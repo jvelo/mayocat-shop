@@ -29,10 +29,8 @@
           </ul>
         </div>
       </div>
-      <div class="row">
-        <div class="span16 admin-content">
-      		<g:layoutBody/>
-        </div>
+      <div class="row content">
+        <g:layoutBody/>
       </div>
     </div>
 		<div class="footer" role="contentinfo"></div>
