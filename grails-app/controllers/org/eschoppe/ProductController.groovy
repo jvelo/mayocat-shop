@@ -4,7 +4,11 @@ import org.springframework.dao.DataIntegrityViolationException
 
 class ProductController {
 
+    def bynameNormalizerService  // injected
+
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    static scaffold = true
 
     static navigation = [
       action : "list",
@@ -13,9 +17,14 @@ class ProductController {
       path : "product"
     ]
 
-    static scaffold = true
-
     def expose() {
-      render "Hello public !"
+      def product = Product.findByByname(params.byname);
+      render "Hello " + product.title
+    }
+
+    def beforeInterceptor = [action:this.&generateByname, only: ['save']]
+
+    def generateByname = {
+      params.byname = bynameNormalizerService.normalize(params.title)
     }
 }

@@ -20,9 +20,9 @@
             
               <g:sortableColumn property="byname" title="${message(code: 'product.byname.label', default: 'Byname')}" />
             
-              <g:sortableColumn property="price" title="${message(code: 'product.price.label', default: 'Price')}" />
-            
               <g:sortableColumn property="title" title="${message(code: 'product.title.label', default: 'Title')}" />
+            
+              <g:sortableColumn property="price" title="${message(code: 'product.price.label', default: 'Price')}" />
             
             </tr>
           </thead>
@@ -32,9 +32,9 @@
             
               <td><g:link action="show" id="${productInstance.id}">${fieldValue(bean: productInstance, field: "byname")}</g:link></td>
             
-              <td>${fieldValue(bean: productInstance, field: "price")}</td>
-            
               <td>${fieldValue(bean: productInstance, field: "title")}</td>
+            
+              <td>${fieldValue(bean: productInstance, field: "price")}</td>
             
             </tr>
           </g:each>
