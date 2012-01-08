@@ -17,13 +17,21 @@
         <table>
           <thead>
             <tr>
-            
+              <th><g:message code="imageSet.product.thumbnail" default="Thumbnail" /></th>
+              <g:sortableColumn property="description" title="${message(code: 'imageSet.description.label', default: 'Description')}" />
+              <g:sortableColumn property="caption" title="${message(code: 'imageSet.caption.label', default: 'Caption')}" />
             </tr>
           </thead>
           <tbody>
           <g:each in="${imageSetInstanceList}" status="i" var="imageSetInstance">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-            
+              <td class="media-grid">
+                <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
+                  <img class="thumbnail" src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
+                </g:link>
+              </td>
+              <td>${fieldValue(bean: imageSetInstance, field: "description")}</td>
+              <td>${fieldValue(bean: imageSetInstance, field: "caption")}</td>
             </tr>
           </g:each>
           </tbody>

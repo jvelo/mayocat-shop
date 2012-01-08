@@ -4,6 +4,10 @@ body {
   background-color: lighten(@oldYellow, 20%);
 }
 
+.clearfix:after {
+      clear: both;
+}
+
 #admin-container.container {
   margin-top:50px;
   background-color:white;
@@ -28,5 +32,10 @@ body {
     margin-bottom:30px;
   }
 
+  .media-grid {
+    img.thumbnail {
+      max-width:200px;
+    }
+  }
 }
 

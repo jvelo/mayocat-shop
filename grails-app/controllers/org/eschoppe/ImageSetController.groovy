@@ -22,13 +22,13 @@ class ImageSetController {
             imageSet.errors.rejectValue('file', 'image.file.tooBig', [readableSize(Image.MAX_SIZE)] as Object[], "Image too big. Max size is {0}")
           }
           else {
-            def image = new Image([data:file])
+            def image = new Image([data:file, hint: ''])
             imageSet.original = image
             imageSet.save()
             product.addToImages(imageSet)
             product.save()
             flash.message = "Image set created"
-            render(view: 'show', model: [imageSet: imageSet])
+            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: ImageSet.THUMBNAIL_SIZE])
           }
         }
         else {
@@ -42,6 +42,17 @@ class ImageSetController {
         flash.message = "Image set could not be created : product not found"
         redirect(controller: "product", action: "list")
       }
+    }
+
+    def show() {
+        def imageSetInstance = ImageSet.get(params.id)
+        if (!imageSetInstance) {
+    		  flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
+          redirect(action: "list")
+          return
+        }
+
+        [imageSetInstance: imageSetInstance, thumbnailSizes: ImageSet.THUMBNAIL_SIZES]
     }
 
     def view() {
@@ -66,4 +77,5 @@ class ImageSetController {
       int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
       new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+
 }

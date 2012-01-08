@@ -21,4 +21,9 @@ class ImageSet {
     thumbnails display:false
     description widget:'textArea', blank:true
   }
+
+  static THUMBNAIL_SIZES = [
+    "s" : [ width: 48, height:48 ],
+    "m" : [ height: 120, height:120 ]
+  ]
 }
