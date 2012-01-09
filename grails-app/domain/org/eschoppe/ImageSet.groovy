@@ -24,6 +24,6 @@ class ImageSet {
 
   static THUMBNAIL_SIZES = [
     "s" : [ width: 48, height:48 ],
-    "m" : [ height: 120, height:120 ]
+    "m" : [ width: 120, height:120 ]
   ]
 }

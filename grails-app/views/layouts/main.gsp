@@ -12,11 +12,12 @@
 		<link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
 		<link rel="apple-touch-icon" href="${resource(dir: 'images', file: 'apple-touch-icon.png')}">
 		<link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">
+    <r:require modules="jquery"/>
     <r:require modules="bootstrap-less"/>
     <r:require modules="styles"/>
     <nav:resources override="true"/>
 		<g:layoutHead/>
-        <r:layoutResources />
+    <r:layoutResources />
 	</head>
 	<body>
     <div class="container" id="admin-container">
@@ -34,7 +35,6 @@
       </div>
     </div>
 		<div class="footer" role="contentinfo"></div>
-		<div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
-        <r:layoutResources />
+    <r:layoutResources />
 	</body>
 </html>

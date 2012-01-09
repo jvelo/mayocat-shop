@@ -8,6 +8,14 @@ body {
       clear: both;
 }
 
+.loading {
+  background:url("../images/ajax-loader.gif") no-repeat center center;
+}
+
+.modal-body.loading {
+  min-height:50px;
+}
+
 #admin-container.container {
   margin-top:50px;
   background-color:white;
@@ -35,6 +43,21 @@ body {
   .media-grid {
     img.thumbnail {
       max-width:200px;
+    }
+    li.thumbnail-list {
+      display:table-cell;
+      vertical-align:top;
+      span.notice {
+        margin-left:20px;
+      }
+    }
+    .thumbnail-wrapper {
+      border: 1px solid #DDDDDD;
+      border-radius: 4px 4px 4px 4px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+      margin: 0 0 18px 20px;
+      padding: 4px;
+      display:inline-block;
     }
   }
 }

@@ -28,7 +28,7 @@ class ImageSetController {
             product.addToImages(imageSet)
             product.save()
             flash.message = "Image set created"
-            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: ImageSet.THUMBNAIL_SIZE])
+            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: ImageSet.THUMBNAIL_SIZES])
           }
         }
         else {

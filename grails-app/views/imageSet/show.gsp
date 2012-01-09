@@ -6,6 +6,7 @@
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'imageSet.label', default: 'ImageSet')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
+    <r:require module="bootstrap-modal" />
 	</head>
 	<body>
     <div class="span14 offset1">
@@ -14,6 +15,18 @@
         <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>
         </g:if>
+
+        <div id="preview-modal" class="modal hide">
+          <div class="modal-header">
+            <a href="#" class="close">&times;</a>
+            <h3><g:message code="imageSet.editThumbnail" default="Edit thumbnail" /></h3>
+          </div>
+          <div class="modal-body loading"></div>
+          <div class="modal-footer">
+            <a href="#" class="btn primary"><g:message code="imageSet.editThumbnail.save" default="Save" /></a>
+            <a href="#" class="btn secondary"><g:message code="imageSet.editThumbnail.cancel" default="Cancel" /></a>
+          </div>
+        </div>
 
         <h3><g:message code="imageSet.original" default="Original" /></h3>
         <ul class="property-list imageSet media-grid clearfix">
@@ -27,13 +40,18 @@
         <h3><g:message code="imageSet.thumbnails" default="Thumbnails" /></h3>
         <ul class="media-grid clearfix">
         <g:each in="${thumbnailSizes.keySet()}" status="i" var="size">
-          <li>
-            ${size} ${thumbnailSizes.get(size)}
-            <a href="">
+          <li class="thumbnail-list">
+            <div class="thumbnail-wrapper">
               <img class="thumbnail"
                    style="max-width:${thumbnailSizes.get(size)?.width}px; max-height:${thumbnailSizes.get(size)?.height}px" 
                    src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
-            </a>
+            </div>
+            <div>
+              <span class="label notice">${size} <small>(${thumbnailSizes.get(size).width}:${thumbnailSizes.get(size).height})</small></span>
+              <div>
+                <span data-controls-modal="preview-modal" data-backdrop="static"><g:message code="imageSet.thumbnail.edit" default="edit" /></span>
+              </div>
+            </div>
           </li>
         </g:each>
         </ul>
