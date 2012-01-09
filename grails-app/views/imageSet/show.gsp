@@ -7,6 +7,7 @@
 		<g:set var="entityName" value="${message(code: 'imageSet.label', default: 'ImageSet')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
     <r:require module="bootstrap-modal" />
+    <r:require module="thumbnailEditor" />
 	</head>
 	<body>
     <div class="span14 offset1">
@@ -38,6 +39,14 @@
         </ul>
 
         <h3><g:message code="imageSet.thumbnails" default="Thumbnails" /></h3>
+        <noscript>
+          <div class="alert-message warning">
+            <p>
+              <g:message code="imageSet.editThumbnail.javascript.required"
+                         default="JavaScript is required in order to edit thumbnails. Activate it in your browser and reload the page in order to edit this image thumbnails." />
+            </p>
+          </div>
+        </noscript>
         <ul class="media-grid clearfix">
         <g:each in="${thumbnailSizes.keySet()}" status="i" var="size">
           <li class="thumbnail-list">
@@ -49,7 +58,13 @@
             <div>
               <span class="label notice">${size} <small>(${thumbnailSizes.get(size).width}:${thumbnailSizes.get(size).height})</small></span>
               <div>
-                <span data-controls-modal="preview-modal" data-backdrop="static"><g:message code="imageSet.thumbnail.edit" default="edit" /></span>
+                <span rel="modal" 
+                      data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
+                      data-size-hint="${size}" 
+                      data-size-width="${thumbnailSizes.get(size).width}"
+                      data-size-height="${thumbnailSizes.get(size).height}">
+                      <g:message code="imageSet.thumbnail.edit" default="edit" />
+                </span>
               </div>
             </div>
           </li>

@@ -51,8 +51,15 @@ class ImageSetController {
           redirect(action: "list")
           return
         }
-
         [imageSetInstance: imageSetInstance, thumbnailSizes: ImageSet.THUMBNAIL_SIZES]
+    }
+
+    def editThumbnail() {
+      def imageSet = ImageSet.get(params.id)
+      if (!imageSet) {
+        flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
+      }
+      [imageSet: imageSet, size: params.size]
     }
 
     def view() {
