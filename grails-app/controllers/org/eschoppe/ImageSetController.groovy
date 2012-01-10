@@ -59,7 +59,7 @@ class ImageSetController {
       if (!imageSet) {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
       }
-      [imageSet: imageSet, size: params.size]
+      [imageSet: imageSet, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size]]
     }
 
     def view() {

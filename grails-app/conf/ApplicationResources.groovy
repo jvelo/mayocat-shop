@@ -9,5 +9,7 @@ modules = {
 
     thumbnailEditor {
       resource url:'js/thumbnailEditor.js'  
+      resource url:'lib/jcrop/jquery.Jcrop.min.js'
+      resource url:'lib/jcrop/jquery.Jcrop.css'
     }
 }
