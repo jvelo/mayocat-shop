@@ -2,6 +2,7 @@ package org.eschoppe
 
 import org.springframework.dao.DataIntegrityViolationException
 import java.text.DecimalFormat
+import javax.imageio.ImageIO
 
 class ImageSetController {
 
@@ -22,7 +23,9 @@ class ImageSetController {
             imageSet.errors.rejectValue('file', 'image.file.tooBig', [readableSize(Image.MAX_SIZE)] as Object[], "Image too big. Max size is {0}")
           }
           else {
-            def image = new Image([data:file, hint: ''])
+            def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
+            def bufferedImage = ImageIO.read(file.inputStream)
+            def image = new Image([data:file, hint: '', width:bufferedImage.width, height:bufferedImage.height, extension:extension])
             imageSet.original = image
             imageSet.save()
             product.addToImages(imageSet)
@@ -66,9 +69,9 @@ class ImageSetController {
       def imageSet = ImageSet.get(params.id)
       def image = imageSet.original
       if (imageSet && image) {
-          response.setContentType("image/jpg")
+          response.setContentType("image/" + image.extension)
           response.setContentLength(image.data.size())
-          response.setHeader('filename', "image.jpg")
+          response.setHeader('filename', "image." + image.extension)
           OutputStream out = response.outputStream
           out.write(image.data)
           out.close()

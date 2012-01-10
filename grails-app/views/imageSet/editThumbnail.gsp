@@ -4,6 +4,8 @@
   </g:if>
   <g:else>
     <img class="thumbnail"
+         data-original-width="${imageSet.original.width}"
+         data-original-height="${imageSet.original.height}"
          style="max-width:500px;max-height:500px;"
          src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: imageSet?.product?.id, id: imageSet?.id]])}" />
     <div style="margin-top:10px;"><strong><g:message code="imageSet.thumbnailEditor.preview" default="Preview:" /></strong></div>
