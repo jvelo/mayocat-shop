@@ -60,6 +60,7 @@
               <div>
                 <span rel="modal" 
                       data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
+                      data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
                       data-size-hint="${size}" 
                       data-size-width="${thumbnailSizes.get(size).width}"
                       data-size-height="${thumbnailSizes.get(size).height}">

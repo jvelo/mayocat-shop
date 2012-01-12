@@ -1,6 +1,9 @@
 package org.eschoppe
 
 import org.springframework.dao.DataIntegrityViolationException
+
+import org.eschoppe.ImageUtils
+
 import java.text.DecimalFormat
 import javax.imageio.ImageIO
 
@@ -25,8 +28,8 @@ class ImageSetController {
           else {
             def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
             def bufferedImage = ImageIO.read(file.inputStream)
-            def image = new Image([data:file, hint: '', width:bufferedImage.width, height:bufferedImage.height, extension:extension])
-            imageSet.original = image
+            def image = new Image([data:file, width:bufferedImage.width, height:bufferedImage.height, extension:extension])
+            imageSet.addToImages(image)
             imageSet.save()
             product.addToImages(imageSet)
             product.save()
@@ -62,12 +65,51 @@ class ImageSetController {
       if (!imageSet) {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
       }
-      [imageSet: imageSet, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size]]
+      [imageSet: imageSet, original:imageSet.images.find{ it.hint == null}, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size]]
+    }
+
+    def saveThumbnail() {
+      def imageSet = ImageSet.get(params.id)
+      def hasError = false 
+      if (!imageSet) {
+        flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
+        hasError = true
+      }
+      if (!params.x || !params.y || !params.width || !params.height) {
+        flash.message = message(code: 'imageSet.editThumbnail.invalidQuery', default: 'Invalid query')
+        hasError = true
+      }
+      if (!hasError) {
+        def thumbnail
+        def exists = true
+        thumbnail = imageSet.images.find { it.hint == params.size }
+        if (!thumbnail) {
+          exists = false
+          thumbnail = new Image()
+        }
+        def output = new ByteArrayOutputStream()
+        def original = imageSet.images.find { it.hint == null }
+        ImageUtils.crop(original.data, original.extension, params, output)
+        thumbnail.data = output.toByteArray()
+        thumbnail.width = params.width as Integer
+        thumbnail.height = params.height as Integer
+        thumbnail.extension = original.extension
+        thumbnail.hint = params.size
+        if (exists) {
+          log.error("Saving an existing thumbnail: " + thumbnail)
+          thumbnail.save()
+        }
+        else {
+          imageSet.addToImages(thumbnail)
+          imageSet.save()
+        }
+      } 
     }
 
     def view() {
       def imageSet = ImageSet.get(params.id)
-      def image = imageSet.original
+      def image
+      image = imageSet.images.find { it.hint == params.hint }
       if (imageSet && image) {
           response.setContentType("image/" + image.extension)
           response.setContentLength(image.data.size())

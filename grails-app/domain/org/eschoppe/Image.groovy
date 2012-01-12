@@ -7,6 +7,7 @@ class Image {
   String extension
   String hint
   byte[] data
+  ImageSet imageSet
 
   static belongsTo = [ImageSet]
   
@@ -15,6 +16,7 @@ class Image {
     width nullable:true
     height nullable:true
     extension nullable:true
+    hint nullable:true
   }
 
   static final Integer MAX_SIZE = 2 * 1024 * 1024

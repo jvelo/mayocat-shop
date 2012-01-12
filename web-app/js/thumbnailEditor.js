@@ -52,6 +52,7 @@ $(document).ready(function(){
     $('#preview-modal').modal({
       backdrop:'static'
     }).modal('show');
+    var saveURI = $(event.currentTarget).data('save-uri')
     $.ajax($(event.currentTarget).data('edit-uri'), {
       success:function(transport) {
         $('.modal-body').removeClass("loading").html(transport);
@@ -66,6 +67,18 @@ $(document).ready(function(){
           }
         );
         $('.modal-footer .btn.primary').bind("click", function(){
+          var coords = te.getCoordinates();
+          $.ajax(saveURI, {
+            data: {
+              width:coords.width,
+              height:coords.height,
+              x:coords.x,
+              y:coords.y
+            },
+            success:function(transport) {
+              console.log(transport);
+            }
+          })
           console.log(te.getCoordinates());
         });
       }

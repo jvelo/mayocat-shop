@@ -5,20 +5,18 @@ class ImageSet {
   String file
   String caption
   String description
-  Image original
 
-  Set thumbnails
+  Set images
   Product product
 
   static belongsTo = [Product]
-  static hasMany = [thumbnails: Image]
+  static hasMany = [images: Image]
 
   static transients = ['file']
 
   static constraints = {
     product display:false
-    original display:false
-    thumbnails display:false
+    images display:false
     description widget:'textArea', blank:true
   }
 
