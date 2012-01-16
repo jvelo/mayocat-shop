@@ -1,6 +1,6 @@
 var Eschoppe = (function(Eschoppe) {
 
-  Eschoppe.ThumbnailEditor = function(image, preview, originalDimensions) {
+  Eschoppe.ThumbnailEditor = function(image, preview, originalDimensions, position) {
 
     this.image = image;
     this.preview = preview;
@@ -9,9 +9,13 @@ var Eschoppe = (function(Eschoppe) {
     this.canvasWidth = this.image.width();
     this.canvasHeight = this.image.height();
     this.originalDimensions = originalDimensions;
+    this.position = (position == undefined ? undefined : [
+      this.getRelativePosition(position.x1, position.y1),
+      this.getRelativePosition(position.x2, position.y2)
+    ]);
 
     this.image.Jcrop({
-      setSelect: [0,0,500,500],
+      setSelect: this.position ? [this.position[0].x, this.position[0].y, this.position[1].x, this.position[1].y] : [0,0,500,500],
       onChange: this.onChangeOrSelect.bind(this),
       onSelect: this.onChangeOrSelect.bind(this),
       aspectRatio: (this.previewWidth / this.previewHeight)
@@ -30,6 +34,13 @@ var Eschoppe = (function(Eschoppe) {
         marginLeft: '-' + Math.round(rx * coords.x) + 'px',
         marginTop: '-' + Math.round(ry * coords.y) + 'px'
       });
+    },
+
+    getRelativePosition: function(x, y) {
+      return {
+        x: parseInt(x * this.canvasWidth / this.originalDimensions.width),
+        y: parseInt(y * this.canvasHeight / this.originalDimensions.height),
+      }
     },
 
     getCoordinates: function() {
@@ -57,14 +68,22 @@ $(document).ready(function(){
       success:function(transport) {
         $('.modal-body').removeClass("loading").html(transport);
         var aspectRatio = $("#preview").width() / $('#preview').height(),
-            original = $('.modal-body .thumbnail');
+            original = $('.modal-body .thumbnail'),
+            dimensions = {
+               width: original.data('original-width'),
+               height: original.data('original-height')
+            },
+            position = !original.data('target-x1') ? undefined : {
+               x1: original.data('target-x1'),
+               y1: original.data('target-y1'),
+               x2: original.data('target-x2'),
+               y2: original.data('target-y2')
+            };
         var te = new Eschoppe.ThumbnailEditor(
           original,
           $('#preview'),
-          {
-            width: original.data('original-width'),
-            height: original.data('original-height')
-          }
+          dimensions,
+          position
         );
         $('.modal-footer .btn.primary').bind("click", function(){
           var coords = te.getCoordinates();
@@ -79,7 +98,6 @@ $(document).ready(function(){
               console.log(transport);
             }
           })
-          console.log(te.getCoordinates());
         });
       }
     })

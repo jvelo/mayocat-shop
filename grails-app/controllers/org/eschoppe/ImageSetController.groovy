@@ -65,7 +65,9 @@ class ImageSetController {
       if (!imageSet) {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
       }
-      [imageSet: imageSet, original:imageSet.images.find{ it.hint == null}, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size]]
+      def original = imageSet.images.find{ it.hint == null}
+      def target = imageSet.images.find{ it.hint == params.size }
+      [imageSet: imageSet, original:original, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size], target: target]
     }
 
     def saveThumbnail() {
@@ -90,11 +92,17 @@ class ImageSetController {
         def output = new ByteArrayOutputStream()
         def original = imageSet.images.find { it.hint == null }
         ImageUtils.crop(original.data, original.extension, params, output)
-        thumbnail.data = output.toByteArray()
-        thumbnail.width = params.width as Integer
-        thumbnail.height = params.height as Integer
-        thumbnail.extension = original.extension
-        thumbnail.hint = params.size
+        thumbnail.identity {
+          data = output.toByteArray()
+          width = ImageSet.THUMBNAIL_SIZES[params.size].width
+          height = ImageSet.THUMBNAIL_SIZES[params.size].height
+          extension = original.extension
+          hint = params.size
+          x1 = params.x as Integer
+          y1 = params.y as Integer
+          x2 = x1 + (params.width as Integer)
+          y2 = y1 + (params.height as Integer)
+        }
         if (exists) {
           log.error("Saving an existing thumbnail: " + thumbnail)
           thumbnail.save()
