@@ -119,7 +119,7 @@ class ImageSetController {
     def expose() {
       def imageSet = ImageSet.get(params.imageid)
       def image
-      image = imageSet.images.find { it.hint == params.hint }
+      image = imageSet.images.find { it.hint == params.size }
       if (imageSet && image) {
           response.setContentType("image/" + image.extension)
           response.setContentLength(image.data.size())

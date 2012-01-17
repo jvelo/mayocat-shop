@@ -7,4 +7,7 @@ class ImageViewModel {
   String description
   Map<String, String> thumbnails
 
+  def withSize(String size) {
+    return thumbnails[ thumbnails.keySet().find{ size == it } ]
+  }
 }

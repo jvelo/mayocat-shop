@@ -30,9 +30,18 @@ class ProductController {
       )
       def imagesViewModel = []
       for (image in product.images) {
+        def thumbnails = [:]
+        for (thumbnail in image.images) {
+          thumbnails[thumbnail.hint] = createLink(
+               controller:'imageSet', 
+               action:'expose', 
+               params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname, 'size':thumbnail.hint]
+          )
+        }
         imagesViewModel.add(new ImageViewModel( 
           caption:image.caption,
-          url: createLink(controller:'imageSet', action:'expose', params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname])
+          url: createLink(controller:'imageSet', action:'expose', params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname]),
+          thumbnails: thumbnails
         ))
       }
       productViewModel.images = imagesViewModel
