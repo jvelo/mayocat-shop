@@ -22,13 +22,3 @@
   </div>
 </div>
 
-<div class="clearfix fieldcontain ${hasErrors(bean: productInstance, field: 'categories', 'error')} ">
-	<label for="categories">
-		<g:message code="product.categories.label" default="Categories" />
-		
-	</label>
-  <div class="input">
-	
-  </div>
-</div>
-

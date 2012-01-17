@@ -8,7 +8,7 @@
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
-    <div class="span14 offset1">
+    <div class="span16">
       <div id="list-product" class="content scaffold-list" role="main">
         <h2><g:message code="default.list.label" args="[entityName]" /></h2>
         <g:if test="${flash.message}">

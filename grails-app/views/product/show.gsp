@@ -8,7 +8,7 @@
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
 	</head>
 	<body>
-    <div class="span14 offset1">
+    <div class="span16">
       <div id="show-product" class="content scaffold-show" role="main">
         <h2><g:message code="default.show.label" args="[entityName]" /></h2>
         <g:if test="${flash.message}">
@@ -49,6 +49,17 @@
             
               <g:each in="${productInstance.categories}" var="c">
               <span class="property-value" aria-labelledby="categories-label"><g:link controller="category" action="show" id="${c.id}">${c?.encodeAsHTML()}</g:link></span>
+              </g:each>
+            
+          </li>
+          </g:if>
+        
+          <g:if test="${productInstance?.images}">
+          <li class="fieldcontain">
+            <span id="images-label" class="property-label"><g:message code="product.images.label" default="Images" /></span>
+            
+              <g:each in="${productInstance.images}" var="i">
+              <span class="property-value" aria-labelledby="images-label"><g:link controller="imageSet" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></span>
               </g:each>
             
           </li>

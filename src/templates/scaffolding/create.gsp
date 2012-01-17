@@ -7,7 +7,7 @@
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
 	</head>
 	<body>
-    <div class="span14 offset1">
+    <div class="span16">
       <div id="create-${domainClass.propertyName}" class="content scaffold-create" role="main">
         <h2><g:message code="default.create.label" args="[entityName]" /></h2>
         <g:if test="\${flash.message}">

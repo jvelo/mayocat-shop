@@ -1,7 +1,8 @@
-@oldYellow : #DCBB4B;
+@chocolate: #2E1901;
+@blue: #2C9AB2;
 
 body {
-  background-color: lighten(@oldYellow, 20%);
+  background-color: lighten(@blue, 5%);
 }
 
 .clearfix:after {
@@ -16,17 +17,26 @@ body {
   min-height:50px;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  color:@chocolate;
+}
+
 #admin-container.container {
-  margin-top:50px;
+  padding:30px;
+  padding-top:50px;
+  min-height:800px;
   background-color:white;
+  border-left:14px solid @chocolate;
+  border-right:2px solid @chocolate;
 
   ul.navigation {
     margin-bottom:0;
-    background-color: lighten(@oldYellow, 20%);
-    border:none;
+    border-color:@chocolate;
 
     li.active a {
-      border:none;
+      border-color:@chocolate @chocolate transparent;
+      color:@chocolate;
+      font-weight:bold;
     }
   }
 
