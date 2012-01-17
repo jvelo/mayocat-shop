@@ -16,7 +16,7 @@
         </g:if>
         <ul class="media-grid">
           <g:each in="${imageSetInstanceList}" status="i" var="imageSetInstance">
-            <li class="${(i % 2) == 0 ? 'even' : 'odd'}">
+            <li class="${(imageSetInstance.id == imageSetInstance.product.featuredImage.id) ? 'featured' : ''}">
               <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
                 <img class="thumbnail"
                      src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}"

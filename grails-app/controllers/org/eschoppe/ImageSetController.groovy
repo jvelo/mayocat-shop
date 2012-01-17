@@ -33,6 +33,9 @@ class ImageSetController {
             imageSet.addToImages(image)
             imageSet.filename = filename
             imageSet.save()
+            if (!product.featuredImage) {
+              product.featuredImage = imageSet
+            }
             product.addToImages(imageSet)
             product.save()
             flash.message = "Image set created"

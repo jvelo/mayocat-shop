@@ -1,6 +1,7 @@
 @chocolate: #2E1901;
 @blue: #2C9AB2;
 @grey: #BFBFBF;
+@green: #A3D831;
 
 body {
   background-color: lighten(@blue, 5%);
@@ -73,6 +74,10 @@ h1, h2, h3, h4, h5, h6 {
   .media-grid {
     img.thumbnail {
       max-width:150px;
+    }
+    li.featured a {
+      border-color:@green;
+      border-width:3px;
     }
     li.thumbnail-list {
       display:table-cell;
