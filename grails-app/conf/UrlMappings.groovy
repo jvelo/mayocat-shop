@@ -3,6 +3,8 @@ class UrlMappings {
 	static mappings = {
 
     "/product/$byname"(controller:"product", action:"expose")
+    "/product/$byname/images/$imageid/$filename"(controller:"imageSet", action:"expose")
+    "/product/$byname/images/$imageid/$size?/$filename?"(controller:"imageSet", action:"expose")
 
 		"/admin/product/$id?/$action?"(controller:"product") 
 		"/admin/product/list"(controller:"product", action:"list") 

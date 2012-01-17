@@ -3,6 +3,7 @@ package org.eschoppe
 class ImageSet {
 
   String file
+  String filename
   String caption
   String description
 

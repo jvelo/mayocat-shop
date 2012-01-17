@@ -27,9 +27,11 @@ class ImageSetController {
           }
           else {
             def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
+            def filename = file.originalFilename
             def bufferedImage = ImageIO.read(file.inputStream)
             def image = new Image([data:file, width:bufferedImage.width, height:bufferedImage.height, extension:extension])
             imageSet.addToImages(image)
+            imageSet.filename = filename
             imageSet.save()
             product.addToImages(imageSet)
             product.save()
@@ -112,6 +114,23 @@ class ImageSetController {
           imageSet.save()
         }
       } 
+    }
+
+    def expose() {
+      def imageSet = ImageSet.get(params.imageid)
+      def image
+      image = imageSet.images.find { it.hint == params.hint }
+      if (imageSet && image) {
+          response.setContentType("image/" + image.extension)
+          response.setContentLength(image.data.size())
+          response.setHeader('filename', imageSet.filename)
+          OutputStream out = response.outputStream
+          out.write(image.data)
+          out.close()
+      }
+      else {
+          response.sendError(404)
+      }
     }
 
     def view() {

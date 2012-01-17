@@ -1,5 +1,7 @@
 package org.eschoppe
 
+import org.eschoppe.viewmodel.ProductViewModel
+import org.eschoppe.viewmodel.ImageViewModel
 import org.springframework.dao.DataIntegrityViolationException
 
 class ProductController {
@@ -19,7 +21,22 @@ class ProductController {
 
     def expose() {
       def product = Product.findByByname(params.byname);
-      render "Hello " + product.title
+      if (!product) {
+        redirect(uri: '/notFound')  
+      }
+      def productViewModel = new ProductViewModel(
+        title: product.title,
+        price: product.price
+      )
+      def imagesViewModel = []
+      for (image in product.images) {
+        imagesViewModel.add(new ImageViewModel( 
+          caption:image.caption,
+          url: createLink(controller:'imageSet', action:'expose', params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname])
+        ))
+      }
+      productViewModel.images = imagesViewModel
+      render(view:"Product.html", model: [product:productViewModel])
     }
 
     def beforeInterceptor = [action:this.&generateByname, only: ['save']]
