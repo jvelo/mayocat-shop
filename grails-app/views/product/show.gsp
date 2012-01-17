@@ -10,30 +10,18 @@
 	<body>
     <div class="span16">
       <div id="show-product" class="content scaffold-show" role="main">
-        <h2><g:message code="default.show.label" args="[entityName]" /></h2>
+        <h1>
+          ${productInstance.title}
+          <small>
+          (<g:message code="commons.at" default="at" />
+            <g:link target="_blank" controller="product" action="expose" params="[byname:productInstance.byname]">/product/${productInstance.byname}</g:link>)
+          </small>
+        </h1>
         <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>
         </g:if>
-        <ol class="property-list product">
-        
-          <g:if test="${productInstance?.byname}">
-          <li class="fieldcontain">
-            <span id="byname-label" class="property-label"><g:message code="product.byname.label" default="Byname" /></span>
-            
-              <span class="property-value" aria-labelledby="byname-label"><g:fieldValue bean="${productInstance}" field="byname"/></span>
-            
-          </li>
-          </g:if>
-        
-          <g:if test="${productInstance?.title}">
-          <li class="fieldcontain">
-            <span id="title-label" class="property-label"><g:message code="product.title.label" default="Title" /></span>
-            
-              <span class="property-value" aria-labelledby="title-label"><g:fieldValue bean="${productInstance}" field="title"/></span>
-            
-          </li>
-          </g:if>
-        
+        <ul class="property-list product">
+
           <g:if test="${productInstance?.price}">
           <li class="fieldcontain">
             <span id="price-label" class="property-label"><g:message code="product.price.label" default="Price" /></span>
@@ -54,18 +42,10 @@
           </li>
           </g:if>
         
-          <g:if test="${productInstance?.images}">
-          <li class="fieldcontain">
-            <span id="images-label" class="property-label"><g:message code="product.images.label" default="Images" /></span>
-            
-              <g:each in="${productInstance.images}" var="i">
-              <span class="property-value" aria-labelledby="images-label"><g:link controller="imageSet" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></span>
-              </g:each>
-            
-          </li>
-          </g:if>
-        
-        </ol>
+        </ul>
+
+        <g:include controller="imageSet" action="list" params="[productid:productInstance.id]" />
+
         <g:form>
           <fieldset class="buttons actions">
             <g:hiddenField name="id" value="${productInstance?.id}" />

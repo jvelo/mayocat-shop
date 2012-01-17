@@ -10,37 +10,29 @@
 	<body>
     <div class="span16">
       <div id="list-imageSet" class="content scaffold-list" role="main">
-        <h2><g:message code="default.list.label" args="[entityName]" /></h2>
+        <h3><g:message code="imageSet.list" default="Images" /></h3>
         <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>
         </g:if>
-        <table>
-          <thead>
-            <tr>
-              <th><g:message code="imageSet.product.thumbnail" default="Thumbnail" /></th>
-              <g:sortableColumn property="description" title="${message(code: 'imageSet.description.label', default: 'Description')}" />
-              <g:sortableColumn property="caption" title="${message(code: 'imageSet.caption.label', default: 'Caption')}" />
-            </tr>
-          </thead>
-          <tbody>
+        <ul class="media-grid">
           <g:each in="${imageSetInstanceList}" status="i" var="imageSetInstance">
-            <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-              <td class="media-grid">
-                <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
-                  <img class="thumbnail" src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
-                </g:link>
-              </td>
-              <td>${fieldValue(bean: imageSetInstance, field: "description")}</td>
-              <td>${fieldValue(bean: imageSetInstance, field: "caption")}</td>
-            </tr>
+            <li class="${(i % 2) == 0 ? 'even' : 'odd'}">
+              <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
+                <img class="thumbnail"
+                     src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}"
+                     title="${fieldValue(bean: imageSetInstance, field: 'caption')}" />
+              </g:link>
+              <div class="hidden description">${fieldValue(bean: imageSetInstance, field: "description")}</div>
+            </li>
           </g:each>
-          </tbody>
-        </table>
+        </ul>
+        <g:if test="${imageSetInstanceTotal > imageSetInstanceList.size()}">
         <div class="pagination">
-          <g:paginate total="${imageSetInstanceTotal}" />
+          <g:paginate controller="imageSet" action="list" params="[productid:params.productid]" total="${imageSetInstanceTotal}" />
         </div>
+        </g:if>
         <div class="add-entry">
-          <g:link params="[productid: params.productid]" class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+          <g:link params="[productid: params.productid]" class="create" action="create"><g:message code="imageSet.add" default="Add an image" /></g:link></li>
         </div>
       </div>
 		</div>
