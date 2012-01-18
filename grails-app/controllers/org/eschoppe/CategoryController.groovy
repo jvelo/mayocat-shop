@@ -2,7 +2,7 @@ package org.eschoppe
 
 import org.springframework.dao.DataIntegrityViolationException
 
-class CategoryController {
+class CategoryController extends AbstractViewModelController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -15,4 +15,12 @@ class CategoryController {
     
     static scaffold = true
 
+    def expose() {
+      def category = Category.findByByname(params.byname)
+      if (!category) {
+        redirect(uri: '/notFound')
+      }
+      def categoryViewModel = getCategoryViewModel(category)
+      render(view:"Category.html", model: [category:categoryViewModel])
+    }
 }

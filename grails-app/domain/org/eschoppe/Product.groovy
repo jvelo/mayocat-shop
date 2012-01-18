@@ -7,6 +7,7 @@ class Product {
     Float price
     Set images
     ImageSet featuredImage
+    boolean exposed
 
     static belongsTo = Category
     static hasMany = [categories:Category, images:ImageSet]
@@ -16,6 +17,10 @@ class Product {
       title blank:false
       price blank:false, min:0 as Float
       featuredImage nullable:true
+      exposed display:false
     }
 
+    static allExposed = where {
+      exposed == true
+    }
 }

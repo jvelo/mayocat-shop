@@ -1,10 +1,8 @@
 package org.eschoppe
 
-import org.eschoppe.viewmodel.ProductViewModel
-import org.eschoppe.viewmodel.ImageViewModel
 import org.springframework.dao.DataIntegrityViolationException
 
-class ProductController {
+class ProductController extends AbstractViewModelController {
 
     def bynameNormalizerService  // injected
 
@@ -24,33 +22,14 @@ class ProductController {
       if (!product) {
         redirect(uri: '/notFound')  
       }
-      def productViewModel = new ProductViewModel(
-        title: product.title,
-        price: product.price
-      )
-      def imagesViewModel = []
-      for (image in product.images) {
-        def thumbnails = [:]
-        for (thumbnail in image.images) {
-          thumbnails[thumbnail.hint] = createLink(
-               controller:'imageSet', 
-               action:'expose', 
-               params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname, 'size':thumbnail.hint]
-          )
-        }
-        imagesViewModel.add(new ImageViewModel( 
-          caption:image.caption,
-          url: createLink(controller:'imageSet', action:'expose', params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname]),
-          thumbnails: thumbnails
-        ))
-      }
-      productViewModel.images = imagesViewModel
+      def productViewModel = getProductViewModel(product)
       render(view:"Product.html", model: [product:productViewModel])
     }
 
-    def beforeInterceptor = [action:this.&generateByname, only: ['save']]
+    def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
 
-    def generateByname = {
+    def beforeSave = {
       params.byname = bynameNormalizerService.normalize(params.title)
+      params.exposed = true
     }
 }

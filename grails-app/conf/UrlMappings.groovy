@@ -2,21 +2,40 @@ class UrlMappings {
 
 	static mappings = {
 
+		"500"(view:'/error')
+
+    // Public area
+    // -----------
+
+    // Home
+    "/"(controller:"home", action:"expose")
+    // Product
     "/product/$byname"(controller:"product", action:"expose")
     "/product/$byname/images/$imageid/$filename"(controller:"imageSet", action:"expose")
     "/product/$byname/images/$imageid/$size?/$filename?"(controller:"imageSet", action:"expose")
+    // Category
+    "/category/$byname"(controller:"category", action:"expose")
 
-		"/admin/product/$id?/$action?"(controller:"product") 
+    // Admin area
+    // ----------
+
+    // Admin -> product
+//		"/admin/product/$id?/$action?"(controller:"product") 
 		"/admin/product/list"(controller:"product", action:"list") 
 		"/admin/product/create"(controller:"product", action:"create") 
 		"/admin/product/save"(controller:"product", action:"save") 
+		"/admin/product/update"(controller:"product", action:"update")
 		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet") 
 		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
 		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 
 		"/admin/product/$productid/images/list"(controller:"imageSet", action:"list") 
-		"/admin/category/$action?/$id?"(controller:"category") 
 
-		"/"(view:"/index")
-		"500"(view:'/error')
+    // Admin -> category
+//		"/admin/category/$id?/$action?"(controller:"category") 
+		"/admin/category/list"(controller:"category", action:"list") 
+		"/admin/category/create"(controller:"category", action:"create") 
+		"/admin/category/save"(controller:"category", action:"save") 
+		"/admin/category/update"(controller:"category", action:"update")
+
 	}
 }

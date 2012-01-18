@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    My shop !
+    <div>
+      Categories:
+      <ul th:each="category : ${categories}">
+        <li><a href="Category.html" th:href="${category.url}" th:text="${category.title}">Une categorie</a></li>
+      </ul>
+    </div>
+    <div>
+      Products:
+      <ul th:each="product : ${products}">
+        <li>
+          <a href="Product.html" th:href="${product.url}" th:text="${product.title}">
+            <span class="description" th:text="${image.description}">Lorem ipsum.</span>
+          </a>
+          <img th:title="${product.featuredImage.caption}" th:src="${product.featuredImage.withSize('m')}" src="./images/foo.gif" title="Some title" />
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

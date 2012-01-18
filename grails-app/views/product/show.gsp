@@ -6,6 +6,7 @@
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
+    <r:require module="productEditor" />
 	</head>
 	<body>
     <div class="span16">
@@ -18,8 +19,16 @@
           </small>
         </h1>
         <g:if test="${flash.message}">
-        <div class="message" role="status">${flash.message}</div>
+          <div class="message" role="status">${flash.message}</div>
         </g:if>
+
+        <div class="exposition">
+          <input type="checkbox" ${productInstance.exposed ? 'checked' : ''} 
+                 name="exposed"
+                 value="true"
+                 data-update-uri="${createLink(url: [controller:'product', action:'update', params:[id:productInstance.id]])}"/> Exposed
+        </div>
+
         <ul class="property-list product">
 
           <g:if test="${productInstance?.price}">
