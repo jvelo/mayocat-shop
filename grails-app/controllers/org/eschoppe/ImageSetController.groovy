@@ -136,6 +136,14 @@ class ImageSetController {
       }
     }
 
+    def list() {
+      def product = Product.get(params.productid)
+      if (!product) {
+        response.sendError(404)
+      }
+      [imageSetInstanceList: product.images]
+    }
+
     def view() {
       def imageSet = ImageSet.get(params.id)
       def image
