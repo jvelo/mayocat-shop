@@ -10,9 +10,16 @@ class AbstractViewModelController {
     if (!category) {
       return
     }
+    def pvms = []
+    for (product in category.products) {
+      if (product.exposed) {
+        pvms.add( getProductViewModel(product) )
+      }
+    }
     def categoryViewModel = new CategoryViewModel(
       title:category.title,
-      url: createLink(controller:'category', action:'expose', params:['byname': category.byname])
+      url: createLink(controller:'category', action:'expose', params:['byname': category.byname]),
+      products: pvms
     )
     categoryViewModel
   }

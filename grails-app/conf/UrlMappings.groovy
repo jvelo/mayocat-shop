@@ -20,22 +20,24 @@ class UrlMappings {
     // ----------
 
     // Admin -> product
-//		"/admin/product/$id?/$action?"(controller:"product") 
-		"/admin/product/list"(controller:"product", action:"list") 
+		"/admin/product/"(controller:"product", action:"list") 
 		"/admin/product/create"(controller:"product", action:"create") 
 		"/admin/product/save"(controller:"product", action:"save") 
 		"/admin/product/update"(controller:"product", action:"update")
+		"/admin/product/show"(controller:"product", action:"show")
+		"/admin/product/edit"(controller:"product", action:"edit")
 		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet") 
 		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
 		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 
 		"/admin/product/$productid/images/list"(controller:"imageSet", action:"list") 
 
     // Admin -> category
-//		"/admin/category/$id?/$action?"(controller:"category") 
-		"/admin/category/list"(controller:"category", action:"list") 
+		"/admin/category/"(controller:"category", action:"list") 
 		"/admin/category/create"(controller:"category", action:"create") 
 		"/admin/category/save"(controller:"category", action:"save") 
 		"/admin/category/update"(controller:"category", action:"update")
+		"/admin/category/show"(controller:"category", action:"show")
+		"/admin/category/edit"(controller:"category", action:"edit")
 
 	}
 }
