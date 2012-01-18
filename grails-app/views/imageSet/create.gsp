@@ -35,8 +35,8 @@
             <g:hiddenField name="product.id" value="${params.productid}" />
           </fieldset>
           <fieldset class="buttons actions">
+            <g:link class="back btn" action="show" controller="product" params="[id:params.productid]"><g:message code="default.cancel" /></g:link>
             <g:submitButton name="create" class="save btn primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-            <g:link class="list btn" action="list" params="[productid:params.productid]"><g:message code="default.cancel" /></g:link>
           </fieldset>
         </g:uploadForm>
       </div>
