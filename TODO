@@ -1,5 +1,14 @@
-Admin:
-- pagination on product images
-- finish edit thumbnail dialog
-Storefront:
-- pagination on collection products
+UI :
+----
+
+* Admin:
+  - pagination on product images
+  - finish edit thumbnail dialog
+  - display correct thumnail on image set show screen
+* Storefront:
+  - pagination on collection products
+
+Backend :
+---------
+
+- Lazily create thumbnails when they are requested at a specific size that does not exist
