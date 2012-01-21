@@ -37,6 +37,7 @@ grails.project.dependency.resolution = {
         compile 'org.thymeleaf:thymeleaf:1.1.4'
         compile 'org.thymeleaf:thymeleaf-spring3:1.1.4'
         compile 'org.apache.commons:commons-lang3:3.1'
+        runtime 'net.sourceforge.nekohtml:nekohtml:1.9.15'
     }
 
     plugins {
