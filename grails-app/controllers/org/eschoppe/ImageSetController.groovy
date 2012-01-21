@@ -109,7 +109,6 @@ class ImageSetController {
           y2 = y1 + (params.height as Integer)
         }
         if (exists) {
-          log.error("Saving an existing thumbnail: " + thumbnail)
           thumbnail.save()
         }
         else {
