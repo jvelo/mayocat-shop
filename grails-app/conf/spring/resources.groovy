@@ -6,7 +6,7 @@ beans = {
   thymeleafTemplateResolver(org.eschoppe.thymeleaf.EschoppeThymeleafTemplateResolver){
     prefix = '/storefronts/default/'
     suffix = ''
-    templateMode = 'HTML5'
+    templateMode = 'LEGACYHTML5'
     cacheable = false
   }
 
