@@ -16,7 +16,7 @@ class HomeController extends AbstractViewModelController {
     for (product in products) {
       pvms.add(getProductViewModel(product))
     }
-    render(view:"Home.html", model: [products:pvms, categories:cvms])
+    render(view:"/storefronts/lea/Home.html", model: [products:pvms, categories:cvms])
   }
 
 }

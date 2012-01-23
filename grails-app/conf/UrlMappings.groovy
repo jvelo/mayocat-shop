@@ -4,6 +4,10 @@ class UrlMappings {
 
 		"500"(view:'/error')
 
+    // Resources
+    // ---------
+    "/resources/**"(controller:"resource", action:"serve")
+
     // Public area
     // -----------
 

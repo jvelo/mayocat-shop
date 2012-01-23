@@ -39,7 +39,7 @@ public class EschoppeThymeleafResourceResolver implements IResourceResolver {
         }
         String targetResourceName = StringUtils.join(fragments.toArray(), '/');
 
-        return this.delegate.getResourceAsStream(arguments, targetResourceName);
+        return this.delegate.getResourceAsStream(arguments, resourceName);
     }
 
 }

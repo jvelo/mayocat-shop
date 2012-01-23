@@ -4,7 +4,7 @@ import org.eschoppe.thymeleaf.*
 beans = {
   
   thymeleafTemplateResolver(org.eschoppe.thymeleaf.EschoppeThymeleafTemplateResolver){
-    prefix = '/storefronts/default/'
+    prefix = ''
     suffix = ''
     templateMode = 'LEGACYHTML5'
     cacheable = false
