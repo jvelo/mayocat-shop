@@ -15,7 +15,6 @@ class ResourceController {
     def contextPath = request.request.contextPath
     def resourcePath = requestURI[(contextPath).size()..-1]
     def storefront = grailsApplication.config.eschoppe.storefront
-    log.error( "storefront : " + storefront )
     if (!storefront || storefront == "") {
       storefront = "default"
     }

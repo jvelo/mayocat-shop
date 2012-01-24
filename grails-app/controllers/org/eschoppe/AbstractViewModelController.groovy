@@ -17,6 +17,7 @@ class AbstractViewModelController {
       }
     }
     def categoryViewModel = new CategoryViewModel(
+      byname:category.byname,
       title:category.title,
       url: createLink(controller:'category', action:'expose', params:['byname': category.byname]),
       products: pvms
@@ -29,6 +30,7 @@ class AbstractViewModelController {
       return
     }
     def productViewModel = new ProductViewModel(
+      byname: product.byname,
       title: product.title,
       price: product.price,
       url: createLink(controller:'product', action:'expose', params: ['byname':product.byname])
