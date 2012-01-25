@@ -13,7 +13,7 @@ class ResourceController {
   def serve = {
     def requestURI = request.request.requestURI
     def contextPath = request.request.contextPath
-    def resourcePath = requestURI[(contextPath).size()..-1]
+    def resourcePath = requestURI[requestURI.indexOf("/resources/")..-1]
     def storefront = grailsApplication.config.eschoppe.storefront
     if (!storefront || storefront == "") {
       storefront = "default"

@@ -16,11 +16,23 @@ class CategoryController extends AbstractViewModelController {
     static scaffold = true
 
     def expose() {
+      // Browsed category
       def category = Category.findByByname(params.byname)
       if (!category) {
         redirect(uri: '/notFound')
       }
       def categoryViewModel = getCategoryViewModel(category)
-      render(view:"Category.html", model: [category:categoryViewModel])
+      // Common vars
+      def products = Product.allExposed;
+      def categories = Category.findAll();
+      def cvms = [:]
+      def pvms = []
+      for (c in categories) {
+        cvms[c.byname] = getCategoryViewModel(c)
+      }
+      for (product in products) {
+        pvms.add(getProductViewModel(product))
+      }
+      render(view:"/storefronts/lea/Category.html", model: [category:categoryViewModel, products:pvms, categories:cvms])
     }
 }

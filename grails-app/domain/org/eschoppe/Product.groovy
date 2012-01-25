@@ -8,6 +8,7 @@ class Product {
     Set images
     ImageSet featuredImage
     boolean exposed
+    Set categories
 
     static belongsTo = Category
     static hasMany = [categories:Category, images:ImageSet]

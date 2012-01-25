@@ -39,11 +39,19 @@ class AbstractViewModelController {
     for (image in product.images) {
       imagesViewModel.add(getImageViewModel(image))
     }
+    def categories = []
+    for (category in product.categories) {
+      categories.add(category.byname)
+      if (!productViewModel.category) {
+        productViewModel.category = category.byname
+      }
+    }
+    productViewModel.categories = categories
     productViewModel.images = imagesViewModel
     productViewModel.featuredImage = getImageViewModel(product.featuredImage)
     productViewModel
   }
-
+ 
   def getImageViewModel(image) {
     if (!image) {
       return

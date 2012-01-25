@@ -39,7 +39,8 @@ class ImageSetController {
             product.addToImages(imageSet)
             product.save()
             flash.message = "Image set created"
-            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: ImageSet.THUMBNAIL_SIZES])
+            def sizes = grailsApplication.config.eschoppe.thumbnailSizes
+            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: sizes])
           }
         }
         else {
@@ -56,27 +57,30 @@ class ImageSetController {
     }
 
     def show() {
+        def sizes = grailsApplication.config.eschoppe.thumbnailSizes
         def imageSetInstance = ImageSet.get(params.id)
         if (!imageSetInstance) {
     		  flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
           redirect(action: "list")
           return
         }
-        [imageSetInstance: imageSetInstance, thumbnailSizes: ImageSet.THUMBNAIL_SIZES]
+        [imageSetInstance: imageSetInstance, thumbnailSizes: sizes]
     }
 
     def editThumbnail() {
+      def sizes = grailsApplication.config.eschoppe.thumbnailSizes
       def imageSet = ImageSet.get(params.id)
       if (!imageSet) {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
       }
       def original = imageSet.images.find{ it.hint == null}
       def target = imageSet.images.find{ it.hint == params.size }
-      [imageSet: imageSet, original:original, size: params.size, dimensions:ImageSet.THUMBNAIL_SIZES[params.size], target: target]
+      [imageSet: imageSet, original:original, size: params.size, dimensions:sizes[params.size], target: target]
     }
 
     def saveThumbnail() {
       def imageSet = ImageSet.get(params.id)
+      def sizes = grailsApplication.config.eschoppe.thumbnailSizes
       def hasError = false 
       if (!imageSet) {
         flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
@@ -96,11 +100,11 @@ class ImageSetController {
         }
         def output = new ByteArrayOutputStream()
         def original = imageSet.images.find { it.hint == null }
-        ImageUtils.crop(original.data, original.extension, params, output)
+        ImageUtils.crop(original.data, original.extension, sizes[params.size], params, output)
         thumbnail.identity {
           data = output.toByteArray()
-          width = ImageSet.THUMBNAIL_SIZES[params.size].width
-          height = ImageSet.THUMBNAIL_SIZES[params.size].height
+          width = sizes[params.size].width
+          height = sizes[params.size].height
           extension = original.extension
           hint = params.size
           x1 = params.x as Integer

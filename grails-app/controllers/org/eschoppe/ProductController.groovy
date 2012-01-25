@@ -23,7 +23,12 @@ class ProductController extends AbstractViewModelController {
         redirect(uri: '/notFound')  
       }
       def productViewModel = getProductViewModel(product)
-      render(view:"Product.html", model: [product:productViewModel])
+      def categories = Category.findAll();
+      def cvms = [:]
+      for (c in categories) {
+        cvms[c.byname] = getCategoryViewModel(c)
+      }
+      render(view:"/storefronts/lea/Product.html", model: [product:productViewModel, categories: cvms])
     }
 
     def beforeInterceptor = [action:this.&beforeSave, only: ['save']]

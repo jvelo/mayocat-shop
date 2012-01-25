@@ -8,14 +8,15 @@ class HomeController extends AbstractViewModelController {
   
     def products = Product.allExposed;
     def categories = Category.findAll();
-    def cvms = []
+    def cvms = [:]
     def pvms = []
     for (category in categories) {
-      cvms.add(getCategoryViewModel(category))
+      cvms[category.byname] = getCategoryViewModel(category)
     }
     for (product in products) {
       pvms.add(getProductViewModel(product))
     }
+    log.error("CAtegories:" + cvms)
     render(view:"/storefronts/lea/Home.html", model: [products:pvms, categories:cvms])
   }
 

@@ -17,6 +17,16 @@ environments {
             url = "jdbc:h2:mem:devDb;MVCC=TRUE"
         }
     }
+    local {
+      dataSource {
+        dialect = org.hibernate.dialect.MySQLDialect
+        driverClassNam = 'com.mysql.jdbc.Driver'
+        username = 'root'
+        password = ''
+        url = 'jdbc:mysql://127.0.0.1/lea'
+        dbCreate = 'update'
+      }
+    }
     test {
         dataSource {
             dbCreate = "update"

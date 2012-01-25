@@ -7,12 +7,12 @@ import javax.imageio.ImageIO
 
 class ImageUtils {
 
-  static def crop(data, extension, params, out) {
+  static def crop(data, extension, size, params, out) {
     def bais = new ByteArrayInputStream(data);
     def originalImage = ImageIO.read(bais)
     def imageType = ((BufferedImage) originalImage).getType();
-    def width = ImageSet.THUMBNAIL_SIZES[params.size].width
-    def height = ImageSet.THUMBNAIL_SIZES[params.size].height
+    def width = size.width
+    def height = size.height
     def newImage = new BufferedImage(width, height, imageType);
     def graphics2D = newImage.createGraphics();
     def x2 = (params.x as Integer) + (params.width as Integer)

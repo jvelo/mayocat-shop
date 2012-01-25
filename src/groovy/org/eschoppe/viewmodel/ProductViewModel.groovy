@@ -6,6 +6,8 @@ class ProductViewModel {
   String title
   String url
   float price
+  List<String> categories
+  String category
 
   List<ImageViewModel> images
   ImageViewModel featuredImage

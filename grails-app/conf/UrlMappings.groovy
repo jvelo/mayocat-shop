@@ -7,6 +7,8 @@ class UrlMappings {
     // Resources
     // ---------
     "/resources/**"(controller:"resource", action:"serve")
+    "/category/resources/**"(controller:"resource", action:"serve")
+    "/product/resources/**"(controller:"resource", action:"serve")
 
     // Public area
     // -----------
