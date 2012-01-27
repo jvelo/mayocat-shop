@@ -2,7 +2,9 @@ package org.eschoppe
 
 import org.springframework.dao.DataIntegrityViolationException
 
-class CategoryController extends AbstractViewModelController {
+import org.eschoppe.viewmodel.builder.CategoryViewModelBuilder
+
+class CategoryController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -21,18 +23,7 @@ class CategoryController extends AbstractViewModelController {
       if (!category) {
         redirect(uri: '/notFound')
       }
-      def categoryViewModel = getCategoryViewModel(category)
-      // Common vars
-      def products = Product.allExposed;
-      def categories = Category.findAll();
-      def cvms = [:]
-      def pvms = []
-      for (c in categories) {
-        cvms[c.byname] = getCategoryViewModel(c)
-      }
-      for (product in products) {
-        pvms.add(getProductViewModel(product))
-      }
-      render(view:"/storefronts/lea/Category.html", model: [category:categoryViewModel, products:pvms, categories:cvms])
+      def builder = new CategoryViewModelBuilder()
+      render(view:"/storefronts/lea/Category.html", model: [category:builder.build(category)])
     }
 }

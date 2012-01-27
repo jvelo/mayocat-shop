@@ -14,3 +14,4 @@ Backend :
 - Lazily create thumbnails when they are requested at a specific size that does not exist
 - Remove the EschoppeThymeleafResourceResolver.java as we don't need it anymore
 - Add modification header when serving resources via ResourceController
+- Switch money representations to BigDecimal

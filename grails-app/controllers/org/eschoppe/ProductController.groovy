@@ -2,6 +2,8 @@ package org.eschoppe
 
 import org.springframework.dao.DataIntegrityViolationException
 
+import org.eschoppe.viewmodel.builder.ProductViewModelBuilder
+
 class ProductController extends AbstractViewModelController {
 
     def bynameNormalizerService  // injected
@@ -22,13 +24,8 @@ class ProductController extends AbstractViewModelController {
       if (!product) {
         redirect(uri: '/notFound')  
       }
-      def productViewModel = getProductViewModel(product)
-      def categories = Category.findAll();
-      def cvms = [:]
-      for (c in categories) {
-        cvms[c.byname] = getCategoryViewModel(c)
-      }
-      render(view:"/storefronts/lea/Product.html", model: [product:productViewModel, categories: cvms])
+      def builder = new ProductViewModelBuilder()
+      render(view:"/storefronts/lea/Product.html", model: [product:builder.build(product)])
     }
 
     def beforeInterceptor = [action:this.&beforeSave, only: ['save']]

@@ -9,6 +9,7 @@ class UrlMappings {
     "/resources/**"(controller:"resource", action:"serve")
     "/category/resources/**"(controller:"resource", action:"serve")
     "/product/resources/**"(controller:"resource", action:"serve")
+    "/cart/resources/**"(controller:"resource", action:"serve")
 
     // Public area
     // -----------
@@ -21,6 +22,10 @@ class UrlMappings {
     "/product/$byname/images/$imageid/$size?/$filename?"(controller:"imageSet", action:"expose")
     // Category
     "/category/$byname"(controller:"category", action:"expose")
+
+    // Cart
+    "/cart/"(controller:"cart", action:"expose")
+    "/cart/$action"(controller:"cart")
 
     // Admin area
     // ----------
