@@ -27,6 +27,13 @@ class CartController {
   def expose() {
     render(view: "/storefronts/lea/Cart.html")
   }
+  
+  def getCart() {
+    if (!session['cart']) {
+      session['cart'] = [:]
+    }
+    session['cart']
+  }
 
   // Utility
 }

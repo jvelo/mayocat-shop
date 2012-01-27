@@ -5,16 +5,19 @@ import org.eschoppe.Category
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
 class ExpositionFilters {
+
   def filters = {
+
     expositionFilter(controller:'*', action:'expose') {
 
       after = { viewModel ->
+        // Enhancing returned viewModel with API available to all pages :
+        //
+
         if (!viewModel) {
           viewModel = [:]
         }
         def taglib = new ApplicationTagLib()
-        log.error("tracing action ${actionUri} and model ${viewModel}")
-        // Enhancing returned viewModel with API available to all pages :
 
         // Cart
         if (session["cart"] == null) {
@@ -34,6 +37,7 @@ class ExpositionFilters {
         // Links
         viewModel["links"] = [
           'home' : taglib.createLink(controller:'home', action:'expose')
+         ,'cart' : taglib.createLink(controller:'cart', action:'expose')
          ,'add_to_cart' : taglib.createLink(controller:'cart', action:'add')
          ,'remove_from_cart' : taglib.createLink(controller:'cart', action:'remove')
         ]
