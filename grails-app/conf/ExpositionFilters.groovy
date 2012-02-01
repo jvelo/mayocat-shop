@@ -1,6 +1,6 @@
-import org.eschoppe.viewmodel.builder.CartViewModelBuilder
-import org.eschoppe.viewmodel.builder.CategoryViewModelBuilder
-import org.eschoppe.Category
+import org.mayocat.shop.viewmodel.builder.CartViewModelBuilder
+import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
+import org.mayocat.shop.grails.Category
 
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 

@@ -1,6 +1,4 @@
-<%@ page import="org.eschoppe.Category" %>
-
-
+<%@ page import="org.mayocat.shop.grails.Category" %>
 
 <div class="clearfix fieldcontain ${hasErrors(bean: categoryInstance, field: 'byname', 'error')} ">
 	<label for="byname">
@@ -18,7 +16,7 @@
 		
 	</label>
   <div class="input">
-	<g:select name="products" from="${org.eschoppe.Product.list()}" multiple="multiple" optionKey="id" size="5" value="${categoryInstance?.products*.id}" class="many-to-many"/>
+	<g:select name="products" from="${org.mayocat.shop.grails.Product.list()}" multiple="multiple" optionKey="id" size="5" value="${categoryInstance?.products*.id}" class="many-to-many"/>
   </div>
 </div>
 

@@ -1,6 +1,4 @@
-<%@ page import="org.eschoppe.Product" %>
-
-
+<%@ page import="org.mayocat.shop.grails.Product" %>
 
 <div class="clearfix fieldcontain ${hasErrors(bean: productInstance, field: 'title', 'error')} required">
 	<label for="title">

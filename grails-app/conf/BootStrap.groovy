@@ -1,4 +1,4 @@
-import org.eschoppe.util.DataSourceUtils
+import org.mayocat.shop.util.DataSourceUtils
 
 class BootStrap {
 

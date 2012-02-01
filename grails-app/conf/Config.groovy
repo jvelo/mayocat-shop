@@ -1,5 +1,5 @@
-eschoppe.storefront = "lea"
-eschoppe.thumbnailSizes = [
+mayocat.shop.storefront = "lea"
+mayocat.shop.thumbnailSizes = [
   M : [
     width : 145,
     height : 145
@@ -20,7 +20,7 @@ eschoppe.thumbnailSizes = [
 
 // grails.config.locations = [Resources.groovy]
 
-grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
+grails.project.groupId = org.mayocat // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
@@ -94,7 +94,7 @@ log4j = {
     // debug  'LesscssResourceMapper',
     //       'com.asual.lesscss.LessEngine',
 
-    debug  'org.eschoppe'
+    debug  'org.mayocat.shop'
 
     error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
            'org.codehaus.groovy.grails.web.pages', //  GSP

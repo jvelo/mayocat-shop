@@ -1,5 +1,4 @@
-<%@ page import="org.eschoppe.ImageSet" %>
-
+<%@ page import="org.mayocat.shop.grails.ImageSet" %>
 
 
 <div class="clearfix fieldcontain ${hasErrors(bean: imageSetInstance, field: 'description', 'error')} ">

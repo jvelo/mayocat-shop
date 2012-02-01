@@ -1,5 +1,4 @@
-
-<%@ page import="org.eschoppe.Product" %>
+<%@ page import="org.mayocat.shop.grails.Product" %>
 <!doctype html>
 <html>
 	<head>

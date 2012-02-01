@@ -1,9 +1,9 @@
-import org.eschoppe.thymeleaf.*
+import org.mayocat.shop.thymeleaf.*
 
 // Place your Spring DSL code here
 beans = {
   
-  thymeleafTemplateResolver(org.eschoppe.thymeleaf.EschoppeThymeleafTemplateResolver){
+  thymeleafTemplateResolver(org.mayocat.shop.thymeleaf.EschoppeThymeleafTemplateResolver){
     prefix = ''
     suffix = ''
     templateMode = 'LEGACYHTML5'
