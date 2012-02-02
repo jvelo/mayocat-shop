@@ -2,13 +2,13 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="main">
+		<meta name="layout" content="catalogue">
 		<g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
 	</head>
 	<body>
     <div class="span16">
-      <div id="create-product" class="content scaffold-create" role="main">
+      <div id="create-product" class="content" role="catalogue">
         <h2><g:message code="default.create.label" args="[entityName]" /></h2>
         <g:if test="${flash.message}">
         <div class="message" role="status">${flash.message}</div>

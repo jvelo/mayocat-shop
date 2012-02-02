@@ -12,7 +12,7 @@
            data-target-x2="${target.x2}"
            data-target-y2="${target.y2}"
          </g:if>
-         style="max-width:500px;max-height:500px;"
+         style="max-width:300px;max-height:300px;"
          src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: imageSet?.product?.id, id: imageSet?.id]])}" />
     <div style="margin-top:10px;"><strong><g:message code="imageSet.thumbnailEditor.preview" default="Preview:" /></strong></div>
     <div class="preview-container"

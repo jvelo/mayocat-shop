@@ -13,10 +13,20 @@ class ProductController {
     static scaffold = true
 
     static navigation = [
-      action : "list",
-      title : "Products",
-      order : 10,
-      path : "product"
+      [
+        group:'main',
+        action:'list',
+        title:'Catalogue',
+        order: 10,
+        path : "product"
+      ],
+      [
+        group:'catalogue',
+        action : "list",
+        title : "Products",
+        order : 10,
+        path : "product"
+      ]
     ]
 
     def expose() {

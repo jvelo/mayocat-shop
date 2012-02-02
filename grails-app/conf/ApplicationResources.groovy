@@ -3,6 +3,11 @@ modules = {
         resource url:'js/application.js'
     }
 
+    twitterBootstrap {
+      resource url: 'lib/bootstrap/css/bootstrap.css'
+      resource url: 'lib/bootstrap/js/bootstrap.js'
+    }
+
     styles {
         resource url:'less/styles.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'
         resource url:'less/products.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'

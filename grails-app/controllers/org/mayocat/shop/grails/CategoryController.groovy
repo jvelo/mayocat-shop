@@ -12,7 +12,8 @@ class CategoryController {
       order : 100,
       action : "list",
       title : "Categories",
-      path : "category"
+      path : "category",
+      group: 'catalogue'
     ]
     
     static scaffold = true

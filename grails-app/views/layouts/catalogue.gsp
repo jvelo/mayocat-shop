@@ -34,7 +34,12 @@
     </div>
     <div class="container-fluid" id="admin-container">
       <div class="row-fluid">
-        <g:layoutBody/>
+        <div class="span2">
+          <g:render template="/shared/catalogueMenu" />
+        </div>
+        <div class="span10">
+          <g:layoutBody/>
+        </div>
       </div>
     </div>
 		<div class="footer" role="contentinfo"></div>

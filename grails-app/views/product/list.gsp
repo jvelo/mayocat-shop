@@ -2,18 +2,27 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="main">
+		<meta name="layout" content="catalogue">
 		<g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
-    <div class="span16">
-      <div id="list-product" class="content scaffold-list" role="main">
+    <div id="list-product" class="content" role="catalogue">
+      <div class="page-header">
         <h2><g:message code="default.list.label" args="[entityName]" /></h2>
-        <g:if test="${flash.message}">
-        <div class="message" role="status">${flash.message}</div>
-        </g:if>
-        <table class="products">
+      </div>
+      <g:if test="${flash.message}">
+        <div class="alert" role="status">${flash.message}</div>
+      </g:if>
+      <g:if test="${productInstanceList.size() <= 0}">
+        <div class="alert alert-block">
+          <a class="close">×</a>
+          <h4 class="alert-heading"><g:message code="product.catalogueEmpty.header" default="Mama mia! The catalogue is empty."/></h4>
+          <g:message code="product.catalogueEmpty.message" default="The is no product in the catalogue yet. Why not start making it great by adding new products ?" />
+        </div>
+      </g:if>
+      <g:else>
+        <table class="products table">
           <thead>
             <tr>
             
@@ -49,9 +58,12 @@
         <div class="pagination">
           <g:paginate total="${productInstanceTotal}" />
         </div>
-        <div class="add-entry">
-          <g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-        </div>
+      </g:else>
+      <div>
+      <a href="${createLink(action:'create')}" class="add-entry btn btn-primary">
+        <i class="icon-plus icon-white"></i>
+        <g:message code="default.new.label" args="[entityName]" />
+      </a>
       </div>
 		</div>
 	</body>

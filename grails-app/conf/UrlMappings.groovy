@@ -31,6 +31,7 @@ class UrlMappings {
     // ----------
 
     // Admin -> product
+		"/admin/"(controller:"admin", action:"dashboard") 
 		"/admin/product/"(controller:"product", action:"list") 
 		"/admin/product/create"(controller:"product", action:"create") 
 		"/admin/product/save"(controller:"product", action:"save") 

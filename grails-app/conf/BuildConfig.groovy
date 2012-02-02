@@ -45,7 +45,6 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.7.1"
         runtime ":resources:1.1.5"
         runtime ":lesscss-resources:0.6.1"
-        runtime ":twitter-bootstrap:1.4.0.14"
         runtime ":navigation:1.3.2"
 
         build ":tomcat:$grailsVersion"
