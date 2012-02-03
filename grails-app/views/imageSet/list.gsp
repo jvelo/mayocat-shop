@@ -12,15 +12,21 @@
       <g:if test="${flash.message}">
       <div class="message" role="status">${flash.message}</div>
       </g:if>
-      <ul class="media-grid">
+      <ul class="thumbnails">
         <g:each in="${imageSetInstanceList}" status="i" var="imageSetInstance">
-          <li class="${(imageSetInstance.id == imageSetInstance.product.featuredImage.id) ? 'featured' : ''}">
-            <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
-              <img class="thumbnail"
-                   src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}"
-                   title="${fieldValue(bean: imageSetInstance, field: 'caption')}" />
-            </g:link>
-            <div class="hidden description">${fieldValue(bean: imageSetInstance, field: "description")}</div>
+          <g:if test="${i % 6 == 0 && i > 0}">
+            </ul>
+            <ul class="thumbnails">
+          </g:if>
+          <li class="span2 ${(imageSetInstance.id == imageSetInstance.product.featuredImage.id) ? 'featured' : ''}" >
+            <div class="thumbnail">
+              <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
+                <img class="thumb"
+                     src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}"
+                     title="${fieldValue(bean: imageSetInstance, field: 'caption')}" />
+              </g:link>
+              <p class="description">${fieldValue(bean: imageSetInstance, field: "description")}</p>
+            </div>
           </li>
         </g:each>
       </ul>
@@ -29,9 +35,10 @@
         <g:paginate controller="imageSet" action="list" params="[productid:params.productid]" total="${imageSetInstanceTotal}" />
       </div>
       </g:if>
-      <div class="add-entry">
-        <g:link params="[productid: params.productid]" class="create" action="create"><g:message code="imageSet.add" default="Add an image" /></g:link></li>
-      </div>
+      <g:link params="[productid: params.productid]" class="create btn" action="create">
+        <i class="icon-plus"></i>
+        <g:message code="imageSet.add" default="Add an image" />
+      </g:link>
 		</div>
 	</body>
 </html>

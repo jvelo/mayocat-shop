@@ -27,10 +27,11 @@
       </div>
 
       <h3><g:message code="imageSet.original" default="Original" /></h3>
-      <ul class="property-list imageSet media-grid clearfix">
+      <ul class="property-list imageSet media-grid clearfix unstyled">
         <li>
           <a href="">
-            <img class="thumbnail" src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
+            <img class="thumbnail"
+                 src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
           </a>
         </li>
       </ul>
@@ -44,26 +45,30 @@
           </p>
         </div>
       </noscript>
-      <ul class="media-grid clearfix">
+      <ul class="thumbnails">
       <g:each in="${thumbnailSizes.keySet()}" status="i" var="size">
-        <li class="thumbnail-list">
-          <div class="thumbnail-wrapper">
-            <img class="thumbnail"
+        <li class="">
+          <div class="thumbnail">
+            <img class="thumb"
                  style="max-width:${thumbnailSizes.get(size)?.width}px; max-height:${thumbnailSizes.get(size)?.height}px" 
                  src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
+              <h5>
+                <g:message code="imageSet.thumbnails.size" default="Size:" /> ${size}
+                <small>(${thumbnailSizes.get(size).width}px : ${thumbnailSizes.get(size).height}px)</small>
+              </h5>
+              <p>
+                <a class="btn" rel="modal" 
+                      data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
+                      data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
+                      data-size-hint="${size}" 
+                      data-size-width="${thumbnailSizes.get(size).width}"
+                      data-size-height="${thumbnailSizes.get(size).height}">
+                      <i class="icon-pencil"></i>
+                      <g:message code="imageSet.thumbnail.edit" default="Edit" />
+                </a>
+              </p>
           </div>
           <div>
-            <span class="label notice">${size} <small>(${thumbnailSizes.get(size).width}:${thumbnailSizes.get(size).height})</small></span>
-            <div>
-              <span rel="modal" 
-                    data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
-                    data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
-                    data-size-hint="${size}" 
-                    data-size-width="${thumbnailSizes.get(size).width}"
-                    data-size-height="${thumbnailSizes.get(size).height}">
-                    <g:message code="imageSet.thumbnail.edit" default="edit" />
-              </span>
-            </div>
           </div>
         </li>
       </g:each>
@@ -83,12 +88,12 @@
       </li>
       </g:if>
       
-      <g:form>
-        <fieldset class="buttons actions">
+      <g:form class="form-horizontal">
+        <fieldset class="buttons form-actions">
           <g:hiddenField name="id" value="${imageSetInstance?.id}" />
           <g:link class="back btn" action="show" controller="product" params="[id: imageSetInstance?.product?.id]"><g:message code="default.back" /></g:link></li>
-          <g:link class="edit btn primary" action="edit" id="${imageSetInstance?.id}" params="[productid: imageSetInstance?.product?.id]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-          <g:actionSubmit class="delete btn danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+          <g:link class="edit btn btn-primary" action="edit" id="${imageSetInstance?.id}" params="[productid: imageSetInstance?.product?.id]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+          <g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
         </fieldset>
       </g:form>
     </div>
