@@ -11,15 +11,16 @@ class ResourceController {
   static def STOREFRONTS_DIR = "storefronts"
 
   def serve = {
-    def requestURI = request.request.requestURI
-    def contextPath = request.request.contextPath
+    def request = unwrapRequest(request)
+    def requestURI = request.fowardURI ?: request.requestURI
+    def contextPath = request.contextPath
     def resourcePath = requestURI[requestURI.indexOf("/resources/")..-1]
     def storefront = grailsApplication.config.mayocat.shop.storefront
     if (!storefront || storefront == "") {
       storefront = "default"
     }
     def filePath = this.getFilePath(resourcePath, storefront)
-    def is = servletContext.context.getResourceAsStream(filePath)
+    def is = servletContext.getResourceAsStream(filePath)
     def filename = filePath[filePath.lastIndexOf("/") + 1..-1];
     def mime = servletContext.getMimeType(filename.toLowerCase())
     def data = IOUtils.toByteArray(is);
@@ -43,6 +44,10 @@ class ResourceController {
     } else {
       response.setContentType("application/octet-stream");
     }    
+  }
+
+  def unwrapRequest(request) {
+    request.request ?: request
   }
 
 }
