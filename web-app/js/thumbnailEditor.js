@@ -59,7 +59,8 @@ var Eschoppe = (function(Eschoppe) {
 
 $(document).ready(function(){
 
-  $("span[rel='modal']").click(function(event) {
+  $("[rel='modal']").click(function(event) {
+    console.log("clicked !", event);
     $('#preview-modal').modal({
       backdrop:'static'
     }).modal('show');

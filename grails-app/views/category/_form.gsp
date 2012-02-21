@@ -1,14 +1,6 @@
 <%@ page import="org.mayocat.shop.grails.Category" %>
 
-<div class="control-group fieldcontain ${hasErrors(bean: categoryInstance, field: 'byname', 'error')} ">
-	<label for="byname">
-		<g:message code="category.byname.label" default="Byname" />
-		
-	</label>
-  <div class="controls">
-	<g:textField name="byname" value="${categoryInstance?.byname}"/>
-  </div>
-</div>
+
 
 <div class="control-group fieldcontain ${hasErrors(bean: categoryInstance, field: 'products', 'error')} ">
 	<label for="products">
