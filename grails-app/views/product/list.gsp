@@ -38,9 +38,16 @@
           <g:each in="${productInstanceList}" status="i" var="productInstance">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'} ${productInstance.exposed ? 'exposed' : 'notExposed'}">
             
-              <td><g:link action="show" id="${productInstance.id}">${fieldValue(bean: productInstance, field: "title")}</g:link></td>
-            
-              <td>${fieldValue(bean: productInstance, field: "title")}</td>
+              <td>
+                <g:link action="show" id="${productInstance.id}">
+                ${fieldValue(bean: productInstance, field: "title")}
+                </g:link>
+                <small>
+                  /product/${fieldValue(bean:productInstance, field: "byname")}
+                </small>
+              </td>
+
+              <td>${fieldValue(bean: productInstance, field: "price")}</td>
             
               <td class="exposition <g:if test='${!productInstance.exposed}'>notExposed</g:if>">
                 <g:if test='${productInstance.exposed}'>
