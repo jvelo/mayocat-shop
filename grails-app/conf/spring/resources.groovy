@@ -1,6 +1,5 @@
-import org.mayocat.shop.thymeleaf.*
+import org.mayocat.shop.thymeleaf.*;
 
-// Place your Spring DSL code here
 beans = {
   
   thymeleafTemplateResolver(org.mayocat.shop.thymeleaf.EschoppeThymeleafTemplateResolver){

@@ -34,8 +34,8 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         runtime 'mysql:mysql-connector-java:5.1.16'
-        compile 'org.thymeleaf:thymeleaf:1.1.4'
-        compile 'org.thymeleaf:thymeleaf-spring3:1.1.4'
+        compile 'org.thymeleaf:thymeleaf:2.0.2'
+        compile 'org.thymeleaf:thymeleaf-spring3:2.0.2'
         compile 'org.apache.commons:commons-lang3:3.1'
         runtime 'net.sourceforge.nekohtml:nekohtml:1.9.15'
     }

@@ -9,7 +9,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.thymeleaf.Arguments;
+import org.thymeleaf.resourceresolver.IResourceResolver;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.exceptions.TemplateProcessingException;
@@ -19,7 +19,7 @@ import org.thymeleaf.resourceresolver.ServletContextResourceResolver;
 
 public class EschoppeThymeleafResourceResolver implements IResourceResolver {
 
-    public static final String NAME = "ESCHOPPE";
+    public static final String NAME = "mayocat";
 
     private ServletContextResourceResolver delegate = new ServletContextResourceResolver();
 
@@ -31,7 +31,7 @@ public class EschoppeThymeleafResourceResolver implements IResourceResolver {
         return NAME; 
     }
 
-    public InputStream getResourceAsStream(final Arguments arguments, final String resourceName) {
+    public InputStream getResourceAsStream(final org.thymeleaf.TemplateProcessingParameters parameters, final String resourceName) {
         
         List<String> fragments = new ArrayList<String>(Arrays.asList(StringUtils.split(resourceName, '/')));
         if (fragments.size() > 1) {
@@ -39,7 +39,7 @@ public class EschoppeThymeleafResourceResolver implements IResourceResolver {
         }
         String targetResourceName = StringUtils.join(fragments.toArray(), '/');
 
-        return this.delegate.getResourceAsStream(arguments, resourceName);
+        return this.delegate.getResourceAsStream(parameters, resourceName);
     }
 
 }
