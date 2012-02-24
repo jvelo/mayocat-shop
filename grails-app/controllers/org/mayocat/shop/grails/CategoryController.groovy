@@ -4,7 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
 
-class CategoryController {
+class CategoryController extends AbstractExposedController {
 
     def bynameNormalizerService  // injected
 
@@ -30,9 +30,10 @@ class CategoryController {
       render(view:"/storefronts/lea/Category.html", model: [category:builder.build(category)])
     }
 
-    def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
-
     def beforeSave = {
       params.byname = bynameNormalizerService.normalize(params.title)
     }
+
+    def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
+    def afterInterceptor = [action:super.afterExpose, only: ['expose']]
 }

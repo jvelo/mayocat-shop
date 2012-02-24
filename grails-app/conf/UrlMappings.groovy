@@ -27,11 +27,18 @@ class UrlMappings {
     "/cart/"(controller:"cart", action:"expose")
     "/cart/$action"(controller:"cart")
 
+
     // Admin area
     // ----------
 
-    // Admin -> product
 		"/admin/"(controller:"admin", action:"dashboard") 
+
+    // Admin -> Preferences
+    "/admin/preferences/"(controller:"shop", action:"edit")
+    "/admin/preferences/edit"(controller:"shop", action:"edit")
+    "/shop/"(controller:"shop")
+
+    // Admin -> product
 		"/admin/product/"(controller:"product", action:"list") 
 		"/admin/product/create"(controller:"product", action:"create") 
 		"/admin/product/save"(controller:"product", action:"save") 

@@ -4,7 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import org.mayocat.shop.viewmodel.builder.ProductViewModelBuilder
 
-class ProductController {
+class ProductController extends AbstractExposedController {
 
     def bynameNormalizerService  // injected
 
@@ -35,13 +35,14 @@ class ProductController {
         redirect(uri: '/notFound')  
       }
       def builder = new ProductViewModelBuilder()
-      render(view:"/storefronts/lea/Product.html", model: [product:builder.build(product)])
+      render(view:"Product.html", model: [product:builder.build(product)])
     }
-
-    def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
 
     def beforeSave = {
       params.byname = bynameNormalizerService.normalize(params.title)
       params.exposed = true
     }
+
+    def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
+    def afterInterceptor = [action:super.afterExpose, only: ['expose']]
 }

@@ -1,6 +1,6 @@
 package org.mayocat.shop.grails
 
-class CartController {
+class CartController extends AbstractExposedController {
 
   def add() {
     def cart = getCart()
@@ -25,7 +25,7 @@ class CartController {
   }
 
   def expose() {
-    render(view: "/storefronts/lea/Cart.html")
+    render(view: "Cart.html")
   }
   
   def getCart() {
@@ -35,5 +35,5 @@ class CartController {
     session['cart']
   }
 
-  // Utility
+  def afterInterceptor = [action:super.afterExpose, only: ['expose']]
 }
