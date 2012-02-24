@@ -1,4 +1,3 @@
-mayocat.shop.storefront = "lea"
 mayocat.shop.thumbnailSizes = [
   M : [
     width : 145,
