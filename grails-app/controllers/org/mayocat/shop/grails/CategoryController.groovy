@@ -4,6 +4,9 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
 
+import grails.plugins.springsecurity.Secured
+
+@Secured(['ROLE_ADMIN'])
 class CategoryController extends AbstractExposedController {
 
     def bynameNormalizerService  // injected
@@ -20,6 +23,7 @@ class CategoryController extends AbstractExposedController {
     
     static scaffold = true
 
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
     def expose() {
       // Browsed category
       def category = Category.findByByname(params.byname)

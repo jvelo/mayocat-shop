@@ -31,6 +31,8 @@ class UrlMappings {
     // Admin area
     // ----------
 
+    "/login/$action?"(controller: "login")
+    "/logout/$action?"(controller: "logout")
 		"/admin/"(controller:"admin", action:"dashboard") 
 
     // Admin -> Preferences

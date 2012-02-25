@@ -7,6 +7,9 @@ import org.mayocat.shop.grails.util.ImageUtils
 import java.text.DecimalFormat
 import javax.imageio.ImageIO
 
+import grails.plugins.springsecurity.Secured
+
+@Secured(['ROLE_ADMIN'])
 class ImageSetController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
@@ -122,6 +125,7 @@ class ImageSetController {
       } 
     }
 
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
     def expose() {
       def imageSet = ImageSet.get(params.imageid)
       def image

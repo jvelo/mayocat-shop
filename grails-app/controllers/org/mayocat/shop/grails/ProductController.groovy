@@ -4,6 +4,9 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import org.mayocat.shop.viewmodel.builder.ProductViewModelBuilder
 
+import grails.plugins.springsecurity.Secured
+
+@Secured(['ROLE_ADMIN'])
 class ProductController extends AbstractExposedController {
 
     def bynameNormalizerService  // injected
@@ -29,6 +32,7 @@ class ProductController extends AbstractExposedController {
       ]
     ]
 
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
     def expose() {
       def product = Product.findByByname(params.byname);
       if (!product) {
