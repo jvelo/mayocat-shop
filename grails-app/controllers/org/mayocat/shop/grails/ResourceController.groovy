@@ -12,10 +12,10 @@ class ResourceController {
 
   def serve = {
     def request = unwrapRequest(request)
-    def requestURI = request.fowardURI ?: request.requestURI
+    def requestURI = request.forwardURI ?: request.requestURI
     def contextPath = request.contextPath
     def resourcePath = requestURI[requestURI.indexOf("/resources/")..-1]
-    def storefront = grailsApplication.config.mayocat.shop.storefront
+    def storefront = Shop.list()[0]?.storefront
     if (!storefront || storefront == "") {
       storefront = "default"
     }
