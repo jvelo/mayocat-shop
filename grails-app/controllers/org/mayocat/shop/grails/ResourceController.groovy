@@ -21,6 +21,9 @@ class ResourceController {
     }
     def filePath = this.getFilePath(resourcePath, storefront)
     def is = servletContext.getResourceAsStream(filePath)
+    if (is == null) {
+      throw new java.io.FileNotFoundException("Could not find file with path ${filePath}")
+    }
     def filename = filePath[filePath.lastIndexOf("/") + 1..-1];
     def mime = servletContext.getMimeType(filename.toLowerCase())
     def data = IOUtils.toByteArray(is);
