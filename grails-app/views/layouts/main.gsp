@@ -29,6 +29,7 @@
               <li class="${it.active ? 'active':''}"><a href=${it.link}>${it.title}</a></li>
             </nav:eachItem>
           </ul>
+          <g:render template="/shared/navbarUserStatus" />
         </div>
       </div>
     </div>
