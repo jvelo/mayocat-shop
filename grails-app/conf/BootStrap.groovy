@@ -1,7 +1,7 @@
 import org.mayocat.shop.util.DataSourceUtils
 import org.mayocat.shop.grails.SecurityUser
 import org.mayocat.shop.grails.SecurityRole
-import org.mayocat.shop.grails.SecurityUserSecurityRole
+import org.mayocat.shop.grails.SecurityUserRole
 
 class BootStrap {
 
@@ -32,12 +32,12 @@ class BootStrap {
         testAdmin.save(flush: true)
 
         // Give user role to user
-        SecurityUserSecurityRole.create(testAdmin, adminRole, true)
-        SecurityUserSecurityRole.create(testUser, userRole, true)
+        SecurityUserRole.create(testAdmin, adminRole, true)
+        SecurityUserRole.create(testUser, userRole, true)
 
         assert SecurityUser.count() == 2
         assert SecurityRole.count() == 2 
-        assert SecurityUserSecurityRole.count() == 2
+        assert SecurityUserRole.count() == 2
       }
     }
 

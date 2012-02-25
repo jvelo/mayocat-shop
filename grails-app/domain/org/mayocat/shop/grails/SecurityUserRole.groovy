@@ -2,13 +2,13 @@ package org.mayocat.shop.grails
 
 import org.apache.commons.lang.builder.HashCodeBuilder
 
-class SecurityUserSecurityRole implements Serializable {
+class SecurityUserRole implements Serializable {
 
 	SecurityUser securityUser
 	SecurityRole securityRole
 
 	boolean equals(other) {
-		if (!(other instanceof SecurityUserSecurityRole)) {
+		if (!(other instanceof SecurityUserRole)) {
 			return false
 		}
 
@@ -23,17 +23,17 @@ class SecurityUserSecurityRole implements Serializable {
 		builder.toHashCode()
 	}
 
-	static SecurityUserSecurityRole get(long securityUserId, long securityRoleId) {
-		find 'from SecurityUserSecurityRole where securityUser.id=:securityUserId and securityRole.id=:securityRoleId',
+	static SecurityUserRole get(long securityUserId, long securityRoleId) {
+		find 'from SecurityUserRole where securityUser.id=:securityUserId and securityRole.id=:securityRoleId',
 			[securityUserId: securityUserId, securityRoleId: securityRoleId]
 	}
 
-	static SecurityUserSecurityRole create(SecurityUser securityUser, SecurityRole securityRole, boolean flush = false) {
-		new SecurityUserSecurityRole(securityUser: securityUser, securityRole: securityRole).save(flush: flush, insert: true)
+	static SecurityUserRole create(SecurityUser securityUser, SecurityRole securityRole, boolean flush = false) {
+		new SecurityUserRole(securityUser: securityUser, securityRole: securityRole).save(flush: flush, insert: true)
 	}
 
 	static boolean remove(SecurityUser securityUser, SecurityRole securityRole, boolean flush = false) {
-		SecurityUserSecurityRole instance = SecurityUserSecurityRole.findBySecurityUserAndSecurityRole(securityUser, securityRole)
+		SecurityUserRole instance = SecurityUserRole.findBySecurityUserAndSecurityRole(securityUser, securityRole)
 		if (!instance) {
 			return false
 		}
@@ -43,11 +43,11 @@ class SecurityUserSecurityRole implements Serializable {
 	}
 
 	static void removeAll(SecurityUser securityUser) {
-		executeUpdate 'DELETE FROM SecurityUserSecurityRole WHERE securityUser=:securityUser', [securityUser: securityUser]
+		executeUpdate 'DELETE FROM SecurityUserRole WHERE securityUser=:securityUser', [securityUser: securityUser]
 	}
 
 	static void removeAll(SecurityRole securityRole) {
-		executeUpdate 'DELETE FROM SecurityUserSecurityRole WHERE securityRole=:securityRole', [securityRole: securityRole]
+		executeUpdate 'DELETE FROM SecurityUserRole WHERE securityRole=:securityRole', [securityRole: securityRole]
 	}
 
 	static mapping = {

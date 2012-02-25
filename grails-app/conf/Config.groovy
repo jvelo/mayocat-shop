@@ -117,5 +117,5 @@ log4j = {
 
 // Spring security configuration
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'org.mayocat.shop.grails.SecurityUser'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'org.mayocat.shop.grails.SecurityUserSecurityRole'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'org.mayocat.shop.grails.SecurityUserRole'
 grails.plugins.springsecurity.authority.className = 'org.mayocat.shop.grails.SecurityRole'

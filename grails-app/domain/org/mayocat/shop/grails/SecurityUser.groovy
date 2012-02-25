@@ -21,7 +21,7 @@ class SecurityUser {
 	}
 
 	Set<SecurityRole> getAuthorities() {
-		SecurityUserSecurityRole.findAllBySecurityUser(this).collect { it.securityRole } as Set
+		SecurityUserRole.findAllBySecurityUser(this).collect { it.securityRole } as Set
 	}
 
 	def beforeInsert() {
