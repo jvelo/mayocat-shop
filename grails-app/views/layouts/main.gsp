@@ -29,12 +29,7 @@
               <li class="${it.active ? 'active':''}"><a href=${it.link}>${it.title}</a></li>
             </nav:eachItem>
           </ul>
-          <sec:ifLoggedIn>
-            <span class="user">
-              <sec:loggedInUserInfo field="username"/>
-              (<g:link controller="logout">logout</g:link>)
-            </span>
-          </sec:ifLoggedIn>
+          <g:render template="/shared/navbarUserStatus" />
         </div>
       </div>
     </div>
