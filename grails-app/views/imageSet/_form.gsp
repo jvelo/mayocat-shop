@@ -2,7 +2,7 @@
 
 
 <div class="control-group fieldcontain ${hasErrors(bean: imageSetInstance, field: 'description', 'error')} ">
-	<label for="description">
+	<label for="description" class="control-label">
 		<g:message code="imageSet.description.label" default="Description" />
 		
 	</label>
@@ -12,7 +12,7 @@
 </div>
 
 <div class="control-group fieldcontain ${hasErrors(bean: imageSetInstance, field: 'caption', 'error')} ">
-	<label for="caption">
+	<label for="caption" class="control-label">
 		<g:message code="imageSet.caption.label" default="Caption" />
 		
 	</label>

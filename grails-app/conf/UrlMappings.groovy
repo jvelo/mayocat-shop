@@ -47,6 +47,9 @@ class UrlMappings {
 		"/admin/product/update"(controller:"product", action:"update")
 		"/admin/product/show"(controller:"product", action:"show")
 		"/admin/product/edit"(controller:"product", action:"edit")
+		"/admin/product/index"(controller:"product", action:"index")
+		"/admin/product/update"(controller:"product", action:"update")
+		"/admin/product/editCategories"(controller:"product", action:"editCategories")
 		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet") 
 		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
 		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 
@@ -59,6 +62,8 @@ class UrlMappings {
 		"/admin/category/update"(controller:"category", action:"update")
 		"/admin/category/show"(controller:"category", action:"show")
 		"/admin/category/edit"(controller:"category", action:"edit")
+		"/admin/category/index"(controller:"category", action:"index")
+		"/admin/category/update"(controller:"category", action:"update")
 
 	}
 }

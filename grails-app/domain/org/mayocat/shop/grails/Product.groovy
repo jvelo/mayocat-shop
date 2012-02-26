@@ -7,7 +7,7 @@ class Product {
     Float price
     Set images
     ImageSet featuredImage
-    boolean exposed
+    Boolean exposed
     Set categories
 
     static belongsTo = Category
@@ -16,9 +16,8 @@ class Product {
     static constraints = {
       byname unique:true, matches:"[a-zA-Z0-9]+[a-zA-Z0-9\\-]*[a-zA-Z0-9]+", display:false, editable:false
       title blank:false
-      price blank:false, min:0 as Float
+      price nullable:true, min:0 as Float
       featuredImage nullable:true
-      exposed display:false
     }
 
     static allExposed = where {

@@ -10,5 +10,5 @@ class Category {
 
     String byname
     String title
-
+    List products
 }

@@ -22,7 +22,7 @@
       <g:uploadForm action="save" class="form-horizontal" params="[productid: params.productid]">
         <fieldset>
           <div class="control-group">
-            <label for="file">
+            <label for="file" class="control-label">
               <g:message code="imageSet.file.label" default="Image file" />
               <span class="required-indicator">*</span>
             </label>
