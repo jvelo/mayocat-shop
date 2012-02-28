@@ -5,6 +5,7 @@ modules = {
 
     twitterBootstrap {
       resource url: 'lib/bootstrap/css/bootstrap.css'
+      resource url: 'lib/bootstrap/css/bootstrap-responsive.css'
       resource url: 'lib/bootstrap/js/bootstrap.js'
     }
 
