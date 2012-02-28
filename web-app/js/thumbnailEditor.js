@@ -1,6 +1,6 @@
-var Eschoppe = (function(Eschoppe) {
+var Mayocat = (function(Mayocat) {
 
-  Eschoppe.ThumbnailEditor = function(image, preview, originalDimensions, position) {
+  Mayocat.ThumbnailEditor = function(image, preview, originalDimensions, position) {
 
     this.image = image;
     this.preview = preview;
@@ -22,7 +22,7 @@ var Eschoppe = (function(Eschoppe) {
     });
   };
 
-  $.extend(Eschoppe.ThumbnailEditor.prototype, {
+  $.extend(Mayocat.ThumbnailEditor.prototype, {
     onChangeOrSelect: function(coords) {
       this.coords = coords
       var rx = this.previewWidth / coords.w;
@@ -53,14 +53,13 @@ var Eschoppe = (function(Eschoppe) {
     }
   });
 
-  return Eschoppe;
+  return Mayocat;
 
-})(Eschoppe || {})
+})(Mayocat || {})
 
 $(document).ready(function(){
 
   $("[rel='modal']").click(function(event) {
-    console.log("clicked !", event);
     $('#preview-modal').modal({
       backdrop:'static'
     }).modal('show');
@@ -80,7 +79,7 @@ $(document).ready(function(){
                x2: original.data('target-x2'),
                y2: original.data('target-y2')
             };
-        var te = new Eschoppe.ThumbnailEditor(
+        var te = new Mayocat.ThumbnailEditor(
           original,
           $('#preview'),
           dimensions,
@@ -96,7 +95,7 @@ $(document).ready(function(){
               y:coords.y
             },
             success:function(transport) {
-              console.log(transport);
+              // Do reload page ?
             }
           })
         });
