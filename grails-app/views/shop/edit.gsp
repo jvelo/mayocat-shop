@@ -23,10 +23,7 @@
         <g:form method="post" class="form-horizontal">
           <g:hiddenField name="id" value="${shopInstance?.id}" />
           <g:hiddenField name="version" value="${shopInstance?.version}" />
-          <fieldset class="form">
-            <legend><g:message code="admin.preferences.general.label" default="General" /></legend>
-            <g:render template="form"/>
-          </fieldset>
+          <g:render template="form"/>
           <fieldset class="buttons form-actions">
             <g:actionSubmit class="save btn btn-primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
             <g:link class="btn list" action="edit"><g:message code="default.reset" default="Reset" /></g:link>

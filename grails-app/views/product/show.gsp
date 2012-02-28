@@ -23,7 +23,7 @@
       </g:if>
 
       <h3>
-        <g:message code="product.details.title" default="Details" />
+        <g:message code="product.details.title" default="Product's details" />
       </h3>
 
       <g:hasErrors bean="${productInstance}">
@@ -36,9 +36,7 @@
       <g:form method="post" class="form-horizontal">
         <g:hiddenField name="id" value="${productInstance?.id}" />
         <g:hiddenField name="version" value="${productInstance?.version}" />
-        <fieldset class="form">
-          <g:render template="form"/>
-        </fieldset>
+        <g:render template="form"/>
         <fieldset class="buttons actions">
           <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
         </fieldset>
