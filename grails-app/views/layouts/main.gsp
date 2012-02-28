@@ -35,7 +35,17 @@
     </div>
     <div class="container-fluid" id="admin-container">
       <div class="row-fluid">
-        <g:layoutBody/>
+        <div class="span2">
+          <g:pageProperty name="page.menu"/>
+        </div>
+        <div class="span7">
+          <g:layoutBody/>
+        </div>
+        <div class="span3">
+          <div class="page-panel">
+            <g:pageProperty name="page.panel"/>
+          </div>
+        </div>
       </div>
     </div>
 		<div class="footer" role="contentinfo"></div>

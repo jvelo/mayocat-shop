@@ -37,9 +37,15 @@
       <div class="row-fluid">
         <div class="span2">
           <g:render template="/shared/catalogueMenu" />
+          <g:pageProperty name="page.menu"/>
         </div>
-        <div class="span10">
+        <div class="span7">
           <g:layoutBody/>
+        </div>
+        <div class="span3">
+          <div class="page-panel">
+            <g:pageProperty name="page.panel"/>
+          </div>
         </div>
       </div>
     </div>

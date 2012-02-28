@@ -8,6 +8,21 @@
     <r:require module="productEditor" />
 	</head>
 	<body>
+    <content tag="panel">
+      <div class="alert alert-error">
+        <strong>
+          <g:message code="common.dangerZone" default="Danger Zone!" />
+        </strong>
+        <g:message code="product.delete" default="There is no undo." />
+        <div>
+          <g:form method="post"> 
+            <g:hiddenField name="id" value="${productInstance?.id}" />
+            <g:hiddenField name="version" value="${productInstance?.version}" />
+            <g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'product.delete.label', default: 'Delete this product')}" formnovalidate="" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+          </g:form>
+        </div>
+      </div>
+    </content>
     <div id="show-product" class="content" role="catalogue">
       <div class="page-header">
       <h1>
@@ -50,9 +65,6 @@
 
       <g:include controller="imageSet" action="list" params="[productid:productInstance.id]" />
  
-%{--
-      <g:actionSubmit class="delete btn danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" formnovalidate="" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
---}%
     </div>
 	</body>
 </html>
