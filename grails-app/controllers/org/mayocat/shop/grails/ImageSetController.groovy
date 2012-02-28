@@ -8,6 +8,7 @@ import java.text.DecimalFormat
 import javax.imageio.ImageIO
 
 import grails.plugins.springsecurity.Secured
+import grails.converters.JSON
 
 @Secured(['ROLE_ADMIN'])
 class ImageSetController {
@@ -115,12 +116,15 @@ class ImageSetController {
           x2 = x1 + (params.width as Integer)
           y2 = y1 + (params.height as Integer)
         }
+        def result = [ok: true]
         if (exists) {
           thumbnail.save()
+          render result as JSON
         }
         else {
           imageSet.addToImages(thumbnail)
           imageSet.save()
+          render result as JSON
         }
       } 
     }

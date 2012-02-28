@@ -21,8 +21,7 @@
         </div>
         <div class="modal-body loading"></div>
         <div class="modal-footer">
-          <a href="#" class="btn primary"><g:message code="imageSet.editThumbnail.save" default="Save" /></a>
-          <a href="#" class="btn secondary"><g:message code="imageSet.editThumbnail.cancel" default="Cancel" /></a>
+          <a href="#" class="btn btn-primary"><g:message code="imageSet.editThumbnail.save" default="Save" /></a>
         </div>
       </div>
 

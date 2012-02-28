@@ -63,6 +63,9 @@ $(document).ready(function(){
     $('#preview-modal').modal({
       backdrop:'static'
     }).modal('show');
+    $('#preview-modal a.close').bind("click", function(){
+      $('#preview-modal').modal('hide');
+    });
     var saveURI = $(event.currentTarget).data('save-uri')
     $.ajax($(event.currentTarget).data('edit-uri'), {
       success:function(transport) {
@@ -85,7 +88,7 @@ $(document).ready(function(){
           dimensions,
           position
         );
-        $('.modal-footer .btn.primary').bind("click", function(){
+        $('.modal-footer .btn.btn-primary').bind("click", function(){
           var coords = te.getCoordinates();
           $.ajax(saveURI, {
             data: {
@@ -95,7 +98,7 @@ $(document).ready(function(){
               y:coords.y
             },
             success:function(transport) {
-              // Do reload page ?
+              $('#preview-modal').modal('hide');
             }
           })
         });
