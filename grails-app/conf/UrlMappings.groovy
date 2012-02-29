@@ -18,8 +18,7 @@ class UrlMappings {
     "/"(controller:"home", action:"expose")
     // Product
     "/product/$byname"(controller:"product", action:"expose")
-    "/product/$byname/images/$imageid/$filename"(controller:"imageSet", action:"expose")
-    "/product/$byname/images/$imageid/$size?/$filename?"(controller:"imageSet", action:"expose")
+    "/product/$byname/images/$imageid/$size?/$filename"(controller:"imageSet", action:"expose")
     // Category
     "/category/$byname"(controller:"category", action:"expose")
 
@@ -38,7 +37,7 @@ class UrlMappings {
     // Admin -> Preferences
     "/admin/preferences/"(controller:"shop", action:"edit")
     "/admin/preferences/edit"(controller:"shop", action:"edit")
-    "/shop/"(controller:"shop")
+    "/shop/"(controller:"shop") // FIXME -> keep everything "shop" under admin/preferences
 
     // Admin -> product
 		"/admin/product/"(controller:"product", action:"list") 
@@ -50,7 +49,7 @@ class UrlMappings {
 		"/admin/product/index"(controller:"product", action:"index")
 		"/admin/product/update"(controller:"product", action:"update")
 		"/admin/product/editCategories"(controller:"product", action:"editCategories")
-		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet") 
+		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet")
 		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
 		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 
 		"/admin/product/$productid/images/list"(controller:"imageSet", action:"list") 
