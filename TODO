@@ -11,6 +11,5 @@ UI :
 Backend :
 ---------
 
-- Lazily create thumbnails when they are requested at a specific size that does not exist
 - Add modification header when serving resources via ResourceController
 - Switch money representations to BigDecimal
