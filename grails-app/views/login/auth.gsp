@@ -12,7 +12,7 @@
     <div class='alert'>${flash.message}</div>
   </g:if>
 
-  <form action='${postUrl}' method='POST' id='loginForm' class='well form-horizontal' autocomplete='off'>
+  <form action='${postUrl}' method='POST' id='loginForm' class='well form' autocomplete='off'>
     <legend>
       <h3><g:message code="admin.login" default="Login" /></h3>
     </legend>
