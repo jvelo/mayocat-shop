@@ -57,7 +57,7 @@ var Mayocat = (function(Mayocat) {
 
 })(Mayocat || {})
 
-$(document).ready(function(){
+$(window).bind("load", function(){
 
   $("[rel='modal']").click(function(event) {
     $('#preview-modal').modal({
@@ -66,44 +66,49 @@ $(document).ready(function(){
     $('#preview-modal a.close').bind("click", function(){
       $('#preview-modal').modal('hide');
     });
-    var saveURI = $(event.currentTarget).data('save-uri')
+    var saveURI = $(event.currentTarget).data('save-uri');
     $.ajax($(event.currentTarget).data('edit-uri'), {
       success:function(transport) {
         $('.modal-body').removeClass("loading").html(transport);
-        var aspectRatio = $("#preview").width() / $('#preview').height(),
-            original = $('.modal-body .thumbnail'),
-            dimensions = {
-               width: original.data('original-width'),
-               height: original.data('original-height')
-            },
-            position = !original.data('target-x1') ? undefined : {
-               x1: original.data('target-x1'),
-               y1: original.data('target-y1'),
-               x2: original.data('target-x2'),
-               y2: original.data('target-y2')
-            };
-        var te = new Mayocat.ThumbnailEditor(
-          original,
-          $('#preview'),
-          dimensions,
-          position
-        );
-        $('.modal-footer .btn.btn-primary').bind("click", function(){
-          var coords = te.getCoordinates();
-          $.ajax(saveURI, {
-            data: {
-              width:coords.width,
-              height:coords.height,
-              x:coords.x,
-              y:coords.y
-            },
-            success:function(transport) {
-              $('#preview-modal').modal('hide');
-            }
-          })
-        });
+        window.setTimeout(function(){
+          // Wrap this in a taco^Wtimeout function so that image have time to load,
+          // otherwise webkit will give them zero width/height.
+          // There should be a better/safer way to do this, though.
+          var aspectRatio = $("#preview").width() / $('#preview').height(),
+              original = $('.modal-body .thumbnail'),
+              dimensions = {
+                 width: original.data('original-width'),
+                 height: original.data('original-height')
+              },
+              position = !original.data('target-x1') ? undefined : {
+                 x1: original.data('target-x1'),
+                 y1: original.data('target-y1'),
+                 x2: original.data('target-x2'),
+                 y2: original.data('target-y2')
+              };
+          var te = new Mayocat.ThumbnailEditor(
+            original,
+            $('#preview'),
+            dimensions,
+            position
+          );
+          $('.modal-footer .btn.btn-primary').bind("click", function(){
+            var coords = te.getCoordinates();
+            $.ajax(saveURI, {
+              data: {
+                width:coords.width,
+                height:coords.height,
+                x:coords.x,
+                y:coords.y
+              },
+              success:function(transport) {
+                $('#preview-modal').modal('hide');
+              }
+            })
+          });
+        }, 250);
       }
-    })
+    });
   });
 
 });
