@@ -22,6 +22,17 @@
 </div>
 </fieldset>
 
+<div class="control-group fieldcontain ${hasErrors(bean: productInstance, field: 'description', 'error')} ">
+	<label for="exposed" class="control-label">
+		<g:message code="product.description.label" default="Description" />
+		
+	</label>
+  <div class="controls">
+	<g:textArea name="description" value="${productInstance?.description}" rows="8" />
+  </div>
+</div>
+</fieldset>
+
 <fieldset class="form">
 <legend>Price, stock, variants</legend>
 <div class="control-group fieldcontain ${hasErrors(bean: productInstance, field: 'price', 'error')} ">

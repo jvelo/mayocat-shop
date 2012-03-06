@@ -18,7 +18,7 @@
             </ul>
             <ul class="thumbnails">
           </g:if>
-          <li class="span2 ${(imageSetInstance.id == imageSetInstance.product.featuredImage.id) ? 'featured' : ''}" >
+          <li class="span2" >
             <div class="thumbnail">
               <g:link params="[productid: params.productid, id:imageSetInstance.id]" action="show">
                 <img class="thumb"

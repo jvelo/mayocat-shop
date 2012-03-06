@@ -36,10 +36,6 @@ class ImageSetController {
             def image = new Image([data:file, width:bufferedImage.width, height:bufferedImage.height, extension:extension])
             imageSet.addToImages(image)
             imageSet.filename = filename
-            imageSet.save()
-            if (!product.featuredImage) {
-              product.featuredImage = imageSet
-            }
             product.addToImages(imageSet)
             product.save()
             flash.message = "Image set created"

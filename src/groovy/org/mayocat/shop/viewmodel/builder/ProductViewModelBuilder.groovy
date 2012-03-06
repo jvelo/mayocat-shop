@@ -32,7 +32,9 @@ class ProductViewModelBuilder {
       }
     }
     productViewModel.images = imagesViewModel
-    productViewModel.featuredImage = this.buildImage(product.featuredImage)
+    if (imagesViewModel.size() > 0) {
+      productViewModel.featuredImage = imagesViewModel[0]
+    }
     productViewModel.categories = categories
     return productViewModel
   }

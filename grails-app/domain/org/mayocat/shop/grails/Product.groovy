@@ -7,9 +7,9 @@ class Product {
     Boolean exposed
     BigDecimal price
     Integer stock
+    String description
 
-    Set images
-    ImageSet featuredImage
+    List<Image> images
 
     Set categories
 
@@ -25,10 +25,10 @@ class Product {
     static constraints = {
       byname unique:true, matches:"[a-zA-Z0-9]+[a-zA-Z0-9\\-]*[a-zA-Z0-9]+", display:false, editable:false
       title blank:false
-      price min: 0.0
-      featuredImage nullable:true
+      price min: 0.0, scale: 2
       defaultVariant nullable:true
       stock nullable:true
+      description maxSize: 2000, nullable:true
     }
 
     static allExposed = where {

@@ -23,7 +23,7 @@ class Image {
 
   // Image set this image belongs to
   ImageSet imageSet
-  static belongsTo = [ImageSet]
+  static belongsTo = [imageSet:ImageSet]
   
   static constraints = {
     data(maxSize: MAX_SIZE)
