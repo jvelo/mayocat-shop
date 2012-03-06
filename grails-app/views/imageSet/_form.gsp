@@ -1,16 +1,5 @@
 <%@ page import="org.mayocat.shop.grails.ImageSet" %>
 
-
-<div class="control-group fieldcontain ${hasErrors(bean: imageSetInstance, field: 'description', 'error')} ">
-	<label for="description" class="control-label">
-		<g:message code="imageSet.description.label" default="Description" />
-		
-	</label>
-  <div class="controls">
-	<g:textField name="description" value="${imageSetInstance?.description}"/>
-  </div>
-</div>
-
 <div class="control-group fieldcontain ${hasErrors(bean: imageSetInstance, field: 'caption', 'error')} ">
 	<label for="caption" class="control-label">
 		<g:message code="imageSet.caption.label" default="Caption" />
@@ -18,6 +7,16 @@
 	</label>
   <div class="controls">
 	<g:textField name="caption" value="${imageSetInstance?.caption}"/>
+  </div>
+</div>
+
+<div class="control-group fieldcontain ${hasErrors(bean: imageSetInstance, field: 'description', 'error')} ">
+	<label for="description" class="control-label">
+		<g:message code="imageSet.description.label" default="Description" />
+		
+	</label>
+  <div class="controls">
+	<g:textArea name="description" value="${imageSetInstance?.description}" rows="8" />
   </div>
 </div>
 

@@ -17,7 +17,7 @@ class ImageSet {
   static constraints = {
     product display:false
     images display:false
-    description widget:'textArea', blank:true
+    description maxSize:2000, blank:true
   }
 
   static THUMBNAIL_SIZES = [
