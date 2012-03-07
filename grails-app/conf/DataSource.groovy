@@ -36,7 +36,11 @@ environments {
     production {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:h2:prodDb;MVCC=TRUE"
+            dialect = org.hibernate.dialect.MySQLDialect
+            driverClassNam = 'com.mysql.jdbc.Driver'
+            username = 'root'
+            password = ''
+            url = 'jdbc:mysql://127.0.0.1/mayocat'
             pooled = true
             properties {
                maxActive = -1
