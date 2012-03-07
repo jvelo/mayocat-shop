@@ -11,16 +11,18 @@ hibernate {
 }
 // environment specific settings
 environments {
+    /*
     development {
         dataSource {
             dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
             url = "jdbc:h2:mem:devDb;MVCC=TRUE"
         }
     }
-    local {
+    */
+    development {
       dataSource {
         dialect = org.hibernate.dialect.MySQLDialect
-        driverClassNam = 'com.mysql.jdbc.Driver'
+        driverClassName = 'com.mysql.jdbc.Driver'
         username = 'root'
         password = ''
         url = 'jdbc:mysql://127.0.0.1/lea'
@@ -34,24 +36,31 @@ environments {
         }
     }
     production {
+      dataSource {
+        dialect = org.hibernate.dialect.MySQLDialect
+        driverClassName = 'com.mysql.jdbc.Driver'
+        username = 'root'
+        password = ''
+        url = 'jdbc:mysql://127.0.0.1/mayocat'
+        dbCreate = 'update'
+        /*
+        pooled = true
+        properties {
+           maxActive = -1
+           minEvictableIdleTimeMillis=1800000
+           timeBetweenEvictionRunsMillis=1800000
+           numTestsPerEvictionRun=3
+           testOnBorrow=true
+           testWhileIdle=true
+           testOnReturn=true
+           validationQuery="SELECT 1"
+        }
+        */
+      }
+    }
+    test {
         dataSource {
             dbCreate = "update"
-            dialect = org.hibernate.dialect.MySQLDialect
-            driverClassNam = 'com.mysql.jdbc.Driver'
-            username = 'root'
-            password = ''
-            url = 'jdbc:mysql://127.0.0.1/mayocat'
-            pooled = true
-            properties {
-               maxActive = -1
-               minEvictableIdleTimeMillis=1800000
-               timeBetweenEvictionRunsMillis=1800000
-               numTestsPerEvictionRun=3
-               testOnBorrow=true
-               testWhileIdle=true
-               testOnReturn=true
-               validationQuery="SELECT 1"
-            }
         }
     }
 }
