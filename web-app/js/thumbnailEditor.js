@@ -16,8 +16,8 @@ var Mayocat = (function(Mayocat) {
 
     this.image.Jcrop({
       setSelect: this.position ? [this.position[0].x, this.position[0].y, this.position[1].x, this.position[1].y] : [0,0,500,500],
-      onChange: this.onChangeOrSelect.bind(this),
-      onSelect: this.onChangeOrSelect.bind(this),
+      onChange: $.proxy(this.onChangeOrSelect, this),
+      onSelect: $.proxy(this.onChangeOrSelect, this),
       aspectRatio: (this.previewWidth / this.previewHeight)
     });
   };
@@ -57,13 +57,13 @@ var Mayocat = (function(Mayocat) {
 
 })(Mayocat || {})
 
-$(window).bind("load", function(){
+$(window).on("load", function(){
 
   $("[rel='modal']").click(function(event) {
     $('#preview-modal').modal({
       backdrop:'static'
     }).modal('show');
-    $('#preview-modal a.close').bind("click", function(){
+    $('#preview-modal a.close').on("click", function(){
       $('#preview-modal').modal('hide');
     });
     var saveURI = $(event.currentTarget).data('save-uri');
@@ -92,7 +92,7 @@ $(window).bind("load", function(){
             dimensions,
             position
           );
-          $('.modal-footer .btn.btn-primary').bind("click", function(){
+          $('.modal-footer .btn.btn-primary').on("click", function(){
             var coords = te.getCoordinates();
             $.ajax(saveURI, {
               data: {
