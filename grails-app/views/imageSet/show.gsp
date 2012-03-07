@@ -50,7 +50,7 @@
           <div class="thumbnail">
             <img class="thumb"
                  style="max-width:${thumbnailSizes.get(size)?.width}px; max-height:${thumbnailSizes.get(size)?.height}px" 
-                 src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}" />
+                 src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id, hint:size]])}" />
               <h5>
                 <g:message code="imageSet.thumbnails.size" default="Size:" /> ${size}
                 <small>(${thumbnailSizes.get(size).width}px : ${thumbnailSizes.get(size).height}px)</small>
