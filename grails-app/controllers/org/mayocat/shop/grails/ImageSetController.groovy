@@ -155,6 +155,10 @@ class ImageSetController {
       def imageSet = ImageSet.get(params.id)
       def image
       image = imageSet.images.find { it.hint == params.hint }
+      if (!image) {
+        // If no image is found, try without the hint
+        image = imageSet.images.find { it.hint == null }
+      }
       if (imageSet && image) {
           response.setContentType("image/" + image.extension)
           response.setContentLength(image.data.size())

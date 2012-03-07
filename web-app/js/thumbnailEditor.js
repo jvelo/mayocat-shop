@@ -103,6 +103,7 @@ $(window).on("load", function(){
               },
               success:function(transport) {
                 $('#preview-modal').modal('hide');
+                window.location.reload(true);
               }
             })
           });
