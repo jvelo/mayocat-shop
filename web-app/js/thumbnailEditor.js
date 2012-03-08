@@ -95,6 +95,7 @@ $(window).on("load", function(){
           $('.modal-footer .btn.btn-primary').on("click", function(){
             var coords = te.getCoordinates();
             $.ajax(saveURI, {
+              type: 'POST',
               data: {
                 width:coords.width,
                 height:coords.height,
