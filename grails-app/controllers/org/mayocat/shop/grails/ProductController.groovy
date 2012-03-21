@@ -39,7 +39,7 @@ class ProductController extends AbstractExposedController {
         redirect(uri: '/notFound')  
       }
       def builder = new ProductViewModelBuilder()
-      render(view:"Product.html", model: [product:builder.build(product)])
+      render(view: "index.html", model: [template: "product", product:builder.build(product)])
     }
 
     def beforeSave = {

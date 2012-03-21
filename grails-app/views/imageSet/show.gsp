@@ -90,6 +90,7 @@
       <g:form class="form-horizontal">
         <fieldset class="buttons form-actions">
           <g:hiddenField name="id" value="${imageSetInstance?.id}" />
+          <g:hiddenField name="productid" value="${imageSetInstance?.product?.id}" />
           <g:link class="back btn" action="show" controller="product" params="[id: imageSetInstance?.product?.id]"><g:message code="default.back" /></g:link></li>
           <g:link class="edit btn btn-primary" action="edit" id="${imageSetInstance?.id}" params="[productid: imageSetInstance?.product?.id]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
           <g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />

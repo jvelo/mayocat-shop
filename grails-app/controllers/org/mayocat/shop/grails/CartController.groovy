@@ -25,7 +25,7 @@ class CartController extends AbstractExposedController {
   }
 
   def expose() {
-    render(view: "Cart.html")
+    render(view: "index.html", model:[template:"cart"])
   }
   
   def getCart() {

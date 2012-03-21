@@ -2,10 +2,7 @@ import org.mayocat.shop.thymeleaf.*;
 
 beans = {
   
-  thymeleafTemplateResolver(
-  org.thymeleaf.templateresolver.ServletContextTemplateResolver
-  //org.mayocat.shop.thymeleaf.EschoppeThymeleafTemplateResolver
-  ){
+  thymeleafTemplateResolver(org.thymeleaf.templateresolver.ServletContextTemplateResolver) {
     prefix = ''
     suffix = ''
     templateMode = 'LEGACYHTML5'

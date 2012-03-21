@@ -49,6 +49,8 @@ class UrlMappings {
 		"/admin/product/index"(controller:"product", action:"index")
 		"/admin/product/update"(controller:"product", action:"update")
 		"/admin/product/editCategories"(controller:"product", action:"editCategories")
+		"/admin/product/$productid/images/$id/delete"(controller:"imageSet", action:"delete") 
+		"/admin/product/$productid/images/$id/index"(controller:"imageSet", action:"index")
 		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet")
 		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
 		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 

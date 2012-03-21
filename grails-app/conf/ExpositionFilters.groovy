@@ -1,6 +1,7 @@
 import org.mayocat.shop.viewmodel.builder.CartViewModelBuilder
 import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
 import org.mayocat.shop.grails.Category
+import org.mayocat.shop.grails.Shop
 
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
@@ -13,6 +14,15 @@ class ExpositionFilters {
       after = { viewModel ->
         // Enhancing returned viewModel with API available to all pages :
         //
+
+        // The shop instance
+        viewModel["shop"] = Shop.list()[0]
+
+        // Base (prefix) for storefront assets. FIXME Find a way to get rid of this
+        viewModel["assets_base"] = "/storefronts/" + viewModel["shop"].storefront
+
+        // fragment = /path/to/template + '.html' extension
+        viewModel["fragment"] = "/storefronts/" + viewModel["shop"].storefront + "/" + (viewModel["template"] ?: "") + ".html"
 
         if (!viewModel) {
           viewModel = [:]
@@ -41,6 +51,7 @@ class ExpositionFilters {
          ,'add_to_cart' : taglib.createLink(controller:'cart', action:'add')
          ,'remove_from_cart' : taglib.createLink(controller:'cart', action:'remove')
         ]
+
       }
     }
   }
