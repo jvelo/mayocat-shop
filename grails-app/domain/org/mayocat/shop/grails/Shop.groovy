@@ -20,9 +20,18 @@ class Shop {
     // When a product is sold out, continue selling it ?
     Boolean sellWhenSoldOut
 
+    // Categories preferences
+    // ----------------------
+
+    // Number of product per page in a category
+    Integer categoryProductsPerPage
+
+    /////////////////////////////////////////////////////////////////
+
     static constraints = {
       name nullable:true
       storefront nullable:true
+      categoryProductsPerPage nullable:true
     }
 
     def beforeValidate() {

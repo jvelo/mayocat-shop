@@ -6,5 +6,9 @@ class CategoryViewModel {
   String title
   String url
   List<ProductViewModel> products
+  Integer totalProducts
+  Integer pages
+  Integer productsPerPage
+  Integer currentPage
 
 }

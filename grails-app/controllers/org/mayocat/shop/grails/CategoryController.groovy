@@ -31,7 +31,8 @@ class CategoryController extends AbstractExposedController {
         redirect(uri: '/notFound')
       }
       def builder = new CategoryViewModelBuilder()
-      render(view:"index.html", model: [template:"category", category:builder.build(category)])
+      def page = (params.page as Integer) ?: 1
+      render(view:"index.html", model: [template:"category", category:builder.build(category, page)])
     }
 
     def beforeSave = {

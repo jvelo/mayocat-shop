@@ -5,8 +5,6 @@ UI :
   - pagination on product images
   - finish edit thumbnail dialog
   - display correct thumnail on image set show screen
-* Storefront:
-  - pagination on collection products
 
 Backend :
 ---------
