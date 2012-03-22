@@ -9,7 +9,7 @@ class ExpositionFilters {
 
   def filters = {
 
-    expositionFilter(controller:'*', action:'expose') {
+    expositionFilter(controller:'*', controllerExclude:'imageSet', action:'expose') {
 
       after = { viewModel ->
         // Enhancing returned viewModel with API available to all pages :
