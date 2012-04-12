@@ -10,6 +10,7 @@ class UrlMappings {
     "/category/resources/**"(controller:"resource", action:"serve")
     "/product/resources/**"(controller:"resource", action:"serve")
     "/cart/resources/**"(controller:"resource", action:"serve")
+    "/page/resources/**"(controller:"resource", action:"serve")
 
     // Public area
     // -----------
@@ -21,6 +22,8 @@ class UrlMappings {
     "/product/$byname/images/$imageid/$size?/$filename"(controller:"imageSet", action:"expose")
     // Category
     "/category/$byname"(controller:"category", action:"expose")
+    // Page
+    "/page/$byname"(controller:"page", action:"expose")
 
     // Cart
     "/cart/"(controller:"cart", action:"expose")
@@ -66,5 +69,14 @@ class UrlMappings {
 		"/admin/category/index"(controller:"category", action:"index")
 		"/admin/category/update"(controller:"category", action:"update")
 
+    // Admin -> pages
+		"/admin/page/"(controller:"page", action:"list") 
+		"/admin/page/create"(controller:"page", action:"create") 
+		"/admin/page/save"(controller:"page", action:"save") 
+		"/admin/page/update"(controller:"page", action:"update")
+		"/admin/page/show"(controller:"page", action:"show")
+		"/admin/page/edit"(controller:"page", action:"edit")
+		"/admin/page/index"(controller:"page", action:"index")
+		"/admin/page/update"(controller:"page", action:"update")
 	}
 }

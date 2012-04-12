@@ -1,6 +1,8 @@
 import org.mayocat.shop.viewmodel.builder.CartViewModelBuilder
 import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
+import org.mayocat.shop.viewmodel.builder.PageViewModelBuilder
 import org.mayocat.shop.grails.Category
+import org.mayocat.shop.grails.Page
 import org.mayocat.shop.grails.Shop
 
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
@@ -43,6 +45,15 @@ class ExpositionFilters {
           categoriesViewModel[category.byname] = categoryBuilder.build(category)
         }
         viewModel["categories"] = categoriesViewModel
+
+        // Pages
+        def pagesViewModel = [:]
+        def pages = Page.findAll();
+        def pageBuilder = new PageViewModelBuilder()
+        for (page in pages) {
+          pagesViewModel[page.byname] = pageBuilder.build(page)
+        }
+        viewModel["pages"] = pagesViewModel
 
         // Links
         viewModel["links"] = [
