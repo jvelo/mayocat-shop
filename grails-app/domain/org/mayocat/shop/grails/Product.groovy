@@ -12,6 +12,7 @@ class Product {
     List<Image> images
 
     Set categories
+    List<PackageDimension> packageDimensions
 
     List<Variant> variants
     Variant defaultVariant
@@ -20,7 +21,7 @@ class Product {
     Date dateUpdated
 
     static belongsTo = Category
-    static hasMany = [categories:Category, images:ImageSet, variants:Variant]
+    static hasMany = [categories:Category, images:ImageSet, variants:Variant, packageDimensions:PackageDimension]
 
     static constraints = {
       byname unique:true, matches:"[a-zA-Z0-9]+[a-zA-Z0-9\\-]*[a-zA-Z0-9]+", display:false, editable:false
@@ -29,6 +30,10 @@ class Product {
       defaultVariant nullable:true
       stock nullable:true
       description maxSize: 2000, nullable:true
+    }
+
+    static mapping = {
+      packageDimensions fetch: 'join'
     }
 
     static allExposed = where {

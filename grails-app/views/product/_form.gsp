@@ -38,7 +38,6 @@
 <div class="control-group fieldcontain ${hasErrors(bean: productInstance, field: 'price', 'error')} ">
 	<label for="price" class="control-label">
 		<g:message code="product.price.label" default="Price" />
-		
 	</label>
   <div class="controls">
 	<input type="number" name="price" value="${productInstance.price}" min="0.0" step="0.01" />
@@ -55,7 +54,7 @@
          value="${productInstance.stock}"
          min="0"
          step="1"
-    <g:if test="${(!productInstance.stock || productInstance.stock == 1) && shopInstance.singleUnitProducts}">
+    <g:if test="${(!productInstance.stock || productInstance.stock == 1) && shopInstance?.singleUnitProducts}">
          disabled
     </g:if>
   />
@@ -63,3 +62,49 @@
 </div>
 </fieldset>
 
+<g:if test="$shopInstance?.sentBySnailMail">
+  <fieldset class="form">
+    <legend>Package</legend>
+    <g:set var="counter" value="${0}" />
+    <g:set var="consumed" value="[]"/>
+    <g:each in="${productInstance.packageDimensions}" var="dimension">
+      <g:if test="${shopInstance?.packageManagement?.getProperty(dimension.type)}">
+      <div class="control-group fieldcontain ${hasErrors(bean: productInstance, field: 'price', 'error')} ">
+        <label for="price" class="control-label">
+          <g:message code="product.package.${dimension.type}"
+             default="${dimension.type.substring(0, 1).toUpperCase()}${dimension.type.substring(1, dimension.type.size())}" />
+        </label>
+        <div class="controls">
+          <input type="number" name="packageDimensions[${counter}].value"
+               value="${dimension.value}" step="10"/>
+        </div>
+      </div>
+      <input type="hidden" name="packageDimensions[${counter}].type"
+               value="${dimension.type}" />
+      </g:if>
+      <g:else>
+        <input type="hidden" name="packageDimensions[${counter}].value"
+               value="${dimension.value}"/>
+        <input type="hidden" name="packageDimensions[${counter}].type"
+               value="${dimension.type}" />
+      </g:else>
+      <g:set var="counter" value="${counter + 1}" />
+      <g:set var="void" value="${consumed.add(dimension.type)}" />
+    </g:each>
+    <g:each in="['weight','width','length','height']" status="i" var="it">
+      <g:if test="${shopInstance?.packageManagement?.getProperty(it) && !consumed.contains(it)}">
+        <label for="price" class="control-label">
+          <g:message code="product.package.${it}"
+             default="${it.substring(0, 1).toUpperCase()}${it.substring(1, it.size())}" />
+        </label>
+        <div class="controls">
+          <input type="number" name="packageDimensions[${counter}].value"
+               value="" step="10"/>
+        </div>
+        <input type="hidden" name="packageDimensions[${counter}].type"
+               value="${it}" />
+        <g:set var="counter" value="${counter + 1}" />
+      </g:if>
+    </g:each>
+  </fieldset>
+</g:if>

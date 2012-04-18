@@ -22,6 +22,7 @@ class ShopController {
 
     def save() {
         def shopInstance = new Shop(params)
+        shopInstance.packageManagement = new PackageManagement()
         if (!shopInstance.save(flush: true)) {
             render(view: "create", model: [shopInstance: shopInstance])
             return
@@ -36,7 +37,8 @@ class ShopController {
         if (!shopInstance) {
           shopInstance = Shop.list()[0]
           if (!shopInstance) {
-            shopInstance = new Shop()
+            shopInstance = new Shop(packageManagement: new PackageManagement())
+            //shopInstance.packageManagement = new PackageManagement()
             shopInstance.save(flush:true)
           }
         }
@@ -63,7 +65,7 @@ class ShopController {
             }
         }
 
-        shopInstance.properties = params
+        bindData(shopInstance, params)
 
         if (!shopInstance.save(flush: true)) {
             render(view: "edit", model: [shopInstance: shopInstance])

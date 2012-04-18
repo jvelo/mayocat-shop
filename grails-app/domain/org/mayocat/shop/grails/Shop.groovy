@@ -20,6 +20,12 @@ class Shop {
     // When a product is sold out, continue selling it ?
     Boolean sellWhenSoldOut
 
+    // Is sent by mail ?
+    Boolean sentBySnailMail
+
+    // Manage package dimensions/weight ?
+    static hasOne = [packageManagement: PackageManagement]
+
     // Categories preferences
     // ----------------------
 
@@ -44,6 +50,9 @@ class Shop {
       }
       if (sellWhenSoldOut == null) {
         sellWhenSoldOut = false
+      }
+      if (sentBySnailMail == null) {
+        sentBySnailMail = false
       }
     }
 

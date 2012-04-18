@@ -8,6 +8,7 @@
     <r:require module="productEditor" />
 	</head>
 	<body>
+
     <content tag="panel">
       <div class="alert alert-error">
         <strong>
@@ -23,6 +24,7 @@
         </div>
       </div>
     </content>
+
     <div id="show-product" class="content" role="catalogue">
       <div class="page-header">
       <h1>

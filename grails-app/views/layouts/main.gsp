@@ -14,6 +14,7 @@
 		<link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">
     <r:require modules="jquery"/>
     <r:require modules="twitterBootstrap"/>
+    <r:require modules="knockout"/>
     <r:require modules="styles"/>
     <nav:resources override="true"/>
 		<g:layoutHead/>

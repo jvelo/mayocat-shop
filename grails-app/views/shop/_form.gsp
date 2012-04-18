@@ -5,20 +5,18 @@
 <fieldset>
   <legend><g:message code="admin.preferences.general" default="General" /></legend>
 
-  <div class="control-group fieldcontain ${hasErrors(bean: shopInstance, field: 'name', 'error')} ">
+  <div class="control-group  ${hasErrors(bean: shopInstance, field: 'name', 'error')} ">
     <label for="name" class="control-label">
       <g:message code="shop.name.label" default="Name" />
-      
     </label>
     <div class="controls">
     <g:textField name="name" value="${shopInstance?.name}"/>
     </div>
   </div>
 
-  <div class="control-group fieldcontain ${hasErrors(bean: shopInstance, field: 'storefront', 'error')} ">
+  <div class="control-group  ${hasErrors(bean: shopInstance, field: 'storefront', 'error')} ">
     <label for="storefront" class="control-label">
       <g:message code="shop.storefront.label" default="Storefront" />
-      
     </label>
     <div class="controls">
       <g:textField name="storefront" value="${shopInstance?.storefront}"/>
@@ -34,16 +32,99 @@
 <fieldset>
   <legend><g:message code="admin.preferences.product" default="Products" /></legend>
 
-  <div class="control-group fieldcontain ${hasErrors(bean: shopInstance, field: 'singleUnitProducts', 'error')} ">
+  <div class="control-group  ${hasErrors(bean: shopInstance, field: 'singleUnitProducts', 'error')} ">
     <label for="singleUnitProducts" class="control-label">
       <g:message code="shop.products.singleUnitProducts" default="Single unit products" />
-      
     </label>
     <div class="controls">
     <label for="singleUnitProducts">
       <g:checkBox name="singleUnitProducts" value="${shopInstance.singleUnitProducts}" />
       <g:message code="shop.products.singleUnitProducts.hint" default="If the products sold are one offs, single units, checking this option will automatically keep track of a single stock unique and ensure only one piece is sold" />
     </label>
+    </div>
+  </div>
+
+  <div class="control-group  ${hasErrors(bean: shopInstance, field: 'sentBySnailMail', 'error')} ">
+    <label for="sentBySnailMail" class="control-label">
+      <g:message code="shop.products.sentBySnailMail" default="Sent by snail mail" />
+    </label>
+    <div class="controls">
+    <label for="sentBySnailMail">
+      <g:checkBox name="sentBySnailMail" value="${shopInstance.sentBySnailMail}" data-bind="checked: sentBySnailMail" />
+      <g:message code="shop.products.sentBySnailMail.hint" default="Select if some or all of the product sold are sent by snail mail" />
+    </label>
+    </div>
+  </div>
+
+  %{-- Snail mail options --}%
+   <div class="snailMailOptions" data-bind="slideVisible: sentBySnailMail" style="padding-left:80px">
+
+    %{-- Weight --}%
+    <div class="control-group ${hasErrors(bean: shopInstance.packageManagement, field: 'weight', 'error')} "
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="packageManagement.weight" class="control-label">
+        <g:message code="shop.products.package.weight" default="Manage weight" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.weight">
+        %{-- We can't use g:checkBox here, it places the '_' in the hidden input wrongly ; see http://jira.grails.org/browse/GRAILS-3299 --}%
+        <input type="checkbox" name="packageManagement.weight" <g:if test="${shopInstance.packageManagement.weight}">checked</g:if>
+               data-bind="enable: sentBySnailMail" />
+        <input type="hidden" name="packageManagement._weight" />
+        <g:message code="shop.products.packageManagement.weight" default="Should the weight of package be managed ?" />
+      </label>
+      </div>
+    </div>
+
+    %{-- Length --}%
+    <div class="control-group ${hasErrors(bean: shopInstance.packageManagement, field: 'length', 'error')} "
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="packageManagement.length" class="control-label">
+        <g:message code="shop.products.package.length" default="Manage length" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.length">
+        %{-- We can't use g:checkBox here, it places the '_' in the hidden input wrongly ; see http://jira.grails.org/browse/GRAILS-3299 --}%
+        <input type="checkbox" name="packageManagement.length" <g:if test="${shopInstance.packageManagement.length}">checked</g:if>
+               data-bind="enable: sentBySnailMail" />
+        <input type="hidden" name="packageManagement._length" />
+        <g:message code="shop.products.packageManagement.length" default="Should the length of package be managed ?" />
+      </label>
+      </div>
+    </div>
+
+    %{-- Width --}%
+    <div class="control-group ${hasErrors(bean: shopInstance.packageManagement, field: 'width', 'error')} "
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="packageManagement.width" class="control-label">
+        <g:message code="shop.products.package.width" default="Manage width" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.width">
+        %{-- We can't use g:checkBox here, it places the '_' in the hidden input wrongly ; see http://jira.grails.org/browse/GRAILS-3299 --}%
+        <input type="checkbox" name="packageManagement.width" <g:if test="${shopInstance.packageManagement.width}">checked</g:if>
+               data-bind="enable: sentBySnailMail" />
+        <input type="hidden" name="packageManagement._width" />
+        <g:message code="shop.products.packageManagement.width" default="Should the width of package be managed ?" />
+      </label>
+      </div>
+    </div>
+
+    %{-- Height --}%
+    <div class="control-group ${hasErrors(bean: shopInstance.packageManagement, field: 'height', 'error')} "
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="packageManagement.height" class="control-label">
+        <g:message code="shop.products.package.height" default="Manage height" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.height">
+        %{-- We can't use g:checkBox here, it places the '_' in the hidden input wrongly ; see http://jira.grails.org/browse/GRAILS-3299 --}%
+        <input type="checkbox" name="packageManagement.height" <g:if test="${shopInstance.packageManagement.height}">checked</g:if>
+               data-bind="enable: sentBySnailMail" />
+        <input type="hidden" name="packageManagement._height" />
+        <g:message code="shop.products.packageManagement.height" default="Should the height of package be managed ?" />
+      </label>
+      </div>
     </div>
   </div>
 
@@ -54,17 +135,48 @@
 <fieldset>
   <legend><g:message code="admin.preferences.categories" default="Categories" /></legend>
 
-  <div class="control-group fieldcontain ${hasErrors(bean: shopInstance, field: 'singleUnitProducts', 'error')} ">
-    <label for="singleUnitProducts" class="control-label">
+  <div class="control-group  ${hasErrors(bean: shopInstance, field: 'productsPerPage', 'error')} ">
+    <label for="productsPerPage" class="control-label">
       <g:message code="shop.categories.productsPerPage" default="Products per page" />
       
     </label>
     <div class="controls">
-    <label for="singleUnitProducts">
+    <label for="productsPerPage">
 	    <input type="number" name="categoryProductsPerPage" value="${shopInstance.categoryProductsPerPage}" min="0" step="1" />
       <g:message code="shop.categories.productsPerPage" default="How many products to display per category page." />
     </label>
     </div>
   </div>
-
 </fieldset>
+
+<script type="text/javascript">
+// <![CDATA[
+$(document).ready(function(){
+  (function(){
+    var viewModel = {
+      sentBySnailMail : ko.observable( $('#sentBySnailMail')[0].checked == true)
+    };
+
+    // Custom slide up/down binding
+    ko.bindingHandlers.slideVisible = {
+        init: function(element, valueAccessor) {
+            // Initially set the element to be instantly visible/hidden depending on the value
+            var value = valueAccessor();
+            $(element).toggle(ko.utils.unwrapObservable(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+        },
+        update: function(element, valueAccessor) {
+            // Whenever the value subsequently changes, slowly slide the element up or down
+            var value = valueAccessor();
+            ko.utils.unwrapObservable(value) ? $(element).slideDown() : $(element).slideUp();
+        }
+    };
+
+    ko.applyBindings(viewModel);
+    viewModel.sentBySnailMail.subscribe(function(newValue) {
+      console.log("Sent by snail mail ", newValue);
+    });
+  })();
+
+});
+// ]]>
+</script>
