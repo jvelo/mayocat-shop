@@ -28,7 +28,7 @@ class BootStrap {
 
         def testUser = new SecurityUser(username: 'user', enabled: true, password: 'password')
         testUser.save(flush: true)
-        def testAdmin = new SecurityUser(username: 'admin', enabled: true, password: 'admin')
+        def testAdmin = new SecurityUser(username: 'Admin', enabled: true, password: 'admin')
         testAdmin.save(flush: true)
 
         // Give user role to user
