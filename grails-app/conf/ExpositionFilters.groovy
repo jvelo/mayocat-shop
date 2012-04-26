@@ -4,6 +4,7 @@ import org.mayocat.shop.viewmodel.builder.PageViewModelBuilder
 import org.mayocat.shop.grails.Category
 import org.mayocat.shop.grails.Page
 import org.mayocat.shop.grails.Shop
+import org.mayocat.shop.grails.PackageManagement
 
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
@@ -11,14 +12,14 @@ class ExpositionFilters {
 
   def filters = {
 
-    expositionFilter(controller:'*', controllerExclude:'imageSet', action:'expose') {
+    expositionFilter(controller:'*', controllerExclude:'imageSet', action:'expose*') {
 
       after = { viewModel ->
         // Enhancing returned viewModel with API available to all pages :
         //
 
         // The shop instance
-        viewModel["shop"] = Shop.list()[0]
+        viewModel["shop"] = Shop.list()[0] ?: new Shop(packageManagement: new PackageManagement())
 
         // Base (prefix) for storefront assets. FIXME Find a way to get rid of this
         viewModel["assets_base"] = "/storefronts/" + viewModel["shop"].storefront
@@ -59,6 +60,7 @@ class ExpositionFilters {
         viewModel["links"] = [
           'home' : taglib.createLink(controller:'home', action:'expose')
          ,'cart' : taglib.createLink(controller:'cart', action:'expose')
+         ,'checkout' : taglib.createLink(controller:'checkout' /* , action:'expose' see http://jira.grails.org/browse/GRAILS-8945 */)
          ,'add_to_cart' : taglib.createLink(controller:'cart', action:'add')
          ,'remove_from_cart' : taglib.createLink(controller:'cart', action:'remove')
         ]
