@@ -77,6 +77,10 @@
         <div class="controls">
           <input type="number" name="packageDimensions[${counter}].value"
                value="${dimension.value}" step="10"/>
+          <span class="unit">
+            <g:if test="${dimension.type == 'weight'}">grams</g:if>
+            <g:else>cm</g:else>
+          </span>
         </div>
       </div>
       <input type="hidden" name="packageDimensions[${counter}].type"
@@ -100,6 +104,10 @@
         <div class="controls">
           <input type="number" name="packageDimensions[${counter}].value"
                value="" step="10"/>
+          <span class="unit">
+            <g:if test="${it == 'weight'}">grams</g:if>
+            <g:else>cm</g:else>
+          </span>
         </div>
         <input type="hidden" name="packageDimensions[${counter}].type"
                value="${it}" />
