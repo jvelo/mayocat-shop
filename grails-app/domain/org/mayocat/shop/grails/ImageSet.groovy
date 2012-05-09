@@ -6,16 +6,14 @@ class ImageSet {
   String filename
   String caption
   String description
-  Product product
   Set images
 
-  static belongsTo = [product:Product]
+  static belongsTo = [Product, Page]
   static hasMany = [images: Image]
 
   static transients = ['file']
 
   static constraints = {
-    product display:false
     images display:false
     description maxSize:2000, blank:true
   }

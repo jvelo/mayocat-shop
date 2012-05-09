@@ -19,7 +19,16 @@
         </g:eachError>
       </ul>
       </g:hasErrors>
-      <g:uploadForm action="save" class="form-horizontal" params="[productid: params.productid]">
+        <form method="post"
+              class="form-horizontal"
+              enctype="multipart/form-data"
+            <g:if test="${params.productid != null}">
+              action="${createLink(url:[controller:"imageSet", action:"save", params:[productid: params.productid]])}"
+            </g:if>
+            <g:else>
+              action="${createLink(url:[controller:"imageSet", action:"save", params:[pageid: params.pageid]])}"
+            </g:else>
+          >
         <fieldset>
           <div class="control-group">
             <label for="file" class="control-label">
@@ -31,13 +40,23 @@
             </div>
           </div>
           <g:render template="form"/>
-          <g:hiddenField name="product.id" value="${params.productid}" />
+          <g:if test="${params.productid != null}">
+            <g:hiddenField name="product.id" value="${params.productid}" />
+          </g:if>
+          <g:else>
+            <g:hiddenField name="page.id" value="${params.pageid}" />
+          </g:else>
           <div class="buttons form-actions">
             <g:submitButton name="create" class="save btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-            <g:link class="back btn" action="show" controller="product" params="[id:params.productid]"><g:message code="default.cancel" /></g:link>
+            <g:if test="${params.productid != null}">
+              <g:link class="back btn" action="show" controller="product" params="[id:params.productid]"><g:message code="default.cancel" /></g:link>
+            </g:if>
+            <g:else>
+              <g:link class="back btn" action="show" controller="page" params="[id:params.pageid]"><g:message code="default.cancel" /></g:link>
+            </g:else>
           </div>
         </fieldset>
-      </g:uploadForm>
+      </form>
     </div>
 	</body>
 </html>

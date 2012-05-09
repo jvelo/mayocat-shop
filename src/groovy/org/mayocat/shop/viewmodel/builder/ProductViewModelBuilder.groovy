@@ -22,7 +22,7 @@ class ProductViewModelBuilder {
     )
     def imagesViewModel = []
     for (image in product.images) {
-      imagesViewModel.add( this.buildImage(image) )
+      imagesViewModel.add( this.buildImage(image, product) )
     }
     def categories = []
     for (category in product.categories) {
@@ -40,7 +40,7 @@ class ProductViewModelBuilder {
   }
 
 
-  def buildImage(image) {
+  def buildImage(image, product) {
     if (!image) {
       return
     }
@@ -49,14 +49,14 @@ class ProductViewModelBuilder {
       thumbnails[thumbnail.hint] = taglib.createLink(
            controller:'imageSet', 
            action:'expose', 
-           params:['imageid':image.id, 'filename':image.filename, 'byname': image.product.byname, 'size':thumbnail.hint]
+           params:['imageid':image.id, 'filename':image.filename, 'byname': product.byname, 'size':thumbnail.hint]
       )
     }
     new ImageViewModel( 
       caption:image.caption,
       url: taglib.createLink( controller:'imageSet'
                              ,action:'expose'
-                             ,params:['imageid':image.id,'filename':image.filename, 'byname': image.product.byname]),
+                             ,params:['imageid':image.id,'filename':image.filename, 'byname': product.byname]),
       thumbnails: thumbnails
     )
   }

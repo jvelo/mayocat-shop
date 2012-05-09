@@ -18,8 +18,10 @@ class ImageSetController {
     static scaffold = true
 
     def save() {
-      def product = Product.get(params.product.id)
-      if (product) {
+      def product = Product.get(params.product?.id)
+      def page = Page.get(params.page?.id)
+      def product_or_page = product ?: page
+      if (product_or_page) {
         def imageSet = new ImageSet(params)
         def file = request.getFile('file')
         if (file && !file.isEmpty()) {
@@ -36,11 +38,16 @@ class ImageSetController {
             def image = new Image([data:file, width:bufferedImage.width, height:bufferedImage.height, extension:extension])
             imageSet.addToImages(image)
             imageSet.filename = filename
-            product.addToImages(imageSet)
-            product.save()
+            product_or_page.addToImages(imageSet)
+            product_or_page.save()
             flash.message = "Image set created"
             def sizes = grailsApplication.config.mayocat.shop.thumbnailSizes
-            render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: sizes])
+            if (product) {
+              render(view: 'show', model: [imageSetInstance: imageSet, productid:product.id, thumbnailSizes: sizes])
+            }
+            else {
+              render(view: 'show', model: [imageSetInstance: imageSet, pageid:page.id, thumbnailSizes: sizes])
+            }
           }
         }
         else {
@@ -145,10 +152,16 @@ class ImageSetController {
 
     def list() {
       def product = Product.get(params.productid)
-      if (!product) {
+      def page = Page.get(params.pageid)
+      if (product) {
+        [imageSetInstanceList: product.images]
+      }
+      else if (page) {
+        [imageSetInstanceList: page.images]
+      }
+      else {
         response.sendError(404)
       }
-      [imageSetInstanceList: product.images]
     }
 
     def view() {

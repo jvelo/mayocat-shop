@@ -78,5 +78,11 @@ class UrlMappings {
 		"/admin/page/edit"(controller:"page", action:"edit")
 		"/admin/page/index"(controller:"page", action:"index")
 		"/admin/page/update"(controller:"page", action:"update")
+		"/admin/page/$pageid/images/$id/delete"(controller:"imageSet", action:"delete") 
+		"/admin/page/$pageid/images/$id/index"(controller:"imageSet", action:"index")
+		"/admin/page/$pageid/images/$id?/$action?"(controller:"imageSet")
+		"/admin/page/$pageid/images/create"(controller:"imageSet", action:"create") 
+		"/admin/page/$pageid/images/save"(controller:"imageSet", action:"save") 
+		"/admin/page/$pageid/images/list"(controller:"imageSet", action:"list") 
 	}
 }
