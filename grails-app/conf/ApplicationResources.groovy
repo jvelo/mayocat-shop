@@ -13,6 +13,12 @@ modules = {
       resource url: 'lib/knockout/knockout.js'
     }
 
+    editor {
+      // defaultBundle false
+
+      resource url: 'lib/editor/editor.nocache.js'
+    }
+
     styles {
         resource url:'less/styles.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'
         resource url:'less/products.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'

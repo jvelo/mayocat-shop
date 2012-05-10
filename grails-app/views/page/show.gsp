@@ -6,6 +6,7 @@
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'page.label', default: 'Page')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
+    <r:require modules="editor"/>
 	</head>
 	<body>
    <div id="show-page" class="content" role="catalogue">
@@ -39,6 +40,8 @@
          <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
        </fieldset>
      </g:form>
+
+      %{-- <g:include controller="imageSet" action="list" params="[pageid:pageInstance.id]" /> --}%
 
    </div>
 	</body>

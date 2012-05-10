@@ -1,0 +1,144 @@
+table.gwt-TabBar{margin:0;}
+.gwt-TabBar .gwt-TabBarFirst{width:5px;}
+.gwt-TabBar .gwt-TabBarItem{margin-left:6px;padding:3px 6px 3px 6px;cursor:pointer;color:black;font-weight:bold;text-align:center;background:#d0e4f6;}
+.gwt-TabBar .gwt-TabBarItem-selected{cursor:default;background:#92c1f0;}
+.gwt-TabPanelBottom{border-color:#92c1f0;border-style:solid;border-width:3px 2px 2px;overflow:hidden;padding:6px;}.xExplorer .listGrid{border:none;}
+.xExplorer{overflow:hidden;}
+.xAttachmentsSelector .xListBox,.xPagesSelector .xListBox{overflow:auto;}
+.xAttachmentsSelector .xAttachPreview,.xAttachmentsSelector .xNewFilePreview,.xPagesSelector .xPagePreview,.xPagesSelector .xNewPagePreview{padding:5px 5px 5px 20px;cursor:pointer;background-position:left center;background-repeat:no-repeat;}
+.xAttachmentsSelector .xAttachPreview{background-image:url(../images/attach.gif);}
+.xPagesSelector .xPagePreview{background-image:url(../images/page_white_text.gif);}
+.xAttachmentsSelector .xNewFilePreview,.xPagesSelector .xNewPagePreview{background-image:url(../images/bullet_add.gif);}
+.xPagePreview .xPagePreviewTitle{padding-top:0;text-transform:none;}
+.xPagePreview .xPagePreviewFullname{margin-bottom:0;margin-top:3px;overflow:hidden;width:413px;}
+.xPagesSearch .xSearchForm{height:25px;line-height:19px;}
+.xSearchForm button{-moz-border-radius-bottomleft:5px;-moz-border-radius-bottomright:5px;-moz-border-radius-topleft:5px;-moz-border-radius-topright:5px;border:1px solid #AAA;margin-left:5px;height:23px;width:83px;}
+.xSearchForm input.gwt-TextBox{width:365px;}.xToolbar div.clearfloats{background-color:transparent;clear:both;float:none;height:1px;line-height:1px;font-size:1px;margin:0;}
+.xToolbar{background:#F0F0EE none repeat scroll 0;border-top:1px solid #DDD;border-bottom:1px solid #DDD;float:left;width:100%;}
+.xToolbar div{float:left;height:23px;}
+.xToolbar .gwt-PushButton-up,.xToolbar .gwt-PushButton-down,.xToolbar .gwt-PushButton-up-hovering,.xToolbar .gwt-PushButton-down-hovering,.xToolbar .gwt-PushButton-up-disabled,.xToolbar .gwt-PushButton-down-disabled,.xToolbar .gwt-ToggleButton-up,.xToolbar .gwt-ToggleButton-down,.xToolbar .gwt-ToggleButton-up-hovering,.xToolbar .gwt-ToggleButton-down-hovering,.xToolbar .gwt-ToggleButton-up-disabled,.xToolbar .gwt-ToggleButton-down-disabled{border:1px solid #F0F0EE!important;cursor:default;height:20px;width:20px;margin:1px 0 0 1px;}
+.xToolbar .gwt-PushButton-up-hovering,.xToolbar .gwt-PushButton-down-hovering,.xToolbar .gwt-ToggleButton-up-hovering,.xToolbar .gwt-ToggleButton-down-hovering{background-color:#B6BDD2!important;border:1px solid #0A246A!important;}
+.xToolbar .gwt-ToggleButton-down{border:1px solid #C0C0BB!important;}
+.xToolbar .gwt-PushButton-up-disabled,.xToolbar .gwt-PushButton-down-disabled,.xToolbar .gwt-ToggleButton-up-disabled,.xToolbar .gwt-ToggleButton-down-disabled{opacity:.4;}
+html>body .xToolbar .gwt-PushButton-up-disabled,html>body .xToolbar .gwt-PushButton-down-disabled,html>body .xToolbar .gwt-ToggleButton-up-disabled,html>body .xToolbar .gwt-ToggleButton-down-disabled{filter:alpha(opacity=40);zoom:1;}
+* html .xToolbar .gwt-PushButton-up-disabled,* html .xToolbar .gwt-PushButton-down-disabled,* html .xToolbar .gwt-ToggleButton-up-disabled,* html .xToolbar .gwt-ToggleButton-down-disabled{background-color:#E6E6E6;}
+.xToolbar .gwt-ListBox{background:#F0F0EE none repeat scroll 0!important;border:2px inset white!important;font-size:smaller;height:20px;margin-top:3px;padding:0!important;vertical-align:top;}
+.xToolbar .gwt-ListBox optgroup{margin-top:6px;}
+.xToolbar .separator{background-color:#F0F0EE;border-color:buttonshadow buttonhighlight buttonhighlight buttonshadow;border-style:solid;border-width:1px;height:17px;margin:2px 2px 2px 4px;width:0;}
+.xToolbar .xStyleNamePicker option{padding-left:17px;text-transform:capitalize;}
+.xToolbar .xStyleNamePicker .selected{background:url(../images/checked-black.gif) no-repeat scroll 2px center #E0E0E0;}.xRichTextEditorTabPanel{background-color:#F0F0EE;font-style:normal;width:100%;padding:0;margin:0;}
+.xRichTextEditorTabPanel td{border:0 none;padding:0;}
+.xRichTextEditorTabPanel .gwt-TabBar .gwt-TabBarItem{background-color:#DDD;}
+.xRichTextEditorTabPanel .gwt-TabBar .gwt-TabBarItem-selected{background-color:#CCC;}
+.xRichTextEditorTabPanel .gwt-TabPanelBottom{border-color:#CCC;}
+.xRichTextEditorTabPanel .gwt-TabPanelBottom{background-color:#FFF;padding:0;}
+.xRichTextEditorTabPanel .xRichTextEditor{border:0 none;}
+.xRichTextEditorTabPanel .xRichTextEditor .gwt-MenuBar-horizontal{border-top:0 none;}
+.xRichTextEditor{border:1px solid #DDD;border-top:0 none;font-style:normal;}
+.xRichTextEditor .gwt-RichTextArea{width:100%;background:#FFF none repeat scroll 0;border:0 none;margin:0;padding:0;}
+.xRichTextEditor .gwt-MenuBar-horizontal{border-top:1px solid #DDD;}
+.xPlainTextEditor{border:0 none;width:100%;height:100%;}.xMacro{padding:6px 0 6px 3px;}
+* html .xMacro{padding:6px 0;}
+.xMacroParameter{padding:14px 0 6px 0;}
+.xMacro .xMacroLabel,.xMacroParameter .xMacroParameterLabel{padding-top:0;}
+.xMacroDescription{margin-bottom:0;margin-top:3px;}
+.xMacroParameterDescription:first-letter{text-transform:capitalize;}
+.xMacroParameter textarea{height:150px;}
+.xMacroParameter option{text-transform:capitalize;}
+.xMacroFilter{padding:2px 0;}
+.xMacroFilter .xSearchBox{width:215px;}
+.xMacroCategoryList{margin-right:6px;text-transform:capitalize;width:215px;}
+.xMacroSelector{margin-top:0;height:346px;}
+.xMacroSelector .xListBox{overflow:auto;}
+.xMacroButton{background-image:url(../images/macro.gif);background-position:center center;background-repeat:no-repeat;}.gwt-PopupPanel{z-index:1001;}
+* html div.gwt-PopupPanel,* html div.gwt-PopupPanel div{display:block;}
+* html .gwt-PopupPanel{width:1px;}
+.gwt-PopupPanelGlass{background-color:black;opacity:.5;z-index:1000;}
+.gwt-PopupPanelGlass{-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";}
+*+html .gwt-PopupPanelGlass{filter:alpha(opacity\=50);}
+* html .gwt-PopupPanelGlass{filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";}
+.xDialogBox{padding:3px;background-color:white;}
+.xDialogBox div.clearfloats{margin:0!important;}
+.xDialogBox-dragging{background-color:transparent!important;border:1px dashed #333;}
+.xDialogCaptionBar{background-color:#DDD;color:#777;font-weight:bold;letter-spacing:-1px;line-height:27px;padding:0 27px 0 25px;position:relative;cursor:default;}
+* html .xDialogCaptionBar{width:100%;}
+.xDialogIcon{position:absolute;left:3px;top:3px;}
+.xDialogCaption{height:27px;line-height:27px;white-space:nowrap;}
+.xDialogCloseIcon{position:absolute;right:5px;top:5px;}
+.xDialogContent{border:2px solid #DDD;border-top:1px solid #DDD;}
+.xDialogHeader,.xDialogFooter{padding:10px;line-height:25px;}
+.xDialogHeader{font-weight:lighter;color:#333;letter-spacing:1px;}
+.xDialogBody{border-top:2px solid #EEE;border-bottom:2px solid #EEE;height:350px;width:459px;overflow:auto;margin:0 6px;font-size:85%;}
+.xDialogBody input{font-size:inherit;}
+.xDialogFooter{text-align:right;}
+.xDialogFooter button{-moz-border-radius-bottomleft:5px;-moz-border-radius-bottomright:5px;-moz-border-radius-topleft:5px;-moz-border-radius-topright:5px;border:1px solid #AAA;height:25px;line-height:17px;vertical-align:middle;margin-left:5px;}
+.xDialogBody .gwt-TabPanel{width:100%;height:100%;}
+.xDialogBody .gwt-TabPanel .gwt-TabBar tr{background-color:#eee;}
+.xDialogBody .gwt-TabBar .gwt-TabBarItem{background-color:#eee;font-weight:normal;padding:0 6px;margin-left:0;}
+.xDialogBody .gwt-TabBar .gwt-TabBarItem .gwt-Label{height:25px;line-height:25px;}
+.xDialogBody .gwt-TabBar .gwt-TabBarItem-selected{background-color:#fff;}
+.xDialogBody .gwt-TabPanel .gwt-TabPanelBottom{border:none;padding:0;height:325px;}
+.xInfoLabel,.xMacroLabel,.xMacroParameterLabel,.xPagePreviewTitle,.xImporterInfoLabel,.xImporterDialog .xDialogFooter .gwt-CheckBox{color:#666;font-weight:bolder;margin-bottom:3px;text-transform:capitalize;padding-top:14px;}
+.xHelpLabel,.xMacroDescription,.xMacroParameterDescription,.xPagePreviewFullname,.xImporterHelpLabel{color:#777;font-size:90%;font-style:italic;margin-bottom:3px;width:433px;}
+.xMandatory{color:#777;font-size:90%;font-style:italic;font-weight:normal;margin-left:1ex;}
+.xLinkToUrl .gwt-TextBox,.xLinkConfig .gwt-TextBox,.xLinkToNewPage .gwt-TextBox,.xUploadPanel .gwt-FileUpload,.xExternalImage .gwt-TextBox,.xImageConfig .gwt-TextBox,.xMacroParameter .textInput,.xMacroParameter textarea,.xTablePanel .gwt-TextBox,.xImporterTabPanel .gwt-FileUpload,.xExplorer input,.xSearchForm input{width:433px;padding:2px;}
+.xLinkToUrl span.gwt-CheckBox,.xLinkConfig span.gwt-CheckBox,.xTablePanel span.gwt-CheckBox{display:block;}
+.xImageConfig .gwt-RadioButton{color:#666;}
+.xMacroParameterLabel-mandatory,.xInfoLabel-mandatory{color:#5A1;}
+.xErrorMsg{font-size:75%;color:#d22;margin-bottom:3px;}
+.xErrorField{border:1px solid #d55!important;}
+.xAttachmentsSelector,.xPagesSelector,.xExplorerPanel,.xImagesSelector,.xImagesExplorer,.xMacroSelector{margin-top:5px;width:459px;overflow:auto;height:340px;}
+.xSelectorAggregatorStep{height:346px;padding:0;margin:0;border:0;overflow:hidden;width:459px;}
+.xSelectorAggregatorStep .xAttachmentsSelector,.xSelectorAggregatorStep .xPagesSelector,.xSelectorAggregatorStep .xExplorerPanel,.xSelectorAggregatorStep .xImagesSelector,.xSelectorAggregatorStep .xImagesExplorer{height:315px;}.gwt-MenuBar{cursor:default;}
+.gwt-MenuBar .gwt-MenuItem{cursor:default;}
+.gwt-MenuBar .gwt-MenuItem-selected{background:#E0EDFE;}
+.gwt-MenuBar .gwt-MenuItem-disabled{color:#C0C0C0;background-color:transparent!important;}
+.gwt-MenuBar-horizontal{background-color:#F0F0EE;}
+.gwt-MenuBar-horizontal table{border-collapse:collapse;border-spacing:0;padding:0;margin:0;}
+.gwt-MenuBar-horizontal .gwt-MenuItem{padding:0 10px;color:#666;font-weight:bold;background-color:#EAEAEA;border:0 none;border-top:1px solid #DDD;border-right:1px solid #DDD;height:24px;}
+.gwt-MenuBar-horizontal .gwt-MenuItemSeparator{width:1px;padding:0;margin:0;border:0;border-left:1px solid #888;background:white;}
+.gwt-MenuBar-horizontal .gwt-MenuItemSeparator .menuSeparatorInner{width:1px;height:1px;background:white;}
+.gwt-MenuBar-vertical{background-color:#F0F0EE;border-style:solid;border-width:1px;border-color:#fff #aaa #aaa #fff;font-size:12px;}
+.gwt-MenuBar-vertical table{border-collapse:collapse;}
+.gwt-MenuBar-vertical .gwt-MenuItem{padding:4px 8px;}
+.gwt-MenuBar-vertical .gwt-MenuItemSeparator{padding:2px 0;}
+.gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner{height:1px;padding:0;border-top:1px solid #aaa;overflow:hidden;margin:0 5px;}
+.gwt-MenuBar-vertical .subMenuIcon{padding-right:4px;}
+.gwt-MenuBar-vertical .subMenuIcon-selected{background-color:#E0EDFE;}
+.gwt-MenuBarPopup{margin:0 0 0 3px;}
+.gwt-MenuBarPopup .menuPopupTopLeftInner{width:5px;height:5px;zoom:1;}
+.gwt-MenuBarPopup .menuPopupTopRightInner{width:8px;height:5px;zoom:1;}
+.gwt-MenuBarPopup .menuPopupTopCenterInner{display:none;}
+.gwt-MenuBarPopup .menuPopupBottomLeftInner{width:5px;height:8px;zoom:1;}
+.gwt-MenuBarPopup .menuPopupBottomRightInner{width:8px;height:8px;zoom:1;}
+* html .gwt-MenuBarPopup .menuPopupTopLeftInner{width:5px;height:41px;margin-top:-36px;overflow:hidden;}
+* html .gwt-MenuBarPopup .menuPopupTopRightInner{width:13px;height:41px;margin-left:-5px;margin-top:-36px;overflow:hidden;}
+* html .gwt-MenuBarPopup .menuPopupBottomLeftInner{width:5px;height:49px;margin-top:-41px;overflow:hidden;}
+* html .gwt-MenuBarPopup .menuPopupBottomRightInner{width:13px;height:49px;margin-left:-5px;margin-top:-41px;overflow:hidden;}
+.gwt-MenuItem .gwt-MenuItemIcon{float:left;margin-left:-5px;vertical-align:middle;}
+.gwt-MenuBar-vertical .gwt-MenuItem .gwt-MenuItemIcon{margin-left:0;}
+.gwt-MenuItem .gwt-MenuItemLabel{float:left;line-height:20px;padding-left:3px;}
+.gwt-MenuItem .gwt-MenuItemShortcutKeyLabel{float:right;line-height:20px;margin-left:30px;}.xImportOfficeContentEditor{width:450px;height:250px;border:1px solid #999;}.xSymbolPalette{border-right:1px solid #EFEFEF;border-bottom:1px solid #EFEFEF;margin:2px 3px 3px 2px;}
+.xSymbolPalette td{border-left:1px solid #EFEFEF;border-top:1px solid #EFEFEF;height:17px;width:17px;margin:2pt;padding:0;}
+.xSymbolPalette .symbolCell{height:15px;width:15px;padding:2px;margin:0;font-size:90%;text-align:center;vertical-align:middle;background-color:#FFF;color:#191970;cursor:default;}
+.xSymbolPalette .symbolCell-hover{background-color:#789;}.xListItem-selected{background-color:#D4E8FF;}
+.xFontSizePicker{width:18ex;}
+.xFontFamilyPicker{width:23ex;}
+.xFontFamilyPicker option{font-size:small!important;}
+.gwt-TextBox-labeled{color:gray;}
+input.xSearchBox{background-image:url(../images/search.gif);background-position:2px center;background-repeat:no-repeat;padding:2px 2px 2px 19px;}.xColorPicker{border:1px solid #B5B6B5;z-index:99;}
+.xColorPalette{border-bottom:1px solid #EFEFEF;border-right:1px solid #EFEFEF;}
+.xColorPalette td{border-left:1px solid #EFEFEF;border-top:1px solid #EFEFEF;height:21px;width:21px;margin:0;padding:0;text-align:center;vertical-align:middle;}
+.xColorPalette .colorCell{height:15px;width:15px;padding:0;margin:0;border:3px solid white;}
+.xColorPalette .colorCell-hover{border:3px solid #CCC;}
+.xColorPalette .colorCell-selected-dark,.xColorPalette .colorCell-selected-light{background-position:center center;background-repeat:no-repeat;}
+.xColorPalette .colorCell-selected-dark{background-image:url("../images/checked-white.gif");}
+.xColorPalette .colorCell-selected-light{background-image:url("../images/checked-black.gif");}.xTablePixel{display:inline;}
+.xTablePanel .xBorderInput{width:410px;}.xImagesSelector .xListItem{display:inline-block;width:145px;height:105px;float:left;}
+.xImagesSelector .clearfloats{width:1px;height:1px;}
+.xImagesSelector .xListItem .xImagePreview,.xImagesSelector .xListItem .xNewImagePreview{display:inline-block;margin:5px;width:135px;height:95px;padding:0;background-color:#FFF;overflow-y:hidden;cursor:pointer;}
+.xImagesSelector .xListItem .xImagePreview img{max-height:95px;max-width:135px;}
+.xImagesSelector .xListItem .xNewImagePreview{text-align:left;vertical-align:bottom;}
+.xImagesSelector .xNewImagePreview .gwt-Label{background-image:url(../images/bullet_add.gif);padding-left:20px;padding-top:1ex;padding-bottom:1ex;margin-top:5px;background-position:left center;background-repeat:no-repeat;}
+.xPageChooser{margin-top:5px;}
+.xImagesSelector .xListBox{overflow:auto;}
