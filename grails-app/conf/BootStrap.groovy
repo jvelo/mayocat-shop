@@ -2,6 +2,8 @@ import org.mayocat.shop.util.DataSourceUtils
 import org.mayocat.shop.grails.SecurityUser
 import org.mayocat.shop.grails.SecurityRole
 import org.mayocat.shop.grails.SecurityUserRole
+import org.mayocat.shop.grails.Shop
+import org.mayocat.shop.grails.PackageManagement
 
 class BootStrap {
 
@@ -38,6 +40,26 @@ class BootStrap {
         assert SecurityUser.count() == 2
         assert SecurityRole.count() == 2 
         assert SecurityUserRole.count() == 2
+      }
+
+      // Migrations 
+      this.ensureShopHasPackageManagement();
+    }
+
+    def ensureShopHasPackageManagement = {
+      def shop = Shop.list()[0]
+      if (shop && shop.packageManagement == null) {
+        try {
+          def pm = new PackageManagement()
+          pm.shop = shop
+          shop.packageManagement = pm
+          shop.save(flush:true)
+        }
+        catch (Exception e) {
+          def session = sessionFactory.currentSession
+          session.setFlushMode(org.hibernate.FlushMode.MANUAL)
+          log.error("Failed to add package management. ${org.apache.commons.lang.exception.ExceptionUtils.getRootCauseMessage(e)}")
+        }
       }
     }
 
