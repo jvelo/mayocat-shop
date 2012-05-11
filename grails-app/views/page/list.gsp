@@ -23,8 +23,6 @@
 
             <g:sortableColumn property="title" title="${message(code: 'page.title.label', default: 'Title')}" />
           
-            <g:sortableColumn property="content" title="${message(code: 'page.content.label', default: 'Content')}" />
-          
           </tr>
         </thead>
         <tbody>
