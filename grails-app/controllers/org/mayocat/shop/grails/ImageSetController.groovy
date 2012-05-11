@@ -18,8 +18,14 @@ class ImageSetController {
     static scaffold = true
 
     def save() {
-      def product = Product.get(params.product?.id)
-      def page = Page.get(params.page?.id)
+      def product = null
+      def page = null
+      if (params.type == 'product') {
+        product = Product.get(params.itemid)
+      }
+      else {
+        page = Page.get(params.itemid)
+      }
       def product_or_page = product ?: page
       if (product_or_page) {
         def imageSet = new ImageSet(params)
@@ -61,6 +67,36 @@ class ImageSetController {
         flash.message = "Image set could not be created : product not found"
         redirect(controller: "product", action: "list")
       }
+    }
+
+    def update() {
+        def imageSetInstance = ImageSet.get(params.id)
+        if (!imageSetInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), params.id])
+            redirect(action: "list", params:params)
+            return
+        }
+
+        if (params.version) {
+            def version = params.version.toLong()
+            if (imageSetInstance.version > version) {
+                imageSetInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+                          [message(code: 'imageSet.label', default: 'ImageSet')] as Object[],
+                          "Another user has updated this ImageSet while you were editing")
+                render(view: "edit", model: [imageSetInstance: imageSetInstance])
+                return
+            }
+        }
+
+        imageSetInstance.properties = params
+
+        if (!imageSetInstance.save(flush: true)) {
+            render(view: "edit", model: [imageSetInstance: imageSetInstance])
+            return
+        }
+
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'imageSet.label', default: 'ImageSet'), imageSetInstance.id])
+        redirect(action: "show", params:[id: imageSetInstance.id, type: params.type, itemid:params.itemid])
     }
 
     def show() {
@@ -151,8 +187,14 @@ class ImageSetController {
     }
 
     def list() {
-      def product = Product.get(params.productid)
-      def page = Page.get(params.pageid)
+      def product = null
+      def page = null
+      if (params.type == 'product') {
+        product = Product.get(params.itemid)
+      }
+      else {
+        page = Page.get(params.itemid)
+      }
       if (product) {
         [imageSetInstanceList: product.images]
       }

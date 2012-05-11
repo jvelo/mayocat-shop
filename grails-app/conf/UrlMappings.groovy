@@ -52,12 +52,6 @@ class UrlMappings {
 		"/admin/product/index"(controller:"product", action:"index")
 		"/admin/product/update"(controller:"product", action:"update")
 		"/admin/product/editCategories"(controller:"product", action:"editCategories")
-		"/admin/product/$productid/images/$id/delete"(controller:"imageSet", action:"delete") 
-		"/admin/product/$productid/images/$id/index"(controller:"imageSet", action:"index")
-		"/admin/product/$productid/images/$id?/$action?"(controller:"imageSet")
-		"/admin/product/$productid/images/create"(controller:"imageSet", action:"create") 
-		"/admin/product/$productid/images/save"(controller:"imageSet", action:"save") 
-		"/admin/product/$productid/images/list"(controller:"imageSet", action:"list") 
 
     // Admin -> category
 		"/admin/category/"(controller:"category", action:"list") 
@@ -78,11 +72,15 @@ class UrlMappings {
 		"/admin/page/edit"(controller:"page", action:"edit")
 		"/admin/page/index"(controller:"page", action:"index")
 		"/admin/page/update"(controller:"page", action:"update")
-		"/admin/page/$pageid/images/$id/delete"(controller:"imageSet", action:"delete") 
-		"/admin/page/$pageid/images/$id/index"(controller:"imageSet", action:"index")
-		"/admin/page/$pageid/images/$id?/$action?"(controller:"imageSet")
-		"/admin/page/$pageid/images/create"(controller:"imageSet", action:"create") 
-		"/admin/page/$pageid/images/save"(controller:"imageSet", action:"save") 
-		"/admin/page/$pageid/images/list"(controller:"imageSet", action:"list") 
+
+    // Admin -> page or product images
+		"/admin/$type/$itemid/images/create"(controller:"imageSet", action:"create") 
+		"/admin/$type/$itemid/images/$id/delete"(controller:"imageSet", action:"delete")
+		"/admin/$type/$itemid/images/$id/index"(controller:"imageSet", action:"index")
+		"/admin/$type/$itemid/images/$id/edit"(controller:"imageSet", action:"edit")
+		"/admin/$type/$itemid/images/$id/update"(controller:"imageSet", action:"update")
+		"/admin/$type/$itemid/images/save"(controller:"imageSet", action:"save")
+		"/admin/$type/$itemid/images/list"(controller:"imageSet", action:"list") 
+		"/admin/$type/$itemid/images/$id?/$action"(controller:"imageSet")
 	}
 }

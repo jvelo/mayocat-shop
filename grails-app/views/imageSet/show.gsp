@@ -30,12 +30,7 @@
         <li>
           <a href="">
             <img class="thumbnail"
-                <g:if test="${params.productid != null}">
-                 src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id]])}"
-                </g:if>
-                <g:else>
-                 src="${createLink(url: [controller:'imageSet', action:'view', params: [pageid: params.pageid, id: imageSetInstance.id]])}"
-                </g:else>
+                 src="${createLink(url: [controller:'imageSet', action:'view', params: [itemid: params.itemid, id: imageSetInstance.id, type:params.type]])}"
             />
           </a>
         </li>
@@ -56,12 +51,7 @@
           <div class="thumbnail">
             <img class="thumb"
                  style="max-width:${thumbnailSizes.get(size)?.width}px; max-height:${thumbnailSizes.get(size)?.height}px" 
-                <g:if test="${params.productid != null}">
-                 src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: params.productid, id: imageSetInstance.id, hint:size]])}"
-                </g:if>
-                <g:else>
-                 src="${createLink(url: [controller:'imageSet', action:'view', params: [pageid: params.pageid, id: imageSetInstance.id, hint:size]])}"
-                </g:else>
+                 src="${createLink(url: [controller:'imageSet', action:'view', params: [itemid: params.itemid, type:params.type, id: imageSetInstance.id, hint:size]])}"
                  />
               <h5>
                 <g:message code="imageSet.thumbnails.size" default="Size:" /> ${size}
@@ -69,14 +59,8 @@
               </h5>
               <p>
                 <a class="btn" rel="modal" 
-                    <g:if test="${params.productid != null}">
-                      data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
-                      data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [productid: params.productid, id: imageSetInstance.id, size:size]])}"
-                    </g:if>
-                    <g:else>
-                      data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [pageid: params.pageid, id: imageSetInstance.id, size:size]])}"
-                      data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [pageid: params.pageid, id: imageSetInstance.id, size:size]])}"
-                    </g:else>
+                      data-edit-uri="${createLink(url: [controller:'imageSet', action:'editThumbnail', params: [itemid: params.itemid, type:params.type, id: imageSetInstance.id, size:size]])}"
+                      data-save-uri="${createLink(url: [controller:'imageSet', action:'saveThumbnail', params: [itemid: params.itemid, type:params.type, id: imageSetInstance.id, size:size]])}"
                       data-size-hint="${size}" 
                       data-size-width="${thumbnailSizes.get(size).width}"
                       data-size-height="${thumbnailSizes.get(size).height}">
@@ -108,16 +92,10 @@
       <g:form class="form-horizontal">
         <fieldset class="buttons form-actions">
           <g:hiddenField name="id" value="${imageSetInstance?.id}" />
-          <g:if test="${params.productid != null}">
-            <g:hiddenField name="productid" value="${params.productid}" />
-            <g:link class="back btn" action="show" controller="product" params="[id: product?.id]"><g:message code="default.back" /></g:link></li>
-            <g:link class="edit btn btn-primary" action="edit" id="${imageSetInstance?.id}" params="[productid: params.productid]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-          </g:if>
-          <g:else>
-            <g:hiddenField name="pageid" value="${params.pageid}" />
-            <g:link class="back btn" action="show" controller="page" params="[id: page?.id]"><g:message code="default.back" /></g:link></li>
-            <g:link class="edit btn btn-primary" action="edit" id="${imageSetInstance?.id}" params="[pageid: params.pageid]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-          </g:else>
+            <g:hiddenField name="itemid" value="${params.itemid}" />
+            <g:hiddenField name="type" value="${params.type}" />
+            <g:link class="back btn" action="show" controller="${params.type}" params="[id: params.itemid]"><g:message code="default.back" /></g:link></li>
+            <g:link class="edit btn btn-primary" action="edit" id="${imageSetInstance?.id}" params="[itemid: params.itemid, type:params.type]"><g:message code="default.button.edit.label" default="Edit" /></g:link>
           <g:actionSubmit class="delete btn btn-danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
         </fieldset>
       </g:form>

@@ -22,12 +22,7 @@
         <form method="post"
               class="form-horizontal"
               enctype="multipart/form-data"
-            <g:if test="${params.productid != null}">
-              action="${createLink(url:[controller:"imageSet", action:"save", params:[productid: params.productid]])}"
-            </g:if>
-            <g:else>
-              action="${createLink(url:[controller:"imageSet", action:"save", params:[pageid: params.pageid]])}"
-            </g:else>
+              action="${createLink(url:[controller:"imageSet", action:"save", params:[itemid: params.itemid, type:params.type]])}"
           >
         <fieldset>
           <div class="control-group">
@@ -40,6 +35,8 @@
             </div>
           </div>
           <g:render template="form"/>
+          <g:hiddenField name="itemid" value="${params.itemid}" />
+          <g:hiddenField name="type" value="${params.type}" />
           <g:if test="${params.productid != null}">
             <g:hiddenField name="product.id" value="${params.productid}" />
           </g:if>
@@ -49,10 +46,10 @@
           <div class="buttons form-actions">
             <g:submitButton name="create" class="save btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />
             <g:if test="${params.productid != null}">
-              <g:link class="back btn" action="show" controller="product" params="[id:params.productid]"><g:message code="default.cancel" /></g:link>
+              <g:link class="back btn" action="show" controller="product" params="[id:params.itemid]"><g:message code="default.cancel" /></g:link>
             </g:if>
             <g:else>
-              <g:link class="back btn" action="show" controller="page" params="[id:params.pageid]"><g:message code="default.cancel" /></g:link>
+              <g:link class="back btn" action="show" controller="page" params="[id:params.itemid]"><g:message code="default.cancel" /></g:link>
             </g:else>
           </div>
         </fieldset>

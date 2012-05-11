@@ -41,7 +41,7 @@
        </fieldset>
      </g:form>
 
-      %{-- <g:include controller="imageSet" action="list" params="[pageid:pageInstance.id]" /> --}%
+      %{--<g:include controller="imageSet" action="list" params="[itemid:pageInstance.id, type:'page']" />--}%
 
    </div>
 	</body>

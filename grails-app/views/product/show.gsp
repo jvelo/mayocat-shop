@@ -65,7 +65,7 @@
 
       <g:include controller="product" action="editCategories" params="[productid:productInstance.id]" />
 
-      <g:include controller="imageSet" action="list" params="[productid:productInstance.id]" />
+      <g:include controller="imageSet" action="list" params="[itemid:productInstance.id, type:'product']" />
  
     </div>
 	</body>

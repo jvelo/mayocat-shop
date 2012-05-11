@@ -20,18 +20,21 @@
           </g:eachError>
         </ul>
         </g:hasErrors>
-        <g:form method="post" >
+        <form method="post"
+                action="${createLink(url:[controller:"imageSet", action:"update", params:[itemid: params.itemid, type:params.type, id:imageSetInstance.id]])}">
           <g:hiddenField name="id" value="${imageSetInstance?.id}" />
           <g:hiddenField name="version" value="${imageSetInstance?.version}" />
+          <g:hiddenField name="itemid" value="${params.itemid}" />
+          <g:hiddenField name="type" value="${params.type}" />
           <fieldset class="form">
             <g:render template="form"/>
           </fieldset>
           <fieldset class="buttons actions">
-            <g:link class="btn list" action="list"><g:message code="default.cancel" /></g:link>
-            <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
-            <g:actionSubmit class="delete btn danger" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" formnovalidate="" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+            <g:link class="btn list" action="list" params="[itemid: params.itemid, type:params.type]"><g:message code="default.cancel" /></g:link>
+            <g:actionSubmit class="save btn primary" action="update" controller="imageSet" params="[itemid: params.itemid, type:params.type]" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+            <g:actionSubmit class="delete btn danger" action="delete" controller="imageSet" params="[itemid: params.itemid, type:params.type]" value="${message(code: 'default.button.delete.label', default: 'Delete')}" formnovalidate="" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
           </fieldset>
-        </g:form>
+        </form>
       </div>
     </div>
 	</body>

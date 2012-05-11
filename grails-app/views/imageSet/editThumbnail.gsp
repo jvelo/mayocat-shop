@@ -13,12 +13,12 @@
            data-target-y2="${target.y2}"
          </g:if>
          style="max-width:300px;max-height:300px;"
-         src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: imageSet?.product?.id, id: imageSet?.id]])}" />
+         src="${createLink(url: [controller:'imageSet', action:'view', params: [itemid: params.itemid, type:params.type, id: imageSet?.id]])}" />
     <div style="margin-top:10px;"><strong><g:message code="imageSet.thumbnailEditor.preview" default="Preview:" /></strong></div>
     <div class="preview-container"
          style="height:${dimensions.height}px;width:${dimensions.width}px;overflow:hidden;margin-top:3px;display:inline-block">
       <img id="preview" 
-           src="${createLink(url: [controller:'imageSet', action:'view', params: [productid: imageSet?.product?.id, id: imageSet?.id]])}"
+           src="${createLink(url: [controller:'imageSet', action:'view', params: [itemid: params.itemid, type:params.type, id: imageSet?.id]])}"
            style="height:${dimensions.height}px;width:${dimensions.width}px;">
     </div>
   </g:else>
