@@ -20,8 +20,8 @@ modules = {
     }
 
     styles {
-        resource url:'less/styles.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'
-        resource url:'less/products.less', attrs:[rel: "stylesheet/less", type:'css'], bundle:'bundle_styles'
+        resource url:'css/styles.css'
+        resource url:'css/products.css'
     }
 
     thumbnailEditor {
