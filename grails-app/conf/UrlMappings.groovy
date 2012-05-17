@@ -18,6 +18,7 @@ class UrlMappings {
     // Home
     "/"(controller:"home", action:"expose")
     // Product
+    "/product/" (controller:"product", action:"all")
     "/product/$byname"(controller:"product", action:"expose")
     "/product/$byname/images/$imageid/$size?/$filename"(controller:"imageSet", action:"expose")
     // Category
