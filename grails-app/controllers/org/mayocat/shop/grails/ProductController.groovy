@@ -5,6 +5,9 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.mayocat.shop.viewmodel.builder.ProductViewModelBuilder
 
 import grails.plugins.springsecurity.Secured
+import grails.converters.JSON
+import org.mayocat.shop.viewmodel.builder.ProductViewModelBuilder
+import org.mayocat.shop.grails.Product
 
 @Secured(['ROLE_ADMIN'])
 class ProductController extends AbstractExposedController {
@@ -40,6 +43,21 @@ class ProductController extends AbstractExposedController {
       }
       def builder = new ProductViewModelBuilder()
       render(view: "index.html", model: [template: "product", product:builder.build(product)])
+    }
+
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def all() {
+      // All products
+      def productsViewModel = [:]
+      def products = Product.findAll(sort:"dateCreated", order:"desc", max:params.number ?: 20, offset: params.offset ?: 0) {
+        exposed == true  
+        // TODO -> check if has at least one image ?
+      }
+      def productBuilder = new ProductViewModelBuilder()
+      for (product in products) {
+        productsViewModel[product.byname] = productBuilder.build(product)
+      }
+      render productsViewModel as JSON  
     }
 
     def beforeSave = {

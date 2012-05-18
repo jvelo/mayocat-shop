@@ -1,9 +1,11 @@
 import org.mayocat.shop.viewmodel.builder.CartViewModelBuilder
 import org.mayocat.shop.viewmodel.builder.CategoryViewModelBuilder
 import org.mayocat.shop.viewmodel.builder.PageViewModelBuilder
+import org.mayocat.shop.viewmodel.builder.ProductViewModelBuilder
 import org.mayocat.shop.grails.Category
 import org.mayocat.shop.grails.Page
 import org.mayocat.shop.grails.Shop
+import org.mayocat.shop.grails.Product
 
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
@@ -46,6 +48,15 @@ class ExpositionFilters {
         }
         viewModel["categories"] = categoriesViewModel
 
+        // All products
+        def productsViewModel = [:]
+        def products = Product.list(sort:"dateCreated", order:"desc", max:24)
+        def productBuilder = new ProductViewModelBuilder()
+        for (product in products) {
+          productsViewModel[product.byname] = productBuilder.build(product)
+        }
+        viewModel["products"] = productsViewModel
+
         // Pages
         def pagesViewModel = [:]
         def pages = Page.findAll();
@@ -58,6 +69,7 @@ class ExpositionFilters {
         // Links
         viewModel["links"] = [
           'home' : taglib.createLink(controller:'home', action:'expose')
+         ,'all_products' : taglib.createLink(controller:'product', action:'all')
          ,'cart' : taglib.createLink(controller:'cart', action:'expose')
          ,'add_to_cart' : taglib.createLink(controller:'cart', action:'add')
          ,'remove_from_cart' : taglib.createLink(controller:'cart', action:'remove')

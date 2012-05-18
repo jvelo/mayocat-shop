@@ -10,4 +10,3 @@ Backend :
 ---------
 
 - Add modification header when serving resources via ResourceController
-- Switch money representations to BigDecimal
