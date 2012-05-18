@@ -1,52 +1,45 @@
-@chocolate: #2E1901;
-@blue: #2C9AB2;
-@grey: #BFBFBF;
-@green: #A3D831;
-
 body {
-  background-color: lighten(@blue, 5%);
-  padding-top:60px;
+  background-color: #31acc6;
+  padding-top: 60px;
 }
-
 .clearfix:after {
   clear: both;
 }
-
 .loading {
-  background:url("../images/ajax-loader.gif") no-repeat center center;
+  background: url("../images/ajax-loader.gif") no-repeat center center;
 }
-
 .hidden {
-  display:none;
+  display: none;
 }
-
 .modal-body.loading {
-  min-height:50px;
+  min-height: 50px;
 }
-
 img {
-  max-width:none !important;
+  max-width: none !important;
 }
-
 .centered {
-  text-align:center;
+  text-align: center;
 }
-
 form div.disabled * {
-  color:grey;
-  cursor:not-allowed;
+  color: grey;
+  cursor: not-allowed;
 }
-
-h1, h2, h3, h4, h5, h6 {
-  color:@chocolate;
-
-  small {
-    a {
-      color:darken(@grey, 20%);
-    }
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #2e1901;
 }
-
+h1 small a,
+h2 small a,
+h3 small a,
+h4 small a,
+h5 small a,
+h6 small a {
+  color: #8c8c8c;
+}
 .container .user {
   color: #FFFFFF;
   display: block;
@@ -57,11 +50,9 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: -20px;
   padding: 13px 20px 12px;
 }
-
 #admin-container {
   margin-bottom: 50px;
 }
-
 .pagination span.currentStep {
   border-right: 1px solid rgba(0, 0, 0, 0.15);
   float: left;
@@ -69,37 +60,25 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 14px;
   text-decoration: none;
 }
-
 #preview-modal.modal {
-  top:250px;
+  top: 250px;
 }
-
 @media screen and (min-height: 700px) {
   .modal {
-    background-color:red;
-    max-height:700px !important;
+    background-color: red;
+    max-height: 700px !important;
   }
 }
-
-#list-imageSet {
-  ul.thumbnails {
-    img {
-      width:100%;
-    }
-  }
+#list-imageSet ul.thumbnails img {
+  width: 100%;
 }
-
 ul.nav-list {
-  margin-bottom:25px;
+  margin-bottom: 25px;
 }
-
 div.page-panel {
-  margin-top:25px;
+  margin-top: 25px;
 }
-
 div.alert button.btn,
 div.alert input.btn[type="submit"] {
-  margin-top:15px;
+  margin-top: 15px;
 }
-
-@import "less/products.less"
