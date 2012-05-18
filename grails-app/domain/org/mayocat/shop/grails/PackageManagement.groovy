@@ -7,6 +7,7 @@ class PackageManagement {
     Boolean width
     Boolean height
 
+    List<ShippingPriceRule> priceRules
     Shop shop
 
     static constraints = {
@@ -16,9 +17,6 @@ class PackageManagement {
       height nullable: true
     }
 
-/*
-    def getDimensions() {
-      return ["weight", "length", "width", "height"]  
-    }
-    */
+    static hasMany = [priceRules: ShippingPriceRule]
+
 }

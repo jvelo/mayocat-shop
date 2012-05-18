@@ -59,6 +59,8 @@
   %{-- Snail mail options --}%
    <div class="snailMailOptions" data-bind="slideVisible: sentBySnailMail" style="padding-left:80px">
 
+    <h4><g:message code="shop.products.package.dimensionsToManage" default="Dimensions to manage" /></h4>
+
     %{-- Weight --}%
     <div class="control-group ${hasErrors(bean: shopInstance.packageManagement, field: 'weight', 'error')} "
          data-bind="css: { disabled: !sentBySnailMail() }">
@@ -126,6 +128,48 @@
       </label>
       </div>
     </div>
+
+    %{-- Shipping price rules --}%
+    <h4><g:message code="shop.products.package.shippingPriceRules" default="Shipping price rules" /></h4>
+    %{-- existing rules --}%
+    <g:set var="counter" value="${0}" />
+    <g:each in="${shopInstance.packageManagement.priceRules}" var="rule">
+    <div class="control-group"
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="rule" class="control-label">
+        <g:message code="shop.products.package.priceRule" default="Rule" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.height">
+        <input type="string" name="packageManagement.priceRules[${counter}].dimension" 
+                             value="${rule.dimension}" />
+        <input type="number" name="packageManagement.priceRules[${counter}].threshold"
+                             value="${rule.threshold}" />
+        <input type="number" name="packageManagement.priceRules[${counter}].price"
+                             value="${rule.price}" />
+      </label>
+      </div>
+    </div>
+    <g:set var="counter" value="${counter + 1}" />
+    </g:each>
+    %{-- new rule --}%
+    <div class="control-group"
+         data-bind="css: { disabled: !sentBySnailMail() }">
+      <label for="rule" class="control-label">
+        <g:message code="shop.products.package.priceRule" default="Rule" />
+      </label>
+      <div class="controls">
+      <label for="packageManagement.height">
+        <input type="string" name="packageManagement.priceRules[${counter}].dimension" 
+                             value="" placeholder="dimension" />
+        <input type="number" name="packageManagement.priceRules[${counter}].threshold"
+                             value="" placeholder="threshold" />
+        <input type="number" name="packageManagement.priceRules[${counter}].price"
+                             value="" placeholder="Price"/>
+      </label>
+      </div>
+    </div>
+
   </div>
 
 </fieldset>
