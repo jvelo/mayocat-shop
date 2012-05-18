@@ -141,12 +141,16 @@
       </label>
       <div class="controls">
       <label for="packageManagement.height">
-        <input type="string" name="packageManagement.priceRules[${counter}].dimension" 
-                             value="${rule.dimension}" />
+        <select name="packageManagement.priceRules[${counter}].dimension" 
+                 placeholder="dimension" class="span1">
+          <option value="">---</option>
+          <option value="weight" <g:if test="${rule.dimension == 'weight'}">selected</g:if>><g:message code="shop.products.package.priceRule.weight" default="Weight" /></option>
+          <option value="price" <g:if test="${rule.dimension == 'price'}">selected</g:if>><g:message code="shop.products.package.priceRule.price" default="Price" /></option>
+        </select>
         <input type="number" name="packageManagement.priceRules[${counter}].threshold"
-                             value="${rule.threshold}" />
+                             value="${rule.threshold}" class="span1" />
         <input type="number" name="packageManagement.priceRules[${counter}].price"
-                             value="${rule.price}" />
+                             value="${rule.price}" class="span1" />
       </label>
       </div>
     </div>
@@ -160,12 +164,16 @@
       </label>
       <div class="controls">
       <label for="packageManagement.height">
-        <input type="string" name="packageManagement.priceRules[${counter}].dimension" 
-                             value="" placeholder="dimension" />
+        <select name="packageManagement.priceRules[${counter}].dimension" 
+                 placeholder="dimension" class="span1">
+          <option value="">---</option>
+          <option value="weight"><g:message code="shop.products.package.priceRule.weight" default="Weight" /></option>
+          <option value="price"><g:message code="shop.products.package.priceRule.price" default="Price" /></option>
+        </select>
         <input type="number" name="packageManagement.priceRules[${counter}].threshold"
-                             value="" placeholder="threshold" />
+                             value="" placeholder="threshold" class="span1" />
         <input type="number" name="packageManagement.priceRules[${counter}].price"
-                             value="" placeholder="Price"/>
+                             value="" placeholder="Price" class="span1" />
       </label>
       </div>
     </div>
@@ -216,9 +224,6 @@ $(document).ready(function(){
     };
 
     ko.applyBindings(viewModel);
-    viewModel.sentBySnailMail.subscribe(function(newValue) {
-      console.log("Sent by snail mail ", newValue);
-    });
   })();
 
 });

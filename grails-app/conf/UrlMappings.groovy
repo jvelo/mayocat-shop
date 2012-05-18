@@ -46,6 +46,8 @@ class UrlMappings {
     // Admin -> Preferences
     "/admin/preferences/"(controller:"shop", action:"edit")
     "/admin/preferences/edit"(controller:"shop", action:"edit")
+    "/admin/preferences/update"(controller:"shop", action:"update")
+    "/admin/preferences/index"(controller:"shop", action:"index")
     "/shop/"(controller:"shop") // FIXME -> keep everything "shop" under admin/preferences
 
     // Admin -> product

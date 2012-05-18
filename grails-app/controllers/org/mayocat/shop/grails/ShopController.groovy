@@ -65,6 +65,21 @@ class ShopController {
             }
         }
 
+        // Remove empty price rules
+        def paramsToRemove = []
+        for (param in params.keySet()) {
+          log.error(param)
+          if (param ==~ /packageManagement.priceRules\[.\]\.dimension/ && params[param] == '') {
+            def index = (param =~ /packageManagement.priceRules\[(.)\]\.dimension/)[0][1]
+            paramsToRemove.add(index)
+          }
+        }
+        for (param in paramsToRemove) {
+          params.remove("packageManagement.priceRules[" + param + "].dimension")
+          params.remove("packageManagement.priceRules[" + param + "].threshold")
+          params.remove("packageManagement.priceRules[" + param + "].price")
+        }
+
         bindData(shopInstance, params)
 
         if (!shopInstance.save(flush: true)) {
@@ -72,7 +87,7 @@ class ShopController {
             return
         }
 
-     	  flash.message = message( code: 'admin.preferences.updated', default: 'Shop preferences updated')
+     	  flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
         redirect(action: "edit", id: shopInstance.id)
     }
 
