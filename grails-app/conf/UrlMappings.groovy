@@ -10,6 +10,7 @@ class UrlMappings {
     "/category/resources/**"(controller:"resource", action:"serve")
     "/product/resources/**"(controller:"resource", action:"serve")
     "/cart/resources/**"(controller:"resource", action:"serve")
+    "/checkout/resources/**"(controller:"resource", action:"serve")
     "/page/resources/**"(controller:"resource", action:"serve")
 
     // Public area
@@ -30,6 +31,10 @@ class UrlMappings {
     "/cart/"(controller:"cart", action:"expose")
     "/cart/$action"(controller:"cart")
 
+    // Checkout
+    "/checkout/"(controller:"checkout") {
+      action = [GET:"expose", POST:"exposeDoCheckout"]
+    }
 
     // Admin area
     // ----------

@@ -4,7 +4,7 @@ class ShopPreferencesFilters {
 
   def filters = {
 
-    injectShopPreferencesModelFilter(controller:'*', actionExclude:'expose', find:true) {
+    injectShopPreferencesModelFilter(controller:'*', actionExclude:'expose*', find:true) {
 
       after = { viewModel ->
         // Enhancing returned viewModel with shop preferences
