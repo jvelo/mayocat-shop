@@ -4,3 +4,4 @@ target
 .project
 stacktrace.log
 .gradle
+.DS_Store
