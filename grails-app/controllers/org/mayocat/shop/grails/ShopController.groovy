@@ -68,7 +68,6 @@ class ShopController {
         // Remove empty price rules
         def paramsToRemove = []
         for (param in params.keySet()) {
-          log.error(param)
           if (param ==~ /packageManagement.priceRules\[.\]\.dimension/ && params[param] == '') {
             def index = (param =~ /packageManagement.priceRules\[(.)\]\.dimension/)[0][1]
             paramsToRemove.add(index)
