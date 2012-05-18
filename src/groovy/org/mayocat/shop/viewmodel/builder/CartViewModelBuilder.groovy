@@ -16,7 +16,12 @@ class CartViewModelBuilder {
       items.add( this.buildItem(p, cart.get(item)) )
       total = total.plus(new BigDecimal(p.price))
     }
-    return new CartViewModel(total: total, items:items)
+    
+    return new CartViewModel(
+      total: total, 
+      displayTotal: String.format("%10.2f", total),
+      items:items, 
+    )
   }
 
   def buildItem(product, quantity) {
