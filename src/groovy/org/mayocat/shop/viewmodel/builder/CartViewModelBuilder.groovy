@@ -8,7 +8,7 @@ class CartViewModelBuilder {
 
   def productViewModelBuilder = new ProductViewModelBuilder()
 
-  def build(cart) {
+  def build(cart, shipping) {
     def items = []
     def total = new BigDecimal(0)
     for (item in cart.keySet()) {
@@ -21,6 +21,8 @@ class CartViewModelBuilder {
       total: total, 
       displayTotal: String.format("%10.2f", total),
       items:items, 
+      shipping: shipping,
+      displayShipping: shipping == null ? null : String.format("%10.2f", shipping)
     )
   }
 

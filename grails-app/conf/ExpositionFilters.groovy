@@ -12,6 +12,9 @@ import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
 class ExpositionFilters {
 
+  // Injected service
+  def shippingPriceCalculatorService
+
   def filters = {
 
     expositionFilter(controller:'*', controllerExclude:'imageSet', action:'expose*') {
@@ -21,7 +24,8 @@ class ExpositionFilters {
         //
 
         // The shop instance
-        viewModel["shop"] = Shop.list()[0] ?: new Shop(packageManagement: new PackageManagement())
+        def shop = Shop.list()[0] ?: new Shop(packageManagement: new PackageManagement())
+        viewModel["shop"] = shop
 
         // Base (prefix) for storefront assets. FIXME Find a way to get rid of this
         viewModel["assets_base"] = "/storefronts/" + viewModel["shop"].storefront
@@ -38,7 +42,8 @@ class ExpositionFilters {
         if (session["cart"] == null) {
           session["cart"] = [:]
         }
-        viewModel["cart"] = new CartViewModelBuilder().build(session["cart"])
+        def shipping = shippingPriceCalculatorService.calculate(shop, session["cart"])
+        viewModel["cart"] = new CartViewModelBuilder().build(session["cart"], shipping)
 
         // Categories
         def categoriesViewModel = [:]
