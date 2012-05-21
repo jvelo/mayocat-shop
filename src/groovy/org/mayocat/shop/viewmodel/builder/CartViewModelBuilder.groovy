@@ -16,6 +16,9 @@ class CartViewModelBuilder {
       items.add( this.buildItem(p, cart.get(item)) )
       total = total.plus(new BigDecimal(p.price))
     }
+    if (shipping && shipping > 0) {
+      total += shipping
+    }
     
     return new CartViewModel(
       total: total, 

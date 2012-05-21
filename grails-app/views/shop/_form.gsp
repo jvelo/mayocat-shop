@@ -148,9 +148,9 @@
           <option value="price" <g:if test="${rule.dimension == 'price'}">selected</g:if>><g:message code="shop.products.package.priceRule.price" default="Price" /></option>
         </select>
         <input type="number" name="packageManagement.priceRules[${counter}].threshold"
-                             value="${rule.threshold}" class="span1" />
+                             step="1" value="${rule.threshold}" class="span1" />
         <input type="number" name="packageManagement.priceRules[${counter}].price"
-                             value="${rule.price}" class="span1" />
+                             step="0.01" value="${rule.price}" class="span1" />
       </label>
       </div>
     </div>
@@ -171,9 +171,9 @@
           <option value="price"><g:message code="shop.products.package.priceRule.price" default="Price" /></option>
         </select>
         <input type="number" name="packageManagement.priceRules[${counter}].threshold"
-                             value="" placeholder="threshold" class="span1" />
+                             step="1" value="" placeholder="threshold" class="span1" />
         <input type="number" name="packageManagement.priceRules[${counter}].price"
-                             value="" placeholder="Price" class="span1" />
+                             step="0.01" value="" placeholder="Price" class="span1" />
       </label>
       </div>
     </div>
