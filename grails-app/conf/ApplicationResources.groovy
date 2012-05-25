@@ -22,6 +22,7 @@ modules = {
     styles {
         resource url:'css/styles.css'
         resource url:'css/products.css'
+        resource url:'css/orders.css'
     }
 
     thumbnailEditor {
@@ -32,5 +33,9 @@ modules = {
 
     productEditor {
       resource url:'js/product.js'
+    }
+
+    timeago {
+      resource url:'lib/timeago/jquery.timeago.js'
     }
 }

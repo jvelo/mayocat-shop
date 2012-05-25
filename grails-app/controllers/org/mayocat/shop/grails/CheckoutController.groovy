@@ -2,6 +2,9 @@ package org.mayocat.shop.grails
 
 class CheckoutController extends AbstractExposedController {
 
+  // Injected
+  def shippingPriceCalculatorService
+
   /**
    * on GET
    */
@@ -13,10 +16,38 @@ class CheckoutController extends AbstractExposedController {
    * on POST form submit -> try to do an actual checkout
    */
   def exposeDoCheckout() {
+    def shop = Shop.list()[0]
     def order = new Order(params)
 
     if (order.validate()) {
-      render(view: "index.html", model:[template:"checkout"])
+      if (shop.sentBySnailMail) {
+        // 1. check if "shop to billing address is checked"
+        // 2. copy address or add new address (+validation)
+
+      }
+      order.status = OrderStatus.WAITING_FOR_PAYMENT
+      def cart = session["cart"]
+      def shipping = shippingPriceCalculatorService.calculate(shop, cart)
+      def totalProducts = 0
+      for (p in cart.keySet()) {
+        def product = Product.findByByname(p)
+        def quantity = cart[p]
+        def item = new OrderItem(
+          unitPrice: product.price,
+          quantity: quantity,
+          title: product.title,
+          description: product.description,
+          product: product
+        )
+        totalProducts += product.price
+        log.error("ITEM : " + item.quantity)
+        order.addToItems(item)
+      }
+      order.totalProducts = totalProducts
+      order.shipping = shipping
+      order.grandTotal = totalProducts + (shipping ?: 0)
+      order.save(failOnError: true, flush:true)
+      render(view: "index.html", model:[template:"payment"])
     }
     else {
       render(view: "index.html", model:[template:"checkout", order: order, errors: order.errors.allErrors])

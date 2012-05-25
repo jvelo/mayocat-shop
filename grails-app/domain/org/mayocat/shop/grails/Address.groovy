@@ -21,4 +21,14 @@ class Address {
       extraInformation type:'text'
     }
 
+    static constraints = {
+      company nullable: true
+      address2 nullable: true
+      countryCode nullable: true
+      phone nullable: true
+      phone2 nullable: true
+    }
+
+    //static belongsTo = [order:Order]
+
 }

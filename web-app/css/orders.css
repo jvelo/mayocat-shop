@@ -1,0 +1,15 @@
+#list-order td span.show:before {
+  content: '\270E';
+  content: '\27af';
+  font-size:2rem;
+}
+#list-order td a:hover {
+  text-decoration:none;
+}
+#list-order td span.total {
+  font-size:2rem;
+}
+#list-order td span.total span.currency:after {
+  /* For now hardcode the currency to euro. Later on support will be added for more currencies, and for conversions. */
+  content: '\20AC'
+}
