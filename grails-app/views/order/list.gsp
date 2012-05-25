@@ -3,7 +3,7 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="noColumn">
+		<meta name="layout" content="noColumns">
 		<g:set var="entityName" value="${message(code: 'order.label', default: 'Order')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
     <r:require modules="timeago"/>
