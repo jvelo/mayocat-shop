@@ -1,24 +1,24 @@
 #list-order td span.show:before {
   content: '\270E';
   content: '\27af';
-  font-size:2rem;
+  font-size: 2rem;
 }
 #list-order td a:hover {
-  text-decoration:none;
+  text-decoration: none;
 }
 #list-order td span.total {
-  font-size:2rem;
+  font-size: 2rem;
 }
 #list-order td span.total span.currency:after {
   /* For now hardcode the currency to euro. Later on support will be added for more currencies, and for conversions. */
   content: '\20AC'
 }
 
-#list-order td a.mail:after {
+#list-order td a.mail:after,
+#show-order div.well a.mail:after {
   content: '\2709';
   font-size: 2rem;
   padding-left: 5px;
-
 }
 
 #list-order time.timeago {
@@ -26,15 +26,50 @@
   color: lightGrey;
 }
 
-#show-order tr.productsTotal {
-  color:grey;
+#show-order h3 {
+  margin-bottom: 5px;
 }
 
 #show-order tr.grandTotal {
   font-weight: bold;
-  border-top: 1px double black;
+  border-top: 2px solid black;
+}
+
+#show-order tr.productsTotal {
+  border-top: 3px double black;
 }
 
 #show-order tr.grandTotal td.price {
   font-size: 1.2rem;
+}
+
+#show-order div.addresses .header {
+  color: grey;
+  padding-bottom: 10px;
+  border-bottom: 1px solid grey;
+  margin-bottom: 10px;
+}
+
+#show-order div.addresses .address {
+  width: 49%;
+}
+
+#show-order div.addresses .header:before {
+  content: "\15dd";
+}
+
+.adr a.tel:before {
+  content: '\260E';
+  font-size: 1.2rem;
+  padding-right: 0.1rem;
+  text-decoration: none;
+  position: relative;
+  top: -3px;
+}
+.adr a.tel:hover {
+  text-decoration:none !important;
+}
+
+.adr a.tel {
+  display: block;
 }

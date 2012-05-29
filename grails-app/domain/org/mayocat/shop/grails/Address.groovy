@@ -28,7 +28,4 @@ class Address {
       phone nullable: true
       phone2 nullable: true
     }
-
-    //static belongsTo = [order:Order]
-
 }
