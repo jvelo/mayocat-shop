@@ -29,5 +29,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 		<property name="encoding">
 			<value>utf-8</value>
 		</property>
+		<property name="forceEncoding">
+			<value>true</value>
+		</property>
 	</bean>
 </beans>
