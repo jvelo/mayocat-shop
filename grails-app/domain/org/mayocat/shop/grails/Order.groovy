@@ -39,6 +39,8 @@ class Order {
       // (which actually is not even made possible from the UI)
       deliveryAddress cascade:"save-update"
       billingAddress cascade:"save-update"
+
+      sort dateCreated: "desc"
     }
 
     def beforeValidate() {
@@ -62,6 +64,5 @@ class Order {
     def beforeUpdate() {
       dateUpdated = new Date()
     }
-
 
 }
