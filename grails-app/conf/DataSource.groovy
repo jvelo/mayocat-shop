@@ -29,7 +29,7 @@ environments {
         driverClassName = 'com.mysql.jdbc.Driver'
         username = 'root'
         password = ''
-        url = 'jdbc:mysql://127.0.0.1/mayocat?zeroDateTimeBehavior=convertToNull'
+        url = 'jdbc:mysql://127.0.0.1/mayocat?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&useUnicode=true&autoReconnect=true'
         dbCreate = 'update'
       }
     }
