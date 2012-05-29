@@ -1,5 +1,7 @@
 package org.mayocat.shop.grails
 
+import java.util.Currency
+
 class Order {
 
     Address deliveryAddress
@@ -15,6 +17,8 @@ class Order {
     BigDecimal totalProducts
     BigDecimal shipping
     BigDecimal grandTotal
+    
+    Currency currency
 
     static hasMany = [items:OrderItem]
 
@@ -24,6 +28,7 @@ class Order {
       deliveryAddress nullable: true
       status nullable: true
       shipping nullable: true
+      currency nullable: true
     }
 
     static mapping = {

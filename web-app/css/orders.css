@@ -13,3 +13,28 @@
   /* For now hardcode the currency to euro. Later on support will be added for more currencies, and for conversions. */
   content: '\20AC'
 }
+
+#list-order td a.mail:after {
+  content: '\2709';
+  font-size: 2rem;
+  padding-left: 5px;
+
+}
+
+#list-order time.timeago {
+  display: block;
+  color: lightGrey;
+}
+
+#show-order tr.productsTotal {
+  color:grey;
+}
+
+#show-order tr.grandTotal {
+  font-weight: bold;
+  border-top: 1px double black;
+}
+
+#show-order tr.grandTotal td.price {
+  font-size: 1.2rem;
+}

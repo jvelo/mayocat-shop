@@ -56,7 +56,7 @@
                  <span class="currency"></span>
                 </span>
               </td>
-              <td><a href="mailto:${fieldValue(bean: orderInstance, field: "customerEmail")}">${fieldValue(bean: orderInstance, field: "customerEmail")}</a></td>
+              <td>${fieldValue(bean: orderInstance, field: "customerEmail")}<a class="mail" href="mailto:${fieldValue(bean: orderInstance, field: "customerEmail")}"></a></td>
             
               <td><g:address address="${orderInstance.billingAddress}" /></td>
 
@@ -71,9 +71,15 @@
             
               <td>${fieldValue(bean: orderInstance, field: "status")}</td>
             
-              <td><g:time class="timeago" datetime="${orderInstance.dateCreated}"></g:time></td>
+              <td>
+                <g:formatDate format="yyyy/MM/dd" date="${orderInstance.dateCreated}"/>
+                <g:time class="timeago" datetime="${orderInstance.dateCreated}"></g:time>
+              </td>
 
-              <td><g:time class="timeago" datetime="${orderInstance.dateUpdated}"></g:time></td>
+              <td>
+                <g:formatDate format="yyyy/MM/dd" date="${orderInstance.dateUpdated}"/>
+                <g:time class="timeago" datetime="${orderInstance.dateUpdated}"></g:time>
+              </td>
             
             </tr>
           </g:each>

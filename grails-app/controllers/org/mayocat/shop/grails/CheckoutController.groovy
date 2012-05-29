@@ -1,5 +1,7 @@
 package org.mayocat.shop.grails
 
+import java.util.Currency
+
 class CheckoutController extends AbstractExposedController {
 
   // Injected
@@ -46,6 +48,9 @@ class CheckoutController extends AbstractExposedController {
       order.totalProducts = totalProducts
       order.shipping = shipping
       order.grandTotal = totalProducts + (shipping ?: 0)
+      // TODO Right now the currency is hard-wired to EUR. Later on available currencies
+      // will be configurable in the administration.
+      order.currency = Currency.getInstance("EUR")
       order.save(failOnError: true, flush:true)
       render(view: "index.html", model:[template:"payment"])
     }
