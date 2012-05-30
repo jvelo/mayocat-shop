@@ -14,7 +14,7 @@
         <h2><g:message code="default.list.label" args="[entityName]" /></h2>
       </div>
       <g:if test="${flash.message}">
-      <div class="message" role="status">${flash.message}</div>
+      <div class="alert alert-info" role="status">${flash.message}</div>
       </g:if>
       <g:if test="${orderInstanceList.size() <= 0}">
         <div class="alert alert-block">
@@ -69,7 +69,7 @@
                 </g:else>
               </td>
 
-              <td>${fieldValue(bean: orderInstance, field: "status")}</td>
+              <td><g:orderStatus status="${orderInstance.status}" /></td>
 
               <td>
                 <g:formatDate format="yyyy/MM/dd" date="${orderInstance.dateCreated}"/>

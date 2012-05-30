@@ -1,5 +1,6 @@
 
 <%@ page import="org.mayocat.shop.grails.Order" %>
+<%@ page import="org.mayocat.shop.grails.OrderStatus" %>
 <!doctype html>
 <html>
   <head>
@@ -13,21 +14,26 @@
         <h1><g:message code="order.header" default="Order #" />${orderInstance.id}</h1>
       </div>
       <g:if test="${flash.message}">
-      <div class="message" role="status">${flash.message}</div>
+        <div class="alert alert-info" role="status">${flash.message}</div>
       </g:if>
 
       <h3>
         <g:message code="order.orderStatus" default="Status" />
       </h3>
 
-      <form>
+
+      <g:form method="post" class="form-horizontal">
         <div>
-          <select name="order.status">
-            <option value="WAITING_FOR_PAYMENT">Waiting for payment</option>
+          <g:hiddenField name="id" value="${orderInstance.id}" />
+          <g:hiddenField name="version" value="${orderInstance.version}" />
+          <select name="status">
+            <g:each var="option" in="${OrderStatus.values()}">
+              <option value="${option}" <g:if test="${orderInstance.status.equals(option)}">selected</g:if> ><g:orderStatus status="${option}"/></option>
+            </g:each>
           </select>
-          <input type="submit" class="button" value="Update" />
+          <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
         </div>
-      </form>
+      </g:form>
 
       <h3>
         <g:message code="order.orderDetails" default="Order details" />
