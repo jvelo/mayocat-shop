@@ -27,7 +27,7 @@ class CheckoutController extends AbstractExposedController {
         // 2. copy address or add new address (+validation)
 
       }
-      order.status = OrderStatus.WAITING_FOR_PAYMENT
+      order.status = OrderStatus.NONE
       def cart = session["cart"]
       def shipping = shippingPriceCalculatorService.calculate(shop, cart)
       def totalProducts = 0
@@ -42,7 +42,6 @@ class CheckoutController extends AbstractExposedController {
           product: product
         )
         totalProducts += product.price
-        log.error("ITEM : " + item.quantity)
         order.addToItems(item)
       }
       order.totalProducts = totalProducts
