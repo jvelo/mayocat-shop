@@ -32,17 +32,17 @@
               <g:sortableColumn property="grandTotal" title="${message(code: 'order.grandTotal.label', default: 'Total')}" />
 
               <g:sortableColumn property="customerEmail" title="${message(code: 'order.customerEmail.label', default: 'Customer Email')}" />
-            
+
               <th><g:message code="order.billingAddress.label" default="Billing Address" /></th>
-            
+
               <th><g:message code="order.deliveryAddress.label" default="Delivery Address" /></th>
-            
+
               <g:sortableColumn property="status" title="${message(code: 'order.status.label', default: 'Status')}" />
-            
+
               <g:sortableColumn property="dateCreated" title="${message(code: 'order.dateCreated.label', default: 'Date Created')}" />
-            
+
               <g:sortableColumn property="dateUpdated" title="${message(code: 'order.dateUpdated.label', default: 'Date Updated')}" />
-            
+
             </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@
                 </span>
               </td>
               <td>${fieldValue(bean: orderInstance, field: "customerEmail")}<a class="mail" href="mailto:${fieldValue(bean: orderInstance, field: "customerEmail")}"></a></td>
-            
+
               <td><g:address address="${orderInstance.billingAddress}" /></td>
 
               <td>
@@ -68,9 +68,9 @@
                   -
                 </g:else>
               </td>
-            
+
               <td>${fieldValue(bean: orderInstance, field: "status")}</td>
-            
+
               <td>
                 <g:formatDate format="yyyy/MM/dd" date="${orderInstance.dateCreated}"/>
                 <g:time class="timeago" datetime="${orderInstance.dateCreated}"></g:time>
@@ -80,7 +80,7 @@
                 <g:formatDate format="yyyy/MM/dd" date="${orderInstance.dateUpdated}"/>
                 <g:time class="timeago" datetime="${orderInstance.dateUpdated}"></g:time>
               </td>
-            
+
             </tr>
           </g:each>
           </tbody>
