@@ -46,8 +46,13 @@
     <div class="container-fluid" id="admin-container">
       <div class="row-fluid">
         <div class="span2">
-          <g:render template="/shared/catalogueMenu" />
-          <g:pageProperty name="page.menu"/>
+        <ul class="nav-list nav navigation">
+          <li class="nav-header"><g:message code="navigation.menu" default="Menu" /></li>
+          <nav:eachItem group="${pageProperty(name: 'page.submenu')}">
+            <li class="${it.active ? 'active':''}"><a href=${it.link}>${it.title}</a></li>
+          </nav:eachItem>
+        </ul>
+        <g:pageProperty name="page.menu"/>
         </div>
         <div class="span7">
           <g:layoutBody/>

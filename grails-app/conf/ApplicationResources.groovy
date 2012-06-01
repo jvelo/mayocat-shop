@@ -35,6 +35,10 @@ modules = {
       resource url:'js/product.js'
     }
 
+    handlebars {
+        resource url:'lib/handlebars/handlebars.js'
+    }
+    
     timeago {
       resource url:'lib/timeago/jquery.timeago.js'
     }

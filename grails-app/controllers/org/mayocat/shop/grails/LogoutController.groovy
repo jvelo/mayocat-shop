@@ -1,4 +1,4 @@
-package org.mayocat.shop.grails.LogoutController
+package org.mayocat.shop.grails;
 
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 

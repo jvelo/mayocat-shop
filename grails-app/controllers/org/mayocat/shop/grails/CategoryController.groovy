@@ -18,7 +18,7 @@ class CategoryController extends AbstractExposedController {
       action : "list",
       title : "Categories",
       path : "category",
-      group: 'catalogue'
+      group: 'submenu:catalogue'
     ]
     
     static scaffold = true

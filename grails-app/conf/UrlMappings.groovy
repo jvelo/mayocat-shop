@@ -33,8 +33,9 @@ class UrlMappings {
 
     // Checkout
     "/checkout/"(controller:"checkout") {
-      action = [GET:"expose", POST:"exposeDoCheckout"]
+      action = [GET:"expose", POST:"createOrder"]
     }
+    "/checkout/payment"(controller:"checkout", action:"selectPaymentMethod")
 
     // Admin area
     // ----------
@@ -48,6 +49,9 @@ class UrlMappings {
     "/admin/preferences/edit"(controller:"shop", action:"edit")
     "/admin/preferences/update"(controller:"shop", action:"update")
     "/admin/preferences/index"(controller:"shop", action:"index")
+    "/admin/preferences/payments"(controller:"shop", action:"editPayments")
+    "/admin/preferences/payments/$id"(controller:"shop", action: "configurePayment", parseRequest:false)
+
     "/shop/"(controller:"shop") // FIXME -> keep everything "shop" under admin/preferences
 
     // Admin -> product

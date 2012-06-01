@@ -23,8 +23,13 @@ class Shop {
     // Is sent by mail ?
     Boolean sentBySnailMail
 
+    // List of payment methods
+    List<PaymentMethod> paymentMethod
+
     // Manage package dimensions/weight ?
     static hasOne = [packageManagement: PackageManagement]
+    
+    static hasMany = [paymentMethod: PaymentMethod]
 
     // Categories preferences
     // ----------------------
