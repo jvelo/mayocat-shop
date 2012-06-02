@@ -25,6 +25,10 @@ modules = {
         resource url:'css/orders.css'
     }
 
+    checkout {
+        resource url:'css/checkout.css'
+    }
+    
     thumbnailEditor {
       resource url:'js/thumbnailEditor.js'  
       resource url:'lib/jcrop/jquery.Jcrop.min.js'

@@ -1,6 +1,6 @@
 package org.mayocat.shop.grails
 
-import org.mayocat.shop.payment.HandlebarsExecutor;
+import org.mayocat.shop.payment.HandlebarsExecutor
 import org.springframework.dao.DataIntegrityViolationException
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
@@ -82,7 +82,7 @@ class ShopController {
         def slurper = new JsonSlurper()
         def configuration = slurper.parseText(entity.json)
         def validationErrors = null
-        def templateContent = paymentGatewayManagerService.getConfigurationTemplateContents(params.id)
+        def templateContent = paymentGatewayManagerService.getTemplateContents(params.id, "configure")
         def executor = HandlebarsExecutor.getInstance()
         
         if (request.post) {

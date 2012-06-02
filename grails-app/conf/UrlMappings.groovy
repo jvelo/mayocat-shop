@@ -35,7 +35,10 @@ class UrlMappings {
     "/checkout/"(controller:"checkout") {
       action = [GET:"expose", POST:"createOrder"]
     }
-    "/checkout/payment"(controller:"checkout", action:"selectPaymentMethod")
+    name checkoutPayment: "/checkout/payment/"(controller:"checkout") {
+      // Restful URLs needs to be named for reverse routing to work.
+      action = [GET:"selectPaymentMethod", POST:"doPayment"]
+    } 
 
     // Admin area
     // ----------

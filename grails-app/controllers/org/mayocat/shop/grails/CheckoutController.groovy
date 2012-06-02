@@ -1,7 +1,9 @@
 package org.mayocat.shop.grails
 
+import groovy.json.JsonSlurper
 import java.util.Currency
 
+import org.mayocat.shop.payment.HandlebarsExecutor
 import org.mayocat.shop.payment.CheckPaymentMethod
 
 class CheckoutController extends AbstractExposedController {
@@ -38,7 +40,7 @@ class CheckoutController extends AbstractExposedController {
 
       def enabledPaymentMethods = shop.paymentMethod.findAll { it.enabled }
       if (enabledPaymentMethods.size() == 1) {
-        this.doPayment(enabledPaymentMethods[0])
+        this.doBeforePayment(enabledPaymentMethods[0].technicalName)
       }
       else {
         render(view: "selectPaymentMethod", model: [methods: enabledPaymentMethods])
@@ -51,15 +53,33 @@ class CheckoutController extends AbstractExposedController {
   }
 
 
-  def doPayment(method) {
-    def gateway = paymentGatewayManagerServoce.load(method.className).newInstance()
-    if (gateway.hasPrepareStep() && !params.execute) {
+  def doBeforePayment(method) {
+    if (!method) {
+      method = params.method     
     }
-    else {
-      render(view: "payment", model: [content: gateway.displayExecuteStep()])
-    }
+    def paymentMethod = PaymentMethod.findByTechnicalName(method)
+    def gateway = paymentGatewayManagerService.getGateway(method)
+    def entity = paymentGatewayManagerService.getOrCreateEntity(method)
+    def slurper = new JsonSlurper()
+    def configuration = slurper.parseText(entity.json)
+    def executor = HandlebarsExecutor.getInstance()
+
+    def context = [
+      configuration: configuration,
+      order: [:]    
+    ]
+    
+    //if (gateway.hasPrepareStep() && !params.execute) {
+        def templateContent = paymentGatewayManagerService.getTemplateContents(method, "before")
+        def beforeContent = executor.executeHandlebar(templateContent, context)        
+        render(view: "payment", model: [method: paymentMethod, beforeContent: beforeContent])
   }
 
+  
+  def doPayment() {
+      println "Do payment"
+      render "OK"
+  }
 
   def prepareOrder(shop, order) {
     order.status = OrderStatus.NONE

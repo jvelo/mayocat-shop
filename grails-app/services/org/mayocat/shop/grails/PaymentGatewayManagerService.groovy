@@ -25,17 +25,17 @@ class PaymentGatewayManagerService {
     }
 
     def isConfigurable(String id) {
-        return getConfigurationResource(id) != null
+        return getTemplateResource(id, "configure") != null
     }
 
-    def getConfigurationTemplateContents(String id) {
-        def file = getConfigurationFile(id)
+    def getTemplateContents(String id, String template) {
+        def file = getTemplateFile(id, template)
         if (!file) {
             return null
         }
         Files.toString(file,  Charsets.UTF_8)
     }
-
+    
     def getGateway(String id) {
         def method = getShop().paymentMethod.find { it.technicalName == id }
         this.load(method.className).newInstance()
@@ -45,12 +45,12 @@ class PaymentGatewayManagerService {
         Thread.currentThread().contextClassLoader.loadClass(className)
     }
 
-    private def getConfigurationResource(String id) {
-        CheckPaymentMethod.class.getClassLoader().getResource("resources/handlebars/payment/" + id + "/configure.html.tpl")
+    private def getTemplateResource(String id, String template) {
+        CheckPaymentMethod.class.getClassLoader().getResource("resources/handlebars/payment/" + id + "/" + template + ".html.tpl")
     }
     
-    private def getConfigurationFile(String id) {
-        new File(this.getConfigurationResource(id).toURI())
+    private def getTemplateFile(String id, String template) {
+        new File(this.getTemplateResource(id, template).toURI())
     }
 
     private def getShop() {
