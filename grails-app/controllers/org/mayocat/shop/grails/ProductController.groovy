@@ -101,6 +101,32 @@ class ProductController extends AbstractExposedController {
       redirect(action:"show", id: productInstance.id, fragment:"Categories")
     }
 
+    def delete() {
+        def productInstance = Product.get(params.id)
+        if (!productInstance) {
+			flash.message = message(code: 'default.not.found.message', args: [message(code: 'product.label', default: 'Product'), params.id])
+            redirect(action: "list")
+            return
+        }
+
+        try {
+            // First remove the product form all its categories
+            for (Category c : productInstance.categories) {
+                c.removeFromProducts(productInstance)
+                c.save(flush: true)
+            }
+            
+            // Then actually delete the product
+            productInstance.delete(flush: true)
+			flash.message = message(code: 'default.deleted.message', args: [message(code: 'product.label', default: 'Product'), params.id])
+            redirect(action: "list")
+        }
+        catch (DataIntegrityViolationException e) {
+			flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'product.label', default: 'Product'), params.id])
+            redirect(action: "show", id: params.id)
+        }
+    }
+
     def beforeInterceptor = [action:this.&beforeSave, only: ['save']]
     def afterInterceptor = [action:super.afterExpose, only: ['expose']]
 

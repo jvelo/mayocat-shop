@@ -21,7 +21,7 @@ class CategoryViewModelBuilder {
     def start = (page - 1) * itemsPerPage
     def end = start + itemsPerPage
     for (product in category.products) {
-      if (product.exposed) {
+      if (product && product.exposed) {
         if (i < end) {
           if (i >= start) {
             pvms.add( productViewModelBuilder.build(product) )
