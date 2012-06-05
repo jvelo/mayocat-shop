@@ -101,6 +101,19 @@ class ProductController extends AbstractExposedController {
       redirect(action:"show", id: productInstance.id, fragment:"Categories")
     }
 
+    def list() {
+        params.max = Math.min(params.max ? params.int('max') : 10, 100)
+        if (params.exposed) {
+          [productInstanceList: Product.list(params), productInstanceTotal: Product.count()]
+        }
+        else {
+          def results = Product.createCriteria().list(params) {
+            eq("exposed", true)
+          }
+          [productInstanceList:results.list, productInstanceTotal: results.totalCount ]
+        }
+    }
+
     def delete() {
         def productInstance = Product.get(params.id)
         if (!productInstance) {

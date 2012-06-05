@@ -22,6 +22,19 @@
         </div>
       </g:if>
       <g:else>
+        <div class="filters-toggle" class="toggle"  data-toggle="collapse" data-target="#filters">
+          <i class="icon-cog"></i> filters...
+        </div>
+        <div id="filters"  class="collapse">
+          <g:form>
+            <fieldset class="well">
+              <label class="checkbox">
+                <input type="checkbox" name="exposed" value="1" <g:if test="${params.exposed}">checked</g:if>> <g:message code="product.filters.exposed" default="Exposed" />
+              </label>
+              <button type="submit" class="btn"><g:message code="product.filters.update" default="Update" /></button>              
+            </fieldset>
+          </g:form>
+        </div>
         <table class="products table">
           <thead>
             <tr>
@@ -47,7 +60,7 @@
                 </small>
               </td>
 
-              <td>${fieldValue(bean: productInstance, field: "price")}</td>
+              <td><g:price price="${productInstance.price}" currency="EUR" /></td>
             
               <td class="exposition <g:if test='${!productInstance.exposed}'>notExposed</g:if>">
                 <g:if test='${productInstance.exposed}'>
@@ -63,7 +76,12 @@
           </tbody>
         </table>
         <div class="pagination">
-          <g:paginate total="${productInstanceTotal}" />
+          <g:if test="${params.exposed}">
+            <g:paginate total="${productInstanceTotal}" params="[exposed:1]" />
+          </g:if>
+          <g:else>
+            <g:paginate total="${productInstanceTotal}" />
+          </g:else>
         </div>
       </g:else>
       <div>
