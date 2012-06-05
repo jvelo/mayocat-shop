@@ -35,10 +35,21 @@ class UrlMappings {
     "/checkout/"(controller:"checkout") {
       action = [GET:"expose", POST:"createOrder"]
     }
-    name checkoutPayment: "/checkout/payment/"(controller:"checkout") {
+    name checkoutPaymentBefore: "/checkout/payment/"(controller:"checkout") {
+        // Restful URLs needs to be named for reverse routing to work.
+        action = [GET:"selectPaymentMethod", POST:"doBeforePayment"]
+      }
+    name checkoutPaymentAfter: "/checkout/payment/success"(controller:"checkout") {
       // Restful URLs needs to be named for reverse routing to work.
-      action = [GET:"selectPaymentMethod", POST:"doPayment"]
-    } 
+      action = [GET:"doPaymentSuccess", POST:"doPaymentSuccess"]
+    }
+    
+    "/checkout/payment/ack"(controller:"checkout", action:"doPaymentAck")
+    
+    name checkoutPaymentFailure: "/checkout/payment/failure"(controller:"checkout") {
+        // Restful URLs needs to be named for reverse routing to work.
+        action = [GET:"", POST:"doPaymentFailure"]
+      }
 
     // Admin area
     // ----------

@@ -41,8 +41,8 @@ public class HandlebarsExecutor
 
     public String executeHandlebar(String contents, Map context)
     {
-        String handlebar = getFileContent("javascripts/lib/handlebars.js");
-        String render = getFileContent("javascripts/lib/render.js");
+        String handlebar = getFileContent("resources/javascripts/lib/handlebars.js");
+        String render = getFileContent("resources/javascripts/lib/render.js");
 
         Global global = new Global();
         Context scriptContext = ContextFactory.getGlobal().enterContext();
@@ -75,7 +75,7 @@ public class HandlebarsExecutor
     private static String getFileContent(String fileName)
     {
         try {
-            return Files.toString(new File(CheckPaymentMethod.class.getClassLoader().getResource(fileName).toURI()),
+            return Files.toString(new File(CheckPaymentGateway.class.getClassLoader().getResource(fileName).toURI()),
                 Charsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);

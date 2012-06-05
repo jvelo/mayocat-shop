@@ -3,13 +3,14 @@ package org.mayocat.shop.payment;
 import java.util.Map;
 
 import org.mayocat.shop.grails.Order;
+import org.mayocat.shop.grails.OrderStatus;
 
 /**
  * A possible method for paying orders in MayocatShop.
  * 
  * @version $Id$
  */
-public interface PaymentMethod
+public interface PaymentGateway
 {
 
     /**
@@ -18,21 +19,23 @@ public interface PaymentMethod
      * and a proper "postal address" ; so that customers have all information needed to send their check. A tiers
      * payment system will require a API key.
      * 
-     * @param configuration the configuration map to verify
+     * @param gatewayConfiguration the configuration map to verify
      * @return a map of errors. Empty map or null means no-error, thus a valid configuration. Error keys correspond
      *         either to a configuration field, or to special keys for cross-field errors. Error values are
      *         human-readable error messages.
      */
-    Map<String, String> validateConfiguration(Map<String, Object> configuration);
+    Map<String, String> validateConfiguration(final Map<String, Object> gatewayConfiguration);
 
-    boolean hasPrepareStep();
+    Map<String, Object> prepareBeforePayment(final Order order, final Map<String, Object> gatewayConfiguration);
 
-    String displayPrepareStep();
+    /**
+     * @param parameters
+     * @param gatewayConfiguration
+     * @return
+     */
+    PaymentResponse acknowledgePayment(final Map<String, Object> responseParameters,
+        final Map<String, Object> gatewayConfiguration);
 
-    void preparePayment(final Order order);
-
-    String displayExecuteStep();
-
-    void executePayment(final Order order);
+    boolean hasExternalForm();
 
 }

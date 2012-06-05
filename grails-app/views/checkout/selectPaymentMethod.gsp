@@ -14,11 +14,11 @@
       <g:if test="${flash.message}">
       <div class="alert alert-info" role="status">${flash.message}</div>
       </g:if>
-      <form>
+      <g:form action="doBeforePayment" method="post" mapping="checkoutPaymentBefore">
         <div>
           <g:each var="method" in="${methods}">
             <div class="method">
-              <input type="checkbox" name="method" value="${method.name}" />
+              <input type="radio" name="method" value="${method.technicalName}" />
             ${method.displayName} - ${method.description}
             </div>
           </g:each>
@@ -26,7 +26,7 @@
             <input type="submit" value="<g:message code='checkout.selectPaymentMethod.submit' default='Continue' />" />
           </div>
         </div>
-      </form>
+      </g:form>
 		</div>
 	</body>
 </html>

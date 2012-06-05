@@ -20,15 +20,20 @@
 				${flash.message}
 			</div>
 		</g:if>
-		<g:form action="doPayment" method="post" mapping="checkoutPayment">
-			<div>
+		<g:if test="${!hasExternalForm}">
+		  <g:form action="doPayment" method="post" mapping="checkoutPaymentExecute">
+		  			<div>
 				${beforeContent}
 			</div>
 			<div class="submit-step">
 				<input class="btn" type="submit"
 					value="<g:message code="checkout.payment.submit" default="Validate" />" />
 			</div>
-		</g:form>
+			</g:form>
+		</g:if>
+	    <g:else>
+          ${beforeContent}
+		</g:else>
 	</div>
 </body>
 </html>

@@ -7,17 +7,16 @@ import org.mayocat.shop.grails.Order;
 
 import com.google.common.base.Strings;
 
-public class CheckPaymentMethod implements PaymentMethod
+public class CheckPaymentGateway implements PaymentGateway
 {
 
     /**
      * {@inheritDoc}
      * 
-     * @see org.mayocat.shop.payment.PaymentMethod#validateConfiguration(java.util.Map)
+     * @see org.mayocat.shop.payment.PaymentGateway#validateConfiguration(java.util.Map)
      */
     public Map<String, String> validateConfiguration(Map<String, Object> configuration)
     {
-
         Map<String, String> errors = new HashMap<String, String>();
         if (configuration == null) {
             errors.put("_null", "Configuration cannot be null");
@@ -32,28 +31,24 @@ public class CheckPaymentMethod implements PaymentMethod
         return errors;
     }
 
-    public boolean hasPrepareStep()
+    @Override
+    public Map<String, Object> prepareBeforePayment(Order order, Map<String, Object> configuration)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasExternalForm()
     {
         return false;
     }
 
-    public String displayPrepareStep()
+    @Override
+    public PaymentResponse acknowledgePayment(Map<String, Object> parameters, Map<String, Object> configuration)
     {
         return null;
-    }
 
-    public void preparePayment(final Order order)
-    {
-        // Nothing
-    }
-
-    public void executePayment(final Order order)
-    {
-    }
-
-    public String displayExecuteStep()
-    {
-        return null;
     }
 
 }
