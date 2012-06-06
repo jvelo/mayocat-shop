@@ -30,7 +30,7 @@
           <g:form>
             <fieldset class="well">
               <label class="checkbox">
-                <input type="checkbox" name="exposed" value="1" <g:if test="${params.exposed}">checked</g:if>> <g:message code="product.filters.exposed" default="Exposed" />
+                <input type="checkbox" name="exposed" value="1" <g:if test="${params.exposed}">checked</g:if>> <g:message code="product.filters.exposed" default="Also include products marked as not exposed" />
               </label>
               <button type="submit" class="btn"><g:message code="product.filters.update" default="Update" /></button>              
             </fieldset>
