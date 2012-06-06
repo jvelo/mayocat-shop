@@ -44,7 +44,7 @@ class UrlMappings {
       action = [GET:"doPaymentSuccess", POST:"doPaymentSuccess"]
     }
     
-    "/checkout/payment/ack"(controller:"checkout", action:"doPaymentAck")
+    "/checkout/payment/$method/ack"(controller:"checkout", action:"doPaymentAck")
     
     name checkoutPaymentFailure: "/checkout/payment/failure"(controller:"checkout") {
         // Restful URLs needs to be named for reverse routing to work.
