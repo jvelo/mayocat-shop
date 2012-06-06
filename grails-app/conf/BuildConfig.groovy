@@ -38,6 +38,9 @@ grails.project.dependency.resolution = {
         compile 'org.thymeleaf:thymeleaf-spring3:2.0.2'
         compile 'org.apache.commons:commons-lang3:3.1'
         runtime 'net.sourceforge.nekohtml:nekohtml:1.9.15'
+        compile 'com.google.guava:guava:12.0'
+        runtime 'org.mozilla:rhino:1.7R3'
+        compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.7'
     }
 
     plugins {

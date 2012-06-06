@@ -10,6 +10,7 @@ class Order {
 
     OrderStatus status
     List<OrderItem> items
+    List<Payment> payments
 
     Date dateCreated
     Date dateUpdated
@@ -19,8 +20,10 @@ class Order {
     BigDecimal grandTotal
     
     Currency currency
+    
+    Long id
 
-    static hasMany = [items:OrderItem]
+    static hasMany = [items:OrderItem, payments:Payment]
 
     static constraints = {
       customerEmail nullable: false
@@ -43,6 +46,10 @@ class Order {
       sort dateCreated: "desc"
     }
 
+    Long getId() {
+        return this.id
+    }
+    
     def beforeValidate() {
       if (dateUpdated == null) {
         dateUpdated = new Date()

@@ -33,8 +33,23 @@ class UrlMappings {
 
     // Checkout
     "/checkout/"(controller:"checkout") {
-      action = [GET:"expose", POST:"exposeDoCheckout"]
+      action = [GET:"expose", POST:"createOrder"]
     }
+    name checkoutPaymentBefore: "/checkout/payment/"(controller:"checkout") {
+        // Restful URLs needs to be named for reverse routing to work.
+        action = [GET:"selectPaymentMethod", POST:"doBeforePayment"]
+      }
+    name checkoutPaymentAfter: "/checkout/payment/success"(controller:"checkout") {
+      // Restful URLs needs to be named for reverse routing to work.
+      action = [GET:"doPaymentSuccess", POST:"doPaymentSuccess"]
+    }
+    
+    "/checkout/payment/ack"(controller:"checkout", action:"doPaymentAck")
+    
+    name checkoutPaymentFailure: "/checkout/payment/failure"(controller:"checkout") {
+        // Restful URLs needs to be named for reverse routing to work.
+        action = [GET:"", POST:"doPaymentFailure"]
+      }
 
     // Admin area
     // ----------
@@ -48,6 +63,9 @@ class UrlMappings {
     "/admin/preferences/edit"(controller:"shop", action:"edit")
     "/admin/preferences/update"(controller:"shop", action:"update")
     "/admin/preferences/index"(controller:"shop", action:"index")
+    "/admin/preferences/payments"(controller:"shop", action:"editPayments")
+    "/admin/preferences/payments/$id"(controller:"shop", action: "configurePayment", parseRequest:false)
+
     "/shop/"(controller:"shop") // FIXME -> keep everything "shop" under admin/preferences
 
     // Admin -> product

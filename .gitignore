@@ -1,7 +1,9 @@
 target
+target-eclipse
 .settings
 .classpath
 .project
 stacktrace.log
 .gradle
 .DS_Store
+.groovy

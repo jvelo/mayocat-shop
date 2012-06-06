@@ -14,26 +14,17 @@
 		<link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">
     <r:require modules="jquery"/>
     <r:require modules="twitterBootstrap"/>
+    <r:require modules="knockout"/>
     <r:require modules="styles"/>
     <nav:resources override="true"/>
 		<g:layoutHead/>
     <r:layoutResources />
 	</head>
 	<body>
-    <g:render template="/shared/navbar" />
-    <div class="container-fluid" id="admin-container">
-      <div class="row-fluid">
-        <div class="span2">
-          <g:render template="/shared/catalogueMenu" />
-          <g:pageProperty name="page.menu"/>
-        </div>
-        <div class="span7">
+    <div class="container" id="checkout-container">
+      <div class="row">
+        <div class="span12">
           <g:layoutBody/>
-        </div>
-        <div class="span3">
-          <div class="page-panel">
-            <g:pageProperty name="page.panel"/>
-          </div>
         </div>
       </div>
     </div>

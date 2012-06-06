@@ -2,7 +2,8 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="catalogue">
+		<meta name="layout" content="hasSubMenu">
+    <parameter name="submenu" value="submenu:catalogue" />
 		<g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
 	</head>

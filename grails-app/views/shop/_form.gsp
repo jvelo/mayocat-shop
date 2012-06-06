@@ -190,11 +190,11 @@
   <div class="control-group  ${hasErrors(bean: shopInstance, field: 'productsPerPage', 'error')} ">
     <label for="productsPerPage" class="control-label">
       <g:message code="shop.categories.productsPerPage" default="Products per page" />
-      
+
     </label>
     <div class="controls">
     <label for="productsPerPage">
-	    <input type="number" name="categoryProductsPerPage" value="${shopInstance.categoryProductsPerPage}" min="0" step="1" />
+	    <input type="number" name="categoryProductsPerPage" value="${shopInstance.categoryProductsPerPage}" min="0" step="1" class="span1" />
       <g:message code="shop.categories.productsPerPage" default="How many products to display per category page." />
     </label>
     </div>

@@ -25,6 +25,10 @@ modules = {
         resource url:'css/orders.css'
     }
 
+    checkout {
+        resource url:'css/checkout.css'
+    }
+    
     thumbnailEditor {
       resource url:'js/thumbnailEditor.js'  
       resource url:'lib/jcrop/jquery.Jcrop.min.js'
@@ -35,6 +39,10 @@ modules = {
       resource url:'js/product.js'
     }
 
+    handlebars {
+        resource url:'lib/handlebars/handlebars.js'
+    }
+    
     timeago {
       resource url:'lib/timeago/jquery.timeago.js'
     }
