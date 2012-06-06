@@ -95,6 +95,7 @@ class CheckoutController extends AbstractExposedController {
         def ackResponse = gateway.acknowledgePayment(getFlatMap(request.parameterMap), configuration)
         paymentGatewayManagerService.processPaymentResponse(paymentMethod, ackResponse)
         response.setContentType(ackResponse.getResponseContentType)
+        println "About to respond: " + ackResponse.getResponseContent()
         render ackResponse.getResponseContent()
     }
 
@@ -105,7 +106,7 @@ class CheckoutController extends AbstractExposedController {
     private def getFlatMap(servletParametersMap) {
         def result = [:]
         for (Map.Entry<String,String[]> entry : servletParametersMap.entrySet()) {
-            String v[] = entry.getValue()
+            String[] v = entry.getValue()
             Object o = (v.length == 1) ? v[0] : v
             result.put(entry.getKey(), o)
         }
