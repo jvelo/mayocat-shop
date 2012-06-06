@@ -2,7 +2,7 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="catalogue">
+		<meta name="layout" content="hasSubMenu">
 		<g:set var="entityName" value="${message(code: 'imageSet.label', default: 'ImageSet')}" />
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
     <r:require module="thumbnailEditor" />

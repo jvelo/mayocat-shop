@@ -2,7 +2,7 @@
 <!doctype html>
 <html>
 	<head>
-		<meta name="layout" content="catalogue">
+		<meta name="layout" content="hasSubMenu">
 		<g:set var="entityName" value="${message(code: 'imageSet.label', default: 'ImageSet')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
