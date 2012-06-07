@@ -22,7 +22,7 @@
 			<g:message code="admin.preferences"
 				default="Configure payment method: {0}" args="[method.displayName]" />
 		</h2>
-		<g:link action="editPayments">
+		<g:link action="editPaymentMethods">
 			<g:message
 				code="admin.preferences.paymentMethods.configureMethod.back"
 				default="<< Back" />

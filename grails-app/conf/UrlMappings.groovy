@@ -63,8 +63,9 @@ class UrlMappings {
     "/admin/preferences/edit"(controller:"shop", action:"edit")
     "/admin/preferences/update"(controller:"shop", action:"update")
     "/admin/preferences/index"(controller:"shop", action:"index")
-    "/admin/preferences/payments"(controller:"shop", action:"editPayments")
-    "/admin/preferences/payments/$id"(controller:"shop", action: "configurePayment", parseRequest:false)
+    "/admin/preferences/payments"(controller:"shop", action:"editPaymentMethods")
+    "/admin/preferences/payments/$id"(controller:"shop", action: "configurePaymentMethod", parseRequest:false)
+    "/admin/preferences/checkout"(controller:"shop", action:"editCheckoutPages")
 
     "/shop/"(controller:"shop") // FIXME -> keep everything "shop" under admin/preferences
 

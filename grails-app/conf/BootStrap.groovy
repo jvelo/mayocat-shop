@@ -1,4 +1,5 @@
 import org.mayocat.shop.util.DataSourceUtils
+import org.mayocat.shop.grails.CheckoutPages
 import org.mayocat.shop.grails.SecurityUser
 import org.mayocat.shop.grails.SecurityRole
 import org.mayocat.shop.grails.SecurityUserRole
@@ -44,6 +45,7 @@ class BootStrap {
 
       // Migrations 
       this.ensureShopHasPackageManagement();
+      this.ensureShopHasCheckoutPagesPreferences();
     }
 
     def ensureShopHasPackageManagement = {
@@ -62,6 +64,23 @@ class BootStrap {
         }
       }
     }
+    
+    def ensureShopHasCheckoutPagesPreferences = {
+        def shop = Shop.list()[0]
+        if (shop && shop.checkoutPages == null) {
+          try {
+            def cp = new CheckoutPages()
+            cp.shop = shop
+            shop.checkoutPages = cp
+            shop.save(flush:true)
+          }
+          catch (Exception e) {
+            def session = sessionFactory.currentSession
+            session.setFlushMode(org.hibernate.FlushMode.MANUAL)
+            log.error("Failed to add checkout pages preferences. ${org.apache.commons.lang.exception.ExceptionUtils.getRootCauseMessage(e)}")
+          }
+        }
+      }
 
     def destroy = {
     }

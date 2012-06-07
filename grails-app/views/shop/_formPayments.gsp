@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="control-group">
-        <g:link action="configurePayment" id="${paymentMethod.technicalName}" rel="modal">
+        <g:link action="configurePaymentMethod" id="${paymentMethod.technicalName}" rel="modal">
           <g:message code="admin.preferences.paymentMethods.configure" default="Configure" />
         </g:link>
       </div>

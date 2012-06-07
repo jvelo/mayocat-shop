@@ -46,4 +46,9 @@ modules = {
     timeago {
       resource url:'lib/timeago/jquery.timeago.js'
     }
+    
+    ace {
+      resource url:'lib/ace/ace.js'
+      resource url:'lib/ace/mode-css.js'
+    }
 }

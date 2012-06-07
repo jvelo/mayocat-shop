@@ -27,7 +27,7 @@ class Shop {
     List<PaymentMethod> paymentMethod
 
     // Manage package dimensions/weight ?
-    static hasOne = [packageManagement: PackageManagement]
+    static hasOne = [packageManagement: PackageManagement, checkoutPages: CheckoutPages]
     
     static hasMany = [paymentMethod: PaymentMethod]
 

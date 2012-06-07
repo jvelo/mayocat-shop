@@ -17,33 +17,40 @@ class ShopController {
     static allowedMethods = [save: "POST", update: "POST"]
 
     static navigation = [
-      [
-        group:'main',
-        action:'edit',
-        title:'Preferences',
-        order: 10,
-        path : "preferences"
-      ],
-      [
-        group:'submenu:preferences',
-        action:'editPayments',
-        title:'Payments',
-        order: 20,
-        path : "payments"
-      ],
-      [
-        group:'submenu:preferences',
-        action:'edit',
-        title:'General',
-        order: 10,
-        path : "general"
-      ]
-
+        [
+            group:'main',
+            action:'edit',
+            title:'Preferences',
+            order: 10,
+            path : "preferences"
+        ],
+        [
+            group:'submenu:preferences',
+            action:'editCheckoutPages',
+            title:'Checkout pages',
+            order: 20,
+            path : "checkout"
+        ],
+        [
+            group:'submenu:preferences',
+            action:'editPaymentMethods',
+            title:'Payments methods',
+            order: 20,
+            path : "payments"
+        ],
+        [
+            group:'submenu:preferences',
+            action:'edit',
+            title:'General',
+            order: 10,
+            path : "general"
+        ]
     ]
 
     def save() {
         def shopInstance = new Shop(params)
         shopInstance.packageManagement = new PackageManagement()
+        shopInstance.checkoutPages = new CheckoutPages()
         if (!shopInstance.save(flush: true)) {
             render(view: "create", model: [shopInstance: shopInstance])
             return
@@ -66,11 +73,11 @@ class ShopController {
         [shopInstance: shopInstance]
     }
 
-    def editPayments() {
+    def editPaymentMethods() {
       edit()
     }
 
-    def configurePayment() {
+    def configurePaymentMethod() {
         if (!paymentGatewayManagerService.isConfigurable(params.id)) {
             response.status = 403
             render "Payment method ${params.id} is not configurable"
@@ -113,10 +120,14 @@ class ShopController {
             def form = executor.executeHandlebar(templateContent, context)
             [method: paymentMethod, configurationForm: form, template: templateContent]
         }
-
+    }
+    
+    def editCheckoutPages() {
+        edit()
     }
 
     def update() {
+                
         def shopInstance = Shop.get(params.id)
         if (!shopInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'shop.label', default: 'Shop'), params.id])
@@ -166,7 +177,7 @@ class ShopController {
           params.remove("paymentMethod[" + param + "].enabled")
         }
         bindData(shopInstance, params)
-
+        
         if (!shopInstance.save(flush: true)) {
             render(view: "edit", model: [shopInstance: shopInstance])
             return

@@ -19,6 +19,9 @@
     <nav:resources override="true"/>
 		<g:layoutHead/>
     <r:layoutResources />
+    <style type="text/css">
+    ${extraCss}
+    </style>
 	</head>
 	<body>
     <div class="container" id="checkout-container">
