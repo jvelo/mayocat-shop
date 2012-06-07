@@ -9,6 +9,11 @@ modules = {
       resource url: 'lib/bootstrap/js/bootstrap.js'
     }
 
+    twitterBootstrapNonResponsive {
+        resource url: 'lib/bootstrap/css/bootstrap.css'
+        resource url: 'lib/bootstrap/js/bootstrap.js'
+    }
+    
     knockout {
       resource url: 'lib/knockout/knockout.js'
     }

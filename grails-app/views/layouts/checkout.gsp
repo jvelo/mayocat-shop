@@ -7,13 +7,13 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title><g:layoutTitle default="Grails"/></title>
+		<title><g:layoutTitle default="Grails"/></title>  
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
 		<link rel="apple-touch-icon" href="${resource(dir: 'images', file: 'apple-touch-icon.png')}">
 		<link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">
     <r:require modules="jquery"/>
-    <r:require modules="twitterBootstrap"/>
+    <r:require modules="twitterBootstrapNonResponsive"/>
     <r:require modules="knockout"/>
     <r:require modules="styles"/>
     <nav:resources override="true"/>
@@ -31,20 +31,22 @@
 	</head>
 	<body>
 	<header>
-	  <div id="brand">
-	    <g:if test="${logo}">
-	      <img src="${createLink(controller: 'shop', action:'serveLogo', params:[filename:logo])}" />
-	    </g:if>
-	  </div>
 	</header>
     <div class="container" id="checkout-container">
       <div class="row">
-        <div class="span12">
+        <div class="span12" id="brand">
+	      <g:if test="${logo}">
+	        <img src="${createLink(controller: 'shop', action:'serveLogo', params:[filename:logo])}" />
+	       </g:if>
+	    </div>	    
+	  </div>
+	  <div class="row">
+	    <div class="span12" id="content">
           <g:layoutBody/>
-        </div>
+        </div>        
       </div>
     </div>
-		<div class="footer" role="contentinfo"></div>
+    <div class="footer" role="contentinfo"></div>
     <r:layoutResources />
 	</body>
 </html>
