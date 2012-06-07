@@ -26,6 +26,9 @@ class CheckoutFilters {
         if (shop.checkoutPages.logoVersion && shop.checkoutPages.logoVersion > 0) {
           viewModel["logo"] = "logo" + shop.checkoutPages.logoVersion + "." + shop.checkoutPages.logoExtension
         }
+        if (shop.checkoutPages.backgroundVersion && shop.checkoutPages.backgroundVersion > 0) {
+            viewModel["background"] = "background" + shop.checkoutPages.backgroundVersion + "." + shop.checkoutPages.backgroundExtension
+        }
       }
     }
   }

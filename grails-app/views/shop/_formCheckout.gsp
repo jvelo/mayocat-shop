@@ -9,6 +9,19 @@
       <g:message code="admin.preferences.checkoutPages.logo" default="Logo" />
     </label>
     <input type="file" name="logo" id="logo" />
+    <g:if test="${shopInstance.checkoutPages.logo}">
+    Current: V${shopInstance.checkoutPages.logoVersion}
+    </g:if>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" for="background">
+      <g:message code="admin.preferences.checkoutPages.background" default="Background" />
+    </label>
+    <input type="file" name="background" id="background" />
+    <g:if test="${shopInstance.checkoutPages.background}">
+    Current: V${shopInstance.checkoutPages.backgroundVersion}
+    </g:if>
   </div>
   
   <div class="control-group">

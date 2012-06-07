@@ -20,11 +20,14 @@
       <div class="alert alert-success" role="status">${flash.message}</div>
       </g:if>
       <g:hasErrors bean="${shopInstance}">
+      <div class="alert alert-error">
       <ul class="errors" role="alert">
+        <g:message code="admin.preferences.checkoutPages.validationErrors" default="There are validation errors :" />
         <g:eachError bean="${shopInstance}" var="error">
         <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
         </g:eachError>
       </ul>
+      </div>
       </g:hasErrors>
       <g:form method="post" enctype="multipart/form-data">
         <g:hiddenField name="id" value="${shopInstance?.id}" />

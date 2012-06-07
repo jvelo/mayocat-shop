@@ -19,7 +19,15 @@
     <nav:resources override="true"/>
 		<g:layoutHead/>
     <r:layoutResources />
+	<g:if test="${background}">
+	  <style type="text/css">
+	  body {
+	    background-image: url(${createLink(controller: 'shop', action:'serveBackground', params:[filename:background])});
+	  }
+	  </style>
+    </g:if>    
     <link rel="stylesheet" href="${createLink(controller: 'shop', action:'serveCss', params:[filename:extraCss])}" type="text/css" />
+    
 	</head>
 	<body>
 	<header>

@@ -4,6 +4,7 @@ import org.mayocat.shop.payment.HandlebarsExecutor
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonSlurper
+import java.text.DecimalFormat
 
 @Secured(['ROLE_ADMIN'])
 class ShopController {
@@ -133,33 +134,50 @@ class ShopController {
             return
         }
         
-        def file = request.getFile('logo')
+        def logo = request.getFile('logo')
+        def bg = request.getFile('background')
+
+        bindData(shopInstance, params)
+        
+        this.attachBackgroundOrLogo(shopInstance, logo, "logo") 
+        this.attachBackgroundOrLogo(shopInstance, bg, "background") 
+        
+        if (shopInstance.hasErrors()) {
+            render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
+            return
+        }
+        else if (shopInstance.save(flush: true)) {
+            flash.message = message(code: 'admin.preferences.checkoutPages.updated', default: 'Checkout pages preferences updated')
+            render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
+            return
+        }
+        else {
+            render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
+            // redirect(action: "editCheckoutPages", id: shopInstance.id)
+        }
+    }
+    
+    def attachBackgroundOrLogo(shop, file, target) {
+        def errors = []
         if (file && !file.isEmpty()) {
-          if (!file.contentType.startsWith("image/")) {
-            shop.errors.rejectValue('logo', 'image.file.notAnImage', "Not an image.")
-          }
-          else if (file.size > CheckoutPages.LOGO_MAX_SIZE) {
-            shop.errors.rejectValue('logo', 'image.file.tooBig', [readableSize(Image.MAX_SIZE)] as Object[], "Image too big. Max size is {0}")
-          }
+            if (!file.contentType.startsWith("image/")) {
+                shop.errors.reject('image.file.notAnImage', "Not an image.")
+            }
+            else if (file.size > (target == 'logo' ? CheckoutPages.LOGO_MAX_SIZE : CheckoutPages.BG_MAX_SIZE)) {             
+                shop.errors.reject('image.file.tooBig', 
+                    [target, readableSize(target == 'logo' ? CheckoutPages.LOGO_MAX_SIZE : CheckoutPages.BG_MAX_SIZE)]
+                as Object[], "{0} is too big. Max size is {1}")
+            }
             else {
                 def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
                 def filename = file.originalFilename
-                shopInstance.checkoutPages.logoExtension = extension
-                shopInstance.checkoutPages.logoVersion =
-                        shopInstance.checkoutPages.logoVersion ? shopInstance.checkoutPages.logoVersion + 1 : 1
-                shopInstance.checkoutPages.logo = file.bytes
+                shop.checkoutPages[target + "Extension"] = extension
+                shop.checkoutPages[target + "Version"] =
+                        shop.checkoutPages[target + "Version"] ? shop.checkoutPages[target + "Version"] + 1 : 1
+                shop.checkoutPages[target] = file.bytes
             }
         }
-        
-        bindData(shopInstance, params)
-        
-        if (!shopInstance.save(flush: true)) {
-            render(view: "edit", model: [shopInstance: shopInstance])
-            return
-        }
-
-        flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
-        redirect(action: "editCheckoutPages", id: shopInstance.id)
+        return shop.errors
     }
     
     def update() {
@@ -239,6 +257,22 @@ class ShopController {
     }
     
     @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def serveBackground() {
+        def shop = Shop.list()[0]
+        if (shop && shop.checkoutPages) {
+            response.setContentType("image/" + shop.checkoutPages.backgroundExtension)
+            response.setContentLength( shop.checkoutPages.background.size())
+            response.setHeader('filename', "background" + shop.checkoutPages.backgroundVersion + "." + shop.checkoutPages.backgroundExtension)
+            OutputStream out = response.outputStream
+            out.write( shop.checkoutPages.background)
+            out.close()
+        }
+        else {
+            response.sendError(404)
+        }
+    }
+    
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
     def serveCss() {
         def shop = Shop.list()[0]
         if (shop && shop.checkoutPages) {
@@ -252,4 +286,11 @@ class ShopController {
         }
     }
 
+    private def readableSize(size) {
+        if (size <= 0) "0"
+            def units = ["B", "KB", "MB", "GB", "TB"]
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024))
+        new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups]
+    }
+    
 }
