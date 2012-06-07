@@ -21,7 +21,11 @@ class CheckoutFilters {
         )
         
         // The extra CSS to insert in all checkout pages
-        viewModel["extraCss"] = shop.checkoutPages.extraCss
+        viewModel["extraCss"] = "extra" + shop.checkoutPages.version + ".css"
+        
+        if (shop.checkoutPages.logoVersion && shop.checkoutPages.logoVersion > 0) {
+          viewModel["logo"] = "logo" + shop.checkoutPages.logoVersion + "." + shop.checkoutPages.logoExtension
+        }
       }
     }
   }

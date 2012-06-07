@@ -3,6 +3,14 @@
 
 <fieldset>
   <legend><g:message code="admin.preferences.checkoutPages" default="Checkout pages" /></legend>
+  
+  <div class="control-group">
+    <label class="control-label" for="logo">
+      <g:message code="admin.preferences.checkoutPages.logo" default="Logo" />
+    </label>
+    <input type="file" name="logo" id="logo" />
+  </div>
+  
   <div class="control-group">
     <label class="control-label" for="extraCss">
       <g:message code="admin.preferences.checkoutPages.extraCss" default="Extra CSS code to insert" />

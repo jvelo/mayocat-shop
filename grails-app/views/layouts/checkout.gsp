@@ -19,11 +19,16 @@
     <nav:resources override="true"/>
 		<g:layoutHead/>
     <r:layoutResources />
-    <style type="text/css">
-    ${extraCss}
-    </style>
+    <link rel="stylesheet" href="${createLink(controller: 'shop', action:'serveCss', params:[filename:extraCss])}" type="text/css" />
 	</head>
 	<body>
+	<header>
+	  <div id="brand">
+	    <g:if test="${logo}">
+	      <img src="${createLink(controller: 'shop', action:'serveLogo', params:[filename:logo])}" />
+	    </g:if>
+	  </div>
+	</header>
     <div class="container" id="checkout-container">
       <div class="row">
         <div class="span12">

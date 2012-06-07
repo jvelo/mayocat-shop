@@ -81,7 +81,6 @@ class CheckoutController extends AbstractExposedController {
 
     def doPaymentSuccess() {
         def order = Order.get(session["order"])
-        println "SUCCESS !"
         // TODO
     }
 

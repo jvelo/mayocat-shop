@@ -45,6 +45,8 @@ class UrlMappings {
     }
     
     "/checkout/payment/$method/ack"(controller:"checkout", action:"doPaymentAck")
+    "/checkout/serve/logo/$filename?"(controller:"shop", action:"serveLogo")
+    "/checkout/serve/css/$filename"(controller:"shop", action:"serveCss")
     
     name checkoutPaymentFailure: "/checkout/payment/failure"(controller:"checkout") {
         // Restful URLs needs to be named for reverse routing to work.
@@ -62,6 +64,7 @@ class UrlMappings {
     "/admin/preferences/"(controller:"shop", action:"edit")
     "/admin/preferences/edit"(controller:"shop", action:"edit")
     "/admin/preferences/update"(controller:"shop", action:"update")
+    "/admin/preferences/updateCheckoutPages"(controller:"shop", action:"updateCheckoutPages")
     "/admin/preferences/index"(controller:"shop", action:"index")
     "/admin/preferences/payments"(controller:"shop", action:"editPaymentMethods")
     "/admin/preferences/payments/$id"(controller:"shop", action: "configurePaymentMethod", parseRequest:false)

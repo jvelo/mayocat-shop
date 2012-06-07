@@ -1,7 +1,6 @@
 package org.mayocat.shop.grails
 
 import org.mayocat.shop.payment.HandlebarsExecutor
-import org.springframework.dao.DataIntegrityViolationException
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonSlurper
@@ -126,8 +125,44 @@ class ShopController {
         edit()
     }
 
+    def updateCheckoutPages() {
+        def shopInstance = Shop.get(params.id)
+        if (!shopInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'shop.label', default: 'Shop'), params.id])
+            redirect(action: "edit")
+            return
+        }
+        
+        def file = request.getFile('logo')
+        if (file && !file.isEmpty()) {
+          if (!file.contentType.startsWith("image/")) {
+            shop.errors.rejectValue('logo', 'image.file.notAnImage', "Not an image.")
+          }
+          else if (file.size > CheckoutPages.LOGO_MAX_SIZE) {
+            shop.errors.rejectValue('logo', 'image.file.tooBig', [readableSize(Image.MAX_SIZE)] as Object[], "Image too big. Max size is {0}")
+          }
+            else {
+                def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
+                def filename = file.originalFilename
+                shopInstance.checkoutPages.logoExtension = extension
+                shopInstance.checkoutPages.logoVersion =
+                        shopInstance.checkoutPages.logoVersion ? shopInstance.checkoutPages.logoVersion + 1 : 1
+                shopInstance.checkoutPages.logo = file.bytes
+            }
+        }
+        
+        bindData(shopInstance, params)
+        
+        if (!shopInstance.save(flush: true)) {
+            render(view: "edit", model: [shopInstance: shopInstance])
+            return
+        }
+
+        flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
+        redirect(action: "editCheckoutPages", id: shopInstance.id)
+    }
+    
     def update() {
-                
         def shopInstance = Shop.get(params.id)
         if (!shopInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'shop.label', default: 'Shop'), params.id])
@@ -185,6 +220,36 @@ class ShopController {
 
         flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
         redirect(action: "edit", id: shopInstance.id)
+    }
+    
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def serveLogo() {
+        def shop = Shop.list()[0]
+        if (shop && shop.checkoutPages) {
+            response.setContentType("image/" + shop.checkoutPages.logoExtension)
+            response.setContentLength( shop.checkoutPages.logo.size())
+            response.setHeader('filename', "logo" + shop.checkoutPages.logoVersion + "." + shop.checkoutPages.logoExtension)
+            OutputStream out = response.outputStream
+            out.write( shop.checkoutPages.logo)
+            out.close()
+        }
+        else {
+            response.sendError(404)
+        }
+    }
+    
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def serveCss() {
+        def shop = Shop.list()[0]
+        if (shop && shop.checkoutPages) {
+            def css = shop.checkoutPages.extraCss
+            response.setContentType("text/css")
+            response.setHeader('filename', "extra" + shop.checkoutPages.version + ".css")
+            render css
+        }
+        else {
+            response.sendError(404)
+        }
     }
 
 }
