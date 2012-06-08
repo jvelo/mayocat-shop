@@ -13,4 +13,6 @@ class Payment {
     static constraints = {
         json type:'text'
     }
+    
+    static belongsTo = [order:Order]
 }

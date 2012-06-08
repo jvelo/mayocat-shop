@@ -12,6 +12,9 @@ class Order {
     List<OrderItem> items
     List<Payment> payments
 
+    // The payment method chosen at the time of the checkout
+    String paymentMethod
+    
     Date dateCreated
     Date dateUpdated
 
@@ -32,6 +35,7 @@ class Order {
       status nullable: true
       shipping nullable: true
       currency nullable: true
+      paymentMethod nullable: true
     }
 
     static mapping = {

@@ -19,7 +19,7 @@ class OrderItem {
       unitPrice min: 0.0, scale: 2
       title nullable:false
       description maxSize: 2000, nullable:true
-      // Product might be deleted later, it's alright as we have duplicated the important information.
+      // Product might be deleted later, it's allright as we have duplicated the important information.
       product nullable:true
     }
 

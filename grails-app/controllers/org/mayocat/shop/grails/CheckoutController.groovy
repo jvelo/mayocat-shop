@@ -58,11 +58,8 @@ class CheckoutController extends AbstractExposedController {
     def doBeforePayment() {
         def order = Order.get(session["order"])
         def method = params.method
-        def paymentMethod = PaymentMethod.findByTechnicalName(method)
-        def gateway = paymentGatewayManagerService.getGateway(method)
-        def entity = paymentGatewayManagerService.getOrCreateEntity(method)
-        def slurper = new JsonSlurper()
-        def configuration = slurper.parseText(entity.json)
+        order.paymentMethod = method
+        def (paymentMethod, gateway, configuration) = retrievePaymentMethod(method)
         def executor = HandlebarsExecutor.getInstance()
 
         def data = gateway.prepareBeforePayment(order, configuration)
@@ -81,7 +78,31 @@ class CheckoutController extends AbstractExposedController {
 
     def doPaymentSuccess() {
         def order = Order.get(session["order"])
-        // TODO
+        def (paymentMethod, gateway, configuration) = retrievePaymentMethod(order.paymentMethod)
+        def executor = HandlebarsExecutor.getInstance()
+        
+        if (!gateway.hasExternalForm()) {
+            // If the payment is internally processed (as opposed to third-party processed payemnts)
+            // We do the trigger the payment acknowledgement from here (as opposed to acknowledgement POST
+            // requests established by third-parties based gateways).
+            params.method = order.paymentMethod
+            params.skipResponse = true
+            params.orderId = order.id
+            this.doPaymentAck()
+        }
+        
+        // Reset order and cart state
+        session.removeAttribute("order")
+        session.removeAttribute("cart")
+        
+        def context = [
+            configuration: configuration,
+            order: [:]
+        ]
+        
+        def templateContent = paymentGatewayManagerService.getTemplateContents(paymentMethod.technicalName, "success")
+        def successContent = executor.executeHandlebar(templateContent ?: "", context)
+        render(view: "success", model: [method: paymentMethod, successContent: successContent])
     }
 
     def doPaymentAck() {
@@ -91,25 +112,22 @@ class CheckoutController extends AbstractExposedController {
         }
         def (paymentMethod, gateway, configuration) = retrievePaymentMethod(params.method)
 
-        def ackResponse = gateway.acknowledgePayment(getFlatMap(request.parameterMap), configuration)
-        paymentGatewayManagerService.processPaymentResponse(paymentMethod, ackResponse)
-        response.setContentType(ackResponse.getResponseContentType)
-        println "About to respond: " + ackResponse.getResponseContent()
-        render ackResponse.getResponseContent()
+        def ackResponse = gateway.acknowledgePayment(params, configuration)
+        if (paymentGatewayManagerService.processPaymentResponse(paymentMethod, ackResponse)) {
+            // Order modified. Send order paid email
+        }
+        else {
+            // Could not find order. Send failure email ?
+        }
+        if (!params.skipResponse) {
+          response.setContentType(ackResponse.getResponseContentType)
+          println "About to respond: " + ackResponse.getResponseContent()
+          render ackResponse.getResponseContent()
+        }
     }
 
     def selectPaymentMethod() {
         def order = Order.get(session["order"])
-    }
-
-    private def getFlatMap(servletParametersMap) {
-        def result = [:]
-        for (Map.Entry<String,String[]> entry : servletParametersMap.entrySet()) {
-            String[] v = entry.getValue()
-            Object o = (v.length == 1) ? v[0] : v
-            result.put(entry.getKey(), o)
-        }
-        result
     }
 
     private def retrievePaymentMethod(method){

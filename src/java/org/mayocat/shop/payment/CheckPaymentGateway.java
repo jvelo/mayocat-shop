@@ -1,9 +1,11 @@
 package org.mayocat.shop.payment;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.mayocat.shop.grails.Order;
+import org.mayocat.shop.grails.OrderStatus;
 
 import com.google.common.base.Strings;
 
@@ -47,7 +49,11 @@ public class CheckPaymentGateway implements PaymentGateway
     @Override
     public PaymentResponse acknowledgePayment(Map<String, Object> parameters, Map<String, Object> configuration)
     {
-        return null;
+        Long orderId = (Long) parameters.get("orderId");
+        PaymentResponse response =
+            new PaymentResponse(orderId, OrderStatus.WAITING_FOR_PAYMENT, Collections.<String, Object> emptyMap(),
+                null, null);
+        return response;
 
     }
 

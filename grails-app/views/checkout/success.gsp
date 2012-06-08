@@ -20,20 +20,19 @@
 				${flash.message}
 			</div>
 		</g:if>
-		<g:if test="${!hasExternalForm}">
-		  <g:form action="doPaymentSuccess" method="post" mapping="checkoutPaymentAfter">
-		  			<div>
-				${beforeContent}
-			</div>
-			<div class="submit-step">
-				<input class="btn" type="submit"
-					value="<g:message code="checkout.payment.submit" default="Validate" />" />
-			</div>
-			</g:form>
-		</g:if>
-	    <g:else>
-          ${beforeContent}
-		</g:else>
+
+        <div class="well">
+        <g:message code="checkout.payment.success" default="Thank you for your order !" />
+
+		  <div>
+			${successContent}
+		  </div>
+		</div>
+		<div class="submit-step center">
+          <a class="btn" href="${createLink(controller:'home', action:'expose')}">
+          Back to the shop
+          </a>
+		</div>
 	</div>
 </body>
 </html>

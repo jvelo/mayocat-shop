@@ -64,13 +64,15 @@ class PaymentGatewayManagerService {
         if (order) {
             order.status = response.getNewStatus()
             Payment p = new Payment(
-                    type: method,
+                    type: method.technicalName,
                     date: new Date(),
                     json: json
                     )
             order.addToPayments(p)
-            order.save()
+            order.save(failOnError: true, flush:true)
+            return true
         }
+        return false
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -84,7 +86,8 @@ class PaymentGatewayManagerService {
     }
 
     private def getTemplateFile(String id, String template) {
-        new File(this.getTemplateResource(id, template).toURI())
+        def res = this.getTemplateResource(id, template)?.toURI()
+        return res ? new File(res) : null
     }
 
     private def getShop() {
