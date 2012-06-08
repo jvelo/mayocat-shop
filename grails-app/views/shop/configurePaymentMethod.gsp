@@ -34,7 +34,7 @@
 		</g:if>
 
 		<form class="well"
-			action="${createLink(action:'configurePayment', id: method.technicalName)}"
+			action="${createLink(action:'configurePaymentMethod', id: method.technicalName)}"
 			method="POST">
             <fieldset>
 			${configurationForm}
