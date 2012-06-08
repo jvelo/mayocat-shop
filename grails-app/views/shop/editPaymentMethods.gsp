@@ -25,12 +25,12 @@
         </g:eachError>
       </ul>
       </g:hasErrors>
-      <g:form method="post" class="form-horizontal">
+      <g:form method="post" class="form-horizontal" enctype="multipart/form-data">
         <g:hiddenField name="id" value="${shopInstance?.id}" />
         <g:hiddenField name="version" value="${shopInstance?.version}" />
         <g:render template="formPayments"/>
         <fieldset class="buttons form-actions">
-          <g:actionSubmit class="save btn btn-primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+          <g:actionSubmit class="save btn btn-primary" action="updatePaymentMethods" value="${message(code: 'default.button.update.label', default: 'Update')}" />
           <g:link class="btn list" action="edit"><g:message code="default.reset" default="Reset" /></g:link>
         </fieldset>
       </g:form>

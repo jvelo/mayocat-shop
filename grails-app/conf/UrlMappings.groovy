@@ -45,6 +45,7 @@ class UrlMappings {
     }
     
     "/checkout/payment/$method/ack"(controller:"checkout", action:"doPaymentAck")
+    "/checkout/payment/$method/image/$filename?"(controller:"shop", action:"serveImage")
     "/checkout/serve/logo/$filename?"(controller:"shop", action:"serveLogo")
     "/checkout/serve/css/$filename"(controller:"shop", action:"serveCss")
     "/checkout/serve/background/$filename"(controller:"shop", action:"serveBackground")

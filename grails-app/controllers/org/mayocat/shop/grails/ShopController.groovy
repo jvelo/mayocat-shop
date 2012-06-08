@@ -139,8 +139,8 @@ class ShopController {
 
         bindData(shopInstance, params)
         
-        this.attachBackgroundOrLogo(shopInstance, logo, "logo") 
-        this.attachBackgroundOrLogo(shopInstance, bg, "background") 
+        this.attachImage(shopInstance, logo, shop.checkoutPages, "logo", CheckoutPages.LOGO_MAX_SIZE) 
+        this.attachImage(shopInstance, bg, shop.checkoutPages, "background", CheckoutPages.BG_MAX_SIZE)
         
         if (shopInstance.hasErrors()) {
             render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
@@ -148,7 +148,7 @@ class ShopController {
         }
         else if (shopInstance.save(flush: true)) {
             flash.message = message(code: 'admin.preferences.checkoutPages.updated', default: 'Checkout pages preferences updated')
-            render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
+            redirect(action: "editCheckoutPages", id: shopInstance.id)
             return
         }
         else {
@@ -157,24 +157,24 @@ class ShopController {
         }
     }
     
-    def attachBackgroundOrLogo(shop, file, target) {
+    def attachImage(shop, file, targetObject, target, maxSize) {
         def errors = []
         if (file && !file.isEmpty()) {
             if (!file.contentType.startsWith("image/")) {
                 shop.errors.reject('image.file.notAnImage', "Not an image.")
             }
-            else if (file.size > (target == 'logo' ? CheckoutPages.LOGO_MAX_SIZE : CheckoutPages.BG_MAX_SIZE)) {             
+            else if (file.size > maxSize) {             
                 shop.errors.reject('image.file.tooBig', 
-                    [target, readableSize(target == 'logo' ? CheckoutPages.LOGO_MAX_SIZE : CheckoutPages.BG_MAX_SIZE)]
+                    [target, readableSize(maxSize)]
                 as Object[], "{0} is too big. Max size is {1}")
             }
             else {
                 def extension = (file.contentType =~ /image\/([a-z]+)/)[0][1]
                 def filename = file.originalFilename
-                shop.checkoutPages[target + "Extension"] = extension
-                shop.checkoutPages[target + "Version"] =
-                        shop.checkoutPages[target + "Version"] ? shop.checkoutPages[target + "Version"] + 1 : 1
-                shop.checkoutPages[target] = file.bytes
+                targetObject[target + "Extension"] = extension
+                targetObject[target + "Version"] =
+                        targetObject[target + "Version"] ? targetObject[target + "Version"] + 1 : 1
+                targetObject[target] = file.bytes
             }
         }
         return shop.errors
@@ -213,8 +213,38 @@ class ShopController {
           params.remove("packageManagement.priceRules[" + param + "].price")
         }
 
+        bindData(shopInstance, params)
+        
+        if (!shopInstance.save(flush: true)) {
+            render(view: "edit", model: [shopInstance: shopInstance])
+            return
+        }
+
+        flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
+        redirect(action: "edit", id: shopInstance.id)
+    }
+    
+    def updatePaymentMethods() {
+        def shopInstance = Shop.get(params.id)
+        if (!shopInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'shop.label', default: 'Shop'), params.id])
+            redirect(action: "editPaymentMethods")
+            return
+        }
+
+        if (params.version) {
+            def version = params.version.toLong()
+            if (shopInstance.version > version) {
+                shopInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+                          [message(code: 'shop.label', default: 'Shop')] as Object[],
+                          "Another user has updated this Shop while you were editing")
+                render(view: "editPaymentMethods", model: [shopInstance: shopInstance])
+                return
+            }
+        }
+
         // Remove empty payment method
-        paramsToRemove = []
+        def paramsToRemove = []
         for (param in params.keySet()) {
           if (param ==~ /paymentMethod\[.\]\.technicalName/ && params[param] == '') {
             def index = (param =~ /paymentMethod\[(.)\]\.technicalName/)[0][1]
@@ -229,7 +259,16 @@ class ShopController {
           params.remove("paymentMethod[" + param + "].className")
           params.remove("paymentMethod[" + param + "].enabled")
         }
+        
         bindData(shopInstance, params)
+        
+        for (param in params.keySet()) {
+            if (param ==~ /paymentMethod\[.\]\.image/) {
+                def index = (param =~ /paymentMethod\[(.)\]\.image/)[0][1]
+                def image = request.getFile('paymentMethod[' + index + '].image')
+                this.attachImage(shopInstance, image, shopInstance.paymentMethod.get(Integer.valueOf(index)), "image", PaymentMethod.IMAGE_MAX_SIZE)
+            }
+        }
         
         if (!shopInstance.save(flush: true)) {
             render(view: "edit", model: [shopInstance: shopInstance])
@@ -237,7 +276,7 @@ class ShopController {
         }
 
         flash.message = message(code: 'admin.preferences.updated', default: 'Shop preferences updated')
-        redirect(action: "edit", id: shopInstance.id)
+        redirect(action: "editPaymentMethods", id: shopInstance.id)
     }
     
     @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
@@ -280,6 +319,23 @@ class ShopController {
             response.setContentType("text/css")
             response.setHeader('filename', "extra" + shop.checkoutPages.version + ".css")
             render css
+        }
+        else {
+            response.sendError(404)
+        }
+    }
+    
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def serveImage() {
+        def shop = Shop.list()[0]
+        def method = shop?.paymentMethod.find(){ return it.technicalName == params.method }
+        if (method) {
+            response.setContentType("image/" + method.imageExtension)
+            response.setContentLength( method.image.size())
+            response.setHeader('filename', "image" + method.imageVersion + "." + method.imageExtension)
+            OutputStream out = response.outputStream
+            out.write( method.image )
+            out.close()
         }
         else {
             response.sendError(404)

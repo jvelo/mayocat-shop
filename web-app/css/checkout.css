@@ -12,3 +12,20 @@
   margin-top: 20px;
 }
 
+
+form div.method img {
+  height: 80px;
+  margin-right:20px;
+}
+
+form div.method .left,
+form div.method .middle {
+	float:left;
+}
+
+form div.method .left {
+	width:100px;
+	text-align:center;
+	height:100px;
+	margin-top:30px;
+}

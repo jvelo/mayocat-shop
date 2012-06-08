@@ -55,7 +55,17 @@
           <g:checkBox name="paymentMethod[${counter}].enabled" value="${paymentMethod.enabled}" />
         </div>
       </div>
-      <div class="control-group">
+	  <div class="control-group">
+	    %{-- image --}%
+        <label class="control-label" for="image${counter}">
+          <g:message code="admin.preferences.checkoutPages.logo" default="Image" />
+        </label> <input type="file" name="paymentMethod[${counter}].image" id="image${counter}" />
+		<g:if test="${shopInstance.paymentMethod[counter].image}">
+		Current: V${shopInstance.paymentMethod[counter].imageVersion}
+        </g:if>
+	  </div>
+	  
+	  <div class="control-group">
         <g:link action="configurePaymentMethod" id="${paymentMethod.technicalName}" rel="modal">
           <g:message code="admin.preferences.paymentMethods.configure" default="Configure" />
         </g:link>

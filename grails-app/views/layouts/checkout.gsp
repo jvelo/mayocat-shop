@@ -16,6 +16,7 @@
     <r:require modules="twitterBootstrapNonResponsive"/>
     <r:require modules="knockout"/>
     <r:require modules="styles"/>
+    <r:require modules="checkout"/>
     <nav:resources override="true"/>
 		<g:layoutHead/>
     <r:layoutResources />
