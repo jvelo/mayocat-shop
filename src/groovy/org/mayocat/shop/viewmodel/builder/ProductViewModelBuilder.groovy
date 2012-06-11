@@ -17,6 +17,7 @@ class ProductViewModelBuilder {
     def productViewModel = new ProductViewModel(
       byname: product.byname,
       title: product.title,
+      description: product.description ?: "",
       price: product.price,
       url: taglib.createLink(controller:'product', action:'expose', params: ['byname':product.byname])
     )

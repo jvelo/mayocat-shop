@@ -4,6 +4,7 @@ class ProductViewModel {
 
   String byname
   String title
+  String description
   String url
   float price
   List<String> categories
