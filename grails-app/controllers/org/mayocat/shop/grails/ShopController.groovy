@@ -139,8 +139,8 @@ class ShopController {
 
         bindData(shopInstance, params)
         
-        this.attachImage(shopInstance, logo, shop.checkoutPages, "logo", CheckoutPages.LOGO_MAX_SIZE) 
-        this.attachImage(shopInstance, bg, shop.checkoutPages, "background", CheckoutPages.BG_MAX_SIZE)
+        this.attachImage(shopInstance, logo, shopInstance.checkoutPages, "logo", CheckoutPages.LOGO_MAX_SIZE) 
+        this.attachImage(shopInstance, bg, shopInstance.checkoutPages, "background", CheckoutPages.BG_MAX_SIZE)
         
         if (shopInstance.hasErrors()) {
             render(view: "editCheckoutPages", model: [shopInstance: shopInstance])
