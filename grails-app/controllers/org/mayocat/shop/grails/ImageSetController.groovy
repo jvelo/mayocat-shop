@@ -143,7 +143,7 @@ class ImageSetController {
         }
         def output = new ByteArrayOutputStream()
         def original = imageSet.images.find { it.hint == null }
-        ImageUtils.crop(original.data, original.extension, sizes[params.size], params, output)
+        ImageUtils.cropAndResize(original.data, original.extension, sizes[params.size], params, output)
         thumbnail.identity {
           data = output.toByteArray()
           width = sizes[params.size].width

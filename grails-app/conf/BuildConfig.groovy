@@ -41,6 +41,7 @@ grails.project.dependency.resolution = {
         compile 'com.google.guava:guava:12.0'
         runtime 'org.mozilla:rhino:1.7R3'
         compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.7'
+        compile 'com.mortennobel:java-image-scaling:0.8.5'
     }
 
     plugins {
