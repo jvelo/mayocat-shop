@@ -56,7 +56,7 @@ class ExpositionFilters {
 
         // All products
         def productsViewModel = [:]
-        def products = Product.list(sort:"dateCreated", order:"desc", max:24)
+        def products = Product.findAllByExposed(true, [sort:"dateCreated", order:"desc", max:24])
         def productBuilder = new ProductViewModelBuilder()
         for (product in products) {
           productsViewModel[product.byname] = productBuilder.build(product)
