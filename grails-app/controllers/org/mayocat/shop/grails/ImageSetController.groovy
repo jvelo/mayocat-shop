@@ -1,8 +1,16 @@
 package org.mayocat.shop.grails
 
-import org.springframework.dao.DataIntegrityViolationException
-
+import org.mayocat.shop.grails.ResourceController.CachedResource;
 import org.mayocat.shop.grails.util.ImageUtils
+
+import com.google.common.cache.CacheBuilderSpec
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
+import com.google.common.net.HttpHeaders;
+import com.google.common.hash.Hashing
+
+import javax.servlet.http.HttpServletResponse;
 
 import java.text.DecimalFormat
 import javax.imageio.ImageIO
@@ -16,6 +24,105 @@ class ImageSetController {
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     static scaffold = true
+
+    private static LoadingCache<String, CachedResource> cache;
+
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static class CachedImage {
+        def byte[] data
+        def String eTag
+        def long lastModifiedTime
+        def String filename
+        def String extension
+
+        private CachedImage(final String filename, final String extension, final byte[] data) {
+            this.filename = filename
+            this.extension = extension
+            this.data = data
+            this.eTag = Hashing.md5().hashBytes(data).toString()
+            this.lastModifiedTime = roundedTimestamp()
+        }
+
+        private long roundedTimestamp() {
+            return (System.currentTimeMillis() / 1000) * 1000
+        }
+    }
+
+    private static class ImageLoader extends CacheLoader<String, CachedImage> {
+        @Override
+        public CachedImage load(String key) throws Exception {
+            def id = key.split(":")[0]
+            def hint = key.split(":")[1]
+            if (hint == "_") {
+              hint = null 
+            } 
+            def imageSet = ImageSet.get(id)
+            def image = imageSet.images.find { it.hint == hint }
+            if (image == null) {
+                return null
+            }
+            return new CachedImage(imageSet.filename, image.extension, image.data)
+        }
+    }
+
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Lazy cache initialization
+     *
+     * @return the resource cache
+     */
+    def getCache() {
+        if (this.cache == null) {
+            this.cache = CacheBuilder.from(CacheBuilderSpec.parse("maximumSize=100"))
+                    .build(new ImageLoader())
+        }
+        this.cache
+    }
+
+    /**
+     * Checks whether the request for the passed resource is cached on the client (browser), checking both
+     * last modification date and etag headers.
+     *
+     * @param request the request to check client caching for
+     * @param resource the server-side resource to check client caching for
+     * @return true if the client has not-expired cache resource, false otherwise
+     */
+    private boolean isCachedByClient(request, image) {
+        return (image.eTag == request.getHeader(HttpHeaders.IF_NONE_MATCH)) ||
+        (request.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) >= image.lastModifiedTime)
+    }
+
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
+    def expose() {
+        def image = this.getCache().getUnchecked(params.imageid + ":" + (params.size ?: "_"))
+        
+        if (image == null) {
+            response.sendError(404)
+            return
+        }
+        else if (this.isCachedByClient(request, image)) {
+            response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+
+        response.setContentType("image/" + image.extension)
+        response.setContentLength(image.data.size())
+        response.setHeader('filename', image.filename)
+        response.setDateHeader(HttpHeaders.LAST_MODIFIED, image.lastModifiedTime)
+        response.setHeader(HttpHeaders.ETAG, image.eTag)
+        
+        OutputStream out = response.outputStream
+        try {
+            out.write(image.data)
+        }
+        finally {
+            out.close()
+        }
+    }
 
     def save() {
       def product = null
@@ -166,24 +273,6 @@ class ImageSetController {
           render result as JSON
         }
       } 
-    }
-
-    @Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
-    def expose() {
-      def imageSet = ImageSet.get(params.imageid)
-      def image
-      image = imageSet.images.find { it.hint == params.size }
-      if (imageSet && image) {
-          response.setContentType("image/" + image.extension)
-          response.setContentLength(image.data.size())
-          response.setHeader('filename', imageSet.filename)
-          OutputStream out = response.outputStream
-          out.write(image.data)
-          out.close()
-      }
-      else {
-          response.sendError(404)
-      }
     }
 
     def list() {
