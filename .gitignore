@@ -7,3 +7,4 @@ stacktrace.log
 .gradle
 .DS_Store
 .groovy
+web-app/WEB-INF/classes/
