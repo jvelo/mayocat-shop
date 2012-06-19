@@ -10,7 +10,7 @@ class Payment {
     // The payment data : a serialized JSON object  
     String json
     
-    static constraints = {
+    static mapping = {
         json type:'text'
     }
     

@@ -120,9 +120,11 @@ class CheckoutController extends AbstractExposedController {
             // Could not find order. Send failure email ?
         }
         if (!params.skipResponse) {
-          response.setContentType(ackResponse.getResponseContentType)
-          println "About to respond: " + ackResponse.getResponseContent()
-          render ackResponse.getResponseContent()
+          render(
+              text: ackResponse.getResponseContent(),
+              contentType: ackResponse.getResponseContentType(),
+              encoding: "UTF-8"
+          )
         }
     }
 

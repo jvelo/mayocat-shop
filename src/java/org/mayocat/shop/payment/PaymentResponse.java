@@ -22,6 +22,8 @@ public class PaymentResponse
         this.orderId = orderId;
         this.newStatus = newStatus;
         this.entityToSave = entityToSave;
+        this.contentType = responseContentType;
+        this.response = response;
     }
 
     public OrderStatus getNewStatus()

@@ -8,7 +8,7 @@ class CheckoutFilters {
 
   def filters = {
 
-    checkoutFilters(controller:'checkout', action:'*') {
+    checkoutFilters(controller:'checkout', action:'*', actionExclude: "doPaymentAck") {
 
       after = { viewModel ->
         // Enhancing returned viewModel with API available to all checkout pages :
