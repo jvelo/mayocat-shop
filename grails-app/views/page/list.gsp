@@ -19,8 +19,6 @@
         <thead>
           <tr>
           
-            <g:sortableColumn property="byname" title="${message(code: 'page.byname.label', default: 'Byname')}" />
-
             <g:sortableColumn property="title" title="${message(code: 'page.title.label', default: 'Title')}" />
           
           </tr>
@@ -28,12 +26,15 @@
         <tbody>
         <g:each in="${pageInstanceList}" status="i" var="pageInstance">
           <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-          
-            <td><g:link action="show" id="${pageInstance.id}">${fieldValue(bean: pageInstance, field: "byname")}</g:link></td>
-          
-            <td>${fieldValue(bean: pageInstance, field: "title")}</td>
-
-            <td>${fieldValue(bean: pageInstance, field: "content")}</td>
+                    
+              <td>
+                <g:link action="show" id="${pageInstance.id}">
+                ${fieldValue(bean: pageInstance, field: "title")}
+                </g:link>
+                <small>
+                  /page/${fieldValue(bean:pageInstance, field: "byname")}
+                </small>
+              </td>
           
           </tr>
         </g:each>

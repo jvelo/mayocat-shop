@@ -16,7 +16,7 @@
 		
 	</label>
   <div class="controls">
-	<g:textArea id="content" name="content" value="${pageInstance?.content}"/>
+	<g:textArea id="content" name="content" value="${pageInstance?.content}" rows="30" />
 
     <!-- Hook wysiwyg -->
     <script type="text/javascript">
