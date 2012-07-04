@@ -19,6 +19,38 @@ class OrderController {
     
     static scaffold = true
 
+    def paymentGatewayManagerService
+
+    def makeShipped() {
+      def order = Order.get(params.id)
+      paymentGatewayManagerService.sendOrderShippedEmail(order)
+      order.status = OrderStatus.SHIPPED
+      order.save()
+      redirect(action:'show', id:params.id)
+    }
+
+    def acceptPayment() {
+      def order = Order.get(params.id)
+      paymentGatewayManagerService.sendPaymentAcceptedEmail(order)
+      order.status = OrderStatus.PAID
+      order.save()
+      redirect(action:'show', id:params.id)
+    }
+    
+    def cancelOrder() {
+      def order = Order.get(params.id)
+      paymentGatewayManagerService.sendOrderCancelledEmail(order)
+      order.status = OrderStatus.CANCELLED
+      order.save()
+
+      order.items.each { item ->
+        def product = item.product
+        product.stock = product.stock + item.quantity
+        product.save()
+      }
+      redirect(action:'show', id:params.id)
+    }
+
     def save() {
       // Voluntary empty to forbid creating orders from the admin.
     }

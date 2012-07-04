@@ -39,8 +39,9 @@
         <table class="products table">
           <thead>
             <tr>
-            
-              <g:sortableColumn property="title" title="${message(code: 'product.title.label', default: 'Title')}" />
+              <g:set var="exposed" value="${request.exposed ? 1 : 0}" />
+
+              <g:sortableColumn property="title" title="${message(code: 'product.title.label', default: 'Title')}" params="[exposed: exposed]" />
             
               <g:sortableColumn property="price" title="${message(code: 'product.price.label', default: 'Price')}" />
               

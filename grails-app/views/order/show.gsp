@@ -26,12 +26,24 @@
         <div>
           <g:hiddenField name="id" value="${orderInstance.id}" />
           <g:hiddenField name="version" value="${orderInstance.version}" />
-          <select name="status">
+          <g:set var="statusChangeable" value="${![OrderStatus.PAID, OrderStatus.WAITING_FOR_PAYMENT].contains(orderInstance.status)}" />
+          <select name="status" <g:if test="${!statusChangeable}">disabled="disabled"</g:if>>
             <g:each var="option" in="${OrderStatus.values()}">
               <option value="${option}" <g:if test="${orderInstance.status.equals(option)}">selected</g:if> ><g:orderStatus status="${option}"/></option>
             </g:each>
           </select>
-          <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+          <g:if test="${statusChangeable}">
+            <g:actionSubmit class="save btn primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+          </g:if>
+          <g:else>
+            <g:if test="${orderInstance.status == OrderStatus.PAID}">
+              <g:actionSubmit class="save btn btn-primary" action="makeShipped" value="${message(code: 'orders.shipOrder', default: 'Ship order')}" />
+            </g:if>
+            <g:if test="${orderInstance.status == OrderStatus.WAITING_FOR_PAYMENT}">
+              <g:actionSubmit class="save btn btn-primary" action="acceptPayment" value="${message(code: 'orders.acceptPayment', default: 'Accept payment')}" />
+              <g:actionSubmit class="save btn btn-danger" action="cancelOrder" value="${message(code: 'orders.cancelOrder', default: 'Cancel order')}" />
+            </g:if>
+          </g:else>
         </div>
       </g:form>
 

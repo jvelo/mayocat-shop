@@ -111,6 +111,7 @@ class UrlMappings {
         "/admin/order/show"(controller:"order", action:"show")
         "/admin/order/index"(controller:"order", action:"index")
         "/admin/order/update"(controller:"order", action:"update")
+        "/admin/order/makeShipped"(controller:"order", action:"makeShipped")
 
         // Admin -> page or product images
         "/admin/$type/$itemid/images/create"(controller:"imageSet", action:"create")

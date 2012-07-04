@@ -1,8 +1,9 @@
 package org.mayocat.shop.grails
 
 import java.io.IOException
-
 import java.io.File
+
+import grails.gsp.PageRenderer
 
 import org.mayocat.shop.payment.CheckPaymentGateway
 import org.mayocat.shop.payment.PaymentResponse
@@ -29,6 +30,8 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     
     def mailService
     
+    PageRenderer groovyPageRenderer
+
     ////////////////////////////////////////////////////////////////////
     
     private def ApplicationContext applicationContext
@@ -94,8 +97,24 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
                     )
             order.addToPayments(p)
             order.save(failOnError: true, flush:true)
+
+            order.items.each { item ->
+              def product = item.product
+              if (product && product.stock > 0) {
+                product.stock  = product.stock - item.quantity
+                if (product.stock == 0) {
+                  product.exposed = false  
+                }
+              }
+              product.save()
+            }
             
-            sendOrderValidationEmail(order)
+            if (order.status == OrderStatus.PAID) {
+              sendOrderValidationEmail(order)
+            }
+            else if (order.status == OrderStatus.WAITING_FOR_PAYMENT) {
+              sendWaitingForPaymentEmail(order)  
+            }
             
             return true
         }
@@ -103,27 +122,66 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     }
 
     def sendOrderValidationEmail(Order order) {
-        MessageSource messageSource = applicationContext.getBean("messageSource")
         def shopName = Shop.list()[0]?.name
+        MessageSource messageSource = applicationContext.getBean("messageSource")
         String mailsubject = messageSource.getMessage("orderValidation.subject", [
             "[${shopName}]"
         ] as Object[], "[${shopName}] Your order validation", LCH.getLocale())
+        this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/orderConfirmation")
+    }
+
+    def sendOrderShippedEmail(Order order) {
+        def shopName = Shop.list()[0]?.name
+        MessageSource messageSource = applicationContext.getBean("messageSource")
+        String mailsubject = messageSource.getMessage("orderShipped.subject", [
+            "[${shopName}]"
+        ] as Object[], "[${shopName}] Your order has been shipped", LCH.getLocale())
+        this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/orderShipped")
+    }
+
+    def sendWaitingForPaymentEmail(Order order) {
+        def shopName = Shop.list()[0]?.name
+        MessageSource messageSource = applicationContext.getBean("messageSource")
+        String mailsubject = messageSource.getMessage("waitingForPayment.subject", [
+            "[${shopName}]"
+        ] as Object[], "[${shopName}] Order waiting for payment", LCH.getLocale())
+        this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/waitingForPayment")
+    }
+
+    def sendPaymentAcceptedEmail(Order order) {
+        def shopName = Shop.list()[0]?.name
+        MessageSource messageSource = applicationContext.getBean("messageSource")
+        String mailsubject = messageSource.getMessage("orderShipped.subject", [
+            "[${shopName}]"
+        ] as Object[], "[${shopName}] Your payment has been accepted", LCH.getLocale())
+        this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/paymentAccepted")
+    }
+
+    private def sendOrderRelatedMailToCustomer(Order order, String mailSubject, String template) {
+        def lang = "fr" // FIXME store user language at time of ordering in order.
+        def realTemplate = templateExists("${template}_${lang}") ? "${template}_${lang}" : template
         try {
             mailService.sendMail {
                 to order.customerEmail
-                subject mailsubject
+                subject mailSubject
                 from Shop.list()[0]?.mailSettings?.fromMail ?: "MayocatShop Mailer<no-reply@mayocatshop.com>"
                 body(
-                  view:"/emails/orderConfirmation",
+                  view: realTemplate,
                   model:[order: order]
                 )
             }
-        } catch (java.net.ConnectException e) {
-          log.error("Failed to send order validation email", e);
+        } catch (Exception e) {
+          // FIXME try to find a more specific error.
+          // java.net.ConnectionException is not caught.
+          log.error("Failed to send order related email to customer", e);
         }
     }
     
     ////////////////////////////////////////////////////////////////////
+
+    private def templateExists(String name) {
+        groovyPageRenderer.findResource(name) != null
+    }
 
     private def load(String className) {
         Thread.currentThread().contextClassLoader.loadClass(className)
