@@ -12,7 +12,7 @@
 					<ul class="nav">
 						<nav:eachItem group="main">
 							<li class="${it.active ? 'active':''}"><a href=${it.link}>
-									${it.title}
+                <g:message code="navigation.main.${it.title}" />
 							</a></li>
 						</nav:eachItem>
 					</ul>

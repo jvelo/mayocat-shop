@@ -16,7 +16,7 @@ class CategoryController extends AbstractExposedController {
     static navigation = [
       order : 100,
       action : "list",
-      title : "Categories",
+      title : "categories",
       path : "category",
       group: 'submenu:catalogue'
     ]

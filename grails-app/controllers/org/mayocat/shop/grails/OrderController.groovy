@@ -12,7 +12,7 @@ class OrderController {
     static navigation = [
       order : 1000,
       action : "list",
-      title : "Orders",
+      title : "orders",
       path : "order",
       group: 'main'
     ]
@@ -39,7 +39,7 @@ class OrderController {
     
     def cancelOrder() {
       def order = Order.get(params.id)
-      paymentGatewayManagerService.sendOrderCancelledEmail(order)
+      // paymentGatewayManagerService.sendOrderCancelledEmail(order)
       order.status = OrderStatus.CANCELLED
       order.save()
 

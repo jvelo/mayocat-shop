@@ -27,7 +27,11 @@
         <ul class="nav-list nav navigation">
           <li class="nav-header"><g:message code="navigation.menu" default="Menu" /></li>
           <nav:eachItem group="${pageProperty(name: 'page.submenu')}">
-            <li class="${it.active ? 'active':''}"><a href=${it.link}>${it.title}</a></li>
+            <li class="${it.active ? 'active':''}">
+              <a href=${it.link}>
+                <g:message code="subnavigation.${pageProperty(name: 'page.submenu')}.${it.title}" />
+              </a>
+            </li>
           </nav:eachItem>
         </ul>
         <g:pageProperty name="page.menu"/>

@@ -22,14 +22,14 @@ class ProductController extends AbstractExposedController {
       [
         group:'main',
         action:'list',
-        title:'Catalogue',
+        title:'catalogue',
         order: 10,
         path : "product"
       ],
       [
         group:'submenu:catalogue',
         action : "list",
-        title : "Products",
+        title : "products",
         order : 10,
         path : "product"
       ]

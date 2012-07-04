@@ -20,28 +20,28 @@ class ShopController {
         [
             group:'main',
             action:'edit',
-            title:'Preferences',
+            title:'preferences',
             order: 10,
             path : "preferences"
         ],
         [
             group:'submenu:preferences',
             action:'editCheckoutPages',
-            title:'Checkout pages',
+            title:'checkoutPages',
             order: 20,
             path : "checkout"
         ],
         [
             group:'submenu:preferences',
             action:'editPaymentMethods',
-            title:'Payments methods',
+            title:'paymentMethods',
             order: 20,
             path : "payments"
         ],
         [
             group:'submenu:preferences',
             action:'edit',
-            title:'General',
+            title:'general',
             order: 10,
             path : "general"
         ]

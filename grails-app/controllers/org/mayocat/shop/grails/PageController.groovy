@@ -19,7 +19,7 @@ class PageController extends AbstractExposedController {
       [
         group:'main',
         action:'list',
-        title:'Pages',
+        title:'pages',
         order: 50,
         path : "Pages"
       ]
