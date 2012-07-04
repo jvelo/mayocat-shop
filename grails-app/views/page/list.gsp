@@ -28,9 +28,7 @@
           <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                     
               <td>
-                <g:link action="show" id="${pageInstance.id}">
-                ${fieldValue(bean: pageInstance, field: "title")}
-                </g:link>
+                <g:link action="show" id="${pageInstance.id}">${fieldValue(bean: pageInstance, field: "title")}</g:link>
                 <small>
                   /page/${fieldValue(bean:pageInstance, field: "byname")}
                 </small>

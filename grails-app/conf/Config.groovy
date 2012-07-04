@@ -117,3 +117,11 @@ log4j = {
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'org.mayocat.shop.grails.SecurityUser'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'org.mayocat.shop.grails.SecurityUserRole'
 grails.plugins.springsecurity.authority.className = 'org.mayocat.shop.grails.SecurityRole'
+
+// Grails mail plugin configuration
+grails {
+   mail {
+     host = "localhost"
+     port = 25
+   }
+}

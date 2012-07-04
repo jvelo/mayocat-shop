@@ -1,10 +1,17 @@
 package org.mayocat.shop.grails
 
 import java.io.IOException
+
 import java.io.File
 
 import org.mayocat.shop.payment.CheckPaymentGateway
 import org.mayocat.shop.payment.PaymentResponse
+import org.springframework.beans.BeansException
+import org.springframework.beans.factory.InitializingBean
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder as LCH
 
 import org.codehaus.jackson.JsonGenerationException
 import org.codehaus.jackson.map.JsonMappingException
@@ -14,8 +21,25 @@ import org.codehaus.jackson.map.SerializationConfig
 import com.google.common.base.Charsets
 import com.google.common.io.Files
 
-class PaymentGatewayManagerService {
+class PaymentGatewayManagerService implements ApplicationContextAware {
 
+    ////////////////////////////////////////////////////////////////////
+    
+    // Injected beans
+    
+    def mailService
+    
+    ////////////////////////////////////////////////////////////////////
+    
+    private def ApplicationContext applicationContext
+
+    public void setApplicationContext(ApplicationContext context) throws BeansException
+    {
+        this.applicationContext = context        
+    }
+    
+    ////////////////////////////////////////////////////////////////////
+    
     def getOrCreateEntity(String id) {
         def method = getShop().paymentMethod.find { it.technicalName == id }
         def entity = Entity.findByTypeAndName("payment", method.technicalName)
@@ -70,11 +94,35 @@ class PaymentGatewayManagerService {
                     )
             order.addToPayments(p)
             order.save(failOnError: true, flush:true)
+            
+            sendOrderValidationEmail(order)
+            
             return true
         }
         return false
     }
 
+    def sendOrderValidationEmail(Order order) {
+        MessageSource messageSource = applicationContext.getBean("messageSource")
+        def shopName = Shop.list()[0]?.name
+        String mailsubject = messageSource.getMessage("orderValidation.subject", [
+            "[${shopName}]"
+        ] as Object[], "[${shopName}] Your order validation", LCH.getLocale())
+        try {
+            mailService.sendMail {
+                to order.customerEmail
+                subject mailsubject
+                from Shop.list()[0]?.mailSettings?.fromMail ?: "MayocatShop Mailer<no-reply@mayocatshop.com>"
+                body(
+                  view:"/emails/orderConfirmation",
+                  model:[order: order]
+                )
+            }
+        } catch (java.net.ConnectException e) {
+          log.error("Failed to send order validation email", e);
+        }
+    }
+    
     ////////////////////////////////////////////////////////////////////
 
     private def load(String className) {
@@ -93,4 +141,5 @@ class PaymentGatewayManagerService {
     private def getShop() {
         Shop.list()[0]
     }
+
 }

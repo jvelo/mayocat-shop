@@ -27,7 +27,7 @@ class Shop {
     List<PaymentMethod> paymentMethod
 
     // Manage package dimensions/weight ?
-    static hasOne = [packageManagement: PackageManagement, checkoutPages: CheckoutPages]
+    static hasOne = [packageManagement: PackageManagement, checkoutPages: CheckoutPages, mailSettings: MailSettings]
     
     static hasMany = [paymentMethod: PaymentMethod]
 
@@ -43,6 +43,7 @@ class Shop {
       name nullable:true
       storefront nullable:true
       categoryProductsPerPage nullable:true
+      mailSettings nullable:true
     }
 
     def beforeValidate() {
