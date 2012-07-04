@@ -1,5 +1,6 @@
 import org.mayocat.shop.util.DataSourceUtils
 import org.mayocat.shop.grails.CheckoutPages
+import org.mayocat.shop.grails.MailSettings
 import org.mayocat.shop.grails.SecurityUser
 import org.mayocat.shop.grails.SecurityRole
 import org.mayocat.shop.grails.SecurityUserRole
@@ -45,9 +46,27 @@ class BootStrap {
 
       // Migrations 
       this.ensureShopHasPackageManagement();
+      this.ensureShopHasMailSettings();
       this.ensureShopHasCheckoutPagesPreferences();
     }
 
+    def ensureShopHasMailSettings = {
+      def shop = Shop.list()[0]
+      if (shop && shop.mailSettings == null) {
+        try {
+          def ms = new MailSettings()
+          ms.shop = shop
+          shop.mailSettings = ms
+          shop.save(flush:true)
+        }
+        catch (Exception e) {
+          def session = sessionFactory.currentSession
+          session.setFlushMode(org.hibernate.FlushMode.MANUAL)
+          log.error("Failed to add mail settings. ${org.apache.commons.lang.exception.ExceptionUtils.getRootCauseMessage(e)}")
+        }
+      }
+    }
+    
     def ensureShopHasPackageManagement = {
       def shop = Shop.list()[0]
       if (shop && shop.packageManagement == null) {

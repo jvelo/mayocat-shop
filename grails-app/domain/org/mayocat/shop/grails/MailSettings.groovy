@@ -23,4 +23,8 @@ class MailSettings
 {
     String fromMail
     Shop shop
+
+    static constraints = {
+      fromMail nullable:true
+    }
 }
