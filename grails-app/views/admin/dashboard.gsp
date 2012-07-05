@@ -42,7 +42,7 @@
 
       <div class="widget span4">
         <h3>
-          <g:message code="dashboard.ordersToProcess" default="Orders waiting for payment" />
+          <g:message code="dashboard.ordersAwaitingPayment" default="Orders waiting for payment" />
         </h3>
         <g:set var="orders" value="${Order.findAllByStatus("WAITING_FOR_PAYMENT", [max: 15, sort: "dateCreated", order: "desc"])}" />
         <g:each in="${orders}" var="order">
