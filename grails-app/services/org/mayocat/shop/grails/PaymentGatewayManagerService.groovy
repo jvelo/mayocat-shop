@@ -124,7 +124,7 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     def sendOrderValidationEmail(Order order) {
         def shopName = Shop.list()[0]?.name
         MessageSource messageSource = applicationContext.getBean("messageSource")
-        String mailsubject = messageSource.getMessage("orderValidation.subject", [
+        String mailsubject = messageSource.getMessage("mails.orderValidation.subject", [
             "[${shopName}]"
         ] as Object[], "[${shopName}] Your order validation", LCH.getLocale())
         this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/orderConfirmation")
@@ -133,7 +133,7 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     def sendOrderShippedEmail(Order order) {
         def shopName = Shop.list()[0]?.name
         MessageSource messageSource = applicationContext.getBean("messageSource")
-        String mailsubject = messageSource.getMessage("orderShipped.subject", [
+        String mailsubject = messageSource.getMessage("mails.orderShipped.subject", [
             "[${shopName}]"
         ] as Object[], "[${shopName}] Your order has been shipped", LCH.getLocale())
         this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/orderShipped")
@@ -142,7 +142,7 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     def sendWaitingForPaymentEmail(Order order) {
         def shopName = Shop.list()[0]?.name
         MessageSource messageSource = applicationContext.getBean("messageSource")
-        String mailsubject = messageSource.getMessage("waitingForPayment.subject", [
+        String mailsubject = messageSource.getMessage("mails.waitingForPayment.subject", [
             "[${shopName}]"
         ] as Object[], "[${shopName}] Order waiting for payment", LCH.getLocale())
         this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/waitingForPayment")
@@ -151,7 +151,7 @@ class PaymentGatewayManagerService implements ApplicationContextAware {
     def sendPaymentAcceptedEmail(Order order) {
         def shopName = Shop.list()[0]?.name
         MessageSource messageSource = applicationContext.getBean("messageSource")
-        String mailsubject = messageSource.getMessage("orderShipped.subject", [
+        String mailsubject = messageSource.getMessage("mails.orderShipped.subject", [
             "[${shopName}]"
         ] as Object[], "[${shopName}] Your payment has been accepted", LCH.getLocale())
         this.sendOrderRelatedMailToCustomer(order, mailsubject, "/emails/paymentAccepted")

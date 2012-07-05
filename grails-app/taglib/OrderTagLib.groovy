@@ -61,7 +61,7 @@ class OrderTagLib {
   def orderStatus = { attrs, body ->
     def humanReadable = attrs.status.code.toLowerCase().replaceAll("_", " ").capitalize()
     def applicationContext = grailsApplication.getMainContext()
-    humanReadable = applicationContext.getMessage("orders.status." + attrs.status, [] as Object[], humanReadable, LCH.getLocale())
+    humanReadable = applicationContext.getMessage("orders.status." + attrs.status.code, [] as Object[], humanReadable, LCH.getLocale())
     out << humanReadable
   }
 
