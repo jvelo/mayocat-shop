@@ -55,11 +55,11 @@
         <thead>
           <tr>
             <th></th>
-            <th>Item name</th>
-            <th>Description</th>
-            <th>Unit price</th>
-            <th>Quantity</th>
-            <th>Item total</th>
+            <th><g:message code="order.table.item" default="Item name" /></th>
+            <th><g:message code="order.table.description" default="Description" /></th>
+            <th><g:message code="order.table.unitPrice" default="Unit price" /></th>
+            <th><g:message code="order.table.quantity" default="Quantity" /></th>
+            <th><g:message code="order.table.itemTotal" default="Item total" /></th>
           </tr>
         </thead>
 

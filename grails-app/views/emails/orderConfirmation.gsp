@@ -1,7 +1,11 @@
 <%@ page contentType="text/html"%>
 
-Hello,<br />
+Bonjour,<br />
 <br />
-Your order #${order.getId()} has been validated, and will be prepared for shipment as soon as possible.<br />
+Votre commande #${order.getId()} à été validée, et sera préparée dans les plus bref délais.<br />
 <br />
-Thank you.<br />
+Détails de votre commande:<br />
+<br />
+<g:render template="/emails/orderTable"/>
+<br />
+Merci.<br />
