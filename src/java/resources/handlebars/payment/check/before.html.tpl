@@ -1,11 +1,15 @@
 <div class="order-before">
-Merci d'envoyer un chèque du montant de votre commande : {{order.grandTotal}} à l'ordre de :
+Merci de faire un chèque du montant de votre commande ({{order.displayTotal}} euros) à l'ordre de :
 
 <div class="well">
 {{configuration.orderto}}
 </div>
-
-à l'adresse suivante :
+<p>
+Pensez s'il vous plaît à inscrire le numéro de votre commande (n&deg;{{order.id}}) au dos ce celui-ci.
+</p>
+<p>
+Envoyez le chèque à l'adresse suivante :
+</p>
 <div class="adr">
 {{configuration.sendto}}
 </div>

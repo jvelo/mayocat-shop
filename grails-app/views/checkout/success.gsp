@@ -30,7 +30,7 @@
 		</div>
 		<div class="submit-step center">
           <a class="btn" href="${createLink(controller:'home', action:'expose')}">
-          Back to the shop
+            <g:message code="checkout.payment.backToTheShop" default="Back to the shop" />
           </a>
 		</div>
 	</div>

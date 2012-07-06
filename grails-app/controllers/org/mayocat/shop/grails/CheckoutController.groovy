@@ -3,6 +3,7 @@ package org.mayocat.shop.grails
 import groovy.json.JsonSlurper
 import java.util.Currency
 
+import org.mayocat.shop.viewmodel.builder.OrderViewModelBuilder
 import org.mayocat.shop.payment.HandlebarsExecutor
 import org.mayocat.shop.payment.CheckPaymentGateway
 
@@ -65,10 +66,10 @@ class CheckoutController extends AbstractExposedController {
         def data = gateway.prepareBeforePayment(order, configuration)
 
         def context = [
-                    configuration: configuration,
-                    order: [:],
-                    data: data
-                ]
+          configuration: configuration,
+          order: new OrderViewModelBuilder().build(order),
+          data: data
+        ]
 
         def templateContent = paymentGatewayManagerService.getTemplateContents(method, "before")
         def beforeContent = executor.executeHandlebar(templateContent, context)
