@@ -29,7 +29,7 @@ class Order {
     static hasMany = [items:OrderItem, payments:Payment]
 
     static constraints = {
-      customerEmail nullable: false
+      customerEmail nullable: false, blank: false
       billingAddress nullable: false
       deliveryAddress nullable: true
       status nullable: true

@@ -29,3 +29,13 @@ form div.method .left {
 	height:100px;
 	margin-top:30px;
 }
+
+label.error {
+	color:#B94A48;
+	font-weight:bold;
+}
+
+fieldset#billingAddress {
+	float:left;
+	margin-right: 100px;
+}

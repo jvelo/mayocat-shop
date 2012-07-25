@@ -118,7 +118,7 @@
         <div class="address">
           <g:if test="${orderInstance.deliveryAddress}">
             <div class="header">
-              <g:message code="order.deliveryAddress" default="Delivery Address" />
+              <g:message code="order.billingAddress" default="Billing Address" />
             </div>
           </g:if>
           <g:else>
@@ -131,6 +131,7 @@
         <g:if test="${orderInstance.deliveryAddress != null}">
         %{-- 2. Delivery address, if different.
           --}%
+          <br />
           <div class="address">
             <div class="header">
               <g:message code="order.deliveryAddress" default="Delivery Address" />

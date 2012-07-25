@@ -18,8 +18,8 @@ class CheckoutController extends AbstractExposedController {
     /**
      * on GET
      */
-    def expose() {
-        render(view: "index.html", model:[template:"checkout"])
+    def checkout() {
+        render("view": "checkout", model: [cart: session["cart"]])
     }
 
     /**
@@ -27,9 +27,28 @@ class CheckoutController extends AbstractExposedController {
      */
     def createOrder() {
         def shop = Shop.list()[0]
-        def order = new Order(params)
+        
+        def keepDeliveryAddress = false
+        for (param in params.keySet()) {
+            if (param ==~ /deliveryAddress.+/ && params[param] != '') {
+                keepDeliveryAddress = true
+            }
+        }
+        if (!keepDeliveryAddress) {
+            def paramsToRemove = []
+            for (param in params.keySet()) {
+                if (param ==~ /deliveryAddress.*/ && params[param] != '') {
+                    paramsToRemove.add(param)
+                }
+            }
+            for (param in paramsToRemove) {
+                params.remove(param)
+            }
+        }
 
-        if (order.validate()) {
+        def order = new Order(params)
+        
+        if (order.validate() && order.billingAddress.validate() && (!keepDeliveryAddress || order.deliveryAddress?.validate())) {
             if (shop.sentBySnailMail) {
                 // 1. check if "shop to billing address is checked"
                 // 2. copy address or add new address (+validation)
@@ -51,7 +70,7 @@ class CheckoutController extends AbstractExposedController {
 
         }
         else {
-            render(view: "index.html", model:[template:"checkout", order: order, errors: order.errors.allErrors])
+            render("view": "checkout", model: [cart: session["cart"], order: order, twoAddress: !params.useBillingAddressForDelivery])
         }
     }
 

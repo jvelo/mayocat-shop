@@ -22,6 +22,12 @@ class Address {
     }
 
     static constraints = {
+      firstName blank: false
+      lastName blank: false
+      address blank: false
+      zip blank: false
+      city blank: false
+      
       company nullable: true
       address2 nullable: true
       countryCode nullable: true
