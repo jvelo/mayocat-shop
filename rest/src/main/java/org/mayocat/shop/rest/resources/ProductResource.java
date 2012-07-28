@@ -1,5 +1,7 @@
 package org.mayocat.shop.rest.resources;
 
+import java.net.URL;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.GET;
@@ -8,7 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.ProductStore;
@@ -28,11 +32,11 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object search(@PathParam("handle") String handle)
+    public Object search(@PathParam("handle") String handle, @Context UriInfo uriInfo)
     {
-        // LOG.debug("Searching database with query [{}]", query);
-
         try {
+            String host = uriInfo.getBaseUri().getHost();
+
             Product product = this.store.getProduct("tenant", handle);
             if (product == null) {
                 return Response.status(404  ).build();

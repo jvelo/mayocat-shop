@@ -8,16 +8,27 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DataNucleusProductStore implements ProductStore
+public class ProductStore implements org.mayocat.shop.store.ProductStore
 {
     @Inject
-    private PersistanceManagerFactoryProdiver pmfProvider;
-
+    protected PersistanceManagerFactoryProdiver pmfProvider;
+    
+    /*
+    public ProductStore()
+    {
+        
+    }
+    
+    public ProductStore(PersistanceManagerFactoryProdiver pmfProvider)
+    {
+        this.pmfProvider = pmfProvider;
+    }
+    */
+    
     public void setPersistanceManagerFactoryProdiver(PersistanceManagerFactoryProdiver pmfProvider) {
         this.pmfProvider = pmfProvider;
     }

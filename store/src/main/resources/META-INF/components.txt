@@ -1,2 +1,2 @@
-org.mayocat.shop.store.datanucleus.DataNucleusProductStore
+org.mayocat.shop.store.datanucleus.ProductStore
 org.mayocat.shop.store.datanucleus.DefaultPersistanceManagerFactoryProdiver

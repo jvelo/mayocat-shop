@@ -38,6 +38,7 @@ public class DefaultPersistanceManagerFactoryProdiver implements PersistanceMana
         props.put("datanucleus.validateTables", "false");
         props.put("datanucleus.validateConstraints", "false");
         props.put("datanucleus.ConnectionDriverName", "org.hsqldb.jdbc.JDBCDriver");
+        props.put("datanucleus.connectionPoolingType", "dbcp-builtin");
 
         return props;
     }
