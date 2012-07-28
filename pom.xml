@@ -1,0 +1,88 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.mayocat</groupId>
+  <artifactId>mayocat-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Mayocat Parent POM</name>
+  <description>Modern eCommerce for the JVM</description>
+  <url>http://github.com/mayocat/mayocat-shop/</url>
+
+  <organization>
+    <name>Mayocat</name>
+    <url>http://github.com/mayocat/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>LGPL, version 2.1</name>
+      <url>http://www.opensource.org/licenses/lgpl-license.php</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/mayocat/mayocat-shop.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/mayocat/mayocat-shop.git</developerConnection>
+    <url>http://github.com/mayocat/mayocat-shop</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>jvelo</id>
+      <name>Jerome Velociter</name>
+      <email>jerome@velociter.fr</email>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <properties>
+    <!-- Java 6 -->
+    <maven.compiler.source>6</maven.compiler.source>
+    <maven.compiler.target>6</maven.compiler.target>
+    <!-- Encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Dependencies versions -->
+    <dropwizard.version>0.4.2</dropwizard.version>
+    <xwiki.version>4.1-milestone-2</xwiki.version>
+    <datanucleus.version>3.0.2</datanucleus.version>
+  </properties>
+
+  <dependencies>
+
+    <!-- Top level dependencies required by all submodules -->
+
+    <!-- XWiki -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${xwiki.version}</version>
+    </dependency>
+
+    <!-- Drop Wizard --> 
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-core</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-client</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+
+  </dependencies>  
+
+  <modules>
+    <module>configuration</module>
+    <module>model</module>
+    <module>store</module>
+    <module>rest</module>
+    <module>application</module>
+  </modules>
+
+</project>

@@ -1,0 +1,8 @@
+logging:
+  loggers:
+      "org.mayocat": DEBUG
+
+dataSource:
+  name: "datanucleus"
+  properties:
+    foo: bar

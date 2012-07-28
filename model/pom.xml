@@ -1,0 +1,88 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+  FIXME: Something inherited in the parent POM makes the JDO enhancer to fail.
+         To investigate... (then also remove the properties + groupId of this POM).
+  <parent>
+    <groupId>org.mayocat</groupId>
+    <artifactId>mayocat-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  -->
+  <groupId>org.mayocat</groupId>
+  <artifactId>mayocat-model</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Mayocat Model</name>
+  <description>Model classes for MayocatShop</description>
+  <properties>
+    <datanucleus.version>3.0.2</datanucleus.version>
+  </properties>
+  <dependencies>
+
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>2.3-eb</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>${datanucleus.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-rdbms</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-api-jdo</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+
+    <!-- Testing dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>maven-datanucleus-plugin</artifactId>
+          <version>${datanucleus.version}</version>
+          <configuration>
+              <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
+              <verbose>true</verbose>
+          </configuration>
+          <executions>
+              <execution>
+                  <phase>process-classes</phase>
+                  <goals>
+                      <goal>enhance</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
