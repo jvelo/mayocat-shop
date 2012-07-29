@@ -47,9 +47,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies versions -->
-    <dropwizard.version>0.4.2</dropwizard.version>
+    <dropwizard.version>0.4.4</dropwizard.version>
     <xwiki.version>4.1-milestone-2</xwiki.version>
-    <datanucleus.version>3.0.3</datanucleus.version>
+    <!-- FIXME With 3.0.3 and above, I have a "Plugin (Bundle) “org.datanucleus.api.jdo” is already registered. -->
+    <datanucleus.version>3.0.2</datanucleus.version>
   </properties>
 
   <dependencies>
@@ -58,7 +59,7 @@
 
     <!-- XWiki -->
     <dependency>
-      <groupId>org.xwiki.commons</groupId>
+    <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-component-default</artifactId>
       <version>${xwiki.version}</version>
     </dependency>

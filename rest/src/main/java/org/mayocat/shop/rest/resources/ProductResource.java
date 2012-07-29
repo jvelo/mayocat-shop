@@ -26,6 +26,11 @@ public class ProductResource implements Resource
     @Inject
     private ProductStore store;
 
+    public ProductResource()
+    {
+        
+    }
+    
     /**
      * Testing constructor.
      */

@@ -20,7 +20,6 @@ public class Product
     @Index
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @NotNull
     private Long id;
 
     @Index
