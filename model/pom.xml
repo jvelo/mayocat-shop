@@ -39,12 +39,35 @@
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-rdbms</artifactId>
       <version>${datanucleus.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-api-jdo</artifactId>
       <version>${datanucleus.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+	  <groupId>javax.validation</groupId>
+	  <artifactId>validation-api</artifactId>
+	  <version>1.0.0.GA</version>
+    </dependency>
+            
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>12.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+	<!-- Eclipse DataNucleus plugin complains about enhancer class not found if the enhancer is not here as a dependency... -->
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-enhancer</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Testing dependencies -->

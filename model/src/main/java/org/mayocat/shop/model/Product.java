@@ -7,6 +7,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 import javax.jdo.annotations.Uniques;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @PersistenceCapable(
     table = "product",
@@ -18,9 +20,12 @@ public class Product
     @Index
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    @NotNull
     private Long id;
 
     @Index
+    @NotNull
+    @Size(min = 1)
     private String handle;
     
     private String tenant;
@@ -44,4 +49,41 @@ public class Product
     {
         this.handle = handle;
     }
+    
+    ////////////////////////////////////////////////
+
+    @Override  
+    public boolean equals(Object obj)  
+    {  
+       if (obj == null)  
+       {  
+          return false;  
+       }  
+       if (getClass() != obj.getClass())  
+       {  
+          return false;  
+       }  
+       final Product other = (Product) obj;  
+         
+       return   com.google.common.base.Objects.equal(this.id, other.id)  
+             && com.google.common.base.Objects.equal(this.tenant, other.tenant)  
+             && com.google.common.base.Objects.equal(this.handle, other.handle);  
+    }  
+    
+    @Override
+    public int hashCode()  
+    {  
+        return com.google.common.base.Objects.hashCode(this.handle, this.tenant, this.id);  
+    }
+    
+    @Override  
+    public String toString()  
+    {  
+       return com.google.common.base.Objects.toStringHelper(this)  
+                 .addValue(this.id)  
+                 .addValue(this.tenant)  
+                 .addValue(this.handle)    
+                 .toString();  
+    }  
+    
 }

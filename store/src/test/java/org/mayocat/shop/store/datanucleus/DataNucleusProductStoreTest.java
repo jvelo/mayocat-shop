@@ -9,6 +9,12 @@ import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.StoreException;
 
+/**
+ * Unit tests for the product store.
+ * 
+ * Note: This tests is really about datanucleus persistance, so bean-validation constraints are not tested here.
+ * They are tested both in the model module directly and in full-stack REST integrations test.
+ */
 public class DataNucleusProductStoreTest
 {
     private PersistanceManagerFactoryProdiver pmfProvider;
@@ -38,6 +44,7 @@ public class DataNucleusProductStoreTest
         Assert.assertNotNull(p2);
     }
 
+    
     @Test
     public void testPersistProductWithSameHandleButDifferentTenant() throws StoreException
     {

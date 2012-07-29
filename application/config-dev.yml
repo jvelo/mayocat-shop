@@ -5,4 +5,11 @@ logging:
 dataSource:
   name: "datanucleus"
   properties:
-    foo: bar
+    javax.jdo.PersistenceManagerFactoryClass: org.datanucleus.api.jdo.JDOPersistenceManagerFactory
+    javax.jdo.option.ConnectionURL: jdbc:hsqldb:mem:mayocat
+    javax.jdo.option.ConnectionUserName: sa
+    javax.jdo.option.ConnectionPassword: 
+    datanucleus.autoCreateSchema: true
+    datanucleus.validateTables: false
+    datanucleus.validateConstraints: false
+    datanucleus.ConnectionDriverName: org.hsqldb.jdbc.JDBCDriver

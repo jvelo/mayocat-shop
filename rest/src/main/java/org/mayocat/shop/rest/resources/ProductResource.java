@@ -1,7 +1,5 @@
 package org.mayocat.shop.rest.resources;
 
-import java.net.URL;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.GET;
@@ -27,6 +25,14 @@ public class ProductResource implements Resource
 {
     @Inject
     private ProductStore store;
+
+    /**
+     * Testing constructor.
+     */
+    public ProductResource(ProductStore store)
+    {
+        this.store = store;
+    }
 
     @Path("{handle}")
     @GET

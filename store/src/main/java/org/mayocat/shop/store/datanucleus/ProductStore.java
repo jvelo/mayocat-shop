@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.validation.Valid;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.StoreException;
@@ -33,7 +34,7 @@ public class ProductStore implements org.mayocat.shop.store.ProductStore
         this.pmfProvider = pmfProvider;
     }
 
-    public void persist(String tenant, Product p) throws StoreException
+    public void persist(String tenant, @Valid Product p) throws StoreException
     {
         PersistenceManager pm = null;
         try {

@@ -1,14 +1,9 @@
 package org.mayocat.shop.store.datanucleus;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
-
-import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
-import org.datanucleus.metadata.PersistenceUnitMetaData;
 
 public class HsqldbTestingPersistanceManagerFactoryProvider implements PersistanceManagerFactoryProdiver
 {
@@ -16,19 +11,11 @@ public class HsqldbTestingPersistanceManagerFactoryProvider implements Persistan
 
     public HsqldbTestingPersistanceManagerFactoryProvider()
     {
-
         Properties props = defaultProperties();
 
         this.pmf = JDOHelper.getPersistenceManagerFactory(props);
-
-        // org.hsqldb.jdbc.JDBCDriver
-
-        // newProperties.put("datanucleus.ConnectionURL", "jdbc:hsqldb:mem:test");
-        // newProperties.put("datanucleus.ConnectionUserName", "sa");
-        // newProperties.put("datanucleus.ConnectionPassword", "");
     }
 
-    @Override
     public PersistenceManagerFactory get()
     {
         return pmf;
@@ -43,9 +30,9 @@ public class HsqldbTestingPersistanceManagerFactoryProvider implements Persistan
         props.put("javax.jdo.option.ConnectionPassword", "");
         props.put("datanucleus.autoCreateSchema", "true");
         props.put("datanucleus.validateTables", "false");
-        props.put("datanucleus.validateConstraints", "false");
+        props.put("datanucleus.validateConstraints", "true");
         props.put("datanucleus.ConnectionDriverName", "org.hsqldb.jdbc.JDBCDriver");
-
+        
         return props;
     }
 }
