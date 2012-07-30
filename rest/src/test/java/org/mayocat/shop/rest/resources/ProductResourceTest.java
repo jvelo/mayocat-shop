@@ -3,6 +3,7 @@ package org.mayocat.shop.rest.resources;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.ProductStore;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -20,6 +22,8 @@ import com.yammer.dropwizard.testing.ResourceTest;
 public class ProductResourceTest extends ResourceTest
 {
 
+    private final Tenant tenant = new Tenant("test");
+    
     private final Product product = new Product();
     
     private final ProductStore store = mock(ProductStore.class);
@@ -28,7 +32,7 @@ public class ProductResourceTest extends ResourceTest
     protected void setUpResources() throws Exception
     {
         product.setHandle("handle");
-        when(store.getProduct(anyString(), anyString())).thenReturn(product);
+        when(store.findByTenantAndHandle(any(Tenant.class), anyString())).thenReturn(product);
         //when(store.persist(anyString(), product)).thenReturn(product);
         addResource(new ProductResource(store));
     }
@@ -39,7 +43,7 @@ public class ProductResourceTest extends ResourceTest
                    client().resource("/product/handle").get(Product.class),
                    is(product));
 
-        verify(store).getProduct("tenant", "handle");
+        verify(store).findByTenantAndHandle(tenant, "handle");
     }
     
     @Test

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
+import org.mayocat.shop.rest.provider.Provider;
 import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
@@ -36,6 +37,13 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
 
         componentManager.initialize(this.getClass().getClassLoader());
 
+        // Registering provider component implementations against the environment...
+        Map<String, Resource> providers = componentManager.getInstanceMap(Provider.class);
+        for (Map.Entry<String, Resource> provider : providers.entrySet()) {
+            environment.addProvider(provider.getValue());
+        }
+
+        // Registering resources component implementations against the environment...
         Map<String, Resource> restResources = componentManager.getInstanceMap(Resource.class);
         for (Map.Entry<String, Resource> resource : restResources.entrySet()) {
             environment.addResource(resource.getValue());

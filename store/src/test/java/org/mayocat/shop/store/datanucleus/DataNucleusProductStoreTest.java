@@ -1,5 +1,7 @@
 package org.mayocat.shop.store.datanucleus;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -7,6 +9,7 @@ import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.StoreException;
 
 /**
@@ -33,51 +36,73 @@ public class DataNucleusProductStoreTest
     }
 
     @Test
-    public void testPersistProduct() throws StoreException
+    public void testCreateProduct() throws StoreException
     {
+        Tenant t = new Tenant("mytenant");
+        
         Product p = new Product();
         p.setHandle("My-Handle");
+        p.setTenant(t);
+        
+        ps.create(p);
 
-        ps.persist("tenant", p);
-
-        Product p2 = ps.getProduct("tenant", "My-Handle");
+        Product p2 = ps.findByTenantAndHandle(t, "My-Handle");
         Assert.assertNotNull(p2);
     }
 
     
     @Test
-    public void testPersistProductWithSameHandleButDifferentTenant() throws StoreException
+    public void testCreateProductWithSameHandleButDifferentTenant() throws StoreException
     {
+        Tenant t = new Tenant("my-tenant");
         Product p = new Product();
         p.setHandle("My-Handle");
-        // p.setTenant("test");
+        p.setTenant(t);
 
-        ps.persist("tenant1", p);
+        ps.create(p);
 
+        Tenant t2 = new Tenant("my-other-tenant");
         Product p2 = new Product();
         p2.setHandle("My-Handle");
-        // p2.setTenant("test2");
+        p2.setTenant(t2);
 
-        ps.persist("tenant2", p2);
+        ps.create(p2);
+        
+        // No exception thrown -> OK
     }
 
     @Test
-    public void testPersistProductThatAlreadyExistsForTenant() throws StoreException
+    public void testCreateProductThatAlreadyExistsForTenant() throws StoreException
     {
         thrown.expect(StoreException.class);
-        thrown.expectMessage(JUnitMatchers.containsString("unique constraint"));
-        thrown.expectMessage(JUnitMatchers.containsString("UNIQUE_HANDLE_PER_TENANT"));
+        thrown.expectMessage(JUnitMatchers.containsString("Product with handle [My-Handle] already exists for tenant [my-tenant]"));
 
+        Tenant t = new Tenant("my-tenant");
+        
         Product p = new Product();
         p.setHandle("My-Handle");
-        // p.setTenant("test");
+        p.setTenant(t);
 
-        ps.persist("tenant", p);
+        ps.create(p);
 
         Product p2 = new Product();
         p2.setHandle("My-Handle");
-        // p2.setTenant("test");
+        p2.setTenant(t);
 
-        ps.persist("tenant", p2);
+        ps.create(p2);
+    }
+    
+    @Test
+    public void testUpdateProduct() throws StoreException
+    {
+        Tenant t = new Tenant("my-tenant");
+        Product p = new Product();
+        p.setHandle("My-Handle");
+        p.setTenant(t);
+
+        ps.create(p);
+        ps.update(p);
+        
+        assertNotNull(ps.findByTenantAndHandle(t, "My-Handle"));
     }
 }
