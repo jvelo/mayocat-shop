@@ -1,49 +1,63 @@
 package org.mayocat.shop.rest.resources;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jmock.Expectations;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.rest.provider.tenant.DefaultTenantResolver;
+import org.mayocat.shop.rest.provider.tenant.QueryTenantProvider;
 import org.mayocat.shop.store.ProductStore;
+import org.xwiki.test.annotation.ComponentList;
+import org.xwiki.test.annotation.MockingRequirement;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.yammer.dropwizard.testing.ResourceTest;
 
-public class ProductResourceTest extends ResourceTest
+@ComponentList(DefaultTenantResolver.class)
+public class ProductResourceTest extends AbstractMockingComponentResourceTest
 {
-
-    private final Tenant tenant = new Tenant("test");
-    
     private final Product product = new Product();
     
-    private final ProductStore store = mock(ProductStore.class);
+    private ProductStore store;
+    
+    @MockingRequirement
+    private ProductResource productResource;
+    
+    @MockingRequirement(
+        // Excluding all providers.
+        // FIXME : find a way to exclude specifically Provider<TenantResolver> ?
+        exceptions=javax.inject.Provider.class
+    )
+    private QueryTenantProvider tenantProvider;
     
     @Override
     protected void setUpResources() throws Exception
     {
+        
+        this.store = getComponentManager().getInstance(ProductStore.class);
+        
         product.setHandle("handle");
-        when(store.findByTenantAndHandle(any(Tenant.class), anyString())).thenReturn(product);
-        //when(store.persist(anyString(), product)).thenReturn(product);
-        addResource(new ProductResource(store));
+        
+        getMockery().checking(new Expectations()        
+        {
+            {        
+                allowing(store).findByTenantAndHandle(with(any(Tenant.class)), with(any(String.class)));
+                will(returnValue(product));
+            }
+        });
+        
+        addResource(this.tenantProvider);
+        addResource(this.productResource);
     }
 
     @Test
     public void testGetProduct() throws Exception {
-        assertThat("GET requests fetch the Product by handle",
-                   client().resource("/product/handle").get(Product.class),
-                   is(product));
-
-        verify(store).findByTenantAndHandle(tenant, "handle");
+        Product returned = client().resource("/product/handle").get(Product.class);
+        assertEquals(returned, product);
     }
     
     @Test

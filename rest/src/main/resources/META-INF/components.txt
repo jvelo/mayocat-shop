@@ -1,2 +1,4 @@
 org.mayocat.shop.rest.provider.tenant.QueryTenantProvider
 org.mayocat.shop.rest.resources.ProductResource
+org.mayocat.shop.rest.provider.tenant.DefaultTenantResolver
+org.mayocat.shop.rest.provider.tenant.TenantResolverProvider

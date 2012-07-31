@@ -13,9 +13,17 @@ public class MayocatShopConfiguration extends Configuration
     @NotNull
     @JsonProperty
     private DataSourceConfiguration dataSource = new DataSourceConfiguration();
-    
+        
+    private String tenantResolver = "default";
+
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;
+    }
+    
+
+    public String getTenantResolver()
+    {
+        return tenantResolver;
     }
 }

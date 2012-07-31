@@ -1,5 +1,7 @@
 package org.mayocat.shop.rest.provider.tenant;
 
+import javax.inject.Inject;
+
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.rest.provider.Provider;
 import org.xwiki.component.annotation.Component;
@@ -14,10 +16,15 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 public class QueryTenantProvider implements InjectableProvider<QueryTenant, Parameter>, Provider
 {
 
+    @Inject
+    private javax.inject.Provider<TenantResolver> tenantResolverProvider;
+
     @Override
-    public Injectable<Tenant> getInjectable(ComponentContext componentContext, QueryTenant aannotation, Parameter parameter)
+    public Injectable<Tenant> getInjectable(ComponentContext componentContext, QueryTenant aannotation,
+        Parameter parameter)
     {
-        return new QueryTenantInjectable();
+
+        return new QueryTenantInjectable(tenantResolverProvider);
     }
 
     @Override

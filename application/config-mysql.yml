@@ -18,3 +18,5 @@ dataSource:
     # datanucleus.ConnectionUserName: root
     # datanucleus.ConnectionPassword: 
     # datanucleus.identifier.case: PreserveCase
+
+tenantResolver: other

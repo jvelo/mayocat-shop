@@ -25,19 +25,6 @@ public class ProductResource implements Resource
     @Inject
     private ProductStore store;
 
-    public ProductResource()
-    {
-        
-    }
-    
-    /**
-     * Testing constructor.
-     */
-    public ProductResource(ProductStore store)
-    {
-        this.store = store;
-    }
-
     @Path("{handle}")
     @GET
     @Timed

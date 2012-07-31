@@ -5,6 +5,9 @@ import java.util.Properties;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
+import org.xwiki.component.annotation.Component;
+
+@Component
 public class HsqldbTestingPersistanceManagerFactoryProvider implements PersistanceManagerFactoryProdiver
 {
     private PersistenceManagerFactory pmf;

@@ -11,6 +11,9 @@ import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.StoreException;
+import org.xwiki.test.AbstractMockingComponentTestCase;
+import org.xwiki.test.annotation.ComponentList;
+import org.xwiki.test.annotation.MockingRequirement;
 
 /**
  * Unit tests for the product store.
@@ -18,11 +21,11 @@ import org.mayocat.shop.store.StoreException;
  * Note: This tests is really about datanucleus persistance, so bean-validation constraints are not tested here.
  * They are tested both in the model module directly and in full-stack REST integrations test.
  */
-public class DataNucleusProductStoreTest
+@ComponentList(HsqldbTestingPersistanceManagerFactoryProvider.class)
+public class DataNucleusProductStoreTest extends AbstractMockingComponentTestCase
 {
-    private PersistanceManagerFactoryProdiver pmfProvider;
-
-    private org.mayocat.shop.store.datanucleus.ProductStore ps;
+    @MockingRequirement(exceptions=PersistanceManagerFactoryProdiver.class)
+    private org.mayocat.shop.store.datanucleus.DNProductStore ps;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -30,9 +33,12 @@ public class DataNucleusProductStoreTest
     @Before
     public void setUp()
     {
-        this.pmfProvider = new HsqldbTestingPersistanceManagerFactoryProvider();
-        this.ps = new ProductStore();
-        this.ps.setPersistanceManagerFactoryProdiver(pmfProvider);
+        try {
+            super.setUp();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Test

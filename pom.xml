@@ -48,7 +48,7 @@
 
     <!-- Dependencies versions -->
     <dropwizard.version>0.4.4</dropwizard.version>
-    <xwiki.version>4.1-milestone-2</xwiki.version>
+    <xwiki.version>4.2-milestone-1</xwiki.version>
     <!-- FIXME With 3.0.3 and above, I have a "Plugin (Bundle) “org.datanucleus.api.jdo” is already registered. -->
     <datanucleus.version>3.0.2</datanucleus.version>
   </properties>

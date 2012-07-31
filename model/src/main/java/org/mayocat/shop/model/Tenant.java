@@ -8,6 +8,7 @@ import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -27,10 +28,11 @@ public class Tenant
 
     @Index
     @NotNull
+    @Unique
     @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
     private String handle;
 
-    @Element(dependent="true")
+    @Element(dependent="true", column="alias", types=String.class)
     List<String> aliases;
 
     ///////////////////////////////////////////////////
@@ -58,6 +60,14 @@ public class Tenant
     public void setAliases(List<String> aliases)
     {
         this.aliases = aliases;
+    }
+
+    ///////////////////////////////////////////////////
+    
+    public void fromTenant(Tenant t)
+    {
+        this.setHandle(t.getHandle());        
+        this.setAliases(t.getAliases());
     }
     
     // ///////////////////////////////////////////////////////////

@@ -15,26 +15,10 @@ import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class ProductStore implements org.mayocat.shop.store.ProductStore
+public class DNProductStore implements org.mayocat.shop.store.ProductStore
 {
     @Inject
     protected PersistanceManagerFactoryProdiver pmfProvider;
-    
-    /*
-    public ProductStore()
-    {
-        
-    }
-    
-    public ProductStore(PersistanceManagerFactoryProdiver pmfProvider)
-    {
-        this.pmfProvider = pmfProvider;
-    }
-    */
-    
-    public void setPersistanceManagerFactoryProdiver(PersistanceManagerFactoryProdiver pmfProvider) {
-        this.pmfProvider = pmfProvider;
-    }
 
     public void create(@Valid Product p) throws StoreException
     {
