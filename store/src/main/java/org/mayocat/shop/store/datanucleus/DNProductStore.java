@@ -18,71 +18,80 @@ import org.xwiki.component.annotation.Component;
 public class DNProductStore implements org.mayocat.shop.store.ProductStore
 {
     @Inject
-    protected PersistanceManagerFactoryProdiver pmfProvider;
+    protected PersistenceManagerProvider persistanceManagerProdiver;
 
-    public void create(@Valid Product p) throws StoreException
+    public void create(@Valid Product product) throws StoreException
     {
+        ensureTenantNotTransient(product);
+
         PersistenceManager pm = null;
         try {
             // // Initial testing for adding to table - works
-            pm = pmfProvider.get().getPersistenceManager();
+            //pm = pmfProvider.get();
+            pm = persistanceManagerProdiver.get();
+            System.out.println("PM is:" + pm);
+
+            //if (this.findByTenantAndHandle(product.getTenant(), product.getHandle()) != null) {
+            //    throw new StoreException(MessageFormat.format(
+            //        "Product with handle [{0}] already exists for tenant [{1}]", product.getHandle(), product
+            //            .getTenant().getHandle()));
+            //}
+            //Tenant t = pm.getObjectById(Tenant.class, product.getTenant().getId());
+            //product.setTenant(t);
+            //t.addToProducts(product);
             
-            if (this.findByTenantAndHandle(p.getTenant(), p.getHandle()) != null) {
-                throw new StoreException(
-                    MessageFormat.format("Product with handle [{0}] already exists for tenant [{1}]", p.getHandle(), p.getTenant().getHandle()));
-            }
-
-            // javax.jdo.Transaction transaction = pm.currentTransaction();
-            // transaction.begin();
-
-            pm.makePersistent(p);
-            // transaction.commit();
+            //pm.makePersistent(t);
+            pm.makePersistent(product);
 
         } finally {
             if (null != pm) {
-                pm.close();
+            //    pm.close();
             }
         }
     }
-    
+
     @Override
-    public void update(Product p) throws StoreException
+    public void update(Product product) throws StoreException
     {
+        ensureTenantNotTransient(product);
+
         PersistenceManager pm = null;
         try {
             // // Initial testing for adding to table - works
-            pm = pmfProvider.get().getPersistenceManager();
-            
-            Product storedProduct = this.findByTenantAndHandle(p.getTenant(), p.getHandle());
-            if (storedProduct == null) {
-                throw new StoreException(
-                    MessageFormat.format("Product with handle [{0}] not found for tenant [{1}]", p.getHandle(), p.getTenant().getHandle()));
-            }
-            
-            storedProduct.fromProduct(p);
-            pm.makePersistent(storedProduct);
+            //pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProdiver.get();
+            System.out.println("PM is:" + pm);
+
+            //Product storedProduct = this.findByTenantAndHandle(product.getTenant(), product.getHandle());
+            //if (storedProduct == null) {
+            //    throw new StoreException(MessageFormat.format("Product with handle [{0}] not found for tenant [{1}]",
+            //        product.getHandle(), product.getTenant().getHandle()));
+            //}
+
+            //storedProduct.fromProduct(product);
+            pm.makePersistent(product);
 
         } catch (javax.jdo.JDODataStoreException e) {
             throw new StoreException(e);
         } finally {
             if (null != pm) {
-                pm.close();
+            //    pm.close();
             }
         }
-        
     }
 
     public Product findById(Long id) throws StoreException
     {
         PersistenceManager pm = null;
         try {
-            pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProdiver.get();
+            System.out.println("PM is:" + pm);
             return pm.getObjectById(Product.class, id);
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
         } finally {
             if (null != pm) {
-                pm.close();
+            //    pm.close();
             }
         }
     }
@@ -92,7 +101,8 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProdiver.get();
+            System.out.println("PM is:" + pm);
 
             q = pm.newQuery(Product.class);
             q.setFilter("handle == handleParam && tenant.id == tenantParam");
@@ -111,9 +121,19 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
                 q.closeAll();
             }
             if (null != pm) {
-                pm.close();
+            //    pm.close();
             }
         }
+    }
+
+    // /////////////////////////////////////////////////////////////////////
+
+    private static void ensureTenantNotTransient(Product product) throws StoreException
+    {
+        //if (product.getTenant() != null && product.getTenant().getId() == null) {
+        //    throw new StoreException(
+        //        "Refusing to persist product with transient tenant. Ensure that the product's tenant has been retrieved from database.");
+        //}
     }
 
 }

@@ -3,25 +3,26 @@ package org.mayocat.shop.store.datanucleus;
 import java.util.Properties;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 import org.xwiki.component.annotation.Component;
 
 @Component
-public class HsqldbTestingPersistanceManagerFactoryProvider implements PersistanceManagerFactoryProdiver
+public class HsqldbTestingPersistenceManagerFactoryProvider implements PersistenceManagerProvider
 {
     private PersistenceManagerFactory pmf;
 
-    public HsqldbTestingPersistanceManagerFactoryProvider()
+    public HsqldbTestingPersistenceManagerFactoryProvider()
     {
         Properties props = defaultProperties();
 
         this.pmf = JDOHelper.getPersistenceManagerFactory(props);
     }
 
-    public PersistenceManagerFactory get()
+    public PersistenceManager get()
     {
-        return pmf;
+        return pmf.getPersistenceManager();
     }
 
     private Properties defaultProperties()
@@ -40,5 +41,12 @@ public class HsqldbTestingPersistanceManagerFactoryProvider implements Persistan
         props.put("datanucleus.RetainValues", "true");
         
         return props;
+    }
+
+    @Override
+    public void set(PersistenceManager pm)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

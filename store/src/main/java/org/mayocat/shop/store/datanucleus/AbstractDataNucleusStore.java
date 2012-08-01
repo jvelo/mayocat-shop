@@ -8,6 +8,6 @@ import javax.inject.Inject;
 public class AbstractDataNucleusStore
 {
     @Inject
-    protected PersistanceManagerFactoryProdiver pmfProvider;
+    protected PersistenceManagerProvider pmfProvider;
 
 }

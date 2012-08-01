@@ -3,6 +3,7 @@ package org.mayocat.shop.store.datanucleus;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
@@ -19,44 +20,57 @@ import org.xwiki.test.annotation.MockingRequirement;
  * constraints are not tested here. They are tested both in the model module directly and in full-stack REST
  * integrations test.
  */
-@ComponentList(HsqldbTestingPersistanceManagerFactoryProvider.class)
+@ComponentList(HsqldbTestingPersistenceManagerFactoryProvider.class)
 public class DNProductStoreTest extends AbstractMockingComponentTestCase
 {
-    @MockingRequirement(exceptions = PersistanceManagerFactoryProdiver.class)
+    @MockingRequirement(exceptions = PersistenceManagerProvider.class)
     private DNProductStore ps;
+
+    @MockingRequirement(exceptions = PersistenceManagerProvider.class)
+    private DNTenantStore ts;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private Tenant tenant;
+
+    @Before
+    public void registerTenant() throws StoreException
+    {
+        this.tenant = this.ts.findByHandle("default");
+        if (this.tenant == null) {
+            this.ts.create(new Tenant("default"));
+            this.tenant = this.ts.findByHandle("default");
+        }
+    }
+
     @Test
     public void testCreateProduct() throws StoreException
     {
-        Tenant t = new Tenant("mytenant");
-
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(t);
+        p.setTenant(this.tenant);
 
         ps.create(p);
 
-        Product p2 = ps.findByTenantAndHandle(t, "My-Handle");
+        Product p2 = ps.findByTenantAndHandle(this.tenant, "My-Handle");
         Assert.assertNotNull(p2);
     }
 
     @Test
     public void testCreateProductWithSameHandleButDifferentTenant() throws StoreException
     {
-        Tenant t = new Tenant("my-tenant");
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(t);
+        p.setTenant(this.tenant);
 
         ps.create(p);
 
-        Tenant t2 = new Tenant("my-other-tenant");
+        this.ts.create(new Tenant("other-tenant"));
+        Tenant otherTenant = this.ts.findByHandle("other-tenant");
         Product p2 = new Product();
         p2.setHandle("My-Handle");
-        p2.setTenant(t2);
+        p2.setTenant(otherTenant);
 
         ps.create(p2);
 
@@ -70,17 +84,15 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
         thrown.expectMessage(JUnitMatchers
             .containsString("Product with handle [My-Handle] already exists for tenant [my-tenant]"));
 
-        Tenant t = new Tenant("my-tenant");
-
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(t);
+        p.setTenant(this.tenant);
 
         ps.create(p);
 
         Product p2 = new Product();
         p2.setHandle("My-Handle");
-        p2.setTenant(t);
+        p2.setTenant(this.tenant);
 
         ps.create(p2);
     }
@@ -88,14 +100,13 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     @Test
     public void testUpdateProduct() throws StoreException
     {
-        Tenant t = new Tenant("my-tenant");
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(t);
+        p.setTenant(this.tenant);
 
         ps.create(p);
         ps.update(p);
 
-        assertNotNull(ps.findByTenantAndHandle(t, "My-Handle"));
+        assertNotNull(ps.findByTenantAndHandle(this.tenant, "My-Handle"));
     }
 }

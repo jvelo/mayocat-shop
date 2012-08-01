@@ -1,6 +1,8 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
+  file:
+    archive: false
 
 dataSource:
   name: "datanucleus"

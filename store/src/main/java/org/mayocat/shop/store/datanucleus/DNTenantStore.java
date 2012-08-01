@@ -16,14 +16,8 @@ import org.xwiki.component.annotation.Component;
 @Component(hints = {"datanucleus", "default"})
 public class DNTenantStore implements TenantStore
 {
-
     @Inject
-    protected PersistanceManagerFactoryProdiver pmfProvider;
-
-    public void setPersistanceManagerFactoryProdiver(PersistanceManagerFactoryProdiver pmfProvider)
-    {
-        this.pmfProvider = pmfProvider;
-    }
+    protected PersistenceManagerProvider persistanceManagerProvider;
 
     @Override
     public void create(Tenant t) throws StoreException
@@ -31,7 +25,7 @@ public class DNTenantStore implements TenantStore
         PersistenceManager pm = null;
         try {
             // // Initial testing for adding to table - works
-            pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProvider.get();
             try {
                 pm.makePersistent(t);
             } catch (JDODataStoreException e) {
@@ -39,7 +33,7 @@ public class DNTenantStore implements TenantStore
             }
         } finally {
             if (null != pm) {
-                pm.close();
+                //pm.close();
             }
         }
     }
@@ -56,13 +50,13 @@ public class DNTenantStore implements TenantStore
     {
         PersistenceManager pm = null;
         try {
-            pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProvider.get();
             return pm.getObjectById(Tenant.class, id);
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
         } finally {
             if (null != pm) {
-                pm.close();
+                //pm.close();
             }
         }
     }
@@ -73,14 +67,14 @@ public class DNTenantStore implements TenantStore
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = pmfProvider.get().getPersistenceManager();
+            pm = persistanceManagerProvider.get();
 
             q = pm.newQuery(Tenant.class);
             q.setFilter("handle == handleParam");
             q.declareParameters("String handleParam");
 
             List<Tenant> results = (List<Tenant>) q.execute(handle);
-            if (results.size() == 1) {
+            if (results.size() > 0) {
                 return results.get(0);
             }
             return null;
@@ -92,7 +86,7 @@ public class DNTenantStore implements TenantStore
                 q.closeAll();
             }
             if (null != pm) {
-                pm.close();
+               // pm.close();
             }
         }
     }

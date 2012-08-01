@@ -43,10 +43,11 @@ public class ProductResource implements Resource
     }
 
     @PUT
+    @Timed
     public Response createProduct(Product product, @QueryTenant Tenant tenant)
     {
         try {
-            product.setTenant(tenant);
+            // product.setTenant(tenant);
             this.store.create(product);
 
             return Response.noContent().build();

@@ -1,5 +1,7 @@
 package org.mayocat.shop.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jdo.annotations.Element;
@@ -28,10 +30,15 @@ public class Tenant
 
     @Index
     @NotNull
-    @Unique
+    //@Unique
     @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
     private String handle;
 
+    //, defaultFetchGroup="true"
+    //@Persistent(mappedBy="tenant")
+    //@Element(dependent = "true")
+    //List<Product> products;
+    
     @Element(dependent="true", column="alias", types=String.class)
     List<String> aliases;
 
@@ -62,6 +69,16 @@ public class Tenant
         this.aliases = aliases;
     }
 
+    /*
+    public void addToProducts(Product p)
+    {
+        if (this.products == null) {
+            this.products = new ArrayList<Product>();
+        }
+        this.products.add(p);
+    }
+    */
+    
     ///////////////////////////////////////////////////
     
     public void fromTenant(Tenant t)

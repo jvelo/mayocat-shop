@@ -6,6 +6,8 @@ import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.rest.provider.Provider;
 import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.shop.store.EventListener;
+import org.mayocat.shop.store.datanucleus.LifeCycle;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 
@@ -48,6 +50,13 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
         for (Map.Entry<String, Resource> resource : restResources.entrySet()) {
             environment.addResource(resource.getValue());
         }
+
+        // Registering revent listeners implementations against the environment
+        Map<String, EventListener> eventListeners = componentManager.getInstanceMap(EventListener.class);
+        for (Map.Entry<String, EventListener> listener : eventListeners.entrySet()) {
+            environment.addServletListeners(listener.getValue());
+        }
+        
     }
 
     private void registerConfigurationsAsComponents(MayocatShopConfiguration configuration)

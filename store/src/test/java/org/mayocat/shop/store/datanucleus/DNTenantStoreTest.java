@@ -16,11 +16,11 @@ import org.xwiki.test.annotation.MockingRequirement;
  * Note: This tests is really about datanucleus persistance, so bean-validation constraints are not tested here.
  * They are tested both in the model module directly and in full-stack REST integrations test.
  */
-@ComponentList(HsqldbTestingPersistanceManagerFactoryProvider.class)
+@ComponentList(HsqldbTestingPersistenceManagerFactoryProvider.class)
 public class DNTenantStoreTest extends AbstractMockingComponentTestCase
 {
 
-    @MockingRequirement(exceptions=PersistanceManagerFactoryProdiver.class)
+    @MockingRequirement(exceptions=PersistenceManagerProvider.class)
     private DNTenantStore tenantStore;
 
     @Rule

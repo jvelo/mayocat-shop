@@ -1,10 +1,13 @@
 package org.mayocat.shop.model;
 
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.Extensions;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,6 +15,11 @@ import javax.validation.constraints.Size;
     table = "product",
     detachable="true"
 )
+@Extensions({
+    @Extension(vendorName="datanucleus", key="multitenancy-column-name", value="tenant"),
+    @Extension(vendorName="datanucleus", key="multitenancy-column-length", value="255")
+})
+//@Unique(name="UNIQUE_HANDLE_PER_TENANT", members={"handle","tenant"})
 public class Product
 {
     @Index
@@ -24,10 +32,13 @@ public class Product
     @Size(min = 1)
     private String handle;
     
-    @Index
-    @NotNull
-    private Tenant tenant;
+//    private String tenant;
     
+//    @Index
+//    @NotNull
+//    private Tenant tenant;
+    
+    /*
     public Tenant getTenant()
     {
         return tenant;
@@ -37,6 +48,7 @@ public class Product
     {
         this.tenant = tenant;
     }
+    */
     
     public String getHandle()
     {
@@ -53,7 +65,7 @@ public class Product
     public void fromProduct(Product p)
     {
         this.setHandle(p.getHandle());
-        this.setTenant(p.getTenant());
+        //this.setTenant(p.getTenant());
     }
     
     ////////////////////////////////////////////////
@@ -71,21 +83,21 @@ public class Product
        }  
        final Product other = (Product) obj;  
          
-       return   com.google.common.base.Objects.equal(this.tenant, other.tenant)  
-             && com.google.common.base.Objects.equal(this.handle, other.handle);  
+       return   //com.google.common.base.Objects.equal(this.tenant, other.tenant)  
+             com.google.common.base.Objects.equal(this.handle, other.handle);  
     }  
     
     @Override
     public int hashCode()  
     {  
-        return com.google.common.base.Objects.hashCode(this.handle, this.tenant);  
+        return com.google.common.base.Objects.hashCode(this.handle);  
     }
     
     @Override  
     public String toString()  
     {  
        return com.google.common.base.Objects.toStringHelper(this)  
-                 .addValue(this.tenant)  
+                 //.addValue(this.tenant)  
                  .addValue(this.handle)    
                  .toString();  
     }  
