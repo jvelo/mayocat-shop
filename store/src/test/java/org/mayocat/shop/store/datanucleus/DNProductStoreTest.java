@@ -22,7 +22,7 @@ import org.xwiki.test.annotation.MockingRequirement;
  * They are tested both in the model module directly and in full-stack REST integrations test.
  */
 @ComponentList(HsqldbTestingPersistanceManagerFactoryProvider.class)
-public class DataNucleusProductStoreTest extends AbstractMockingComponentTestCase
+public class DNProductStoreTest extends AbstractMockingComponentTestCase
 {
     @MockingRequirement(exceptions=PersistanceManagerFactoryProdiver.class)
     private org.mayocat.shop.store.datanucleus.DNProductStore ps;
