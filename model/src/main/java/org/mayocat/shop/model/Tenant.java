@@ -18,7 +18,7 @@ public class Tenant
 {
     public Tenant(@Valid String handle)
     {
-        this.handle = handle;
+        setHandle(handle);
     }
     
     @Index

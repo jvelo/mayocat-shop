@@ -36,6 +36,9 @@ public class HsqldbTestingPersistanceManagerFactoryProvider implements Persistan
         props.put("datanucleus.validateConstraints", "true");
         props.put("datanucleus.ConnectionDriverName", "org.hsqldb.jdbc.JDBCDriver");
         
+        // Ensure field values are not unloaded when object are moved into hollow state.
+        props.put("datanucleus.RetainValues", "true");
+        
         return props;
     }
 }

@@ -79,6 +79,24 @@
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-test</artifactId>
       <version>${xwiki.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+	<!-- Override the version of jmock dragged by xwiki-commons-test so that we can use the @Rule JUnit annotation
+	     for declaring exception expectations.
+	     See http://baddotrobot.com/blog/2012/03/27/expecting-exception-with-junit-rule/ -->
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>2.6.0-RC2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-junit4</artifactId>
+      <version>2.6.0-RC2</version>
+      <scope>test</scope>
     </dependency>
     
     <dependency>

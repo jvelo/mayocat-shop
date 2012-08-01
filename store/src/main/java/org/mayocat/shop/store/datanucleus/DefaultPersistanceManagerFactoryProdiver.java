@@ -40,6 +40,10 @@ public class DefaultPersistanceManagerFactoryProdiver implements PersistanceMana
         props.put("datanucleus.validateConstraints", "true");
         props.put("datanucleus.identifier.case", "PreserveCase");
         
+        // Ensure field values are not unloaded when object are moved into hollow state.
+        // See http://www.datanucleus.org/products/datanucleus/jdo/object_lifecycle.html
+        props.put("datanucleus.RetainValues", "true");
+        
         return props;
     }
     

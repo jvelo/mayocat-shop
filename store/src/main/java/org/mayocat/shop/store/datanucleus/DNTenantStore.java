@@ -32,17 +32,10 @@ public class DNTenantStore implements TenantStore
         try {
             // // Initial testing for adding to table - works
             pm = pmfProvider.get().getPersistenceManager();
-            Transaction transaction = pm.currentTransaction();
-
             try {
-                transaction.begin();
                 pm.makePersistent(t);
-                transaction.commit();
-            } finally {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                    throw new StoreException("Failed to commit transaction.");
-                }
+            } catch (JDODataStoreException e) {
+                throw new StoreException(e.getMessage(), e);
             }
         } finally {
             if (null != pm) {
