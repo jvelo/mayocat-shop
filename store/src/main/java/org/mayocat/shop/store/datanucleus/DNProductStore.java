@@ -17,7 +17,7 @@ import org.xwiki.component.annotation.Component;
 public class DNProductStore implements org.mayocat.shop.store.ProductStore
 {
     @Inject
-    protected PersistenceManagerProvider persistanceManagerProdiver;
+    protected PersistenceManagerProvider persistanceManagerProvider;
 
     public void create(@Valid Product product) throws StoreException
     {
@@ -27,8 +27,7 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
         try {
             // // Initial testing for adding to table - works
             //pm = pmfProvider.get();
-            pm = persistanceManagerProdiver.get();
-            System.out.println("PM is:" + pm);
+            pm = persistanceManagerProvider.get();
 
             //if (this.findByTenantAndHandle(product.getTenant(), product.getHandle()) != null) {
             //    throw new StoreException(MessageFormat.format(
@@ -59,8 +58,7 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
         try {
             // // Initial testing for adding to table - works
             //pm = pmfProvider.get().getPersistenceManager();
-            pm = persistanceManagerProdiver.get();
-            System.out.println("PM is:" + pm);
+            pm = persistanceManagerProvider.get();
 
             //Product storedProduct = this.findByTenantAndHandle(product.getTenant(), product.getHandle());
             //if (storedProduct == null) {
@@ -84,8 +82,7 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
     {
         PersistenceManager pm = null;
         try {
-            pm = persistanceManagerProdiver.get();
-            System.out.println("PM is:" + pm);
+            pm = persistanceManagerProvider.get();
             return pm.getObjectById(Product.class, id);
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
@@ -101,8 +98,7 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManagerProdiver.get();
-            System.out.println("PM is:" + pm);
+            pm = persistanceManagerProvider.get();
 
             q = pm.newQuery(Product.class);
             q.setFilter("handle == handleParam && tenant.id == tenantParam");
