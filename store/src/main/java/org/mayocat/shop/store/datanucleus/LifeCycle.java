@@ -13,6 +13,7 @@ import javax.servlet.ServletRequestListener;
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.multitenancy.TenantResolver;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
@@ -30,18 +31,21 @@ public class LifeCycle implements ServletRequestListener, EventListener
     @Inject
     private PersistenceManagerProvider provider;
 
+    @Inject
+    private Logger logger;
+    
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
     {
         if (this.provider.get() != null) {
             this.provider.get().close();
         } else {
-            System.out.println("COULD not clean up threadlocal : not null");
+            this.logger.warn("Failed to close persistence manager upon request destroy : was null");
         }
     }
 
     @Override
-    public void requestInitialized(ServletRequestEvent sre)
+    public void requestInitialized(ServletRequestEvent event)
     {
         // Step 1. Resolve tenant
         Properties props = getPersistenceProperties();
@@ -50,7 +54,7 @@ public class LifeCycle implements ServletRequestListener, EventListener
             JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager();
         this.provider.set(tenantAgnosticPersistenceManager);
         
-        String host = sre.getServletRequest().getServerName();
+        String host = event.getServletRequest().getServerName();
         String tenant = this.tenantResolverProdiver.get().resolve(host).getHandle();
 
         // Release agnostic PM
@@ -63,7 +67,10 @@ public class LifeCycle implements ServletRequestListener, EventListener
         props.put("datanucleus.tenantId", tenant);
 
         this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
-        System.out.println("FOUND pm : " + this.provider.get());
+        
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Persistence manager {} set for request with tenant {}", this.provider.get(), tenant);
+        }
     }
 
     private Properties getPersistenceProperties()
