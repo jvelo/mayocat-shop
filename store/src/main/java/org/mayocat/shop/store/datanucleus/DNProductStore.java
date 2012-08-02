@@ -1,6 +1,5 @@
 package org.mayocat.shop.store.datanucleus;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,7 +41,8 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
             
             //pm.makePersistent(t);
             pm.makePersistent(product);
-
+        } catch (JDODataStoreException e) {
+            throw new StoreException(e);
         } finally {
             if (null != pm) {
             //    pm.close();

@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.rest.provider.tenant.QueryTenant;
+import org.mayocat.shop.multitenancy.QueryTenant;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;

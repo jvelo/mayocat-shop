@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.provider.tenant;
+package org.mayocat.shop.multitenancy;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

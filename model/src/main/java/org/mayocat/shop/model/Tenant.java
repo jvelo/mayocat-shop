@@ -1,21 +1,20 @@
 package org.mayocat.shop.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.jdo.annotations.Element;
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.jdo.annotations.Unique;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @PersistenceCapable(table = "tenant", detachable = "true")
+@Extension(vendorName="datanucleus", key="multitenancy-disable", value="true")
 public class Tenant
 {
     public Tenant(@Valid String handle)

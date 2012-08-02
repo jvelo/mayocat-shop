@@ -2,6 +2,7 @@ package org.mayocat.shop.store.datanucleus;
 
 import java.util.Properties;
 
+import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -9,8 +10,11 @@ import javax.jdo.PersistenceManagerFactory;
 import org.xwiki.component.annotation.Component;
 
 @Component
+@Singleton
 public class HsqldbTestingPersistenceManagerFactoryProvider implements PersistenceManagerProvider
 {
+    private PersistenceManager pm;
+    
     private PersistenceManagerFactory pmf;
 
     public HsqldbTestingPersistenceManagerFactoryProvider()
@@ -46,7 +50,6 @@ public class HsqldbTestingPersistenceManagerFactoryProvider implements Persisten
     @Override
     public void set(PersistenceManager pm)
     {
-        // TODO Auto-generated method stub
-        
+       this.pm = pm;
     }
 }

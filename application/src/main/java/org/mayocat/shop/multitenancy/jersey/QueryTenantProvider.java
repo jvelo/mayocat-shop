@@ -1,9 +1,11 @@
-package org.mayocat.shop.rest.provider.tenant;
+package org.mayocat.shop.multitenancy.jersey;
 
 import javax.inject.Inject;
 
+import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.rest.provider.Provider;
+import org.mayocat.shop.multitenancy.QueryTenant;
+import org.mayocat.shop.multitenancy.TenantResolver;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.model.Parameter;

@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.StoreException;
-import org.xwiki.test.AbstractMockingComponentTestCase;
-import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**
@@ -16,8 +14,7 @@ import org.xwiki.test.annotation.MockingRequirement;
  * Note: This tests is really about datanucleus persistance, so bean-validation constraints are not tested here.
  * They are tested both in the model module directly and in full-stack REST integrations test.
  */
-@ComponentList(HsqldbTestingPersistenceManagerFactoryProvider.class)
-public class DNTenantStoreTest extends AbstractMockingComponentTestCase
+public class DNTenantStoreTest extends AbstractStoreEntityTestCase
 {
 
     @MockingRequirement(exceptions=PersistenceManagerProvider.class)

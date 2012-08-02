@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.jdo.Transaction;
 
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.StoreException;

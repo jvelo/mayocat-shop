@@ -13,4 +13,17 @@
   <name>Mayocat Base</name>
   <description>Some base classes and interfaces</description>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-configuration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
 </project>

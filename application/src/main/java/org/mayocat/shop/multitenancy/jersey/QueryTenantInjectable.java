@@ -1,8 +1,9 @@
-package org.mayocat.shop.rest.provider.tenant;
+package org.mayocat.shop.multitenancy.jersey;
 
 import javax.inject.Provider;
 
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.multitenancy.TenantResolver;
 
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
@@ -21,7 +22,7 @@ public class QueryTenantInjectable extends AbstractHttpContextInjectable<Tenant>
     @Override
     public Tenant getValue(HttpContext context)
     {
-        return this.provider.get().resolve(context);
+        return this.provider.get().resolve(context.getUriInfo().getBaseUri().getHost());
     }
 
 }

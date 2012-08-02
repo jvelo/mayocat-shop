@@ -10,9 +10,8 @@ import org.junit.matchers.JUnitMatchers;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
-import org.xwiki.test.AbstractMockingComponentTestCase;
-import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**
@@ -20,8 +19,7 @@ import org.xwiki.test.annotation.MockingRequirement;
  * constraints are not tested here. They are tested both in the model module directly and in full-stack REST
  * integrations test.
  */
-@ComponentList(HsqldbTestingPersistenceManagerFactoryProvider.class)
-public class DNProductStoreTest extends AbstractMockingComponentTestCase
+public class DNProductStoreTest extends AbstractStoreEntityTestCase
 {
     @MockingRequirement(exceptions = PersistenceManagerProvider.class)
     private DNProductStore ps;
@@ -57,15 +55,18 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     }
 
     @Test
-    public void testCreateProductWithSameHandleButDifferentTenant() throws StoreException
+    public void testCreateProductWithSameHandleButDifferentTenant() throws Exception
     {
         Product p = new Product();
         p.setHandle("My-Handle");
 
         ps.create(p);
-
-        this.ts.create(new Tenant("other-tenant"));
-        Tenant otherTenant = this.ts.findByHandle("other-tenant");
+        
+        this.setTenantToResolveTo("other");
+        this.setUpPersistenceManager();
+        
+        this.ps = this.getComponentManager().getInstance(ProductStore.class, "datanucleus");
+        
         Product p2 = new Product();
         p2.setHandle("My-Handle");;
 
@@ -79,7 +80,7 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     {
         thrown.expect(StoreException.class);
         thrown.expectMessage(JUnitMatchers
-            .containsString("Product with handle [My-Handle] already exists for tenant [my-tenant]"));
+            .containsString("integrity constraint violation"));
 
         Product p = new Product();
         p.setHandle("My-Handle");

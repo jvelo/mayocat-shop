@@ -19,7 +19,6 @@ import javax.validation.constraints.Size;
     @Extension(vendorName="datanucleus", key="multitenancy-column-name", value="tenant"),
     @Extension(vendorName="datanucleus", key="multitenancy-column-length", value="255")
 })
-//@Unique(name="UNIQUE_HANDLE_PER_TENANT", members={"handle","tenant"})
 public class Product
 {
     @Index
@@ -29,27 +28,10 @@ public class Product
 
     @Index
     @NotNull
+    @Unique
     @Size(min = 1)
     private String handle;
-    
-//    private String tenant;
-    
-//    @Index
-//    @NotNull
-//    private Tenant tenant;
-    
-    /*
-    public Tenant getTenant()
-    {
-        return tenant;
-    }
-
-    public void setTenant(Tenant tenant)
-    {
-        this.tenant = tenant;
-    }
-    */
-    
+        
     public String getHandle()
     {
         return handle;
