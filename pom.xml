@@ -47,11 +47,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies versions -->
-    <dropwizard.version>0.5.0</dropwizard.version>
+    <dropwizard.version>0.5.1-SNAPSHOT</dropwizard.version>
     <xwiki.version>4.2-milestone-1</xwiki.version>
     <!-- FIXME With 3.0.3 and above, I have a "Plugin (Bundle) “org.datanucleus.api.jdo” is already registered. -->
     <datanucleus.version>3.0.2</datanucleus.version>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
 
   <dependencies>
 

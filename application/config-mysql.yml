@@ -4,21 +4,14 @@ logging:
   file:
     archive: false
 
+multitenancy:
+  activated: false
+  defaultTenant: shop
+
 dataSource:
   name: "datanucleus"
   properties:
-    # javax.jdo.PersistenceManagerFactoryClass: org.datanucleus.api.jdo.JDOPersistenceManagerFactory
     javax.jdo.option.ConnectionDriverName: com.mysql.jdbc.Driver
     javax.jdo.option.ConnectionURL: jdbc:mysql://127.0.0.1/shop
     javax.jdo.option.ConnectionUserName: root
     javax.jdo.option.ConnectionPassword: 
-    # datanucleus.autoCreateSchema: true
-    # datanucleus.validateTables: false
-    # datanucleus.validateConstraints: false
-    # datanucleus.ConnectionDriverName: com.mysql.jdbc.Driver
-    # datanucleus.ConnectionURL: jdbc:mysql://localhost/shop
-    # datanucleus.ConnectionUserName: root
-    # datanucleus.ConnectionPassword: 
-    # datanucleus.identifier.case: PreserveCase
-
-tenantResolver: other

@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 
 @PersistenceCapable(table = "tenant", detachable = "true")
 @Extension(vendorName="datanucleus", key="multitenancy-disable", value="true")
-public class Tenant
+public class Tenant extends Entity
 {
     public Tenant(@Valid String handle)
     {

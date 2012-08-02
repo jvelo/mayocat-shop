@@ -14,16 +14,19 @@ public class MayocatShopConfiguration extends Configuration
     @JsonProperty
     private DataSourceConfiguration dataSource = new DataSourceConfiguration();
         
-    private String tenantResolver = "default";
+    @Valid
+    @NotNull
+    @JsonProperty
+    private MultitenancyConfiguration multitenancy = new MultitenancyConfiguration();
 
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;
     }
     
-
-    public String getTenantResolver()
+    public MultitenancyConfiguration getMultitenancyConfiguration()
     {
-        return tenantResolver;
+        return multitenancy;
     }
+
 }

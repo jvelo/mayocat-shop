@@ -93,7 +93,7 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
         }
     }
 
-    public Product findByTenantAndHandle(Tenant tenant, String handle) throws StoreException
+    public Product findByHandle(String handle) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
@@ -101,10 +101,10 @@ public class DNProductStore implements org.mayocat.shop.store.ProductStore
             pm = persistanceManagerProvider.get();
 
             q = pm.newQuery(Product.class);
-            q.setFilter("handle == handleParam && tenant.id == tenantParam");
-            q.declareParameters("String handleParam, Long tenantParam");
+            q.setFilter("handle == handleParam");
+            q.declareParameters("String handleParam");
 
-            List<Product> results = (List<Product>) q.execute(handle, tenant.getId());
+            List<Product> results = (List<Product>) q.execute(handle);
             if (results.size() == 1) {
                 return results.get(0);
             }

@@ -50,7 +50,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
 
         ps.create(p);
 
-        Product p2 = ps.findByTenantAndHandle(this.tenant, "My-Handle");
+        Product p2 = ps.findByHandle("My-Handle");
         Assert.assertNotNull(p2);
     }
 
@@ -102,6 +102,6 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
         ps.create(p);
         ps.update(p);
 
-        assertNotNull(ps.findByTenantAndHandle(this.tenant, "My-Handle"));
+        assertNotNull(ps.findByHandle("My-Handle"));
     }
 }

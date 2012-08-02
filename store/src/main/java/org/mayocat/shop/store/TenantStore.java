@@ -6,7 +6,7 @@ import org.mayocat.shop.model.Tenant;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface TenantStore
+public interface TenantStore extends Store<Tenant>
 {
     void create(@Valid Tenant t) throws StoreException;
     

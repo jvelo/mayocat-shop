@@ -7,7 +7,7 @@ import org.mayocat.shop.model.Tenant;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface ProductStore
+public interface ProductStore extends Store<Product>
 {
     void create(@Valid Product p) throws StoreException;
     
@@ -15,5 +15,5 @@ public interface ProductStore
     
     Product findById(Long id) throws StoreException;
     
-    Product findByTenantAndHandle(Tenant tenant, String handle) throws StoreException;
+    Product findByHandle(String handle) throws StoreException;
 }

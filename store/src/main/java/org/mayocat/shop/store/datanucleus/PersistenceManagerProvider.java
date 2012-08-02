@@ -9,6 +9,6 @@ public interface PersistenceManagerProvider
 {
     PersistenceManager get();
 
-    void set(PersistenceManager pmf);
+    void set(PersistenceManager pm);
     
 }

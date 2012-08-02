@@ -6,6 +6,7 @@ import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
+import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
@@ -55,7 +56,7 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
         for (Map.Entry<String, EventListener> listener : eventListeners.entrySet()) {
             environment.addServletListeners(listener.getValue());
         }
-        
+
     }
 
     private void registerConfigurationsAsComponents(MayocatShopConfiguration configuration)
@@ -69,6 +70,11 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
             new DefaultComponentDescriptor<DataSourceConfiguration>();
         cd2.setRoleType(DataSourceConfiguration.class);
         componentManager.registerComponent(cd2, configuration.getDataSourceConfiguration());
+
+        DefaultComponentDescriptor<MultitenancyConfiguration> cd3 =
+            new DefaultComponentDescriptor<MultitenancyConfiguration>();
+        cd3.setRoleType(MultitenancyConfiguration.class);
+        componentManager.registerComponent(cd3, configuration.getMultitenancyConfiguration());
     }
 
 }

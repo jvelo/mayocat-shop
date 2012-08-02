@@ -45,7 +45,7 @@ public class ProductResourceTest extends AbstractMockingComponentResourceTest
         getMockery().checking(new Expectations()        
         {
             {        
-                allowing(store).findByTenantAndHandle(with(any(Tenant.class)), with(any(String.class)));
+                allowing(store).findByHandle(with(any(Tenant.class)), with(any(String.class)));
                 will(returnValue(product));
             }
         });

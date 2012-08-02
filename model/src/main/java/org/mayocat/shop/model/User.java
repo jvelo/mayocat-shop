@@ -10,7 +10,7 @@ import javax.jdo.annotations.Uniques;
 
 @PersistenceCapable(table = "user", detachable = "true")
 @Uniques({@Unique(name = "UNIQUE_EMAIL", members = {"email"})})
-public class User
+public class User extends Entity
 {
     @Index
     @PrimaryKey
