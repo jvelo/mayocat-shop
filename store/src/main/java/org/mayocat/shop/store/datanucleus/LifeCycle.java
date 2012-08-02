@@ -8,8 +8,8 @@ import javax.jdo.JDOHelper;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
+import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
-import org.mayocat.shop.store.EventListener;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;

@@ -14,7 +14,12 @@
   <description>Packaging of the MayocatShop application around DropWizard</description>
 
   <dependencies>
-  
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>  
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-rest</artifactId>

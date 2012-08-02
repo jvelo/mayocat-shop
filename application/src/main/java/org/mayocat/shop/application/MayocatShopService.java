@@ -2,12 +2,11 @@ package org.mayocat.shop.application;
 
 import java.util.Map;
 
+import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.rest.provider.Provider;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.store.EventListener;
-import org.mayocat.shop.store.datanucleus.LifeCycle;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 

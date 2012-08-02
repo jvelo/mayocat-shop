@@ -49,7 +49,6 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     {
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(this.tenant);
 
         ps.create(p);
 
@@ -62,15 +61,13 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     {
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(this.tenant);
 
         ps.create(p);
 
         this.ts.create(new Tenant("other-tenant"));
         Tenant otherTenant = this.ts.findByHandle("other-tenant");
         Product p2 = new Product();
-        p2.setHandle("My-Handle");
-        p2.setTenant(otherTenant);
+        p2.setHandle("My-Handle");;
 
         ps.create(p2);
 
@@ -86,13 +83,11 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
 
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(this.tenant);
 
         ps.create(p);
 
         Product p2 = new Product();
         p2.setHandle("My-Handle");
-        p2.setTenant(this.tenant);
 
         ps.create(p2);
     }
@@ -102,7 +97,6 @@ public class DNProductStoreTest extends AbstractMockingComponentTestCase
     {
         Product p = new Product();
         p.setHandle("My-Handle");
-        p.setTenant(this.tenant);
 
         ps.create(p);
         ps.update(p);

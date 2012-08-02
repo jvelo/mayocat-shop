@@ -79,6 +79,7 @@
   </dependencies>  
 
   <modules>
+    <module>base</module>
     <module>configuration</module>
     <module>model</module>
     <module>store</module>
