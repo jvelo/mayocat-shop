@@ -65,7 +65,8 @@ public abstract class AbstractMockingComponentResourceTest extends AbstractMocki
     }
 
     @Before
-    public void setUpJersey() throws Exception {
+    public void setUp() throws Exception {
+        super.setUp();
         setUpResources();
         this.test = new JerseyTest() {
             @Override
@@ -86,7 +87,12 @@ public abstract class AbstractMockingComponentResourceTest extends AbstractMocki
                 return new LowLevelAppDescriptor.Builder(config).build();
             }
         };
-        test.setUp();
+        try {
+            test.setUp();
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @After

@@ -51,7 +51,7 @@ public class ProductResource implements Resource
             // product.setTenant(tenant);
             this.store.get().create(product);
 
-            return Response.noContent().build();
+            return Response.ok().build();
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
