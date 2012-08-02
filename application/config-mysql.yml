@@ -5,7 +5,7 @@ logging:
     archive: false
 
 multitenancy:
-  activated: false
+  activated: true
   defaultTenant: shop
 
 dataSource:

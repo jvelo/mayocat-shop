@@ -113,7 +113,7 @@ public class ProductResourceTest extends AbstractMockingComponentResourceTest
     {
         ClientResponse cr =
             client().resource("/product/").type(MediaType.APPLICATION_JSON)
-                .entity("{\"handle\":\"fdsa\", \"tenant\":\"test\"}").put(ClientResponse.class);
+                .entity("{\"handle\":\"aiya\"").put(ClientResponse.class);
 
         Assert.assertEquals(Status.OK, cr.getClientResponseStatus());
     }
