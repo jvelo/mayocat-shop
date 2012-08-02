@@ -4,6 +4,7 @@ import javax.inject.Provider;
 
 import junit.framework.Assert;
 
+import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
@@ -42,9 +43,8 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
             new DefaultComponentDescriptor<MultitenancyConfiguration>();
         cd.setRoleType(MultitenancyConfiguration.class);
         this.getComponentManager().registerComponent(cd, this.configuration);
-        
-        DefaultComponentDescriptor<TenantStore> cd2 =
-            new DefaultComponentDescriptor<TenantStore>();
+
+        DefaultComponentDescriptor<TenantStore> cd2 = new DefaultComponentDescriptor<TenantStore>();
         cd2.setRoleType(TenantStore.class);
         this.getComponentManager().registerComponent(cd2, this.providedTenantStore);
     }
@@ -58,39 +58,101 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
         configuration = this.getComponentManager().getInstance(MultitenancyConfiguration.class);
         providedTenantStore = this.getComponentManager().getInstance(TenantStore.class);
 
-        
-        DefaultParameterizedType providerType = new DefaultParameterizedType(Provider.class.getComponentType(), Provider.class, TenantStore.class);
+        DefaultParameterizedType providerType =
+            new DefaultParameterizedType(Provider.class.getComponentType(), Provider.class, TenantStore.class);
         this.provider = this.getComponentManager().getInstance(providerType);
 
         getMockery().checking(new Expectations()
         {
             {
-                allowing(configuration).isActivated();
-                will(returnValue(false));
-
                 allowing(configuration).getDefaultTenant();
                 will(returnValue("mytenant"));
-                
+
                 allowing(configuration).getRootDomain();
                 will(returnValue(null));
 
                 allowing(provider).get();
                 will(returnValue(providedTenantStore));
 
-                //allowing(providedTenantStore).findByHandle(with(any(String.class)));
-                //will(returnValue(null));
+                allowing(providedTenantStore).findByHandle(with(Matchers.not(equal("mytenant"))));
+                will(returnValue(null));
 
-                allowing(providedTenantStore).findByHandle("mytenant");
+                allowing(providedTenantStore).findByHandle(with(equal("mytenant")));
                 will(returnValue(new Tenant("mytenant")));
-                
+
                 allowing(providedTenantStore).create(with(any(Tenant.class)));
-                
+
             }
         });
     }
 
     @Test
-    public void testMultitenancyNotActivatedReturnsDefaultTenant() throws Exception
+    public void testMultitenancyNotActivatedReturnsDefaultTenant1() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyNotActivated();
+        Assert.assertNotNull(this.tenantResolver.resolve("mayocatshop.com"));
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mayocatshop.com").getHandle());
+    }
+
+    @Test
+    public void testMultitenancyNotActivatedReturnsDefaultTenant2() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyNotActivated();
+        Assert.assertNotNull(this.tenantResolver.resolve("localhost"));
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("localhost").getHandle());
+    }
+
+    @Test
+    public void testMultitenancyTenantResolver1() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyActivated();
+
+        Assert.assertNotNull(this.tenantResolver.resolve("mytenant.mayocatshop.com"));
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.mayocatshop.com").getHandle());
+    }
+
+    @Test
+    public void testMultitenancyTenantResolver2() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyActivated();
+
+        Assert.assertNotNull(this.tenantResolver.resolve("mytenant.localhost"));
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.localhost").getHandle());
+    }
+
+    @Test
+    public void testMultitenancyTenantResolver3() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyActivated();
+
+        Assert.assertNull(this.tenantResolver.resolve("localhost"));
+    }
+
+    @Test
+    public void testMultitenancyTenantResolver4() throws Exception
+    {
+        this.setUpExpectationsForMultitenancyActivated();
+
+        Assert.assertNull(this.tenantResolver.resolve("mayocatshop.com"));
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////
+
+    private void setUpExpectationsForMultitenancyActivated()
+    {
+        getMockery().checking(new Expectations()
+        {
+            {
+                allowing(configuration).isActivated();
+                will(returnValue(true));
+
+                allowing(configuration).getRootDomain();
+                will(returnValue(null));
+            }
+        });
+    }
+
+    private void setUpExpectationsForMultitenancyNotActivated()
     {
         getMockery().checking(new Expectations()
         {
@@ -102,9 +164,5 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
                 will(returnValue("mytenant"));
             }
         });
-
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("google.com").getHandle());
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("localhost").getHandle());
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("Anything").getHandle());
     }
 }

@@ -1,5 +1,8 @@
 package org.mayocat.shop.multitenancy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -18,10 +21,10 @@ public class DefaultTenantResolver implements TenantResolver
 {
 
     /**
-     * ThreadLocal for storing the resolved tenant for the current thread (request) so that we don't query the store
-     * each time.
+     * Request-scoped cache so that we don't call the store multiple times per request for the same host.
+     * FIXME: maybe setup a global cache instead.
      */
-    private ThreadLocal<Tenant> resolved = new ThreadLocal<Tenant>();
+    private ThreadLocal<Map<String, Tenant>> resolved = new ThreadLocal<Map<String, Tenant>>();
 
     @Inject
     private Provider<TenantStore> tenantStore;
@@ -36,6 +39,9 @@ public class DefaultTenantResolver implements TenantResolver
     public Tenant resolve(String host)
     {
         if (this.resolved.get() == null) {
+            this.resolved.set(new HashMap<String, Tenant>());
+        }
+        if (!this.resolved.get().containsKey(host)) {
             Tenant tenant = null;
             try {
                 if (!this.configuration.isActivated()) {
@@ -44,19 +50,19 @@ public class DefaultTenantResolver implements TenantResolver
                         this.tenantStore.get().create(new Tenant(this.configuration.getDefaultTenant()));
                         tenant = this.tenantStore.get().findByHandle(this.configuration.getDefaultTenant());
                     }
-                    this.resolved.set(tenant);
+                    this.resolved.get().put(host, tenant);
                 } else {
                     tenant = this.tenantStore.get().findByHandle(this.extractHandleFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
-                    this.resolved.set(tenant);
+                    this.resolved.get().put(host, tenant);
                 }
             } catch (StoreException e) {
                 this.logger.error("Error trying to resolve tenant for host {} : {}", host, e.getMessage());
             }
         }
-        return this.resolved.get();
+        return this.resolved.get().get(host);
     }
 
     private String extractHandleFromHost(String host)
