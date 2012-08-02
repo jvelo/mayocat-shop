@@ -35,6 +35,28 @@
       <version>${project.version}</version>
     </dependency>
         
+    <!-- Testing dependencies -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-test</artifactId>
+      <version>${xwiki.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Need to drag this for some reason -->
+    <dependency>
+	  <groupId>ch.qos.logback</groupId>
+	  <artifactId>logback-classic</artifactId>
+	  <version>1.0.6</version>
+	  <scope>test</scope>
+	</dependency>
+    
+    <!-- Used to mock configuration classes -->
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-legacy</artifactId>
+      <version>2.5.1</version>
+    </dependency>
   </dependencies>
 
  

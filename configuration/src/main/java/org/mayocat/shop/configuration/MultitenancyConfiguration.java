@@ -14,7 +14,7 @@ public class MultitenancyConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private String rootDomain = "localhost";
+    private String rootDomain = null;
     
     @Valid
     @JsonProperty

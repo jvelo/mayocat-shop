@@ -1,6 +1,7 @@
 package org.mayocat.shop.multitenancy;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
@@ -23,7 +24,7 @@ public class DefaultTenantResolver implements TenantResolver
     private ThreadLocal<Tenant> resolved = new ThreadLocal<Tenant>();
 
     @Inject
-    private TenantStore tenantStore;
+    private Provider<TenantStore> tenantStore;
 
     @Inject
     private Logger logger;
@@ -38,14 +39,14 @@ public class DefaultTenantResolver implements TenantResolver
             Tenant tenant = null;
             try {
                 if (!this.configuration.isActivated()) {
-                    tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
+                    tenant = this.tenantStore.get().findByHandle(this.configuration.getDefaultTenant());
                     if (tenant == null) {
-                        this.tenantStore.create(new Tenant(this.configuration.getDefaultTenant()));
-                        tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
+                        this.tenantStore.get().create(new Tenant(this.configuration.getDefaultTenant()));
+                        tenant = this.tenantStore.get().findByHandle(this.configuration.getDefaultTenant());
                     }
                     this.resolved.set(tenant);
                 } else {
-                    tenant = this.tenantStore.findByHandle(this.extractHandleFromHost(host));
+                    tenant = this.tenantStore.get().findByHandle(this.extractHandleFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
@@ -63,12 +64,22 @@ public class DefaultTenantResolver implements TenantResolver
         String rootDomain;
         if (Strings.emptyToNull(configuration.getRootDomain()) == null) {
             InternetDomainName domainName = InternetDomainName.from(host);
-            return domainName.topPrivateDomain().name();
+            if (domainName.hasPublicSuffix()) {
+                // Domain is under a valid TLD, extract the TLD + first child
+                rootDomain = domainName.topPrivateDomain().name();
+            }
+            else if (host.indexOf(".") > 0 && host.indexOf(".") < host.length()){
+                // Otherwise, best guess : strip everything before the first dot.
+                rootDomain = host.substring(host.indexOf(".") + 1);
+            }
+            else {
+                rootDomain = host;
+            }
         } else {
             rootDomain = configuration.getRootDomain();
         }
         if (host.indexOf("." + rootDomain) > 0) {
-            return host.substring((host.indexOf("." + rootDomain)));
+            return host.substring(0, host.indexOf("." + rootDomain));
         } else {
             return host;
         }

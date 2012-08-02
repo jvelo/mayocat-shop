@@ -17,8 +17,8 @@ import javax.validation.constraints.Size;
     detachable="true"
 )
 @Extensions({
-    @Extension(vendorName="datanucleus", key="multitenancy-column-name", value="tenant")//,
-    //@Extension(vendorName="datanucleus", key="multitenancy-column-length", value="10")
+    @Extension(vendorName="datanucleus", key="multitenancy-column-name", value="tenant"),
+    @Extension(vendorName="datanucleus", key="multitenancy-column-length", value="255")
 })
 public class Product extends Entity
 {

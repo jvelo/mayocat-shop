@@ -12,6 +12,7 @@ import javax.servlet.ServletRequestListener;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.multitenancy.TenantResolver;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -55,7 +56,12 @@ public class LifeCycle implements ServletRequestListener, EventListener
         this.provider.set(tenantAgnosticPersistenceManager);
         
         String host = event.getServletRequest().getServerName();
-        String tenant = this.tenantResolverProdiver.get().resolve(host).getHandle();
+        Tenant tenant =  this.tenantResolverProdiver.get().resolve(host);
+        
+        if (tenant == null) {
+            // Leave it to Jersey resource to throw the appropriate exception...
+            return;
+        }
 
         // Release agnostic PM
         this.provider.get().close();
@@ -64,7 +70,7 @@ public class LifeCycle implements ServletRequestListener, EventListener
         // Step 2. Set request persistence manager with proper tenant ID.
         props = getPersistenceProperties();
 
-        props.put("datanucleus.tenantId", tenant);
+        props.put("datanucleus.tenantId", tenant.getHandle());
 
         this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
         
