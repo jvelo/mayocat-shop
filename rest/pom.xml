@@ -8,7 +8,6 @@
   </parent>
   <artifactId>mayocat-rest</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
   <name>Mayocat REST resources</name>
   <description>JAX-RS resources for the Mayocat application</description>

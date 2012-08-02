@@ -8,7 +8,6 @@
   </parent>
   <artifactId>mayocat-application</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
   <name>Mayocat Application</name>
   <description>Packaging of the MayocatShop application around DropWizard</description>
