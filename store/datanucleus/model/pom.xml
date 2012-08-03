@@ -1,0 +1,118 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.mayocat</groupId>
+    <artifactId>mayocat-store-datanucleus</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>mayocat-store-datanucleus-model</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Mayocat Store - DataNucleus - Model Enhancement</name>
+  <description>Module that enhance model classes against JDO mappings</description>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-rdbms</artifactId>
+      <version>${datanucleus.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-api-jdo</artifactId>
+      <version>${datanucleus.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>1.0.0.GA</version>
+    </dependency>
+
+    <!-- Add the enhancer as a dependency. This is not needed in theory (running the maven build from the command line works fine without it
+         but eclipse fails to find the enhancer without it.
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-enhancer</artifactId>
+      <version>${datanucleus.version}</version>
+      <scope>compile</scope>
+    </dependency>-->
+    <!-- For eclipse too 
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>2.3-eb</version>
+    </dependency>-->
+
+     <dependency>
+       <groupId>org.datanucleus</groupId>
+       <artifactId>datanucleus-core</artifactId>
+       <version>${datanucleus.version}</version>
+     </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+       <!-- Step 1 : unpack model class files -->
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <version>2.4</version>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>process-sources</phase>
+             <goals>
+               <goal>unpack-dependencies</goal>
+             </goals>
+             <configuration>
+               <includes>org/mayocat/shop/model/*.class</includes>
+               <outputDirectory>${project.build.directory}/classes</outputDirectory> 
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+
+      <!-- Step 2 : enhance model class files -->
+      <plugin>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>maven-datanucleus-plugin</artifactId>
+          <version>${datanucleus.version}</version>
+          <configuration>
+              <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
+              <verbose>true</verbose>
+              <mappingIncludes>**/*.jdo, **/*.class</mappingIncludes>
+              <verbose>true</verbose>
+             <enhancerName>ASM</enhancerName>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>enhance</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.datanucleus</groupId>
+              <artifactId>datanucleus-core</artifactId>
+              <version>${datanucleus.version}</version>
+            </dependency>
+          </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+</project>

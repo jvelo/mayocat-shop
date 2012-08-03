@@ -11,5 +11,26 @@
 
   <name>Mayocat Configuration</name>
   <description>Top level configuration for mayocat</description>
+  <dependencies>
+
+    <!-- XWiki -->
+    <dependency>
+    <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${xwiki.version}</version>
+    </dependency>
+
+    <!-- Drop Wizard --> 
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-core</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-client</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>

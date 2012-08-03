@@ -3,18 +3,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.mayocat</groupId>
-    <artifactId>mayocat-parent</artifactId>
+    <artifactId>mayocat-store</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>mayocat-store</artifactId>
+  <artifactId>mayocat-store-datanucleus</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Mayocat Store - Parent POM</name>
-  <description>Persistence layer</description>
-
+  <name>Mayocat Store - DataNucleus - Parent POM</name>
+  <description>Persistence layer - DataNucleus implementation</description>
   <modules>
-    <module>api</module>
-    <module>datanucleus</module>
+    <module>model</module>
+    <module>store</module>
   </modules>
 </project>

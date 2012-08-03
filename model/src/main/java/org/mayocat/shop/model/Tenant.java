@@ -2,19 +2,10 @@ package org.mayocat.shop.model;
 
 import java.util.List;
 
-import javax.jdo.annotations.Element;
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Index;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@PersistenceCapable(table = "tenant", detachable = "true")
-@Extension(vendorName="datanucleus", key="multitenancy-disable", value="true")
 public class Tenant extends Entity
 {
     public Tenant(@Valid String handle)
@@ -22,23 +13,12 @@ public class Tenant extends Entity
         setHandle(handle);
     }
     
-    @Index
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Long id;
 
-    @Index
     @NotNull
-    //@Unique
     @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
     private String handle;
-
-    //, defaultFetchGroup="true"
-    //@Persistent(mappedBy="tenant")
-    //@Element(dependent = "true")
-    //List<Product> products;
     
-    @Element(dependent="true", column="alias", types=String.class)
     List<String> aliases;
 
     ///////////////////////////////////////////////////

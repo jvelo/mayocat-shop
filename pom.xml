@@ -49,8 +49,8 @@
     <!-- Dependencies versions -->
     <dropwizard.version>0.5.1-SNAPSHOT</dropwizard.version>
     <xwiki.version>4.2-milestone-1</xwiki.version>
-    <!-- FIXME With 3.0.3 and above, I have a "Plugin (Bundle) “org.datanucleus.api.jdo” is already registered. -->
-    <datanucleus.version>3.0.2</datanucleus.version>
+    <guava.version>12.0</guava.version>
+    <datanucleus.version>3.1.0-release</datanucleus.version>
   </properties>
 
   <repositories>
@@ -60,31 +60,6 @@
       <url>http://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </repositories>
-
-  <dependencies>
-
-    <!-- Top level dependencies required by all submodules -->
-
-    <!-- XWiki -->
-    <dependency>
-    <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-component-default</artifactId>
-      <version>${xwiki.version}</version>
-    </dependency>
-
-    <!-- Drop Wizard --> 
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-core</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-client</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-
-  </dependencies>  
 
   <modules>
     <module>configuration</module>

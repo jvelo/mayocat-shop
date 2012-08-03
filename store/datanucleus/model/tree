@@ -1,0 +1,24 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Mayocat Store - DataNucleus - Model Enhancement 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.4:tree (default-cli) @ mayocat-store-datanucleus-model ---
+[INFO] org.mayocat:mayocat-store-datanucleus-model:jar:1.0-SNAPSHOT
+[INFO] +- org.mayocat:mayocat-model:jar:1.0-SNAPSHOT:compile
+[INFO] +- org.datanucleus:datanucleus-rdbms:jar:3.1.0-release:provided
+[INFO] +- org.datanucleus:datanucleus-api-jdo:jar:3.1.0-release:compile
+[INFO] +- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.datanucleus:datanucleus-enhancer:jar:3.1.0-release:compile
+[INFO] |  \- org.ow2.asm:asm:jar:4.0:compile
+[INFO] +- javax.jdo:jdo2-api:jar:2.3-eb:compile
+[INFO] |  \- javax.transaction:transaction-api:jar:1.1:compile
+[INFO] \- org.datanucleus:datanucleus-core:jar:3.1.0-release:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.236s
+[INFO] Finished at: Fri Aug 03 21:15:54 CEST 2012
+[INFO] Final Memory: 6M/71M
+[INFO] ------------------------------------------------------------------------

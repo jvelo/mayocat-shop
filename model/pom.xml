@@ -13,65 +13,19 @@
 
   <name>Mayocat Model</name>
   <description>Model classes for MayocatShop</description>
-  <properties>
-    <datanucleus.version>3.0.2</datanucleus.version>
-  </properties>
   <dependencies>
-
     <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-      <version>2.3-eb</version>
-    </dependency>
-  
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-      <version>${datanucleus.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.datanucleus</groupId>
-          <artifactId>datanucleus-core</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-rdbms</artifactId>
-      <version>${datanucleus.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-api-jdo</artifactId>
-      <version>${datanucleus.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-	  <groupId>javax.validation</groupId>
-	  <artifactId>validation-api</artifactId>
-	  <version>1.0.0.GA</version>
-    </dependency>
-            
+    <!-- hashCode, equals, etc. helpers -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>12.0</version>
+      <version>${guava.version}</version>
       <scope>provided</scope>
-    </dependency>
-
-	<!-- Eclipse DataNucleus plugin complains about enhancer class not found if the enhancer is not here as a dependency... -->
-  <!--
-    -->
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-enhancer</artifactId>
-      <version>3.0.1</version>
-      <scope>compile</scope>
     </dependency>
 
     <!-- Testing dependencies -->
@@ -81,52 +35,6 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.0.0</version>
-      <scope>test</scope>
-    </dependency>
-
-     <dependency>
-       <groupId>org.datanucleus</groupId>
-       <artifactId>datanucleus-core</artifactId>
-       <version>${datanucleus.version}</version>
-     </dependency>
-
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-          <groupId>org.datanucleus</groupId>
-          <artifactId>maven-datanucleus-plugin</artifactId>
-          <version>${datanucleus.version}</version>
-          <configuration>
-              <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
-              <verbose>true</verbose>
-              <mappingIncludes>**/*.jdo, **/*.class</mappingIncludes>
-              <verbose>true</verbose>
-             <enhancerName>ASM</enhancerName>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>compile</phase>
-              <goals>
-                <goal>enhance</goal>
-              </goals>
-            </execution>
-          </executions>
-          <dependencies>
-            <dependency>
-              <groupId>org.datanucleus</groupId>
-              <artifactId>datanucleus-core</artifactId>
-              <version>${datanucleus.version}</version>
-            </dependency>
-          </dependencies>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdo xmlns="http://java.sun.com/xml/ns/jdo/jdo"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdo
+        http://java.sun.com/xml/ns/jdo/jdo_3_0.xsd">
+
+  <package name="org.mayocat.shop.model">
+    <class name="Role" table="role" detachable="true" identity-type="application">
+
+      <!-- Proper name for the multitenancy column -->
+      <extension vendor-name="datanucleus" key="multitenancy-column-name" value="tenant"/>
+      <extension vendor-name="datanucleus" key="multitenancy-column-length" value="255"/>
+
+      <!-- id field -->
+      <field name="id" primary-key="true" value-strategy="identity">
+        <index />
+      </field>
+
+      <!-- Name field -->
+      <field name="name">
+        <column length="255" />
+        <unique />
+      </field>
+
+      <!-- Capabilities -->
+      <field name="capabilities" table="role_capability">
+        <collection />
+        <join />
+      </field>
+    </class>
+  </package>
+</jdo>
