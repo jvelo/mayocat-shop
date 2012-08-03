@@ -1,7 +1,10 @@
 package org.mayocat.shop.model;
 
+import java.util.Set;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Index;
+import javax.jdo.annotations.Join;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -24,5 +27,8 @@ public class User extends Entity
      * The password hash.
      */
     private String password;
+    
+    @Join
+    private Set<Role> roles;
 
 }

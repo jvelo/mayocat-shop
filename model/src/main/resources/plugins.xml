@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<plugin>
+    <extension point="org.datanucleus.store_mapping">
+        <mapping java-type="org.mayocat.shop.capabilities.Capability" mapping-class="org.mayocat.shop.store.datanucleus.mapping.CapabilityMapping"/>
+    </extension>
+</plugin>
