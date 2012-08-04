@@ -6,17 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class Tenant extends Entity
-{
-    public Tenant()
-    {
-        
-    }
-    
-    public Tenant(String handle)
-    {
-        setHandle(handle);
-    }
-    
+{    
     Long id;
 
     @NotNull
@@ -25,6 +15,17 @@ public class Tenant extends Entity
     
     List<String> aliases;
 
+    ///////////////////////////////////////////////////
+    
+    public Tenant()
+    {
+    }
+    
+    public Tenant(String handle)
+    {
+        setHandle(handle);
+    }
+    
     ///////////////////////////////////////////////////
     
     public Long getId()
@@ -52,16 +53,6 @@ public class Tenant extends Entity
         this.aliases = aliases;
     }
 
-    /*
-    public void addToProducts(Product p)
-    {
-        if (this.products == null) {
-            this.products = new ArrayList<Product>();
-        }
-        this.products.add(p);
-    }
-    */
-    
     ///////////////////////////////////////////////////
     
     public void fromTenant(Tenant t)
