@@ -14,6 +14,14 @@
   <name>Mayocat Model</name>
   <description>Model classes for MayocatShop</description>
   <dependencies>
+  
+     <!-- XWiki -->
+    <dependency>
+    <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${xwiki.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>

@@ -21,6 +21,11 @@
     </dependency>  
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-authorization</artifactId>
+      <version>${project.version}</version>
+    </dependency>  
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-rest</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -13,7 +13,13 @@
   <description>JAX-RS resources for the Mayocat application</description>
 
   <dependencies>
-  
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-authorization</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>  
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-store</artifactId>
@@ -37,6 +43,11 @@
     <dependency>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-core</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-auth</artifactId>
         <version>${dropwizard.version}</version>
     </dependency>
     <dependency>

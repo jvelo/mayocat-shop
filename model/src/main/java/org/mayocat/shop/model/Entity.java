@@ -1,6 +1,8 @@
 package org.mayocat.shop.model;
 
-public class Entity
+import java.io.Serializable;
+
+public class Entity implements Serializable
 {
 
 }

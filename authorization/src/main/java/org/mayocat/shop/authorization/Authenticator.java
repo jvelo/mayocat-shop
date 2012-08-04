@@ -4,7 +4,9 @@ import org.mayocat.shop.model.User;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface Gatekeeper
+public interface Authenticator
 {
-    boolean hasCapability(User user, Class<? extends Capability> capability);
+    boolean respondTo(String headerName, String headerValue);
+    
+    User verify(String value);
 }

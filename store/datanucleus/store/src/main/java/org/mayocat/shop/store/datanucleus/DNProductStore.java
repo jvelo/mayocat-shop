@@ -9,7 +9,6 @@ import javax.jdo.Query;
 import javax.validation.Valid;
 
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 

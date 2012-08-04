@@ -1,7 +1,7 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
-      "DataNucleus.Datastore.Native": DEBUG
+      # "DataNucleus.Datastore.Native": DEBUG
   file:
     archive: false
 

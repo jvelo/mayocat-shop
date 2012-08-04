@@ -24,9 +24,16 @@ public class CapabilityMapping extends ObjectAsStringMapping
     }
 
     @Override
-    protected Object stringToObject(String datastoreValue)
+    protected Object stringToObject(final String datastoreValue)
     {
-        return new Capability(datastoreValue);
+        return new Capability(){
+
+            @Override
+            public String getName()
+            {
+                return datastoreValue;
+            }
+        };
     }
 
 }

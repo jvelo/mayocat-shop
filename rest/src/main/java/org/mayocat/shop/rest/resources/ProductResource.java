@@ -12,12 +12,14 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.model.User;
 import org.mayocat.shop.multitenancy.QueryTenant;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
+import com.yammer.dropwizard.auth.Auth;
 
 @Component("ProductResource")
 @Path("/product/")
@@ -30,7 +32,11 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object search(@PathParam("handle") String handle, @QueryTenant Tenant tenant)
+    public Object search(
+        @PathParam("handle") String handle,
+        @QueryTenant Tenant tenant,
+        @Auth User user
+    )
     {
         try {
             Product product = this.store.get().findByHandle(handle);

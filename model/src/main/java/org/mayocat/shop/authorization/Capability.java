@@ -1,16 +1,9 @@
 package org.mayocat.shop.authorization;
 
-public class Capability
+import org.xwiki.component.annotation.Role;
+
+@Role
+public interface Capability
 {
-    private String name;
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public Capability(String name)
-    {
-        this.name = name;
-    }
+    public String getName();
 }

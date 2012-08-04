@@ -1,1 +1,3 @@
 org.mayocat.shop.rest.resources.ProductResource
+org.mayocat.shop.authorization.jersey.AuthorizedProvider
+org.mayocat.shop.multitenancy.jersey.QueryTenantProvider

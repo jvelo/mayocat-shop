@@ -79,7 +79,7 @@
                <goal>unpack-dependencies</goal>
              </goals>
              <configuration>
-               <includes>org/mayocat/shop/model/*.class</includes>
+               <includes>org/mayocat/shop/**/*.class</includes>
                <outputDirectory>${project.build.directory}/classes</outputDirectory> 
              </configuration>
            </execution>

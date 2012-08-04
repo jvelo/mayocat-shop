@@ -1,0 +1,3 @@
+org.mayocat.shop.authorization.BasicAuthenticator
+org.mayocat.shop.authorization.DefaultGatekeeper
+org.mayocat.shop.authorization.BCryptPasswordManager

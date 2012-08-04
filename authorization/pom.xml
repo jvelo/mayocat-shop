@@ -19,7 +19,12 @@
       <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-store-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-configuration</artifactId>
@@ -29,6 +34,11 @@
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-model</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+	  <groupId>org.mindrot</groupId>
+	  <artifactId>jbcrypt</artifactId>
+	  <version>0.3m</version>
     </dependency>
   </dependencies>
 
