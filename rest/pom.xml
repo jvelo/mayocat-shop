@@ -18,11 +18,13 @@
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-store</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>

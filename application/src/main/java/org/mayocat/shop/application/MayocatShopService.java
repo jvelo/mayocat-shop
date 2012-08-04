@@ -3,6 +3,7 @@ package org.mayocat.shop.application;
 import java.util.Map;
 
 import org.mayocat.shop.base.EventListener;
+import org.mayocat.shop.base.HealthCheck;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
@@ -55,6 +56,14 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
         Map<String, EventListener> eventListeners = componentManager.getInstanceMap(EventListener.class);
         for (Map.Entry<String, EventListener> listener : eventListeners.entrySet()) {
             environment.addServletListeners(listener.getValue());
+        }
+
+        // Registering health checks implementations against the environment
+        Map<String, HealthCheck> healthChecks = componentManager.getInstanceMap(HealthCheck.class);
+        for (Map.Entry<String, HealthCheck> check : healthChecks.entrySet()) {
+            if (com.yammer.metrics.core.HealthCheck.class.isAssignableFrom(check.getValue().getClass())) {
+                environment.addHealthCheck((com.yammer.metrics.core.HealthCheck) check.getValue());
+            }
         }
 
     }
