@@ -90,8 +90,7 @@
       <plugin>
           <groupId>org.datanucleus</groupId>
           <artifactId>maven-datanucleus-plugin</artifactId>
-          <!--         <version>${datanucleus.version}</version>-->
-          <version>3.0.2</version>
+          <version>${datanucleus.version}</version>
           <configuration>
               <log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
               <verbose>true</verbose>
