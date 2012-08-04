@@ -26,8 +26,32 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-store</artifactId>
+      <artifactId>mayocat-store-api</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-store-datanucleus-model</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <!-- We want the enhanced version instead -->
+          <groupId>org.mayocat</groupId>
+          <artifactId>mayocat-model</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-store-datanucleus-store</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <!-- We want the enhanced version instead -->
+          <groupId>org.mayocat</groupId>
+          <artifactId>mayocat-model</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
@@ -45,11 +69,10 @@
     
     <!-- Need to drag this for some reason -->
     <dependency>
-	  <groupId>ch.qos.logback</groupId>
-	  <artifactId>logback-classic</artifactId>
-	  <version>1.0.6</version>
-	  <scope>test</scope>
-	</dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.6</version>
+    </dependency>
     
     <!-- Used to mock configuration classes -->
     <dependency>
@@ -62,11 +85,34 @@
  
   <build>
     <plugins>
+
+       <!-- Step 1 : copy datanucleus in target/lib -->
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-dependency-plugin</artifactId>
+         <version>2.4</version>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>process-sources</phase>
+             <goals>
+               <goal>copy-dependencies</goal>
+             </goals>
+             <configuration>
+               <includeGroupIds>org.datanucleus</includeGroupIds>
+               <outputDirectory>${project.build.directory}/lib</outputDirectory> 
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+
+      <!-- Step 2 : shade everything else -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>1.4</version>
         <configuration>
+
           <createDependencyReducedPom>true</createDependencyReducedPom>
           <filters>
             <filter>
@@ -86,6 +132,13 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.datanucleus:*</exclude>
+                  <exclude>datanucleus:rdbms</exclude>
+                  <exclude>datanucleus:api</exclude>
+                </excludes>
+              </artifactSet>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/components.txt</resource>
@@ -109,5 +162,29 @@
       </plugin>
     </plugins>
   </build>
- 
+  <profiles>
+    <profile>
+      <id>hsqldb</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>hsqldb</artifactId>
+          <version>2.0.0</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>mysql</id>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>5.1.21</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

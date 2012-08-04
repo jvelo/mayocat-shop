@@ -5,12 +5,12 @@ import javax.validation.constraints.Size;
 
 public class Product extends Entity
 {
-    private Long id;
+    Long id;
 
     @NotNull
     @Size(min = 1)
-    private String handle;
-        
+    String handle;
+
     public String getHandle()
     {
         return handle;

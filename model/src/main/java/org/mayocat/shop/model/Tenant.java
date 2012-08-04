@@ -2,22 +2,26 @@ package org.mayocat.shop.model;
 
 import java.util.List;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class Tenant extends Entity
 {
-    public Tenant(@Valid String handle)
+    public Tenant()
+    {
+        
+    }
+    
+    public Tenant(String handle)
     {
         setHandle(handle);
     }
     
-    private Long id;
+    Long id;
 
     @NotNull
     @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
-    private String handle;
+    String handle;
     
     List<String> aliases;
 

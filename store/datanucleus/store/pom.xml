@@ -81,7 +81,7 @@
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-api-jdo</artifactId>
       <version>${datanucleus.version}</version>
-      <scope>runtime</scope>
+      <!--<scope>runtime</scope>-->
     </dependency>
 
     <!-- Testing dependencies -->
