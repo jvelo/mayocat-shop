@@ -2,7 +2,6 @@ package org.mayocat.shop.store.datanucleus;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -15,8 +14,6 @@ import org.xwiki.component.annotation.Component;
 @Component(hints = {"datanucleus", "default"})
 public class DNTenantStore extends AbstractDataNucleusStore<Tenant, Long> implements TenantStore
 {
-    @Inject
-    protected PersistenceManagerProvider persistanceManager;
 
     public boolean exists(Tenant entity) throws StoreException
     {
