@@ -55,21 +55,5 @@
         <artifactId>dropwizard-client</artifactId>
         <version>${dropwizard.version}</version>
     </dependency>
-
-    <!-- Test dependencies -->
-    <dependency>
-       <groupId>com.yammer.dropwizard</groupId>
-       <artifactId>dropwizard-testing</artifactId>
-       <version>${dropwizard.version}</version>
-       <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-test</artifactId>
-      <version>${xwiki.version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 </project>

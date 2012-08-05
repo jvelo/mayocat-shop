@@ -20,6 +20,7 @@ import org.mayocat.shop.multitenancy.TenantResolver;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.core.HttpContext;
 
@@ -70,7 +71,7 @@ class AuthorizedInjectable extends AnonymousInjectable
 
         User user = null;
         for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
-            final String headerValue = httpContext.getRequest().getHeaderValue(headerName);
+            final String headerValue = Strings.nullToEmpty(httpContext.getRequest().getHeaderValue(headerName));
             for (Authenticator authenticator : this.authenticators.values()) {
                 if (authenticator.respondTo(headerName, headerValue)) {
                     user = authenticator.verify(headerValue);
