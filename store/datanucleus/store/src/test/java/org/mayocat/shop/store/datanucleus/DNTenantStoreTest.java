@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.test.annotation.MockingRequirement;
 
@@ -24,7 +25,7 @@ public class DNTenantStoreTest extends AbstractStoreEntityTestCase
     public ExpectedException thrown = ExpectedException.none();
     
     @Test
-    public void testCreateTenant() throws StoreException
+    public void testCreateTenant() throws Exception
     {
         Tenant t = new Tenant("mytenant");
         
@@ -35,10 +36,9 @@ public class DNTenantStoreTest extends AbstractStoreEntityTestCase
     }
     
     @Test
-    public void testCreateTenantFailsWhenTenantWithSameHandleAlreadyExists() throws StoreException
+    public void testCreateTenantFailsWhenTenantWithSameHandleAlreadyExists() throws Exception
     {   
-        thrown.expect(StoreException.class);
-        //thrown.expectMessage(JUnitMatchers.containsString("integrity constraint violation: unique constraint"));
+        thrown.expect(EntityAlreadyExistsException.class);
         
         Tenant t = new Tenant("mytenant");
         tenantStore.create(t);

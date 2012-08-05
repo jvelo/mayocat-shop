@@ -71,4 +71,13 @@
     <module>application</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>it</id>
+      <modules>
+        <module>test</module>
+      </modules>
+    </profile>
+  </profiles>
+
 </project>

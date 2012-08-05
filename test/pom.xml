@@ -7,9 +7,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>mayocat-test</artifactId>
-  <name>Mayocat - Functional Tests</name>
+  <name>Mayocat Functional Tests</name>
   <packaging>pom</packaging>
-  <description>XWiki Enterprise - Functional Tests - Parent POM</description>
+  <description>Functional tests for the REST API.</description>
   <dependencies>
 
     <dependency>
