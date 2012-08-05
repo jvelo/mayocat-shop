@@ -33,7 +33,7 @@ public class ProductResource implements Resource
     @Timed
     @Produces({"application/json; charset=UTF-8"})
     public Object getProduct(
-        @Anonymous Context context,
+        @Authorized Context context,
         @PathParam("handle") String handle)
     {
         try {

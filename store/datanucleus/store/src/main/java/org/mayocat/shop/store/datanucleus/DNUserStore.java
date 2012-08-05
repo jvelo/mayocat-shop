@@ -52,7 +52,7 @@ public class DNUserStore implements UserStore
             pm = persistanceManagerProvider.get();
 
             q = pm.newQuery(User.class);
-            q.setFilter("name == param or email == param");
+            q.setFilter("email == param");
             q.declareParameters("String param");
 
             List<User> results = (List<User>) q.execute(userNameOrEmail);

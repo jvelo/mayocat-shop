@@ -33,9 +33,9 @@ public class BasicAuthenticator implements Authenticator
     public boolean respondTo(String headerName, String headerValue)
     {
         if (headerName.equalsIgnoreCase(HttpHeaders.AUTHORIZATION)) {
-            final int space = headerName.indexOf(' ');
+            final int space = headerValue.indexOf(' ');
             if (space > 0) {
-                final String method = headerName.substring(0, space);
+                final String method = headerValue.substring(0, space);
                 if (method.equalsIgnoreCase(METHOD)) {
                     return true;
                 }
