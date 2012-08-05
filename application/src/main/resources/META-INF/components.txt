@@ -1,2 +1,1 @@
 org.mayocat.shop.multitenancy.DefaultTenantResolver
-org.mayocat.shop.multitenancy.jersey.QueryTenantProvider

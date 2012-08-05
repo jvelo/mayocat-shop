@@ -11,14 +11,16 @@ import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
+import org.xwiki.component.annotation.Component;
 
+@Component(hints = {"datanucleus", "default"})
 public class DNUserStore implements UserStore
 {
     @Inject
     protected PersistenceManagerProvider persistanceManagerProvider;
     
     @Override
-    public void persist(User user) throws StoreException
+    public void create(User user) throws StoreException
     {
         PersistenceManager pm = null;
         try {
@@ -49,7 +51,7 @@ public class DNUserStore implements UserStore
         try {
             pm = persistanceManagerProvider.get();
 
-            q = pm.newQuery(Product.class);
+            q = pm.newQuery(User.class);
             q.setFilter("name == param or email == param");
             q.declareParameters("String param");
 
@@ -59,6 +61,22 @@ public class DNUserStore implements UserStore
             }
             return null;
 
+        } catch (JDODataStoreException e) {
+            throw new StoreException(e);
+        } 
+    }
+
+    @Override
+    public List<User> findAll(int number, int offset) throws StoreException
+    {
+        PersistenceManager pm = null;
+        Query q = null;
+        try {
+            pm = persistanceManagerProvider.get();
+
+            q = pm.newQuery(User.class);
+            q.setRange(offset, offset + number);
+            return (List<User>) q.execute();
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
         } 

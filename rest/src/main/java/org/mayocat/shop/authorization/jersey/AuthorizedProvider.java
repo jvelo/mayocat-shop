@@ -4,10 +4,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.shop.authorization.Authorized;
-import org.mayocat.shop.authorization.Gatekeeper;
-import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.authorization.Authenticator;
+import org.mayocat.shop.authorization.Gatekeeper;
+import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.base.Provider;
+import org.mayocat.shop.multitenancy.TenantResolver;
+import org.mayocat.shop.store.UserStore;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.model.Parameter;
@@ -19,12 +21,17 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 @Component("authorized")
 public class AuthorizedProvider implements InjectableProvider<Authorized, Parameter>, Provider
 {
+    @Inject
+    private javax.inject.Provider<TenantResolver> tenantResolverProvider;
 
     @Inject
     private Map<String, Authenticator> authenticators;
-    
+
     @Inject
     private Gatekeeper gatekeeper;
+
+    @Inject
+    private javax.inject.Provider<UserStore> userStore;
     
     @Override
     public ComponentScope getScope()
@@ -35,7 +42,7 @@ public class AuthorizedProvider implements InjectableProvider<Authorized, Parame
     @Override
     public Injectable< ? > getInjectable(ComponentContext ic, Authorized a, Parameter c)
     {
-        return new AuthorizedInjectable(authenticators, a.value(), gatekeeper);
+        return new AuthorizedInjectable(userStore, tenantResolverProvider, authenticators, gatekeeper, a);
     }
 
 }

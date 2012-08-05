@@ -1,10 +1,12 @@
-package org.mayocat.shop.authorization;
+package org.mayocat.shop.authorization.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.mayocat.shop.authorization.Capability;
 
 /**
  * This annotation is used to inject authenticated and authorized principal objects into protected JAX-RS resource

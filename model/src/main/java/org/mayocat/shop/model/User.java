@@ -1,5 +1,7 @@
 package org.mayocat.shop.model;
 
+import javax.validation.constraints.NotNull;
+
 public class User extends Entity
 {
     Long id;
@@ -9,6 +11,7 @@ public class User extends Entity
     /**
      * The password hash.
      */
+    @NotNull
     String password;
 
     ///////////////////////////////////////////////////

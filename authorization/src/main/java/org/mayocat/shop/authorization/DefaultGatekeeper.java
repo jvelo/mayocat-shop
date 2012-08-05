@@ -15,17 +15,17 @@ public class DefaultGatekeeper implements Gatekeeper
 
     @Inject
     private Provider<RoleStore> roleStore;
-    
+
     @Inject
     private Logger logger;
-    
+
     @Override
-    public boolean hasCapability(User user, Class<? extends Capability> capability)
+    public boolean hasCapability(User user, Class< ? extends Capability> capability)
     {
         try {
             return (this.roleStore.get().findByUserAndCapability(user, capability.newInstance()) != null);
-        }
-        catch (StoreException e) {
+
+        } catch (StoreException e) {
             this.logger.error("Failed to find role for user and capability", e);
         } catch (InstantiationException e) {
             this.logger.error("Failed to instanciate capability");

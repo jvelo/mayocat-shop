@@ -10,16 +10,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.shop.authorization.Context;
+import org.mayocat.shop.authorization.annotation.Anonymous;
+import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.model.User;
-import org.mayocat.shop.multitenancy.QueryTenant;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
-import com.yammer.dropwizard.auth.Auth;
 
 @Component("ProductResource")
 @Path("/product/")
@@ -32,11 +32,9 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object search(
-        @PathParam("handle") String handle,
-        @QueryTenant Tenant tenant,
-        @Auth User user
-    )
+    public Object getProduct(
+        @Anonymous Context context,
+        @PathParam("handle") String handle)
     {
         try {
             Product product = this.store.get().findByHandle(handle);
@@ -51,7 +49,9 @@ public class ProductResource implements Resource
 
     @PUT
     @Timed
-    public Response createProduct(Product product, @QueryTenant Tenant tenant)
+    public Response createProduct(
+        @Authorized(value=AddProduct.class, optional=true) Context context,
+        Product product)
     {
         try {
             // product.setTenant(tenant);
@@ -61,5 +61,5 @@ public class ProductResource implements Resource
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
-    }
+    }   
 }
