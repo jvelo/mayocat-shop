@@ -1,5 +1,6 @@
 package org.mayocat.shop.store;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import javax.inject.Inject;
@@ -10,7 +11,7 @@ import org.slf4j.Logger;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 
-public abstract class AbstractStoreProvider<T extends Store< ? extends Entity>>
+public abstract class AbstractStoreProvider<T extends Store< ? extends Entity, ? extends Serializable>>
 {
 
     @Inject

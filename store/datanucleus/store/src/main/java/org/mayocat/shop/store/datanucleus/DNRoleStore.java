@@ -13,41 +13,20 @@ import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
+import org.xwiki.component.annotation.Component;
 
-public class DNRoleStore implements RoleStore
+@Component(hints = {"datanucleus", "default"})
+public class DNRoleStore extends AbstractDataNucleusStore<Role, Long> implements RoleStore
 {
     @Inject
-    protected PersistenceManagerProvider persistanceManagerProvider;
-    
-    
-    public void persist(Role role) throws StoreException
-    {
-        PersistenceManager pm = null;
-        try {
-            pm = persistanceManagerProvider.get();
-            pm.makePersistent(role);
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
-        }
-    }
-    
-    public Role findById(Long id) throws StoreException
-    {
-        PersistenceManager pm = null;
-        try {
-            pm = persistanceManagerProvider.get();
-            return pm.getObjectById(Role.class, id);
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
-        } 
-    }
-    
+    protected PersistenceManagerProvider persistanceManager;
+
     public Role findByUserAndCapability(User user, Capability capability) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManagerProvider.get();
+            pm = persistanceManager.get();
 
             q = pm.newQuery(Product.class);
             q.setFilter("capability in (role.capabilities)");
@@ -63,4 +42,11 @@ public class DNRoleStore implements RoleStore
             throw new StoreException(e);
         }
     }
+
+    @Override
+    public boolean exists(Role entity) throws StoreException
+    {
+        return false;
+    }
+
 }

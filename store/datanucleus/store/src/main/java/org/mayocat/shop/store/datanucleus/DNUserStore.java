@@ -7,49 +7,28 @@ import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNUserStore implements UserStore
+public class DNUserStore extends AbstractDataNucleusStore<User, Long> implements UserStore
 {
     @Inject
-    protected PersistenceManagerProvider persistanceManagerProvider;
-    
-    @Override
-    public void create(User user) throws StoreException
+    protected PersistenceManagerProvider persistanceManager;
+
+    public boolean exists(User entity) throws StoreException
     {
-        PersistenceManager pm = null;
-        try {
-            pm = persistanceManagerProvider.get();
-            pm.makePersistent(user);
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
-        }
+        return this.findByEmailOrUserName(entity.getEmail()) != null;
     }
 
-    @Override
-    public User findById(Long id) throws StoreException
-    {
-        PersistenceManager pm = null;
-        try {
-            pm = persistanceManagerProvider.get();
-            return pm.getObjectById(User.class, id);
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
-        } 
-    }
-
-    @Override
     public User findByEmailOrUserName(String userNameOrEmail) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManagerProvider.get();
+            pm = persistanceManager.get();
 
             q = pm.newQuery(User.class);
             q.setFilter("email == param");
@@ -63,23 +42,22 @@ public class DNUserStore implements UserStore
 
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
-        } 
+        }
     }
 
-    @Override
     public List<User> findAll(int number, int offset) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManagerProvider.get();
+            pm = persistanceManager.get();
 
             q = pm.newQuery(User.class);
             q.setRange(offset, offset + number);
             return (List<User>) q.execute();
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
-        } 
+        }
     }
 
 }

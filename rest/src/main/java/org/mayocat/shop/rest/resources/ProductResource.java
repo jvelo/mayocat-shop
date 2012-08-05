@@ -8,6 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.Context;
@@ -15,6 +16,7 @@ import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
@@ -32,9 +34,7 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object getProduct(
-        @Authorized Context context,
-        @PathParam("handle") String handle)
+    public Object getProduct(@Authorized Context context, @PathParam("handle") String handle)
     {
         try {
             Product product = this.store.get().findByHandle(handle);
@@ -49,8 +49,7 @@ public class ProductResource implements Resource
 
     @PUT
     @Timed
-    public Response createProduct(
-        @Authorized(value=AddProduct.class, optional=true) Context context,
+    public Response createProduct(@Authorized(value = AddProduct.class, optional = true) Context context,
         Product product)
     {
         try {
@@ -60,6 +59,9 @@ public class ProductResource implements Resource
             return Response.ok().build();
         } catch (StoreException e) {
             throw new WebApplicationException(e);
+        } catch (EntityAlreadyExistsException e) {
+            throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
+                .entity("A product with this handle already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
-    }   
+    }
 }

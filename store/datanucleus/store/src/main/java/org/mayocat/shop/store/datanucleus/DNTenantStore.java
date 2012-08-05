@@ -13,60 +13,22 @@ import org.mayocat.shop.store.TenantStore;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNTenantStore implements TenantStore
+public class DNTenantStore extends AbstractDataNucleusStore<Tenant, Long> implements TenantStore
 {
     @Inject
-    protected PersistenceManagerProvider persistanceManagerProvider;
+    protected PersistenceManagerProvider persistanceManager;
 
-    @Override
-    public void create(Tenant t) throws StoreException
+    public boolean exists(Tenant entity) throws StoreException
     {
-        PersistenceManager pm = null;
-        try {
-            // // Initial testing for adding to table - works
-            pm = persistanceManagerProvider.get();
-            try {
-                pm.makePersistent(t);
-            } catch (JDODataStoreException e) {
-                throw new StoreException(e.getMessage(), e);
-            }
-        } finally {
-            if (null != pm) {
-                //pm.close();
-            }
-        }
+        return this.findByHandle(entity.getHandle()) != null;
     }
-
-    @Override
-    public void update(Tenant t) throws StoreException
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public Tenant findById(Long id) throws StoreException
-    {
-        PersistenceManager pm = null;
-        try {
-            pm = persistanceManagerProvider.get();
-            return pm.getObjectById(Tenant.class, id);
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
-        } finally {
-            if (null != pm) {
-                //pm.close();
-            }
-        }
-    }
-
-    @Override
+    
     public Tenant findByHandle(String handle) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManagerProvider.get();
+            pm = persistanceManager.get();
 
             q = pm.newQuery(Tenant.class);
             q.setFilter("handle == handleParam");
@@ -89,8 +51,7 @@ public class DNTenantStore implements TenantStore
             }
         }
     }
-
-    @Override
+    
     public Tenant findByHandleOrAlias(String handleOrAlias) throws StoreException
     {
         // TODO Auto-generated method stub

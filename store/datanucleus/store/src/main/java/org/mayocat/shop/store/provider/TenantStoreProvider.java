@@ -10,7 +10,6 @@ import org.mayocat.shop.store.TenantStore;
 public class TenantStoreProvider extends AbstractStoreProvider<TenantStore> implements Provider<TenantStore>
 {
 
-    @Override
     protected Type getType()
     {
         return TenantStore.class;
