@@ -3,7 +3,7 @@ package org.mayocat.shop.authorization;
 import org.mindrot.jbcrypt.BCrypt;
 import org.xwiki.component.annotation.Component;
 
-@Component("bcrypt")
+@Component(hints = {"bcrypt", "default"})
 public class BCryptPasswordManager implements PasswordManager
 {
 
