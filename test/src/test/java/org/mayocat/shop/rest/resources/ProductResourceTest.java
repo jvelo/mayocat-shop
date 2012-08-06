@@ -7,41 +7,41 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.xwiki.test.annotation.AllComponents;
 
-import org.mayocat.shop.model.Product;
-
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @AllComponents
-public class ProductResourceTest extends AbstractResourceTest
+public class ProductResourceTest extends AbstractAuthenticatedResourceTest
 {
     ProductResource productResource;
-
-    final Product product = new Product();
 
     @Override
     protected void setUpResources() throws Exception
     {
         super.setUpResources();
-        
+
         this.productResource = this.componentManager.getInstance(Resource.class, "ProductResource");
-        product.setHandle("handle");
         addResource(this.productResource);
     }
-    
+
     @Test
-    public void testGetProduct() throws Exception
+    public void testGetInexistentProduct() throws Exception
     {
-        Product returned = client().resource("/product/handle").get(Product.class);
-        Assert.assertEquals(returned, product);
+        ClientResponse cr = client().resource("/product/hoverboard")
+                                    .header("Authorization", this.getBasicAuthenticationHeader())
+                                    .get(ClientResponse.class);
+
+        Assert.assertEquals(Status.NOT_FOUND, cr.getClientResponseStatus());
     }
 
     @Test
     public void testPutRequestRequireValidProduct() throws Exception
     {
-        ClientResponse cr =
-            client().resource("/product/").type(MediaType.APPLICATION_JSON).entity("{\"handle\":\"aiya\"}")
-                .put(ClientResponse.class);
+        ClientResponse cr = client().resource("/product/")
+                                    .type(MediaType.APPLICATION_JSON)
+                                    .entity("{\"handle\":\"aiya\"}")
+                                    .header("Authorization", this.getBasicAuthenticationHeader())
+                                    .put(ClientResponse.class);
 
         Assert.assertEquals(Status.OK, cr.getClientResponseStatus());
     }

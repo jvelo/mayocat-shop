@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.Context;
-import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.model.Product;
@@ -49,11 +48,10 @@ public class ProductResource implements Resource
 
     @PUT
     @Timed
-    public Response createProduct(@Authorized(value = AddProduct.class, optional = true) Context context,
+    public Response createProduct(@Authorized(value = AddProduct.class) Context context,
         Product product)
     {
         try {
-            // product.setTenant(tenant);
             this.store.get().create(product);
 
             return Response.ok().build();
