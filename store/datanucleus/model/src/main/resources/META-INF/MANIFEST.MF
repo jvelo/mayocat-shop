@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Capability Plug-in
+Bundle-SymbolicName: org.mayocat.shop.store.datanucleus.model.capability;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Require-Bundle: org.datanucleus

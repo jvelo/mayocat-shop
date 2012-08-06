@@ -4,13 +4,12 @@ import org.mayocat.shop.authorization.Capability;
 import org.xwiki.component.annotation.Component;
 
 @Component("ADD_PRODUCT")
-public class AddProduct implements Capability
+public class AddProduct extends Capability
 {
 
-    @Override
-    public String getName()
+    public AddProduct()
     {
-        return "ADD_PRODUCT";
+        super("ADD_PRODUCT");
     }
 
 }

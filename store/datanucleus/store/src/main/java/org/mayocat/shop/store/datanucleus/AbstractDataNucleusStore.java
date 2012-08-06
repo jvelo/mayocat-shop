@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 
 import javax.inject.Inject;
 import javax.jdo.JDODataStoreException;
+import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
@@ -13,6 +14,7 @@ import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.Store;
 import org.mayocat.shop.store.StoreException;
+import org.slf4j.Logger;
 
 /**
  * Base class for all datanucleus DAOs.
@@ -24,6 +26,9 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
 
     @Inject
     protected PersistenceManagerProvider persistenceManager;
+    
+    @Inject
+    private Logger logger;
 
     public AbstractDataNucleusStore()
     {
@@ -49,13 +54,12 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
             pm.makePersistent(entity);
             tx.commit();
 
-        } catch (JDODataStoreException e) {
-            throw new StoreException(e);
+        } catch (JDOException e) {
+            this.logger.error("Failed to commit transaction", e);
+            throw new StoreException("Failed to commit transaction", e);
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
-                throw new StoreException(MessageFormat.format(
-                    "Failed to commit transation to save entity [{0}]. It has been rollbacked.", entity));
             }
         }
     }
@@ -70,7 +74,7 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
                 this.type, id), e);
         }
     }
-    
+
     protected Class<T> getPersistentType()
     {
         return this.type;

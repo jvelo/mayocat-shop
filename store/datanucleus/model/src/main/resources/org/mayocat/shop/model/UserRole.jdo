@@ -5,7 +5,7 @@
         http://java.sun.com/xml/ns/jdo/jdo_3_0.xsd">
 
   <package name="org.mayocat.shop.model">
-    <class name="Role" table="role" detachable="true" identity-type="application">
+    <class name="UserRole" table="userrole" detachable="true" identity-type="application">
 
       <!-- Proper name for the multitenancy column -->
       <extension vendor-name="datanucleus" key="multitenancy-column-name" value="tenant"/>
@@ -16,17 +16,11 @@
         <index />
       </field>
 
-      <!-- Name field -->
-      <field name="name">
-        <column length="255" />
-        <unique />
-      </field>
+      <!-- User field -->
+      <field name="user"></field>
 
-      <!-- Capabilities --> 
-      <field name="capabilities" table="rolecapability">
-        <collection />
-        <join />
-      </field>
+      <!-- Role field -->
+      <field name="role"></field>
 
     </class>
   </package>

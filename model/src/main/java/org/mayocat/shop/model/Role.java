@@ -1,23 +1,37 @@
 package org.mayocat.shop.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.mayocat.shop.authorization.Capability;
 
 public class Role extends Entity
 {
+    public enum RoleName
+    {
+        ADMIN,
+        MANAGER,
+        DESIGNER,
+        ACCOUNTANT
+    }
+
     Long id;
-    
-    String name;
-    
+
+    RoleName name;
+
     Set<Capability> capabilities;
+
+    public Role()
+    {
+        
+    }
     
-    public String getName()
+    public RoleName getName()
     {
         return name;
     }
 
-    public void setName(String name)
+    public void setName(RoleName name)
     {
         this.name = name;
     }
@@ -27,8 +41,12 @@ public class Role extends Entity
         return id;
     }
 
+    
     public void addToCapabilities(Capability capability)
     {
+        if (this.capabilities == null) {
+            this.capabilities = new HashSet<Capability>();
+        }
         this.capabilities.add(capability);
     }
 
@@ -36,4 +54,5 @@ public class Role extends Entity
     {
         this.capabilities.remove(capability);
     }
+
 }

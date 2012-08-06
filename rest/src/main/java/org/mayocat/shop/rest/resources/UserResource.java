@@ -9,13 +9,19 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.shop.authorization.Capability;
 import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.PasswordManager;
 import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.authorization.capability.shop.AddUser;
+import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.model.UserRole;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.store.UserRoleStore;
 import org.mayocat.shop.store.UserStore;
 import org.xwiki.component.annotation.Component;
 
@@ -30,6 +36,12 @@ public class UserResource implements Resource
     private Provider<UserStore> store;
 
     @Inject
+    private Provider<RoleStore> roleStore;
+    
+    @Inject
+    private Provider<UserRoleStore> userRoleStore;
+    
+    @Inject
     private PasswordManager passwordManager;
 
     @PUT
@@ -43,7 +55,22 @@ public class UserResource implements Resource
             // Persist
             this.store.get().create(user);
 
+            if (context.getUser() == null) {
+                // This means the shop has no user yet.
+                Role role = new Role();
+                role.setName(Role.RoleName.ADMIN);
+                role.addToCapabilities(new AddUser());
+                role.addToCapabilities(new AddProduct());
+                roleStore.get().create(role);
+                
+                UserRole userRole = new UserRole();
+                userRole.setRole(role);
+                userRole.setUser(user);
+                userRoleStore.get().create(userRole);
+            }
+            
             return Response.ok().build();
+            
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         } catch (EntityAlreadyExistsException e) {

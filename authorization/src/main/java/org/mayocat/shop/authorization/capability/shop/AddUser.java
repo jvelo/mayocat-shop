@@ -4,13 +4,12 @@ import org.mayocat.shop.authorization.Capability;
 import org.xwiki.component.annotation.Component;
 
 @Component("ADD_USER")
-public class AddUser implements Capability
+public class AddUser extends Capability
 {
 
-    @Override
-    public String getName()
+    public AddUser()
     {
-        return "ADD_USER";
+        super("ADD_USER");
     }
 
 }

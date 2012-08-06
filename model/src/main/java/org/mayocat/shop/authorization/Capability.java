@@ -2,8 +2,22 @@ package org.mayocat.shop.authorization;
 
 import org.xwiki.component.annotation.Role;
 
-@Role
-public interface Capability
-{
-    public String getName();
+public class Capability
+{    
+    String name;
+    
+    public Capability(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getName()
+    {
+        return this.name;
+    }
+    
+    public String toString()
+    {
+        return this.name;
+    }
 }

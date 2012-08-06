@@ -63,7 +63,7 @@
       <artifactId>mayocat-configuration</artifactId>
       <version>${project.version}</version>
     </dependency>
-        
+
     <!-- Testing dependencies -->
     <dependency>
       <groupId>org.xwiki.commons</groupId>
@@ -71,14 +71,14 @@
       <version>${xwiki.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Need to drag this for some reason -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.6</version>
     </dependency>
-    
+
     <!-- Used to mock configuration classes -->
     <dependency>
       <groupId>org.jmock</groupId>
@@ -87,7 +87,7 @@
     </dependency>
   </dependencies>
 
- 
+
   <build>
 
     <resources>
@@ -106,13 +106,25 @@
          <version>2.4</version>
          <executions>
            <execution>
-             <id>unpack</id>
+             <id>unpack-datanucleus</id>
              <phase>process-sources</phase>
              <goals>
                <goal>copy-dependencies</goal>
              </goals>
              <configuration>
                <includeGroupIds>org.datanucleus</includeGroupIds>
+               <outputDirectory>${project.build.directory}/lib</outputDirectory> 
+             </configuration>
+           </execution>
+           <execution>
+             <id>unpack-mayocat-model</id>
+             <phase>process-sources</phase>
+             <goals>
+               <goal>copy-dependencies</goal>
+             </goals>
+             <configuration>
+               <includeGroupIds>org.mayocat</includeGroupIds>
+               <includeArtifactIds>mayocat-store-datanucleus-model</includeArtifactIds>
                <outputDirectory>${project.build.directory}/lib</outputDirectory> 
              </configuration>
            </execution>
@@ -150,6 +162,7 @@
                   <exclude>org.datanucleus:*</exclude>
                   <exclude>datanucleus:rdbms</exclude>
                   <exclude>datanucleus:api</exclude>
+                  <exclude>org.mayocat:mayocat-store-datanucleus-model*</exclude>
                 </excludes>
               </artifactSet>
               <transformers>
