@@ -4,16 +4,12 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**
@@ -48,30 +44,26 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     public void testCreateProduct() throws Exception
     {
         Product p = new Product();
-        p.setHandle("My-Handle");
+        p.setHandle("waterproof-fly-swatter");
 
         ps.create(p);
 
-        Product p2 = ps.findByHandle("My-Handle");
+        Product p2 = ps.findByHandle("waterproof-fly-swatter");
         Assert.assertNotNull(p2);
     }
 
     @Test
-    @Ignore
     public void testCreateProductWithSameHandleButDifferentTenant() throws Exception
     {
         Product p = new Product();
-        p.setHandle("My-Handle");
+        p.setHandle("leopard-fishnet-tights");
 
         ps.create(p);
         
         this.setTenantToResolveTo("other");
-        this.setUpPersistenceManager();
-        
-        this.ps = this.getComponentManager().getInstance(ProductStore.class, "datanucleus");
         
         Product p2 = new Product();
-        p2.setHandle("My-Handle");;
+        p2.setHandle("leopard-fishnet-tights");;
 
         ps.create(p2);
 
@@ -84,12 +76,12 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
         thrown.expect(EntityAlreadyExistsException.class);
 
         Product p = new Product();
-        p.setHandle("My-Handle");
+        p.setHandle("peugeot-403-convertible");
 
         ps.create(p);
 
         Product p2 = new Product();
-        p2.setHandle("My-Handle");
+        p2.setHandle("peugeot-403-convertible");
 
         ps.create(p2);
     }
@@ -98,11 +90,11 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     public void testUpdateProduct() throws Exception
     {
         Product p = new Product();
-        p.setHandle("My-Other-Handle");
+        p.setHandle("face-skin-mask");
 
         ps.create(p);
         ps.update(p);
 
-        assertNotNull(ps.findByHandle("My-Other-Handle"));
+        assertNotNull(ps.findByHandle("face-skin-mask"));
     }
 }

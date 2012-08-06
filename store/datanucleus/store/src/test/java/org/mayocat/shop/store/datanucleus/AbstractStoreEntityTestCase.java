@@ -37,6 +37,8 @@ public abstract class AbstractStoreEntityTestCase extends AbstractMockingCompone
     public void setTenantToResolveTo(String tenant)
     {
         this.tenant = tenant;
+        Properties props = defaultProperties();
+        this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
     }
     
     public void setUpPersistenceManager() throws Exception

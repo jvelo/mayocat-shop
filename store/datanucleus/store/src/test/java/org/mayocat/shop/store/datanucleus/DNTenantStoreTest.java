@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**

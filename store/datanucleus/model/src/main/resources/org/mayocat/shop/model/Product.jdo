@@ -10,6 +10,12 @@
       <extension vendor-name="datanucleus" key="multitenancy-column-name" value="tenant"/>
       <extension vendor-name="datanucleus" key="multitenancy-column-length" value="255"/>
 
+      <!-- Enforce unique product handle per tenant -->
+      <unique name="UNIQUE_NAME_PER_TENANT">
+        <column name="tenant"/>
+        <column name="handle"/>
+      </unique>
+
       <!-- Id field -->
       <field name="id" primary-key="true" value-strategy="identity">
         <index />
@@ -18,7 +24,6 @@
       <!-- handle field -->
       <field name="handle">
         <column length="255" />
-        <unique />
         <index />
       </field>
 
