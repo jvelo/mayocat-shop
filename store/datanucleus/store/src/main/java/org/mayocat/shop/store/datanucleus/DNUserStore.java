@@ -24,7 +24,7 @@ public class DNUserStore extends AbstractDataNucleusStore<User, Long> implements
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManager.get();
+            pm = persistenceManager.get();
 
             q = pm.newQuery(User.class);
             q.setFilter("email == param");
@@ -46,7 +46,7 @@ public class DNUserStore extends AbstractDataNucleusStore<User, Long> implements
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManager.get();
+            pm = persistenceManager.get();
 
             q = pm.newQuery(User.class);
             q.setRange(offset, offset + number);

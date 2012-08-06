@@ -26,7 +26,7 @@ public class DNProductStore extends AbstractDataNucleusStore<Product, Long> impl
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManager.get();
+            pm = persistenceManager.get();
 
             q = pm.newQuery(Product.class);
             q.setFilter("handle == handleParam");

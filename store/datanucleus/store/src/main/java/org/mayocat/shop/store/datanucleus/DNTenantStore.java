@@ -25,7 +25,7 @@ public class DNTenantStore extends AbstractDataNucleusStore<Tenant, Long> implem
         PersistenceManager pm = null;
         Query q = null;
         try {
-            pm = persistanceManager.get();
+            pm = persistenceManager.get();
 
             q = pm.newQuery(Tenant.class);
             q.setFilter("handle == handleParam");

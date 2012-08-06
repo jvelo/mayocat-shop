@@ -28,7 +28,7 @@ public class DataNucleusStoreHealthCheck extends HealthCheck implements org.mayo
     public Result check() throws Exception
     {
         if (JDOHelper.getPersistenceManagerFactory(getPersistenceProperties()).getPersistenceManager() == null) {
-            return Result.unhealthy("Failed to get a persistance manager");
+            return Result.unhealthy("Failed to get a persistence manager");
         }
 
         return Result.healthy();

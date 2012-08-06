@@ -11,7 +11,7 @@ import org.xwiki.test.annotation.MockingRequirement;
 /**
  * Unit tests for the tenant store.
  * 
- * Note: This tests is really about datanucleus persistance, so bean-validation constraints are not tested here.
+ * Note: This tests is really about datanucleus persistence, so bean-validation constraints are not tested here.
  * They are tested both in the model module directly and in full-stack REST integrations test.
  */
 public class DNTenantStoreTest extends AbstractStoreEntityTestCase

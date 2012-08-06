@@ -13,7 +13,7 @@ import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**
- * Unit tests for the product store. Note: This tests is really about datanucleus persistance, so bean-validation
+ * Unit tests for the product store. Note: This tests is really about datanucleus persistence, so bean-validation
  * constraints are not tested here. They are tested both in the model module directly and in full-stack REST
  * integrations test.
  */

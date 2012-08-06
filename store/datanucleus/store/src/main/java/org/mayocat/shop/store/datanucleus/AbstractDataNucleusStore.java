@@ -23,7 +23,7 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
     private Class<T> type;
 
     @Inject
-    protected PersistenceManagerProvider persistanceManager;
+    protected PersistenceManagerProvider persistenceManager;
 
     public AbstractDataNucleusStore()
     {
@@ -42,7 +42,7 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
 
     public void update(T entity) throws StoreException
     {
-        PersistenceManager pm = persistanceManager.get();
+        PersistenceManager pm = persistenceManager.get();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -62,7 +62,7 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
 
     public T findById(K id) throws StoreException
     {
-        PersistenceManager pm = persistanceManager.get();
+        PersistenceManager pm = persistenceManager.get();
         try {
             return pm.getObjectById(this.type, id);
         } catch (JDODataStoreException e) {
