@@ -6,7 +6,7 @@ import junit.framework.Assert;
 
 import org.eclipse.jetty.util.B64Code;
 import org.junit.Before;
-import org.mayocat.shop.store.UserStore;
+import org.mayocat.shop.service.UserService;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -15,7 +15,7 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
 {
     private UserResource userResource;
     
-    private UserStore userStore;
+    private UserService userService;
 
     private static final String USER_NAME = "admin";
 
@@ -29,8 +29,8 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
     @Before
     public void setUpUser() throws Exception
     {
-        this.userStore = this.componentManager.getInstance(UserStore.class);
-        if (this.userStore.findByEmailOrUserName(USER_NAME) == null) {
+        this.userService = this.componentManager.getInstance(UserService.class);
+        if (!this.userService.hasUsers()) {
             ClientResponse cr = client().resource("/user/")
                 .type(MediaType.APPLICATION_JSON)
                 .entity("{\"email\":\"" + USER_NAME + "\", \"password\" : \"" + PASSWORD + "\"}")

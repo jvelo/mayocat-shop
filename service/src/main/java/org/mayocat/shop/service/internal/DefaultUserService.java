@@ -35,13 +35,11 @@ public class DefaultUserService implements UserService
     @Inject
     private PasswordManager passwordManager;
 
-    @Override
     public List<User> findAll(int number, int offset) throws StoreException
     {
         return this.userStore.get().findAll(number, offset);
     }
 
-    @Override
     public void create(User user) throws EntityAlreadyExistsException, StoreException
     {
         user.setPassword(this.passwordManager.hashPassword(user.getPassword()));
@@ -49,17 +47,21 @@ public class DefaultUserService implements UserService
         this.userStore.get().create(user);
     }
 
-    @Override
     public void update(User entity) throws StoreException
     {
         this.userStore.get().update(entity);
     }
 
-    @Override
     public void createInitialUser(User user) throws StoreException
     {
         if (this.hasUsers()) {
             throw new RuntimeException("Illegal attempt at create the initial user");
+        }
+
+        try {
+            this.create(user);
+        } catch (EntityAlreadyExistsException e1) {
+            throw new StoreException(e1);
         }
 
         Role role = new Role();
@@ -87,13 +89,11 @@ public class DefaultUserService implements UserService
         return this.findAll(1, 0).size() > 0;
     }
 
-    @Override
     public User findByHandle(String handle) throws StoreException
     {
         return this.findByEmailOrUserName(handle);
     }
 
-    @Override
     public User findByEmailOrUserName(String userNameOrEmail) throws StoreException
     {
         return this.userStore.get().findByEmailOrUserName(userNameOrEmail);
