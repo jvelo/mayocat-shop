@@ -6,10 +6,9 @@ import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.mayocat.shop.authorization.Capability;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.model.UserRole;
 import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
@@ -17,22 +16,21 @@ import org.xwiki.component.annotation.Component;
 @Component(hints = {"datanucleus", "default"})
 public class DNRoleStore extends AbstractDataNucleusStore<Role, Long> implements RoleStore
 {
-    public Role findByUserAndCapability(User user, Capability capability) throws StoreException
+    public List<Role> findAllByUser(User user) throws StoreException
     {
         PersistenceManager pm = null;
         Query q = null;
         try {
             pm = persistenceManager.get();
-
-            q = pm.newQuery(Product.class);
-            q.setFilter("capability in (role.capabilities)");
-            q.declareParameters("String capability");
-
-            List<Role> results = (List<Role>) q.execute(capability);
-            if (results.size() == 1) {
-                return results.get(0);
-            }
-            return null;
+            
+            // Select all roles from UserRole that contains the passed user
+            //q = pm.newQuery(Role.class, "(select ur.role from org.mayocat.shop.model.UserRole ur).contains(user)");
+            q = pm.newQuery(UserRole.class);
+            q.setResult("role");
+            q.setFilter("user == userParam");
+            q.declareParameters("User userParam");
+            List<Role> results = (List<Role>) q.execute(user);
+            return results;
 
         } catch (JDODataStoreException e) {
             throw new StoreException(e);

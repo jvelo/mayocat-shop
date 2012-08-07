@@ -41,6 +41,10 @@ public class Role extends Entity
         return id;
     }
 
+    public Set<Capability> getCapabilities()
+    {
+        return capabilities;
+    }
     
     public void addToCapabilities(Capability capability)
     {

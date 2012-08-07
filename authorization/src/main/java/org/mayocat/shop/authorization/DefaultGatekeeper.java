@@ -1,8 +1,11 @@
 package org.mayocat.shop.authorization;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
@@ -23,14 +26,24 @@ public class DefaultGatekeeper implements Gatekeeper
     public boolean hasCapability(User user, Class< ? extends Capability> capability)
     {
         try {
-            return (this.roleStore.get().findByUserAndCapability(user, capability.newInstance()) != null);
+            String name = capability.newInstance().getName();
+            List<Role> userRoles = this.roleStore.get().findAllByUser(user);
+            for (Role role : userRoles) {
+                for (Capability cap : role.getCapabilities()) {
+                    if (cap.getName().equals(name)) {
+                        return true;
+                    }
+                }
+            }
+            // Pas cap
+            return false;
 
         } catch (StoreException e) {
             this.logger.error("Failed to find role for user and capability", e);
         } catch (InstantiationException e) {
-            this.logger.error("Failed to instanciate capability");
+            this.logger.error("Failed to find role for user and capability", e);
         } catch (IllegalAccessException e) {
-            this.logger.error("Failed to instanciate capability");
+            this.logger.error("Failed to find role for user and capability", e);
         }
         return false;
     }
