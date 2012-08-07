@@ -9,7 +9,7 @@ import org.mayocat.shop.authorization.Gatekeeper;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.multitenancy.TenantResolver;
-import org.mayocat.shop.store.UserStore;
+import org.mayocat.shop.service.UserService;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.model.Parameter;
@@ -31,7 +31,7 @@ public class AuthorizedProvider implements InjectableProvider<Authorized, Parame
     private Gatekeeper gatekeeper;
 
     @Inject
-    private javax.inject.Provider<UserStore> userStore;
+    private UserService userService;
     
     @Override
     public ComponentScope getScope()
@@ -42,7 +42,7 @@ public class AuthorizedProvider implements InjectableProvider<Authorized, Parame
     @Override
     public Injectable< ? > getInjectable(ComponentContext ic, Authorized a, Parameter c)
     {
-        return new AuthorizedInjectable(userStore, tenantResolverProvider, authenticators, gatekeeper, a);
+        return new AuthorizedInjectable(userService, tenantResolverProvider, authenticators, gatekeeper, a);
     }
 
 }

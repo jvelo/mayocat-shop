@@ -1,0 +1,102 @@
+package org.mayocat.shop.service.internal;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import org.mayocat.shop.authorization.PasswordManager;
+import org.mayocat.shop.authorization.capability.shop.AddProduct;
+import org.mayocat.shop.authorization.capability.shop.AddUser;
+import org.mayocat.shop.model.Role;
+import org.mayocat.shop.model.User;
+import org.mayocat.shop.model.UserRole;
+import org.mayocat.shop.service.UserService;
+import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.RoleStore;
+import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.store.UserRoleStore;
+import org.mayocat.shop.store.UserStore;
+import org.xwiki.component.annotation.Component;
+
+@Component
+public class DefaultUserService implements UserService
+{
+
+    @Inject
+    private Provider<UserStore> userStore;
+
+    @Inject
+    private Provider<RoleStore> roleStore;
+
+    @Inject
+    private Provider<UserRoleStore> userRoleStore;
+
+    @Inject
+    private PasswordManager passwordManager;
+
+    @Override
+    public List<User> findAll(int number, int offset) throws StoreException
+    {
+        return this.userStore.get().findAll(number, offset);
+    }
+
+    @Override
+    public void create(User user) throws EntityAlreadyExistsException, StoreException
+    {
+        user.setPassword(this.passwordManager.hashPassword(user.getPassword()));
+
+        this.userStore.get().create(user);
+    }
+
+    @Override
+    public void update(User entity) throws StoreException
+    {
+        this.userStore.get().update(entity);
+    }
+
+    @Override
+    public void createInitialUser(User user) throws StoreException
+    {
+        if (this.hasUsers()) {
+            throw new RuntimeException("Illegal attempt at create the initial user");
+        }
+
+        Role role = new Role();
+        role.setName(Role.RoleName.ADMIN);
+        role.addToCapabilities(new AddUser());
+        role.addToCapabilities(new AddProduct());
+        try {
+            roleStore.get().create(role);
+        } catch (EntityAlreadyExistsException e) {
+            throw new StoreException(e);
+        }
+
+        UserRole userRole = new UserRole();
+        userRole.setRole(role);
+        userRole.setUser(user);
+        try {
+            userRoleStore.get().create(userRole);
+        } catch (EntityAlreadyExistsException e) {
+            throw new StoreException(e);
+        }
+    }
+
+    public boolean hasUsers() throws StoreException
+    {
+        return this.findAll(1, 0).size() > 0;
+    }
+
+    @Override
+    public User findByHandle(String handle) throws StoreException
+    {
+        return this.findByEmailOrUserName(handle);
+    }
+
+    @Override
+    public User findByEmailOrUserName(String userNameOrEmail) throws StoreException
+    {
+        return this.userStore.get().findByEmailOrUserName(userNameOrEmail);
+    }
+
+}

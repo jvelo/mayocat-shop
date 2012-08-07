@@ -17,8 +17,8 @@ import org.mayocat.shop.authorization.capability.shop.AddUser;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.multitenancy.TenantResolver;
+import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.StoreException;
-import org.mayocat.shop.store.UserStore;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -34,16 +34,16 @@ class AuthorizedInjectable extends AnonymousInjectable
 
     private Gatekeeper gatekeeper;
 
-    private Provider<UserStore> userStore;
+    private UserService userService;
 
-    AuthorizedInjectable(Provider<UserStore> userStore, Provider<TenantResolver> provider,
+    AuthorizedInjectable(UserService userService, Provider<TenantResolver> provider,
         Map<String, Authenticator> authenticators, Gatekeeper gatekeeper, Authorized auth)
     {
         super(provider);
 
         this.authenticators = authenticators;
         this.gatekeeper = gatekeeper;
-        this.userStore = userStore;
+        this.userService = userService;
 
         this.optional = auth.optional();
         this.capabilities = auth.value();
@@ -128,7 +128,7 @@ class AuthorizedInjectable extends AnonymousInjectable
     private boolean isTenantEmptyOfUser()
     {
         try {
-            return this.userStore.get().findAll(1, 0).size() == 0;
+            return !this.userService.hasUsers();
         } catch (StoreException e) {
             // Assume the worst
             return false;

@@ -1,7 +1,6 @@
 package org.mayocat.shop.rest.resources;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -15,8 +14,8 @@ import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.service.ProductService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
@@ -27,7 +26,7 @@ import com.yammer.metrics.annotation.Timed;
 public class ProductResource implements Resource
 {
     @Inject
-    private Provider<ProductStore> store;
+    private ProductService productService;
 
     @Path("{handle}")
     @GET
@@ -36,7 +35,7 @@ public class ProductResource implements Resource
     public Object getProduct(@Authorized Context context, @PathParam("handle") String handle)
     {
         try {
-            Product product = this.store.get().findByHandle(handle);
+            Product product = this.productService.findByHandle(handle);
             if (product == null) {
                 return Response.status(404).build();
             }
@@ -48,11 +47,10 @@ public class ProductResource implements Resource
 
     @PUT
     @Timed
-    public Response createProduct(@Authorized(value = AddProduct.class) Context context,
-        Product product)
+    public Response createProduct(@Authorized(value = AddProduct.class) Context context, Product product)
     {
         try {
-            this.store.get().create(product);
+            this.productService.create(product);
 
             return Response.ok().build();
         } catch (StoreException e) {

@@ -66,6 +66,7 @@
     <module>model</module>
     <module>base</module>
     <module>store</module>
+    <module>service</module>
     <module>authorization</module>
     <module>rest</module>
     <module>application</module>

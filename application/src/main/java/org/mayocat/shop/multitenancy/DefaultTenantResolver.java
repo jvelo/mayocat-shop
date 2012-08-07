@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.service.TenantService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.StoreException;
-import org.mayocat.shop.store.TenantStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -28,7 +27,7 @@ public class DefaultTenantResolver implements TenantResolver
     private ThreadLocal<Map<String, Tenant>> resolved = new ThreadLocal<Map<String, Tenant>>();
 
     @Inject
-    private Provider<TenantStore> tenantStore;
+    private TenantService tenantStore;
 
     @Inject
     private Logger logger;
@@ -46,14 +45,14 @@ public class DefaultTenantResolver implements TenantResolver
             Tenant tenant = null;
             try {
                 if (!this.configuration.isActivated()) {
-                    tenant = this.tenantStore.get().findByHandle(this.configuration.getDefaultTenant());
+                    tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
                     if (tenant == null) {
-                        this.tenantStore.get().create(new Tenant(this.configuration.getDefaultTenant()));
-                        tenant = this.tenantStore.get().findByHandle(this.configuration.getDefaultTenant());
+                        this.tenantStore.create(new Tenant(this.configuration.getDefaultTenant()));
+                        tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
                     }
                     this.resolved.get().put(host, tenant);
                 } else {
-                    tenant = this.tenantStore.get().findByHandle(this.extractHandleFromHost(host));
+                    tenant = this.tenantStore.findByHandle(this.extractHandleFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
