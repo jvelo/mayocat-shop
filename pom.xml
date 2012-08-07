@@ -69,6 +69,7 @@
     <module>service</module>
     <module>authorization</module>
     <module>rest</module>
+    <module>client</module>
     <module>application</module>
   </modules>
 

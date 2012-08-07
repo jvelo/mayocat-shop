@@ -48,6 +48,12 @@ public class LifeCycle implements ServletRequestListener, EventListener
     @Override
     public void requestInitialized(ServletRequestEvent event)
     {
+        javax.servlet.http.HttpServletRequest request = (javax.servlet.http.HttpServletRequest)event.getServletRequest();
+        System.out.println("" + request.getPathInfo());
+        if (request.getPathInfo().startsWith("/admin/")) {
+            return;
+        }
+        
         // Step 1. Resolve tenant
         Properties props = getPersistenceProperties();
 

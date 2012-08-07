@@ -12,7 +12,9 @@ import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 
+import com.google.common.cache.CacheBuilderSpec;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
 
 public class MayocatShopService extends Service<MayocatShopConfiguration>
@@ -27,6 +29,10 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
     private MayocatShopService()
     {
         super("MayocatShop");
+
+        //CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
+        CacheBuilderSpec cacheSpec = CacheBuilderSpec.disableCaching();
+        addBundle(new AssetsBundle("/client/", cacheSpec, "/admin/"));
     }
 
     @Override
