@@ -9,6 +9,7 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpServletRequest;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
@@ -34,7 +35,7 @@ public class LifeCycle implements ServletRequestListener, EventListener
 
     @Inject
     private Logger logger;
-    
+
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
     {
@@ -48,22 +49,21 @@ public class LifeCycle implements ServletRequestListener, EventListener
     @Override
     public void requestInitialized(ServletRequestEvent event)
     {
-        javax.servlet.http.HttpServletRequest request = (javax.servlet.http.HttpServletRequest)event.getServletRequest();
-        System.out.println("" + request.getPathInfo());
+        HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         if (request.getPathInfo().startsWith("/admin/")) {
             return;
         }
-        
+
         // Step 1. Resolve tenant
         Properties props = getPersistenceProperties();
 
         PersistenceManager tenantAgnosticPersistenceManager =
             JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager();
         this.provider.set(tenantAgnosticPersistenceManager);
-        
+
         String host = event.getServletRequest().getServerName();
-        Tenant tenant =  this.tenantResolverProdiver.get().resolve(host);
-        
+        Tenant tenant = this.tenantResolverProdiver.get().resolve(host);
+
         if (tenant == null) {
             // Leave it to Jersey resource to throw the appropriate exception...
             return;
@@ -79,7 +79,7 @@ public class LifeCycle implements ServletRequestListener, EventListener
         props.put("datanucleus.tenantId", tenant.getHandle());
 
         this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
-        
+
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Persistence manager {} set for request with tenant {}", this.provider.get(), tenant);
         }
@@ -101,7 +101,7 @@ public class LifeCycle implements ServletRequestListener, EventListener
         for (Map.Entry<String, String> entry : this.configuration.getProperties().entrySet()) {
             props.setProperty(entry.getKey(), Strings.nullToEmpty(entry.getValue()));
         }
-        
+
         return props;
     }
 
