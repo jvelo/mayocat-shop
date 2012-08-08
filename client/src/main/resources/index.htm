@@ -28,7 +28,7 @@
 <body ng-controller="AppController">
 
   <!-- Top navigation bar -->
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top" ng-show="authenticated">
     <div class="navbar-inner">
       <div class="container">
         <a class="brand" href="#">
@@ -54,7 +54,7 @@
   </div>
 
   <!-- Main container -->
-  <div class="main-container">
+  <div class="main-container" ng-show="authenticated">
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span2">
@@ -87,8 +87,7 @@
 
   <!-- Login modal -->
   <div class="modal" ng-show="!authenticated" id="myModal">
-    <div ng-controller="LoginCtrl">
-    <form class="" ngSubmit="requestLogin()">
+    <form class="" ng-controller="LoginCtrl">
       <div class="modal-header">
         <h3>Authentication required</h3>
       </div>
@@ -106,7 +105,6 @@
         <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
       </div>
     </form>
-    </div>
   </div>
   <div class="modal-backdrop" ng-show="!authenticated"></div>
 </body>
