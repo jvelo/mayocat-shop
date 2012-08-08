@@ -36,6 +36,14 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- JSON annotations -->
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.9</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Testing dependencies -->
     <dependency>
       <groupId>junit</groupId>

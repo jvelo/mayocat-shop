@@ -5,11 +5,10 @@ import java.util.Properties;
 
 import javax.jdo.JDOHelper;
 
-import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.TenantStore;
 import org.mayocat.shop.store.datanucleus.PersistenceManagerProvider;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;

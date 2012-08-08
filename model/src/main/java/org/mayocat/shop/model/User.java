@@ -1,11 +1,17 @@
 package org.mayocat.shop.model;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.mayocat.shop.jackson.PasswordSerializer;
 
 public class User extends Entity
 {
     Long id;
 
+    @Pattern(regexp = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)", message = "Not a valid email")
+    @NotNull
     String email;
 
     /**
@@ -26,6 +32,7 @@ public class User extends Entity
         this.email = email;
     }
 
+    @JsonSerialize(using = PasswordSerializer.class)
     public String getPassword()
     {
         return password;

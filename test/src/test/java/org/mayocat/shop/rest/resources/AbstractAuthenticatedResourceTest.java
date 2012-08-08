@@ -17,9 +17,9 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
     
     private UserService userService;
 
-    private static final String USER_NAME = "admin";
+    protected static final String USER_NAME = "jerome@mayocat.org";
 
-    private static final String PASSWORD = "password";
+    protected static final String PASSWORD = "password";
 
     public AbstractAuthenticatedResourceTest()
     {
@@ -34,7 +34,6 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
             ClientResponse cr = client().resource("/user/")
                 .type(MediaType.APPLICATION_JSON)
                 .entity("{\"email\":\"" + USER_NAME + "\", \"password\" : \"" + PASSWORD + "\"}")
-                .header("Authorization", this.getBasicAuthenticationHeader())
                 .put(ClientResponse.class);
 
             Assert.assertEquals(Status.OK, cr.getClientResponseStatus());

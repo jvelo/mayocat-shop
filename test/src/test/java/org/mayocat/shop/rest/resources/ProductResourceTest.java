@@ -5,12 +5,10 @@ import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.xwiki.test.annotation.AllComponents;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
-@AllComponents
 public class ProductResourceTest extends AbstractAuthenticatedResourceTest
 {
     ProductResource productResource;

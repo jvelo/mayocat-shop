@@ -49,8 +49,8 @@ public class LifeCycle implements ServletRequestListener, EventListener
     {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         if (request.getRequestURI().startsWith("/admin/")) {
-            // When serving static assets, do not initialize a peristence manager
-            // TODO have the admin path configured in am application constant
+            // When serving static assets, do not initialize a persistence manager
+            // TODO have the "/admin/" path configured in am application constant
             return;
         }
 
