@@ -41,8 +41,6 @@ public class LifeCycle implements ServletRequestListener, EventListener
     {
         if (this.provider.get() != null) {
             this.provider.get().close();
-        } else {
-            this.logger.warn("Failed to close persistence manager upon request destroy : was null");
         }
     }
 
@@ -50,7 +48,9 @@ public class LifeCycle implements ServletRequestListener, EventListener
     public void requestInitialized(ServletRequestEvent event)
     {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
-        if (request.getPathInfo().startsWith("/admin/")) {
+        if (request.getRequestURI().startsWith("/admin/")) {
+            // When serving static assets, do not initialize a peristence manager
+            // TODO have the admin path configured in am application constant
             return;
         }
 

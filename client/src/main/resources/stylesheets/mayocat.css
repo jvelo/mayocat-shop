@@ -1,0 +1,11 @@
+body {
+  background-color: #FCF7E2;
+  padding: 75px 25px 0px 25px;
+}
+
+div.main-container {
+  padding-top: 25px;
+  background-color:white;
+  border: 1px solid #f8e9d8;
+  border-bottom:none;
+}
