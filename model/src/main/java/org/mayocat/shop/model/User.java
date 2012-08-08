@@ -10,7 +10,7 @@ public class User extends Entity
 {
     Long id;
 
-    @Pattern(regexp = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)", message = "Not a valid email")
+    @Pattern(regexp = "^(([^@\\s]+)@((?:[-a-zA-Z0-9]+\\.)+[a-zA-Z]{2,}))?$", message = "Not a valid email")
     @NotNull
     String email;
 
