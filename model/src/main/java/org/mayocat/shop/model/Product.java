@@ -3,8 +3,11 @@ package org.mayocat.shop.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Product extends Entity
 {
+    @JsonIgnore
     Long id;
 
     @NotNull

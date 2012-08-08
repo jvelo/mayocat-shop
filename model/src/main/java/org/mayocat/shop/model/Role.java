@@ -3,6 +3,7 @@ package org.mayocat.shop.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.shop.authorization.Capability;
 
 public class Role extends Entity
@@ -15,6 +16,7 @@ public class Role extends Entity
         ACCOUNTANT
     }
 
+    @JsonIgnore
     Long id;
 
     RoleName name;
