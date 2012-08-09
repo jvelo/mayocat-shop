@@ -1,4 +1,4 @@
-package org.mayocat.shop.authorization;
+package org.mayocat.shop.authorization.basic;
 
 import java.io.UnsupportedEncodingException;
 
@@ -7,6 +7,8 @@ import javax.inject.Provider;
 
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
+import org.mayocat.shop.authorization.Authenticator;
+import org.mayocat.shop.authorization.PasswordManager;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
@@ -15,7 +17,7 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.net.HttpHeaders;
 
-@Component
+@Component("basic")
 public class BasicAuthenticator implements Authenticator
 {
     @Inject

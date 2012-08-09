@@ -73,10 +73,7 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
    * On 'event:loginRequest' send credentials to the server.
    */
   scope.$on('event:authenticationRequest', function(event, username, password) {
-    var config = {
-      headers: {'Authorization': 'Basic ' + window.btoa(username + ":" + password)}
-    }
-    $http.get('/user/_me', config).success(function(data, status) {
+    $http.get('/login/?username=' + username + "&password=" + password).success(function(data, status) {
       if (status == 200) {
         scope.$broadcast('event:authenticationSuccessful', data.email);
       }
