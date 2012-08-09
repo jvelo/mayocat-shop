@@ -70,7 +70,7 @@ class AuthorizedInjectable extends AnonymousInjectable
             // - managing tenants as a "farm admin"
         }
 
-        Optional<User> user = null;
+        Optional<User> user = Optional.absent();
         for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
             final String headerValue = Strings.nullToEmpty(httpContext.getRequest().getHeaderValue(headerName));
             for (Authenticator authenticator : this.authenticators.values()) {
@@ -123,7 +123,7 @@ class AuthorizedInjectable extends AnonymousInjectable
                     .entity("Insufficient privileges").type(MediaType.TEXT_PLAIN_TYPE).build());
             }
         }
-        return new Context(tenant, user.get());
+        return new Context(tenant, user.orNull());
     }
 
     private boolean isTenantEmptyOfUser()

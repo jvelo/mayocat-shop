@@ -34,7 +34,7 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
             ClientResponse cr = client().resource("/user/")
                 .type(MediaType.APPLICATION_JSON)
                 .entity("{\"email\":\"" + USER_NAME + "\", \"password\" : \"" + PASSWORD + "\"}")
-                .put(ClientResponse.class);
+                .post(ClientResponse.class);
 
             Assert.assertEquals(Status.OK, cr.getClientResponseStatus());
         }        

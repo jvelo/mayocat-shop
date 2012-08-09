@@ -59,7 +59,7 @@ public class UserResourceTest extends AbstractAuthenticatedResourceTest
                                     .type(MediaType.APPLICATION_JSON)
                                     .entity("{\"email\":\"_me\", \"password\" : \"lol\"}")
                                     .header("Authorization", this.getBasicAuthenticationHeader())
-                                    .put(ClientResponse.class);
+                                    .post(ClientResponse.class);
 
         
         // Direct code comparison as 422 is a WebDAV extension which Jersey client has no mapping for.

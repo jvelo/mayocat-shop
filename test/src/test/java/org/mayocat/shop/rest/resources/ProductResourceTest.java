@@ -39,7 +39,7 @@ public class ProductResourceTest extends AbstractAuthenticatedResourceTest
                                     .type(MediaType.APPLICATION_JSON)
                                     .entity("{\"handle\":\"aiya\"}")
                                     .header("Authorization", this.getBasicAuthenticationHeader())
-                                    .put(ClientResponse.class);
+                                    .post(ClientResponse.class);
 
         Assert.assertEquals(Status.OK, cr.getClientResponseStatus());
     }
