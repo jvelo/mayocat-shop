@@ -15,6 +15,7 @@ import org.mayocat.shop.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 
 @Component("basic")
@@ -47,7 +48,7 @@ public class BasicAuthenticator implements Authenticator
     }
 
     @Override
-    public User verify(String value)
+    public Optional<User> verify(String value)
     {
         final int space = value.indexOf(' ');
         if (space > 0) {
@@ -61,7 +62,7 @@ public class BasicAuthenticator implements Authenticator
                         User user = userStore.get().findByEmailOrUserName(username);
                         if (user != null) {
                             if (this.passwordManager.verifyPassword(password, user.getPassword())) {
-                                return user;
+                                return Optional.of(user);
                             }
                         }
                     } catch (StoreException e) {
@@ -72,7 +73,7 @@ public class BasicAuthenticator implements Authenticator
                 this.logger.debug("Failed to decode basic auth credentials");
             }
         }
-        return null;
+        return Optional.absent();
     }
 
 }

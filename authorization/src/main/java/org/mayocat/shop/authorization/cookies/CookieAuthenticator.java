@@ -11,6 +11,7 @@ import org.mayocat.shop.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 @Component("cookie")
@@ -46,7 +47,7 @@ public class CookieAuthenticator implements Authenticator
     }
 
     @Override
-    public User verify(String value)
+    public Optional<User> verify(String value)
     {
         try {
             String username = null;
@@ -67,17 +68,17 @@ public class CookieAuthenticator implements Authenticator
                 User user = userStore.get().findByEmailOrUserName(username);
                 if (user != null) {
                     if (this.passwordManager.verifyPassword(password, user.getPassword())) {
-                        return user;
+                        return Optional.of(user);
                     }
                 }
             }
-            return null;
+            return Optional.absent();
         } catch (StoreException e) {
             this.logger.error("Failed to get user information", e);
-            return null;
+            return Optional.absent();
         } catch (EncryptionException e) {
             this.logger.error("Failed to decrypt cookies", e);
-            return null;
+            return Optional.absent();
         }
     }
 

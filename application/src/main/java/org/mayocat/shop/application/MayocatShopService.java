@@ -1,10 +1,16 @@
 package org.mayocat.shop.application;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
 import org.mayocat.shop.base.Provider;
+import org.mayocat.shop.configuration.AuthenticationConfiguration;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
@@ -30,7 +36,7 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
     {
         super("MayocatShop");
 
-        //CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
+        // CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
         CacheBuilderSpec cacheSpec = CacheBuilderSpec.disableCaching();
         addBundle(new AssetsBundle("/client/", cacheSpec, "/admin/"));
     }
@@ -76,20 +82,27 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
 
     private void registerConfigurationsAsComponents(MayocatShopConfiguration configuration)
     {
+        Field[] configurationFields = MayocatShopConfiguration.class.getDeclaredFields();
+        for (Field field : configurationFields) {
+            boolean isAccessible = field.isAccessible();
+            try {
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(configuration);
+                    DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
+                    cd.setRoleType(value.getClass());
+                    componentManager.registerComponent(cd, value);
+                } finally {
+                    field.setAccessible(isAccessible);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         DefaultComponentDescriptor<MayocatShopConfiguration> cd =
             new DefaultComponentDescriptor<MayocatShopConfiguration>();
         cd.setRoleType(MayocatShopConfiguration.class);
         componentManager.registerComponent(cd, configuration);
-
-        DefaultComponentDescriptor<DataSourceConfiguration> cd2 =
-            new DefaultComponentDescriptor<DataSourceConfiguration>();
-        cd2.setRoleType(DataSourceConfiguration.class);
-        componentManager.registerComponent(cd2, configuration.getDataSourceConfiguration());
-
-        DefaultComponentDescriptor<MultitenancyConfiguration> cd3 =
-            new DefaultComponentDescriptor<MultitenancyConfiguration>();
-        cd3.setRoleType(MultitenancyConfiguration.class);
-        componentManager.registerComponent(cd3, configuration.getMultitenancyConfiguration());
     }
-
 }

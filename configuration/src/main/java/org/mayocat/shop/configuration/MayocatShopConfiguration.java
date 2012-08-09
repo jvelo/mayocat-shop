@@ -13,20 +13,30 @@ public class MayocatShopConfiguration extends Configuration
     @NotNull
     @JsonProperty
     private DataSourceConfiguration dataSource = new DataSourceConfiguration();
-        
+
     @Valid
     @NotNull
     @JsonProperty
     private MultitenancyConfiguration multitenancy = new MultitenancyConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private AuthenticationConfiguration authentication = new AuthenticationConfiguration();
+
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;
     }
-    
+
     public MultitenancyConfiguration getMultitenancyConfiguration()
     {
         return multitenancy;
+    }
+
+    public AuthenticationConfiguration getAuthenticationConfiguration()
+    {
+        return authentication;
     }
 
 }

@@ -1,16 +1,7 @@
 package org.mayocat.shop.authorization.cookies;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.InvalidParameterSpecException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
@@ -18,13 +9,19 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
+import org.mayocat.shop.configuration.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Strings;
 
 @Component
 public class DefaultCookieCrypter implements CookieCrypter
 {
-
+    
+    @Inject
+    private AuthenticationConfiguration configuration;
+    
     @Inject
     private Logger logger;
 
@@ -46,11 +43,16 @@ public class DefaultCookieCrypter implements CookieCrypter
 
     private String crypt(String input, Mode mode) throws EncryptionException
     {
+        if (Strings.isNullOrEmpty(this.configuration.getCookieEncryptionKey())) {
+            throw new EncryptionException("Invalid or missing cookie encryption key in configuration file. " +
+            		"You MUST specify a key in order to support cookie authentication.");
+        }
+        
         try {
             byte[] in = input.getBytes();
 
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            byte[] keyBytes = "1234567890azertyuiopqsdf".getBytes("UTF-8");
+            byte[] keyBytes = this.configuration.getCookieEncryptionKey().getBytes("UTF-8");
             DESKeySpec desKeySpec = new DESKeySpec(keyBytes);
             SecretKey key = keyFactory.generateSecret(desKeySpec);
 
@@ -80,32 +82,11 @@ public class DefaultCookieCrypter implements CookieCrypter
                     return new String(decrypted);
             }
 
-        } catch (InvalidParameterSpecException e) {
-            this.logger.error("Failed to get cipher", e);
-            throw new EncryptionException(e);
-        } catch (NoSuchAlgorithmException e) {
-            this.logger.error("Failed to get cipher", e);
-            throw new EncryptionException(e);
-        } catch (NoSuchPaddingException e) {
-            this.logger.error("Failed to get cipher", e);
-            throw new EncryptionException(e);
-        } catch (InvalidKeyException e) {
-            this.logger.error("Failed to get cipher", e);
-            throw new EncryptionException();
-        } catch (InvalidAlgorithmParameterException e) {
-            this.logger.error("Failed to get cipher", e);
-            throw new EncryptionException(e);
-        } catch (InvalidKeySpecException e) {
-            this.logger.error("Invalid key", e);
-            throw new EncryptionException(e);
-        } catch (IllegalBlockSizeException e) {
-            this.logger.error("Failed to encrypt", e);
-            throw new EncryptionException(e);
         } catch (BadPaddingException e) {
-            this.logger.error("Failed to encrypt", e);
+            this.logger.warn("Bad padding when attempting to decipher cookies. Key changed ?");
             throw new EncryptionException();
-        } catch (UnsupportedEncodingException e) {
-            this.logger.error("Failed to encrypt", e);
+        } catch (Exception e) {
+            this.logger.error("Fail to perform cookie crypt or decrypt operation", e);
             throw new EncryptionException(e);
         }
     }

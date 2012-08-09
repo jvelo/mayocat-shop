@@ -20,6 +20,7 @@ import org.mayocat.shop.multitenancy.TenantResolver;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.StoreException;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.core.HttpContext;
@@ -69,24 +70,24 @@ class AuthorizedInjectable extends AnonymousInjectable
             // - managing tenants as a "farm admin"
         }
 
-        User user = null;
+        Optional<User> user = null;
         for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
             final String headerValue = Strings.nullToEmpty(httpContext.getRequest().getHeaderValue(headerName));
             for (Authenticator authenticator : this.authenticators.values()) {
                 if (authenticator.respondTo(headerName, headerValue)) {
                     user = authenticator.verify(headerValue);
-                    if (user != null) {
+                    if (user.isPresent()) {
                         if (capabilities.length == 0) {
                             // No capability declared, just return authenticated user
-                            return new Context(tenant, user);
+                            return new Context(tenant, user.get());
                         }
                         // We have a valid user... now verify capabilities
                         boolean hasAllRequiredCapabilities = true;
                         for (Class< ? extends Capability> capability : Arrays.asList(this.capabilities)) {
-                            hasAllRequiredCapabilities &= this.gatekeeper.hasCapability(user, capability);
+                            hasAllRequiredCapabilities &= this.gatekeeper.hasCapability(user.get(), capability);
                         }
                         if (hasAllRequiredCapabilities) {
-                            return new Context(tenant, user);
+                            return new Context(tenant, user.get());
                         }
                     }
                 }
@@ -105,7 +106,7 @@ class AuthorizedInjectable extends AnonymousInjectable
         
             // If some conditions are not met... FIRE (╯°Д°）╯︵ /(.□ . \)
         
-            if (!this.optional && user == null) {
+            if (!this.optional && !user.isPresent()) {
 
                 // Not authenticated
 
@@ -122,7 +123,7 @@ class AuthorizedInjectable extends AnonymousInjectable
                     .entity("Insufficient privileges").type(MediaType.TEXT_PLAIN_TYPE).build());
             }
         }
-        return new Context(tenant, user);
+        return new Context(tenant, user.get());
     }
 
     private boolean isTenantEmptyOfUser()

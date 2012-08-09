@@ -3,10 +3,12 @@ package org.mayocat.shop.authorization;
 import org.mayocat.shop.model.User;
 import org.xwiki.component.annotation.Role;
 
+import com.google.common.base.Optional;
+
 @Role
 public interface Authenticator
 {
     boolean respondTo(String headerName, String headerValue);
     
-    User verify(String value);
+    Optional<User> verify(String value);
 }

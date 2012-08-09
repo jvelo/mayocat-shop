@@ -11,10 +11,13 @@ multitenancy:
   activated: false
   defaultTenant: shop
 
+authentication:
+  cookieEncryptionKey: Change me here!
+
 dataSource:
   name: "datanucleus"
   properties:
     javax.jdo.option.ConnectionDriverName: com.mysql.jdbc.Driver
     javax.jdo.option.ConnectionURL: jdbc:mysql://127.0.0.1/shop
     javax.jdo.option.ConnectionUserName: root
-    javax.jdo.option.ConnectionPassword: 
+    javax.jdo.option.ConnectionPassword:

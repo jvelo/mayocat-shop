@@ -1,10 +1,12 @@
 package org.mayocat.shop.rest.resources;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.jdo.JDOHelper;
 
+import org.mayocat.shop.configuration.AuthenticationConfiguration;
 import org.mayocat.shop.configuration.DataSourceConfiguration;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
@@ -88,22 +90,27 @@ public abstract class AbstractResourceTest extends ResourceTest
         return props;
     }
 
-    private void registerConfigurationsAsComponents()
+    private void registerConfigurationsAsComponents() throws Exception
     {
-        DefaultComponentDescriptor<MayocatShopConfiguration> cd =
-            new DefaultComponentDescriptor<MayocatShopConfiguration>();
-        cd.setRoleType(MayocatShopConfiguration.class);
-        componentManager.registerComponent(cd, new MayocatShopConfiguration());
-
-        DefaultComponentDescriptor<DataSourceConfiguration> cd2 =
-            new DefaultComponentDescriptor<DataSourceConfiguration>();
-        cd2.setRoleType(DataSourceConfiguration.class);
-        componentManager.registerComponent(cd2, new DataSourceConfiguration());
-
-        DefaultComponentDescriptor<MultitenancyConfiguration> cd3 =
-            new DefaultComponentDescriptor<MultitenancyConfiguration>();
-        cd3.setRoleType(MultitenancyConfiguration.class);
-        componentManager.registerComponent(cd3, new MultitenancyConfiguration());
+        for (Class<?> clazz : Arrays.<Class<?>> asList(
+            MayocatShopConfiguration.class,
+            DataSourceConfiguration.class,
+            MultitenancyConfiguration.class,
+            AuthenticationConfiguration.class
+        )) {
+            DefaultComponentDescriptor cd =
+                new DefaultComponentDescriptor();
+            cd.setRoleType(clazz);
+            try {
+                componentManager.registerComponent(cd, clazz.newInstance());
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
 }
