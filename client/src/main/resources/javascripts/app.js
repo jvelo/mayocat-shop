@@ -72,8 +72,16 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
   /**
    * On 'event:loginRequest' send credentials to the server.
    */
-  scope.$on('event:authenticationRequest', function(event, username, password) {
-    $http.get('/login/?username=' + username + "&password=" + password).success(function(data, status) {
+  scope.$on('event:authenticationRequest', function(event, username, password, remember) {
+    var config = {
+      headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+    };
+    var data = {
+      username: username,
+      password: password,
+      remember: remember
+    };
+    $http.post('/login/', $.param(data), config).success(function(data, status) {
       if (status == 200) {
         scope.$broadcast('event:authenticationSuccessful', data.email);
       }
@@ -96,8 +104,8 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
    * Ping server to figure out if user is already logged in.
    */
   function ping() {
-    $http.get('/user/_me').success(function() {
-      scope.$broadcast('event:loginConfirmed');
+    $http.get('/user/_me').success(function(data) {
+      scope.$broadcast('event:authenticationSuccessful', data.email);
     });
   }
 

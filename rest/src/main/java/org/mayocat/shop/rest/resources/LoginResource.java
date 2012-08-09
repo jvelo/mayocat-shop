@@ -3,9 +3,9 @@ package org.mayocat.shop.rest.resources;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -20,7 +20,6 @@ import org.mayocat.shop.authorization.cookies.EncryptionException;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.StoreException;
-import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 @Component("LoginResource")
@@ -37,10 +36,10 @@ public class LoginResource implements Resource
     @Inject
     private CookieCrypter crypter;
 
-    @GET
+    @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response login(@QueryParam("username") String username, @QueryParam("password") String password,
-        @QueryParam("remember") @DefaultValue("false") Boolean remember, @Context UriInfo uri)
+    public Response login(@FormParam("username") String username, @FormParam("password") String password,
+        @FormParam("remember") @DefaultValue("false") Boolean remember, @Context UriInfo uri)
     {
         try {
             User user = userService.findByEmailOrUserName(username);

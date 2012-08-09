@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="stylesheets/bootstrap.css">
   <link rel="stylesheet" href="stylesheets/mayocat.css">
 
+  <script src="javascripts/jquery.js"></script>
   <script src="javascripts/angular-1.0.1.min.js"></script>
   <script src="javascripts/app.js"></script>
   <script src="javascripts/controllers.js"></script>
@@ -25,7 +26,7 @@
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 </head>
-<body ng-controller="AppController">
+<body ng-controller="AppController" ng-cloak>
 
   <!-- Top navigation bar -->
   <div class="navbar navbar-fixed-top" ng-show="authenticated">
@@ -40,7 +41,7 @@
               <a href="#"
                     class="dropdown-toggle"
                     data-toggle="dropdown">
-                    <span ng-model="user"></span>
+                    <span ng-bind="user"></span>
                     <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
@@ -98,6 +99,8 @@
               <input type="text" class="span3" ng-model="username" />
               <label>Password</label>
               <input type="password" class="span3" ng-model="password" />
+              <label>Remember me</label>
+              <input type="checkbox" ng-model="remember" />
             </fieldset>
         </p>
       </div>

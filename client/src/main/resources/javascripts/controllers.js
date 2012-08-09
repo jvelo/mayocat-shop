@@ -1,20 +1,21 @@
 'use strict'
 
 function HomeCtrl($scope) {
-  $scope.user = "";
-  $scope.$on("event:authenticationSuccessful", function(user) {
-    $scope.user = user;
-  });
 }
 
 function UserCtrl($scope) {
+  $scope.user = "";
+  $scope.$on("event:authenticationSuccessful", function(event, user) {
+    $scope.user = user;
+  });
 }
 
 function LoginCtrl($scope) {
   $scope.username = "";
   $scope.password = "";
+  $scope.remember = false;
   $scope.requestLogin = function() {
-    $scope.$emit("event:authenticationRequest", $scope.username, $scope.password);
+    $scope.$emit("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
   };
 }
 
