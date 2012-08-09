@@ -1,19 +1,13 @@
 package org.mayocat.shop.application;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
 import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.configuration.AuthenticationConfiguration;
-import org.mayocat.shop.configuration.DataSourceConfiguration;
+import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
-import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
@@ -75,6 +69,14 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
         for (Map.Entry<String, HealthCheck> check : healthChecks.entrySet()) {
             if (com.yammer.metrics.core.HealthCheck.class.isAssignableFrom(check.getValue().getClass())) {
                 environment.addHealthCheck((com.yammer.metrics.core.HealthCheck) check.getValue());
+            }
+        }
+        
+        // Registering tasks implementations against the environment
+        Map<String, Task> tasks = componentManager.getInstanceMap(Task.class);
+        for (Map.Entry<String, Task> task : tasks.entrySet()) {
+            if (com.yammer.dropwizard.tasks.Task.class.isAssignableFrom(task.getValue().getClass())) {
+                environment.addTask((com.yammer.dropwizard.tasks.Task) task.getValue());
             }
         }
 

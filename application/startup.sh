@@ -5,7 +5,7 @@ DEBUG_PORT=5005
 
 if [ "$1" == "debug" ]
 then
-  DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
+  DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=$DEBUG_PORT"
 fi
 
 java \

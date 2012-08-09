@@ -4,12 +4,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.mayocat.shop.model.annotation.SearchIndex;
 
 public class Product extends Entity
 {
     @JsonIgnore
     Long id;
 
+    @SearchIndex
     @NotNull
     @Size(min = 1)
     String handle;
