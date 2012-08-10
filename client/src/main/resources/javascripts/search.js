@@ -7,26 +7,31 @@ angular.module('search', [])
         $http.get('/search/?term=' + term).success(function(data) {
           var result = [];
           for (var i=0; i<data.length; i++) {
-            result.push(data[i].title);
+            result.push(data[i]);
           }
           callback && callback.call(this, result);
         });
       }
     };
   })
-  .controller('SearchController', ['$scope', 'searchService', function($scope, searchService) {
-    $scope.term = "";
-    $scope.suggestions = [];
-    $scope.clear = function() {
-      $scope.term = "";
-      $scope.suggestions = [];
-    }
-    $scope.$watch('term', function(term) {
-      if (term != "") {
-        searchService.search(term, function(result){
-          $scope.suggestions = result;
+  .controller('SearchController', ['$scope', '$location', 'searchService',
+      function($scope, $location, searchService) {
+        $scope.term = "";
+        $scope.suggestions = [];
+        $scope.clear = function() {
+          $scope.term = "";
+          $scope.suggestions = [];
+        }
+        $scope.setRoute = function(handle) {
+          $location.url("/product/" + handle);
+          $scope.clear();
+        }
+        $scope.$watch('term', function(term) {
+          if (term != "") {
+            searchService.search(term, function(result){
+              $scope.suggestions = result;
+            });
+          }
         });
-      }
-    });
   }]);
 

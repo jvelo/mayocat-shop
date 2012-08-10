@@ -20,6 +20,15 @@ body > div.loader {
   height: -calc(100% - 175px);
 }
 
+.loading {
+  background: url('../images/loader-small.gif') no-repeat center center;
+  min-height: 34px;
+}
+
+.product.loading {
+  width: 34px;
+}
+
 body div.modal {
   /** Reset bootstrap modal border radius */
   border-radius: 0;

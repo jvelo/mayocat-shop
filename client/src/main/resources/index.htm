@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en" ng-app="mayocat"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" ng-app="mayocat"> <!--<![endif]-->
 <head>
   <meta charset="utf-8" />
@@ -19,11 +19,13 @@
   <script src="javascripts/vendor/jquery.js"></script>
   <script src="javascripts/vendor/bootstrap.js"></script>
   <script src="javascripts/vendor/angular-1.0.1.min.js"></script>
+  <script src="javascripts/vendor/angular-resource-1.0.1.min.js"></script>
 
   <!-- Application scripts -->
   <script src="javascripts/app.js"></script>
   <script src="javascripts/controllers.js"></script>
   <script src="javascripts/search.js"></script>
+  <script src="javascripts/product.js"></script>
 
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
@@ -45,8 +47,8 @@
             <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
           </div>
           <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
-            <li ng-repeat="suggestion in suggestions">
-              <a><h4>{{suggestion}}</h4></a>
+            <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.handle)">
+              <a><h4>{{suggestion.title}}</h4></a>
             </li>
           </ul>
         </form>
