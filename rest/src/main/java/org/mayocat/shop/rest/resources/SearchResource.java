@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,7 +26,7 @@ public class SearchResource implements Resource
 {
 
     @Inject
-    private SearchEngine searchEngine;
+    private Provider<SearchEngine> searchEngine;
 
     @GET
     @Produces({"application/json; charset=UTF-8"})
@@ -35,7 +36,7 @@ public class SearchResource implements Resource
         classes.add(Product.class);
 
         try {
-            return this.searchEngine.search(term, classes);
+            return this.searchEngine.get().search(term, classes);
         } catch (SearchEngineException e) {
             throw new WebApplicationException();
         }

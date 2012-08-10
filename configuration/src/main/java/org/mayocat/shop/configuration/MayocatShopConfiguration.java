@@ -24,6 +24,11 @@ public class MayocatShopConfiguration extends Configuration
     @JsonProperty
     private AuthenticationConfiguration authentication = new AuthenticationConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SearchEngineConfiguration searchEngine = new SearchEngineConfiguration();
+
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;
@@ -37,6 +42,11 @@ public class MayocatShopConfiguration extends Configuration
     public AuthenticationConfiguration getAuthenticationConfiguration()
     {
         return authentication;
+    }
+
+    public SearchEngineConfiguration getSearchEngine()
+    {
+        return searchEngine;
     }
 
 }

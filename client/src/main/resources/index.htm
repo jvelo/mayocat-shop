@@ -43,7 +43,7 @@
           <input id="search" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
           <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
             <li ng-repeat="suggestion in suggestions">
-              <h4>{{suggestion}}</h4>
+              <a><h4>{{suggestion}}</h4></a>
             </li>
           </ul>
         </form>

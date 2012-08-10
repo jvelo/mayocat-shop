@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionListener;
@@ -27,7 +28,6 @@ import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.mayocat.shop.base.Managed;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.annotation.SearchIndex;
@@ -36,18 +36,54 @@ import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.observation.EventListener;
+import org.xwiki.observation.ObservationManager;
 import org.xwiki.observation.event.Event;
 
-@Component(hints = {"elasticsearch", "default"})
-public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventListener
+import com.yammer.dropwizard.lifecycle.Managed;
+
+@Component("elasticsearch")
+@Singleton
+public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initializable
 {
 
     @Inject
     private Logger logger;
 
+    @Inject
+    private ObservationManager observationManager;
+
     private Client client;
+
+    private class SearchEngineEventListener implements EventListener
+    {
+        public void onEvent(Event event, Object source, Object data)
+        {
+            Entity entity = (Entity) data;
+            try {
+                index(entity);
+            } catch (SearchEngineException e) {
+                logger.error("Failed to index entity upon update", e);
+            }
+        }
+
+        public String getName()
+        {
+            return "elasticSearch";
+        }
+
+        public List<Event> getEvents()
+        {
+            return Arrays.<Event> asList(new EntityUpdatedEvent());
+        }
+    }
+
+    public void initialize() throws InitializationException
+    {
+        this.observationManager.addListener(new SearchEngineEventListener());
+    }
 
     @Override
     public void index(Entity t) throws SearchEngineException
@@ -74,7 +110,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventLi
                 // Temporary until we have a generic way of computing an id (handle for example)
                 Product p = (Product) t;
                 String id = p.getHandle();
-                
+
                 IndexResponse response =
                     this.client.prepareIndex("entities", entityName, id).setSource(source).execute().actionGet();
                 this.logger.debug("" + response.type());
@@ -90,39 +126,17 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventLi
         throws SearchEngineException
     {
         SearchResponse response =
-            client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setQuery(queryString(term)).setFrom(0).setSize(10).setExplain(false).execute().actionGet();
-        
-        List<Map<String,Object>> result = new ArrayList<Map<String,Object>>(); 
+            client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setQuery(queryString(term))
+                .setFrom(0).setSize(10).setExplain(false).execute().actionGet();
+
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         for (SearchHit hit : response.getHits()) {
             result.add(hit.getSource());
         }
         return result;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    
-    public void onEvent(Event event, Object source, Object data)
-    {
-        Entity entity = (Entity) data;
-        try {
-            this.index(entity);
-        } catch (SearchEngineException e) {
-            logger.error("Failed to index entity upon update", e);
-        }
-    }
-    
-    public String getName()
-    {
-        return "elasticSearch";
-    }
-
-    public List<Event> getEvents()
-    {
-        return Arrays.<Event> asList(new EntityUpdatedEvent());
-    }
-    
-    ////////////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////////////
 
     public void start() throws Exception
     {
@@ -172,5 +186,4 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventLi
     {
         this.client.close();
     }
-
 }

@@ -40,10 +40,19 @@ div.main-container {
 
 body ul#searchSuggestions.dropdown-menu {
   display: block;
-  width: 578px;
-  top: 34px;
+  width: 580px;
+  top: 25px;
+  margin-left: -1px;
+  border-top:none;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+body ul#searchSuggestions.dropdown-menu:before,
+body ul#searchSuggestions.dropdown-menu:after {
+  border: none;
 }
 
 ul#searchSuggestions.dropdown-menu li {
-  padding: 5px;
+  padding: 5px 0;
 }

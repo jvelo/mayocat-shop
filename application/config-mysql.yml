@@ -1,6 +1,6 @@
 logging:
   loggers:
-      "org.mayocat": INFO
+      "org.mayocat": DEBUG
       # "DataNucleus.Datastore.Native": DEBUG
       # "DataNucleus.Plugin": DEBUG
 
