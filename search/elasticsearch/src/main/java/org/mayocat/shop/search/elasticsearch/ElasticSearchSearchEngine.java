@@ -1,9 +1,13 @@
 package org.mayocat.shop.search.elasticsearch;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,22 +19,29 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.IndicesExistsResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.search.SearchHit;
 import org.mayocat.shop.model.Entity;
+import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.annotation.SearchIndex;
+import org.mayocat.shop.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+import org.xwiki.observation.EventListener;
+import org.xwiki.observation.event.Event;
 
-@Component(hints = {"solr", "default"})
-public class ElasticSearchSearchEngine implements SearchEngine, Initializable
+@Component(hints = {"elasticsearch", "default"})
+public class ElasticSearchSearchEngine implements SearchEngine, Initializable, EventListener
 {
 
     @Inject
@@ -60,8 +71,12 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable
 
                 this.logger.debug("Indexing entity {} ...", entityName);
 
+                // Temporary until we have a generic way of computing an id (handle for example)
+                Product p = (Product) t;
+                String id = p.getHandle();
+                
                 IndexResponse response =
-                    this.client.prepareIndex("entities", entityName, "hello").setSource(source).execute().actionGet();
+                    this.client.prepareIndex("entities", entityName, id).setSource(source).execute().actionGet();
                 this.logger.debug("" + response.type());
             }
 
@@ -70,6 +85,22 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable
         }
     }
 
+    @Override
+    public List<Map<String, Object>> search(String term, List<Class< ? extends Entity>> entityTypes)
+        throws SearchEngineException
+    {
+        SearchResponse response =
+            client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                .setQuery(queryString(term)).setFrom(0).setSize(10).setExplain(false).execute().actionGet();
+        
+        List<Map<String,Object>> result = new ArrayList<Map<String,Object>>(); 
+        for (SearchHit hit : response.getHits()) {
+            result.add(hit.getSource());
+        }
+        return result;
+    }
+
+    
     @Override
     public void initialize() throws InitializationException
     {
@@ -103,7 +134,6 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable
                             logger.error("Failed to create entities indice status ...");
                         }
                     }
-
                 }
 
                 @Override
@@ -117,6 +147,26 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable
             throw new InitializationException("Failed to initialize embedded solr", e);
         }
 
+    }
+
+    public void onEvent(Event event, Object source, Object data)
+    {
+        Entity entity = (Entity) data;
+        try {
+            this.index(entity);
+        } catch (SearchEngineException e) {
+            logger.error("Failed to index entity upon update", e);
+        }
+    }
+    
+    public String getName()
+    {
+        return "elasticSearch";
+    }
+
+    public List<Event> getEvents()
+    {
+        return Arrays.<Event> asList(new EntityUpdatedEvent());
     }
 
 }

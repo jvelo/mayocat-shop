@@ -6,10 +6,8 @@
     <artifactId>mayocat-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.mayocat</groupId>
   <artifactId>mayocat-model</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
   <name>Mayocat Model</name>
   <description>Model classes for MayocatShop</description>
@@ -20,6 +18,12 @@
     <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-component-default</artifactId>
       <version>${xwiki.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-observation-api</artifactId>
+      <version>${xwiki.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

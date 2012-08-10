@@ -27,6 +27,12 @@
         <index />
       </field>
 
+      <!-- Title field -->
+      <field name="title">
+        <column length="255" />
+        <index />
+      </field>
+
     </class>
   </package>
 </jdo>

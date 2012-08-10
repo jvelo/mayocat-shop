@@ -15,6 +15,10 @@ public class Product extends Entity
     @NotNull
     @Size(min = 1)
     String handle;
+    
+    @SearchIndex
+    @NotNull
+    String title;
 
     public String getHandle()
     {
@@ -24,6 +28,16 @@ public class Product extends Entity
     public void setHandle(String handle)
     {
         this.handle = handle;
+    }
+    
+    public String getTitle()
+    {
+        return title;
+    }
+    
+    public void setTitle(String title)
+    {
+        this.title = title;
     }
     
     ////////////////////////////////////////////////
@@ -49,21 +63,21 @@ public class Product extends Entity
        }  
        final Product other = (Product) obj;  
          
-       return   //com.google.common.base.Objects.equal(this.tenant, other.tenant)  
-             com.google.common.base.Objects.equal(this.handle, other.handle);  
+       return   com.google.common.base.Objects.equal(this.title, other.title)  
+             && com.google.common.base.Objects.equal(this.handle, other.handle);  
     }  
     
     @Override
     public int hashCode()  
     {  
-        return com.google.common.base.Objects.hashCode(this.handle);  
+        return com.google.common.base.Objects.hashCode(this.handle, this.title);  
     }
     
     @Override  
     public String toString()  
     {  
        return com.google.common.base.Objects.toStringHelper(this)  
-                 //.addValue(this.tenant)  
+                 .addValue(this.title)  
                  .addValue(this.handle)    
                  .toString();  
     }  

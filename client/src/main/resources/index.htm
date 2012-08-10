@@ -16,10 +16,12 @@
   <link rel="stylesheet" href="stylesheets/bootstrap.css">
   <link rel="stylesheet" href="stylesheets/mayocat.css">
 
-  <script src="javascripts/jquery.js"></script>
-  <script src="javascripts/angular-1.0.1.min.js"></script>
+  <script src="javascripts/vendor/jquery.js"></script>
+  <script src="javascripts/vendor/angular-1.0.1.min.js"></script>
+
   <script src="javascripts/app.js"></script>
   <script src="javascripts/controllers.js"></script>
+  <script src="javascripts/search.js"></script>
 
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
@@ -35,6 +37,16 @@
         <a class="brand" href="#">
           MayocatShop
         </a>
+        <form class="navbar-search pull-left" ng-controller="SearchController">
+          <input id="search" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
+          <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
+            <li ng-repeat="suggestion in suggestions">
+              <h4>
+                {{suggestion}}
+              </h4>
+            </li>
+          </ul>
+        </form>
         <div class="pull-right" ng-controller="UserCtrl">
           <ul class="nav">
             <li class="dropdown">

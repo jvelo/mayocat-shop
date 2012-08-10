@@ -10,6 +10,7 @@ import org.junit.rules.ExpectedException;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.xwiki.observation.ObservationManager;
 import org.xwiki.test.annotation.MockingRequirement;
 
 /**
@@ -19,10 +20,10 @@ import org.xwiki.test.annotation.MockingRequirement;
  */
 public class DNProductStoreTest extends AbstractStoreEntityTestCase
 {
-    @MockingRequirement(exceptions = PersistenceManagerProvider.class)
+    @MockingRequirement(exceptions = {PersistenceManagerProvider.class, ObservationManager.class})
     private DNProductStore ps;
 
-    @MockingRequirement(exceptions = PersistenceManagerProvider.class)
+    @MockingRequirement(exceptions = {PersistenceManagerProvider.class})
     private DNTenantStore ts;
 
     @Rule

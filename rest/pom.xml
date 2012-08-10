@@ -28,6 +28,12 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-search-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

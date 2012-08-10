@@ -11,10 +11,12 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.mayocat.shop.model.Entity;
+import org.mayocat.shop.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.Store;
 import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
+import org.xwiki.observation.ObservationManager;
 
 /**
  * Base class for all datanucleus DAOs.
@@ -30,6 +32,9 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
     @Inject
     private Logger logger;
 
+    @Inject
+    private ObservationManager observationManager;
+    
     public AbstractDataNucleusStore()
     {
         this.type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
@@ -54,6 +59,8 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
             pm.makePersistent(entity);
             tx.commit();
 
+            this.observationManager.notify(new EntityUpdatedEvent(), this, entity);
+            
         } catch (JDOException e) {
             this.logger.error("Failed to commit transaction", e);
             throw new StoreException("Failed to commit transaction", e);
@@ -79,5 +86,6 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
     {
         return this.type;
     }
+
 
 }

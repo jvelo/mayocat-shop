@@ -8,12 +8,18 @@
   </parent>
   <artifactId>mayocat-store-datanucleus-store</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
   <name>Mayocat Store - DataNucleus - Store implementation</name>
   <description>Persistence layer - DataNucleus implementation</description>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-observation-api</artifactId>
+      <version>${xwiki.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>javax.jdo</groupId>

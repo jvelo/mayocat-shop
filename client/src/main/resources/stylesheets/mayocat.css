@@ -9,3 +9,13 @@ div.main-container {
   border: 1px solid #f8e9d8;
   border-bottom:none;
 }
+
+body ul#searchSuggestions.dropdown-menu {
+  display: block;
+  width: 578px;
+  top: 34px;
+}
+
+ul#searchSuggestions.dropdown-menu li {
+  padding: 5px;
+}

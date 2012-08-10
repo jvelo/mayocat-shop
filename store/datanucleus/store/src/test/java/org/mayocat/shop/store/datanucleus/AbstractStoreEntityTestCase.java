@@ -4,8 +4,12 @@ import java.util.Properties;
 
 import javax.jdo.JDOHelper;
 
+import org.jmock.Expectations;
 import org.junit.Before;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.observation.ObservationManager;
+import org.xwiki.observation.event.Event;
 import org.xwiki.test.AbstractMockingComponentTestCase;
 
 public abstract class AbstractStoreEntityTestCase extends AbstractMockingComponentTestCase
@@ -13,8 +17,23 @@ public abstract class AbstractStoreEntityTestCase extends AbstractMockingCompone
 
     protected PersistenceManagerProvider provider = new DefaultPersistenceManagerProdiver();
 
+    protected ObservationManager observationManager;
+
     private String tenant = "default";
-    
+
+    @Before
+    public void setUpRequirements() throws ComponentLookupException, Exception
+    {
+        this.observationManager = this.getComponentManager().getInstance(ObservationManager.class);
+        getMockery().checking(new Expectations()
+        {
+            {
+                allowing(observationManager).notify(with(any(Event.class)), with(any(Object.class)),
+                    with(any(Object.class)));
+            }
+        });
+    }
+
     @Before
     public void setUpStore()
     {
@@ -33,20 +52,19 @@ public abstract class AbstractStoreEntityTestCase extends AbstractMockingCompone
         cd.setRoleType(PersistenceManagerProvider.class);
         this.getComponentManager().registerComponent(cd, this.provider);
     }
-    
+
     public void setTenantToResolveTo(String tenant)
     {
         this.tenant = tenant;
         Properties props = defaultProperties();
         this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
     }
-    
+
     public void setUpPersistenceManager() throws Exception
     {
         this.setUpStore();
         this.setupDependencies();
     }
-    
 
     private Properties defaultProperties()
     {

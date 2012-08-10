@@ -15,6 +15,11 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-observation-local</artifactId>
+      <version>${xwiki.version}</version>
+   </dependency>
+    <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
