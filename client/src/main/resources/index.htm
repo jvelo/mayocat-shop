@@ -98,8 +98,11 @@
     </div><!--/.fluid-container-->
   </div>
 
+  <!-- Initial AJAX loader -->
+  <div class="loader" ng-show="authenticated == undefined"></div>
+
   <!-- Login modal -->
-  <div class="modal" ng-show="!authenticated" id="myModal">
+  <div class="modal" ng-show="authenticated != undefined && !authenticated" id="myModal">
     <form class="" ng-controller="LoginCtrl">
       <div class="modal-header">
         <h3>Authentication required</h3>
@@ -121,6 +124,6 @@
       </div>
     </form>
   </div>
-  <div class="modal-backdrop" ng-show="!authenticated"></div>
+  <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
 </body>
 </html>

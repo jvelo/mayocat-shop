@@ -20,8 +20,7 @@ function LoginCtrl($scope) {
 }
 
 function AppController($scope) {
-
-  $scope.authenticated = false;
+  $scope.authenticated = undefined;
   $scope.$on("event:authenticationRequired", function() {
     $scope.authenticated = false;
   });
