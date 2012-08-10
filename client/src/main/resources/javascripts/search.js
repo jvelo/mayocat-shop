@@ -17,6 +17,10 @@ angular.module('search', [])
   .controller('SearchController', ['$scope', 'searchService', function($scope, searchService) {
     $scope.term = "";
     $scope.suggestions = [];
+    $scope.clear = function() {
+      $scope.term = "";
+      $scope.suggestions = [];
+    }
     $scope.$watch('term', function(term) {
       if (term != "") {
         searchService.search(term, function(result){

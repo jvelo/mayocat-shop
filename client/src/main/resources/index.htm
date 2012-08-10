@@ -39,8 +39,11 @@
         <a class="brand" href="#">
           MayocatShop
         </a>
-        <form class="navbar-search pull-left" ng-controller="SearchController">
-          <input id="search" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
+        <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
+          <div class="input-append">
+            <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
+            <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
+          </div>
           <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
             <li ng-repeat="suggestion in suggestions">
               <a><h4>{{suggestion}}</h4></a>

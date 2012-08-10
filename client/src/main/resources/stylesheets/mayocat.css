@@ -38,7 +38,13 @@ div.main-container {
   border-bottom:none;
 }
 
-body ul#searchSuggestions.dropdown-menu {
+.navbar-inner .container {
+  /* The search close add-on messes up with the height of the navbar.
+     So limit its height whatever is computed. */
+  max-height: 40px;
+}
+
+#search ul.dropdown-menu {
   display: block;
   width: 580px;
   top: 25px;
@@ -48,11 +54,23 @@ body ul#searchSuggestions.dropdown-menu {
   border-top-left-radius: 0;
 }
 
-body ul#searchSuggestions.dropdown-menu:before,
-body ul#searchSuggestions.dropdown-menu:after {
+#search ul.dropdown-menu:before,
+#search ul.dropdown-menu:after {
   border: none;
 }
 
-ul#searchSuggestions.dropdown-menu li {
+#search u.dropdown-menu li {
   padding: 5px 0;
+}
+
+#search .add-on.close {
+  position: relative;
+  left: -28px;
+  top: -28px;
+  z-index: 10000;
+}
+
+#search .add-on.close:before {
+  content: '\274c';
+  color: #E8503E;
 }
