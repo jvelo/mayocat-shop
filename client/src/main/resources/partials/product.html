@@ -1,3 +1,5 @@
-<div class="product" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
-  <h1>{{product.title}} <small>{{product.handle}}</small></h1>
+<div class="entity" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
+  <div class="page-header" ng-show="product.title">
+    <h1>{{product.title}} <small>at <tt>/product/{{product.handle}}</tt></small></h1>
+  </div>
 </div>
