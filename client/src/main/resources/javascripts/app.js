@@ -92,11 +92,15 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
   });
 
   /**
-   * On 'logoutRequest' invoke logout on the server and broadcast 'event:loginRequired'.
+   * On 'logoutRequest' invoke logout on the server and broadcast 'event:authenticationRequired'.
    */
-  scope.$on('event:logoutRequest', function() {
-    $http.put('j_spring_security_logout', {}).success(function() {
+  scope.$on('event:forgetAuthenticationRequest', function() {
+    var config = {
+      headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+    };
+    $http.post('/logout/', "", config).success(function() {
       ping();
+      scope.$broadcast('event:authenticationRequired');
     });
   });
 

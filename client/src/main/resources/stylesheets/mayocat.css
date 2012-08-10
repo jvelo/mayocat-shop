@@ -20,6 +20,17 @@ body > div.loader {
   height: -calc(100% - 175px);
 }
 
+body div.modal {
+  /** Reset bootstrap modal border radius */
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
 div.main-container {
   padding-top: 25px;
   background-color:white;

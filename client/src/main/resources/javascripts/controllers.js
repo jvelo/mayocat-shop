@@ -3,19 +3,22 @@
 function HomeCtrl($scope) {
 }
 
-function UserCtrl($scope) {
+function UserCtrl($rootScope, $scope) {
   $scope.user = "";
+  $scope.logout = function() {
+    $rootScope.$broadcast("event:forgetAuthenticationRequest");
+  };
   $scope.$on("event:authenticationSuccessful", function(event, user) {
     $scope.user = user;
   });
 }
 
-function LoginCtrl($scope) {
+function LoginCtrl($rootScope, $scope) {
   $scope.username = "";
   $scope.password = "";
   $scope.remember = false;
   $scope.requestLogin = function() {
-    $scope.$emit("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
+    $rootScope.$broadcast("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
   };
 }
 
@@ -25,7 +28,6 @@ function AppController($scope) {
     $scope.authenticated = false;
   });
   $scope.$on("event:authenticationSuccessful", function() {
-    console.log("rodger that");
     $scope.authenticated = true;
   });
 }

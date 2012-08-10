@@ -164,7 +164,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventLi
             });
 
         } catch (Exception e) {
-            throw new InitializationException("Failed to initialize embedded solr", e);
+            throw new InitializationException("Failed to initialize embedded elastic search", e);
         }
     }
 

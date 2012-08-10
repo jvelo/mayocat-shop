@@ -41,6 +41,9 @@ public class LifeCycle implements ServletRequestListener, EventListener
     {
         if (this.provider.get() != null) {
             this.provider.get().close();
+        } else {
+            this.logger.debug("No persistence manager to close for request {}",
+                ((HttpServletRequest) sre.getServletRequest()).getPathInfo());
         }
     }
 
