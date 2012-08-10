@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
+import org.mayocat.shop.base.Managed;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
@@ -41,9 +42,7 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
 
         // Initialize Rendering components and allow getting instances
         componentManager = new EmbeddableComponentManager();
-
         this.registerConfigurationsAsComponents(configuration);
-
         componentManager.initialize(this.getClass().getClassLoader());
 
         // Registering provider component implementations against the environment...
@@ -78,6 +77,12 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
             if (com.yammer.dropwizard.tasks.Task.class.isAssignableFrom(task.getValue().getClass())) {
                 environment.addTask((com.yammer.dropwizard.tasks.Task) task.getValue());
             }
+        }
+        
+        // Managed services that show a managed lifecycle
+        Map<String, Managed> managedServices = componentManager.getInstanceMap(Managed.class);
+        for (Map.Entry<String, Managed> managed : managedServices.entrySet()) {
+            environment.manage(managed.getValue());
         }
 
     }

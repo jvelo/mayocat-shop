@@ -1,6 +1,6 @@
 logging:
   loggers:
-      "org.mayocat": DEBUG
+      "org.mayocat": INFO
       # "DataNucleus.Datastore.Native": DEBUG
       # "DataNucleus.Plugin": DEBUG
 
@@ -21,3 +21,4 @@ dataSource:
     javax.jdo.option.ConnectionURL: jdbc:mysql://127.0.0.1/shop
     javax.jdo.option.ConnectionUserName: root
     javax.jdo.option.ConnectionPassword:
+    datanucleus.connectionPoolingType: dbcp-builtin

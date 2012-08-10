@@ -1,7 +1,7 @@
 package org.mayocat.shop.search.elasticsearch;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.mayocat.shop.base.Managed;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.annotation.SearchIndex;
@@ -35,13 +36,12 @@ import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
 
 @Component(hints = {"elasticsearch", "default"})
-public class ElasticSearchSearchEngine implements SearchEngine, Initializable, EventListener
+public class ElasticSearchSearchEngine implements SearchEngine, Managed, EventListener
 {
 
     @Inject
@@ -100,55 +100,8 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable, E
         return result;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
     
-    @Override
-    public void initialize() throws InitializationException
-    {
-        try {
-            final Builder settings = ImmutableSettings.settingsBuilder();
-            settings.put("client.transport.sniff", true);
-            settings.build();
-
-            final NodeBuilder nb = nodeBuilder().settings(settings).local(true).client(false).data(true);
-            final Node node = nb.node();
-            client = node.client();
-
-            IndicesExistsRequest indicesExistsRequest = new IndicesExistsRequest("entities");
-
-            // we just send back a response, no need to fork a listener
-            indicesExistsRequest.listenerThreaded(false);
-            client.admin().indices().exists(indicesExistsRequest, new ActionListener<IndicesExistsResponse>()
-            {
-                @Override
-                public void onResponse(IndicesExistsResponse response)
-                {
-                    if (!response.exists()) {
-                        try {
-                            logger.debug("Entities indice does not exists. Creating it...");
-                            CreateIndexResponse r =
-                                client.admin().indices().create(new CreateIndexRequest("entities")).actionGet();
-
-                            logger.debug("Created indice with response {}", r.acknowledged() ? "\u2713 acknowledged"
-                                : "\2718 not acknowledged");
-                        } catch (Exception e) {
-                            logger.error("Failed to create entities indice status ...");
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable e)
-                {
-                    logger.error("Failed to enquiry entities indice status ...");
-                }
-            });
-
-        } catch (Exception e) {
-            throw new InitializationException("Failed to initialize embedded solr", e);
-        }
-
-    }
-
     public void onEvent(Event event, Object source, Object data)
     {
         Entity entity = (Entity) data;
@@ -167,6 +120,57 @@ public class ElasticSearchSearchEngine implements SearchEngine, Initializable, E
     public List<Event> getEvents()
     {
         return Arrays.<Event> asList(new EntityUpdatedEvent());
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    public void start() throws Exception
+    {
+        try {
+            final Builder settings = ImmutableSettings.settingsBuilder();
+            settings.put("client.transport.sniff", true);
+            settings.build();
+
+            final NodeBuilder nb = nodeBuilder().settings(settings).local(true).client(false).data(true);
+            final Node node = nb.node();
+            client = node.client();
+
+            IndicesExistsRequest indicesExistsRequest = new IndicesExistsRequest("entities");
+
+            // we just send back a response, no need to fork a listener
+            indicesExistsRequest.listenerThreaded(false);
+            client.admin().indices().exists(indicesExistsRequest, new ActionListener<IndicesExistsResponse>()
+            {
+                public void onResponse(IndicesExistsResponse response)
+                {
+                    if (!response.exists()) {
+                        try {
+                            logger.debug("Entities indice does not exists. Creating it...");
+                            CreateIndexResponse r =
+                                client.admin().indices().create(new CreateIndexRequest("entities")).actionGet();
+
+                            logger.debug("Created indice with response {}", r.acknowledged() ? "\u2713 acknowledged"
+                                : "\2718 not acknowledged");
+                        } catch (Exception e) {
+                            logger.error("Failed to create entities indice status ...");
+                        }
+                    }
+                }
+
+                public void onFailure(Throwable e)
+                {
+                    logger.error("Failed to enquiry entities indice status ...");
+                }
+            });
+
+        } catch (Exception e) {
+            throw new InitializationException("Failed to initialize embedded solr", e);
+        }
+    }
+
+    public void stop() throws Exception
+    {
+        this.client.close();
     }
 
 }

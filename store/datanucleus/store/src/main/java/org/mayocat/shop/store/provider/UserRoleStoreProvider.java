@@ -6,9 +6,8 @@ import javax.inject.Provider;
 
 import org.mayocat.shop.store.AbstractStoreProvider;
 import org.mayocat.shop.store.UserRoleStore;
-import org.mayocat.shop.store.UserStore;
 
-public class UserRoleStoreProvider extends AbstractStoreProvider<UserStore> implements Provider<UserStore>
+public class UserRoleStoreProvider extends AbstractStoreProvider<UserRoleStore> implements Provider<UserRoleStore>
 {
 
     protected Type getType()
