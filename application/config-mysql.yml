@@ -3,6 +3,7 @@ logging:
       "org.mayocat": DEBUG
       # "DataNucleus.Datastore.Native": DEBUG
       # "DataNucleus.Plugin": DEBUG
+      # "DataNucleus.Connection": DEBUG
 
   file:
     archive: false
@@ -21,4 +22,12 @@ dataSource:
     javax.jdo.option.ConnectionURL: jdbc:mysql://127.0.0.1/shop
     javax.jdo.option.ConnectionUserName: root
     javax.jdo.option.ConnectionPassword:
-    datanucleus.connectionPoolingType: dbcp-builtin
+    datanucleus.connectionPoolingType: DBCP
+    datanucleus.connectionPool.maxIdle: 10
+    datanucleus.connectionPool.minIdle: 3
+    datanucleus.connectionPool.maxActive: 5
+    datanucleus.connectionPool.maxWait: 60
+    datanucleus.connectionPool.maxStatements: 20
+    datanucleus.connectionPool.testSQL: SELECT 1
+    datanucleus.connectionPool.timeBetweenEvictionRunsMillis: 2400000
+    datanucleus.connectionPool.minEvictableIdleTimeMillis: 18000000

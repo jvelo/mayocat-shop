@@ -1,12 +1,15 @@
 package org.mayocat.shop.store.datanucleus;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +23,7 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
 
+@Singleton
 @Component
 public class LifeCycle implements ServletRequestListener, EventListener
 {
@@ -35,6 +39,10 @@ public class LifeCycle implements ServletRequestListener, EventListener
 
     @Inject
     private Logger logger;
+
+    private Map<String, PersistenceManagerFactory> factories = new HashMap<String, PersistenceManagerFactory>();
+
+    private PersistenceManagerFactory tenantAgnosticFactory = null;
 
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
@@ -58,11 +66,12 @@ public class LifeCycle implements ServletRequestListener, EventListener
         }
 
         // Step 1. Resolve tenant
-        Properties props = getPersistenceProperties();
+        if (this.tenantAgnosticFactory == null) {
+            Properties props = getPersistenceProperties();
 
-        PersistenceManager tenantAgnosticPersistenceManager =
-            JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager();
-        this.provider.set(tenantAgnosticPersistenceManager);
+            tenantAgnosticFactory = JDOHelper.getPersistenceManagerFactory(props);
+        }
+        this.provider.set(tenantAgnosticFactory.getPersistenceManager());
 
         String host = event.getServletRequest().getServerName();
         Tenant tenant = this.tenantResolverProdiver.get().resolve(host);
@@ -76,12 +85,13 @@ public class LifeCycle implements ServletRequestListener, EventListener
         this.provider.get().close();
         this.provider.set(null);
 
+        if (!this.factories.containsKey(tenant.getHandle())) {
+            Properties props = getPersistenceProperties();
+            props.put("datanucleus.tenantId", tenant.getHandle());
+            this.factories.put(tenant.getHandle(), JDOHelper.getPersistenceManagerFactory(props));
+        }
         // Step 2. Set request persistence manager with proper tenant ID.
-        props = getPersistenceProperties();
-
-        props.put("datanucleus.tenantId", tenant.getHandle());
-
-        this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
+        this.provider.set(this.factories.get(tenant.getHandle()).getPersistenceManager());
 
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Persistence manager {} set for request with tenant {}", this.provider.get(), tenant);
