@@ -1,7 +1,7 @@
 package org.mayocat.shop.model;
 
 
-public class Entity
+public interface Entity
 {
 
 }

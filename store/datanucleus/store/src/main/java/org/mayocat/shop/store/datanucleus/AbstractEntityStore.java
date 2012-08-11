@@ -12,6 +12,7 @@ import javax.jdo.Transaction;
 
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
+import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.Store;
 import org.mayocat.shop.store.StoreException;
@@ -21,7 +22,7 @@ import org.xwiki.observation.ObservationManager;
 /**
  * Base class for all datanucleus DAOs.
  */
-public abstract class AbstractDataNucleusStore<T extends Entity, K extends Serializable> implements Store<T, K>
+public abstract class AbstractEntityStore<T extends Entity, K extends Serializable> implements Store<T, K>
 {
 
     private Class<T> type;
@@ -30,12 +31,12 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
     protected PersistenceManagerProvider persistenceManager;
     
     @Inject
-    private Logger logger;
+    protected Logger logger;
 
     @Inject
-    private ObservationManager observationManager;
+    protected ObservationManager observationManager;
     
-    public AbstractDataNucleusStore()
+    public AbstractEntityStore()
     {
         this.type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
@@ -47,11 +48,6 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
         if (this.exists(entity)) {
             throw new EntityAlreadyExistsException(MessageFormat.format("Entity [{0}] already exists", entity));
         }
-        this.update(entity);
-    }
-
-    public void update(T entity) throws StoreException
-    {
         PersistenceManager pm = persistenceManager.get();
         Transaction tx = pm.currentTransaction();
         try {
@@ -59,7 +55,7 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
             pm.makePersistent(entity);
             tx.commit();
 
-            this.observationManager.notify(new EntityUpdatedEvent(), this, entity);
+            //this.observationManager.notify(new EntityCreatedEvent(), this, entity);
             
         } catch (JDOException e) {
             this.logger.error("Failed to commit transaction", e);
@@ -70,6 +66,8 @@ public abstract class AbstractDataNucleusStore<T extends Entity, K extends Seria
             }
         }
     }
+
+    public abstract void update(T entity) throws StoreException;
 
     public T findById(K id) throws StoreException
     {

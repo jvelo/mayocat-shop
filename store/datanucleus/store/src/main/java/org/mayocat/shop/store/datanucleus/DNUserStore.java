@@ -12,7 +12,7 @@ import org.mayocat.shop.store.UserStore;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNUserStore extends AbstractDataNucleusStore<User, Long> implements UserStore
+public class DNUserStore extends AbstractHandleableEntityStore<User, Long> implements UserStore
 {
     public boolean exists(User entity) throws StoreException
     {

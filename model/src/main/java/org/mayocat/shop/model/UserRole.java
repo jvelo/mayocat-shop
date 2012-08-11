@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class UserRole extends Entity
+public class UserRole implements Entity
 {
     @JsonIgnore
     Long id;

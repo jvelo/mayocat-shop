@@ -36,7 +36,7 @@ public class UserResourceTest extends AbstractAuthenticatedResourceTest
                             .header("Authorization", this.getBasicAuthenticationHeader())
                             .get(User.class);
 
-        Assert.assertEquals(user.getEmail(), USER_NAME);
+        Assert.assertEquals(user.getEmail(), EMAIL);
         Assert.assertEquals(user.getPassword(), "********");
 
     }
@@ -57,7 +57,7 @@ public class UserResourceTest extends AbstractAuthenticatedResourceTest
         
         ClientResponse cr = client().resource("/user/")
                                     .type(MediaType.APPLICATION_JSON)
-                                    .entity("{\"email\":\"_me\", \"password\" : \"lol\"}")
+                                    .entity("{\"email\":\"_me\", \"handle\": \"lol\", \"password\" : \"lol\"}")
                                     .header("Authorization", this.getBasicAuthenticationHeader())
                                     .post(ClientResponse.class);
 

@@ -7,7 +7,9 @@ import javax.validation.constraints.Pattern;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class Tenant extends Entity
+import com.google.common.base.Objects;
+
+public class Tenant implements HandleableEntity
 {    
     @JsonIgnore
     Long id;
@@ -77,20 +79,19 @@ public class Tenant extends Entity
         }
         final Tenant other = (Tenant) obj;
 
-        return com.google.common.base.Objects.equal(this.handle, other.handle);
+        return Objects.equal(this.handle, other.handle);
     }
 
     @Override
     public int hashCode()
     {
-        return com.google.common.base.Objects.hashCode(this.handle);
+        return Objects.hashCode(this.handle);
     }
 
     @Override
     public String toString()
     {
-        return com.google.common.base.Objects.toStringHelper(this)
-            .addValue(this.handle).toString();
+        return Objects.toStringHelper(this).addValue(this.handle).toString();
     }
 
 }

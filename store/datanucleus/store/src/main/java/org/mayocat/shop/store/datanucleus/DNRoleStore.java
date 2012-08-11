@@ -14,7 +14,7 @@ import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNRoleStore extends AbstractDataNucleusStore<Role, Long> implements RoleStore
+public class DNRoleStore extends AbstractEntityStore<Role, Long> implements RoleStore
 {
     public List<Role> findAllByUser(User user) throws StoreException
     {
@@ -41,6 +41,12 @@ public class DNRoleStore extends AbstractDataNucleusStore<Role, Long> implements
     public boolean exists(Role entity) throws StoreException
     {
         return false;
+    }
+
+    @Override
+    public void update(Role entity) throws StoreException
+    {
+        throw new RuntimeException("Not implemented.");
     }
 
 }

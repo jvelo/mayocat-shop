@@ -6,7 +6,9 @@ import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
-public class Product extends Entity
+import com.google.common.base.Objects;
+
+public class Product implements HandleableEntity
 {
     @JsonIgnore
     Long id;
@@ -41,14 +43,6 @@ public class Product extends Entity
     }
     
     ////////////////////////////////////////////////
-    
-    public void fromProduct(Product p)
-    {
-        this.setHandle(p.getHandle());
-        //this.setTenant(p.getTenant());
-    }
-    
-    ////////////////////////////////////////////////
 
     @Override  
     public boolean equals(Object obj)  
@@ -63,20 +57,20 @@ public class Product extends Entity
        }  
        final Product other = (Product) obj;  
          
-       return   com.google.common.base.Objects.equal(this.title, other.title)  
-             && com.google.common.base.Objects.equal(this.handle, other.handle);  
+       return   Objects.equal(this.title, other.title)  
+             && Objects.equal(this.handle, other.handle);  
     }  
     
     @Override
     public int hashCode()  
     {  
-        return com.google.common.base.Objects.hashCode(this.handle, this.title);  
+        return Objects.hashCode(this.handle, this.title);  
     }
     
     @Override  
     public String toString()  
     {  
-       return com.google.common.base.Objects.toStringHelper(this)  
+       return Objects.toStringHelper(this)  
                  .addValue(this.title)  
                  .addValue(this.handle)    
                  .toString();  

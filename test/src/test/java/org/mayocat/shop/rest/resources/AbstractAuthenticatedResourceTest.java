@@ -17,7 +17,9 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
     
     private UserService userService;
 
-    protected static final String USER_NAME = "jerome@mayocat.org";
+    protected static final String HANDLE = "jerome";
+    
+    protected static final String EMAIL = "jerome@mayocat.org";
 
     protected static final String PASSWORD = "password";
 
@@ -33,7 +35,7 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
         if (!this.userService.hasUsers()) {
             ClientResponse cr = client().resource("/user/")
                 .type(MediaType.APPLICATION_JSON)
-                .entity("{\"email\":\"" + USER_NAME + "\", \"password\" : \"" + PASSWORD + "\"}")
+                .entity("{\"handle\":\"" + HANDLE + "\", \"email\":\"" + EMAIL + "\", \"password\" : \"" + PASSWORD + "\"}")
                 .post(ClientResponse.class);
 
             Assert.assertEquals(Status.OK, cr.getClientResponseStatus());
@@ -52,6 +54,6 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
 
     protected String getBasicAuthenticationHeader()
     {
-        return "Basic " + B64Code.encode(USER_NAME + ":" + PASSWORD);
+        return "Basic " + B64Code.encode(EMAIL + ":" + PASSWORD);
     }
 }

@@ -1,5 +1,6 @@
 package org.mayocat.shop.store.datanucleus;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Assert;
@@ -90,12 +91,21 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     @Test
     public void testUpdateProduct() throws Exception
     {
-        Product p = new Product();
-        p.setHandle("face-skin-mask");
+        Product product = new Product();
+        product.setHandle("face-skin-mask");
+        product.setTitle("Face Skin Mask");
+        
+        ps.create(product);
 
-        ps.create(p);
-        ps.update(p);
+        product = new Product();
+        product.setHandle("face-skin-mask");
+        
+        product.setTitle("Horse Head Mask");
+        ps.update(product);
 
-        assertNotNull(ps.findByHandle("face-skin-mask"));
+        Product retrieved = ps.findByHandle("face-skin-mask"); 
+        assertNotNull(retrieved);
+        assertEquals("Horse Head Mask", retrieved.getTitle());
+        assertEquals(product, retrieved);
     }
 }

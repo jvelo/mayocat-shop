@@ -6,7 +6,7 @@ import java.util.Set;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.shop.authorization.Capability;
 
-public class Role extends Entity
+public class Role implements Entity
 {
     public enum RoleName
     {

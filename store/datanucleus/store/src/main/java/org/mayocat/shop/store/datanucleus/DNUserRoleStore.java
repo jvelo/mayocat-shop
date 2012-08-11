@@ -13,7 +13,7 @@ import org.mayocat.shop.store.UserRoleStore;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNUserRoleStore extends AbstractDataNucleusStore<UserRole, Long> implements UserRoleStore
+public class DNUserRoleStore extends AbstractEntityStore<UserRole, Long> implements UserRoleStore
 {
 
     public boolean exists(UserRole entity) throws StoreException
@@ -33,6 +33,12 @@ public class DNUserRoleStore extends AbstractDataNucleusStore<UserRole, Long> im
         } catch (JDODataStoreException e) {
             throw new StoreException(e);
         }
+    }
+
+    @Override
+    public void update(UserRole entity) throws StoreException
+    {
+        throw new RuntimeException("Not implemented");
     }
     
 }
