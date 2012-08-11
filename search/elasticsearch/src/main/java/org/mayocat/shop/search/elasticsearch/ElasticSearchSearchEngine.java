@@ -29,8 +29,10 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.shop.model.Entity;
+import org.mayocat.shop.model.HandleableEntity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.annotation.SearchIndex;
+import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
@@ -63,7 +65,9 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
         {
             Entity entity = (Entity) data;
             try {
-                index(entity);
+                if (entity instanceof HandleableEntity) {
+                    index((HandleableEntity) entity);
+                }
             } catch (SearchEngineException e) {
                 logger.error("Failed to index entity upon update", e);
             }
@@ -76,7 +80,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
 
         public List<Event> getEvents()
         {
-            return Arrays.<Event> asList(new EntityUpdatedEvent());
+            return Arrays.<Event> asList(new EntityUpdatedEvent(), new EntityCreatedEvent());
         }
     }
 
@@ -86,33 +90,30 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public void index(Entity t) throws SearchEngineException
+    public void index(HandleableEntity entity) throws SearchEngineException
     {
         try {
             Map<String, Object> source = new HashMap<String, Object>();
-            for (Field field : t.getClass().getDeclaredFields()) {
+            for (Field field : entity.getClass().getDeclaredFields()) {
                 boolean isAccessible = field.isAccessible();
                 try {
                     field.setAccessible(true);
                     SearchIndex searchIndex = field.getAnnotation(SearchIndex.class);
                     if (searchIndex != null) {
-                        source.put(field.getName(), field.get(t));
+                        source.put(field.getName(), field.get(entity));
                     }
                 } finally {
                     field.setAccessible(isAccessible);
                 }
             }
             if (source.keySet().size() > 0) {
-                String entityName = StringUtils.substringAfterLast(t.getClass().getName(), ".").toLowerCase();
+                String entityName = StringUtils.substringAfterLast(entity.getClass().getName(), ".").toLowerCase();
 
                 this.logger.debug("Indexing entity {} ...", entityName);
 
-                // Temporary until we have a generic way of computing an id (handle for example)
-                Product p = (Product) t;
-                String id = p.getHandle();
-
                 IndexResponse response =
-                    this.client.prepareIndex("entities", entityName, id).setSource(source).execute().actionGet();
+                    this.client.prepareIndex("entities", entityName, entity.getHandle()).setSource(source).execute()
+                        .actionGet();
                 this.logger.debug("" + response.type());
             }
 
@@ -122,7 +123,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public List<Map<String, Object>> search(String term, List<Class< ? extends Entity>> entityTypes)
+    public List<Map<String, Object>> search(String term, List<Class< ? extends HandleableEntity>> entityTypes)
         throws SearchEngineException
     {
         SearchResponse response =

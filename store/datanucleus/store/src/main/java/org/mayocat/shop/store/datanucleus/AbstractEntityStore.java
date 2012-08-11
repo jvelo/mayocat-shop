@@ -55,7 +55,7 @@ public abstract class AbstractEntityStore<T extends Entity, K extends Serializab
             pm.makePersistent(entity);
             tx.commit();
 
-            //this.observationManager.notify(new EntityCreatedEvent(), this, entity);
+            this.observationManager.notify(new EntityCreatedEvent(), this, entity);
             
         } catch (JDOException e) {
             this.logger.error("Failed to commit transaction", e);

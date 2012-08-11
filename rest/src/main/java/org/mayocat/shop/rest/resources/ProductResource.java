@@ -51,21 +51,24 @@ public class ProductResource implements Resource
     @PUT
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProduct(@Authorized Context context, @PathParam("handle") String handle, Product updatedProduct)
+    public Response updateProduct(@Authorized Context context, @PathParam("handle") String handle,
+        Product updatedProduct)
     {
         try {
             Product product = this.productService.findByHandle(handle);
             if (product == null) {
                 return Response.status(404).build();
+            } else {
+                this.productService.update(updatedProduct);
             }
-            
+
             return Response.ok().build();
-            
+
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
     }
-    
+
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
