@@ -84,7 +84,7 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
     };
     $http.post('/login/', $.param(data), config).success(function(data, status) {
       if (status == 200) {
-        scope.$broadcast('event:authenticationSuccessful', data.email);
+        ping();
       }
       else {
         scope.$broadcast('event:authenticationFailure');
@@ -109,8 +109,8 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
    * Ping server to figure out if user is already logged in.
    */
   function ping() {
-    $http.get('/user/_me').success(function(data) {
-      scope.$broadcast('event:authenticationSuccessful', data.email);
+    $http.get('/tenant/').success(function(data) {
+      scope.$broadcast('event:authenticationSuccessful', data);
     });
   }
 

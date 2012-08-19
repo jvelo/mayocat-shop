@@ -5,7 +5,7 @@
         http://java.sun.com/xml/ns/jdo/jdo_3_0.xsd">
 
   <package name="org.mayocat.shop.model">
-    <class name="Tenant" table="tenant" detachable="true" identity-type="application">
+    <class name="Shop" table="shop" detachable="true" identity-type="application">
 
       <!-- Disable multitenancy on this one and avoid the Xzibit effect -->
       <extension vendor-name="datanucleus" key="multitenancy-disable" value="true"/>
@@ -16,21 +16,11 @@
       </field>
 
       <!-- handle field -->
-      <field name="handle">
+      <field name="name">
         <column length="255" />
-        <unique />
         <index />
       </field>
 
-      <field name="shop" default-fetch-group="true">
-      </field>
-
-      <!--
-      <field name="aliases">
-        <collection />
-        <element column="tenand_id" />
-      </field>
-      -->
     </class>
   </package>
 </jdo>

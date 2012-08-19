@@ -10,6 +10,7 @@ import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
+import javax.jdo.spi.PersistenceCapable;
 
 import org.mayocat.shop.model.HandleableEntity;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
@@ -78,18 +79,36 @@ public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, 
         }
     }
 
-    private <O> void copyPersistentFields(Object entity, O valueObject) throws IllegalAccessException,
+    private <O> void copyPersistentFields(Object existingEntity, O valueObject) throws IllegalAccessException,
         NoSuchMethodException, InvocationTargetException
     {
+        // FIXME this is likely to be not very efficient
+        // Check if equivalent behavior can be implemented without reflection,
+        // using jdo state management.
+        // See PersistenceCapable#jdoCopyFields(java.lang.Object, int[]) for example
+
         for (Method method : valueObject.getClass().getMethods()) {
             if (method.getName().startsWith("set") && Character.isUpperCase(method.getName().charAt(3))) {
-                // Found a setter
+                // Found a setter. Ensure it is accessible
                 boolean setterAccessible = method.isAccessible();
+
+                // Find the equivalent getter and ensure it is accessible
                 Method getter = valueObject.getClass().getMethod("get" + method.getName().substring(3));
                 boolean getterAccessible = getter.isAccessible();
                 getter.setAccessible(true);
+
                 try {
-                    method.invoke(entity, getter.invoke(valueObject));
+                    // Obtain new value
+                    Object value = getter.invoke(valueObject);
+
+                    // If the value itself is a persistent object, recurse
+                    if (value instanceof javax.jdo.spi.PersistenceCapable) {
+                        this.copyPersistentFields(getter.invoke(existingEntity), value);
+                    }
+                    // Else if value not null, copy over to persistent object
+                    else if (value != null) {
+                        method.invoke(existingEntity, value);
+                    }
                 } finally {
                     // Tidy up
                     method.setAccessible(setterAccessible);

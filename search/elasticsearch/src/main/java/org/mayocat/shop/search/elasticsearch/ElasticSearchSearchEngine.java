@@ -30,7 +30,6 @@ import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.HandleableEntity;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.annotation.SearchIndex;
 import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;

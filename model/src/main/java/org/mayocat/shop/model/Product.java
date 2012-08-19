@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.mayocat.shop.model.annotation.Localizable;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
@@ -18,10 +19,15 @@ public class Product implements HandleableEntity
     @Size(min = 1)
     String handle;
     
+    @Localizable
     @SearchIndex
     @NotNull
     String title;
 
+    @Localizable
+    @SearchIndex
+    String description;
+    
     public String getHandle()
     {
         return handle;
@@ -40,6 +46,16 @@ public class Product implements HandleableEntity
     public void setTitle(String title)
     {
         this.title = title;
+    }
+    
+    public String getDescription()
+    {
+        return description;
+    }
+    
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
     
     ////////////////////////////////////////////////

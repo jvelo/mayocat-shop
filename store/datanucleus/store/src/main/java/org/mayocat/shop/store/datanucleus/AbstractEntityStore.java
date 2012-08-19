@@ -11,7 +11,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 
 import org.mayocat.shop.model.Entity;
-import org.mayocat.shop.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.Store;

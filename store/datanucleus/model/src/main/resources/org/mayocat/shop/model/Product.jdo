@@ -33,6 +33,11 @@
         <index />
       </field>
 
+      <!-- Title field -->
+      <field name="description">
+        <column length="10000" jdbc-type="LONGVARCHAR"/>
+      </field>
+
     </class>
   </package>
 </jdo>

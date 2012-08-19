@@ -38,9 +38,7 @@
   <div class="navbar navbar-fixed-top" ng-show="authenticated">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="#">
-          MayocatShop
-        </a>
+        <a class="brand" href="#" ng-bind="tenant.shop.name"></a>
         <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
           <div class="input-append">
             <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
@@ -52,11 +50,11 @@
             </li>
           </ul>
         </form>
-        <div class="pull-right" ng-controller="UserCtrl">
+        <div class="pull-right">
           <ul class="nav">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span ng-bind="user"></span>
+                <span ng-bind="user.email"></span>
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">

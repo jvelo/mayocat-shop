@@ -3,16 +3,6 @@
 function HomeCtrl($scope) {
 }
 
-function UserCtrl($rootScope, $scope) {
-  $scope.user = "";
-  $scope.logout = function() {
-    $rootScope.$broadcast("event:forgetAuthenticationRequest");
-  };
-  $scope.$on("event:authenticationSuccessful", function(event, user) {
-    $scope.user = user;
-  });
-}
-
 function LoginCtrl($rootScope, $scope) {
   $scope.username = "";
   $scope.password = "";
@@ -22,12 +12,23 @@ function LoginCtrl($rootScope, $scope) {
   };
 }
 
-function AppController($scope) {
+function AppController($rootScope, $scope) {
+
+  $scope.tenant = undefined;
+  $scope.user = undefined;
   $scope.authenticated = undefined;
+
+  $scope.logout = function() {
+    $rootScope.$broadcast("event:forgetAuthenticationRequest");
+  };
+
   $scope.$on("event:authenticationRequired", function() {
     $scope.authenticated = false;
   });
-  $scope.$on("event:authenticationSuccessful", function() {
+
+  $scope.$on("event:authenticationSuccessful", function(event, data) {
     $scope.authenticated = true;
+    $scope.user = data.user;
+    $scope.tenant = data.tenant;
   });
 }

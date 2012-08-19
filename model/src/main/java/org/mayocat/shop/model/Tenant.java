@@ -19,6 +19,8 @@ public class Tenant implements HandleableEntity
     String handle;
     
     List<String> aliases;
+    
+    Shop shop;
 
     ///////////////////////////////////////////////////
     
@@ -58,6 +60,16 @@ public class Tenant implements HandleableEntity
         this.aliases = aliases;
     }
 
+    public Shop getShop()
+    {
+        return shop;
+    }
+    
+    public void setShop(Shop shop)
+    {
+        this.shop = shop;
+    }
+    
     ///////////////////////////////////////////////////
     
     public void fromTenant(Tenant t)

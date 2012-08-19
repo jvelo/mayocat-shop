@@ -27,7 +27,7 @@ public class DefaultTenantResolver implements TenantResolver
     private ThreadLocal<Map<String, Tenant>> resolved = new ThreadLocal<Map<String, Tenant>>();
 
     @Inject
-    private TenantService tenantStore;
+    private TenantService tenantService;
 
     @Inject
     private Logger logger;
@@ -45,14 +45,18 @@ public class DefaultTenantResolver implements TenantResolver
             Tenant tenant = null;
             try {
                 if (!this.configuration.isActivated()) {
-                    tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
+                    // Mono-tenant
+                    
+                    tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
                     if (tenant == null) {
-                        this.tenantStore.create(new Tenant(this.configuration.getDefaultTenant()));
-                        tenant = this.tenantStore.findByHandle(this.configuration.getDefaultTenant());
+                        this.tenantService.create(new Tenant(this.configuration.getDefaultTenant()));
+                        tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
                     }
                     this.resolved.get().put(host, tenant);
                 } else {
-                    tenant = this.tenantStore.findByHandle(this.extractHandleFromHost(host));
+                    // Multi-tenant
+                    
+                    tenant = this.tenantService.findByHandle(this.extractHandleFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
