@@ -119,6 +119,9 @@
               <input type="checkbox" ng-model="remember" />
             </fieldset>
         </p>
+        <div class="alert" ng-show="authenticationFailed">
+        We could not authenticate you with these credentials.
+        </div>
       </div>
       <div class="modal-footer">
         <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>

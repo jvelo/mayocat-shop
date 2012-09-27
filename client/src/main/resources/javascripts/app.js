@@ -26,7 +26,7 @@ mayocat.config(function($httpProvider) {
 
     function error(response) {
       var status = response.status;
-      if (status == 401) {
+      if (status == 401 && response.config.url != '/login/') {
         var deferred = $q.defer();
         var req = {
           config: response.config,
@@ -82,14 +82,18 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
       password: password,
       remember: remember
     };
-    $http.post('/login/', $.param(data), config).success(function(data, status) {
-      if (status == 200) {
-        ping();
-      }
-      else {
+    $http.post('/login/', $.param(data), config)
+      .success(function(data, status) {
+        if (status == 200) {
+          ping();
+        }
+        else {
+          scope.$broadcast('event:authenticationFailure');
+        }
+      })
+      .error(function(data, status){
         scope.$broadcast('event:authenticationFailure');
-      }
-    });
+      });
   });
 
   /**

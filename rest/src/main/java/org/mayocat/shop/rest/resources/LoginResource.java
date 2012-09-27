@@ -46,12 +46,12 @@ public class LoginResource implements Resource
 
             if (user == null) {
                 // Don't give more information than this
-                return Response.status(Status.UNAUTHORIZED).build();
+                return Response.noContent().status(Status.UNAUTHORIZED).build();
             }
 
             if (!passwordManager.verifyPassword(password, user.getPassword())) {
                 // Don't give more information than this
-                return Response.status(Status.UNAUTHORIZED).build();
+                return Response.noContent().status(Status.UNAUTHORIZED).build();
             }
 
             // Find out some cookie parameters we will need
