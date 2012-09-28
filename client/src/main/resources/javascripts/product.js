@@ -3,7 +3,14 @@
 angular.module('product', ['ngResource'])
   .controller('ProductController', ['$scope', '$routeParams', '$resource',
       function($scope, $routeParams, $resource) {
+
         $scope.handle = $routeParams.product;
-        this.Product = $resource("/product/:handle");
-        $scope.product = this.Product.get({ "handle" : $scope.handle });
+
+        $scope.updateProduct = function() {
+          $scope.ProductResource.save({ "handle" : $scope.handle }, $scope.product);
+        }
+
+        $scope.ProductResource = $resource("/product/:handle");
+
+        $scope.product = $scope.ProductResource.get({ "handle" : $scope.handle });
   }]);

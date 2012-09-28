@@ -1,5 +1,29 @@
-<div class="entity" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
-  <div class="page-header" ng-show="product.title">
-    <h1>{{product.title}} <small>at <tt>/product/{{product.handle}}</tt></small></h1>
+<form>
+  <div class="span8">
+    <div class="entity" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
+
+        <div ng-show="product.title">
+
+          <!-- Title -->
+          <h1>
+            <input type="text" class="span12" ng-model="product.title" />
+          </h1>
+
+          <!-- Description -->
+          <div>
+            <label>Description</label>
+            <textarea class="span12" rows="10" ng-model="product.description" />
+          </div>
+        </div>
+
+    </div>
   </div>
-</div>
+  <div class="span2">
+    <div class="buttons">
+      <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
+    </div>
+    <div class="uri">
+      <small>at <tt>/product/{{product.handle}}</tt></small>
+    </div>
+  </div>
+</form>

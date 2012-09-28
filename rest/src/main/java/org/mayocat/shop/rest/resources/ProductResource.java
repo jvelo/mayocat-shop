@@ -48,7 +48,7 @@ public class ProductResource implements Resource
     }
 
     @Path("{handle}")
-    @PUT
+    @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateProduct(@Authorized Context context, @PathParam("handle") String handle,
@@ -67,6 +67,16 @@ public class ProductResource implements Resource
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
+    }
+
+    @Path("{handle}")
+    @PUT
+    @Timed
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response replaceProduct(@Authorized Context context, @PathParam("handle") String handle, Product newProduct)
+    {
+        // TODO
+        throw new RuntimeException("Not implemented");
     }
 
     @POST
