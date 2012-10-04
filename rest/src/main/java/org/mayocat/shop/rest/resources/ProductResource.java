@@ -43,7 +43,6 @@ public class ProductResource implements Resource
     {
         try {
             List<Product> products = this.catalogueService.findAllProducts(number, offset);
-            System.out.println("Found : " + products.size());
             return products;
         }
         catch (StoreException e) {
