@@ -10,9 +10,13 @@ angular.module('catalogue', [])
       }
     };
   })
-  .controller('CatalogueController', ['$scope', 'catalogueService',
-      function($scope, catalogueService) {
+  .controller('CatalogueController', ['$scope', '$location', 'catalogueService',
+      function($scope, $location, catalogueService) {
         $scope.products = [];
+
+        $scope.setRoute = function(handle) {
+          $location.url("/product/" + handle);
+        }
 
         catalogueService.list(function(products) {
           $scope.products = products;

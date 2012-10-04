@@ -15,6 +15,7 @@
 <table class="table list">
   <tr ng-repeat="product in products">
     <td>{{product.title}}</td>
+    <td><a ng-click="setRoute(product.handle)">Edit</a></td>
   </tr>
 </table>
 </div>
