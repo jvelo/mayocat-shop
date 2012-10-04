@@ -48,8 +48,7 @@ public class DefaultCatalogueService implements CatalogueService
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException
     {
-        // TODO
-        throw new RuntimeException("Not implemented");
+        return this.productStore.get().findAll(number, offset);
     }
 
     @Override
@@ -77,8 +76,7 @@ public class DefaultCatalogueService implements CatalogueService
     @Override
     public List<Category> findAllCategories(int number, int offset) throws StoreException
     {
-        // TODO
-        throw new RuntimeException("Not implemented");
+        return this.categoryStore.get().findAll(number, offset);
     }
 
     private String generateHandle(String title)

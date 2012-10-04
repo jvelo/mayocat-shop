@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.jdo.JDODataStoreException;
 import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -99,6 +100,37 @@ public abstract class AbstractEntityStore<T extends Entity, K extends Serializab
         } catch (JDODataStoreException e) {
             throw new StoreException(MessageFormat.format("Failed to obtain entity of type [{0}] by its id [{1}]",
                 this.type, id), e);
+        }
+    }
+
+    public List<T> findAll(Integer number, Integer offset) throws StoreException
+    {
+        PersistenceManager pm = persistenceManager.get();
+        Query q = null;
+        try {
+            q = pm.newQuery(this.getPersistentType());
+            
+            if (number > 0 && offset > 0) {
+                q.setRange(offset, offset + number);
+            } else if (number > 0) {
+                q.setRange(0, number);
+            } else if (offset > 0) {
+                q.setRange(offset, Long.MAX_VALUE);
+            }
+            
+            List<T> result = new ArrayList<T>();
+            for (T entity : (List<T>) q.execute()) {
+                result.add(entity);
+            }
+
+            return result;
+
+        } catch (JDODataStoreException e) {
+            throw new StoreException(e);
+        } finally {
+            if (null != q) {
+                q.closeAll();
+            }
         }
     }
 

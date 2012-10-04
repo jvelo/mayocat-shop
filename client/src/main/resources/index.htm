@@ -25,6 +25,7 @@
   <script src="javascripts/app.js"></script>
   <script src="javascripts/controllers.js"></script>
   <script src="javascripts/search.js"></script>
+  <script src="javascripts/catalogue.js"></script>
   <script src="javascripts/product.js"></script>
 
   <!-- IE Fix for HTML5 Tags -->
@@ -73,17 +74,33 @@
       <div class="row-fluid">
         <div class="span2">
           <div class="sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">Sidebar</li>
-              <li class="active"><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li class="nav-header">Sidebar</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+
+            <!-- Orders -->
+            <ul class="nav nav-tabs nav-stacked">
+              <li active-class="active">
+                <a href="#/order/">
+                  <h2>Orders</h2>
+                  Follow and process your latest orders
+                </a>
+              </li>
             </ul>
+
+            <!-- Products, Contents, Theme, Statistics -->
+            <ul class="nav nav-tabs nav-stacked">
+              <li active-class="active">
+                <a href="#/product/">
+                  <h2>Products</h2>
+                  Add, delete and edit products of your catalogue
+                </a>
+              </li>
+              <li active-class="active">
+                <a href="#/pages/">
+                  <h2>Contents</h2>
+                  Edit pages and news of your site
+                </a>
+              </li>
+            </ul>
+
           </div><!--/.well -->
         </div><!--/span-->
         <div class="span10" ng-view>

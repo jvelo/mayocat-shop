@@ -1,6 +1,6 @@
 'use strict';
 
-var mayocat = angular.module('mayocat', ['search', 'product']);
+var mayocat = angular.module('mayocat', ['search', 'product', 'catalogue']);
 
 // config(['$locationProvider', function($locationProvider) {
 //   $locationProvider.html5Mode(true);
@@ -8,6 +8,7 @@ var mayocat = angular.module('mayocat', ['search', 'product']);
 mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
+      when('/product/', {templateUrl: 'partials/catalogue.html', controller: 'CatalogueController'}).
       when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
       otherwise({redirectTo: '/'});
 }]);
@@ -46,6 +47,36 @@ mayocat.config(function($httpProvider) {
   }];
   $httpProvider.responseInterceptors.push(interceptor);
 });
+
+/**
+ * 'active-class' directive for <a> elements or <li> elements with a children <a>.
+ *
+ * Sets an active class when the current location path matches the path of the href attribute of the target <a>
+ * (which is either the link element on which the active-class attribute has been set, or the first link element
+ * found when descending nodes down a list element.
+ *
+ * Inspired by http://stackoverflow.com/a/12631074/1281372
+ */
+mayocat.directive('activeClass', ['$location', function(location) {
+  return {
+    restrict: ['A', 'LI'],
+    link: function(scope, element, attrs, controller) {
+      var clazz = attrs.activeClass;
+      var path = attrs.href || $(element).find("a[href]").attr('href');
+      if (path) {
+        path = path.substring(1); //hack because path does bot return including hashbang
+        scope.location = location;
+        scope.$watch('location.path()', function(newPath) {
+          if (newPath.indexOf(path) === 0) {
+              element.addClass(clazz);
+          } else {
+              element.removeClass(clazz);
+          }
+        });
+      }
+    }
+  };
+}]);
 
 mayocat.run(['$rootScope', '$http', function(scope, $http) {
 

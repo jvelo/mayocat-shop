@@ -34,6 +34,10 @@ body > div.loader {
   padding-left: 50px;
 }
 
+table.table.list {
+  margin-top: 20px;
+}
+
 body div.modal {
   /** Reset bootstrap modal border radius */
   border-radius: 0;

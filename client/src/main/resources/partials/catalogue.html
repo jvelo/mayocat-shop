@@ -1,0 +1,20 @@
+<div class="page-header">
+
+  <div class="pull-right">
+    <a href="#/category/" class="btn">Manage categories</a>
+  </div>
+
+  <h1 class="">Products</h1>
+</div>
+
+<div>
+  <button class="btn btn-primary btn-large">Add a new product</button>
+</div>
+
+<div>
+<table class="table list">
+  <tr ng-repeat="product in products">
+    <td>{{product.title}}</td>
+  </tr>
+</table>
+</div>
