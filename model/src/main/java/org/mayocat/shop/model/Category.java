@@ -1,5 +1,7 @@
 package org.mayocat.shop.model;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -9,7 +11,7 @@ import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Product implements HandleableEntity
+public class Category implements HandleableEntity
 {
     @JsonIgnore
     Long id;
@@ -28,6 +30,8 @@ public class Product implements HandleableEntity
     @Localizable
     @SearchIndex
     String description;
+    
+    List<Product> products;
     
     public String getHandle()
     {
@@ -72,7 +76,7 @@ public class Product implements HandleableEntity
        {  
           return false;  
        }  
-       final Product other = (Product) obj;  
+       final Category other = (Category) obj;  
          
        return   Objects.equal(this.title, other.title)  
              && Objects.equal(this.handle, other.handle);  
@@ -92,5 +96,6 @@ public class Product implements HandleableEntity
                  .addValue(this.handle)    
                  .toString();  
     }  
-    
+
+
 }

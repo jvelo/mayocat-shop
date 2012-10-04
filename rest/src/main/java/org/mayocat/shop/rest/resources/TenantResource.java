@@ -17,6 +17,7 @@ import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.TenantService;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
@@ -53,6 +54,8 @@ public class TenantResource implements Resource
 
             return Response.ok().build();
 
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }

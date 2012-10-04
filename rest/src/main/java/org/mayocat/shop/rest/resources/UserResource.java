@@ -18,6 +18,7 @@ import org.mayocat.shop.authorization.capability.shop.AddUser;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
@@ -52,6 +53,8 @@ public class UserResource implements Resource
 
         } catch (StoreException e) {
             throw new WebApplicationException(e);
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
                 .entity("A user with this usernane or email already exists").type(MediaType.TEXT_PLAIN_TYPE).build());

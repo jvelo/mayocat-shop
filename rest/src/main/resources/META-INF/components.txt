@@ -1,3 +1,4 @@
+org.mayocat.shop.rest.resources.CategoryResource
 org.mayocat.shop.rest.resources.ProductResource
 org.mayocat.shop.rest.resources.UserResource
 org.mayocat.shop.rest.resources.LoginResource

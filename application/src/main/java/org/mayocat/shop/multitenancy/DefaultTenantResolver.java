@@ -9,6 +9,7 @@ import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.TenantService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -64,6 +65,8 @@ public class DefaultTenantResolver implements TenantResolver
                 }
             } catch (StoreException e) {
                 this.logger.error("Error trying to resolve tenant for host {} : {}", host, e.getMessage());
+            } catch (InvalidEntityException e) {
+                throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
             } catch (EntityAlreadyExistsException e) {
                 // Has been created in between ?
                 this.logger.warn("Failed attempt at creating a tenant that already exists for host {}", host);

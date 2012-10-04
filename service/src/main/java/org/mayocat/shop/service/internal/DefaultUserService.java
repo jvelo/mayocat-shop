@@ -13,6 +13,7 @@ import org.mayocat.shop.model.User;
 import org.mayocat.shop.model.UserRole;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserRoleStore;
@@ -40,14 +41,14 @@ public class DefaultUserService implements UserService
         return this.userStore.get().findAll(number, offset);
     }
 
-    public void create(User user) throws EntityAlreadyExistsException, StoreException
+    public void create(User user) throws InvalidEntityException, EntityAlreadyExistsException, StoreException
     {
         user.setPassword(this.passwordManager.hashPassword(user.getPassword()));
 
         this.userStore.get().create(user);
     }
 
-    public void update(User entity) throws StoreException
+    public void update(User entity) throws InvalidEntityException, StoreException
     {
         this.userStore.get().update(entity);
     }
@@ -62,6 +63,8 @@ public class DefaultUserService implements UserService
             this.create(user);
         } catch (EntityAlreadyExistsException e1) {
             throw new StoreException(e1);
+        } catch (InvalidEntityException e2) {
+            throw new StoreException(e2);
         }
 
         Role role = new Role();
@@ -72,6 +75,8 @@ public class DefaultUserService implements UserService
             roleStore.get().create(role);
         } catch (EntityAlreadyExistsException e) {
             throw new StoreException(e);
+        } catch (InvalidEntityException e2) {
+            throw new StoreException(e2);
         }
 
         UserRole userRole = new UserRole();
@@ -81,6 +86,8 @@ public class DefaultUserService implements UserService
             userRoleStore.get().create(userRole);
         } catch (EntityAlreadyExistsException e) {
             throw new StoreException(e);
+        } catch (InvalidEntityException e2) {
+            throw new StoreException(e2);
         }
     }
 

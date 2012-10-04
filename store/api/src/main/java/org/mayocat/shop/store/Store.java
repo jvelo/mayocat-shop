@@ -8,9 +8,9 @@ import org.mayocat.shop.model.Entity;
 
 public interface Store<T extends Entity, K extends Serializable>
 {
-    void create(@Valid T entity) throws EntityAlreadyExistsException, StoreException;
+    void create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException, StoreException;
     
-    void update(@Valid T entity) throws StoreException;
+    void update(@Valid T entity) throws InvalidEntityException, StoreException;
     
     T findById(K id) throws StoreException;
 

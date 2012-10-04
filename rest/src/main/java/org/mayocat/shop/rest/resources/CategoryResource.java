@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
-import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Category;
 import org.mayocat.shop.service.CatalogueService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -24,10 +24,11 @@ import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
 
-@Component("ProductResource")
-@Path("/product/")
-public class ProductResource implements Resource
+@Component("CategoryResource")
+@Path("/category/")
+public class CategoryResource implements Resource
 {
+
     @Inject
     private CatalogueService catalogueService;
 
@@ -35,14 +36,14 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object getProduct(@Authorized Context context, @PathParam("handle") String handle)
+    public Object getCategory(@Authorized Context context, @PathParam("handle") String handle)
     {
         try {
-            Product product = this.catalogueService.findProductByHandle(handle);
-            if (product == null) {
+            Category category = this.catalogueService.findCategoryByHandle(handle);
+            if (category == null) {
                 return Response.status(404).build();
             }
-            return product;
+            return category;
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
@@ -52,15 +53,15 @@ public class ProductResource implements Resource
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProduct(@Authorized Context context, @PathParam("handle") String handle,
-        Product updatedProduct)
+    public Response updateCategory(@Authorized Context context, @PathParam("handle") String handle,
+        Category updatedCategory)
     {
         try {
-            Product product = this.catalogueService.findProductByHandle(handle);
-            if (product == null) {
+            Category category = this.catalogueService.findCategoryByHandle(handle);
+            if (category == null) {
                 return Response.status(404).build();
             } else {
-                this.catalogueService.updateProduct(updatedProduct);
+                this.catalogueService.updateCategory(updatedCategory);
             }
 
             return Response.ok().build();
@@ -76,7 +77,8 @@ public class ProductResource implements Resource
     @PUT
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceProduct(@Authorized Context context, @PathParam("handle") String handle, Product newProduct)
+    public Response replaceCategory(@Authorized Context context, @PathParam("handle") String handle,
+        Category newCategory)
     {
         // TODO
         throw new RuntimeException("Not implemented");
@@ -85,10 +87,10 @@ public class ProductResource implements Resource
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createProduct(@Authorized(value = AddProduct.class) Context context, Product product)
+    public Response createCategory(@Authorized(value = AddProduct.class) Context context, Category Category)
     {
         try {
-            this.catalogueService.createProduct(product);
+            this.catalogueService.createCategory(Category);
 
             return Response.ok().build();
         } catch (StoreException e) {
@@ -97,7 +99,7 @@ public class ProductResource implements Resource
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A product with this handle already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
+                .entity("A Category with this handle already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 }

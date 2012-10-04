@@ -1,3 +1,4 @@
+org.mayocat.shop.store.datanucleus.DNCategoryStore
 org.mayocat.shop.store.datanucleus.DNProductStore
 org.mayocat.shop.store.datanucleus.DNUserStore
 org.mayocat.shop.store.datanucleus.DNTenantStore
@@ -7,6 +8,7 @@ org.mayocat.shop.store.datanucleus.DefaultPersistenceManagerProdiver
 org.mayocat.shop.store.datanucleus.LifeCycle
 org.mayocat.shop.store.datanucleus.DataNucleusStoreHealthCheck
 org.mayocat.shop.store.provider.ProductStoreProvider
+org.mayocat.shop.store.provider.CategoryStoreProvider
 org.mayocat.shop.store.provider.TenantStoreProvider
 org.mayocat.shop.store.provider.UserStoreProvider
 org.mayocat.shop.store.provider.RoleStoreProvider

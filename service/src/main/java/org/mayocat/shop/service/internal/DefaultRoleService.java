@@ -9,6 +9,7 @@ import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.RoleService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
@@ -21,13 +22,13 @@ public class DefaultRoleService implements RoleService
     private Provider<RoleStore> roleStore;
 
     @Override
-    public void create(Role entity) throws EntityAlreadyExistsException, StoreException
+    public void create(Role entity) throws InvalidEntityException, EntityAlreadyExistsException, StoreException
     {
         this.roleStore.get().create(entity);
     }
 
     @Override
-    public void update(Role entity) throws StoreException
+    public void update(Role entity) throws InvalidEntityException, StoreException
     {
         this.roleStore.get().update(entity);
     }

@@ -8,6 +8,7 @@ import javax.inject.Provider;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.TenantService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.TenantStore;
 import org.xwiki.component.annotation.Component;
@@ -19,13 +20,13 @@ public class DefaultTenantService implements TenantService
     private Provider<TenantStore> tenantStore;
 
     @Override
-    public void create(Tenant entity) throws EntityAlreadyExistsException, StoreException
+    public void create(Tenant entity) throws InvalidEntityException, EntityAlreadyExistsException, StoreException
     {
         this.tenantStore.get().create(entity);
     }
 
     @Override
-    public void update(Tenant entity) throws StoreException
+    public void update(Tenant entity) throws InvalidEntityException, StoreException
     {
         this.tenantStore.get().update(entity);
 

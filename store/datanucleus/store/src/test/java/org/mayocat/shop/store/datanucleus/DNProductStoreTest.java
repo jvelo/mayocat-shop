@@ -47,6 +47,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     {
         Product p = new Product();
         p.setHandle("waterproof-fly-swatter");
+        p.setTitle("Waterproof Fly Swatter");
 
         ps.create(p);
 
@@ -59,6 +60,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     {
         Product p = new Product();
         p.setHandle("leopard-fishnet-tights");
+        p.setTitle("Leopard Fishnet Tights");
 
         ps.create(p);
         
@@ -66,6 +68,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
         
         Product p2 = new Product();
         p2.setHandle("leopard-fishnet-tights");;
+        p2.setTitle("Leopard Fishnet Tights");
 
         ps.create(p2);
 
@@ -79,12 +82,14 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
 
         Product p = new Product();
         p.setHandle("peugeot-403-convertible");
+        p.setTitle("Peugeot 403 convertible");
 
         ps.create(p);
 
         Product p2 = new Product();
         p2.setHandle("peugeot-403-convertible");
-
+        p2.setTitle("Peugeot 403 convertible");
+        
         ps.create(p2);
     }
 
@@ -99,7 +104,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
 
         product = new Product();
         product.setHandle("face-skin-mask");
-        
+       
         product.setTitle("Horse Head Mask");
         ps.update(product);
 
