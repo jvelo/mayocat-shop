@@ -21,27 +21,7 @@
    </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-base</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-authorization</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-rest</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-store-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -67,12 +47,6 @@
           <artifactId>mayocat-model</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
