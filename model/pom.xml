@@ -12,7 +12,7 @@
   <name>Mayocat Model</name>
   <description>Model classes for MayocatShop</description>
   <dependencies>
-  
+
      <!-- XWiki -->
     <dependency>
     <groupId>org.xwiki.commons</groupId>

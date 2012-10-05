@@ -1,12 +1,13 @@
-package org.mayocat.shop.authorization;
+package org.mayocat.shop.context;
 
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 
 public class Context
 {
-    
+
     private Tenant tenant;
+    
     private User user;
 
     public Context(Tenant tenant, User user)
@@ -23,6 +24,5 @@ public class Context
     {
         return user;
     }
-    
-    
+
 }

@@ -5,7 +5,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.Context;
+import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.multitenancy.TenantResolver;
 

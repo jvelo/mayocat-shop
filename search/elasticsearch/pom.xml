@@ -29,13 +29,11 @@
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-configuration</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Elastic Search -->

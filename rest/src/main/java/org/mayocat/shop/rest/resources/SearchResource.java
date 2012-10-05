@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.HandleableEntity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.search.SearchEngine;

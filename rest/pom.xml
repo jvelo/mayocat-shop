@@ -16,27 +16,13 @@
 
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-authorization</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>  
-    <dependency>
-      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-store-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-search-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-base</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
@@ -46,9 +32,13 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-service</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Drop Wizard --> 

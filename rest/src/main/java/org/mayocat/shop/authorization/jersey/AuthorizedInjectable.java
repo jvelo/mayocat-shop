@@ -10,10 +10,10 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.Authenticator;
 import org.mayocat.shop.authorization.Capability;
-import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.Gatekeeper;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddUser;
+import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.multitenancy.TenantResolver;

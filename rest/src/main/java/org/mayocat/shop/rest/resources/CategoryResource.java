@@ -12,9 +12,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.Context;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
+import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.service.CatalogueService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;

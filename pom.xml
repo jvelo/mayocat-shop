@@ -72,6 +72,7 @@
     <module>model</module>
     <module>base</module>
     <module>store</module>
+    <module>context</module>
     <module>search</module>
     <module>service</module>
     <module>authorization</module>
