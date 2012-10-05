@@ -92,7 +92,7 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
         // add them later on in the execution of the application when in a multitenancy context), and since some
         // constraints (like unicity of handles per tenant) are expressed using the tenant ID column,
         // creation of the schema would fail.
-        //props.put("datanucleus.tenantId", "");
+        props.put("datanucleus.tenantId", "");
         
         JDOPersistenceManagerFactory pmf = (JDOPersistenceManagerFactory) JDOHelper.getPersistenceManagerFactory(props);
         NucleusContext ctx = pmf.getNucleusContext();
