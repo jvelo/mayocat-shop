@@ -74,7 +74,7 @@
       <groupId>org.datanucleus</groupId>
       <artifactId>datanucleus-core</artifactId>
       <version>${datanucleus.version}</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -98,7 +98,7 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-test</artifactId>
@@ -106,9 +106,9 @@
       <scope>test</scope>
     </dependency>
 
-  	<!-- Override the version of jmock dragged by xwiki-commons-test so that we can use the @Rule JUnit annotation
-	       for declaring exception expectations.
-	       See http://baddotrobot.com/blog/2012/03/27/expecting-exception-with-junit-rule/ -->
+    <!-- Override the version of jmock dragged by xwiki-commons-test so that we can use the @Rule JUnit annotation
+         for declaring exception expectations.
+         See http://baddotrobot.com/blog/2012/03/27/expecting-exception-with-junit-rule/ -->
     <dependency>
       <groupId>org.jmock</groupId>
       <artifactId>jmock</artifactId>
@@ -122,27 +122,27 @@
       <version>2.6.0-RC2</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- somehow not dragged by xwiki-commons-test -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.0.6</version>
       <scope>test</scope>
-	  </dependency>
-    
+    </dependency>
+
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
-	  <groupId>javax.validation</groupId>
-	  <artifactId>validation-api</artifactId>
-	  <version>1.0.0.GA</version>
-	  <!-- <scope>test</scope>-->
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+      <!-- <scope>test</scope>-->
     </dependency>
 
   </dependencies>

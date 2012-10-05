@@ -9,9 +9,11 @@ import org.mayocat.shop.base.Managed;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
+import org.mayocat.shop.event.ApplicationStartedEvent;
 import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
+import org.xwiki.observation.ObservationManager;
 
 import com.google.common.cache.CacheBuilderSpec;
 import com.yammer.dropwizard.Service;
@@ -70,7 +72,7 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
                 environment.addHealthCheck((com.yammer.metrics.core.HealthCheck) check.getValue());
             }
         }
-        
+
         // Registering tasks implementations against the environment
         Map<String, Task> tasks = componentManager.getInstanceMap(Task.class);
         for (Map.Entry<String, Task> task : tasks.entrySet()) {
@@ -78,13 +80,15 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
                 environment.addTask((com.yammer.dropwizard.tasks.Task) task.getValue());
             }
         }
-        
+
         // Managed services that show a managed lifecycle
         Map<String, Managed> managedServices = componentManager.getInstanceMap(Managed.class);
         for (Map.Entry<String, Managed> managed : managedServices.entrySet()) {
             environment.manage(managed.getValue());
         }
 
+        ObservationManager observationManager = componentManager.getInstance(ObservationManager.class);
+        observationManager.notify(new ApplicationStartedEvent(), this);
     }
 
     private void registerConfigurationsAsComponents(MayocatShopConfiguration configuration)

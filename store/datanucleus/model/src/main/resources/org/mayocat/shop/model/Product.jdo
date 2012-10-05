@@ -33,7 +33,7 @@
         <index />
       </field>
 
-      <!-- Title field -->
+      <!-- Description field -->
       <field name="description">
         <column length="10000" jdbc-type="LONGVARCHAR"/>
       </field>
