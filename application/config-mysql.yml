@@ -1,9 +1,11 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
-      # "DataNucleus.Datastore.Native": DEBUG
-      # "DataNucleus.Plugin": DEBUG
-      # "DataNucleus.Connection": DEBUG
+      #"DataNucleus.Datastore.Native": DEBUG
+      #"DataNucleus.Datastore.Schema": DEBUG
+      #"DataNucleus.Plugin": DEBUG
+      #"DataNucleus.Connection": DEBUG
+      #"DataNucleus.SchemaTool": DEBUG
 
   file:
     archive: false

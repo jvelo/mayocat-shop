@@ -14,4 +14,5 @@ java \
   org.mayocat.shop.application.MayocatShopService \
   server \
   config-mysql.yml
+#  config-dev.yml
 

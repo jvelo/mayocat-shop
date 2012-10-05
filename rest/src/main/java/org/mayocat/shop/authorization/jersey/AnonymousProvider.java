@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.base.Provider;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.multitenancy.TenantResolver;
 
 import com.sun.jersey.api.model.Parameter;
@@ -18,6 +19,9 @@ public class AnonymousProvider implements InjectableProvider<Anonymous, Paramete
     @Inject
     private javax.inject.Provider<TenantResolver> tenantResolverProvider;
     
+    @Inject
+    private Execution execution;
+    
     @Override
     public ComponentScope getScope()
     {
@@ -27,7 +31,7 @@ public class AnonymousProvider implements InjectableProvider<Anonymous, Paramete
     @Override
     public Injectable< ? > getInjectable(ComponentContext ic, Anonymous a, Parameter c)
     {
-        return new AnonymousInjectable(tenantResolverProvider);
+        return new AnonymousInjectable(tenantResolverProvider, execution);
     }
 
 }

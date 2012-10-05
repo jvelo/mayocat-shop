@@ -5,5 +5,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface Execution
 {
-    Context getContext();   
+    Context getContext();
+    
+    void setContext(Context context);
 }

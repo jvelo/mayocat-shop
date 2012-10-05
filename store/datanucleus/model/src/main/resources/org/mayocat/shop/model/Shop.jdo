@@ -21,6 +21,15 @@
         <index />
       </field>
 
+      <!-- All this shop products. This is useful to maintain product ordering when
+           the shop is not using categories, or for products that are not associated
+           with any category
+      -->
+      <field name="products"  default-fetch-group="true">
+        <collection element-type="org.mayocat.shop.model.Product"/>
+        <element column="shop_id" />
+      </field>
+
     </class>
   </package>
 </jdo>

@@ -93,6 +93,7 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
         // constraints (like unicity of handles per tenant) are expressed using the tenant ID column,
         // creation of the schema would fail.
         props.put("datanucleus.tenantId", "");
+        props.put("datanucleus.autoCreateTables", "true");
         
         JDOPersistenceManagerFactory pmf = (JDOPersistenceManagerFactory) JDOHelper.getPersistenceManagerFactory(props);
         NucleusContext ctx = pmf.getNucleusContext();
@@ -201,12 +202,17 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
     {
         Properties props = new Properties();
         props.put("javax.jdo.PersistenceManagerFactoryClass", "org.datanucleus.api.jdo.JDOPersistenceManagerFactory");
-        props.put("datanucleus.autoCreateSchema", "true");
         props.put("datanucleus.autoCreateWarnOnError", "false");
         props.put("datanucleus.validateTables", "false");
         props.put("datanucleus.validateConstraints", "true");
         props.put("datanucleus.identifier.case", "PreserveCase");
 
+        // Ensure schema are not automatically created. This causes issues when performed in a non multi-tenant context
+        // (i.e. a PMF created without the "datanucleus.tenantId" property set, because some constraints need the tenant
+        // column to be present.
+        // Instead, we ensure automatic schema creation at startup of the application, programmatically.
+        props.put("datanucleus.autoCreateSchema", "false");
+        
         // Ensure field values are not unloaded when object are moved into hollow state.
         props.put("datanucleus.RetainValues", "true");
 

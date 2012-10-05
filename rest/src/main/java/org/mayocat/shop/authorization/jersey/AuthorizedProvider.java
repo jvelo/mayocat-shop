@@ -8,6 +8,7 @@ import org.mayocat.shop.authorization.Authenticator;
 import org.mayocat.shop.authorization.Gatekeeper;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.base.Provider;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.multitenancy.TenantResolver;
 import org.mayocat.shop.service.UserService;
 import org.xwiki.component.annotation.Component;
@@ -32,7 +33,10 @@ public class AuthorizedProvider implements InjectableProvider<Authorized, Parame
 
     @Inject
     private UserService userService;
-    
+
+    @Inject
+    private Execution execution;
+
     @Override
     public ComponentScope getScope()
     {
@@ -42,7 +46,7 @@ public class AuthorizedProvider implements InjectableProvider<Authorized, Parame
     @Override
     public Injectable< ? > getInjectable(ComponentContext ic, Authorized a, Parameter c)
     {
-        return new AuthorizedInjectable(userService, tenantResolverProvider, authenticators, gatekeeper, a);
+        return new AuthorizedInjectable(userService, tenantResolverProvider, authenticators, gatekeeper, a, execution);
     }
 
 }

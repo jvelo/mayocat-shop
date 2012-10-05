@@ -6,13 +6,18 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.shop.context.Context;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Shop;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.CatalogueService;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.ProductStore;
+import org.mayocat.shop.store.ShopStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
@@ -21,6 +26,12 @@ import com.google.common.base.Strings;
 @Component
 public class DefaultCatalogueService implements CatalogueService
 {
+    @Inject
+    private Execution execution;
+
+    @Inject
+    private Provider<ShopStore> shopStore;
+
     @Inject
     private Provider<ProductStore> productStore;
 
@@ -34,6 +45,14 @@ public class DefaultCatalogueService implements CatalogueService
             entity.setHandle(this.generateHandle(entity.getTitle()));
         }
         this.productStore.get().create(entity);
+
+        Context context = this.execution.getContext();
+
+        Tenant tenant = context.getTenant();
+        Shop shop = tenant.getShop();
+        shop.addToProducts(entity);
+        this.shopStore.get().update(shop);
+
     }
 
     public void updateProduct(Product entity) throws InvalidEntityException, StoreException

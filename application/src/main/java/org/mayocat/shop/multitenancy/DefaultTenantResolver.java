@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
+import org.mayocat.shop.model.Shop;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.TenantService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -50,7 +51,9 @@ public class DefaultTenantResolver implements TenantResolver
                     
                     tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
                     if (tenant == null) {
-                        this.tenantService.create(new Tenant(this.configuration.getDefaultTenant()));
+                        Tenant tenantToCreate = new Tenant(this.configuration.getDefaultTenant());
+                        tenantToCreate.setShop(new Shop());
+                        this.tenantService.create(tenantToCreate);
                         tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
                     }
                     this.resolved.get().put(host, tenant);

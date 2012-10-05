@@ -116,7 +116,7 @@ public class ProductResource implements Resource
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A product with this handle already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
+                .entity("A product with this handle already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 }

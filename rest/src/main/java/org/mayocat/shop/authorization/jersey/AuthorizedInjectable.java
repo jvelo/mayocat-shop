@@ -14,6 +14,7 @@ import org.mayocat.shop.authorization.Gatekeeper;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddUser;
 import org.mayocat.shop.context.Context;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.multitenancy.TenantResolver;
@@ -36,11 +37,11 @@ class AuthorizedInjectable extends AnonymousInjectable
     private Gatekeeper gatekeeper;
 
     private UserService userService;
-
+    
     AuthorizedInjectable(UserService userService, Provider<TenantResolver> provider,
-        Map<String, Authenticator> authenticators, Gatekeeper gatekeeper, Authorized auth)
+        Map<String, Authenticator> authenticators, Gatekeeper gatekeeper, Authorized auth, Execution execution)
     {
-        super(provider);
+        super(provider, execution);
 
         this.authenticators = authenticators;
         this.gatekeeper = gatekeeper;
@@ -56,6 +57,7 @@ class AuthorizedInjectable extends AnonymousInjectable
         // Not calling super.getValue() here to get the tenant as it results in calling the
         // AbstractHttpContextInjectable#getValue()
         // not AnonymousInjectable
+        Context context;
         Tenant tenant = this.provider.get().resolve(httpContext.getUriInfo().getBaseUri().getHost());
         if (tenant == null) {
 
@@ -79,7 +81,9 @@ class AuthorizedInjectable extends AnonymousInjectable
                     if (user.isPresent()) {
                         if (capabilities.length == 0) {
                             // No capability declared, just return authenticated user
-                            return new Context(tenant, user.get());
+                            context = new Context(tenant, user.get());
+                            this.execution.setContext(context);
+                            return context;
                         }
                         // We have a valid user... now verify capabilities
                         boolean hasAllRequiredCapabilities = true;
@@ -87,7 +91,9 @@ class AuthorizedInjectable extends AnonymousInjectable
                             hasAllRequiredCapabilities &= this.gatekeeper.hasCapability(user.get(), capability);
                         }
                         if (hasAllRequiredCapabilities) {
-                            return new Context(tenant, user.get());
+                            context = new Context(tenant, user.get());
+                            this.execution.setContext(context);
+                            return context;
                         }
                     }
                 }
@@ -123,7 +129,9 @@ class AuthorizedInjectable extends AnonymousInjectable
                     .entity("Insufficient privileges").type(MediaType.TEXT_PLAIN_TYPE).build());
             }
         }
-        return new Context(tenant, user.orNull());
+        context = new Context(tenant, user.orNull());
+        this.execution.setContext(context);
+        return context;
     }
 
     private boolean isTenantEmptyOfUser()

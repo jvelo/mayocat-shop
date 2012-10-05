@@ -10,7 +10,6 @@ import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
-import javax.jdo.spi.PersistenceCapable;
 
 import org.mayocat.shop.model.HandleableEntity;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
