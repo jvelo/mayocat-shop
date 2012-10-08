@@ -1,9 +1,14 @@
 package org.mayocat.shop.store.datanucleus;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.jdo.JDOHelper;
 
+import org.datanucleus.NucleusContext;
+import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
+import org.datanucleus.store.schema.SchemaAwareStoreManager;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -38,7 +43,24 @@ public abstract class AbstractStoreEntityTestCase extends AbstractMockingCompone
     public void setUpStore()
     {
         Properties props = defaultProperties();
-        this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
+        JDOPersistenceManagerFactory pmf = (JDOPersistenceManagerFactory) JDOHelper.getPersistenceManagerFactory(props);
+        this.provider.set(pmf.getPersistenceManager());
+
+        Set<String> classNames = new HashSet<String>();
+
+        // FIXME Refactor this so that we don't have to list all entity classes.
+        classNames.add("org.mayocat.shop.model.Category");
+        classNames.add("org.mayocat.shop.model.User");
+        classNames.add("org.mayocat.shop.model.Product");
+        classNames.add("org.mayocat.shop.model.Role");
+        classNames.add("org.mayocat.shop.model.Shop");
+        classNames.add("org.mayocat.shop.model.Tenant");
+        classNames.add("org.mayocat.shop.model.UserRole");
+        NucleusContext ctx = pmf.getNucleusContext();
+
+        Properties properties = new Properties();
+        // Set any properties for schema generation
+        ((SchemaAwareStoreManager) ctx.getStoreManager()).createSchema(classNames, properties);
     }
 
     /**

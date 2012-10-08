@@ -6,18 +6,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.shop.context.Context;
-import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.model.Shop;
-import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.CatalogueService;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.ProductStore;
-import org.mayocat.shop.store.ShopStore;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
@@ -27,12 +22,6 @@ import com.google.common.base.Strings;
 public class DefaultCatalogueService implements CatalogueService
 {
     @Inject
-    private Execution execution;
-
-    @Inject
-    private Provider<ShopStore> shopStore;
-
-    @Inject
     private Provider<ProductStore> productStore;
 
     @Inject
@@ -41,18 +30,27 @@ public class DefaultCatalogueService implements CatalogueService
     public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException,
         StoreException
     {
+        Category allProducts = this.categoryStore.get().findByHandle("_all");
+        if (allProducts == null) {
+            // Lazily create the "all products" special category
+            allProducts = new Category();
+            allProducts.setHandle("_all");
+            allProducts.setTitle("");
+            allProducts.setSpecial(true);
+            this.categoryStore.get().create(allProducts);
+        }
+
         if (Strings.isNullOrEmpty(entity.getHandle())) {
             entity.setHandle(this.generateHandle(entity.getTitle()));
         }
-        this.productStore.get().create(entity);
+        
+        // We could just update/create the entity, but no "product created event would be fired, so
+        // we save the products in base explicitly.
+        productStore.get().create(entity);
 
-        Context context = this.execution.getContext();
+        allProducts.addToProducts(entity);
 
-        Tenant tenant = context.getTenant();
-        Shop shop = tenant.getShop();
-        shop.addToProducts(entity);
-        this.shopStore.get().update(shop);
-
+        this.categoryStore.get().update(allProducts);
     }
 
     public void updateProduct(Product entity) throws InvalidEntityException, StoreException
@@ -67,7 +65,8 @@ public class DefaultCatalogueService implements CatalogueService
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException
     {
-        return this.productStore.get().findAll(number, offset);
+        Category category = this.categoryStore.get().findByHandle("_all");
+        return category.getProducts();
     }
 
     @Override
@@ -102,6 +101,45 @@ public class DefaultCatalogueService implements CatalogueService
     {
         return Normalizer.normalize(title.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "").replaceAll("\\s+", "-");
+    }
+
+    @Override
+    public void moveProductInCategory(Category category, String handleOfProductToMove, String handleOfProductToMoveBeforeOf)
+        throws StoreException
+    {
+        int position = -1;
+        Product toMove = null;
+        int i = 0;
+        for (Product product : category.getProducts()) {
+            if (product.getHandle().equals(handleOfProductToMove)) {
+                toMove = product;
+            }
+        }
+        if (toMove == null) {
+            // TODO throw exception
+            return;
+        }
+        
+        category.getProducts().remove(toMove);
+        
+        for (Product product : category.getProducts()) {
+            if (product.getHandle().equals(handleOfProductToMoveBeforeOf)) {
+                position = i;
+            }
+            i++;
+        }
+        
+        if (position < 0) {
+            // TODO throw exception            
+            return;
+        }
+        
+        category.getProducts().add(position, toMove);
+        try {
+            this.categoryStore.get().update(category);
+        } catch (InvalidEntityException e) {
+            throw new StoreException(e);
+        }
     }
 
 }

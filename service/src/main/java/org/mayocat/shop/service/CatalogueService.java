@@ -33,6 +33,8 @@ public interface CatalogueService
     
     void updateCategory(Category entity) throws InvalidEntityException, StoreException;
     
+    void moveProductInCategory(Category category, String handleOfProductToMove, String handleOfProductToMoveBeforeOf) throws StoreException;
+    
     Category findCategoryByHandle(String handle) throws StoreException;
     
     List<Category> findAllCategories(int number, int offset) throws StoreException;

@@ -12,7 +12,7 @@
       <extension vendor-name="datanucleus" key="multitenancy-column-length" value="255"/>
 
       <!-- Enforce unique handle per tenant -->
-      <unique name="UNIQUE_HANDLE_PER_TENANT">
+      <unique name="UNIQUE_USER_HANDLE_PER_TENANT">
         <column name="tenant"/>
         <column name="handle"/>
       </unique>

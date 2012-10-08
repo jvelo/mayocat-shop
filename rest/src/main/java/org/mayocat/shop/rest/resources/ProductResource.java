@@ -24,6 +24,7 @@ import org.mayocat.shop.service.CatalogueService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
@@ -35,6 +36,9 @@ public class ProductResource implements Resource
     @Inject
     private CatalogueService catalogueService;
 
+    @Inject
+    private Logger logger;
+    
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
@@ -46,6 +50,7 @@ public class ProductResource implements Resource
             return products;
         }
         catch (StoreException e) {
+            this.logger.error("Error while getting products", e);
             throw new WebApplicationException(e);
         }
     }
@@ -63,6 +68,7 @@ public class ProductResource implements Resource
             }
             return product;
         } catch (StoreException e) {
+            this.logger.error("Error while getting product", e);
             throw new WebApplicationException(e);
         }
     }
@@ -85,8 +91,10 @@ public class ProductResource implements Resource
             return Response.ok().build();
 
         } catch (StoreException e) {
+            this.logger.error("Error while updating product", e);
             throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
+            this.logger.error("Error while updating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         }
     }
@@ -111,10 +119,13 @@ public class ProductResource implements Resource
 
             return Response.ok().build();
         } catch (StoreException e) {
-            throw new WebApplicationException(e);
+            this.logger.error("Error while creating product", e);
+            throw new WebApplicationException(e);            
         } catch (InvalidEntityException e) {
+            this.logger.error("Error while creating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
+            this.logger.error("Error while creating product: entity already exists", e);
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
                 .entity("A product with this handle already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }

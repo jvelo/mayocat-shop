@@ -2,12 +2,14 @@ package org.mayocat.shop.rest.resources;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -45,6 +47,23 @@ public class CategoryResource implements Resource
             }
             return category;
         } catch (StoreException e) {
+            throw new WebApplicationException(e);
+        }
+    }
+
+    @Path("{handle}/move")
+    @POST
+    @Timed
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response changePosition(@Authorized Context context, @PathParam("handle") String handle,
+        @FormParam("product") String handleOfProductToMove, @FormParam("before") String handleOfProductToMoveBeforeOf)
+    {
+        try {
+            Category category = this.catalogueService.findCategoryByHandle(handle);
+            this.catalogueService.moveProductInCategory(category, handleOfProductToMove, handleOfProductToMoveBeforeOf);
+            return Response.ok().build();
+        }
+        catch (StoreException e) {
             throw new WebApplicationException(e);
         }
     }
@@ -87,10 +106,10 @@ public class CategoryResource implements Resource
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCategory(@Authorized(value = AddProduct.class) Context context, Category Category)
+    public Response createCategory(@Authorized(value = AddProduct.class) Context context, Category category)
     {
         try {
-            this.catalogueService.createCategory(Category);
+            this.catalogueService.createCategory(category);
 
             return Response.ok().build();
         } catch (StoreException e) {

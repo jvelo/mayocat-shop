@@ -53,7 +53,7 @@ public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, 
     }
 
     public T findByHandle(String handle) throws StoreException
-    {
+    {        
         PersistenceManager pm = null;
         Query q = null;
         try {
@@ -92,7 +92,14 @@ public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, 
                 boolean setterAccessible = method.isAccessible();
 
                 // Find the equivalent getter and ensure it is accessible
-                Method getter = valueObject.getClass().getMethod("get" + method.getName().substring(3));
+                Method getter;
+                try {
+                    getter = valueObject.getClass().getMethod("get" + method.getName().substring(3));
+                }
+                catch (java.lang.NoSuchMethodException e) {
+                    // Try isXxx for booleans
+                    getter = valueObject.getClass().getMethod("is" + method.getName().substring(3));
+                }
                 boolean getterAccessible = getter.isAccessible();
                 getter.setAccessible(true);
 

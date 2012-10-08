@@ -10,8 +10,8 @@
       <extension vendor-name="datanucleus" key="multitenancy-column-name" value="tenant"/>
       <extension vendor-name="datanucleus" key="multitenancy-column-length" value="255"/>
 
-      <!-- Enforce unique product handle per tenant -->
-      <unique name="UNIQUE_NAME_PER_TENANT">
+      <!-- Enforce unique category handle per tenant -->
+      <unique name="UNIQUE_CATEGORY_NAME_PER_TENANT">
         <column name="tenant"/>
         <column name="handle"/>
       </unique>
@@ -38,8 +38,11 @@
         <column length="10000" jdbc-type="LONGVARCHAR" />
       </field>
 
+      <!-- Special field -->
+      <field name="special" />
+
       <!-- list of products -->
-      <field name="products" table="category_products">
+      <field name="products" table="category_products" default-fetch-group="true">
         <collection element-type="org.mayocat.shop.model.Product" />
         <join />
       </field>
