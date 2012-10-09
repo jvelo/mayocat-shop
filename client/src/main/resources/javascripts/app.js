@@ -1,6 +1,6 @@
 'use strict';
 
-var mayocat = angular.module('mayocat', ['search', 'product', 'catalogue', 'jqui']);
+var mayocat = angular.module('mayocat', ['search', 'product', 'catalog', 'jqui']);
 
 // config(['$locationProvider', function($locationProvider) {
 //   $locationProvider.html5Mode(true);
@@ -8,7 +8,7 @@ var mayocat = angular.module('mayocat', ['search', 'product', 'catalogue', 'jqui
 mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
-      when('/product/', {templateUrl: 'partials/catalogue.html', controller: 'CatalogueController'}).
+      when('/product/', {templateUrl: 'partials/catalog.html', controller: 'CatalogController'}).
       when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
       otherwise({redirectTo: '/'});
 }]);

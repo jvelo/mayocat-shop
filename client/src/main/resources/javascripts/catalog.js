@@ -1,7 +1,7 @@
 'use strict'
 
-angular.module('catalogue', [])
-  .service('catalogueService', function($http){
+angular.module('catalog', [])
+  .service('catalogService', function($http){
     return {
       list: function(callback) {
         $http.get('/product/').success(function(data) {
@@ -18,8 +18,8 @@ angular.module('catalogue', [])
 
     };
   })
-  .controller('CatalogueController', ['$scope', '$location', 'catalogueService',
-      function($scope, $location, catalogueService) {
+  .controller('CatalogController', ['$scope', '$location', 'catalogService',
+      function($scope, $location, catalogService) {
 
         // List of products
         $scope.products = [];
@@ -31,12 +31,12 @@ angular.module('catalogue', [])
           $location.url("/product/" + handle);
         };
 
-        catalogueService.list(function(products) {
+        catalogService.list(function(products) {
           $scope.products = products;
         });
 
         $scope.changePosition = function() {
-          catalogueService.move($scope.changeOperation.handle, $scope.changeOperation.target, $scope.changeOperation.position);
+          catalogService.move($scope.changeOperation.handle, $scope.changeOperation.target, $scope.changeOperation.position);
           $scope.changeOperation = undefined;
         };
   }]);

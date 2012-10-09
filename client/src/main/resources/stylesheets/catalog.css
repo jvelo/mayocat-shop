@@ -1,17 +1,17 @@
-#catalogue ul {
+#catalog ul {
   /*list-style: none outside none;*/
   margin-left: 0;
 }
 
-#catalogue ul li {
+#catalog ul li {
   color: white;
 }
 
-#catalogue ul li div {
+#catalog ul li div {
   color: #333;
 }
 
-#catalogue ul li div.row {
+#catalog ul li div.row {
   margin-left: 0;
 }
 
