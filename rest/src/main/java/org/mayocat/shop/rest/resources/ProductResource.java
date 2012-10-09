@@ -20,7 +20,7 @@ import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.service.CatalogueService;
+import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
@@ -34,7 +34,7 @@ import com.yammer.metrics.annotation.Timed;
 public class ProductResource implements Resource
 {
     @Inject
-    private CatalogueService catalogueService;
+    private CatalogService catalogueService;
 
     @Inject
     private Logger logger;

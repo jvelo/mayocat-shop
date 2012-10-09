@@ -9,7 +9,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,7 +17,7 @@ import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Category;
-import org.mayocat.shop.service.CatalogueService;
+import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
@@ -32,7 +31,7 @@ public class CategoryResource implements Resource
 {
 
     @Inject
-    private CatalogueService catalogueService;
+    private CatalogService catalogService;
 
     @Path("{handle}")
     @GET
@@ -41,7 +40,7 @@ public class CategoryResource implements Resource
     public Object getCategory(@Authorized Context context, @PathParam("handle") String handle)
     {
         try {
-            Category category = this.catalogueService.findCategoryByHandle(handle);
+            Category category = this.catalogService.findCategoryByHandle(handle);
             if (category == null) {
                 return Response.status(404).build();
             }
@@ -59,8 +58,8 @@ public class CategoryResource implements Resource
         @FormParam("product") String handleOfProductToMove, @FormParam("before") String handleOfProductToMoveBeforeOf)
     {
         try {
-            Category category = this.catalogueService.findCategoryByHandle(handle);
-            this.catalogueService.moveProductInCategory(category, handleOfProductToMove, handleOfProductToMoveBeforeOf);
+            Category category = this.catalogService.findCategoryByHandle(handle);
+            this.catalogService.moveProductInCategory(category, handleOfProductToMove, handleOfProductToMoveBeforeOf);
             return Response.ok().build();
         }
         catch (StoreException e) {
@@ -76,11 +75,11 @@ public class CategoryResource implements Resource
         Category updatedCategory)
     {
         try {
-            Category category = this.catalogueService.findCategoryByHandle(handle);
+            Category category = this.catalogService.findCategoryByHandle(handle);
             if (category == null) {
                 return Response.status(404).build();
             } else {
-                this.catalogueService.updateCategory(updatedCategory);
+                this.catalogService.updateCategory(updatedCategory);
             }
 
             return Response.ok().build();
@@ -109,7 +108,7 @@ public class CategoryResource implements Resource
     public Response createCategory(@Authorized(value = AddProduct.class) Context context, Category category)
     {
         try {
-            this.catalogueService.createCategory(category);
+            this.catalogService.createCategory(category);
 
             return Response.ok().build();
         } catch (StoreException e) {

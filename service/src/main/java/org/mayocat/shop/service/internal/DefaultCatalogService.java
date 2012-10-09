@@ -8,7 +8,7 @@ import javax.inject.Provider;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.service.CatalogueService;
+import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -19,7 +19,7 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 
 @Component
-public class DefaultCatalogueService implements CatalogueService
+public class DefaultCatalogService implements CatalogService
 {
     @Inject
     private Provider<ProductStore> productStore;

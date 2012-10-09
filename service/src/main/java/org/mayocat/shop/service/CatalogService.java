@@ -10,12 +10,12 @@ import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Role;
 
 /**
- * Regroups product, product variants and catalogue operations.
+ * Regroup product, product variants and catalog operations.
  * 
  * @version $Id$
  */
 @Role
-public interface CatalogueService
+public interface CatalogService
 {
     // Product operations
     
