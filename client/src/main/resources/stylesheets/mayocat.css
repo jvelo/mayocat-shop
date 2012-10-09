@@ -25,6 +25,10 @@ body > div.loader {
   min-height: 34px;
 }
 
+.dragme {
+  cursor: pointer;
+}
+
 .entity.loading {
   background-position: left;
   margin-left: 0px;
@@ -32,10 +36,6 @@ body > div.loader {
 
 .entity {
   padding-left: 50px;
-}
-
-table.table.list {
-  margin-top: 20px;
 }
 
 body div.modal {

@@ -16,9 +16,11 @@
       return {
         link: function (scope, item, attrs) {
           var sortableOnChangeExp = attrs.sortableOnChange || '',
-              sortableOnChange = evalFn(item, scope, sortableOnChangeExp, 'changeOperation');
+              sortableOnChange = evalFn(item, scope, sortableOnChangeExp, 'changeOperation'),
+              handle = attrs.handleClass ? "." + attrs.handleClass : false;
 
           item.sortable({
+            handle: handle,
             update: function(event, ui) {
               var moved = ui.item.data('handle'),
                   target = ui.item.next().data('handle') ? ui.item.next().data('handle') : ui.item.prev().data('handle'),

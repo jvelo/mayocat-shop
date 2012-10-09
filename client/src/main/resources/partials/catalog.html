@@ -13,14 +13,15 @@
 
   <!-- list/table -->
   <div>
-    <ul class="list" sortable-on-change="changePosition()">
+    <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
       <li ng-repeat="product in products" data-handle="{{product.handle}}">
         <div class="row droptarget">
           <div class="span6">{{product.title}}</div>
           <div class="span1"><a ng-click="setRoute(product.handle)">Edit</a></div>
-          <div class="span1"><span class="dragme">Drag me</span></div>
+          <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
         </div>
       </li>
     </ul>
   </div>
+
 </div>
