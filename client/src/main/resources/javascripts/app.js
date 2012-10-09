@@ -1,6 +1,6 @@
 'use strict';
 
-var mayocat = angular.module('mayocat', ['search', 'product', 'catalogue']);
+var mayocat = angular.module('mayocat', ['search', 'product', 'catalogue', 'jqui']);
 
 // config(['$locationProvider', function($locationProvider) {
 //   $locationProvider.html5Mode(true);

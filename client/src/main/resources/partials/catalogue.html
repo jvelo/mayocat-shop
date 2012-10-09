@@ -1,21 +1,26 @@
-<div class="page-header">
+<div id="catalogue">
+  <!-- header -->
+  <div class="page-header">
+    <div class="pull-right">
+      <a href="#/category/" class="btn">Manage categories</a>
+    </div>
 
-  <div class="pull-right">
-    <a href="#/category/" class="btn">Manage categories</a>
+    <h1 class="">Products</h1>
+  </div>
+  <div>
+    <button class="btn btn-primary btn-large">Add a new product</button>
   </div>
 
-  <h1 class="">Products</h1>
-</div>
-
-<div>
-  <button class="btn btn-primary btn-large">Add a new product</button>
-</div>
-
-<div>
-<table class="table list">
-  <tr ng-repeat="product in products">
-    <td>{{product.title}}</td>
-    <td><a ng-click="setRoute(product.handle)">Edit</a></td>
-  </tr>
-</table>
+  <!-- list/table -->
+  <div>
+    <ul class="list" sortable-on-change="changePosition()">
+      <li ng-repeat="product in products" data-handle="{{product.handle}}">
+        <div class="row droptarget">
+          <div class="span6">{{product.title}}</div>
+          <div class="span1"><a ng-click="setRoute(product.handle)">Edit</a></div>
+          <div class="span1"><span class="dragme">Drag me</span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
 </div>
