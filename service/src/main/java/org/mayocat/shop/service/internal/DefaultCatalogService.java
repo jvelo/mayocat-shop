@@ -9,6 +9,7 @@ import javax.inject.Provider;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.service.CatalogService;
+import org.mayocat.shop.service.InvalidMoveOperation;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -43,7 +44,7 @@ public class DefaultCatalogService implements CatalogService
         if (Strings.isNullOrEmpty(entity.getHandle())) {
             entity.setHandle(this.generateHandle(entity.getTitle()));
         }
-        
+
         // We could just update/create the entity, but no "product created event would be fired, so
         // we save the products in base explicitly.
         productStore.get().create(entity);
@@ -104,8 +105,15 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void moveProductInCategory(Category category, String handleOfProductToMove, String handleOfProductToMoveBeforeOf)
-        throws StoreException
+    public void moveProductInCategory(Category category, String handleOfProductToMove, String relativeHandle)
+        throws InvalidMoveOperation, StoreException
+    {
+        this.moveProductInCategory(category, handleOfProductToMove, relativeHandle, InsertPosition.BEFORE);
+    }
+
+    @Override
+    public void moveProductInCategory(Category category, String handleOfProductToMove, String relativeHandle,
+        InsertPosition insertPosition) throws InvalidMoveOperation, StoreException
     {
         int position = -1;
         Product toMove = null;
@@ -116,25 +124,31 @@ public class DefaultCatalogService implements CatalogService
             }
         }
         if (toMove == null) {
-            // TODO throw exception
-            return;
+            throw new InvalidMoveOperation();
         }
-        
+
         category.getProducts().remove(toMove);
-        
+
         for (Product product : category.getProducts()) {
-            if (product.getHandle().equals(handleOfProductToMoveBeforeOf)) {
+            if (product.getHandle().equals(relativeHandle)) {
                 position = i;
             }
             i++;
         }
-        
+
         if (position < 0) {
-            // TODO throw exception            
-            return;
+            throw new InvalidMoveOperation();
         }
-        
-        category.getProducts().add(position, toMove);
+
+        switch (insertPosition) {
+            case BEFORE:
+                category.getProducts().add(position, toMove);
+                break;
+            case AFTER:
+                category.getProducts().add(position + 1, toMove);
+                break;
+        }
+
         try {
             this.categoryStore.get().update(category);
         } catch (InvalidEntityException e) {

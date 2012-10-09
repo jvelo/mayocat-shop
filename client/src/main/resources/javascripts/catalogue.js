@@ -8,13 +8,12 @@ angular.module('catalogue', [])
           callback && callback.call(this, data);
         });
       },
-      move: function(handle, insertBefore){
+      move: function(handle, target, position){
         $http.post('/category/_all/move',
-                   "product=" + handle + "&before=" + insertBefore,
+                   "product=" + handle + "&" + position + "=" + target,
                    { "headers" : {'Content-Type': 'application/x-www-form-urlencoded'} })
-          .success(function(data){
-            console.log("OK");
-        });
+          .success(function(data) {
+          });
       }
 
     };
@@ -37,7 +36,7 @@ angular.module('catalogue', [])
         });
 
         $scope.changePosition = function() {
-          catalogueService.move($scope.changeOperation.moved, $scope.changeOperation.nextItem);
+          catalogueService.move($scope.changeOperation.handle, $scope.changeOperation.target, $scope.changeOperation.position);
           $scope.changeOperation = undefined;
         };
   }]);

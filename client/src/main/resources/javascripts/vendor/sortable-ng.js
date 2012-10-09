@@ -21,9 +21,14 @@
           item.sortable({
             update: function(event, ui) {
               var moved = ui.item.data('handle'),
-                  nextItem = ui.item.next().data('handle');
+                  target = ui.item.next().data('handle') ? ui.item.next().data('handle') : ui.item.prev().data('handle'),
+                  position = ui.item.next().data('handle') ? "before" : "after";
 
-              sortableOnChange({ moved: moved, nextItem: nextItem });
+              sortableOnChange({
+                handle: moved,
+                target: target,
+                position: position
+              });
 
               scope.$apply();
             }

@@ -18,11 +18,13 @@ import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.service.CatalogService;
+import org.mayocat.shop.service.InvalidMoveOperation;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Strings;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("CategoryResource")
@@ -55,14 +57,25 @@ public class CategoryResource implements Resource
     @Timed
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response changePosition(@Authorized Context context, @PathParam("handle") String handle,
-        @FormParam("product") String handleOfProductToMove, @FormParam("before") String handleOfProductToMoveBeforeOf)
+        @FormParam("product") String handleOfProductToMove, @FormParam("before") String handleOfProductToMoveBeforeOf,
+        @FormParam("after") String handleOfProductToMoveAfterOf)
     {
         try {
             Category category = this.catalogService.findCategoryByHandle(handle);
-            this.catalogService.moveProductInCategory(category, handleOfProductToMove, handleOfProductToMoveBeforeOf);
+
+            if (!Strings.isNullOrEmpty(handleOfProductToMoveAfterOf)) {
+                this.catalogService.moveProductInCategory(category, handleOfProductToMove,
+                    handleOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
+            } else {
+                this.catalogService.moveProductInCategory(category, handleOfProductToMove,
+                    handleOfProductToMoveBeforeOf);
+            }
+
             return Response.ok().build();
-        }
-        catch (StoreException e) {
+
+        } catch (InvalidMoveOperation e) {
+            throw new WebApplicationException(e);
+        } catch (StoreException e) {
             throw new WebApplicationException(e);
         }
     }
