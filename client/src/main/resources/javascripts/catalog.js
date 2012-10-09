@@ -36,6 +36,9 @@ angular.module('catalog', [])
         });
 
         $scope.changePosition = function() {
+          if (typeof $scope.changeOperation === "undefined") {
+            return;
+          }
           catalogService.move($scope.changeOperation.handle, $scope.changeOperation.target, $scope.changeOperation.position);
           $scope.changeOperation = undefined;
         };
