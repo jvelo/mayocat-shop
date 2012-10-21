@@ -1,5 +1,6 @@
 package org.mayocat.shop.rest.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.rest.representations.ProductRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -38,23 +40,23 @@ public class ProductResource implements Resource
 
     @Inject
     private Logger logger;
-    
+
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object getAllProducts(@Authorized Context context, @QueryParam("number") @DefaultValue("50") Integer number,
+    public List<ProductRepresentation> getAllProducts(@Authorized Context context,
+        @QueryParam("number") @DefaultValue("50") Integer number,
         @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
         try {
-            List<Product> products = this.catalogueService.findAllProducts(number, offset);
-            return products;
-        }
-        catch (StoreException e) {
+            return this.wrapInReprensentations(this.catalogueService.findAllProducts(number, offset));
+
+        } catch (StoreException e) {
             this.logger.error("Error while getting products", e);
             throw new WebApplicationException(e);
         }
     }
-    
+
     @Path("{handle}")
     @GET
     @Timed
@@ -66,7 +68,7 @@ public class ProductResource implements Resource
             if (product == null) {
                 return Response.status(404).build();
             }
-            return product;
+            return this.wrapInRepresentation(product);
         } catch (StoreException e) {
             this.logger.error("Error while getting product", e);
             throw new WebApplicationException(e);
@@ -120,7 +122,7 @@ public class ProductResource implements Resource
             return Response.ok().build();
         } catch (StoreException e) {
             this.logger.error("Error while creating product", e);
-            throw new WebApplicationException(e);            
+            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             this.logger.error("Error while creating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
@@ -129,5 +131,21 @@ public class ProductResource implements Resource
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
                 .entity("A product with this handle already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
+    }
+
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private List<ProductRepresentation> wrapInReprensentations(List<Product> products)
+    {
+        List<ProductRepresentation> result = new ArrayList<ProductRepresentation>();
+        for (Product product : products) {
+            result.add(this.wrapInRepresentation(product));
+        }
+        return result;
+    }
+
+    private ProductRepresentation wrapInRepresentation(Product product)
+    {
+        return new ProductRepresentation(product);
     }
 }

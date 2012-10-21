@@ -1,6 +1,12 @@
 'use strict';
 
-var mayocat = angular.module('mayocat', ['search', 'product', 'catalog', 'jqui']);
+var mayocat = angular.module('mayocat', [
+    'search',
+    'product',
+    'category',
+    'catalog',
+    'jqui'
+]);
 
 // config(['$locationProvider', function($locationProvider) {
 //   $locationProvider.html5Mode(true);
@@ -9,7 +15,9 @@ mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
       when('/product/', {templateUrl: 'partials/catalog.html', controller: 'CatalogController'}).
+      when('/category/', {templateUrl: 'partials/categories.html', controller: 'CatalogController'}).
       when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
+      when('/category/:category', {templateUrl: 'partials/category.html', controller: 'CategoryController'}).
       otherwise({redirectTo: '/'});
 }]);
 
@@ -61,17 +69,29 @@ mayocat.directive('activeClass', ['$location', function(location) {
   return {
     restrict: ['A', 'LI'],
     link: function(scope, element, attrs, controller) {
-      var clazz = attrs.activeClass;
-      var path = attrs.href || $(element).find("a[href]").attr('href');
-      if (path) {
-        path = path.substring(1); //hack because path does bot return including hashbang
+      var clazz = attrs.activeClass,
+          path = attrs.href || $(element).find("a[href]").attr('href'),
+          otherHrefs = attrs.otherActiveHref || $(element).find("a[other-active-href]").attr('other-active-href'),
+          allHrefs = [ path ];
+
+      if (typeof otherHrefs != "undefined") {
+        otherHrefs = otherHrefs.split(",");
+        for (var i=0; i<otherHrefs.length; i++) {
+          allHrefs.push(otherHrefs[i].trim());
+        }
+      }
+
+      if (allHrefs.length > 0) {
         scope.location = location;
         scope.$watch('location.path()', function(newPath) {
-          if (newPath.indexOf(path) === 0) {
-              element.addClass(clazz);
-          } else {
-              element.removeClass(clazz);
-          }
+         for (var i=0; i<allHrefs.length; i++) {
+           var path = allHrefs[i].substring(1); //hack because path does bot return including hashbang
+           if (newPath.indexOf(path) === 0) {
+             element.addClass(clazz);
+             return;
+           }
+         }
+         element.removeClass(clazz);
         });
       }
     }

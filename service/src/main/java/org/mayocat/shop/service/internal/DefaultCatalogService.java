@@ -95,7 +95,7 @@ public class DefaultCatalogService implements CatalogService
     @Override
     public List<Category> findAllCategories(int number, int offset) throws StoreException
     {
-        return this.categoryStore.get().findAll(number, offset);
+        return this.categoryStore.get().findAllNotSpecial();
     }
 
     private String generateHandle(String title)

@@ -3,8 +3,13 @@
 angular.module('catalog', [])
   .service('catalogService', function($http){
     return {
-      list: function(callback) {
+      listProducts: function(callback) {
         $http.get('/product/').success(function(data) {
+          callback && callback.call(this, data);
+        });
+      },
+      listCategories: function(callback) {
+        $http.get('/category/').success(function(data) {
           callback && callback.call(this, data);
         });
       },
@@ -27,12 +32,16 @@ angular.module('catalog', [])
         // A "move position" operation to perform. It is set by the 'sortable' directive when the list sort order changes.
         $scope.changeOperation = undefined;
 
-        $scope.setRoute = function(handle) {
-          $location.url("/product/" + handle);
+        $scope.setRoute = function(href) {
+          $location.url(href);
         };
 
-        catalogService.list(function(products) {
+        catalogService.listProducts(function(products) {
           $scope.products = products;
+        });
+
+        catalogService.listCategories(function(categories) {
+          $scope.categories = categories;
         });
 
         $scope.changePosition = function() {

@@ -9,6 +9,25 @@ curl -i -H "Content-Type: application/json" -X POST -d " \
   "                                                      \
   http://localhost:8080/user/
 
+echo -e "\n\nAdding some categories...\n"
+
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"Vehicles\"                                        \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/category/
+
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"Garments\"                                        \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/category/
 
 echo -e "\n\nAdding some products...\n"
 
