@@ -13,7 +13,7 @@ import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component(hints = {"datanucleus", "default"})
-public class DNProductStore extends AbstractHandleableEntityStore<Product, Long> implements ProductStore
+public class DNProductStore extends AbstractEntityWithSlugStore<Product, Long> implements ProductStore
 {
 
     @Override

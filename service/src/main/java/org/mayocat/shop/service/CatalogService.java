@@ -23,7 +23,7 @@ public interface CatalogService
 
     void updateProduct(Product entity) throws InvalidEntityException, StoreException;
 
-    Product findProductByHandle(String handle) throws StoreException;
+    Product findProductBySlug(String slug) throws StoreException;
 
     List<Product> findAllProducts(int number, int offset) throws StoreException;
 
@@ -43,12 +43,12 @@ public interface CatalogService
      * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
      *      relative target.
      * @param category the category in which to move the project in
-     * @param handleOfProductToMove the handle of the project to move
-     * @param handleOfProductToMoveBeforeOf the handle of the product to move before of
+     * @param slugOfProductToMove the slug of the project to move
+     * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
      * @throws StoreException when a problems occur persisting the category
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
-    void moveProductInCategory(Category category, String handleOfProductToMove, String handleOfProductToMoveBeforeOf)
+    void moveProductInCategory(Category category, String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
         throws InvalidMoveOperation, StoreException;
 
     /**
@@ -56,16 +56,16 @@ public interface CatalogService
      * other products within the same category as necessary.
      * 
      * @param category the category in which to move the project in
-     * @param handleOfProductToMove the handle of the project to move
-     * @param relativeHandle the handle of the product to move relative to
+     * @param slugOfProductToMove the slug of the project to move
+     * @param relativesSlug the slug of the product to move relative to
      * @param position the relative insert position : before or after
      * @throws StoreException when a problems occur persisting the category
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
-    void moveProductInCategory(Category category, String handleOfProductToMove, String relativeHandle,
+    void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
         InsertPosition position) throws InvalidMoveOperation, StoreException;
 
-    Category findCategoryByHandle(String handle) throws StoreException;
+    Category findCategoryBySlug(String slug) throws StoreException;
 
     List<Category> findAllCategories(int number, int offset) throws StoreException;
 }

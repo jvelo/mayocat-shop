@@ -17,7 +17,7 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
     
     private UserService userService;
 
-    protected static final String HANDLE = "jerome";
+    protected static final String SLUG = "jerome";
     
     protected static final String EMAIL = "jerome@mayocat.org";
 
@@ -35,7 +35,7 @@ public abstract class AbstractAuthenticatedResourceTest extends AbstractResource
         if (!this.userService.hasUsers()) {
             ClientResponse cr = client().resource("/user/")
                 .type(MediaType.APPLICATION_JSON)
-                .entity("{\"handle\":\"" + HANDLE + "\", \"email\":\"" + EMAIL + "\", \"password\" : \"" + PASSWORD + "\"}")
+                .entity("{\"slug\":\"" + SLUG + "\", \"email\":\"" + EMAIL + "\", \"password\" : \"" + PASSWORD + "\"}")
                 .post(ClientResponse.class);
 
             Assert.assertEquals(Status.OK, cr.getClientResponseStatus());

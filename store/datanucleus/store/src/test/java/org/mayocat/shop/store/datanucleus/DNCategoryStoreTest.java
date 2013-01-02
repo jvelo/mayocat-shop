@@ -23,23 +23,23 @@ public class DNCategoryStoreTest extends AbstractStoreEntityTestCase
     public void testCreateAndUpdateCategory() throws Exception
     {
         Category category = new Category();
-        category.setHandle("my-category");
+        category.setSlug("my-category");
         category.setTitle("My category");
         
         Product p1 = new Product();
         p1.setTitle("P1");
-        p1.setHandle("p1");
+        p1.setSlug("p1");
 
         Product p2 = new Product();
         p2.setTitle("P2");
-        p2.setHandle("p2");
+        p2.setSlug("p2");
         
         category.addToProducts(p1);
         category.addToProducts(p2);
         
         this.categoryStore.create(category);
         
-        category = this.categoryStore.findByHandle("my-category");
+        category = this.categoryStore.findBySlug("my-category");
         
         Assert.assertEquals(2, category.getProducts().size());
         

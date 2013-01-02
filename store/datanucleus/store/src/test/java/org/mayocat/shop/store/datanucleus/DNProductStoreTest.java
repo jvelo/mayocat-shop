@@ -35,10 +35,10 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     @Before
     public void registerTenant() throws Exception
     {
-        this.tenant = this.ts.findByHandle("default");
+        this.tenant = this.ts.findBySlug("default");
         if (this.tenant == null) {
             this.ts.create(new Tenant("default"));
-            this.tenant = this.ts.findByHandle("default");
+            this.tenant = this.ts.findBySlug("default");
         }
     }
 
@@ -46,12 +46,12 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     public void testCreateProduct() throws Exception
     {
         Product p = new Product();
-        p.setHandle("waterproof-fly-swatter");
+        p.setSlug("waterproof-fly-swatter");
         p.setTitle("Waterproof Fly Swatter");
 
         ps.create(p);
 
-        Product p2 = ps.findByHandle("waterproof-fly-swatter");
+        Product p2 = ps.findBySlug("waterproof-fly-swatter");
         Assert.assertNotNull(p2);
     }
 
@@ -59,7 +59,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     public void testCreateProductWithSameHandleButDifferentTenant() throws Exception
     {
         Product p = new Product();
-        p.setHandle("leopard-fishnet-tights");
+        p.setSlug("leopard-fishnet-tights");
         p.setTitle("Leopard Fishnet Tights");
 
         ps.create(p);
@@ -67,7 +67,7 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
         this.setTenantToResolveTo("other");
         
         Product p2 = new Product();
-        p2.setHandle("leopard-fishnet-tights");;
+        p2.setSlug("leopard-fishnet-tights");;
         p2.setTitle("Leopard Fishnet Tights");
 
         ps.create(p2);
@@ -81,13 +81,13 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
         thrown.expect(EntityAlreadyExistsException.class);
 
         Product p = new Product();
-        p.setHandle("peugeot-403-convertible");
+        p.setSlug("peugeot-403-convertible");
         p.setTitle("Peugeot 403 convertible");
 
         ps.create(p);
 
         Product p2 = new Product();
-        p2.setHandle("peugeot-403-convertible");
+        p2.setSlug("peugeot-403-convertible");
         p2.setTitle("Peugeot 403 convertible");
         
         ps.create(p2);
@@ -97,18 +97,18 @@ public class DNProductStoreTest extends AbstractStoreEntityTestCase
     public void testUpdateProduct() throws Exception
     {
         Product product = new Product();
-        product.setHandle("face-skin-mask");
+        product.setSlug("face-skin-mask");
         product.setTitle("Face Skin Mask");
         
         ps.create(product);
 
         product = new Product();
-        product.setHandle("face-skin-mask");
+        product.setSlug("face-skin-mask");
        
         product.setTitle("Horse Head Mask");
         ps.update(product);
 
-        Product retrieved = ps.findByHandle("face-skin-mask"); 
+        Product retrieved = ps.findBySlug("face-skin-mask"); 
         assertNotNull(retrieved);
         assertEquals("Horse Head Mask", retrieved.getTitle());
         assertEquals(product, retrieved);

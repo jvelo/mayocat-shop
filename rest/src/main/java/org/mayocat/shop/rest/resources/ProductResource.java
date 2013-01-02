@@ -57,14 +57,14 @@ public class ProductResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object getProduct(@Authorized Context context, @PathParam("handle") String handle)
+    public Object getProduct(@Authorized Context context, @PathParam("slug") String slug)
     {
         try {
-            Product product = this.catalogueService.findProductByHandle(handle);
+            Product product = this.catalogueService.findProductBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             }
@@ -75,15 +75,15 @@ public class ProductResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProduct(@Authorized Context context, @PathParam("handle") String handle,
+    public Response updateProduct(@Authorized Context context, @PathParam("slug") String slug,
         Product updatedProduct)
     {
         try {
-            Product product = this.catalogueService.findProductByHandle(handle);
+            Product product = this.catalogueService.findProductBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             } else {
@@ -101,11 +101,11 @@ public class ProductResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @PUT
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceProduct(@Authorized Context context, @PathParam("handle") String handle, Product newProduct)
+    public Response replaceProduct(@Authorized Context context, @PathParam("slug") String slug, Product newProduct)
     {
         // TODO
         throw new RuntimeException("Not implemented");
@@ -129,7 +129,7 @@ public class ProductResource implements Resource
         } catch (EntityAlreadyExistsException e) {
             this.logger.error("Error while creating product: entity already exists", e);
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A product with this handle already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
+                .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 

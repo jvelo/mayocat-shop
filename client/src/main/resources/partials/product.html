@@ -2,11 +2,11 @@
   <div class="span8">
     <div class="entity" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
 
-        <div ng-show="product.title">
+        <div ng-show="product.title != undefined">
 
           <!-- Title -->
           <h1>
-            <input type="text" class="span12" ng-model="product.title" />
+            <input type="text" class="span12" ng-model="product.title" placeholder="Product's title" />
           </h1>
 
           <!-- Description -->
@@ -18,12 +18,12 @@
 
     </div>
   </div>
-  <div class="span2">
+  <div class="span2" ng-show="product.title != undefined">
     <div class="buttons">
       <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
     </div>
-    <div class="uri">
-      <small>at <tt>/product/{{product.handle}}</tt></small>
+    <div class="uri" ng-show="!isNew()">
+      <small>at <tt>/product/{{product.slug}}</tt></small>
     </div>
   </div>
 </form>

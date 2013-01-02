@@ -33,15 +33,15 @@ public class DefaultTenantService implements TenantService
     }
 
     @Override
-    public Tenant findByHandle(String handle) throws StoreException
+    public Tenant findBySlug(String slug) throws StoreException
     {
-        return this.tenantStore.get().findByHandle(handle);
+        return this.tenantStore.get().findBySlug(slug);
     }
 
     @Override
-    public Tenant findByHandleOrAlias(String handleOrAlias) throws StoreException
+    public Tenant findBySlugOrAlias(String slugOrAlias) throws StoreException
     {
-        return this.tenantStore.get().findByHandleOrAlias(handleOrAlias);
+        return this.tenantStore.get().findBySlugOrAlias(slugOrAlias);
     }
 
     @Override

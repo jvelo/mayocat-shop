@@ -8,7 +8,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface CategoryStore extends Store<Category, Long>
 {
-    Category findByHandle(String handle) throws StoreException;
+    Category findBySlug(String slug) throws StoreException;
     
     List<Category> findAllNotSpecial() throws StoreException;
 }

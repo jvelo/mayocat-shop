@@ -10,10 +10,10 @@
       <extension vendor-name="datanucleus" key="multitenancy-column-name" value="tenant"/>
       <extension vendor-name="datanucleus" key="multitenancy-column-length" value="255"/>
 
-      <!-- Enforce unique product handle per tenant -->
+      <!-- Enforce unique product slug per tenant -->
       <unique name="UNIQUE_PRODUCT_NAME_PER_TENANT">
         <column name="tenant"/>
-        <column name="handle"/>
+        <column name="slug"/>
       </unique>
 
       <!-- Id field -->
@@ -21,8 +21,8 @@
         <index />
       </field>
 
-      <!-- handle field -->
-      <field name="handle">
+      <!-- slug field -->
+      <field name="slug">
         <column length="255" />
         <index />
       </field>

@@ -9,14 +9,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.google.common.base.Objects;
 
-public class Tenant implements HandleableEntity
+public class Tenant implements EntityWithSlug
 {    
     @JsonIgnore
     Long id;
 
     @NotNull
     @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
-    String handle;
+    String slug;
     
     List<String> aliases;
     
@@ -28,9 +28,9 @@ public class Tenant implements HandleableEntity
     {
     }
     
-    public Tenant(String handle)
+    public Tenant(String slug)
     {
-        setHandle(handle);
+        setSlug(slug);
     }
     
     ///////////////////////////////////////////////////
@@ -40,14 +40,14 @@ public class Tenant implements HandleableEntity
         return id;
     }
     
-    public String getHandle()
+    public String getSlug()
     {
-        return handle;
+        return slug;
     }
 
-    public void setHandle(String handle)
+    public void setSlug(String slug)
     {
-        this.handle = handle;
+        this.slug = slug;
     }
 
     public List<String> getAliases()
@@ -74,7 +74,7 @@ public class Tenant implements HandleableEntity
     
     public void fromTenant(Tenant t)
     {
-        this.setHandle(t.getHandle());        
+        this.setSlug(t.getSlug());        
         this.setAliases(t.getAliases());
     }
     
@@ -91,19 +91,19 @@ public class Tenant implements HandleableEntity
         }
         final Tenant other = (Tenant) obj;
 
-        return Objects.equal(this.handle, other.handle);
+        return Objects.equal(this.slug, other.slug);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.handle);
+        return Objects.hashCode(this.slug);
     }
 
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).addValue(this.handle).toString();
+        return Objects.toStringHelper(this).addValue(this.slug).toString();
     }
 
 }

@@ -6,21 +6,19 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.shop.model.annotation.Localizable;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Category implements HandleableEntity
+public class Category implements EntityWithSlug
 {
-    @JsonIgnore
     Long id;
 
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String handle;
+    String slug;
 
     @Localizable
     @SearchIndex
@@ -35,14 +33,14 @@ public class Category implements HandleableEntity
 
     List<Product> products;
 
-    public String getHandle()
+    public String getSlug()
     {
-        return handle;
+        return slug;
     }
 
-    public void setHandle(String handle)
+    public void setSlug(String slug)
     {
-        this.handle = handle;
+        this.slug = slug;
     }
 
     public String getTitle()
@@ -114,20 +112,20 @@ public class Category implements HandleableEntity
         }
         final Category other = (Category) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.handle, other.handle)
+        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
             && Objects.equal(this.special, other.special) && Objects.equal(this.description, other.description);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.handle, this.title, this.special, this.description);
+        return Objects.hashCode(this.slug, this.title, this.special, this.description);
     }
 
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).addValue(this.title).addValue(this.handle).addValue(this.special)
+        return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).addValue(this.special)
             .toString();
     }
 

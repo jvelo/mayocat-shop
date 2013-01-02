@@ -48,7 +48,7 @@ public class TenantResource implements Resource
                 // Should not happen
                 return Response.status(404).build();
             } else {
-                updatedTenant.setHandle(context.getTenant().getHandle());
+                updatedTenant.setSlug(context.getTenant().getSlug());
                 this.tenantService.update(updatedTenant);
             }
 

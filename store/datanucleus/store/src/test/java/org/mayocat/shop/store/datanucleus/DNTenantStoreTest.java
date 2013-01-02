@@ -32,7 +32,7 @@ public class DNTenantStoreTest extends AbstractStoreEntityTestCase
         Tenant t = new Tenant("mytenant");
 
         tenantStore.create(t);
-        Tenant t2 = tenantStore.findByHandle("mytenant");
+        Tenant t2 = tenantStore.findBySlug("mytenant");
 
         Assert.assertEquals(t, t2);
     }

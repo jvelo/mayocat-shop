@@ -11,22 +11,22 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.mayocat.shop.model.HandleableEntity;
+import org.mayocat.shop.model.EntityWithSlug;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.store.StoreException;
 
-public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, K extends Serializable> extends
+public abstract class AbstractEntityWithSlugStore<T extends EntityWithSlug, K extends Serializable> extends
     AbstractEntityStore<T, K>
 {
 
     public boolean exists(T entity) throws StoreException
     {
-        return this.findByHandle(entity.getHandle()) != null;
+        return this.findBySlug(entity.getSlug()) != null;
     }
 
     public void update(T entity) throws StoreException
     {
-        T existing = this.findByHandle(entity.getHandle());
+        T existing = this.findBySlug(entity.getSlug());
         try {
             PersistenceManager pm = persistenceManager.get();
             Transaction tx = pm.currentTransaction();
@@ -52,7 +52,7 @@ public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, 
 
     }
 
-    public T findByHandle(String handle) throws StoreException
+    public T findBySlug(String slug) throws StoreException
     {        
         PersistenceManager pm = null;
         Query q = null;
@@ -60,10 +60,10 @@ public abstract class AbstractHandleableEntityStore<T extends HandleableEntity, 
             pm = persistenceManager.get();
 
             q = pm.newQuery(this.getPersistentType());
-            q.setFilter("handle == handleParam");
-            q.declareParameters("String handleParam");
+            q.setFilter("slug == slugParam");
+            q.declareParameters("String slugParam");
 
-            List<T> results = (List<T>) q.execute(handle);
+            List<T> results = (List<T>) q.execute(slug);
             if (results.size() == 1) {
                 return results.get(0);
             }

@@ -22,8 +22,8 @@ angular.module('search', [])
           $scope.term = "";
           $scope.suggestions = [];
         }
-        $scope.setRoute = function(handle) {
-          $location.url("/product/" + handle);
+        $scope.setRoute = function(slug) {
+          $location.url("/product/" + slug);
           $scope.clear();
         }
         $scope.$watch('term', function(term) {

@@ -31,18 +31,18 @@ public class DefaultCatalogService implements CatalogService
     public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException,
         StoreException
     {
-        Category allProducts = this.categoryStore.get().findByHandle("_all");
+        Category allProducts = this.categoryStore.get().findBySlug("_all");
         if (allProducts == null) {
             // Lazily create the "all products" special category
             allProducts = new Category();
-            allProducts.setHandle("_all");
+            allProducts.setSlug("_all");
             allProducts.setTitle("");
             allProducts.setSpecial(true);
             this.categoryStore.get().create(allProducts);
         }
 
-        if (Strings.isNullOrEmpty(entity.getHandle())) {
-            entity.setHandle(this.generateHandle(entity.getTitle()));
+        if (Strings.isNullOrEmpty(entity.getSlug())) {
+            entity.setSlug(this.generateSlug(entity.getTitle()));
         }
 
         // We could just update/create the entity, but no "product created event would be fired, so
@@ -59,14 +59,14 @@ public class DefaultCatalogService implements CatalogService
         this.productStore.get().update(entity);
     }
 
-    public Product findProductByHandle(String handle) throws StoreException
+    public Product findProductBySlug(String slug) throws StoreException
     {
-        return this.productStore.get().findByHandle(handle);
+        return this.productStore.get().findBySlug(slug);
     }
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException
     {
-        Category category = this.categoryStore.get().findByHandle("_all");
+        Category category = this.categoryStore.get().findBySlug("_all");
         return category.getProducts();
     }
 
@@ -74,8 +74,8 @@ public class DefaultCatalogService implements CatalogService
     public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException,
         StoreException
     {
-        if (Strings.isNullOrEmpty(entity.getHandle())) {
-            entity.setHandle(this.generateHandle(entity.getTitle()));
+        if (Strings.isNullOrEmpty(entity.getSlug())) {
+            entity.setSlug(this.generateSlug(entity.getTitle()));
         }
         this.categoryStore.get().create(entity);
     }
@@ -87,9 +87,9 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public Category findCategoryByHandle(String handle) throws StoreException
+    public Category findCategoryBySlug(String slug) throws StoreException
     {
-        return this.categoryStore.get().findByHandle(handle);
+        return this.categoryStore.get().findBySlug(slug);
     }
 
     @Override
@@ -98,28 +98,28 @@ public class DefaultCatalogService implements CatalogService
         return this.categoryStore.get().findAllNotSpecial();
     }
 
-    private String generateHandle(String title)
+    private String generateSlug(String title)
     {
         return Normalizer.normalize(title.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "").replaceAll("\\s+", "-");
     }
 
     @Override
-    public void moveProductInCategory(Category category, String handleOfProductToMove, String relativeHandle)
+    public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug)
         throws InvalidMoveOperation, StoreException
     {
-        this.moveProductInCategory(category, handleOfProductToMove, relativeHandle, InsertPosition.BEFORE);
+        this.moveProductInCategory(category, slugOfProductToMove, relativeSlug, InsertPosition.BEFORE);
     }
 
     @Override
-    public void moveProductInCategory(Category category, String handleOfProductToMove, String relativeHandle,
+    public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
         InsertPosition insertPosition) throws InvalidMoveOperation, StoreException
     {
         int position = -1;
         Product toMove = null;
         int i = 0;
         for (Product product : category.getProducts()) {
-            if (product.getHandle().equals(handleOfProductToMove)) {
+            if (product.getSlug().equals(slugOfProductToMove)) {
                 toMove = product;
             }
         }
@@ -130,7 +130,7 @@ public class DefaultCatalogService implements CatalogService
         category.getProducts().remove(toMove);
 
         for (Product product : category.getProducts()) {
-            if (product.getHandle().equals(relativeHandle)) {
+            if (product.getSlug().equals(relativeSlug)) {
                 position = i;
             }
             i++;

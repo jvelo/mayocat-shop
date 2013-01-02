@@ -16,7 +16,7 @@
       </field>
 
       <!-- handle field -->
-      <field name="handle">
+      <field name="slug">
         <column length="255" />
         <unique />
         <index />

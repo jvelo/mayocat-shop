@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.mayocat.shop.jackson.PasswordSerializer;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
-public class User implements HandleableEntity
+public class User implements EntityWithSlug
 {
     @JsonIgnore
     Long id;
@@ -17,7 +17,7 @@ public class User implements HandleableEntity
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String handle;
+    String slug;
 
     @SearchIndex
     @Pattern(regexp = "^(([^@\\s]+)@((?:[-a-zA-Z0-9]+\\.)+[a-zA-Z]{2,}))?$", message = "Not a valid email")
@@ -58,14 +58,14 @@ public class User implements HandleableEntity
         return id;
     }
 
-    public String getHandle()
+    public String getSlug()
     {
-        return this.handle;
+        return this.slug;
     }
 
-    public void setHandle(String handle)
+    public void setSlug(String slug)
     {
-        this.handle = handle;
+        this.slug = slug;
     }
 
 }

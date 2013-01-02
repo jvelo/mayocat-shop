@@ -59,10 +59,10 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
                 allowing(configuration).getRootDomain();
                 will(returnValue(null));
 
-                allowing(tenantService).findByHandle(with(Matchers.not(equal("mytenant"))));
+                allowing(tenantService).findBySlug(with(Matchers.not(equal("mytenant"))));
                 will(returnValue(null));
 
-                allowing(tenantService).findByHandle(with(equal("mytenant")));
+                allowing(tenantService).findBySlug(with(equal("mytenant")));
                 will(returnValue(new Tenant("mytenant")));
 
                 allowing(tenantService).create(with(any(Tenant.class)));
@@ -76,7 +76,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
     {
         this.setUpExpectationsForMultitenancyNotActivated();
         Assert.assertNotNull(this.tenantResolver.resolve("mayocatshop.com"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mayocatshop.com").getHandle());
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mayocatshop.com").getSlug());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
     {
         this.setUpExpectationsForMultitenancyNotActivated();
         Assert.assertNotNull(this.tenantResolver.resolve("localhost"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("localhost").getHandle());
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("localhost").getSlug());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
         this.setUpExpectationsForMultitenancyActivated();
 
         Assert.assertNotNull(this.tenantResolver.resolve("mytenant.mayocatshop.com"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.mayocatshop.com").getHandle());
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.mayocatshop.com").getSlug());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
         this.setUpExpectationsForMultitenancyActivated();
 
         Assert.assertNotNull(this.tenantResolver.resolve("mytenant.localhost"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.localhost").getHandle());
+        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.localhost").getSlug());
     }
 
     @Test

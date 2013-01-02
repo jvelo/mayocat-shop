@@ -185,13 +185,13 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
         this.provider.get().close();
         this.provider.set(null);
 
-        if (!this.factories.containsKey(tenant.getHandle())) {
+        if (!this.factories.containsKey(tenant.getSlug())) {
             Properties props = getPersistenceProperties();
-            props.put("datanucleus.tenantId", tenant.getHandle());
-            this.factories.put(tenant.getHandle(), JDOHelper.getPersistenceManagerFactory(props));
+            props.put("datanucleus.tenantId", tenant.getSlug());
+            this.factories.put(tenant.getSlug(), JDOHelper.getPersistenceManagerFactory(props));
         }
         // Step 2. Set request persistence manager with proper tenant ID.
-        this.provider.set(this.factories.get(tenant.getHandle()).getPersistenceManager());
+        this.provider.set(this.factories.get(tenant.getSlug()).getPersistenceManager());
 
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Persistence manager {} set for request with tenant {}", this.provider.get(), tenant);

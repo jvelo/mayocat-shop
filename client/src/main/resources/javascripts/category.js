@@ -4,13 +4,13 @@ angular.module('category', ['ngResource'])
   .controller('CategoryController', ['$scope', '$routeParams', '$resource',
       function($scope, $routeParams, $resource) {
 
-        $scope.handle = $routeParams.category;
+        $scope.slug = $routeParams.category;
 
         $scope.updateCategory = function() {
-          $scope.CategoryResource.save({ "handle" : $scope.handle }, $scope.category);
+          $scope.CategoryResource.save({ "slug" : $scope.slug }, $scope.category);
         }
 
-        $scope.CategoryResource = $resource("/category/:handle");
+        $scope.CategoryResource = $resource("/category/:slug");
 
-        $scope.category = $scope.CategoryResource.get({ "handle" : $scope.handle });
+        $scope.category = $scope.CategoryResource.get({ "slug" : $scope.slug });
   }]);

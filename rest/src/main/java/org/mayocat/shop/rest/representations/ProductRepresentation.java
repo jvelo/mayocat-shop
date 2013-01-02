@@ -2,11 +2,10 @@ package org.mayocat.shop.rest.representations;
 
 import org.mayocat.shop.model.Product;
 
-@SuppressWarnings("unused")
 public class ProductRepresentation
 {
 
-    private String handle;
+    private String slug;
 
     private String title;
 
@@ -18,16 +17,16 @@ public class ProductRepresentation
 
     public ProductRepresentation(Product product)
     {
-        this.handle = product.getHandle();
+        this.slug = product.getSlug();
         this.title = product.getTitle();
         this.description = product.getDescription();
 
-        this.href = "/product/" + this.handle;
+        this.href = "/product/" + this.slug;
     }
     
-    public String getHandle()
+    public String getSlug()
     {
-        return handle;
+        return slug;
     }
     
     public String getTitle()

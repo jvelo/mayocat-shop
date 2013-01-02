@@ -62,7 +62,7 @@ public abstract class AbstractResourceTest extends ResourceTest
         this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
 
         this.tenantStore = this.componentManager.getInstance(TenantStore.class);
-        if (this.tenantStore.findByHandle("default") == null) {
+        if (this.tenantStore.findBySlug("default") == null) {
             this.tenantStore.create(new Tenant("default"));
         }
 

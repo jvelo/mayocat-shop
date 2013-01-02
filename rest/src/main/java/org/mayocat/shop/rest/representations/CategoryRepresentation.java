@@ -2,14 +2,13 @@ package org.mayocat.shop.rest.representations;
 
 import org.mayocat.shop.model.Category;
 
-@SuppressWarnings("unused")
 public class CategoryRepresentation
 {
     private String title;
 
     private String description;
 
-    private String handle;
+    private String slug;
 
     private boolean special;
 
@@ -21,29 +20,34 @@ public class CategoryRepresentation
     {
         this.title = category.getTitle();
         this.description = category.getDescription();
-        this.handle = category.getHandle();
+        this.slug = category.getSlug();
         this.special = category.isSpecial();
 
-        this.href = "/category/" + this.handle;
+        this.href = "/category/" + this.slug;
     }
-    
+
     public String getTitle()
     {
         return title;
     }
-    
+
     public String getDescription()
     {
         return description;
     }
-    
-    public String getHandle()
+
+    public String getSlug()
     {
-        return handle;
+        return slug;
     }
-    
+
     public String getHref()
     {
         return href;
+    }
+
+    public boolean isSpecial()
+    {
+        return special;
     }
 }

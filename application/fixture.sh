@@ -2,7 +2,7 @@ echo -e "Creating user...\n"
 
 curl -i -H "Content-Type: application/json" -X POST -d " \
   {                                                      \
-    \"handle\"   : \"jvelo\",                            \
+    \"slug\"   : \"jvelo\",                              \
     \"email\"    : \"jerome@velociter.fr\",              \
     \"password\":\"trololo\"                             \
   }                                                      \

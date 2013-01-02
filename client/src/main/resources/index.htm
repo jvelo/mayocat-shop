@@ -50,7 +50,7 @@
             <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
           </div>
           <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
-            <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.handle)">
+            <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.slug)">
               <a><h4>{{suggestion.title}}</h4></a>
             </li>
           </ul>
@@ -111,10 +111,7 @@
         </div><!--/span-->
       </div><!--/row-->
 
-      <hr>
-
       <footer>
-        <p>&copy; Company 2012</p>
       </footer>
 
     </div><!--/.fluid-container-->

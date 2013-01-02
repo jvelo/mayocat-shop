@@ -96,9 +96,9 @@ public class DefaultUserService implements UserService
         return this.findAll(1, 0).size() > 0;
     }
 
-    public User findByHandle(String handle) throws StoreException
+    public User findBySlug(String slug) throws StoreException
     {
-        return this.findByEmailOrUserName(handle);
+        return this.findByEmailOrUserName(slug);
     }
 
     public User findByEmailOrUserName(String userNameOrEmail) throws StoreException

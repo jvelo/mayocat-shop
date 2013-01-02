@@ -60,14 +60,14 @@ public class CategoryResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public Object getCategory(@Authorized Context context, @PathParam("handle") String handle)
+    public Object getCategory(@Authorized Context context, @PathParam("slug") String slug)
     {
         try {
-            Category category = this.catalogService.findCategoryByHandle(handle);
+            Category category = this.catalogService.findCategoryBySlug(slug);
             if (category == null) {
                 return Response.status(404).build();
             }
@@ -77,23 +77,23 @@ public class CategoryResource implements Resource
         }
     }
 
-    @Path("{handle}/move")
+    @Path("{slug}/move")
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response changePosition(@Authorized Context context, @PathParam("handle") String handle,
-        @FormParam("product") String handleOfProductToMove, @FormParam("before") String handleOfProductToMoveBeforeOf,
-        @FormParam("after") String handleOfProductToMoveAfterOf)
+    public Response changePosition(@Authorized Context context, @PathParam("slug") String slug,
+        @FormParam("product") String slugOfProductToMove, @FormParam("before") String slugOfProductToMoveBeforeOf,
+        @FormParam("after") String slugOfProductToMoveAfterOf)
     {
         try {
-            Category category = this.catalogService.findCategoryByHandle(handle);
+            Category category = this.catalogService.findCategoryBySlug(slug);
 
-            if (!Strings.isNullOrEmpty(handleOfProductToMoveAfterOf)) {
-                this.catalogService.moveProductInCategory(category, handleOfProductToMove,
-                    handleOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
+            if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterOf)) {
+                this.catalogService.moveProductInCategory(category, slugOfProductToMove,
+                    slugOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
             } else {
-                this.catalogService.moveProductInCategory(category, handleOfProductToMove,
-                    handleOfProductToMoveBeforeOf);
+                this.catalogService.moveProductInCategory(category, slugOfProductToMove,
+                    slugOfProductToMoveBeforeOf);
             }
 
             return Response.ok().build();
@@ -105,15 +105,15 @@ public class CategoryResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCategory(@Authorized Context context, @PathParam("handle") String handle,
+    public Response updateCategory(@Authorized Context context, @PathParam("slug") String slug,
         Category updatedCategory)
     {
         try {
-            Category category = this.catalogService.findCategoryByHandle(handle);
+            Category category = this.catalogService.findCategoryBySlug(slug);
             if (category == null) {
                 return Response.status(404).build();
             } else {
@@ -129,11 +129,11 @@ public class CategoryResource implements Resource
         }
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @PUT
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceCategory(@Authorized Context context, @PathParam("handle") String handle,
+    public Response replaceCategory(@Authorized Context context, @PathParam("slug") String slug,
         Category newCategory)
     {
         // TODO
@@ -155,7 +155,7 @@ public class CategoryResource implements Resource
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A Category with this handle already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
+                .entity("A Category with this slug already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 

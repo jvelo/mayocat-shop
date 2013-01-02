@@ -6,7 +6,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface TenantStore extends Store<Tenant, Long>
 {    
-    Tenant findByHandle(String handle) throws StoreException;
+    Tenant findBySlug(String slug) throws StoreException;
     
-    Tenant findByHandleOrAlias(String handleOrAlias) throws StoreException;
+    Tenant findBySlugOrAlias(String slugOrAlias) throws StoreException;
 }

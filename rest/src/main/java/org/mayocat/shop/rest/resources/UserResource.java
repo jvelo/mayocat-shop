@@ -69,14 +69,14 @@ public class UserResource implements Resource
         return context.getUser();
     }
 
-    @Path("{handle}")
+    @Path("{slug}")
     @GET
     @Timed
     @Produces({"application/json; charset=UTF-8"})
-    public User getUser(@Authorized Context context, @PathParam("handle") String handle)
+    public User getUser(@Authorized Context context, @PathParam("slug") String slug)
     {
         try {
-            return userService.findByEmailOrUserName(handle);
+            return userService.findByEmailOrUserName(slug);
         } catch (StoreException e) {
             throw new WebApplicationException(e);
         }

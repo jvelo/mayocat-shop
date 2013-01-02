@@ -5,7 +5,7 @@ import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface UserService extends EntityWithHandleRepositoryService<User>
+public interface UserService extends EntityWithSlugRepositoryService<User>
 {
     User findByEmailOrUserName(String userNameOrEmail) throws StoreException;
     

@@ -15,7 +15,7 @@
         <index />
       </field>
 
-      <!-- handle field -->
+      <!-- slug field -->
       <field name="name">
         <column length="255" />
         <index />

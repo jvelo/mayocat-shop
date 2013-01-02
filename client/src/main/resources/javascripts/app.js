@@ -22,41 +22,6 @@ mayocat.config(['$routeProvider', function($routeProvider) {
 }]);
 
 /**
- * Authentication/401 interception
- *
- * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
- */
-mayocat.config(function($httpProvider) {
-  var interceptor = ['$rootScope','$q', function(scope, $q) {
-
-    function success(response) {
-      return response;
-    }
-
-    function error(response) {
-      var status = response.status;
-      if (status == 401 && response.config.url != '/login/') {
-        var deferred = $q.defer();
-        var req = {
-          config: response.config,
-          deferred: deferred
-        }
-        scope.requests401.push(req);
-        scope.$broadcast('event:authenticationRequired');
-        return deferred.promise;
-      }
-      // otherwise
-      return $q.reject(response);
-    }
-
-    return function(promise) {
-      return promise.then(success, error);
-    }
-  }];
-  $httpProvider.responseInterceptors.push(interceptor);
-});
-
-/**
  * 'active-class' directive for <a> elements or <li> elements with a children <a>.
  *
  * Sets an active class when the current location path matches the path of the href attribute of the target <a>
@@ -97,6 +62,42 @@ mayocat.directive('activeClass', ['$location', function(location) {
     }
   };
 }]);
+
+
+/**
+ * Authentication/401 interception
+ *
+ * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
+ */
+mayocat.config(function($httpProvider) {
+  var interceptor = ['$rootScope','$q', function(scope, $q) {
+
+    function success(response) {
+      return response;
+    }
+
+    function error(response) {
+      var status = response.status;
+      if (status == 401 && response.config.url != '/login/') {
+        var deferred = $q.defer();
+        var req = {
+          config: response.config,
+          deferred: deferred
+        }
+        scope.requests401.push(req);
+        scope.$broadcast('event:authenticationRequired');
+        return deferred.promise;
+      }
+      // otherwise
+      return $q.reject(response);
+    }
+
+    return function(promise) {
+      return promise.then(success, error);
+    }
+  }];
+  $httpProvider.responseInterceptors.push(interceptor);
+});
 
 mayocat.run(['$rootScope', '$http', function(scope, $http) {
 

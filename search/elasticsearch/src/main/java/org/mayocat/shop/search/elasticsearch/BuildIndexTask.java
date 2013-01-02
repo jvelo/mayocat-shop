@@ -35,7 +35,7 @@ public class BuildIndexTask extends Task implements org.mayocat.shop.base.Task
         output.flush();
 
         Product test = new Product();
-        test.setHandle("hello");
+        test.setSlug("hello");
         this.searchEngine.get().index(test);
     }
 

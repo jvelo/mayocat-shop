@@ -29,7 +29,7 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.shop.model.Entity;
-import org.mayocat.shop.model.HandleableEntity;
+import org.mayocat.shop.model.EntityWithSlug;
 import org.mayocat.shop.model.annotation.SearchIndex;
 import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
@@ -64,8 +64,8 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
         {
             Entity entity = (Entity) data;
             try {
-                if (entity instanceof HandleableEntity) {
-                    index((HandleableEntity) entity);
+                if (entity instanceof EntityWithSlug) {
+                    index((EntityWithSlug) entity);
                 }
             } catch (SearchEngineException e) {
                 logger.error("Failed to index entity upon update", e);
@@ -89,7 +89,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public void index(HandleableEntity entity) throws SearchEngineException
+    public void index(EntityWithSlug entity) throws SearchEngineException
     {
         try {
             Map<String, Object> source = new HashMap<String, Object>();
@@ -111,7 +111,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
                 this.logger.debug("Indexing entity {} ...", entityName);
 
                 IndexResponse response =
-                    this.client.prepareIndex("entities", entityName, entity.getHandle()).setSource(source).execute()
+                    this.client.prepareIndex("entities", entityName, entity.getSlug()).setSource(source).execute()
                         .actionGet();
                 this.logger.debug("" + response.type());
             }
@@ -122,7 +122,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public List<Map<String, Object>> search(String term, List<Class< ? extends HandleableEntity>> entityTypes)
+    public List<Map<String, Object>> search(String term, List<Class< ? extends EntityWithSlug>> entityTypes)
         throws SearchEngineException
     {
         SearchResponse response =

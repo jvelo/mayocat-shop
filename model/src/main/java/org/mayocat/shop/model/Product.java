@@ -3,21 +3,19 @@ package org.mayocat.shop.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.shop.model.annotation.Localizable;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Product implements HandleableEntity
+public class Product implements EntityWithSlug
 {
-    @JsonIgnore
     Long id;
 
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String handle;
+    String slug;
     
     @Localizable
     @SearchIndex
@@ -29,14 +27,14 @@ public class Product implements HandleableEntity
     @SearchIndex
     String description;
     
-    public String getHandle()
+    public String getSlug()
     {
-        return handle;
+        return slug;
     }
 
-    public void setHandle(String handle)
+    public void setSlug(String slug)
     {
-        this.handle = handle;
+        this.slug = slug;
     }
     
     public String getTitle()
@@ -75,13 +73,13 @@ public class Product implements HandleableEntity
        final Product other = (Product) obj;  
          
        return   Objects.equal(this.title, other.title)  
-             && Objects.equal(this.handle, other.handle);  
+             && Objects.equal(this.slug, other.slug);  
     }  
     
     @Override
     public int hashCode()  
     {  
-        return Objects.hashCode(this.handle, this.title);  
+        return Objects.hashCode(this.slug, this.title);  
     }
     
     @Override  
@@ -89,7 +87,7 @@ public class Product implements HandleableEntity
     {  
        return Objects.toStringHelper(this)  
                  .addValue(this.title)  
-                 .addValue(this.handle)    
+                 .addValue(this.slug)    
                  .toString();  
     }  
     

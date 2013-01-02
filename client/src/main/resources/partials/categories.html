@@ -14,7 +14,7 @@
   <!-- list/table -->
   <div>
     <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-      <li ng-repeat="category in categories" data-handle="{{category.handle}}">
+      <li ng-repeat="category in categories" data-slug="{{category.slug}}">
         <div class="row droptarget">
           <div class="span6">{{category.title}}</div>
           <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>

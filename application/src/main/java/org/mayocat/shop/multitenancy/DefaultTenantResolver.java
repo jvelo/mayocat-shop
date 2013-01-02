@@ -49,18 +49,18 @@ public class DefaultTenantResolver implements TenantResolver
                 if (!this.configuration.isActivated()) {
                     // Mono-tenant
                     
-                    tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
+                    tenant = this.tenantService.findBySlug(this.configuration.getDefaultTenant());
                     if (tenant == null) {
                         Tenant tenantToCreate = new Tenant(this.configuration.getDefaultTenant());
                         tenantToCreate.setShop(new Shop());
                         this.tenantService.create(tenantToCreate);
-                        tenant = this.tenantService.findByHandle(this.configuration.getDefaultTenant());
+                        tenant = this.tenantService.findBySlug(this.configuration.getDefaultTenant());
                     }
                     this.resolved.get().put(host, tenant);
                 } else {
                     // Multi-tenant
                     
-                    tenant = this.tenantService.findByHandle(this.extractHandleFromHost(host));
+                    tenant = this.tenantService.findBySlug(this.extractSlugFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
@@ -78,7 +78,7 @@ public class DefaultTenantResolver implements TenantResolver
         return this.resolved.get().get(host);
     }
 
-    private String extractHandleFromHost(String host)
+    private String extractSlugFromHost(String host)
     {
         String rootDomain;
         if (Strings.emptyToNull(configuration.getRootDomain()) == null) {

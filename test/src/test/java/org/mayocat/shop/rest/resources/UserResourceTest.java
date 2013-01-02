@@ -57,7 +57,7 @@ public class UserResourceTest extends AbstractAuthenticatedResourceTest
         
         ClientResponse cr = client().resource("/user/")
                                     .type(MediaType.APPLICATION_JSON)
-                                    .entity("{\"email\":\"_me\", \"handle\": \"lol\", \"password\" : \"lol\"}")
+                                    .entity("{\"email\":\"_me\", \"slug\": \"lol\", \"password\" : \"lol\"}")
                                     .header("Authorization", this.getBasicAuthenticationHeader())
                                     .post(ClientResponse.class);
 
