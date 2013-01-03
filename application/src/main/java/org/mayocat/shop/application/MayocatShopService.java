@@ -15,9 +15,9 @@ import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.observation.ObservationManager;
 
-import com.google.common.cache.CacheBuilderSpec;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.assets.AssetsBundle;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 public class MayocatShopService extends Service<MayocatShopConfiguration>
@@ -29,17 +29,14 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
         new MayocatShopService().run(args);
     }
 
-    private MayocatShopService()
+    @Override
+    public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
-        super("MayocatShop");
-
-        // CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
-        CacheBuilderSpec cacheSpec = CacheBuilderSpec.disableCaching();
-        addBundle(new AssetsBundle("/client/", cacheSpec, "/admin/"));
+        bootstrap.addBundle(new AssetsBundle("/client/", "/admin/"));
     }
 
     @Override
-    protected void initialize(MayocatShopConfiguration configuration, Environment environment) throws Exception
+    public void run(MayocatShopConfiguration configuration, Environment environment) throws Exception
     {
 
         // Initialize Rendering components and allow getting instances

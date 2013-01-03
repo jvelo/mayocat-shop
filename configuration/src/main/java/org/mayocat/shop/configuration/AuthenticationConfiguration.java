@@ -2,7 +2,7 @@ package org.mayocat.shop.configuration;
 
 import javax.validation.Valid;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AuthenticationConfiguration
 {
