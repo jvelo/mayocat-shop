@@ -1,37 +1,61 @@
 package org.mayocat.shop.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.shop.model.annotation.Localizable;
+import org.mayocat.shop.model.annotation.LocalizationFieldType;
+import org.mayocat.shop.model.annotation.Localized;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Category implements EntityWithSlug
+public class Category extends AbstractLocalizedEntity
 {
-    Long id;
+    private Long id;
 
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String slug;
+    private String slug;
 
-    @Localizable
+    @Localized(type = LocalizationFieldType.SMALL)
     @SearchIndex
     @NotNull
-    String title;
+    private String title;
 
-    @Localizable
+    @Localized(type = LocalizationFieldType.MEDIUM)
     @SearchIndex
-    String description;
+    private String description;
 
-    boolean special = false;
+    public Category()
+    {
+        super();
+    }
 
-    List<Product> products;
+    public Category(Translations translations)
+    {
+        super(translations);
+    }
+
+    public Category(Long id)
+    {
+        super();
+        this.id = id;
+    }
+
+    public Category(Long id, Translations translations)
+    {
+        super(translations);
+        this.id = id;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
 
     public String getSlug()
     {
@@ -43,6 +67,11 @@ public class Category implements EntityWithSlug
         this.slug = slug;
     }
 
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+    
     public String getTitle()
     {
         return title;
@@ -63,42 +92,6 @@ public class Category implements EntityWithSlug
         this.description = description;
     }
 
-    public boolean isSpecial()
-    {
-        return special;
-    }
-
-    public void setSpecial(boolean special)
-    {
-        this.special = special;
-    }
-
-    public List<Product> getProducts()
-    {
-        return products;
-    }
-
-    public void setProducts(List<Product> products)
-    {
-        this.products = products;
-    }
-
-    public void addToProducts(Product product)
-    {
-        if (this.products == null) {
-            this.products = new ArrayList<Product>();
-        }
-        this.products.add(product);
-    }
-
-    public void removeFromProducts(Product product)
-    {
-        if (this.products == null) {
-            this.products = new ArrayList<Product>();
-        }
-        this.products.remove(product);
-    }
-
     // //////////////////////////////////////////////
 
     @Override
@@ -113,20 +106,19 @@ public class Category implements EntityWithSlug
         final Category other = (Category) obj;
 
         return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
-            && Objects.equal(this.special, other.special) && Objects.equal(this.description, other.description);
+            && Objects.equal(this.description, other.description);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.slug, this.title, this.special, this.description);
+        return Objects.hashCode(this.slug, this.title, this.description);
     }
 
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).addValue(this.special)
-            .toString();
+        return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
 
 }

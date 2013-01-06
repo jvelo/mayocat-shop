@@ -13,7 +13,6 @@
   <description>Packaging of the MayocatShop application around DropWizard</description>
 
   <dependencies>
-
     <dependency>
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-observation-local</artifactId>
@@ -52,6 +51,18 @@
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-search-elasticsearch</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-store-rdbms-jdbi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-store-rdbms-migrations</artifactId>
       <version>${project.version}</version>
     </dependency>
 

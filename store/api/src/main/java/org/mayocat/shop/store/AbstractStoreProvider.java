@@ -13,7 +13,6 @@ import org.xwiki.component.manager.ComponentManager;
 
 public abstract class AbstractStoreProvider<T extends Store< ? extends Entity, ? extends Serializable>>
 {
-
     @Inject
     private DataSourceConfiguration configuration;
 
@@ -28,10 +27,15 @@ public abstract class AbstractStoreProvider<T extends Store< ? extends Entity, ?
     public T get()
     {
         try {
+            if (this.getType().equals(UserStore.class)
+             || this.getType().equals(TenantStore.class)
+             || this.getType().equals(CategoryStore.class)) {
+                return this.componentManager.getInstance(this.getType(), "jdbi");
+            }
             return this.componentManager.getInstance(this.getType(), this.configuration.getName());
         } catch (ComponentLookupException e) {
             try {
-                // Configured store failed. We warn in the console and as a fallback plan try to get the default store
+                // Configured store failed. We warn in the console and as a fall-back plan try to get the default store
                 
                 this.logger.warn("Failed to lookup store for type {} and name {}, trying default store instead", this
                     .getType(), this.configuration.getName());

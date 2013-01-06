@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.mayocat.shop.jackson.PasswordSerializer;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
-public class User implements EntityWithSlug
+public class User implements Entity
 {
     @JsonIgnore
     Long id;
@@ -33,6 +33,18 @@ public class User implements EntityWithSlug
 
     // /////////////////////////////////////////////////
 
+    public User()
+    {
+        
+    }
+    
+    public User(Long id)
+    {
+        this.id = id;
+    }
+    
+    // /////////////////////////////////////////////////
+    
     public String getEmail()
     {
         return email;
@@ -58,6 +70,11 @@ public class User implements EntityWithSlug
         return id;
     }
 
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+    
     public String getSlug()
     {
         return this.slug;
@@ -67,5 +84,4 @@ public class User implements EntityWithSlug
     {
         this.slug = slug;
     }
-
 }

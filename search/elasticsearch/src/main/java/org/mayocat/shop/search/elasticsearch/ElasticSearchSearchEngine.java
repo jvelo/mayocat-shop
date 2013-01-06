@@ -29,7 +29,6 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.shop.model.Entity;
-import org.mayocat.shop.model.EntityWithSlug;
 import org.mayocat.shop.model.annotation.SearchIndex;
 import org.mayocat.shop.model.event.EntityCreatedEvent;
 import org.mayocat.shop.model.event.EntityUpdatedEvent;
@@ -62,11 +61,9 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     {
         public void onEvent(Event event, Object source, Object data)
         {
-            Entity entity = (Entity) data;
+            Entity entity2 = (Entity) data;
             try {
-                if (entity instanceof EntityWithSlug) {
-                    index((EntityWithSlug) entity);
-                }
+                index((Entity) entity2);
             } catch (SearchEngineException e) {
                 logger.error("Failed to index entity upon update", e);
             }
@@ -89,7 +86,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public void index(EntityWithSlug entity) throws SearchEngineException
+    public void index(Entity entity) throws SearchEngineException
     {
         try {
             Map<String, Object> source = new HashMap<String, Object>();
@@ -122,7 +119,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     }
 
     @Override
-    public List<Map<String, Object>> search(String term, List<Class< ? extends EntityWithSlug>> entityTypes)
+    public List<Map<String, Object>> search(String term, List<Class< ? extends Entity>> entityTypes)
         throws SearchEngineException
     {
         SearchResponse response =

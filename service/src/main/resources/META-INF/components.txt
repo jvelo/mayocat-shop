@@ -1,4 +1,3 @@
 org.mayocat.shop.service.internal.DefaultUserService
-org.mayocat.shop.service.internal.DefaultRoleService
 org.mayocat.shop.service.internal.DefaultCatalogService
 org.mayocat.shop.service.internal.DefaultTenantService

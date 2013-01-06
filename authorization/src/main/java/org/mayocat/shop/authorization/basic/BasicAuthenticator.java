@@ -9,6 +9,7 @@ import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 import org.mayocat.shop.authorization.Authenticator;
 import org.mayocat.shop.authorization.PasswordManager;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
@@ -48,7 +49,7 @@ public class BasicAuthenticator implements Authenticator
     }
 
     @Override
-    public Optional<User> verify(String value)
+    public Optional<User> verify(String value, Tenant tenant)
     {
         final int space = value.indexOf(' ');
         if (space > 0) {
@@ -59,7 +60,8 @@ public class BasicAuthenticator implements Authenticator
                     final String username = decoded.substring(0, i);
                     final String password = decoded.substring(i + 1);
                     try {
-                        User user = userStore.get().findByEmailOrUserName(username);
+                        // FIXME
+                        User user = userStore.get().findByEmailOrUserNameAndTenant(username, tenant);
                         if (user != null) {
                             if (this.passwordManager.verifyPassword(password, user.getPassword())) {
                                 return Optional.of(user);

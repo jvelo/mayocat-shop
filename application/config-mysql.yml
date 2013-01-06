@@ -18,18 +18,31 @@ authentication:
   cookieEncryptionKey: Change me here!
 
 dataSource:
-  name: "datanucleus"
+  name: "jdbi"
+
+# shop:
+#   products:
+#     variants:
+#       enabled: true
+#       mandatory: false
+#       priceVaries: true
+#       configurable: false
+#     categories:
+#       enabled: true
+#       configurable: true
+
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: root
+  password: 
+  url: jdbc:mysql://127.0.0.1/shop
   properties:
-    javax.jdo.option.ConnectionDriverName: com.mysql.jdbc.Driver
-    javax.jdo.option.ConnectionURL: jdbc:mysql://127.0.0.1/shop
-    javax.jdo.option.ConnectionUserName: root
-    javax.jdo.option.ConnectionPassword:
-    datanucleus.connectionPoolingType: DBCP
-    datanucleus.connectionPool.maxIdle: 10
-    datanucleus.connectionPool.minIdle: 3
-    datanucleus.connectionPool.maxActive: 5
-    datanucleus.connectionPool.maxWait: 60
-    datanucleus.connectionPool.maxStatements: 20
-    datanucleus.connectionPool.testSQL: SELECT 1
-    datanucleus.connectionPool.timeBetweenEvictionRunsMillis: 2400000
-    datanucleus.connectionPool.minEvictableIdleTimeMillis: 18000000
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  checkConnectionHealthWhenIdleFor: 10s
+  closeConnectionIfIdleFor: 1 minute
+

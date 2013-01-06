@@ -1,1 +1,2 @@
 org.mayocat.shop.multitenancy.DefaultTenantResolver
+org.mayocat.shop.multitenancy.DefaultTenantResolverServletEventListener

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="1" author="jvelo">
+
+    <!-- Tenant table -->
+    <createTable tableName="tenant">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="slug" type="varchar(255)">
+        <constraints nullable="false" unique="true" />
+      </column>
+    </createTable>
+    <createIndex tableName="tenant" indexName="SLUG_INDEX">
+      <column name="slug" />
+    </createIndex>
+
+    <!-- Entity table -->
+    <createTable tableName="entity">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="slug" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="type" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="tenant_id" type="bigint" />
+    </createTable>
+    <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id" constraintName="UNIQUE_SLUG_PER_TYPE_PER_TENANT" />
+    <addForeignKeyConstraint constraintName="TENANT_FK"
+                             baseTableName="entity" baseColumnNames="tenant_id"
+                             referencedTableName="tenant" referencedColumnNames="id" />
+    <createIndex tableName="entity" indexName="SLUG_INDEX">
+      <column name="slug" />
+    </createIndex>
+    <createIndex tableName="entity" indexName="TYPE_INDEX">
+      <column name="type" />
+    </createIndex>
+    <createIndex tableName="entity" indexName="TENANT_INDEX">
+      <column name="tenant_id" />
+    </createIndex>
+
+    <!-- Translations -->
+    <createTable tableName="translation">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="entity_id" type="bigint" />
+      <column name="field" type="varchar(255)" />
+    </createTable>
+    <addUniqueConstraint tableName="translation" columnNames="entity_id,field" constraintName="UNIQUE_TRANSLATION_PER_FIELD_PER_ENTITY" />
+    <addForeignKeyConstraint constraintName="TRANSLATION_ENTITY_FK"
+                             baseTableName="translation" baseColumnNames="entity_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="translation" indexName="FIELD_INDEX">
+      <column name="field" />
+    </createIndex>
+
+    <createTable tableName="translation_small">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="translation_id" type="bigint" />
+      <column name="locale" type="varchar(255)" />
+      <column name="text" type="varchar(255)" />
+    </createTable>
+    <addUniqueConstraint tableName="translation_small" columnNames="translation_id,locale" constraintName="UNIQUE_TRANSLATION_PER_LANG" />
+    <addForeignKeyConstraint constraintName="TRANSLATION_SMALL_TRANSLATION_FK"
+                             baseTableName="translation_small" baseColumnNames="translation_id"
+                             referencedTableName="translation" referencedColumnNames="id" />
+    <createIndex tableName="translation_small" indexName="LANG_INDEX">
+      <column name="locale" />
+    </createIndex>
+
+    <createTable tableName="translation_medium">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="translation_id" type="bigint" />
+      <column name="locale" type="varchar(255)" />
+      <column name="text" type="mediumtext" />
+    </createTable>
+    <addUniqueConstraint tableName="translation_medium" columnNames="translation_id,locale" constraintName="UNIQUE_TRANSLATION_PER_LANG" />
+    <addForeignKeyConstraint constraintName="TRANSLATION_MEDIUM_TRANSLATION_FK"
+                             baseTableName="translation_medium" baseColumnNames="translation_id"
+                             referencedTableName="translation" referencedColumnNames="id" />
+    <createIndex tableName="translation_medium" indexName="LANG_INDEX">
+      <column name="locale" />
+    </createIndex>
+
+    <!-- User table -->
+    <createTable tableName="user">
+      <column name="entity_id" type="bigint">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="email" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="password" type="varchar(255)" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="USER_ENTITY_FK"
+                             baseTableName="user" baseColumnNames="entity_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="user" indexName="EMAIL_INDEX">
+      <column name="email" />
+    </createIndex>
+
+    <!-- Role table -->
+    <createTable tableName="user_role">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="user_id" type="bigint" />
+      <column name="role" type="varchar(255)" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="ROLE_USER_FK"
+                             baseTableName="user_role" baseColumnNames="user_id"
+                             referencedTableName="user" referencedColumnNames="entity_id" />
+
+    <!-- Product table -->
+    <createTable tableName="product">
+      <column name="entity_id" type="bigint">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="index" type="smallint unsigned" />
+      <column name="title" type="varchar(255)" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
+                             baseTableName="product" baseColumnNames="entity_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="product" indexName="TITLE_INDEX">
+      <column name="title" />
+    </createIndex>
+
+    <!-- Category table -->
+    <createTable tableName="category">
+      <column name="entity_id" type="bigint">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="title" type="varchar(255)" />
+      <column name="description" type="mediumtext" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="CATEGORY_ENTITY_FK"
+                             baseTableName="category" baseColumnNames="entity_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="category" indexName="TITLE_INDEX">
+      <column name="title" />
+    </createIndex>
+
+    <!-- Category <-> Product -->
+    <createTable tableName="category_product">
+      <column name="category_id" type="bigint" />
+      <column name="product_id" type="bigint" />
+      <column name="index" type="smallint unsigned" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_CATEGORY_ENTITY_FK"
+                             baseTableName="category_product" baseColumnNames="category_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_PRODUCT_ENTITY_FK"
+                             baseTableName="category_product" baseColumnNames="product_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <addPrimaryKey tableName="category_product"
+                   columnNames="category_id,product_id" constraintName="CATEGORY_PRODUCT_PK" />
+    <createIndex tableName="category_product" indexName="INDEX_INDEX">
+      <column name="index" />
+    </createIndex>
+
+  </changeSet>
+
+</databaseChangeLog>

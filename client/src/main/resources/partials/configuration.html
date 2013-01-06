@@ -1,0 +1,52 @@
+<ng-form name="configurationForm" ng-controller="ConfigurationController2">
+  <div id="configuration">
+    <div class="span8">
+      <!-- header -->
+      <div class="page-header">
+        <h1 class="">Parameters</h1>
+      </div>
+
+      <form class="form-horizontal" name="tenantForm">
+        <fieldset>
+          <legend>Shop</legend>
+          <div class="control-group">
+            <label class="control-label" for="hasVariants">Name</label>
+            <div class="controls">
+              <input type="text" name="name" class="input-xlarge" ng-model="tenant.shop.name"/>
+          </div>
+        </fieldset>
+      </form>
+
+      <form class="form-horizontal" name="shopForm">
+        <fieldset>
+          <legend>Products</legend>
+          <div class="control-group">
+            <label class="control-label" for="hasVariants">have variants</label>
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" 
+                       class="input"
+                       name="variantsEnabled"
+                       ng-model="configuration.shop.variants.enabled" />
+                Check if this shop products can have variants. Variants can be size for t-shirts.
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+      </form>
+    </div>
+
+
+    <div class="span2">
+      <div class="buttons">
+        <button ng-click="updateConfiguration()"
+                class="btn btn-large btn-primary"
+                ng-disabled="!configurationForm.shopForm.$dirty
+                          && !configurationForm.tenantForm.$dirty">
+                Update
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-form>

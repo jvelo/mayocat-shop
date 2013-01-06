@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Shop;
@@ -18,8 +21,9 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 
-@Component
-public class DefaultTenantResolver implements TenantResolver
+@Component(hints={"default", "subdomain"})
+@Singleton
+public class DefaultTenantResolver implements TenantResolver, ServletRequestListener
 {
 
     /**
@@ -37,6 +41,11 @@ public class DefaultTenantResolver implements TenantResolver
     @Inject
     private MultitenancyConfiguration configuration;
 
+    public void requestDestroyed()
+    {
+        this.resolved.remove();
+    }
+    
     @Override
     public Tenant resolve(String host)
     {
@@ -48,7 +57,7 @@ public class DefaultTenantResolver implements TenantResolver
             try {
                 if (!this.configuration.isActivated()) {
                     // Mono-tenant
-                    
+
                     tenant = this.tenantService.findBySlug(this.configuration.getDefaultTenant());
                     if (tenant == null) {
                         Tenant tenantToCreate = new Tenant(this.configuration.getDefaultTenant());
@@ -59,7 +68,7 @@ public class DefaultTenantResolver implements TenantResolver
                     this.resolved.get().put(host, tenant);
                 } else {
                     // Multi-tenant
-                    
+
                     tenant = this.tenantService.findBySlug(this.extractSlugFromHost(host));
                     if (tenant == null) {
                         return null;
@@ -102,6 +111,17 @@ public class DefaultTenantResolver implements TenantResolver
         } else {
             return host;
         }
+    }
+
+    @Override
+    public void requestDestroyed(ServletRequestEvent sre)
+    {
+        this.resolved.remove();
+    }
+
+    @Override
+    public void requestInitialized(ServletRequestEvent sre)
+    {
     }
 
 }

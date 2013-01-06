@@ -8,6 +8,7 @@ import javax.inject.Provider;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.service.InvalidMoveOperation;
 import org.mayocat.shop.store.CategoryStore;
@@ -31,6 +32,7 @@ public class DefaultCatalogService implements CatalogService
     public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException,
         StoreException
     {
+        /*
         Category allProducts = this.categoryStore.get().findBySlug("_all");
         if (allProducts == null) {
             // Lazily create the "all products" special category
@@ -40,7 +42,8 @@ public class DefaultCatalogService implements CatalogService
             allProducts.setSpecial(true);
             this.categoryStore.get().create(allProducts);
         }
-
+         */
+        
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.generateSlug(entity.getTitle()));
         }
@@ -49,9 +52,9 @@ public class DefaultCatalogService implements CatalogService
         // we save the products in base explicitly.
         productStore.get().create(entity);
 
-        allProducts.addToProducts(entity);
-
-        this.categoryStore.get().update(allProducts);
+        //allProducts.addToProducts(entity);
+        //this.categoryStore.get().update(allProducts);
+        
     }
 
     public void updateProduct(Product entity) throws InvalidEntityException, StoreException
@@ -66,8 +69,8 @@ public class DefaultCatalogService implements CatalogService
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException
     {
-        Category category = this.categoryStore.get().findBySlug("_all");
-        return category.getProducts();
+        // TODO
+        return null;
     }
 
     @Override
@@ -89,13 +92,14 @@ public class DefaultCatalogService implements CatalogService
     @Override
     public Category findCategoryBySlug(String slug) throws StoreException
     {
-        return this.categoryStore.get().findBySlug(slug);
+        Tenant t = new Tenant(1l);
+        return this.categoryStore.get().findBySlug(slug, t);
     }
 
     @Override
     public List<Category> findAllCategories(int number, int offset) throws StoreException
     {
-        return this.categoryStore.get().findAllNotSpecial();
+        return null;
     }
 
     private String generateSlug(String title)
@@ -115,6 +119,7 @@ public class DefaultCatalogService implements CatalogService
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
         InsertPosition insertPosition) throws InvalidMoveOperation, StoreException
     {
+        /*
         int position = -1;
         Product toMove = null;
         int i = 0;
@@ -154,6 +159,7 @@ public class DefaultCatalogService implements CatalogService
         } catch (InvalidEntityException e) {
             throw new StoreException(e);
         }
+        */
     }
 
 }

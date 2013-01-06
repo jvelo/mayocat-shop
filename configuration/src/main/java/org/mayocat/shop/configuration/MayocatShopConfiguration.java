@@ -6,9 +6,15 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
 
 public class MayocatShopConfiguration extends Configuration
 {
+    @Valid
+    @NotNull
+    @JsonProperty
+    private DatabaseConfiguration database = new DatabaseConfiguration();
+    
     @Valid
     @NotNull
     @JsonProperty
@@ -29,6 +35,11 @@ public class MayocatShopConfiguration extends Configuration
     @JsonProperty
     private SearchEngineConfiguration searchEngine = new SearchEngineConfiguration();
 
+    public DatabaseConfiguration getDatabaseConfiguration()
+    {
+        return database;
+    }
+    
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;

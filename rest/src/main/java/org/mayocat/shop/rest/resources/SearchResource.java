@@ -14,7 +14,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.context.Context;
-import org.mayocat.shop.model.EntityWithSlug;
+import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
@@ -32,7 +32,7 @@ public class SearchResource implements Resource
     @Produces({"application/json; charset=UTF-8"})
     public List<Map<String, Object>> search(@Authorized Context context, @QueryParam("term") String term)
     {
-        List<Class< ? extends EntityWithSlug>> classes = new ArrayList<Class< ? extends EntityWithSlug>>();
+        List<Class< ? extends Entity>> classes = new ArrayList<Class< ? extends Entity>>();
         classes.add(Product.class);
 
         try {

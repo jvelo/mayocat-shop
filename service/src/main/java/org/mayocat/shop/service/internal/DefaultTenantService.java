@@ -19,13 +19,11 @@ public class DefaultTenantService implements TenantService
     @Inject
     private Provider<TenantStore> tenantStore;
 
-    @Override
     public void create(Tenant entity) throws InvalidEntityException, EntityAlreadyExistsException, StoreException
     {
         this.tenantStore.get().create(entity);
     }
 
-    @Override
     public void update(Tenant entity) throws InvalidEntityException, StoreException
     {
         this.tenantStore.get().update(entity);
@@ -41,14 +39,17 @@ public class DefaultTenantService implements TenantService
     @Override
     public Tenant findBySlugOrAlias(String slugOrAlias) throws StoreException
     {
-        return this.tenantStore.get().findBySlugOrAlias(slugOrAlias);
+        // FIXME
+        return this.tenantStore.get().findBySlug(slugOrAlias);
     }
 
+    /*
     @Override
     public List<Tenant> findAll(int number, int offset) throws StoreException
     {
         // TODO
         throw new RuntimeException("Not implemented");
     }
+    */
 
 }

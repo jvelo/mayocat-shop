@@ -3,23 +3,18 @@ package org.mayocat.shop.store;
 public class EntityAlreadyExistsException extends Exception
 {
     /**
-     * 
+     * Change when the serialization form of this exception changes.
      */
     private static final long serialVersionUID = -153504107891229925L;
 
-    public EntityAlreadyExistsException(){
+    public EntityAlreadyExistsException()
+    {
         super();
     }
-    
-    public EntityAlreadyExistsException(String message){
+
+    public EntityAlreadyExistsException(String message)
+    {
         super(message);
     }
-    
-    public EntityAlreadyExistsException(Throwable cause){
-        super(cause);
-    }
-    
-    public EntityAlreadyExistsException(String message, Throwable cause){
-        super(message, cause);
-    }
+
 }

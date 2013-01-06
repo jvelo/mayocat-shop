@@ -11,6 +11,8 @@ import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.shop.event.ApplicationStartedEvent;
 import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.shop.store.rdbms.dbi.DBIProvider;
+import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.observation.ObservationManager;
@@ -19,6 +21,10 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
+import com.yammer.dropwizard.jdbi.DBIFactory;
+import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
+import com.yammer.dropwizard.migrations.MigrationsBundle;
 
 public class MayocatShopService extends Service<MayocatShopConfiguration>
 {
@@ -33,6 +39,15 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
     public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
         bootstrap.addBundle(new AssetsBundle("/client/", "/admin/"));
+        bootstrap.addBundle(new DBIExceptionsBundle());
+        bootstrap.addBundle(new MigrationsBundle<MayocatShopConfiguration>()
+        {
+            @Override
+            public DatabaseConfiguration getDatabaseConfiguration(MayocatShopConfiguration configuration)
+            {
+                return configuration.getDatabaseConfiguration();
+            }
+        });
     }
 
     @Override
@@ -41,7 +56,10 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
 
         // Initialize Rendering components and allow getting instances
         componentManager = new EmbeddableComponentManager();
+
         this.registerConfigurationsAsComponents(configuration);
+        this.registerDBIFactoryComponent(environment, configuration);
+
         componentManager.initialize(this.getClass().getClassLoader());
 
         // Registering provider component implementations against the environment...
@@ -86,6 +104,26 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
 
         ObservationManager observationManager = componentManager.getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
+    }
+
+    private void registerDBIFactoryComponent(Environment environment, MayocatShopConfiguration configuration)
+        throws ClassNotFoundException
+    {
+        final DBIFactory factory = new DBIFactory();
+        final DBI jdbi =
+            factory.build(environment, configuration.getDatabaseConfiguration(), configuration
+                .getDataSourceConfiguration().getName());
+        final DBIProvider dbi = new DBIProvider()
+        {
+            @Override
+            public DBI get()
+            {
+                return jdbi;
+            }
+        };
+        DefaultComponentDescriptor<DBIProvider> cd = new DefaultComponentDescriptor<DBIProvider>();
+        cd.setRoleType(DBIProvider.class);
+        componentManager.registerComponent(cd, dbi);
     }
 
     private void registerConfigurationsAsComponents(MayocatShopConfiguration configuration)

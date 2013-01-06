@@ -77,7 +77,7 @@ class AuthorizedInjectable extends AnonymousInjectable
             final String headerValue = Strings.nullToEmpty(httpContext.getRequest().getHeaderValue(headerName));
             for (Authenticator authenticator : this.authenticators.values()) {
                 if (authenticator.respondTo(headerName, headerValue)) {
-                    user = authenticator.verify(headerValue);
+                    user = authenticator.verify(headerValue, tenant);
                     if (user.isPresent()) {
                         if (capabilities.length == 0) {
                             // No capability declared, just return authenticated user

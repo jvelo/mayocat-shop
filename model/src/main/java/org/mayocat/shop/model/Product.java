@@ -3,12 +3,12 @@ package org.mayocat.shop.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.shop.model.annotation.Localizable;
+import org.mayocat.shop.model.annotation.Localized;
 import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Product implements EntityWithSlug
+public class Product implements Entity
 {
     Long id;
 
@@ -17,13 +17,13 @@ public class Product implements EntityWithSlug
     @Size(min = 1)
     String slug;
     
-    @Localizable
+    @Localized
     @SearchIndex
     @NotNull
     @Size(min = 1)
     String title;
 
-    @Localizable
+    @Localized
     @SearchIndex
     String description;
     
@@ -55,6 +55,16 @@ public class Product implements EntityWithSlug
     public void setDescription(String description)
     {
         this.description = description;
+    }
+    
+    public Long getId()
+    {
+        return this.id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
     }
     
     ////////////////////////////////////////////////
@@ -89,6 +99,5 @@ public class Product implements EntityWithSlug
                  .addValue(this.title)  
                  .addValue(this.slug)    
                  .toString();  
-    }  
-    
+    }    
 }

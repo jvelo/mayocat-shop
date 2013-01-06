@@ -39,6 +39,9 @@ import com.google.common.base.Strings;
 public class LifeCycle implements ServletRequestListener, EventListener, Initializable
 {
 
+    /**
+     * FIXME this certainly shouldn't be here.
+     */
     private static final String DEFAULT_CLIENT_STATIC_PATH = "/admin/";
 
     @Inject
@@ -85,54 +88,6 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
 
     private void createAllSchemas()
     {
-        Properties props = getPersistenceProperties();
-        
-        // Force DataNucleus to create schemas in a multi-tenancy context.
-        // This is needed because otherwise, DN will create schemas without the tenant ID columns (it would
-        // add them later on in the execution of the application when in a multitenancy context), and since some
-        // constraints (like unicity of handles per tenant) are expressed using the tenant ID column,
-        // creation of the schema would fail.
-        props.put("datanucleus.tenantId", "");
-        props.put("datanucleus.autoCreateTables", "true");
-        
-        JDOPersistenceManagerFactory pmf = (JDOPersistenceManagerFactory) JDOHelper.getPersistenceManagerFactory(props);
-        NucleusContext ctx = pmf.getNucleusContext();
-
-        Set<String> classNames = new HashSet<String>();
-
-        // FIXME Refactor this so that we don't have to list all entity classes.
-        classNames.add("org.mayocat.shop.model.Category");
-        classNames.add("org.mayocat.shop.model.User");
-        classNames.add("org.mayocat.shop.model.Product");
-        classNames.add("org.mayocat.shop.model.Role");
-        classNames.add("org.mayocat.shop.model.Shop");
-        classNames.add("org.mayocat.shop.model.Tenant");
-        classNames.add("org.mayocat.shop.model.UserRole");
-
-        try {
-            Properties properties = new Properties();
-            // Set any properties for schema generation
-            ((SchemaAwareStoreManager) ctx.getStoreManager()).createSchema(classNames, properties);
-        } catch (Exception e) {
-            this.logger.error("Failed to create schemas", e);
-            
-            // Don't go any further if schemas have failed to be created.
-            // DropWizard/Mayocat is designed to run on its own JVM, so this does not affect other programs
-            try {
-                // Leave some room for the logger to finish its duty (otherwise "Aborting..." can end up in the
-                // middle of the error log.
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException ex) {
-                // Nothing
-            }
-            finally {
-                System.out.println("Aborting...");
-                System.out.flush();
-                System.exit(-1);
-            }
-            
-        }
 
     }
 
@@ -147,6 +102,7 @@ public class LifeCycle implements ServletRequestListener, EventListener, Initial
     {
         if (this.provider.get() != null) {
             this.provider.get().close();
+            this.provider.set(null);
         } else {
             if (this.logger.isDebugEnabled()
                 && !((HttpServletRequest) event.getServletRequest()).getRequestURI().startsWith(

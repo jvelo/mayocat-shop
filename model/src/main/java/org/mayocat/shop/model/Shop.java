@@ -2,7 +2,7 @@ package org.mayocat.shop.model;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class Shop implements Entity
+public class Shop
 {
     @JsonIgnore
     Long id;

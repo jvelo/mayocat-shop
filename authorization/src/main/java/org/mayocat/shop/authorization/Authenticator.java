@@ -1,6 +1,7 @@
 package org.mayocat.shop.authorization;
 
 import org.mayocat.shop.authorization.cookies.CookieAuthenticator;
+import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.xwiki.component.annotation.Role;
 
@@ -12,7 +13,7 @@ import com.google.common.base.Optional;
  * respond to the authentication challenge when passed a header "Authorization" with a value that starts with "Basic".
  * Similarly, a {@link CookieAuthenticator} will only accept to respond when passed a "Cookie" header and a value that
  * contains a certain number of cookies it needs (encrypted username and password, etc). Implementation must specify
- * which header name/value paris they accept to respond to in the {@link #respondTo(String, String)} method.
+ * which header name/value pair they accept to respond to in the {@link #respondTo(String, String)} method.
  * Authentication verification logic should then be implemented in the {@link #verify(String)} method, where the value
  * passed is always a header value the authenticator has accepted to respond to.
  * 
@@ -30,8 +31,9 @@ public interface Authenticator
 
     /**
      * @param value the header value to authenticate
+     * @param tenant the tenant for which to verify the header
      * @return an empty option when the authenticator did not authentify any user against the challenge, an option with
      *         the authenticated user otherwise.
      */
-    Optional<User> verify(String value);
+    Optional<User> verify(String value, Tenant tenant);
 }

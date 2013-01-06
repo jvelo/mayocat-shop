@@ -7,8 +7,8 @@ import javax.inject.Provider;
 
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
-import org.mayocat.shop.store.RoleStore;
 import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -17,7 +17,7 @@ public class DefaultGatekeeper implements Gatekeeper
 {
 
     @Inject
-    private Provider<RoleStore> roleStore;
+    private Provider<UserStore> userStore;
 
     @Inject
     private Logger logger;
@@ -27,13 +27,10 @@ public class DefaultGatekeeper implements Gatekeeper
     {
         try {
             String name = capability.newInstance().getName();
-            List<Role> userRoles = this.roleStore.get().findAllByUser(user);
+            List<Role> userRoles = this.userStore.get().findRolesForUser(user);
             for (Role role : userRoles) {
-                for (Capability cap : role.getCapabilities()) {
-                    if (cap.getName().equals(name)) {
-                        return true;
-                    }
-                }
+                // FIXME
+                return true;
             }
             // Pas cap
             return false;

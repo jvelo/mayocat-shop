@@ -10,8 +10,6 @@ public class CategoryRepresentation
 
     private String slug;
 
-    private boolean special;
-
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private String href;
@@ -21,7 +19,6 @@ public class CategoryRepresentation
         this.title = category.getTitle();
         this.description = category.getDescription();
         this.slug = category.getSlug();
-        this.special = category.isSpecial();
 
         this.href = "/category/" + this.slug;
     }
@@ -44,10 +41,5 @@ public class CategoryRepresentation
     public String getHref()
     {
         return href;
-    }
-
-    public boolean isSpecial()
-    {
-        return special;
     }
 }

@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.google.common.base.Objects;
 
-public class Tenant implements EntityWithSlug
+public class Tenant implements Entity
 {    
     @JsonIgnore
     Long id;
@@ -28,6 +28,11 @@ public class Tenant implements EntityWithSlug
     {
     }
     
+    public Tenant(Long id)
+    {
+        this.id = id;
+    }
+    
     public Tenant(String slug)
     {
         setSlug(slug);
@@ -39,7 +44,12 @@ public class Tenant implements EntityWithSlug
     {
         return id;
     }
-    
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
     public String getSlug()
     {
         return slug;
@@ -105,5 +115,4 @@ public class Tenant implements EntityWithSlug
     {
         return Objects.toStringHelper(this).addValue(this.slug).toString();
     }
-
 }

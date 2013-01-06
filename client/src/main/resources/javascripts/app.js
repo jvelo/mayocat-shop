@@ -5,6 +5,7 @@ var mayocat = angular.module('mayocat', [
     'product',
     'category',
     'catalog',
+    'configuration',
     'jqui'
 ]);
 
@@ -18,6 +19,7 @@ mayocat.config(['$routeProvider', function($routeProvider) {
       when('/category/', {templateUrl: 'partials/categories.html', controller: 'CatalogController'}).
       when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
       when('/category/:category', {templateUrl: 'partials/category.html', controller: 'CategoryController'}).
+      when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
       otherwise({redirectTo: '/'});
 }]);
 
