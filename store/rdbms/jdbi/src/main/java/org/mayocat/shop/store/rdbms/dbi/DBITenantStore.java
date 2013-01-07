@@ -1,5 +1,8 @@
 package org.mayocat.shop.store.rdbms.dbi;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.mayocat.shop.model.Tenant;
@@ -22,25 +25,32 @@ public class DBITenantStore implements TenantStore, Initializable
     private TenantDAO dao;
     
     @Override
-    public void create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException, StoreException
+    public void create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.create(tenant);
     }
 
     @Override
-    public void update(Tenant entity) throws InvalidEntityException, StoreException
+    public void update(Tenant entity) throws InvalidEntityException
     {
         
     }
 
     @Override
-    public Tenant findById(Long id) throws StoreException
+    public List<Tenant> findAll(Integer number, Integer offset)
+    {
+        // TODO
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Tenant findById(Long id)
     {
         return null;
     }
 
     @Override
-    public Tenant findBySlug(String slug) throws StoreException
+    public Tenant findBySlug(String slug)
     {
         return this.dao.findBySlug(slug);
     }

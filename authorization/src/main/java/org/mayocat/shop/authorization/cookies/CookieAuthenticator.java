@@ -66,16 +66,13 @@ public class CookieAuthenticator implements Authenticator
                 }
             }
             if (!Strings.isNullOrEmpty(password) && !Strings.isNullOrEmpty(username)) {
-                User user = userStore.get().findByEmailOrUserNameAndTenant(username, tenant);
+                User user = userStore.get().findByEmailOrUserName(username);
                 if (user != null) {
                     if (this.passwordManager.verifyPassword(password, user.getPassword())) {
                         return Optional.of(user);
                     }
                 }
             }
-            return Optional.absent();
-        } catch (StoreException e) {
-            this.logger.error("Failed to get user information", e);
             return Optional.absent();
         } catch (EncryptionException e) {
             this.logger.error("Failed to decrypt cookies", e);

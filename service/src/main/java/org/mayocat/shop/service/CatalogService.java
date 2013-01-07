@@ -57,7 +57,7 @@ public interface CatalogService
      * 
      * @param category the category in which to move the project in
      * @param slugOfProductToMove the slug of the project to move
-     * @param relativesSlug the slug of the product to move relative to
+     * @param relativeSlug the slug of the product to move relative to
      * @param position the relative insert position : before or after
      * @throws StoreException when a problems occur persisting the category
      * @throws InvalidMoveOperation when no sense can be made of move parameters

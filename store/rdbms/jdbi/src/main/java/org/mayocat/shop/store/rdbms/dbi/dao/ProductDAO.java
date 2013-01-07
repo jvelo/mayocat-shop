@@ -2,13 +2,16 @@ package org.mayocat.shop.store.rdbms.dbi.dao;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.store.rdbms.dbi.mapper.ProductMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
+@RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
 public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>
 {

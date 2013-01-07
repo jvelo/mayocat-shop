@@ -27,10 +27,7 @@ public class DefaultUserService implements UserService
 
     public List<User> findAll(int number, int offset) throws StoreException
     {
-     // FIXME
-        Tenant tenant = new Tenant(new Long(1));
-        tenant.setSlug("slug");
-        return this.userStore.get().findAll(tenant, number, offset);
+        return this.userStore.get().findAll(number, offset);
     }
 
     public void create(User user) throws InvalidEntityException, EntityAlreadyExistsException, StoreException
@@ -43,11 +40,7 @@ public class DefaultUserService implements UserService
     {
         user.setPassword(this.passwordManager.hashPassword(user.getPassword()));
 
-        // FIXME
-        Tenant tenant = new Tenant(new Long(1));
-        tenant.setSlug("slug");
-
-        this.userStore.get().create(user, tenant, initialRole);
+        this.userStore.get().create(user, initialRole);
     }
 
     public void update(User entity) throws InvalidEntityException, StoreException
@@ -82,8 +75,9 @@ public class DefaultUserService implements UserService
 
     public User findByEmailOrUserName(String userNameOrEmail) throws StoreException
     {
-        // FIXME get tenant from execution context
-        return this.userStore.get().findByEmailOrUserNameAndTenant(userNameOrEmail, null);
+        return this.userStore.get().findByEmailOrUserName(userNameOrEmail);
     }
+
+
 
 }

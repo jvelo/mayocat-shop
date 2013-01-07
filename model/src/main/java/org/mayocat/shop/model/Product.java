@@ -26,7 +26,16 @@ public class Product extends AbstractLocalizedEntity
     @Localized
     @SearchIndex
     String description;
-    
+
+    public Product()
+    {
+    }
+
+    public Product(Long id)
+    {
+        this.id = id;
+    }
+
     public String getSlug()
     {
         return slug;

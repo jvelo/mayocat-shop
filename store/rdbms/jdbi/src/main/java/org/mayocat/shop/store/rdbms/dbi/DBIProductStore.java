@@ -17,42 +17,48 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 @Component(hints={"jdbi", "default"})
-public class DBIProductStore implements ProductStore, Initializable
+public class DBIProductStore extends AbstractEntityStore implements ProductStore, Initializable
 {
     @Inject
     private DBIProvider dbi;
     
     private static final String PRODUCT_TABLE_NAME = "product";
     private ProductDAO dao;
-    
-    public void create(Product product, Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException, StoreException
+
+    public void create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(product.getSlug(), tenant) != null) {
+        if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
         }
 
         this.dao.begin();
-        
-        Long entityId = this.dao.createEntity(product, PRODUCT_TABLE_NAME, tenant);
-        Integer lastIndex = this.dao.lastPosition(tenant);
+
+        Long entityId = this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        Integer lastIndex = this.dao.lastPosition(getTenant());
         if (lastIndex == null) {
             lastIndex = 0;
         }
         this.dao.create(entityId, lastIndex + 1, product);
         this.dao.insertTranslations(entityId, product.getTranslations());
-        
+
         this.dao.commit();
     }
 
     @Override
-    public void update(Product entity) throws InvalidEntityException, StoreException
+    public void update(Product entity) throws InvalidEntityException
     {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public Product findById(Long id) throws StoreException
+    public List<Product> findAll(Integer number, Integer offset)
+    {
+        return this.dao.findAll(PRODUCT_TABLE_NAME, getTenant(), number, offset);
+    }
+
+    @Override
+    public Product findById(Long id)
     {
         // TODO Auto-generated method stub
         return null;
@@ -64,25 +70,16 @@ public class DBIProductStore implements ProductStore, Initializable
         this.dao = this.dbi.get().onDemand(ProductDAO.class);
     }
 
-    public Product findBySlug(String slug, Tenant tenant) throws StoreException
+    public Product findBySlug(String slug)
     {
-        return this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, tenant);
+        return this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
     }
 
     @Override
-    public List<Product> findAllInCategory(Category category, int number, int offset) throws StoreException
+    public List<Product> findAllInCategory(Category category, int number, int offset)
     {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public void create(Product product) throws EntityAlreadyExistsException, InvalidEntityException, StoreException
-    {
-        // FIXME KIIIIIIIIILL MEEEEEEEE
-        Tenant t = new Tenant(new Long(1));
-        t.setSlug("shop");
-        this.create(product, t);
     }
 
 }

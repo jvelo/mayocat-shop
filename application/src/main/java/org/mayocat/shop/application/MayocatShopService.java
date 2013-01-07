@@ -1,7 +1,9 @@
 package org.mayocat.shop.application;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
@@ -28,6 +30,12 @@ import com.yammer.dropwizard.migrations.MigrationsBundle;
 
 public class MayocatShopService extends Service<MayocatShopConfiguration>
 {
+    public static final String ADMIN_UI_PATH = "/admin/";
+
+    public static final Set<String> STATIC_PATHS = new HashSet<String>() {{
+        add(ADMIN_UI_PATH);
+    }};
+
     private EmbeddableComponentManager componentManager;
 
     public static void main(String[] args) throws Exception
@@ -38,7 +46,7 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
     @Override
     public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
-        bootstrap.addBundle(new AssetsBundle("/client/", "/admin/"));
+        bootstrap.addBundle(new AssetsBundle("/client/", ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new MigrationsBundle<MayocatShopConfiguration>()
         {

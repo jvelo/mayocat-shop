@@ -64,15 +64,12 @@ public class DefaultCatalogService implements CatalogService
 
     public Product findProductBySlug(String slug) throws StoreException
     {
-        // FIXME
-        Tenant t = new Tenant(1l);
-        return this.productStore.get().findBySlug(slug, t);
+        return this.productStore.get().findBySlug(slug);
     }
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException
     {
-        // TODO
-        return null;
+        return this.productStore.get().findAll(number, offset);
     }
 
     @Override
@@ -94,14 +91,13 @@ public class DefaultCatalogService implements CatalogService
     @Override
     public Category findCategoryBySlug(String slug) throws StoreException
     {
-        Tenant t = new Tenant(1l);
-        return this.categoryStore.get().findBySlug(slug, t);
+        return this.categoryStore.get().findBySlug(slug);
     }
 
     @Override
     public List<Category> findAllCategories(int number, int offset) throws StoreException
     {
-        return null;
+        return this.categoryStore.get().findAll(number, offset);
     }
 
     private String generateSlug(String title)

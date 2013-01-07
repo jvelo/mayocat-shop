@@ -59,16 +59,12 @@ public class BasicAuthenticator implements Authenticator
                 if (i > 0) {
                     final String username = decoded.substring(0, i);
                     final String password = decoded.substring(i + 1);
-                    try {
-                        // FIXME
-                        User user = userStore.get().findByEmailOrUserNameAndTenant(username, tenant);
-                        if (user != null) {
-                            if (this.passwordManager.verifyPassword(password, user.getPassword())) {
-                                return Optional.of(user);
-                            }
+                    // FIXME check how we authenticate "global users"
+                    User user = userStore.get().findByEmailOrUserName(username);
+                    if (user != null) {
+                        if (this.passwordManager.verifyPassword(password, user.getPassword())) {
+                            return Optional.of(user);
                         }
-                    } catch (StoreException e) {
-                        this.logger.error("Failed to retriev user against store", e);
                     }
                 }
             } catch (UnsupportedEncodingException e) {

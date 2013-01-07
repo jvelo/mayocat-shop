@@ -10,7 +10,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface ProductStore extends Store<Product, Long>
 {    
-    Product findBySlug(String slug, Tenant tenant) throws StoreException;
+    Product findBySlug(String slug);
     
-    List<Product> findAllInCategory(Category category, int number, int offset) throws StoreException;
+    List<Product> findAllInCategory(Category category, int number, int offset);
 }

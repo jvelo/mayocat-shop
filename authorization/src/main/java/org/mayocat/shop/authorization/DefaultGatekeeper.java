@@ -35,8 +35,6 @@ public class DefaultGatekeeper implements Gatekeeper
             // Pas cap
             return false;
 
-        } catch (StoreException e) {
-            this.logger.error("Failed to find role for user and capability", e);
         } catch (InstantiationException e) {
             this.logger.error("Failed to find role for user and capability", e);
         } catch (IllegalAccessException e) {

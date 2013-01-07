@@ -7,7 +7,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -15,8 +14,10 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.shop.authorization.PasswordManager;
+import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.authorization.cookies.CookieCrypter;
 import org.mayocat.shop.authorization.cookies.EncryptionException;
+import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.StoreException;
@@ -39,7 +40,7 @@ public class LoginResource implements Resource
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response login(@FormParam("username") String username, @FormParam("password") String password,
-        @FormParam("remember") @DefaultValue("false") Boolean remember, @Context UriInfo uri)
+        @FormParam("remember") @DefaultValue("false") Boolean remember)
     {
         try {
             User user = userService.findByEmailOrUserName(username);

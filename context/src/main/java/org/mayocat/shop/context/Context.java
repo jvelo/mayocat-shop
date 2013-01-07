@@ -5,7 +5,6 @@ import org.mayocat.shop.model.User;
 
 public class Context
 {
-
     private Tenant tenant;
     
     private User user;
@@ -25,4 +24,13 @@ public class Context
         return user;
     }
 
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+
+    public void setTenant(Tenant tenant)
+    {
+        this.tenant = tenant;
+    }
 }

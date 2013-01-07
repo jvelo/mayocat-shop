@@ -3,6 +3,7 @@ package org.mayocat.shop.store.rdbms.dbi;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.Tenant;
@@ -18,28 +19,32 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 @Component(hints = {"jdbi", "default"})
-public class DBIUserStore implements UserStore, Initializable
+public class DBIUserStore extends AbstractEntityStore implements UserStore, Initializable
 {
     @Inject
     private DBIProvider dbi;
 
     private UserDAO dao;
 
-    public void create(User user, Tenant tenant, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException,
-        StoreException
+    public void create(User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(user.getSlug(), tenant) != null) {
+        if (this.dao.findBySlug(user.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
         }
 
         this.dao.begin();
-                
-        this.dao.createEntity(user, "user", tenant);
-        Long entityId = this.dao.getId(user, "user", tenant);
+
+        this.dao.createEntity(user, "user", getTenant());
+        Long entityId = this.dao.getId(user, "user", getTenant());
         this.dao.create(entityId, user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
-        
+
         this.dao.commit();
+    }
+
+    public void create(User user) throws EntityAlreadyExistsException, InvalidEntityException
+    {
+        this.create(user, Role.ADMIN);
     }
 
     public void update(User user, Tenant tenant) throws EntityDoesNotExistsException, InvalidEntityException,
@@ -51,36 +56,27 @@ public class DBIUserStore implements UserStore, Initializable
         this.dao.update(user, tenant);
     }
 
-    public User findById(Long id) throws StoreException
+    public User findById(Long id)
     {
         return this.dao.findById(id);
     }
 
-    public List<User> findAll(Tenant tenant, Integer number, Integer offset) throws StoreException
+    public List<User> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(tenant, number, offset);
+        return this.dao.findAll(getTenant(), number, offset);
     }
 
-    public User findByEmailOrUserNameAndTenant(String userNameOrEmail, Tenant t) throws StoreException
+    public User findByEmailOrUserName(String userNameOrEmail)
     {
-        return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, t);
+        return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
     }
 
-    public void create(User user) throws EntityAlreadyExistsException, InvalidEntityException, StoreException
-    {
-        // FIXME KILL ME
-        Tenant t = new Tenant(new Long(1));
-        t.setSlug("shop");
-        this.create(user, t, Role.ADMIN);
-    }
-
-    public void update(User entity) throws InvalidEntityException, StoreException
+    public void update(User entity) throws InvalidEntityException
     {
         // TODO Auto-generated method stub
-
     }
 
-    public List<Role> findRolesForUser(User user) throws StoreException
+    public List<Role> findRolesForUser(User user)
     {
         return this.dao.findRolesForUser(user);
     }

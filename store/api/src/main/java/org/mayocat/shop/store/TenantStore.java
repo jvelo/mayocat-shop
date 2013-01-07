@@ -8,5 +8,5 @@ import org.xwiki.component.annotation.Role;
 public interface TenantStore extends Store<Tenant, Long>
 {    
     
-    Tenant findBySlug(@Bind("slug") String slug) throws StoreException;
+    Tenant findBySlug(@Bind("slug") String slug);
 }
