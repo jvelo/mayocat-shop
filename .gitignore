@@ -1,9 +1,17 @@
+# Data dir
 data
+
+# Eclipse
 target
 target-eclipse
 .settings
 .classpath
 .project
+
+# Intellij
+*.iml
+.idea
+
 stacktrace.log
 .gradle
 .DS_Store
