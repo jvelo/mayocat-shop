@@ -11,20 +11,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.shop.authorization.PasswordManager;
-import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.authorization.cookies.CookieCrypter;
 import org.mayocat.shop.authorization.cookies.EncryptionException;
-import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component("LoginResource")
 @Path("/login/")
+@ExistingTenant
 public class LoginResource implements Resource
 {
 

@@ -11,17 +11,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
 import org.xwiki.component.annotation.Component;
 
 @Component("SearchResource")
 @Path("/search/")
+@Produces(MediaType.APPLICATION_JSON)
+@ExistingTenant
 public class SearchResource implements Resource
 {
 
@@ -29,8 +33,8 @@ public class SearchResource implements Resource
     private Provider<SearchEngine> searchEngine;
 
     @GET
-    @Produces({"application/json; charset=UTF-8"})
-    public List<Map<String, Object>> search(@Authorized Context context, @QueryParam("term") String term)
+    @Authorized
+    public List<Map<String, Object>> search(@QueryParam("term") String term)
     {
         List<Class< ? extends Entity>> classes = new ArrayList<Class< ? extends Entity>>();
         classes.add(Product.class);

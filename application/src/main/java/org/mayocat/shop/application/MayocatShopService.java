@@ -61,7 +61,6 @@ public class MayocatShopService extends Service<MayocatShopConfiguration>
     @Override
     public void run(MayocatShopConfiguration configuration, Environment environment) throws Exception
     {
-
         // Initialize Rendering components and allow getting instances
         componentManager = new EmbeddableComponentManager();
 

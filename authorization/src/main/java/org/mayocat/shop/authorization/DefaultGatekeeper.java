@@ -22,25 +22,4 @@ public class DefaultGatekeeper implements Gatekeeper
     @Inject
     private Logger logger;
 
-    @Override
-    public boolean hasCapability(User user, Class< ? extends Capability> capability)
-    {
-        try {
-            String name = capability.newInstance().getName();
-            List<Role> userRoles = this.userStore.get().findRolesForUser(user);
-            for (Role role : userRoles) {
-                // FIXME
-                return true;
-            }
-            // Pas cap
-            return false;
-
-        } catch (InstantiationException e) {
-            this.logger.error("Failed to find role for user and capability", e);
-        } catch (IllegalAccessException e) {
-            this.logger.error("Failed to find role for user and capability", e);
-        }
-        return false;
-    }
-
 }

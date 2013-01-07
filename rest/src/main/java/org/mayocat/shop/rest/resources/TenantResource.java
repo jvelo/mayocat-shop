@@ -11,9 +11,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.annotation.Anonymous;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.context.Context;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.TenantService;
@@ -23,27 +23,33 @@ import org.xwiki.component.annotation.Component;
 
 @Component("TenantResource")
 @Path("/tenant/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class TenantResource implements Resource
 {
+
+    @Inject
+    private Execution execution;
 
     @Inject
     private TenantService tenantService;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserAndTenant currentTenant(@Authorized Context context)
+    @Authorized
+    public UserAndTenant currentTenant()
     {
         UserAndTenant userAndTenant = new UserAndTenant();
-        userAndTenant.setTenant(context.getTenant());
-        userAndTenant.setUser(context.getUser());
+        userAndTenant.setTenant(execution.getContext().getTenant());
+        userAndTenant.setUser(execution.getContext().getUser());
         return userAndTenant;
     }
 
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateTenant(@Authorized Context context, Tenant updatedTenant)
+    @Authorized
+    public Response updateTenant(Tenant updatedTenant)
     {
         try {
+            Context context = execution.getContext();
             if (context.getTenant() == null) {
                 // Should not happen
                 return Response.status(404).build();
@@ -62,9 +68,9 @@ public class TenantResource implements Resource
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTenant(@Anonymous Context context, UserAndTenant userAndTenant)
+    public Response createTenant(UserAndTenant userAndTenant)
     {
+        // TODO
         return Response.ok().build();
     }
 

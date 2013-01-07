@@ -18,9 +18,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.model.Role;
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.ProductRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -33,6 +34,9 @@ import com.yammer.metrics.annotation.Timed;
 
 @Component("ProductResource")
 @Path("/product/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@ExistingTenant
 public class ProductResource implements Resource
 {
     @Inject
@@ -43,8 +47,8 @@ public class ProductResource implements Resource
 
     @GET
     @Timed
-    @Produces({"application/json; charset=UTF-8"})
-    public List<ProductRepresentation> getAllProducts(@Authorized Context context,
+    @Authorized
+    public List<ProductRepresentation> getAllProducts(
         @QueryParam("number") @DefaultValue("50") Integer number,
         @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
@@ -60,8 +64,8 @@ public class ProductResource implements Resource
     @Path("{slug}")
     @GET
     @Timed
-    @Produces({"application/json; charset=UTF-8"})
-    public Object getProduct(@Authorized Context context, @PathParam("slug") String slug)
+    @Authorized
+    public Object getProduct(@PathParam("slug") String slug)
     {
         try {
             Product product = this.catalogueService.findProductBySlug(slug);
@@ -78,8 +82,8 @@ public class ProductResource implements Resource
     @Path("{slug}")
     @POST
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProduct(@Authorized Context context, @PathParam("slug") String slug,
+    @Authorized
+    public Response updateProduct(@PathParam("slug") String slug,
         Product updatedProduct)
     {
         try {
@@ -104,8 +108,8 @@ public class ProductResource implements Resource
     @Path("{slug}")
     @PUT
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceProduct(@Authorized Context context, @PathParam("slug") String slug, Product newProduct)
+    @Authorized
+    public Response replaceProduct(@PathParam("slug") String slug, Product newProduct)
     {
         // TODO
         throw new RuntimeException("Not implemented");
@@ -113,8 +117,8 @@ public class ProductResource implements Resource
 
     @POST
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createProduct(@Authorized(value = AddProduct.class) Context context, Product product)
+    @Authorized(roles={ Role.ADMIN })
+    public Response createProduct(Product product)
     {
         try {
             this.catalogueService.createProduct(product);

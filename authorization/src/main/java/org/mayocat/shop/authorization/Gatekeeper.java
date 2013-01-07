@@ -6,5 +6,4 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface Gatekeeper
 {
-    boolean hasCapability(User user, Class<? extends Capability> capability);
 }

@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.mayocat.shop.authorization.Capability;
+import org.mayocat.shop.model.Role;
 
 /**
  * This annotation is used to inject authenticated and authorized principal objects into protected JAX-RS resource
@@ -14,10 +14,8 @@ import org.mayocat.shop.authorization.Capability;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Authorized
 {
-    boolean optional() default false;
-    
-    Class< ? extends Capability >[] value() default {};
+    Role[] roles() default {};
 }

@@ -7,10 +7,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.xwiki.component.annotation.Component;
 
 @Component("LogoutResource")
 @Path("/logout/")
+@ExistingTenant
 public class LogoutResource implements Resource
 {
 

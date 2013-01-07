@@ -61,11 +61,15 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         this.execution.setContext(context);
 
         Optional<User> user = Optional.absent();
-        for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
-            final String headerValue = Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
-            for (Authenticator authenticator : this.authenticators.values()) {
-                if (authenticator.respondTo(headerName, headerValue)) {
-                    user = authenticator.verify(headerValue, tenant);
+        if (tenant != null) {
+            // Right now we only support tenant-linked user accounts.
+            // In the future we will introduce "global" (or "marketplace") accounts
+            for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
+                final String headerValue = Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
+                for (Authenticator authenticator : this.authenticators.values()) {
+                    if (authenticator.respondTo(headerName, headerValue)) {
+                        user = authenticator.verify(headerValue, tenant);
+                    }
                 }
             }
         }

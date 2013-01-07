@@ -13,9 +13,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.authorization.capability.shop.AddUser;
 import org.mayocat.shop.context.Context;
+import org.mayocat.shop.context.Execution;
+import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.service.UserService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -26,17 +28,25 @@ import com.yammer.metrics.annotation.Timed;
 
 @Component("UserResource")
 @Path("/user/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@ExistingTenant
+@Authorized
 public class UserResource implements Resource
 {
-
     @Inject
     private UserService userService;
+
+    @Inject
+    private Execution execution;
 
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(@Authorized(AddUser.class) Context context, @Valid User user)
+    @Authorized(roles={ Role.ADMIN })
+    public Response addUser(@Valid User user)
     {
+        Context context = execution.getContext();
         try {
             if (context.getUser() == null) {
                 // This can only mean there is no user recorded in database,
@@ -63,17 +73,16 @@ public class UserResource implements Resource
 
     @GET
     @Path("_me")
-    @Produces({"application/json; charset=UTF-8"})
-    public User getCurrentUser(@Authorized Context context)
+    public User getCurrentUser()
     {
+        Context context = execution.getContext();
         return context.getUser();
     }
 
     @Path("{slug}")
     @GET
     @Timed
-    @Produces({"application/json; charset=UTF-8"})
-    public User getUser(@Authorized Context context, @PathParam("slug") String slug)
+    public User getUser(@PathParam("slug") String slug)
     {
         try {
             return userService.findByEmailOrUserName(slug);

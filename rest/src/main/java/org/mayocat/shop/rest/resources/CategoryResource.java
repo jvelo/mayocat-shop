@@ -19,9 +19,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.authorization.capability.shop.AddProduct;
 import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.Role;
+import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.CategoryRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.service.InvalidMoveOperation;
@@ -36,9 +37,11 @@ import com.yammer.metrics.annotation.Timed;
 
 @Component("CategoryResource")
 @Path("/category/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@ExistingTenant
 public class CategoryResource implements Resource
 {
-
     @Inject
     private CatalogService catalogService;
 
@@ -47,8 +50,8 @@ public class CategoryResource implements Resource
 
     @GET
     @Timed
-    @Produces({"application/json; charset=UTF-8"})
-    public List<CategoryRepresentation> getAllCategories(@Authorized Context context,
+    @Authorized
+    public List<CategoryRepresentation> getAllCategories(
         @QueryParam("number") @DefaultValue("50") Integer number,
         @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
@@ -63,8 +66,8 @@ public class CategoryResource implements Resource
     @Path("{slug}")
     @GET
     @Timed
-    @Produces({"application/json; charset=UTF-8"})
-    public Object getCategory(@Authorized Context context, @PathParam("slug") String slug)
+    @Authorized
+    public Object getCategory(@PathParam("slug") String slug)
     {
         try {
             Category category = this.catalogService.findCategoryBySlug(slug);
@@ -80,8 +83,9 @@ public class CategoryResource implements Resource
     @Path("{slug}/move")
     @POST
     @Timed
+    @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response changePosition(@Authorized Context context, @PathParam("slug") String slug,
+    public Response changePosition(@PathParam("slug") String slug,
         @FormParam("product") String slugOfProductToMove, @FormParam("before") String slugOfProductToMoveBeforeOf,
         @FormParam("after") String slugOfProductToMoveAfterOf)
     {
@@ -108,9 +112,9 @@ public class CategoryResource implements Resource
     @Path("{slug}")
     @POST
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCategory(@Authorized Context context, @PathParam("slug") String slug,
-        Category updatedCategory)
+    @Authorized
+    public Response updateCategory(@PathParam("slug") String slug,
+            Category updatedCategory)
     {
         try {
             Category category = this.catalogService.findCategoryBySlug(slug);
@@ -132,8 +136,8 @@ public class CategoryResource implements Resource
     @Path("{slug}")
     @PUT
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response replaceCategory(@Authorized Context context, @PathParam("slug") String slug,
+    @Authorized
+    public Response replaceCategory(@PathParam("slug") String slug,
         Category newCategory)
     {
         // TODO
@@ -142,8 +146,8 @@ public class CategoryResource implements Resource
 
     @POST
     @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCategory(@Authorized(value = AddProduct.class) Context context, Category category)
+    @Authorized(roles={Role.ADMIN})
+    public Response createCategory(Category category)
     {
         try {
             this.catalogService.createCategory(category);

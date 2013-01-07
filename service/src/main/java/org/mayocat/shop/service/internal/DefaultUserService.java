@@ -25,7 +25,7 @@ public class DefaultUserService implements UserService
     @Inject
     private PasswordManager passwordManager;
 
-    public List<User> findAll(int number, int offset) throws StoreException
+    public List<User> findAll(int number, int offset)
     {
         return this.userStore.get().findAll(number, offset);
     }
@@ -34,7 +34,7 @@ public class DefaultUserService implements UserService
     {
         this.create(user, null);
     }
-    
+
     public void create(User user, Role initialRole) throws InvalidEntityException, EntityAlreadyExistsException,
         StoreException
     {
@@ -63,7 +63,7 @@ public class DefaultUserService implements UserService
         }
     }
 
-    public boolean hasUsers() throws StoreException
+    public boolean hasUsers()
     {
         return this.findAll(1, 0).size() > 0;
     }
@@ -78,6 +78,10 @@ public class DefaultUserService implements UserService
         return this.userStore.get().findByEmailOrUserName(userNameOrEmail);
     }
 
+    public List<Role> findRolesForUser(User user)
+    {
+        return this.userStore.get().findRolesForUser(user);
+    }
 
 
 }

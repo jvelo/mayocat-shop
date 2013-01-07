@@ -2,8 +2,7 @@ package org.mayocat.shop.rest.resources;
 
 import javax.ws.rs.core.MediaType;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

@@ -21,8 +21,6 @@ import com.yammer.dropwizard.testing.ResourceTest;
 public abstract class AbstractResourceTest extends ResourceTest
 {
 
-    private PersistenceManagerProvider provider;
-
     protected EmbeddableComponentManager componentManager;
 
     private TenantStore tenantStore;
@@ -44,50 +42,10 @@ public abstract class AbstractResourceTest extends ResourceTest
         // Registering provider component implementations against the test
         // environment...
         Map<String, org.mayocat.shop.base.Provider> providers =
-            componentManager.getInstanceMap(org.mayocat.shop.base.Provider.class);
+                componentManager.getInstanceMap(org.mayocat.shop.base.Provider.class);
         for (Map.Entry<String, org.mayocat.shop.base.Provider> provider : providers.entrySet()) {
             this.addResource(provider.getValue());
         }
-
-        this.provider = this.componentManager.getInstance(PersistenceManagerProvider.class);
-
-        this.setUpPmf();
-
-
-    }
-
-    private void setUpPmf() throws Exception
-    {
-        Properties props = getPersistenceProperties();
-        this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
-
-        this.tenantStore = this.componentManager.getInstance(TenantStore.class);
-        if (this.tenantStore.findBySlug("default") == null) {
-            this.tenantStore.create(new Tenant("default"));
-        }
-
-        props.put("datanucleus.tenantId", "testing");
-        this.provider.set(JDOHelper.getPersistenceManagerFactory(props).getPersistenceManager());
-    }
-
-    private Properties getPersistenceProperties()
-    {
-        Properties props = new Properties();
-        props.put("javax.jdo.PersistenceManagerFactoryClass", "org.datanucleus.api.jdo.JDOPersistenceManagerFactory");
-        props.put("datanucleus.autoCreateSchema", "true");
-        props.put("datanucleus.validateTables", "false");
-        props.put("datanucleus.validateConstraints", "true");
-        props.put("datanucleus.identifier.case", "PreserveCase");
-        props.put("javax.jdo.option.ConnectionDriverName", "org.hsqldb.jdbc.JDBCDriver");
-        props.put("javax.jdo.option.ConnectionURL", "jdbc:hsqldb:mem:mayocat");
-        props.put("javax.jdo.option.ConnectionUserName", "sa");
-        props.put("javax.jdo.option.ConnectionPassword", "");
-
-        // Ensure field values are not unloaded when object are moved into
-        // hollow state.
-        props.put("datanucleus.RetainValues", "true");
-
-        return props;
     }
 
     private void registerConfigurationsAsComponents() throws Exception
