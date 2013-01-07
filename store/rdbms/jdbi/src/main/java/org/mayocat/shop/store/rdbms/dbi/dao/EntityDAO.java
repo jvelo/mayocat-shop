@@ -45,7 +45,7 @@ public interface EntityDAO< E extends Entity >
         "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.slug = :slug AND entity.type = '<type>' AND entity.tenant_id = :tenant.id"
     )
-    E findBySlugWithTranslations(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
     
     @SqlQuery
     (

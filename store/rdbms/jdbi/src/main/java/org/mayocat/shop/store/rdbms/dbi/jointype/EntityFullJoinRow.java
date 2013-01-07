@@ -1,4 +1,4 @@
-package org.mayocat.shop.store.rdbms.dbi.dao.jointype;
+package org.mayocat.shop.store.rdbms.dbi.jointype;
 
 import java.util.Locale;
 import java.util.Map;

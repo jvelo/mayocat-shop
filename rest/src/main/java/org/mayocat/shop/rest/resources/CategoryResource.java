@@ -155,7 +155,7 @@ public class CategoryResource implements Resource
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A Category with this slug already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
+                .entity("A Category with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 

@@ -3,11 +3,10 @@ package org.mayocat.shop.store.rdbms.dbi.mapper;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.shop.store.rdbms.dbi.dao.jointype.EntityFullJoinRow;
+import org.mayocat.shop.store.rdbms.dbi.jointype.EntityFullJoinRow;
 
 public class EntityFullJoinRowMapper extends BaseMapMapper<EntityFullJoinRow>
 {
-
     protected EntityFullJoinRow mapInternal(int index, Map<String, Object> data)
     {
         EntityFullJoinRow entry = new EntityFullJoinRow();

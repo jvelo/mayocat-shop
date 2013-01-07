@@ -1,3 +1,4 @@
 org.mayocat.shop.store.rdbms.dbi.DBIUserStore
 org.mayocat.shop.store.rdbms.dbi.DBITenantStore
 org.mayocat.shop.store.rdbms.dbi.DBICategoryStore
+org.mayocat.shop.store.rdbms.dbi.DBIProductStore

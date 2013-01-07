@@ -13,13 +13,13 @@ public interface TranslationDAO
     @GetGeneratedKeys
     @SqlUpdate
     (
-        "insert into translation (entity_id, field) values (:entity_id, :field)"
+        "INSERT INTO translation (entity_id, field) VALUES (:entity_id, :field)"
     )
     Long createTranslation(@Bind("entity_id") Long id, @Bind("field") String field);
 
     @SqlBatch
     (
-        "insert into translation_<type> (translation_id, locale, text) values (:translation_id, :locale, :text)"
+        "INSERT INTO translation_<type> (translation_id, locale, text) VALUES (:translation_id, :locale, :text)"
     )
     void insertTranslations(@Define("type") String type, @Bind("translation_id") List<Long> id,
         @Bind("locale") List<String> locale, @Bind("text") List<String> text);

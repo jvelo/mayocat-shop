@@ -66,11 +66,6 @@ public class DBIUserStore implements UserStore, Initializable
         return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, t);
     }
 
-    public void initialize() throws InitializationException
-    {
-        this.dao = this.dbi.get().onDemand(UserDAO.class);
-    }
-
     public void create(User user) throws EntityAlreadyExistsException, InvalidEntityException, StoreException
     {
         // FIXME KILL ME
@@ -89,5 +84,11 @@ public class DBIUserStore implements UserStore, Initializable
     {
         return this.dao.findRolesForUser(user);
     }
+    
+    public void initialize() throws InitializationException
+    {
+        this.dao = this.dbi.get().onDemand(UserDAO.class);
+    }
+
 
 }

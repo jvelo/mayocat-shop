@@ -61,7 +61,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     
     public User findBySlug(String slug, Tenant tenant)
     {
-        return this.findBySlugWithTranslations(USER_TABLE_NAME, slug, tenant);
+        return this.findBySlug(USER_TABLE_NAME, slug, tenant);
     }
 
     public List<User> findAll(Tenant tenant, Integer number, Integer offset)

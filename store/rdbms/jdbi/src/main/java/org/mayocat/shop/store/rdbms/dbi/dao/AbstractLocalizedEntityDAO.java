@@ -12,7 +12,7 @@ import org.jodah.typetools.TypeResolver;
 import org.mayocat.shop.model.LocalizedEntity;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.Translations;
-import org.mayocat.shop.store.rdbms.dbi.dao.jointype.EntityFullJoinRow;
+import org.mayocat.shop.store.rdbms.dbi.jointype.EntityFullJoinRow;
 import org.mayocat.shop.store.rdbms.dbi.mapper.EntityFullJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
@@ -26,6 +26,9 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
 
     public void insertTranslations(Long entityId, Translations translations)
     {
+        if (translations == null) {
+            return;
+        }
         List<Long> ids = new ArrayList<Long>();
         List<String> langs = new ArrayList<String>();
         List<String> texts = new ArrayList<String>();
@@ -103,7 +106,6 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         } catch (InvocationTargetException e) {
             throw new IllegalArgumentException(e);
         }
-
     }
     
     @RegisterMapper(EntityFullJoinRowMapper.class)

@@ -129,14 +129,14 @@
       <column name="entity_id" type="bigint">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="index" type="smallint unsigned" />
+      <column name="position" type="smallint unsigned" />
       <column name="title" type="varchar(255)" />
     </createTable>
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="product" indexName="TITLE_INDEX">
-      <column name="title" />
+    <createIndex tableName="product" indexName="POSITION_INDEX">
+      <column name="position" />
     </createIndex>
 
     <!-- Category table -->
@@ -158,7 +158,7 @@
     <createTable tableName="category_product">
       <column name="category_id" type="bigint" />
       <column name="product_id" type="bigint" />
-      <column name="index" type="smallint unsigned" />
+      <column name="position" type="smallint unsigned" />
     </createTable>
     <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_CATEGORY_ENTITY_FK"
                              baseTableName="category_product" baseColumnNames="category_id"
@@ -168,8 +168,8 @@
                              referencedTableName="entity" referencedColumnNames="id" />
     <addPrimaryKey tableName="category_product"
                    columnNames="category_id,product_id" constraintName="CATEGORY_PRODUCT_PK" />
-    <createIndex tableName="category_product" indexName="INDEX_INDEX">
-      <column name="index" />
+    <createIndex tableName="category_product" indexName="POSITION_INDEX">
+      <column name="position" />
     </createIndex>
 
   </changeSet>

@@ -64,7 +64,9 @@ public class DefaultCatalogService implements CatalogService
 
     public Product findProductBySlug(String slug) throws StoreException
     {
-        return this.productStore.get().findBySlug(slug);
+        // FIXME
+        Tenant t = new Tenant(1l);
+        return this.productStore.get().findBySlug(slug, t);
     }
 
     public List<Product> findAllProducts(int number, int offset) throws StoreException

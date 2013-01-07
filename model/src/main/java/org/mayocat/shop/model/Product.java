@@ -8,7 +8,7 @@ import org.mayocat.shop.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Product implements Entity
+public class Product extends AbstractLocalizedEntity
 {
     Long id;
 
