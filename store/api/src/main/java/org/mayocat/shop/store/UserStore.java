@@ -13,7 +13,7 @@ public interface UserStore extends Store<User, Long>
 {
     void create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
 
-    User findByEmailOrUserName(String userNameOrEmail);
+    User findUserByEmailOrUserName(String userNameOrEmail);
 
     List<Role> findRolesForUser(User user);
 }

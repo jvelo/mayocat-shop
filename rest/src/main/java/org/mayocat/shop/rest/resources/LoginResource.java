@@ -6,7 +6,6 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -17,8 +16,7 @@ import org.mayocat.shop.authorization.cookies.CookieCrypter;
 import org.mayocat.shop.authorization.cookies.EncryptionException;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.service.UserService;
-import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
 @Component("LoginResource")
@@ -28,7 +26,7 @@ public class LoginResource implements Resource
 {
 
     @Inject
-    private UserService userService;
+    private AccountsService accountsService;
 
     @Inject
     private PasswordManager passwordManager;
@@ -42,7 +40,7 @@ public class LoginResource implements Resource
         @FormParam("remember") @DefaultValue("false") Boolean remember)
     {
         try {
-            User user = userService.findByEmailOrUserName(username);
+            User user = accountsService.findUserByEmailOrUserName(username);
 
             if (user == null) {
                 // Don't give more information than this
@@ -70,11 +68,10 @@ public class LoginResource implements Resource
 
             return Response.ok().cookie(newUserCookie, newPassCookie).build();
 
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
         } catch (EncryptionException e) {
             // Don't give more information than this
-            throw new WebApplicationException();
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                    .entity("Failed to log in.").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 }

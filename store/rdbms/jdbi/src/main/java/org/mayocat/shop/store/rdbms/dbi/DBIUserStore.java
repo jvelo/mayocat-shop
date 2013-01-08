@@ -3,13 +3,12 @@ package org.mayocat.shop.store.rdbms.dbi;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
@@ -47,11 +46,11 @@ public class DBIUserStore extends AbstractEntityStore implements UserStore, Init
         this.create(user, Role.ADMIN);
     }
 
-    public void update(User user, Tenant tenant) throws EntityDoesNotExistsException, InvalidEntityException,
+    public void update(User user, Tenant tenant) throws EntityDoesNotExistException, InvalidEntityException,
         StoreException
     {
         if (this.dao.findBySlug(user.getSlug(), tenant) != null) {
-            throw new EntityDoesNotExistsException();
+            throw new EntityDoesNotExistException();
         }
         this.dao.update(user, tenant);
     }
@@ -66,7 +65,7 @@ public class DBIUserStore extends AbstractEntityStore implements UserStore, Init
         return this.dao.findAll(getTenant(), number, offset);
     }
 
-    public User findByEmailOrUserName(String userNameOrEmail)
+    public User findUserByEmailOrUserName(String userNameOrEmail)
     {
         return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
     }

@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.service.TenantService;
+import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.test.AbstractMockingComponentTestCase;
 import org.xwiki.test.annotation.MockingRequirement;
@@ -22,7 +22,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
 
     private MultitenancyConfiguration configuration;
 
-    private TenantService tenantService;
+    private AccountsService accountsService;
 
     /**
      * Setup mock dependencies before initializing the @MockingRequirement components.
@@ -48,7 +48,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
         super.setUp();
 
         configuration = this.getComponentManager().getInstance(MultitenancyConfiguration.class);
-        tenantService = this.getComponentManager().getInstance(TenantService.class);
+        accountsService = this.getComponentManager().getInstance(AccountsService.class);
 
         getMockery().checking(new Expectations()
         {
@@ -59,13 +59,13 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
                 allowing(configuration).getRootDomain();
                 will(returnValue(null));
 
-                allowing(tenantService).findBySlug(with(Matchers.not(equal("mytenant"))));
+                allowing(accountsService).findTenant(with(Matchers.not(equal("mytenant"))));
                 will(returnValue(null));
 
-                allowing(tenantService).findBySlug(with(equal("mytenant")));
+                allowing(accountsService).findTenant(with(equal("mytenant")));
                 will(returnValue(new Tenant("mytenant")));
 
-                allowing(tenantService).create(with(any(Tenant.class)));
+                allowing(accountsService).createTenant(with(any(Tenant.class)));
 
             }
         });
@@ -120,6 +120,15 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
 
         Assert.assertNull(this.tenantResolver.resolve("mayocatshop.com"));
     }
+
+    @Test
+    public void testMultitenancyTenantResolver5() throws Exception
+    {
+        //TODO
+        // Test IP addresses resolving.
+        // (right now it throws a illegal argument exception
+    }
+
 
     // ///////////////////////////////////////////////////////////////////////////////////
 

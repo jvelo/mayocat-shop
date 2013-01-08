@@ -49,16 +49,10 @@ public class ProductResource implements Resource
     @Timed
     @Authorized
     public List<ProductRepresentation> getAllProducts(
-        @QueryParam("number") @DefaultValue("50") Integer number,
-        @QueryParam("offset") @DefaultValue("0") Integer offset)
+            @QueryParam("number") @DefaultValue("50") Integer number,
+            @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
-        try {
-            return this.wrapInReprensentations(this.catalogueService.findAllProducts(number, offset));
-
-        } catch (StoreException e) {
-            this.logger.error("Error while getting products", e);
-            throw new WebApplicationException(e);
-        }
+        return this.wrapInReprensentations(this.catalogueService.findAllProducts(number, offset));
     }
 
     @Path("{slug}")
@@ -67,16 +61,11 @@ public class ProductResource implements Resource
     @Authorized
     public Object getProduct(@PathParam("slug") String slug)
     {
-        try {
-            Product product = this.catalogueService.findProductBySlug(slug);
-            if (product == null) {
-                return Response.status(404).build();
-            }
-            return this.wrapInRepresentation(product);
-        } catch (StoreException e) {
-            this.logger.error("Error while getting product", e);
-            throw new WebApplicationException(e);
+        Product product = this.catalogueService.findProductBySlug(slug);
+        if (product == null) {
+            return Response.status(404).build();
         }
+        return this.wrapInRepresentation(product);
     }
 
     @Path("{slug}")
@@ -84,7 +73,7 @@ public class ProductResource implements Resource
     @Timed
     @Authorized
     public Response updateProduct(@PathParam("slug") String slug,
-        Product updatedProduct)
+            Product updatedProduct)
     {
         try {
             Product product = this.catalogueService.findProductBySlug(slug);
@@ -95,10 +84,6 @@ public class ProductResource implements Resource
             }
 
             return Response.ok().build();
-
-        } catch (StoreException e) {
-            this.logger.error("Error while updating product", e);
-            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             this.logger.error("Error while updating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
@@ -117,23 +102,20 @@ public class ProductResource implements Resource
 
     @POST
     @Timed
-    @Authorized(roles={ Role.ADMIN })
+    @Authorized(roles = { Role.ADMIN })
     public Response createProduct(Product product)
     {
         try {
             this.catalogueService.createProduct(product);
 
             return Response.ok().build();
-        } catch (StoreException e) {
-            this.logger.error("Error while creating product", e);
-            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             this.logger.error("Error while creating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             this.logger.error("Error while creating product: entity already exists", e);
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
+                    .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 

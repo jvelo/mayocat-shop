@@ -6,7 +6,6 @@ import org.xwiki.component.annotation.Role;
 
 @Role
 public interface TenantStore extends Store<Tenant, Long>
-{    
-    
+{
     Tenant findBySlug(@Bind("slug") String slug);
 }

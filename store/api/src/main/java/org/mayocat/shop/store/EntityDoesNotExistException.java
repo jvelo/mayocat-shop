@@ -1,18 +1,18 @@
 package org.mayocat.shop.store;
 
-public class EntityDoesNotExistsException extends Exception
+public class EntityDoesNotExistException extends Exception
 {
     /**
      * Change when the serialization form of this exception changes.
      */
     private static final long serialVersionUID = 2219941249999412472L;
 
-    public EntityDoesNotExistsException()
+    public EntityDoesNotExistException()
     {
         super();
     }
     
-    public EntityDoesNotExistsException(String message)
+    public EntityDoesNotExistException(String message)
     {
         super(message);
     }

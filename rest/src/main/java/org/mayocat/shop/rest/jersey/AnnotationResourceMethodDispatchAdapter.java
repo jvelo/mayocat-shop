@@ -17,8 +17,7 @@ import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.UserResource;
-import org.mayocat.shop.service.UserService;
-import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.core.HttpContext;
@@ -43,7 +42,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
     private Gatekeeper gatekeeper;
 
     @Inject
-    private UserService userService;
+    private AccountsService accountsService;
 
     /**
      * Request dispatcher that checks if a valid tenant has been set in the execution context,
@@ -125,7 +124,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
                 return true;
             }
 
-            List<Role> roles = userService.findRolesForUser(user);
+            List<Role> roles = accountsService.findRolesForUser(user);
             for (Role role : roles) {
                 if (Arrays.asList(this.annotation.roles()).contains(role)) {
                     return true;
@@ -137,7 +136,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
         private boolean isTenantEmptyOfUser()
         {
-            return !userService.hasUsers();
+            return !accountsService.hasUsers();
         }
 
         private boolean isCreateUserResource()

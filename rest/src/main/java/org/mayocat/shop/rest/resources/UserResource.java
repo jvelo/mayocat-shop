@@ -18,10 +18,9 @@ import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.service.UserService;
+import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
@@ -35,7 +34,7 @@ import com.yammer.metrics.annotation.Timed;
 public class UserResource implements Resource
 {
     @Inject
-    private UserService userService;
+    private AccountsService accountsService;
 
     @Inject
     private Execution execution;
@@ -43,7 +42,7 @@ public class UserResource implements Resource
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    @Authorized(roles={ Role.ADMIN })
+    @Authorized(roles = { Role.ADMIN })
     public Response addUser(@Valid User user)
     {
         Context context = execution.getContext();
@@ -52,22 +51,18 @@ public class UserResource implements Resource
                 // This can only mean there is no user recorded in database,
                 // and this is the request to create the initial user.
 
-                this.userService.createInitialUser(user);
-            }
-
-            else {
-                this.userService.create(user);
+                this.accountsService.createInitialUser(user);
+            } else {
+                this.accountsService.createUser(user);
             }
 
             return Response.ok().build();
-
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A user with this usernane or email already exists").type(MediaType.TEXT_PLAIN_TYPE).build());
+                    .entity("A user with this usernane or email already exists").type(MediaType.TEXT_PLAIN_TYPE)
+                    .build());
         }
     }
 
@@ -84,11 +79,6 @@ public class UserResource implements Resource
     @Timed
     public User getUser(@PathParam("slug") String slug)
     {
-        try {
-            return userService.findByEmailOrUserName(slug);
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
-        }
-
+        return accountsService.findUserByEmailOrUserName(slug);
     }
 }

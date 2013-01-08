@@ -4,7 +4,8 @@ public enum Role
 {
 
     GOD     ("god"),     /* Marketplace admin */
-    ADMIN   ("admin")    /* Shop admin */
+    ADMIN   ("admin"),   /* Shop admin */
+    NONE    ("none")     /* No role */
     
     ;
     

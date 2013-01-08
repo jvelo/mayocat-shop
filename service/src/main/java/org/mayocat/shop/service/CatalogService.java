@@ -6,7 +6,6 @@ import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -19,19 +18,19 @@ public interface CatalogService
 {
     // Product operations
 
-    void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException, StoreException;
+    void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
-    void updateProduct(Product entity) throws InvalidEntityException, StoreException;
+    void updateProduct(Product entity) throws InvalidEntityException;
 
-    Product findProductBySlug(String slug) throws StoreException;
+    Product findProductBySlug(String slug);
 
-    List<Product> findAllProducts(int number, int offset) throws StoreException;
+    List<Product> findAllProducts(int number, int offset);
 
     // Category operations
 
-    void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException, StoreException;
+    void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
-    void updateCategory(Category entity) throws InvalidEntityException, StoreException;
+    void updateCategory(Category entity) throws InvalidEntityException;
 
     enum InsertPosition
     {
@@ -45,11 +44,10 @@ public interface CatalogService
      * @param category the category in which to move the project in
      * @param slugOfProductToMove the slug of the project to move
      * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
-     * @throws StoreException when a problems occur persisting the category
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
     void moveProductInCategory(Category category, String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
-        throws InvalidMoveOperation, StoreException;
+        throws InvalidMoveOperation;
 
     /**
      * Move a product in a category. This operation changes the position of a product within a category, and shifts
@@ -59,13 +57,12 @@ public interface CatalogService
      * @param slugOfProductToMove the slug of the project to move
      * @param relativeSlug the slug of the product to move relative to
      * @param position the relative insert position : before or after
-     * @throws StoreException when a problems occur persisting the category
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
     void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
-        InsertPosition position) throws InvalidMoveOperation, StoreException;
+        InsertPosition position) throws InvalidMoveOperation;
 
-    Category findCategoryBySlug(String slug) throws StoreException;
+    Category findCategoryBySlug(String slug);
 
-    List<Category> findAllCategories(int number, int offset) throws StoreException;
+    List<Category> findAllCategories(int number, int offset);
 }

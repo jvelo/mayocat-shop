@@ -52,15 +52,10 @@ public class CategoryResource implements Resource
     @Timed
     @Authorized
     public List<CategoryRepresentation> getAllCategories(
-        @QueryParam("number") @DefaultValue("50") Integer number,
-        @QueryParam("offset") @DefaultValue("0") Integer offset)
+            @QueryParam("number") @DefaultValue("50") Integer number,
+            @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
-        try {
-            return this.wrapInReprensentations(this.catalogService.findAllCategories(number, offset));
-        } catch (StoreException e) {
-            this.logger.error("Error while getting categories", e);
-            throw new WebApplicationException(e);
-        }
+        return this.wrapInReprensentations(this.catalogService.findAllCategories(number, offset));
     }
 
     @Path("{slug}")
@@ -69,15 +64,12 @@ public class CategoryResource implements Resource
     @Authorized
     public Object getCategory(@PathParam("slug") String slug)
     {
-        try {
-            Category category = this.catalogService.findCategoryBySlug(slug);
-            if (category == null) {
-                return Response.status(404).build();
-            }
-            return this.wrapInRepresentation(category);
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
+
+        Category category = this.catalogService.findCategoryBySlug(slug);
+        if (category == null) {
+            return Response.status(404).build();
         }
+        return this.wrapInRepresentation(category);
     }
 
     @Path("{slug}/move")
@@ -103,9 +95,8 @@ public class CategoryResource implements Resource
             return Response.ok().build();
 
         } catch (InvalidMoveOperation e) {
-            throw new WebApplicationException(e);
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 
@@ -126,8 +117,6 @@ public class CategoryResource implements Resource
 
             return Response.ok().build();
 
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         }
@@ -153,8 +142,6 @@ public class CategoryResource implements Resource
             this.catalogService.createCategory(category);
 
             return Response.ok().build();
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {

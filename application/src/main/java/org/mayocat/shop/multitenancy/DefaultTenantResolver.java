@@ -11,10 +11,9 @@ import javax.servlet.ServletRequestListener;
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Shop;
 import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.service.TenantService;
+import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -33,7 +32,7 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
     private ThreadLocal<Map<String, Tenant>> resolved = new ThreadLocal<Map<String, Tenant>>();
 
     @Inject
-    private TenantService tenantService;
+    private AccountsService accountsService;
 
     @Inject
     private Logger logger;
@@ -58,25 +57,23 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
                 if (!this.configuration.isActivated()) {
                     // Mono-tenant
 
-                    tenant = this.tenantService.findBySlug(this.configuration.getDefaultTenant());
+                    tenant = this.accountsService.findTenant(this.configuration.getDefaultTenant());
                     if (tenant == null) {
                         Tenant tenantToCreate = new Tenant(this.configuration.getDefaultTenant());
                         tenantToCreate.setShop(new Shop());
-                        this.tenantService.create(tenantToCreate);
-                        tenant = this.tenantService.findBySlug(this.configuration.getDefaultTenant());
+                        this.accountsService.createTenant(tenantToCreate);
+                        tenant = this.accountsService.findTenant(this.configuration.getDefaultTenant());
                     }
                     this.resolved.get().put(host, tenant);
                 } else {
                     // Multi-tenant
 
-                    tenant = this.tenantService.findBySlug(this.extractSlugFromHost(host));
+                    tenant = this.accountsService.findTenant(this.extractSlugFromHost(host));
                     if (tenant == null) {
                         return null;
                     }
                     this.resolved.get().put(host, tenant);
                 }
-            } catch (StoreException e) {
-                this.logger.error("Error trying to resolve tenant for host {} : {}", host, e.getMessage());
             } catch (InvalidEntityException e) {
                 throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
             } catch (EntityAlreadyExistsException e) {

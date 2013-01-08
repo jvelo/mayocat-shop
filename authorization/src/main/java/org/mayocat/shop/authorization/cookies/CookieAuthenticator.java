@@ -7,7 +7,6 @@ import org.mayocat.shop.authorization.Authenticator;
 import org.mayocat.shop.authorization.PasswordManager;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
-import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -66,7 +65,7 @@ public class CookieAuthenticator implements Authenticator
                 }
             }
             if (!Strings.isNullOrEmpty(password) && !Strings.isNullOrEmpty(username)) {
-                User user = userStore.get().findByEmailOrUserName(username);
+                User user = userStore.get().findUserByEmailOrUserName(username);
                 if (user != null) {
                     if (this.passwordManager.verifyPassword(password, user.getPassword())) {
                         return Optional.of(user);

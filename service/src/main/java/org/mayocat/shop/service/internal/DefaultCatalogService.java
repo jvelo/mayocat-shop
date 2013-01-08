@@ -29,8 +29,7 @@ public class DefaultCatalogService implements CatalogService
     @Inject
     private Provider<CategoryStore> categoryStore;
 
-    public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException,
-        StoreException
+    public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         /*
         Category allProducts = this.categoryStore.get().findBySlug("_all");
@@ -57,24 +56,23 @@ public class DefaultCatalogService implements CatalogService
         
     }
 
-    public void updateProduct(Product entity) throws InvalidEntityException, StoreException
+    public void updateProduct(Product entity) throws InvalidEntityException
     {
         this.productStore.get().update(entity);
     }
 
-    public Product findProductBySlug(String slug) throws StoreException
+    public Product findProductBySlug(String slug)
     {
         return this.productStore.get().findBySlug(slug);
     }
 
-    public List<Product> findAllProducts(int number, int offset) throws StoreException
+    public List<Product> findAllProducts(int number, int offset)
     {
         return this.productStore.get().findAll(number, offset);
     }
 
     @Override
-    public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException,
-        StoreException
+    public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.generateSlug(entity.getTitle()));
@@ -83,19 +81,19 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void updateCategory(Category entity) throws InvalidEntityException, StoreException
+    public void updateCategory(Category entity) throws InvalidEntityException
     {
         this.categoryStore.get().update(entity);
     }
 
     @Override
-    public Category findCategoryBySlug(String slug) throws StoreException
+    public Category findCategoryBySlug(String slug)
     {
         return this.categoryStore.get().findBySlug(slug);
     }
 
     @Override
-    public List<Category> findAllCategories(int number, int offset) throws StoreException
+    public List<Category> findAllCategories(int number, int offset)
     {
         return this.categoryStore.get().findAll(number, offset);
     }
@@ -108,14 +106,14 @@ public class DefaultCatalogService implements CatalogService
 
     @Override
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug)
-        throws InvalidMoveOperation, StoreException
+        throws InvalidMoveOperation
     {
         this.moveProductInCategory(category, slugOfProductToMove, relativeSlug, InsertPosition.BEFORE);
     }
 
     @Override
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
-        InsertPosition insertPosition) throws InvalidMoveOperation, StoreException
+        InsertPosition insertPosition) throws InvalidMoveOperation
     {
         /*
         int position = -1;

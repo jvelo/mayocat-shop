@@ -7,7 +7,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,9 +15,9 @@ import org.mayocat.shop.context.Context;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
-import org.mayocat.shop.service.TenantService;
+import org.mayocat.shop.service.AccountsService;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 @Component("TenantResource")
@@ -32,7 +31,7 @@ public class TenantResource implements Resource
     private Execution execution;
 
     @Inject
-    private TenantService tenantService;
+    private AccountsService accountsService;
 
     @GET
     @Authorized
@@ -55,15 +54,16 @@ public class TenantResource implements Resource
                 return Response.status(404).build();
             } else {
                 updatedTenant.setSlug(context.getTenant().getSlug());
-                this.tenantService.update(updatedTenant);
+                this.accountsService.updateTenant(updatedTenant);
             }
 
             return Response.ok().build();
 
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
-        } catch (StoreException e) {
-            throw new WebApplicationException(e);
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Tenant not found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
