@@ -13,20 +13,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.ProductRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -85,8 +83,10 @@ public class ProductResource implements Resource
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
-            this.logger.error("Error while updating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
@@ -110,12 +110,10 @@ public class ProductResource implements Resource
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
-            this.logger.error("Error while creating product: invalid entity", e);
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
-            this.logger.error("Error while creating product: entity already exists", e);
-            throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                    .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 

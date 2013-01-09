@@ -131,6 +131,7 @@
       </column>
       <column name="position" type="smallint unsigned" />
       <column name="title" type="varchar(255)" />
+      <column name="description" type="mediumtext" />
     </createTable>
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"
@@ -144,14 +145,15 @@
       <column name="entity_id" type="bigint">
         <constraints primaryKey="true" nullable="false" />
       </column>
+      <column name="position" type="smallint unsigned" />
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
     </createTable>
     <addForeignKeyConstraint constraintName="CATEGORY_ENTITY_FK"
                              baseTableName="category" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="category" indexName="TITLE_INDEX">
-      <column name="title" />
+    <createIndex tableName="category" indexName="POSITION_INDEX">
+      <column name="position" />
     </createIndex>
 
     <!-- Category <-> Product -->

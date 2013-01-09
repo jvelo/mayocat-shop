@@ -5,6 +5,7 @@ import java.util.List;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.xwiki.component.annotation.Role;
 
@@ -20,7 +21,7 @@ public interface CatalogService
 
     void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
-    void updateProduct(Product entity) throws InvalidEntityException;
+    void updateProduct(Product entity) throws EntityDoesNotExistException, InvalidEntityException;
 
     Product findProductBySlug(String slug);
 
@@ -30,7 +31,7 @@ public interface CatalogService
 
     void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
-    void updateCategory(Category entity) throws InvalidEntityException;
+    void updateCategory(Category entity) throws EntityDoesNotExistException, InvalidEntityException;
 
     enum InsertPosition
     {

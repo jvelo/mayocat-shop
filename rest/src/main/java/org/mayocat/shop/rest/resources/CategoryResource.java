@@ -27,6 +27,7 @@ import org.mayocat.shop.rest.representations.CategoryRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.service.InvalidMoveOperation;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
@@ -108,17 +109,14 @@ public class CategoryResource implements Resource
             Category updatedCategory)
     {
         try {
-            Category category = this.catalogService.findCategoryBySlug(slug);
-            if (category == null) {
-                return Response.status(404).build();
-            } else {
-                this.catalogService.updateCategory(updatedCategory);
-            }
+            this.catalogService.updateCategory(updatedCategory);
 
             return Response.ok().build();
-
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No category with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
@@ -135,7 +133,7 @@ public class CategoryResource implements Resource
 
     @POST
     @Timed
-    @Authorized(roles={Role.ADMIN})
+    @Authorized(roles = { Role.ADMIN })
     public Response createCategory(Category category)
     {
         try {
@@ -145,8 +143,8 @@ public class CategoryResource implements Resource
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
-            throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                .entity("A Category with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build());
+            return Response.status(Response.Status.CONFLICT)
+                .entity("A Category with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 

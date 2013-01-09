@@ -17,13 +17,24 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
 {
     @SqlUpdate
     (
-        "INSERT INTO product (entity_id, position, title) VALUES (:id, :position, :product.title)"
+        "INSERT INTO product " +
+        "            (entity_id, " +
+        "             position, " +
+        "             title, " +
+        "             description) " +
+        "VALUES      (:id, " +
+        "             :position, " +
+        "             :product.title, " +
+        "             :product.description) "
     )
     public abstract void create(@Bind("id") Long entityId, @Bind("position") Integer position, @BindBean("product") Product product);
     
     @SqlUpdate
     (
-        // TODO
+        "UPDATE product " +
+        "SET    title = :product.title, " +
+        "       description = :product.description " +
+        "WHERE  id = :product.id "
     )
     public abstract void update(@BindBean("product") Product product);
     

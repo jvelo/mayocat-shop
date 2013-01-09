@@ -8,6 +8,7 @@ import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
@@ -45,10 +46,12 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
     }
 
     @Override
-    public void update(Product entity) throws InvalidEntityException
+    public void update(Product product) throws EntityDoesNotExistException, InvalidEntityException
     {
-        // TODO Auto-generated method stub
-
+        if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
+            throw new EntityDoesNotExistException();
+        }
+        this.dao.update(product);
     }
 
     @Override

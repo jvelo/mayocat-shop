@@ -9,11 +9,14 @@ import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.rdbms.dbi.dao.CategoryDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.base.Optional;
 
 @Component(hints={"jdbi", "default"})
 public class DBICategoryStore extends AbstractEntityStore implements CategoryStore, Initializable
@@ -34,15 +37,19 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         this.dao.begin();
 
         Long entityId = this.dao.createEntity(category, CATEGORY_TABLE_NAME, getTenant());
-        this.dao.create(entityId, category);
+        Integer lastIndex = this.dao.lastPosition(getTenant());
+        this.dao.create(entityId, lastIndex == null ? 0 : lastIndex++, category);
         this.dao.insertTranslations(entityId, category.getTranslations());
 
         this.dao.commit();
     }
 
-    public void update(Category entity) throws InvalidEntityException
+    public void update(Category category) throws EntityDoesNotExistException, InvalidEntityException
     {
-        // TODO Auto-generated method stub
+        if (this.dao.findBySlug(category.getSlug(), getTenant()) != null) {
+            throw new EntityDoesNotExistException();
+        }
+        this.dao.update(category);
     }
 
     public List<Category> findAll(Integer number, Integer offset)

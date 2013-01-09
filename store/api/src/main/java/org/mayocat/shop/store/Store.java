@@ -12,7 +12,7 @@ public interface Store<T extends Entity, K extends Serializable>
 {
     void create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
     
-    void update(@Valid T entity) throws InvalidEntityException;
+    void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException;
 
     List<T> findAll(Integer number, Integer offset);
 

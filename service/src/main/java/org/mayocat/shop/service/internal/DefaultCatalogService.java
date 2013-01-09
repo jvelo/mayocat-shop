@@ -8,14 +8,13 @@ import javax.inject.Provider;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.service.InvalidMoveOperation;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.ProductStore;
-import org.mayocat.shop.store.StoreException;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
@@ -56,7 +55,7 @@ public class DefaultCatalogService implements CatalogService
         
     }
 
-    public void updateProduct(Product entity) throws InvalidEntityException
+    public void updateProduct(Product entity) throws EntityDoesNotExistException, InvalidEntityException
     {
         this.productStore.get().update(entity);
     }
@@ -81,7 +80,7 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void updateCategory(Category entity) throws InvalidEntityException
+    public void updateCategory(Category entity) throws EntityDoesNotExistException, InvalidEntityException
     {
         this.categoryStore.get().update(entity);
     }

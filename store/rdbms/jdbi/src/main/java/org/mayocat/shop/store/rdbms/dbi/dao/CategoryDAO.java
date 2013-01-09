@@ -5,6 +5,7 @@ import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.rdbms.dbi.mapper.CategoryMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
@@ -17,15 +18,40 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
 
     @SqlUpdate
     (
-        "INSERT INTO category (entity_id, title) VALUES (:id, :category.title)"
+        "INSERT INTO category " +
+        "            (entity_id, " +
+        "             position, " +
+        "             title, " +
+        "             description) " +
+        "VALUES      (:id, " +
+        "             :position, " +
+        "             :category.title, " +
+        "             :category.description) "
     )
-    public abstract void create(@Bind("id") Long entityId, @BindBean("category") Category category);
+    public abstract void create(@Bind("id") Long entityId, @Bind("position") Integer position,
+            @BindBean("category") Category category);
     
     @SqlUpdate
     (
-        "UPDATE category SET title=:category.title, password=:u.password WHERE id=:category.id"
+        "UPDATE category " +
+        "SET    title = :category.title, " +
+        "       description = :category.description " +
+        "WHERE  id = :category.id "
     )
     public abstract void update(@BindBean("category") Category category);
+
+    @SqlQuery
+    (
+        "SELECT category.position " +
+        "FROM   entity " +
+        "       INNER JOIN category " +
+        "               ON entity.id = category.entity_id " +
+        "WHERE  entity.type = 'category' " +
+        "       AND entity.tenant_id = :tenant.id " +
+        "ORDER  BY position DESC " +
+        "LIMIT  1"
+    )
+    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
     public Object findBySlug(String slug, Tenant tenant)
     {
