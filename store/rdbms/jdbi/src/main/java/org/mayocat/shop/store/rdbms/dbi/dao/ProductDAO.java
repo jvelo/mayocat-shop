@@ -34,9 +34,9 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         "UPDATE product " +
         "SET    title = :product.title, " +
         "       description = :product.description " +
-        "WHERE  id = :product.id "
+        "WHERE  entity_id = :product.id "
     )
-    public abstract void update(@BindBean("product") Product product);
+    public abstract Integer update(@BindBean("product") Product product);
     
     @SqlQuery
     (
@@ -45,7 +45,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
     )
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
-    public Object findBySlug(String slug, Tenant tenant)
+    public Product findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("product", slug, tenant);
     }

@@ -34,9 +34,7 @@ public class TableColumnMapMapper implements ResultSetMapper<Map<String, Object>
             for (int i = 1; i <= m.getColumnCount(); i ++)
             {
                 String key = m.getTableName(i) + "." + m.getColumnName(i);
-                String alias = m.getColumnLabel(i);
                 Object value = r.getObject(i);
-                row.put(alias, value);
                 row.put(key, value);
             }
         }

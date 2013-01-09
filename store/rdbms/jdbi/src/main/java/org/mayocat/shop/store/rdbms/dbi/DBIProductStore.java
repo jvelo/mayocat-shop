@@ -48,10 +48,21 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
     @Override
     public void update(Product product) throws EntityDoesNotExistException, InvalidEntityException
     {
-        if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
+        this.dao.begin();
+
+        Product originalProduct = this.dao.findBySlug(product.getSlug(), getTenant());
+        if (originalProduct == null) {
+            this.dao.commit();
             throw new EntityDoesNotExistException();
         }
-        this.dao.update(product);
+        product.setId(originalProduct.getId());
+        Integer updatedRows = this.dao.update(product);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating product");
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.mayocat.shop.store;
 
-public class StoreException extends Exception
+public class StoreException extends RuntimeException
 {
 
     /**
@@ -8,7 +8,7 @@ public class StoreException extends Exception
      */
     private static final long serialVersionUID = -153504107891229925L;
 
-    public StoreException(){
+    public StoreException()  {
         super();
     }
     

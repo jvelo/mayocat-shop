@@ -36,9 +36,9 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
         "UPDATE category " +
         "SET    title = :category.title, " +
         "       description = :category.description " +
-        "WHERE  id = :category.id "
+        "WHERE  entity_id = :category.id "
     )
-    public abstract void update(@BindBean("category") Category category);
+    public abstract Integer update(@BindBean("category") Category category);
 
     @SqlQuery
     (
@@ -53,7 +53,7 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     )
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
-    public Object findBySlug(String slug, Tenant tenant)
+    public Category findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("category", slug, tenant);
     }

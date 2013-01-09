@@ -11,6 +11,7 @@ import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.rdbms.dbi.dao.CategoryDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -46,10 +47,21 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
 
     public void update(Category category) throws EntityDoesNotExistException, InvalidEntityException
     {
-        if (this.dao.findBySlug(category.getSlug(), getTenant()) != null) {
+        this.dao.begin();
+
+        Category originalCategory = this.dao.findBySlug(category.getSlug(), getTenant());
+        if (originalCategory == null) {
+            this.dao.commit();
             throw new EntityDoesNotExistException();
         }
-        this.dao.update(category);
+        category.setId(originalCategory.getId());
+        Integer updatedRows = this.dao.update(category);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating category");
+        }
     }
 
     public List<Category> findAll(Integer number, Integer offset)

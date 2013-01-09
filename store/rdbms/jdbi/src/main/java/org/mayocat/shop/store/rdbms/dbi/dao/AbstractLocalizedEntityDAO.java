@@ -20,6 +20,8 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import com.google.common.base.Optional;
+
 public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> implements TranslationDAO,
     EntityDAO<E>
 {
@@ -78,6 +80,9 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         E entity;
         try {
             entity = (E) type.newInstance();
+            String entityType = type.getSimpleName().toLowerCase();
+            // TODO we will likely need to support custom table name mapping via annotation in the future
+
 
             for (Method method : entity.getClass().getMethods()) {
                 if (method.getName().startsWith("set") && !method.getName().equals("setTranslations")
@@ -85,12 +90,18 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
                     // Found a setter.
                     String field = method.getName().substring(3);
 
-                    if (entityData.containsKey(field)) {
-                        boolean setterAccessible = method.isAccessible();
-                        method.setAccessible(true);
-                        method.invoke(entity, entityData.get(field));
-                        method.setAccessible(setterAccessible);
+                    Object value = Optional.absent();
+                    if (entityData.containsKey("entity." + field)) {
+                        value = entityData.get("entity." + field);
                     }
+                    else if (entityData.containsKey(entityType + "." + field)) {
+                        value = entityData.get(entityType + "." + field);
+                    }
+
+                    boolean setterAccessible = method.isAccessible();
+                    method.setAccessible(true);
+                    method.invoke(entity, value);
+                    method.setAccessible(setterAccessible);
                 }
             }
             return entity;
