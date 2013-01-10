@@ -9,10 +9,11 @@ import javax.inject.Provider;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.service.InvalidMoveOperation;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
+import org.mayocat.shop.store.HasOrderedCollections;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.ProductStore;
 import org.xwiki.component.annotation.Component;
@@ -30,29 +31,11 @@ public class DefaultCatalogService implements CatalogService
 
     public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
-        /*
-        Category allProducts = this.categoryStore.get().findBySlug("_all");
-        if (allProducts == null) {
-            // Lazily create the "all products" special category
-            allProducts = new Category();
-            allProducts.setSlug("_all");
-            allProducts.setTitle("");
-            allProducts.setSpecial(true);
-            this.categoryStore.get().create(allProducts);
-        }
-         */
-        
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.generateSlug(entity.getTitle()));
         }
 
-        // We could just update/create the entity, but no "product created event would be fired, so
-        // we save the products in base explicitly.
         productStore.get().create(entity);
-
-        //allProducts.addToProducts(entity);
-        //this.categoryStore.get().update(allProducts);
-        
     }
 
     public void updateProduct(Product entity) throws EntityDoesNotExistException, InvalidEntityException
@@ -86,6 +69,22 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
+    public void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
+            throws InvalidMoveOperation
+    {
+        this.moveCategory(slugOfCategoryToMove, slugOfCategoryToMoveBeforeOf, InsertPosition.BEFORE);
+    }
+
+    @Override
+    public void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToRelativeTo,
+            InsertPosition position) throws InvalidMoveOperation
+    {
+        this.categoryStore.get().moveCategory(slugOfCategoryToMove, slugOfCategoryToRelativeTo,
+                position.equals(InsertPosition.AFTER) ? HasOrderedCollections.RelativePosition.AFTER :
+                        HasOrderedCollections.RelativePosition.BEFORE);
+    }
+
+    @Override
     public Category findCategoryBySlug(String slug)
     {
         return this.categoryStore.get().findBySlug(slug);
@@ -112,7 +111,7 @@ public class DefaultCatalogService implements CatalogService
 
     @Override
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
-        InsertPosition insertPosition) throws InvalidMoveOperation
+            InsertPosition insertPosition) throws InvalidMoveOperation
     {
         /*
         int position = -1;

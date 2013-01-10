@@ -7,6 +7,7 @@ import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -40,6 +41,30 @@ public interface CatalogService
     }
 
     /**
+     * Moves a category relatively to another, and shifts other categories as necessary.
+     *
+     * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
+     *      relative target.
+     * @param slugOfCategoryToMove the slug of the project to move
+     * @param slugOfCategoryToMoveBeforeOf the slug of the product to move before of
+     * @throws org.mayocat.shop.store.InvalidMoveOperation when no sense can be made of move parameters
+     */
+    void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
+            throws InvalidMoveOperation;
+
+
+    /**
+     * Moves a category relatively to another, and shifts other categories as necessary.
+     *
+     * @param slugOfCategoryToMove the slug of the project to move
+     * @param slugOfCategoryToMoveBeforeOf the slug of the product to move before of
+     * @param position the relative insert position : before or after
+     * @throws InvalidMoveOperation when no sense can be made of move parameters
+     */
+    void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf, InsertPosition position)
+            throws InvalidMoveOperation;
+
+    /**
      * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
      *      relative target.
      * @param category the category in which to move the project in
@@ -61,7 +86,7 @@ public interface CatalogService
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
     void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
-        InsertPosition position) throws InvalidMoveOperation;
+            InsertPosition position) throws InvalidMoveOperation;
 
     Category findCategoryBySlug(String slug);
 

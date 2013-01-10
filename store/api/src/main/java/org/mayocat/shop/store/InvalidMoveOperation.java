@@ -1,4 +1,4 @@
-package org.mayocat.shop.service;
+package org.mayocat.shop.store;
 
 public class InvalidMoveOperation extends Exception
 {

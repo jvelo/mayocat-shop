@@ -19,17 +19,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.CategoryRepresentation;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.service.InvalidMoveOperation;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -78,7 +76,34 @@ public class CategoryResource implements Resource
     @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response changePosition(@PathParam("slug") String slug,
+    public Response move(@PathParam("slug") String slug,
+            @FormParam("before") String slugOfCategoryToMoveBeforeOf,
+            @FormParam("after") String slugOfCategoryToMoveAfterOf)
+    {
+        try {
+            Category category = this.catalogService.findCategoryBySlug(slug);
+
+            if (!Strings.isNullOrEmpty(slugOfCategoryToMoveAfterOf)) {
+                this.catalogService.moveCategory(slug,
+                        slugOfCategoryToMoveAfterOf, CatalogService.InsertPosition.AFTER);
+            } else {
+                this.catalogService.moveCategory(slug, slugOfCategoryToMoveBeforeOf);
+            }
+
+            return Response.ok().build();
+
+        } catch (InvalidMoveOperation e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
+        }
+    }
+
+    @Path("{slug}/moveProduct")
+    @POST
+    @Timed
+    @Authorized
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response moveProduct(@PathParam("slug") String slug,
         @FormParam("product") String slugOfProductToMove, @FormParam("before") String slugOfProductToMoveBeforeOf,
         @FormParam("after") String slugOfProductToMoveAfterOf)
     {
@@ -87,10 +112,10 @@ public class CategoryResource implements Resource
 
             if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterOf)) {
                 this.catalogService.moveProductInCategory(category, slugOfProductToMove,
-                    slugOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
+                        slugOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
             } else {
                 this.catalogService.moveProductInCategory(category, slugOfProductToMove,
-                    slugOfProductToMoveBeforeOf);
+                        slugOfProductToMoveBeforeOf);
             }
 
             return Response.ok().build();

@@ -50,7 +50,48 @@ public interface EntityDAO< E extends Entity >
     @SqlQuery
     (
         "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
-        "WHERE entity.type = '<type>' AND entity.tenant_id = :tenant.id LIMIT :number OFFSET :offset"
+        "WHERE entity.type = '<type>' AND entity.tenant_id = :tenant.id"
     )
-    List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant, @Bind("number") Integer number, @Bind("offset") Integer offset);
+    List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN <type>" +
+        "               ON entity.id = <type>.entity_id " +
+        "WHERE  entity.type = '<type>' " +
+        "       AND entity.tenant_id = :tenant.id " +
+        "ORDER  BY <order> ASC "
+    )
+    List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN <type>" +
+        "               ON entity.id = <type>.entity_id " +
+        "WHERE  entity.type = '<type>' " +
+        "       AND entity.tenant_id = :tenant.id " +
+        "LIMIT  :number " +
+        "OFFSET :offset "
+    )
+    List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN <type>" +
+        "               ON entity.id = <type>.entity_id " +
+        "WHERE  entity.type = '<type>' " +
+        "       AND entity.tenant_id = :tenant.id " +
+        "ORDER  BY <order> ASC " +
+        "LIMIT  :number " +
+        "OFFSET :offset "
+    )
+    List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant,
+            @Bind("number") Integer number, @Bind("offset") Integer offset);
 }
