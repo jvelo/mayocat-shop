@@ -23,30 +23,6 @@
       <artifactId>mayocat-rest</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-store-datanucleus-model</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <!-- We want the enhanced version instead -->
-          <groupId>org.mayocat</groupId>
-          <artifactId>mayocat-model</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-store-datanucleus-store</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <!-- We want the enhanced version instead -->
-          <groupId>org.mayocat</groupId>
-          <artifactId>mayocat-model</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>org.mayocat</groupId>
@@ -126,31 +102,6 @@
                <outputDirectory>${project.build.directory}/assets/client</outputDirectory> 
              </configuration>
            </execution>
-           <!-- Copy datanucleus in target/lib -->
-           <execution>
-             <id>unpack-datanucleus</id>
-             <phase>process-sources</phase>
-             <goals>
-               <goal>copy-dependencies</goal>
-             </goals>
-             <configuration>
-               <includeGroupIds>org.datanucleus</includeGroupIds>
-               <outputDirectory>${project.build.directory}/lib</outputDirectory> 
-             </configuration>
-           </execution>
-           <!-- Copy mayocat-store-datanucleus-model in target/lib -->
-           <execution>
-             <id>unpack-mayocat-model</id>
-             <phase>process-sources</phase>
-             <goals>
-               <goal>copy-dependencies</goal>
-             </goals>
-             <configuration>
-               <includeGroupIds>org.mayocat</includeGroupIds>
-               <includeArtifactIds>mayocat-store-datanucleus-model</includeArtifactIds>
-               <outputDirectory>${project.build.directory}/lib</outputDirectory> 
-             </configuration>
-           </execution>
          </executions>
        </plugin>
 
@@ -182,10 +133,6 @@
             <configuration>
               <artifactSet>
                 <excludes>
-                  <exclude>org.datanucleus:*</exclude>
-                  <exclude>datanucleus:rdbms</exclude>
-                  <exclude>datanucleus:api</exclude>
-                  <exclude>org.mayocat:mayocat-store-datanucleus-model*</exclude>
                   <exclude>org.mayocat:mayocat-client</exclude>
                 </excludes>
               </artifactSet>
@@ -193,14 +140,6 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/components.txt</resource>
                 </transformer>
-                <!--
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/MANIFEST.MF</resource>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
-                  <resource>plugin.xml</resource>
-                </transformer>
-                -->
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>org.mayocat.shop.application.MayocatShopService</mainClass>

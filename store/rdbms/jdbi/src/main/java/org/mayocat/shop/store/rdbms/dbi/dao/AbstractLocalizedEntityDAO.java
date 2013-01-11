@@ -54,7 +54,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         List<EntityFullJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
 
         E entity = null;
-        Class< ? > thisEntityType = Generics.getTypeParameter(getClass(), AbstractLocalizedEntityDAO.class);
+        Class< E > thisEntityType = Generics.getTypeParameter(getClass(), LocalizedEntity.class);
         Translations translations = new Translations();
         for (EntityFullJoinRow row : rows) {
             if (entity == null) {
