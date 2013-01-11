@@ -6,7 +6,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.configuration.tenant.ShopConfiguration;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.service.ConfigurationService;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -16,15 +19,19 @@ import com.yammer.metrics.annotation.Timed;
 @Path("/configuration/")
 @Produces(MediaType.APPLICATION_JSON)
 @ExistingTenant
-public class ConfigurationResource
+@Authorized
+public class ConfigurationResource implements Resource
 {
     @Inject
     private Logger logger;
 
+    @Inject
+    private ConfigurationService configurationService;
+
     @GET
     @Timed
-    public Object getConfiguration()
+    public ShopConfiguration getConfiguration()
     {
-        return null;
+        return configurationService.getConfiguration();
     }
 }

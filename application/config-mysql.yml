@@ -1,11 +1,6 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
-      #"DataNucleus.Datastore.Native": DEBUG
-      #"DataNucleus.Datastore.Schema": DEBUG
-      #"DataNucleus.Plugin": DEBUG
-      #"DataNucleus.Connection": DEBUG
-      #"DataNucleus.SchemaTool": DEBUG
 
   file:
     archive: false
@@ -20,17 +15,6 @@ authentication:
 dataSource:
   name: "jdbi"
 
-# shop:
-#   products:
-#     variants:
-#       enabled: true
-#       mandatory: false
-#       priceVaries: true
-#       configurable: false
-#     categories:
-#       enabled: true
-#       configurable: true
-
 database:
   driverClass: com.mysql.jdbc.Driver
   user: root
@@ -39,10 +23,21 @@ database:
   properties:
     charSet: UTF-8
   maxWaitForConnection: 1s
-  validationQuery: "/* MyService Health Check */ SELECT 1"
+  validationQuery: "/* MayocatShop Health Check */ SELECT 1"
   minSize: 8
   maxSize: 32
   checkConnectionWhileIdle: false
   checkConnectionHealthWhenIdleFor: 10s
   closeConnectionIfIdleFor: 1 minute
 
+shop:
+  products:
+    categories:
+      enabled: true
+      configurable: true
+
+#    variants:
+#      enabled: true
+#      mandatory: false
+#      priceVaries: true
+#      configurable: false

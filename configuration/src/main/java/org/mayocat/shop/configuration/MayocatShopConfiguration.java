@@ -3,6 +3,7 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.shop.configuration.tenant.ShopConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
@@ -35,6 +36,11 @@ public class MayocatShopConfiguration extends Configuration
     @JsonProperty
     private SearchEngineConfiguration searchEngine = new SearchEngineConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private ShopConfiguration shop = new ShopConfiguration();
+
     public DatabaseConfiguration getDatabaseConfiguration()
     {
         return database;
@@ -58,6 +64,11 @@ public class MayocatShopConfiguration extends Configuration
     public SearchEngineConfiguration getSearchEngine()
     {
         return searchEngine;
+    }
+
+    public ShopConfiguration getShop()
+    {
+        return shop;
     }
 
 }

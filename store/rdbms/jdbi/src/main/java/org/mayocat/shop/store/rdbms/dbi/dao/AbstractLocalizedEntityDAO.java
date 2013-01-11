@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jodah.typetools.TypeResolver;
 import org.mayocat.shop.model.LocalizedEntity;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.Translations;
@@ -21,6 +20,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import com.google.common.base.Optional;
+import com.yammer.dropwizard.util.Generics;
 
 public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> implements TranslationDAO,
     EntityDAO<E>
@@ -54,7 +54,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         List<EntityFullJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
 
         E entity = null;
-        Class< ? > thisEntityType = TypeResolver.resolveArguments(getClass(), AbstractLocalizedEntityDAO.class)[0];
+        Class< ? > thisEntityType = Generics.getTypeParameter(getClass(), AbstractLocalizedEntityDAO.class);
         Translations translations = new Translations();
         for (EntityFullJoinRow row : rows) {
             if (entity == null) {
