@@ -6,10 +6,11 @@ import javax.inject.Inject;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
+import org.mayocat.shop.store.HasOrderedCollections;
 import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.rdbms.dbi.dao.ProductDAO;
@@ -17,13 +18,16 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
-@Component(hints={"jdbi", "default"})
+@Component(hints = { "jdbi", "default" })
 public class DBIProductStore extends AbstractEntityStore implements ProductStore, Initializable
 {
+    private static final String PRODUCT_POSITION = "product.position";
+
     @Inject
     private DBIProvider dbi;
-    
+
     private static final String PRODUCT_TABLE_NAME = "product";
+
     private ProductDAO dao;
 
     public void create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
@@ -65,10 +69,31 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
         }
     }
 
-    @Override
+    public void moveProduct(String productToMove, String productToMoveRelativeTo,
+            HasOrderedCollections.RelativePosition relativePosition) throws InvalidMoveOperation
+    {
+        this.dao.begin();
+
+        List<Product> allProducts = this.findAll();
+        MoveEntityInListOperation<Product> moveOp =
+                new MoveEntityInListOperation<Product>(allProducts, productToMove,
+                        productToMoveRelativeTo, relativePosition);
+
+        if (moveOp.hasMoved()) {
+            this.dao.updatePositions(PRODUCT_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());
+        }
+
+        this.dao.commit();
+    }
+
+    public List<Product> findAll()
+    {
+        return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant());
+    }
+
     public List<Product> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(PRODUCT_TABLE_NAME, getTenant(), number, offset);
+        return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset);
     }
 
     @Override
@@ -95,5 +120,4 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
         // TODO Auto-generated method stub
         return null;
     }
-
 }

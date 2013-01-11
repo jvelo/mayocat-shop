@@ -13,12 +13,24 @@ angular.module('catalog', [])
           callback && callback.call(this, data);
         });
       },
-      move: function(handle, target, position){
+      moveCategory: function(slug, targeg, position) {
+     },
+      moveProduct: function(slug, target, position){
         $http.post('/category/_all/move',
-                   "product=" + handle + "&" + position + "=" + target,
+                   "product=" + slug + "&" + position + "=" + target,
                    { "headers" : {'Content-Type': 'application/x-www-form-urlencoded'} })
           .success(function(data) {
           });
+      },
+      move: function(path, slug, target, position) {
+        $http.post(path + slug + "/move",
+                   position + "=" + target,
+                   { "headers" : {'Content-Type': 'application/x-www-form-urlencoded'} })
+             .success(function(data) {
+             })
+             .error(function(data, status) {
+
+             });
       }
 
     };
@@ -48,7 +60,14 @@ angular.module('catalog', [])
           if (typeof $scope.changeOperation === "undefined") {
             return;
           }
-          catalogService.move($scope.changeOperation.handle, $scope.changeOperation.target, $scope.changeOperation.position);
+
+          catalogService.move(
+              $location.path(),
+              $scope.changeOperation.handle,
+              $scope.changeOperation.target,
+              $scope.changeOperation.position
+          );
+
           $scope.changeOperation = undefined;
         };
   }]);

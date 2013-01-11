@@ -13,7 +13,8 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 
 @RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
-public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>
+public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>,
+        PositionedDAO<Product>
 {
     @SqlUpdate
     (

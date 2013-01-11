@@ -41,12 +41,35 @@ public interface CatalogService
     }
 
     /**
+     * Moves a product relatively to another, and shifts other products as necessary.
+     *
+     * @param slugOfProductToMove the slug of the product to move
+     * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
+     * @throws org.mayocat.shop.store.InvalidMoveOperation when no sense can be made of move parameters
+     * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
+     *      relative target.
+     */
+    void moveProduct(String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
+            throws InvalidMoveOperation;
+
+    /**
+     * Moves a product relatively to another, and shifts other products as necessary.
+     *
+     * @param slugOfProductToMove the slug of the project to move
+     * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
+     * @param position the relative insert position : before or after
+     * @throws InvalidMoveOperation when no sense can be made of move parameters
+     */
+    void moveProduct(String slugOfProductToMove, String slugOfProductToMoveBeforeOf, InsertPosition position)
+            throws InvalidMoveOperation;
+
+    /**
      * Moves a category relatively to another, and shifts other categories as necessary.
      *
      * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
      *      relative target.
-     * @param slugOfCategoryToMove the slug of the project to move
-     * @param slugOfCategoryToMoveBeforeOf the slug of the product to move before of
+     * @param slugOfCategoryToMove the slug of the category to move
+     * @param slugOfCategoryToMoveBeforeOf the slug of the category to move before of
      * @throws org.mayocat.shop.store.InvalidMoveOperation when no sense can be made of move parameters
      */
     void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
@@ -56,8 +79,8 @@ public interface CatalogService
     /**
      * Moves a category relatively to another, and shifts other categories as necessary.
      *
-     * @param slugOfCategoryToMove the slug of the project to move
-     * @param slugOfCategoryToMoveBeforeOf the slug of the product to move before of
+     * @param slugOfCategoryToMove the slug of the category to move
+     * @param slugOfCategoryToMoveBeforeOf the slug of the category to move before of
      * @param position the relative insert position : before or after
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */

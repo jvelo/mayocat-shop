@@ -76,13 +76,12 @@ public class CategoryResource implements Resource
     @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.WILDCARD)
     public Response move(@PathParam("slug") String slug,
             @FormParam("before") String slugOfCategoryToMoveBeforeOf,
             @FormParam("after") String slugOfCategoryToMoveAfterOf)
     {
         try {
-            Category category = this.catalogService.findCategoryBySlug(slug);
-
             if (!Strings.isNullOrEmpty(slugOfCategoryToMoveAfterOf)) {
                 this.catalogService.moveCategory(slug,
                         slugOfCategoryToMoveAfterOf, CatalogService.InsertPosition.AFTER);
@@ -90,7 +89,7 @@ public class CategoryResource implements Resource
                 this.catalogService.moveCategory(slug, slugOfCategoryToMoveBeforeOf);
             }
 
-            return Response.ok().build();
+            return Response.noContent().build();
 
         } catch (InvalidMoveOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
@@ -103,6 +102,7 @@ public class CategoryResource implements Resource
     @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.WILDCARD)
     public Response moveProduct(@PathParam("slug") String slug,
         @FormParam("product") String slugOfProductToMove, @FormParam("before") String slugOfProductToMoveBeforeOf,
         @FormParam("after") String slugOfProductToMoveAfterOf)
@@ -118,7 +118,7 @@ public class CategoryResource implements Resource
                         slugOfProductToMoveBeforeOf);
             }
 
-            return Response.ok().build();
+            return Response.noContent().build();
 
         } catch (InvalidMoveOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)

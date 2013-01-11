@@ -1,6 +1,5 @@
 package org.mayocat.shop.store.rdbms.dbi;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -73,46 +72,13 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         this.dao.begin();
 
         List<Category> allCategories = this.findAll();
-        Integer from = -1;
-        Integer to = -1;
-        int i = 0;
-        for (Category category : allCategories) {
-            if (categoryToMove.equals(category.getSlug())) {
-                from = i;
-            }
-            if (categoryToMoveRelativeTo.equals(category.getSlug())) {
-                if (from == -1) {
-                    // From is down the list
-                    to = relativePosition.equals(RelativePosition.AFTER) ?
-                            i + 1 : i;
-                } else {
-                    // From is already found : this position or up the list
-                    to = relativePosition.equals(RelativePosition.AFTER) ?
-                            i : i - 1;
-                }
-            }
-            i++;
+        MoveEntityInListOperation<Category> moveOp =
+                new MoveEntityInListOperation<Category>(allCategories, categoryToMove,
+                        categoryToMoveRelativeTo, relativePosition);
+
+        if (moveOp.hasMoved()) {
+            this.dao.updatePositions(CATEGORY_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());
         }
-
-        if (from < 0 || to < 0) {
-            throw new InvalidMoveOperation();
-        }
-
-        if (from == to) {
-            // Nothing to do
-            this.dao.commit();
-            return;
-        }
-
-        CollectionUtil.move(allCategories, from, to);
-
-        // Create a list with the sequence of positions
-        List<Integer> positions = Lists.newArrayList();
-        for (int j = 0; j < allCategories.size(); j++) {
-            positions.add(j);
-        }
-
-        this.dao.updatePositions(CATEGORY_TABLE_NAME, allCategories, positions);
 
         this.dao.commit();
     }

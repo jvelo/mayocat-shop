@@ -9,12 +9,12 @@ import javax.inject.Provider;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.store.InvalidMoveOperation;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.HasOrderedCollections;
 import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.mayocat.shop.store.ProductStore;
 import org.xwiki.component.annotation.Component;
 
@@ -69,6 +69,22 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
+    public void moveProduct(String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
+            throws InvalidMoveOperation
+    {
+        this.moveProduct(slugOfProductToMove, slugOfProductToMoveBeforeOf, InsertPosition.BEFORE);
+    }
+
+    @Override
+    public void moveProduct(String slugOfProductToMove, String slugOfProductToRelativeTo,
+            InsertPosition position) throws InvalidMoveOperation
+    {
+        this.productStore.get().moveProduct(slugOfProductToMove, slugOfProductToRelativeTo,
+                position.equals(InsertPosition.AFTER) ? HasOrderedCollections.RelativePosition.AFTER :
+                        HasOrderedCollections.RelativePosition.BEFORE);
+    }
+
+    @Override
     public void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
             throws InvalidMoveOperation
     {
@@ -96,12 +112,6 @@ public class DefaultCatalogService implements CatalogService
         return this.categoryStore.get().findAll(number, offset);
     }
 
-    private String generateSlug(String title)
-    {
-        return Normalizer.normalize(title.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
-            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "").replaceAll("\\s+", "-");
-    }
-
     @Override
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug)
         throws InvalidMoveOperation
@@ -113,47 +123,13 @@ public class DefaultCatalogService implements CatalogService
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
             InsertPosition insertPosition) throws InvalidMoveOperation
     {
-        /*
-        int position = -1;
-        Product toMove = null;
-        int i = 0;
-        for (Product product : category.getProducts()) {
-            if (product.getSlug().equals(slugOfProductToMove)) {
-                toMove = product;
-            }
-        }
-        if (toMove == null) {
-            throw new InvalidMoveOperation();
-        }
+        throw new InvalidMoveOperation();
+    }
 
-        category.getProducts().remove(toMove);
-
-        for (Product product : category.getProducts()) {
-            if (product.getSlug().equals(relativeSlug)) {
-                position = i;
-            }
-            i++;
-        }
-
-        if (position < 0) {
-            throw new InvalidMoveOperation();
-        }
-
-        switch (insertPosition) {
-            case BEFORE:
-                category.getProducts().add(position, toMove);
-                break;
-            case AFTER:
-                category.getProducts().add(position + 1, toMove);
-                break;
-        }
-
-        try {
-            this.categoryStore.get().update(category);
-        } catch (InvalidEntityException e) {
-            throw new StoreException(e);
-        }
-        */
+    private String generateSlug(String title)
+    {
+        return Normalizer.normalize(title.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "").replaceAll("\\s+", "-");
     }
 
 }

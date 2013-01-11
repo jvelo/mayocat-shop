@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -25,9 +27,11 @@ import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Strings;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("ProductResource")
@@ -38,7 +42,7 @@ import com.yammer.metrics.annotation.Timed;
 public class ProductResource implements Resource
 {
     @Inject
-    private CatalogService catalogueService;
+    private CatalogService catalogService;
 
     @Inject
     private Logger logger;
@@ -50,7 +54,7 @@ public class ProductResource implements Resource
             @QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
-        return this.wrapInReprensentations(this.catalogueService.findAllProducts(number, offset));
+        return this.wrapInReprensentations(this.catalogService.findAllProducts(number, offset));
     }
 
     @Path("{slug}")
@@ -59,11 +63,37 @@ public class ProductResource implements Resource
     @Authorized
     public Object getProduct(@PathParam("slug") String slug)
     {
-        Product product = this.catalogueService.findProductBySlug(slug);
+        Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
             return Response.status(404).build();
         }
         return this.wrapInRepresentation(product);
+    }
+
+    @Path("{slug}/move")
+    @POST
+    @Timed
+    @Authorized
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.WILDCARD)
+    public Response move(@PathParam("slug") String slug,
+            @FormParam("before") String slugOfProductToMoveBeforeOf,
+            @FormParam("after") String slugOfProductToMoveAfterTo)
+    {
+        try {
+            if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterTo)) {
+                this.catalogService.moveProduct(slug,
+                        slugOfProductToMoveAfterTo, CatalogService.InsertPosition.AFTER);
+            } else {
+                this.catalogService.moveProduct(slug, slugOfProductToMoveBeforeOf);
+            }
+
+            return Response.noContent().build();
+
+        } catch (InvalidMoveOperation e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
+        }
     }
 
     @Path("{slug}")
@@ -74,11 +104,11 @@ public class ProductResource implements Resource
             Product updatedProduct)
     {
         try {
-            Product product = this.catalogueService.findProductBySlug(slug);
+            Product product = this.catalogService.findProductBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             } else {
-                this.catalogueService.updateProduct(updatedProduct);
+                this.catalogService.updateProduct(updatedProduct);
             }
 
             return Response.ok().build();
@@ -106,7 +136,7 @@ public class ProductResource implements Resource
     public Response createProduct(Product product)
     {
         try {
-            this.catalogueService.createProduct(product);
+            this.catalogService.createProduct(product);
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
