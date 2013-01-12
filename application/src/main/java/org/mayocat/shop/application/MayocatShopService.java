@@ -1,26 +1,14 @@
 package org.mayocat.shop.application;
 
-import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.mayocat.shop.base.EventListener;
-import org.mayocat.shop.base.HealthCheck;
-import org.mayocat.shop.base.Managed;
-import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
-import org.mayocat.shop.event.ApplicationStartedEvent;
-import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.store.rdbms.dbi.DBIProvider;
 import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
-import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentRepositoryException;
-import org.xwiki.observation.ObservationManager;
 
-import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -32,6 +20,7 @@ import com.yammer.dropwizard.migrations.MigrationsBundle;
 public class MayocatShopService extends AbstractService<MayocatShopConfiguration>
 {
     public static final String ADMIN_UI_PATH = "/admin/";
+    public static final String CLIENT_RESOURCE_PATH = "/client/";
 
     public static final Set<String> STATIC_PATHS = new HashSet<String>(){{
             add(ADMIN_UI_PATH);
@@ -45,7 +34,7 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
     @Override
     public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
-        bootstrap.addBundle(new AssetsBundle("/client/", ADMIN_UI_PATH));
+        bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new MigrationsBundle<MayocatShopConfiguration>()
         {

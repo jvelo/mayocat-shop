@@ -35,7 +35,7 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     @Override
     public void run(C configuration, Environment environment) throws Exception
     {
-        // Initialize Rendering components and allow getting instances
+        // Initialize components and allow getting instances
         componentManager = new EmbeddableComponentManager();
 
         this.registerConfigurationsAsComponents(configuration);
