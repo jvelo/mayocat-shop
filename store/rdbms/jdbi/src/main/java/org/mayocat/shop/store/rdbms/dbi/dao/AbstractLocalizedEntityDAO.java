@@ -32,7 +32,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
             return;
         }
         List<Long> ids = new ArrayList<Long>();
-        List<String> langs = new ArrayList<String>();
+        List<String> languages = new ArrayList<String>();
         List<String> texts = new ArrayList<String>();
 
         for (String field : translations.keySet()) {
@@ -40,13 +40,14 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
             Long id = createTranslation(entityId, field);
             for (Locale locale : fieldTranslations.keySet()) {
                 ids.add(id);
-                langs.add(locale.toString());
+                languages.add(locale.toString());
                 texts.add(fieldTranslations.get(locale));
             }
         }
 
         if (ids.size() > 0) {
-            insertTranslations("small", ids, langs, texts);
+            // FIXME check in the entity class the size of the translation
+            insertTranslations("small", ids, languages, texts);
         }
     }
 
