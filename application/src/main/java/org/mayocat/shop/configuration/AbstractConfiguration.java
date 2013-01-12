@@ -3,7 +3,7 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.mayocat.shop.configuration.tenant.ShopConfiguration;
+import org.mayocat.shop.configuration.shop.ShopConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;

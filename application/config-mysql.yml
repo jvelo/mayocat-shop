@@ -1,7 +1,6 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
-
   file:
     archive: false
 
@@ -30,14 +29,25 @@ database:
   checkConnectionHealthWhenIdleFor: 10s
   closeConnectionIfIdleFor: 1 minute
 
-shop:
-  products:
-    categories:
-      enabled: true
+general:
+  locales:
+    main:
+      default: en
+      configurable: false
+      visible: true
+    others:
+      default: [de, fr_FR]
       configurable: true
 
-#    variants:
-#      enabled: true
-#      mandatory: false
-#      priceVaries: true
-#      configurable: false
+shop:
+  products:
+    stock:
+      default: true
+    categories:
+      default: true
+    variants: 
+      default: true
+    priceVariesWithVariants:
+      default: true
+      configurable: false
+      visible: false

@@ -7,14 +7,15 @@ import javax.inject.Provider;
 import javax.validation.Valid;
 
 import org.mayocat.shop.authorization.PasswordManager;
+import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.model.TenantConfiguration;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.TenantStore;
 import org.mayocat.shop.store.UserStore;
 import org.xwiki.component.annotation.Component;
@@ -30,6 +31,9 @@ public class DefaultAccountsService implements AccountsService
 
     @Inject
     private PasswordManager passwordManager;
+
+    @Inject
+    private MultitenancyConfiguration multitenancyConfiguration;
 
     @Override
     public void createInitialUser(User user) throws EntityAlreadyExistsException, InvalidEntityException
@@ -49,6 +53,22 @@ public class DefaultAccountsService implements AccountsService
     @Override
     public Tenant findTenant(String slug)
     {
+        return this.tenantStore.get().findBySlug(slug);
+    }
+
+    @Override
+    public Tenant createDefaultTenant() throws EntityAlreadyExistsException
+    {
+        if (this.tenantStore.get().findAll(1, 0).size() != 0) {
+            throw new EntityAlreadyExistsException("Cannot create default tenant : a tenant already exists");
+        }
+        String slug = multitenancyConfiguration.getDefaultTenantSlug();
+        TenantConfiguration configuration = new TenantConfiguration(0);
+        Tenant tenant = new Tenant(slug, configuration);
+        try {
+            this.tenantStore.get().create(tenant);
+        } catch (InvalidEntityException e) {
+        }
         return this.tenantStore.get().findBySlug(slug);
     }
 

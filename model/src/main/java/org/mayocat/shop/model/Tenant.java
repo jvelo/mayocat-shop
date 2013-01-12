@@ -10,36 +10,40 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import com.google.common.base.Objects;
 
 public class Tenant implements Entity
-{    
+{
     @JsonIgnore
     Long id;
 
     @NotNull
-    @Pattern (message="Only word characters or hyphens", regexp="\\w[\\w-]*\\w")
+    @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
     String slug;
-    
-    List<String> aliases;
-    
+
     Shop shop;
 
+    private TenantConfiguration configuration;
+
     ///////////////////////////////////////////////////
-    
-    public Tenant()
-    {
-    }
-    
-    public Tenant(Long id)
-    {
-        this.id = id;
-    }
-    
-    public Tenant(String slug)
+
+    public Tenant(String slug, TenantConfiguration configuration)
     {
         setSlug(slug);
+        this.configuration = configuration;
     }
-    
+
+    public Tenant(Long id, String slug, TenantConfiguration configuration)
+    {
+        setId(id);
+        setSlug(slug);
+        this.configuration = configuration;
+    }
+
     ///////////////////////////////////////////////////
-    
+
+    public TenantConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
     public Long getId()
     {
         return id;
@@ -60,34 +64,16 @@ public class Tenant implements Entity
         this.slug = slug;
     }
 
-    public List<String> getAliases()
-    {
-        return aliases;
-    }
-
-    public void setAliases(List<String> aliases)
-    {
-        this.aliases = aliases;
-    }
-
     public Shop getShop()
     {
         return shop;
     }
-    
+
     public void setShop(Shop shop)
     {
         this.shop = shop;
     }
-    
-    ///////////////////////////////////////////////////
-    
-    public void fromTenant(Tenant t)
-    {
-        this.setSlug(t.getSlug());        
-        this.setAliases(t.getAliases());
-    }
-    
+
     // ///////////////////////////////////////////////////////////
 
     @Override

@@ -7,6 +7,17 @@
 
   <changeSet id="1" author="jvelo">
 
+    <!-- Configuration table -->
+    <createTable tableName="configuration">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="version" type="smallint unsigned">
+        <constraints nullable="false" />
+      </column>
+      <column name="data" type="mediumtext" />
+    </createTable>
+
     <!-- Tenant table -->
     <createTable tableName="tenant">
       <column name="id" type="bigint" autoIncrement="true">
@@ -15,7 +26,11 @@
       <column name="slug" type="varchar(255)">
         <constraints nullable="false" unique="true" />
       </column>
+      <column name="configuration_id" type="bigint" />
     </createTable>
+    <addForeignKeyConstraint constraintName="TENANT_CONFIGURATION_FK"
+                             baseTableName="tenant" baseColumnNames="configuration_id"
+                             referencedTableName="configuration" referencedColumnNames="id" />
     <createIndex tableName="tenant" indexName="SLUG_INDEX">
       <column name="slug" />
     </createIndex>
@@ -34,7 +49,7 @@
       <column name="tenant_id" type="bigint" />
     </createTable>
     <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id" constraintName="UNIQUE_SLUG_PER_TYPE_PER_TENANT" />
-    <addForeignKeyConstraint constraintName="TENANT_FK"
+    <addForeignKeyConstraint constraintName="ENTITY_TENANT_FK"
                              baseTableName="entity" baseColumnNames="tenant_id"
                              referencedTableName="tenant" referencedColumnNames="id" />
     <createIndex tableName="entity" indexName="SLUG_INDEX">

@@ -9,7 +9,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
 import org.mayocat.shop.configuration.MultitenancyConfiguration;
-import org.mayocat.shop.model.Shop;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -57,12 +56,9 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
                 if (!this.configuration.isActivated()) {
                     // Mono-tenant
 
-                    tenant = this.accountsService.findTenant(this.configuration.getDefaultTenant());
+                    tenant = this.accountsService.findTenant(this.configuration.getDefaultTenantSlug());
                     if (tenant == null) {
-                        Tenant tenantToCreate = new Tenant(this.configuration.getDefaultTenant());
-                        tenantToCreate.setShop(new Shop());
-                        this.accountsService.createTenant(tenantToCreate);
-                        tenant = this.accountsService.findTenant(this.configuration.getDefaultTenant());
+                        tenant = this.accountsService.createDefaultTenant();
                     }
                     this.resolved.get().put(host, tenant);
                 } else {
@@ -74,8 +70,6 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
                     }
                     this.resolved.get().put(host, tenant);
                 }
-            } catch (InvalidEntityException e) {
-                throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
             } catch (EntityAlreadyExistsException e) {
                 // Has been created in between ?
                 this.logger.warn("Failed attempt at creating a tenant that already exists for host {}", host);

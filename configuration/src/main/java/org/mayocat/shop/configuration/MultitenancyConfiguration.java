@@ -33,7 +33,7 @@ public class MultitenancyConfiguration extends Configuration
         return rootDomain;
     }
 
-    public String getDefaultTenant()
+    public String getDefaultTenantSlug()
     {
         return defaultTenant;
     }

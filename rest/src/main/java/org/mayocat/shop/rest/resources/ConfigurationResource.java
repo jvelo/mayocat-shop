@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.configuration.tenant.ShopConfiguration;
+import org.mayocat.shop.configuration.shop.ShopConfiguration;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.service.ConfigurationService;
 import org.slf4j.Logger;

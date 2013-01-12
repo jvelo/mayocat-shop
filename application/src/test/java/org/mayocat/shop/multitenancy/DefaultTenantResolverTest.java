@@ -53,7 +53,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
         getMockery().checking(new Expectations()
         {
             {
-                allowing(configuration).getDefaultTenant();
+                allowing(configuration).getDefaultTenantSlug();
                 will(returnValue("mytenant"));
 
                 allowing(configuration).getRootDomain();
@@ -63,7 +63,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
                 will(returnValue(null));
 
                 allowing(accountsService).findTenant(with(equal("mytenant")));
-                will(returnValue(new Tenant("mytenant")));
+                will(returnValue(new Tenant("mytenant", null)));
 
                 allowing(accountsService).createTenant(with(any(Tenant.class)));
 
@@ -154,7 +154,7 @@ public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
                 allowing(configuration).isActivated();
                 will(returnValue(false));
 
-                allowing(configuration).getDefaultTenant();
+                allowing(configuration).getDefaultTenantSlug();
                 will(returnValue("mytenant"));
             }
         });

@@ -1,9 +1,6 @@
-package org.mayocat.shop.configuration.tenant;
+package org.mayocat.shop.configuration.shop;
 
 import javax.validation.Valid;
-
-import org.mayocat.shop.configuration.tenant.products.CategoriesConfiguration;
-import org.mayocat.shop.configuration.tenant.products.ProductsConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
