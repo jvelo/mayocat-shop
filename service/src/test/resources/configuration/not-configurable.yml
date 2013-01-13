@@ -1,0 +1,10 @@
+  name:
+    default: Your shop's name
+    configurable: false
+  locales:
+    main:
+      default: en
+      configurable: false
+    others:
+      default: [de, fr_FR]
+      configurable: false

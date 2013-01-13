@@ -1,7 +1,9 @@
 package org.mayocat.shop.service.internal;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -17,7 +19,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.yammer.dropwizard.util.Generics;
 
 /**
  * @version $Id$
@@ -37,22 +41,29 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getConfiguration()
     {
-        Multimap<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
+        Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
         ShopConfiguration gestaltConfiguration = new ShopConfiguration();
 
-        return this.multimapFromConfigurations();
+        Map<String, Object> platformConfiguration = this.mapFromConfigurations();
+        ConfigurationMerger merger = new ConfigurationMerger(platformConfiguration, tenantConfiguration);
+        return merger.merge();
     }
 
     @Override
     public Map<String, Object> getConfiguration(String name)
     {
-        return null;
+        try {
+            return (Map<String, Object>) getConfiguration().get(name);
+        }
+        catch (ClassCastException e) {
+            this.logger.warn("Attempt at accessing a configuration that is not an object");
+        }
+        return Collections.emptyMap();
     }
 
-    private Map<String, Object> multimapFromConfigurations()
+    private Map<String, Object> mapFromConfigurations()
     {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new GuavaModule());
         try {
             String json = mapper.writeValueAsString(this.configurations);
             Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});

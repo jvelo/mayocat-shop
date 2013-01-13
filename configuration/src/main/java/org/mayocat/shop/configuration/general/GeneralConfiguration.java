@@ -18,7 +18,7 @@ public class GeneralConfiguration implements Configuration
 
     @Valid
     @JsonProperty
-    private LocalesConfiguration locales;
+    private LocalesConfiguration locales = new LocalesConfiguration();
 
     public LocalesConfiguration getLocales()
     {

@@ -4,19 +4,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
-public class TenantConfiguration implements Multimap<String, Object>
+public class TenantConfiguration implements Map<String, Object>
 {
-    private Multimap<String, Object> data;
+    private Map<String, Object> data;
 
     private final Integer version;
 
@@ -25,10 +21,10 @@ public class TenantConfiguration implements Multimap<String, Object>
     public TenantConfiguration(final Integer version)
     {
         this.version = version;
-        this.data = HashMultimap.create();
+        this.data = Maps.newHashMap();
     }
 
-    public TenantConfiguration(final Integer version, final Multimap<String, Object> data)
+    public TenantConfiguration(final Integer version, final Map<String, Object> data)
     {
         this.version = version;
         this.data = data;
@@ -41,12 +37,10 @@ public class TenantConfiguration implements Multimap<String, Object>
         return this.version;
     }
 
-    public Multimap<String, Object> getData()
+    public Map<String, Object> getData()
     {
-        return new ImmutableMultimap.Builder<String, Object>().putAll(data).build();
+        return ImmutableMap.<String, Object>builder().putAll(data).build();
     }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public int size()
@@ -61,57 +55,39 @@ public class TenantConfiguration implements Multimap<String, Object>
     }
 
     @Override
-    public boolean containsKey(@Nullable Object o)
+    public boolean containsKey(Object o)
     {
         return this.data.containsKey(o);
     }
 
     @Override
-    public boolean containsValue(@Nullable Object o)
+    public boolean containsValue(Object o)
     {
         return this.data.containsValue(o);
     }
 
     @Override
-    public boolean containsEntry(@Nullable Object o, @Nullable Object o2)
+    public Object get(Object o)
     {
-        return this.data.containsEntry(o, o2);
+        return this.data.get(o);
     }
 
     @Override
-    public boolean put(@Nullable String s, @Nullable Object o)
+    public Object put(String s, Object o)
     {
         return this.data.put(s, o);
     }
 
     @Override
-    public boolean remove(@Nullable Object o, @Nullable Object o2)
+    public Object remove(Object o)
     {
-        return this.data.remove(o, o2);
+        return this.data.remove(o);
     }
 
     @Override
-    public boolean putAll(@Nullable String s, Iterable<?> objects)
+    public void putAll(Map<? extends String, ?> map)
     {
-        return this.data.putAll(s, objects);
-    }
-
-    @Override
-    public boolean putAll(Multimap<? extends String, ?> multimap)
-    {
-        return this.data.putAll(multimap);
-    }
-
-    @Override
-    public Collection<Object> replaceValues(@Nullable String s, Iterable<?> objects)
-    {
-        return this.data.replaceValues(s, objects);
-    }
-
-    @Override
-    public Collection<Object> removeAll(@Nullable Object o)
-    {
-        return this.data.removeAll(o);
+        this.data.putAll(map);
     }
 
     @Override
@@ -121,21 +97,9 @@ public class TenantConfiguration implements Multimap<String, Object>
     }
 
     @Override
-    public Collection<Object> get(@Nullable String s)
-    {
-        return this.data.get(s);
-    }
-
-    @Override
     public Set<String> keySet()
     {
         return this.data.keySet();
-    }
-
-    @Override
-    public Multiset<String> keys()
-    {
-        return this.data.keys();
     }
 
     @Override
@@ -145,14 +109,10 @@ public class TenantConfiguration implements Multimap<String, Object>
     }
 
     @Override
-    public Collection<Map.Entry<String, Object>> entries()
+    public Set<Entry<String, Object>> entrySet()
     {
-        return this.data.entries();
+        return this.data.entrySet();
     }
 
-    @Override
-    public Map<String, Collection<Object>> asMap()
-    {
-        return this.data.asMap();
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

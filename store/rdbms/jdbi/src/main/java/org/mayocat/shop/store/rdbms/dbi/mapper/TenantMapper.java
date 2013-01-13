@@ -3,15 +3,16 @@ package org.mayocat.shop.store.rdbms.dbi.mapper;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.TenantConfiguration;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.google.common.collect.Multimap;
 
 public class TenantMapper implements ResultSetMapper<Tenant>
 {
@@ -24,7 +25,7 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         Integer configurationVersion = result.getInt("configuration.version");
 
         try {
-            Multimap<String, Object> data = mapper.readValue(result.getString("configuration.data"), Multimap.class);
+            Map<String, Object> data = mapper.readValue(result.getString("configuration.data"), new TypeReference<Map<String, Object>>(){});
 
             TenantConfiguration configuration = new TenantConfiguration(configurationVersion, data);
 

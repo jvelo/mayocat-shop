@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -36,5 +37,13 @@ public class ConfigurationResource implements Resource
     public Map<String, Object> getConfiguration()
     {
         return configurationService.getConfiguration();
+    }
+
+    @GET
+    @Timed
+    @Path("{module}")
+    public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
+    {
+        return configurationService.getConfiguration(module);
     }
 }
