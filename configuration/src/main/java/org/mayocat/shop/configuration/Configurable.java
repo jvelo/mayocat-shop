@@ -1,5 +1,6 @@
 package org.mayocat.shop.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
@@ -38,6 +39,7 @@ public class Configurable<T>
         this.visible = visible;
     }
 
+    @JsonIgnore
     @ValidationMethod(message = "Configurable values cannot be invisible")
     public boolean isNotConfigurableAndInvisible()
     {

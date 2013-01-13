@@ -1,5 +1,7 @@
 package org.mayocat.shop.rest.resources;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,6 +15,7 @@ import org.mayocat.shop.service.ConfigurationService;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.collect.Multimap;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("ConfigurationResource")
@@ -30,7 +33,7 @@ public class ConfigurationResource implements Resource
 
     @GET
     @Timed
-    public ShopConfiguration getConfiguration()
+    public Map<String, Object> getConfiguration()
     {
         return configurationService.getConfiguration();
     }

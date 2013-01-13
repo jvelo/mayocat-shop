@@ -1,7 +1,11 @@
 package org.mayocat.shop.service;
 
+import java.util.Map;
+
 import org.mayocat.shop.configuration.shop.ShopConfiguration;
 import org.xwiki.component.annotation.Role;
+
+import com.google.common.collect.Multimap;
 
 /**
  * @version $Id$
@@ -9,5 +13,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface ConfigurationService
 {
-    ShopConfiguration getConfiguration();
+    Map<String, Object> getConfiguration();
+
+    Map<String, Object> getConfiguration(String name);
 }

@@ -30,6 +30,8 @@ database:
   closeConnectionIfIdleFor: 1 minute
 
 general:
+  name:
+    default: Your shop's name
   locales:
     main:
       default: en

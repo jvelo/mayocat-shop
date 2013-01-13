@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.mayocat.shop.configuration.Configuration;
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
 import org.mayocat.shop.base.Managed;
@@ -127,8 +128,21 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
                 try {
                     field.setAccessible(true);
                     Object value = field.get(configuration);
+
+                    if (Configuration.class.isAssignableFrom(value.getClass())) {
+                        DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
+                        // For mayocat injectable configurations, inject them as such
+                        // (this is useful for the configuration module that needs to get all configuration
+                        // injected as a map).
+                        cd.setRoleType(Configuration.class);
+                        cd.setRoleHint(field.getName());
+                        componentManager.registerComponent(cd, value);
+                    }
+
+                    // Inject "as is" for components that only need an individual configuration
                     DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
                     cd.setRoleType(value.getClass());
+
                     componentManager.registerComponent(cd, value);
                 } finally {
                     field.setAccessible(isAccessible);

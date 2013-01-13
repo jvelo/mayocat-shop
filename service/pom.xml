@@ -15,6 +15,11 @@
   <dependencies>
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-store-api</artifactId>
       <version>${project.version}</version>
     </dependency>
