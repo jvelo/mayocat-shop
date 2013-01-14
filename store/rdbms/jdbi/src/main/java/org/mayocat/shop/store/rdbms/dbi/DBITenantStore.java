@@ -18,8 +18,6 @@ import org.xwiki.component.phase.InitializationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 @Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
 {
@@ -52,7 +50,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public void update(Tenant entity) throws InvalidEntityException
     {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
@@ -69,13 +67,13 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public List<Tenant> findAll(Integer number, Integer offset)
     {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public Tenant findById(Long id)
     {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
