@@ -63,7 +63,7 @@ public class DefaultAccountsService implements AccountsService
             throw new EntityAlreadyExistsException("Cannot create default tenant : a tenant already exists");
         }
         String slug = multitenancyConfiguration.getDefaultTenantSlug();
-        TenantConfiguration configuration = new TenantConfiguration(0);
+        TenantConfiguration configuration = new TenantConfiguration();
         Tenant tenant = new Tenant(slug, configuration);
         try {
             this.tenantStore.get().create(tenant);

@@ -1,7 +1,5 @@
 package org.mayocat.shop.configuration.json;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.mayocat.shop.configuration.Configurable;
 
@@ -23,7 +21,7 @@ public class ConfigurableTest
         Configurable<Boolean> value1 =
                 mapper.readValue("{\"default\": true, \"configurable\":false}", Configurable.class);
         assertEquals(value1.isConfigurable(), false);
-        assertEquals(value1.getValue(), true);
+        assertEquals(value1.getDefaultValue(), true);
     }
 
     @Test
@@ -32,12 +30,12 @@ public class ConfigurableTest
         Configurable<Double> value1 =
                 mapper.readValue("{\"default\": 4.20, \"configurable\":false}", Configurable.class);
         assertEquals(value1.isConfigurable(), false);
-        assertEquals(value1.getValue(), new Double(4.20));
+        assertEquals(value1.getDefaultValue(), new Double(4.20));
 
         Configurable<Double> value2 =
                 mapper.readValue("{\"default\": 3.14, \"configurable\":true}", Configurable.class);
         assertEquals(value2.isConfigurable(), true);
-        assertEquals(value2.getValue(), new Double(3.14));
+        assertEquals(value2.getDefaultValue(), new Double(3.14));
     }
 
     @Test
@@ -46,12 +44,12 @@ public class ConfigurableTest
         Configurable<Double> value1 =
                 mapper.readValue("{\"default\": [\"fr\", \"en\"], \"configurable\":false}", Configurable.class);
         assertEquals(value1.isConfigurable(), false);
-        assertEquals(value1.getValue(), Lists.newArrayList("fr", "en"));
+        assertEquals(value1.getDefaultValue(), Lists.newArrayList("fr", "en"));
 
         Configurable<Double> value2 =
                 mapper.readValue("{\"default\": [\"de\", \"ro\"], \"configurable\":true}", Configurable.class);
         assertEquals(value2.isConfigurable(), true);
-        assertEquals(value2.getValue(), Lists.newArrayList("de", "ro"));
+        assertEquals(value2.getDefaultValue(), Lists.newArrayList("de", "ro"));
     }
 
     @Test

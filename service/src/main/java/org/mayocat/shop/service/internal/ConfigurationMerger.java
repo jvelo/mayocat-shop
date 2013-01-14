@@ -2,29 +2,19 @@ package org.mayocat.shop.service.internal;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
-public class ConfigurationMerger
+public class ConfigurationMerger extends AbstractConfigurationHandler
 {
-    public static final String CONFIGURABLE_KEY = "configurable";
-
-    public static final String DEFAULT_KEY = "default";
-
-    public static final String VISIBLE_KEY = "visible";
-
-    public static final String VALUE_KEY = "value";
-
-    private final Map<String, Object> platform;
-
-    private final Map<String, Object> tenant;
-
     public ConfigurationMerger(final Map<String, Object> platform, final Map<String, Object> tenant)
     {
-        this.platform = platform;
-        this.tenant = tenant;
+        super(platform, tenant);
     }
 
     public Map<String, Object> merge()
@@ -32,7 +22,8 @@ public class ConfigurationMerger
         return merge(platform, tenant);
     }
 
-    private Map<String, Object> merge(final Map<String, Object> global, final Map<String, Object> local)
+    private Map<String, Object> merge(@NotNull final Map<String, Object> global,
+            @Nullable final Map<String, Object> local)
     {
         // Copy the global object
         Map<String, Object> result = Maps.newHashMap(global);
@@ -51,7 +42,6 @@ public class ConfigurationMerger
                             // is not permitted for this entry : we set the default value as value
                             valueAsMap.put(VALUE_KEY, valueAsMap.get(DEFAULT_KEY));
                         }
-                        //result.put(key, valueAsMap);
                     } else {
                         // We need to go deeper
                         Map<String, Object> localSubMap = null;
@@ -74,13 +64,4 @@ public class ConfigurationMerger
         }
         return result;
     }
-
-    private boolean isConfigurableEntry(Map<String, Object> entry)
-    {
-        return entry.containsKey(CONFIGURABLE_KEY)
-            && Boolean.class.isAssignableFrom(entry.get(CONFIGURABLE_KEY).getClass())
-            && entry.containsKey(DEFAULT_KEY)
-            && entry.containsKey(VISIBLE_KEY);
-    }
-
 }

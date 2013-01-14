@@ -1,6 +1,5 @@
   name:
     default: Your shop's name
-    configurable: false
   locales:
     main:
       default: en

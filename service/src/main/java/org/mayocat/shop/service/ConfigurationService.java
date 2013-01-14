@@ -15,5 +15,9 @@ public interface ConfigurationService
 {
     Map<String, Object> getConfiguration();
 
-    Map<String, Object> getConfiguration(String name);
+    Map<String, Object> getConfiguration(String name) throws NoSuchModuleException;
+
+    void updateConfiguration(Map<String, Object> configuration);
+
+    void updateConfiguration(String module, Map<String, Object> configuration) throws NoSuchModuleException;
 }

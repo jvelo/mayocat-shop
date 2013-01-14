@@ -26,6 +26,18 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
 
     @SqlUpdate
     (
+        "UPDATE configuration " +
+        "SET    data = :data, " +
+        "       version = :version " +
+        "WHERE  id = (SELECT configuration_id " +
+        "             FROM   tenant " +
+        "             WHERE  id = tenant.id) "
+    )
+    public abstract void updateConfiguration(@BindBean("tenant") Tenant id, @Bind("version") Integer version,
+            @Bind("data") String configuration);
+
+    @SqlUpdate
+    (
         "INSERT INTO tenant " +
         "            (slug, " +
         "             configuration_id) " +

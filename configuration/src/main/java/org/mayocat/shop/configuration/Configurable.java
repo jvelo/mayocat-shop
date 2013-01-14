@@ -9,8 +9,11 @@ import com.yammer.dropwizard.validation.ValidationMethod;
  */
 public class Configurable<T>
 {
-    @JsonProperty("default")
+    @JsonIgnore
     private T value;
+
+    @JsonProperty("default")
+    private T defaultValue;
 
     @JsonProperty
     private Boolean configurable = true;
@@ -22,20 +25,20 @@ public class Configurable<T>
     {
     }
 
-    public Configurable(T value)
+    public Configurable(T defaultValue)
     {
-        this.value = value;
+        this.defaultValue = defaultValue;
     }
 
-    public Configurable(T value, boolean configurable)
+    public Configurable(T defaultValue, boolean configurable)
     {
-        this(value);
+        this(defaultValue);
         this.configurable = configurable;
     }
 
-    public Configurable(T value, boolean configurable, boolean visible)
+    public Configurable(T defaultValue, boolean configurable, boolean visible)
     {
-        this(value, configurable);
+        this(defaultValue, configurable);
         this.visible = visible;
     }
 
@@ -46,9 +49,9 @@ public class Configurable<T>
         return !(this.isConfigurable() && !this.isVisible());
     }
 
-    public T getValue()
+    public T getDefaultValue()
     {
-        return value;
+        return defaultValue;
     }
 
     public boolean isConfigurable()
@@ -64,5 +67,14 @@ public class Configurable<T>
             this.visible = configurable;
         }
         return visible;
+    }
+
+    @JsonIgnore
+    public T getValue()
+    {
+        if (value == null) {
+            return this.getDefaultValue();
+        }
+        return value;
     }
 }

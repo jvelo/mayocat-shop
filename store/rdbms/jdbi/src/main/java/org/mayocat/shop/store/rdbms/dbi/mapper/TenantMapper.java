@@ -9,6 +9,8 @@ import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.TenantConfiguration;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,19 +25,20 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
         Integer configurationVersion = result.getInt("configuration.version");
-
+        TenantConfiguration configuration;
         try {
-            Map<String, Object> data = mapper.readValue(result.getString("configuration.data"), new TypeReference<Map<String, Object>>(){});
-
-            TenantConfiguration configuration = new TenantConfiguration(configurationVersion, data);
-
-            Tenant tenant = new Tenant(result.getLong("tenant.id"), slug, configuration);
-            tenant.setSlug(slug);
-
-            return tenant;
+            Map<String, Object> data =
+                    mapper.readValue(result.getString("configuration.data"), new TypeReference<Map<String, Object>>(){});
+            configuration = new TenantConfiguration(configurationVersion, data);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load configuration for tenant with slug ["
-                    + slug + "]", e);
+            final Logger logger = LoggerFactory.getLogger(TenantMapper.class);
+            logger.error("Failed to load configuration for tenant with slug [{}]", e);
+            configuration = new TenantConfiguration();
         }
+
+        Tenant tenant = new Tenant(result.getLong("tenant.id"), slug, configuration);
+        tenant.setSlug(slug);
+
+        return tenant;
     }
 }

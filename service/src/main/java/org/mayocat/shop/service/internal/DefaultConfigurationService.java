@@ -1,27 +1,26 @@
 package org.mayocat.shop.service.internal;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.mayocat.shop.configuration.Configuration;
-import org.mayocat.shop.configuration.shop.ShopConfiguration;
 import org.mayocat.shop.context.Execution;
+import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.model.TenantConfiguration;
 import org.mayocat.shop.service.ConfigurationService;
+import org.mayocat.shop.service.NoSuchModuleException;
+import org.mayocat.shop.store.TenantStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.yammer.dropwizard.util.Generics;
 
 /**
  * @version $Id$
@@ -29,6 +28,9 @@ import com.yammer.dropwizard.util.Generics;
 @Component
 public class DefaultConfigurationService implements ConfigurationService
 {
+    @Inject
+    private Provider<TenantStore> tenantStore;
+
     @Inject
     private Map<String, Configuration> configurations;
 
@@ -42,23 +44,54 @@ public class DefaultConfigurationService implements ConfigurationService
     public Map<String, Object> getConfiguration()
     {
         Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
-        ShopConfiguration gestaltConfiguration = new ShopConfiguration();
-
         Map<String, Object> platformConfiguration = this.mapFromConfigurations();
         ConfigurationMerger merger = new ConfigurationMerger(platformConfiguration, tenantConfiguration);
         return merger.merge();
     }
 
     @Override
-    public Map<String, Object> getConfiguration(String name)
+    public Map<String, Object> getConfiguration(String module) throws NoSuchModuleException
     {
+        if (!this.configurations.containsKey(module)) {
+            throw new NoSuchModuleException();
+        }
+
         try {
-            return (Map<String, Object>) getConfiguration().get(name);
+            return (Map<String, Object>) getConfiguration().get(module);
         }
         catch (ClassCastException e) {
             this.logger.warn("Attempt at accessing a configuration that is not an object");
         }
         return Collections.emptyMap();
+    }
+
+    @Override
+    public void updateConfiguration(Map<String, Object> data)
+    {
+        ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(mapFromConfigurations(), data);
+        ValidConfigurationEnforcer.ValidationResult result = enforcer.enforce();
+
+        TenantConfiguration configuration =
+                new TenantConfiguration(TenantConfiguration.CURRENT_VERSION, result.getResult());
+        this.tenantStore.get().updateConfiguration(configuration);
+
+        // TODO throw an exception here when there are validation errors, so that it can be acknowledged to the
+        // REST service consumer ? (meaning the operation has been partially successful only)
+    }
+
+    @Override
+    public void updateConfiguration(String module, Map<String, Object> configuration) throws NoSuchModuleException
+    {
+        if (!this.configurations.containsKey(module)) {
+            throw new NoSuchModuleException();
+        }
+
+        Tenant tenant = this.execution.getContext().getTenant();
+        TenantConfiguration currentConfiguration = tenant.getConfiguration();
+        Map<String, Object> data = Maps.newHashMap(currentConfiguration.getData());
+
+        data.put(module, configuration);
+        this.updateConfiguration(data);
     }
 
     private Map<String, Object> mapFromConfigurations()
@@ -73,6 +106,6 @@ public class DefaultConfigurationService implements ConfigurationService
         } catch (IOException e) {
             this.logger.error("Failed to convert configurations to map", e);
         }
-        return Collections.<String, Object>emptyMap();
+        return Collections.emptyMap();
     }
 }

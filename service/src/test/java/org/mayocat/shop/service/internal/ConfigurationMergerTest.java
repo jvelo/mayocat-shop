@@ -21,11 +21,11 @@ import junit.framework.Assert;
 /**
  * @version $Id$
  */
-public class ConfigurationMergerTest
+public class ConfigurationMergerTest extends AbstractConfigurationTest
 {
     private GeneralConfiguration defaultConfiguration = new GeneralConfiguration();
 
-    private GeneralConfiguration notConfigurableConfiguration;
+    private GeneralConfiguration localesNotConfigurableConfiguration;
 
     private final Validator validator = new Validator();
 
@@ -35,8 +35,9 @@ public class ConfigurationMergerTest
     @Before
     public void setUp() throws Exception
     {
-        File notConfigurableConfigurationFile = new File(Resources.getResource("configuration/not-configurable.yml").toURI());
-        notConfigurableConfiguration = factory.build(notConfigurableConfigurationFile);
+        File notConfigurableConfigurationFile = new File(Resources.getResource(
+                "configuration/locales-not-configurable.yml").toURI());
+        localesNotConfigurableConfiguration = factory.build(notConfigurableConfigurationFile);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ConfigurationMergerTest
     @Test
     public void testConfigurationMergeWhenPropertyIsNotConfigurable() throws Exception
     {
-        Map<String, Object> generalConfiguration = getConfiguration(notConfigurableConfiguration);
+        Map<String, Object> generalConfiguration = getConfiguration(localesNotConfigurableConfiguration);
         Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
 
         ConfigurationMerger merger = new ConfigurationMerger(generalConfiguration, tenantConfiguration);
@@ -66,25 +67,4 @@ public class ConfigurationMergerTest
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private Map<String, Object> loadConfiguration(String uri) throws Exception
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(loadJSON(uri), new TypeReference<Map<String, Object>>()
-        {
-        });
-    }
-
-    private String loadJSON(String uri) throws IOException
-    {
-        return Resources.toString(Resources.getResource(uri), Charsets.UTF_8);
-    }
-
-    private Map<String, Object> getConfiguration(GeneralConfiguration configuration) throws Exception
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        String asJson = mapper.writeValueAsString(configuration);
-        Map<String, Object> configurationAsJson = mapper.readValue(asJson, new TypeReference<Map<String, Object>>(){});
-        return configurationAsJson;
-    }
 }

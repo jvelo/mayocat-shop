@@ -16,12 +16,18 @@ public class TenantConfiguration implements Map<String, Object>
 
     private final Integer version;
 
+    public static final Integer CURRENT_VERSION = 0;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public TenantConfiguration()
+    {
+        this(CURRENT_VERSION);
+    }
 
     public TenantConfiguration(final Integer version)
     {
-        this.version = version;
-        this.data = Maps.newHashMap();
+        this(version, Maps.<String, Object>newHashMap());
     }
 
     public TenantConfiguration(final Integer version, final Map<String, Object> data)

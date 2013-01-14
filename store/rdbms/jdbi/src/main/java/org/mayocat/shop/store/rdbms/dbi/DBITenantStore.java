@@ -1,15 +1,14 @@
 package org.mayocat.shop.store.rdbms.dbi;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.TenantConfiguration;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.StoreException;
 import org.mayocat.shop.store.TenantStore;
 import org.mayocat.shop.store.rdbms.dbi.dao.TenantDAO;
 import org.xwiki.component.annotation.Component;
@@ -18,33 +17,33 @@ import org.xwiki.component.phase.InitializationException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
-@Component(hints={"jdbi", "default"})
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+@Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
 {
+    @Inject
+    private Execution execution;
 
     @Inject
     private DBIProvider dbi;
 
     private TenantDAO dao;
-    
+
     @Override
     public void create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new GuavaModule());
-
         TenantConfiguration configuration = tenant.getConfiguration();
 
         try {
-            String configurationAsJson = mapper.writeValueAsString(configuration);
+            String configurationAsJson = convertConfigurationToJSON(configuration);
             Integer configurationId = this.dao.createConfiguration(configuration.getVersion(), configurationAsJson);
             this.dao.create(tenant, configurationId);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("", e);
+            throw new RuntimeException("Failed to create tenant", e);
         } finally {
             this.dao.commit();
         }
@@ -53,20 +52,30 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public void update(Tenant entity) throws InvalidEntityException
     {
-        
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void updateConfiguration(TenantConfiguration configuration)
+    {
+        try {
+            this.dao.updateConfiguration(getTenant(), configuration.getVersion(),
+                    convertConfigurationToJSON(configuration));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("", e);
+        }
     }
 
     @Override
     public List<Tenant> findAll(Integer number, Integer offset)
     {
-        // TODO
-        return Collections.emptyList();
+        throw new NotImplementedException();
     }
 
     @Override
     public Tenant findById(Long id)
     {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -81,4 +90,14 @@ public class DBITenantStore implements TenantStore, Initializable
         this.dao = this.dbi.get().onDemand(TenantDAO.class);
     }
 
+    private Tenant getTenant()
+    {
+        return this.execution.getContext().getTenant();
+    }
+
+    private String convertConfigurationToJSON(TenantConfiguration configuration) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(configuration);
+    }
 }
