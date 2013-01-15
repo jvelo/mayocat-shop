@@ -21,7 +21,7 @@ public class MultitenancyConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private String resolver = "default";
+    private String resolver = "subdomain";
     
     public boolean isActivated()
     {

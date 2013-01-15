@@ -19,9 +19,9 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 
-@Component(hints={"default", "subdomain"})
+@Component("subdomain")
 @Singleton
-public class DefaultTenantResolver implements TenantResolver, ServletRequestListener
+public class SubdomainSlugTenantResolver implements TenantResolver, ServletRequestListener
 {
 
     /**
@@ -41,6 +41,7 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
 
     public void requestDestroyed()
     {
+        this.resolved.set(null);
         this.resolved.remove();
     }
     

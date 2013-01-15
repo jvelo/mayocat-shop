@@ -14,11 +14,11 @@ import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.test.AbstractMockingComponentTestCase;
 import org.xwiki.test.annotation.MockingRequirement;
 
-public class DefaultTenantResolverTest extends AbstractMockingComponentTestCase
+public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTestCase
 {
 
     @MockingRequirement(exceptions = MultitenancyConfiguration.class)
-    private DefaultTenantResolver tenantResolver;
+    private SubdomainSlugTenantResolver tenantResolver;
 
     private MultitenancyConfiguration configuration;
 

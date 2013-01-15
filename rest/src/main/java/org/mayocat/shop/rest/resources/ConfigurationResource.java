@@ -15,7 +15,10 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.configuration.shop.ShopConfiguration;
+import org.mayocat.shop.context.Context;
+import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
+import org.mayocat.shop.model.TenantConfiguration;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.service.ConfigurationService;
 import org.mayocat.shop.service.NoSuchModuleException;
@@ -39,10 +42,14 @@ public class ConfigurationResource implements Resource
     @Inject
     private ConfigurationService configurationService;
 
+    @Inject
+    private Execution execution;
+
     @GET
     @Timed
     public Map<String, Object> getConfiguration()
     {
+        TenantConfiguration configuration = execution.getContext().getTenant().getConfiguration();
         return configurationService.getConfiguration();
     }
 

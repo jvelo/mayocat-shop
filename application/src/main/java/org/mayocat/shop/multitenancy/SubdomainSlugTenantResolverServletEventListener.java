@@ -9,8 +9,8 @@ import org.mayocat.shop.base.EventListener;
 import org.xwiki.component.annotation.Component;
 
 @Component
-@Named("tenantResolverEventListener")
-public class DefaultTenantResolverServletEventListener implements ServletRequestListener, EventListener
+@Named("subdomainSlugTenantResolverEventListener")
+public class SubdomainSlugTenantResolverServletEventListener implements ServletRequestListener, EventListener
 {
     @Inject
     @Named("subdomain")
@@ -19,9 +19,13 @@ public class DefaultTenantResolverServletEventListener implements ServletRequest
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
     {
-        DefaultTenantResolver dtr = (DefaultTenantResolver) this.defaultTenantResolver;
-        if (dtr != null) {
-            dtr.requestDestroyed();
+        try {
+            SubdomainSlugTenantResolver dtr = (SubdomainSlugTenantResolver) this.defaultTenantResolver;
+            if (dtr != null) {
+                dtr.requestDestroyed();
+            }
+        } catch (ClassCastException e) {
+            // This mean we are not using the sub-domain slug tenant resolver...
         }
     }
 
@@ -29,5 +33,4 @@ public class DefaultTenantResolverServletEventListener implements ServletRequest
     public void requestInitialized(ServletRequestEvent sre)
     {
     }
-
 }
