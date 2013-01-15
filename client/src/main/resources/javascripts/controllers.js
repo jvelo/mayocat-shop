@@ -20,6 +20,8 @@ function LoginCtrl($rootScope, $scope) {
 }
 
 function AppController($rootScope, $scope) {
+  // Ensure authenticated
+  $scope.$parent.ping();
 
   $scope.tenant = undefined;
   $scope.user = undefined;

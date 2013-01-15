@@ -166,11 +166,10 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
   /**
    * Ping server to figure out if user is already logged in.
    */
-  function ping() {
+  scope.ping = function() {
     $http.get('/tenant/').success(function(data) {
       scope.$broadcast('event:authenticationSuccessful', data);
     });
   }
 
-  ping();
 }]);

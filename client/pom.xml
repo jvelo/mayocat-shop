@@ -12,6 +12,45 @@
   <description>Client Administration UI</description>
   <build>
     <plugins>
+      <!-- Jasmine tests -->
+      <plugin>
+        <groupId>com.github.searls</groupId>
+        <artifactId>jasmine-maven-plugin</artifactId>
+        <version>1.2.0.0</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>jasmine-tests</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <preloadSources>
+            <include>javascripts/vendor/jquery.js</include>
+            <include>javascripts/vendor/jquery-ui-1.9.0.custom.min.js</include>
+            <include>javascripts/vendor/angular/1.0.3/angular.min.js</include>
+            <include>javascripts/vendor/angular/1.0.3/angular-resource.min.js</include>
+            <include>javascripts/vendor/angular/1.0.3/angular-mocks.js</include>
+            <include>javascripts/vendor/sortable-ng.js</include>
+          </preloadSources>
+          <sourceIncludes>
+            <include>javascripts/controllers.js</include>
+            <include>javascripts/search.js</include>
+            <include>javascripts/product.js</include>
+            <include>javascripts/category.js</include>
+            <include>javascripts/catalog.js</include>
+            <include>javascripts/configuration.js</include>
+            <include>javascripts/app.js</include>
+          </sourceIncludes>
+          <specIncludes>
+            <include>spec/**/*.js</include>
+          </specIncludes>
+          <jsSrcDir>${project.basedir}/src/main/resources</jsSrcDir>
+        </configuration>
+      </plugin>
+      <!-- Assembly -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.3</version>

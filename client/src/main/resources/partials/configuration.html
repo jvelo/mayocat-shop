@@ -1,4 +1,4 @@
-<ng-form name="configurationForm" ng-controller="ConfigurationController2">
+<ng-form name="configurationForm">
   <div id="configuration">
     <div class="span8">
       <!-- header -->
@@ -9,11 +9,35 @@
       <form class="form-horizontal" name="tenantForm">
         <fieldset>
           <legend>Shop</legend>
+
+          <!-- Shop name -->
           <div class="control-group">
-            <label class="control-label" for="hasVariants">Name</label>
+            <label class="control-label" for="shopName">Name</label>
             <div class="controls">
-              <input type="text" name="name" class="input-xlarge" ng-model="tenant.shop.name"/>
+              <input type="text" name="name" class="input-xlarge"
+                                 ng-model="configuration.general.name.value" 
+                                 id="shopName" />
+            </div>
           </div>
+
+          <!-- Default locale -->
+          <div class="control-group" ng-show="isVisible('general.locales.main')">
+            <label class="control-label" for="defaultLocale">Default language</label>
+            <div class="controls">
+              <input type="text" name="name" class="input-xlarge"
+                                 ng-model="configuration.general.locales.main.value"
+                                 id="defaultLocale"
+                                 ng-disabled="!isConfigurable('general.locales.main')" />
+            </div>
+          </div>
+
+          <!-- Other locales -->
+          <div class="control-group">
+            <label class="control-label" for="hasVariants">Other languages</label>
+            <div class="controls">
+              <input type="text" name="name" class="input-xlarge" ng-model="configuration.general.locales.others.value"/>
+          </div>
+
         </fieldset>
       </form>
 
