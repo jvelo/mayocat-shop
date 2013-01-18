@@ -99,7 +99,7 @@
              <configuration>
                <includeGroupIds>org.mayocat</includeGroupIds>
                <includeArtifactIds>mayocat-client</includeArtifactIds>
-               <outputDirectory>${project.build.directory}/assets/client</outputDirectory> 
+               <outputDirectory>${project.build.directory}/</outputDirectory> 
              </configuration>
            </execution>
          </executions>

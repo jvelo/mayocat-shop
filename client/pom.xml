@@ -28,21 +28,21 @@
         </executions>
         <configuration>
           <preloadSources>
-            <include>javascripts/vendor/jquery.js</include>
-            <include>javascripts/vendor/jquery-ui-1.9.0.custom.min.js</include>
-            <include>javascripts/vendor/angular/1.0.3/angular.min.js</include>
-            <include>javascripts/vendor/angular/1.0.3/angular-resource.min.js</include>
-            <include>javascripts/vendor/angular/1.0.3/angular-mocks.js</include>
-            <include>javascripts/vendor/sortable-ng.js</include>
+            <include>assets/client/javascripts/vendor/jquery.js</include>
+            <include>assets/client/javascripts/vendor/jquery-ui-1.9.0.custom.min.js</include>
+            <include>assets/client/javascripts/vendor/angular/1.0.3/angular.min.js</include>
+            <include>assets/client/javascripts/vendor/angular/1.0.3/angular-resource.min.js</include>
+            <include>assets/client/javascripts/vendor/angular/1.0.3/angular-mocks.js</include>
+            <include>assets/client/javascripts/vendor/sortable-ng.js</include>
           </preloadSources>
           <sourceIncludes>
-            <include>javascripts/controllers.js</include>
-            <include>javascripts/search.js</include>
-            <include>javascripts/product.js</include>
-            <include>javascripts/category.js</include>
-            <include>javascripts/catalog.js</include>
-            <include>javascripts/configuration.js</include>
-            <include>javascripts/app.js</include>
+            <include>assets/client/javascripts/controllers.js</include>
+            <include>assets/client/javascripts/search.js</include>
+            <include>assets/client/javascripts/product.js</include>
+            <include>assets/client/javascripts/category.js</include>
+            <include>assets/client/javascripts/catalog.js</include>
+            <include>assets/client/javascripts/configuration.js</include>
+            <include>assets/client/javascripts/app.js</include>
           </sourceIncludes>
           <specIncludes>
             <include>spec/**/*.js</include>
