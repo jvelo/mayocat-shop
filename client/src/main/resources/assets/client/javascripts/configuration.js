@@ -33,7 +33,6 @@ angular.module('configuration', ['ngResource'])
             }
 
             function walk(node) {
-                console.log(node);
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
                         if (isConfigurable(node[property])) {
