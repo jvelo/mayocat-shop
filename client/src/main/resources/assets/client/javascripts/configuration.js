@@ -5,10 +5,10 @@ angular.module('configuration', ['ngResource'])
 
         var configuration,
             configurationResource = $resource("/configuration/", {}, {
-              update:{method:"PUT"}
+                update:{method:"PUT"}
             });
 
-        var getConfiguration = function() {
+        var getConfiguration = function () {
             var deferred = $q.defer();
             if (configuration != null) {
                 deferred.resolve(configuration);
@@ -24,14 +24,14 @@ angular.module('configuration', ['ngResource'])
         }
 
         var saveOriginalValues = function (configuration) {
-            var isConfigurable = function(node) {
+            var isConfigurable = function (node) {
                 return typeof node.configurable !== "undefined"
                     && typeof node.value !== "undefined"
                     && typeof node.default !== "undefined"
                     && typeof node.visible !== "undefined";
             }
 
-            var walk = function(node) {
+            var walk = function (node) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
                         if (isConfigurable(node[property])) {
@@ -52,15 +52,15 @@ angular.module('configuration', ['ngResource'])
             walk(configuration);
         }
 
-        var prepareConfiguration = function(configuration) {
-            var isConfigurable = function(node) {
+        var prepareConfiguration = function (configuration) {
+            var isConfigurable = function (node) {
                 return typeof node.configurable !== "undefined"
                     && typeof node.value !== "undefined"
                     && typeof node.default !== "undefined"
                     && typeof node.visible !== "undefined";
             }
 
-            var isStillDefaultValue = function(node) {
+            var isStillDefaultValue = function (node) {
                 if (node.value === node.__originalValue && node.value === node.defaultValue) {
                     // Nothing changed
                     return true;
@@ -68,7 +68,7 @@ angular.module('configuration', ['ngResource'])
                 return false;
             }
 
-            var walk = function(node, container) {
+            var walk = function (node, container) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
                         if (isConfigurable(node[property])) {
