@@ -9,8 +9,13 @@ angular.module('catalog', [])
                 });
             },
             listCategories:function (callback) {
-                $http.get('/category/').success(function (data) {
-                    callback && callback.call(this, data);
+                var hasCategories = configurationService.get("shop.products.categories", function(hasCategories){
+                    if (!hasCategories) {
+                        callback && callback.call(this, []);
+                    }
+                    $http.get('/category/').success(function (data) {
+                        callback && callback.call(this, data);
+                    });
                 });
             },
             moveCategory:function (slug, targeg, position) {
