@@ -29,7 +29,24 @@ describe('Configuration', function () {
             expect(configurationService).toBeDefined();
         });
 
-        it("Should offer access to configurations", function () {
+        it("Should offer access to the whole configuration object", function () {
+            var config;
+            configurationService.get(function(c){
+                config = c;
+            });
+            httpBackend.flush();
+
+            waitsFor(function() {
+                return typeof config !== "undefined";
+            }, "Config never returned", 100);
+
+            runs(function(){
+                expect(config).toBeDefined();
+                expect(config.module.propertySet.property.value).toBe("Hello");
+            });
+        });
+
+        it("Should offer access to individual configuration properties", function () {
             var property;
             configurationService.get("module.propertySet.property", function(p){
                 property = p;
@@ -38,7 +55,7 @@ describe('Configuration', function () {
 
             waitsFor(function() {
                 return typeof property !== "undefined";
-            }, "Configuration property never returned", 1000);
+            }, "Configuration property never returned", 100);
 
             runs(function(){
                 expect(property).toBe("Hello");

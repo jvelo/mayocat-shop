@@ -3,13 +3,12 @@
 angular.module('configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q) {
 
-        var configurationResource = $resource("/configuration/", {}, {
-            update:{method:"PUT"}
-        });
+        var configuration,
+            configurationResource = $resource("/configuration/", {}, {
+              update:{method:"PUT"}
+            });
 
-        var configuration;
-
-        function getConfiguration() {
+        var getConfiguration = function() {
             var deferred = $q.defer();
             if (configuration != null) {
                 deferred.resolve(configuration);
@@ -24,15 +23,15 @@ angular.module('configuration', ['ngResource'])
             return deferred.promise;
         }
 
-        function saveOriginalValues(configuration) {
-            function isConfigurable(node) {
+        var saveOriginalValues = function (configuration) {
+            var isConfigurable = function(node) {
                 return typeof node.configurable !== "undefined"
                     && typeof node.value !== "undefined"
                     && typeof node.default !== "undefined"
                     && typeof node.visible !== "undefined";
             }
 
-            function walk(node) {
+            var walk = function(node) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
                         if (isConfigurable(node[property])) {
@@ -53,15 +52,15 @@ angular.module('configuration', ['ngResource'])
             walk(configuration);
         }
 
-        function prepareConfiguration(configuration) {
-            function isConfigurable(node) {
+        var prepareConfiguration = function(configuration) {
+            var isConfigurable = function(node) {
                 return typeof node.configurable !== "undefined"
                     && typeof node.value !== "undefined"
                     && typeof node.default !== "undefined"
                     && typeof node.visible !== "undefined";
             }
 
-            function isStillDefaultValue(node) {
+            var isStillDefaultValue = function(node) {
                 if (node.value === node.__originalValue && node.value === node.defaultValue) {
                     // Nothing changed
                     return true;
@@ -69,7 +68,7 @@ angular.module('configuration', ['ngResource'])
                 return false;
             }
 
-            function walk(node, container) {
+            var walk = function(node, container) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
                         if (isConfigurable(node[property])) {
@@ -94,8 +93,24 @@ angular.module('configuration', ['ngResource'])
         };
 
         return {
-            get:function (path, callback) {
-                // TODO check number of args instead
+            /**
+             * Gets access to either the whole configuration object, or to a single configuration property.
+             *
+             * To get access to the whole configuration object :
+             *
+             * configurationService.get(function(configuration){
+             *   // Something with configuration
+             * });
+             *
+             * To get access to a single configuration property :
+             *
+             * configurationService.get("module.sample.property", function(value){
+             *   // Something with value
+             * });
+             */
+            get:function () {
+                var path = arguments.length === 2 ? arguments[0] : undefined,
+                    callback = arguments.length === 2 ? arguments[1] : arguments[0];
                 getConfiguration().then(function (configuration) {
                     if (typeof path === "undefined") {
                         callback(configuration);
@@ -117,10 +132,23 @@ angular.module('configuration', ['ngResource'])
                 });
             },
 
+            /**
+             * Updates the configuration with the passed configuration, hitting the /configuration PUT API.
+             *
+             * @param {Object} config the configuration object to put
+             */
             put:function (config) {
                 configurationResource.update(prepareConfiguration(configuration));
             },
 
+            /**
+             * Checks if a configuration property is visible (i.e. should be exposed to users) or not.
+             *
+             * @param {Object} configuration the configuration object to test a path for visibility for.
+             * @param {String} path the configuration path to test visibility for. For example: "general.locales.main"
+             * @return {*} undefined if the configuration does not exists at this path for this configuration object,
+             * false if the configuration is not visible (i.e. it should not be exposed to the users), true if it is.
+             */
             isVisible:function (configuration, path) {
                 if (typeof configuration === "undefined") {
                     return;
@@ -128,35 +156,51 @@ angular.module('configuration', ['ngResource'])
                 var configurationElement = eval("configuration." + path);
                 if (typeof configurationElement === "undefined") {
                     // The configuration does not exist
-                    return false;
+                    return;
                 }
                 return typeof configurationElement.visible === "undefined"
                     || configurationElement.visible;
-
             },
 
+            /**
+             * Checks if a configuration property is configurable (users are allowed to override the value set at the
+             * platform level) or not.
+             *
+             * @param {Object} configuration the configuration object to test a path for configurability for.
+             * @param {String} path the configuration path to test configurability for.
+             * For example: "general.locales.main"
+             * @return {Boolean|undefined} undefined if the configuration does not exists at this path for this
+             * configuration object, false if the configuration is not configurable, true if it is.
+             */
             isConfigurable:function (configuration, path) {
                 if (typeof configuration === "undefined") {
-                    return;
+                    return undefined;
                 }
                 var configurationElement = eval("configuration." + path);
                 if (typeof configurationElement === "undefined") {
                     // The configuration does not exist
-                    return false;
+                    return undefined;
                 }
                 return typeof configurationElement.configurable === "undefined"
                     || configurationElement.configurable;
-
             },
 
+            /**
+             * Checks if a configuration property value is the default value (the one set at the platform level).
+             *
+             * @param {Object} configuration the configuration object to check the default value with
+             * @param {String} path the path of the configuration to check if the value is the default one for
+             * @return {Boolean|undefined} undefined if the configuration does not exists at this path for this
+             * configuration object, true if the value for this configuration path is the default one, false otherwise
+             */
             isDefaultValue:function (configuration, path) {
                 if (typeof configuration === "undefined") {
-                    return;
+                    return undefined;
                 }
                 var configurationElement = eval("configuration." + path);
                 if (typeof configurationElement === "undefined") {
                     // The configuration does not exist
-                    return false;
+                    return undefined;
                 }
                 return typeof configurationElement.default !== "undefined"
                     && angular.equals(configurationElement.default, configurationElement.value);
