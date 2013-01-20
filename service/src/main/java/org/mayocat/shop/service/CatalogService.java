@@ -34,6 +34,12 @@ public interface CatalogService
 
     void updateCategory(Category entity) throws EntityDoesNotExistException, InvalidEntityException;
 
+    /**
+     * @param product the product to find the categories for
+     * @return all the categories this product is listed in
+     */
+    List<Category> findCategoriesForProduct(Product product);
+
     enum InsertPosition
     {
         BEFORE,

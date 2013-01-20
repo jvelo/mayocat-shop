@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.CategoryStore;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
@@ -81,6 +82,11 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         }
 
         this.dao.commit();
+    }
+
+    public List<Category> findAllForProduct(Product product)
+    {
+        return this.dao.findAllForProduct(product);
     }
 
     public List<Category> findAll()

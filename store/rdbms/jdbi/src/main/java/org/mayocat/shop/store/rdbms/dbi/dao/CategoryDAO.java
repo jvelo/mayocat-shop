@@ -1,6 +1,9 @@
 package org.mayocat.shop.store.rdbms.dbi.dao;
 
+import java.util.List;
+
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.rdbms.dbi.mapper.CategoryMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -54,8 +57,24 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     )
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN category " +
+        "               ON entity.id = category.entity_id " +
+        "WHERE  entity.type = 'category' " +
+        "       AND category.entity_id IN (SELECT category_id " +
+        "                                  FROM   category_product " +
+        "                                  WHERE  product_id = :product.id)"
+    )
+    public abstract List<Category> findAllForProduct(@BindBean("product") Product product);
+
     public Category findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("category", slug, tenant);
     }
+
+
 }

@@ -71,6 +71,12 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
+    public List<Category> findCategoriesForProduct(Product product)
+    {
+        return this.categoryStore.get().findAllForProduct(product);
+    }
+
+    @Override
     public void moveProduct(String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
             throws InvalidMoveOperation
     {

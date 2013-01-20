@@ -21,9 +21,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.rest.representations.EntityReference;
 import org.mayocat.shop.rest.representations.ProductRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -34,6 +36,7 @@ import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("ProductResource")
@@ -63,13 +66,18 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Authorized
-    public Object getProduct(@PathParam("slug") String slug)
+    public Object getProduct(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
         Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
             return Response.status(404).build();
         }
-        return this.wrapInRepresentation(product);
+        if (!Strings.isNullOrEmpty(expand)) {
+            List<Category> categories = this.catalogService.findCategoriesForProduct(product);
+            return this.wrapInRepresentation(product, categories);
+        } else {
+            return this.wrapInRepresentation(product);
+        }
     }
 
     @Path("{slug}/move")
@@ -166,5 +174,14 @@ public class ProductResource implements Resource
     private ProductRepresentation wrapInRepresentation(Product product)
     {
         return new ProductRepresentation(product);
+    }
+
+    private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories)
+    {
+        List<EntityReference> categoriesReferences = Lists.newArrayList();
+        for (Category category : categories) {
+            categoriesReferences.add(new EntityReference(category.getTitle(), "/category/" + category.getSlug()));
+        }
+        return new ProductRepresentation(product, categoriesReferences);
     }
 }
