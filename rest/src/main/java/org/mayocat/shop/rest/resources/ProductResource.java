@@ -1,5 +1,7 @@
 package org.mayocat.shop.rest.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,14 +138,17 @@ public class ProductResource implements Resource
     public Response createProduct(Product product)
     {
         try {
-            this.catalogService.createProduct(product);
+            Product created = this.catalogService.createProduct(product);
 
-            return Response.ok().build();
+            // TODO : URI factory
+            return Response.seeOther(new URI("/product/" + created.getSlug())).build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        } catch (URISyntaxException e) {
+            throw new WebApplicationException(e);
         }
     }
 

@@ -40,8 +40,8 @@ angular.module('catalog', [])
 
         };
     })
-    .controller('CatalogController', ['$scope', '$location', 'catalogService',
-    function ($scope, $location, catalogService) {
+    .controller('CatalogController', ['$scope', '$location', 'catalogService', 'configurationService',
+    function ($scope, $location, catalogService, configurationService) {
 
         // List of products
         $scope.products = [];
@@ -74,5 +74,9 @@ angular.module('catalog', [])
             );
 
             $scope.changeOperation = undefined;
-        };
+        }
+
+        configurationService.get("shop.products.categories", function(value){
+          $scope.hasCategories = value;
+        });
     }]);

@@ -18,12 +18,12 @@
 
     </div>
   </div>
-  <div class="span2">
+  <div class="span4">
     <div class="buttons">
       <button ng-click="updateCategory()" class="btn btn-large btn-primary">Update</button>
     </div>
-    <div class="uri">
-      <small>at <tt>/category/{{category.slug}}</tt></small>
-    </div>
+    <p class="uri" ng-show="!isNew()">
+        <small><pre>/category/{{category.slug}}</pre></small>
+    </p>
   </div>
 </form>

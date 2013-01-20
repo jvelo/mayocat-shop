@@ -228,7 +228,7 @@ angular.module('configuration', ['ngResource'])
             return configurationService.isDefaultValue($scope.configuration, path);
         };
 
-        configurationService.get(undefined, function (configuration) {
+        configurationService.get(function (configuration) {
             $scope.configuration = configuration;
         });
     }

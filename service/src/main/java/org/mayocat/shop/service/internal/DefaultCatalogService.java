@@ -29,13 +29,15 @@ public class DefaultCatalogService implements CatalogService
     @Inject
     private Provider<CategoryStore> categoryStore;
 
-    public void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException
+    public Product createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.generateSlug(entity.getTitle()));
         }
 
         productStore.get().create(entity);
+
+        return this.findProductBySlug(entity.getSlug());
     }
 
     public void updateProduct(Product entity) throws EntityDoesNotExistException, InvalidEntityException

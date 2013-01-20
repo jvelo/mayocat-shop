@@ -15,6 +15,9 @@ public class ProductMapper implements ResultSetMapper<Product>
         Product product = new Product(resultSet.getLong("id"));
         product.setSlug(resultSet.getString("slug"));
         product.setTitle(resultSet.getString("title"));
+        product.setDescription(resultSet.getString("description"));
+        product.setOnShelf(resultSet.getBoolean("on_shelf"));
+
         return product;
     }
 }

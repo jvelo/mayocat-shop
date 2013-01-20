@@ -34,10 +34,6 @@ body > div.loader {
   margin-left: 0px;
 }
 
-.entity {
-  padding-left: 50px;
-}
-
 .control-group.default input {
   opacity: 0.7;
 }

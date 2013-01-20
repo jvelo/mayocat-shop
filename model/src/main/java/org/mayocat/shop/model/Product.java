@@ -10,22 +10,25 @@ import com.google.common.base.Objects;
 
 public class Product extends AbstractLocalizedEntity
 {
-    Long id;
+    private Long id;
+
+    @SearchIndex
+    private boolean onShelf = false;
 
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String slug;
+    private String slug;
     
     @Localized
     @SearchIndex
     @NotNull
     @Size(min = 1)
-    String title;
+    private String title;
 
     @Localized
     @SearchIndex
-    String description;
+    private String description;
 
     public Product()
     {
@@ -75,6 +78,16 @@ public class Product extends AbstractLocalizedEntity
     {
         this.id = id;
     }
+
+    public boolean isOnShelf()
+    {
+        return onShelf;
+    }
+
+    public void setOnShelf(boolean onShelf)
+    {
+        this.onShelf = onShelf;
+    }
     
     ////////////////////////////////////////////////
 
@@ -108,5 +121,5 @@ public class Product extends AbstractLocalizedEntity
                  .addValue(this.title)  
                  .addValue(this.slug)    
                  .toString();  
-    }    
+    }
 }

@@ -18,12 +18,12 @@
 
     </div>
   </div>
-  <div class="span2" ng-show="product.title != undefined">
+  <div class="span4" ng-show="product.title != undefined">
     <div class="buttons">
       <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
     </div>
-    <div class="uri" ng-show="!isNew()">
-      <small>at <tt>/product/{{product.slug}}</tt></small>
-    </div>
+    <p class="uri" ng-show="!isNew()">
+      <small><pre>/product/{{product.slug}}</pre></small>
+    </p>
   </div>
 </form>

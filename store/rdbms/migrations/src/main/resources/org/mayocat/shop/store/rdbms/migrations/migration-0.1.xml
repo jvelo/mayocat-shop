@@ -147,12 +147,16 @@
       <column name="position" type="smallint unsigned" />
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
+      <column name="on_shelf" type="boolean" defaultValueBoolean="false" />
     </createTable>
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
     <createIndex tableName="product" indexName="POSITION_INDEX">
       <column name="position" />
+    </createIndex>
+    <createIndex tableName="product" indexName="ON_SHELF_INDEX">
+      <column name="on_shelf" />
     </createIndex>
 
     <!-- Category table -->

@@ -20,7 +20,7 @@ public interface CatalogService
 {
     // Product operations
 
-    void createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException;
+    Product createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
     void updateProduct(Product entity) throws EntityDoesNotExistException, InvalidEntityException;
 

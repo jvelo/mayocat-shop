@@ -11,6 +11,7 @@ import java.util.Map;
 import org.mayocat.shop.model.LocalizedEntity;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.Translations;
+import org.mayocat.shop.store.rdbms.dbi.dao.util.StringUtil;
 import org.mayocat.shop.store.rdbms.dbi.jointype.EntityFullJoinRow;
 import org.mayocat.shop.store.rdbms.dbi.mapper.EntityFullJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -89,7 +90,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
                 if (method.getName().startsWith("set") && !method.getName().equals("setTranslations")
                     && Character.isUpperCase(method.getName().charAt(3))) {
                     // Found a setter.
-                    String field = method.getName().substring(3);
+                    String field = StringUtil.snakify(method.getName().substring(3));
 
                     Object value = Optional.absent();
                     if (entityData.containsKey("entity." + field)) {

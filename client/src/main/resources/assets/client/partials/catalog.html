@@ -11,8 +11,8 @@
         <a ng-click="setRoute('product/_new')" class="btn btn-primary btn-large">Add a new product</a>
     </div>
 
-    <!-- list/table -->
-    <div>
+    <!-- list categories -->
+    <div ng-show="hasCategories">
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
             <li ng-repeat="category in categories" data-handle="{{category.slug}}">
                 <div class="row droptarget">
@@ -24,6 +24,8 @@
         </ul>
     </div>
 
+    <!-- list remaining products (un-categorized products, or all products if the shop is configured to not
+         have categories -->
     <div>
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
             <li ng-repeat="product in products" data-handle="{{product.slug}}">
