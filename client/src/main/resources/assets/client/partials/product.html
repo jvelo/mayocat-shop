@@ -25,5 +25,14 @@
     <p class="uri" ng-show="!isNew()">
       <small><pre>/product/{{product.slug}}</pre></small>
     </p>
+
+    <div class="well well-small" ng-show="categories.length > 0">
+        <p><strong>Categories</strong></p>
+        <ul class="list unstyled">
+            <li ng-repeat="category in categories">
+                <input type="checkbox" ng-model="category.hasProduct" /> {{category.title}}
+            </li>
+        </ul>
+    </div>
   </div>
 </form>

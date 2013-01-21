@@ -9,13 +9,7 @@ import javax.inject.Provider;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.store.CategoryStore;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.HasOrderedCollections;
-import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.InvalidMoveOperation;
-import org.mayocat.shop.store.ProductStore;
+import org.mayocat.shop.store.*;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
@@ -74,6 +68,21 @@ public class DefaultCatalogService implements CatalogService
     public List<Category> findCategoriesForProduct(Product product)
     {
         return this.categoryStore.get().findAllForProduct(product);
+    }
+
+    @Override
+    public void addProductToCategory(String category, String product) throws InvalidOperation {
+        Category c = this.findCategoryBySlug(category);
+        Product p = this.findProductBySlug(product);
+        if (p == null || c == null) {
+            throw new InvalidOperation("Product or category does not exist");
+        }
+        List<Category> categories = this.categoryStore.get().findAllForProduct(p);
+        if (categories.contains(c)) {
+            // Already has it
+            return;
+        }
+        this.categoryStore.get().addProduct(c, p);
     }
 
     @Override

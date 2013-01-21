@@ -12,6 +12,8 @@ public interface CategoryStore extends Store<Category, Long>, HasOrderedCollecti
 {
     Category findBySlug(String slug);
 
+    void addProduct(Category category, Product product);
+
     void moveCategory(String categoryToMove, String categoryToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 

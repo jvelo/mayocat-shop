@@ -4,10 +4,7 @@ import java.util.List;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.InvalidMoveOperation;
+import org.mayocat.shop.store.*;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -39,6 +36,14 @@ public interface CatalogService
      * @return all the categories this product is listed in
      */
     List<Category> findCategoriesForProduct(Product product);
+
+    /**
+     * Adds a product to a category
+     *
+     * @param category the slug of the category to add the product to
+     * @param product the slug of the product to add
+     */
+    void addProductToCategory(String category, String product) throws InvalidOperation;
 
     enum InsertPosition
     {

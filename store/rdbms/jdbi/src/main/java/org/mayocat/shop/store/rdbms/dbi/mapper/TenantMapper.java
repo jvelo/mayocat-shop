@@ -3,8 +3,10 @@ package org.mayocat.shop.store.rdbms.dbi.mapper;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.TenantConfiguration;
 import org.skife.jdbi.v2.StatementContext;
@@ -26,14 +28,18 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         mapper.registerModule(new GuavaModule());
         Integer configurationVersion = result.getInt("configuration.version");
         TenantConfiguration configuration;
-        try {
-            Map<String, Object> data =
-                    mapper.readValue(result.getString("configuration.data"), new TypeReference<Map<String, Object>>(){});
-            configuration = new TenantConfiguration(configurationVersion, data);
-        } catch (IOException e) {
-            final Logger logger = LoggerFactory.getLogger(TenantMapper.class);
-            logger.error("Failed to load configuration for tenant with slug [{}]", e);
-            configuration = new TenantConfiguration();
+        if (Strings.isNullOrEmpty(result.getString("configuration.data"))) {
+            configuration = new TenantConfiguration(configurationVersion, Collections.<String, Object>emptyMap());
+        } else {
+            try {
+                Map<String, Object> data = mapper.readValue(result.getString("configuration.data"),
+                        new TypeReference<Map<String, Object>>() {});
+                configuration = new TenantConfiguration(configurationVersion, data);
+            } catch (IOException e) {
+                final Logger logger = LoggerFactory.getLogger(TenantMapper.class);
+                logger.error("Failed to load configuration for tenant with slug [{}]", e);
+                configuration = new TenantConfiguration();
+            }
         }
 
         Tenant tenant = new Tenant(result.getLong("tenant.id"), slug, configuration);

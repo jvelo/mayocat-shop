@@ -34,7 +34,7 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     )
     public abstract void create(@Bind("id") Long entityId, @Bind("position") Integer position,
             @BindBean("category") Category category);
-    
+
     @SqlUpdate
     (
         "UPDATE category " +
@@ -71,10 +71,34 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     )
     public abstract List<Category> findAllForProduct(@BindBean("product") Product product);
 
+    @SqlQuery
+    (
+        "SELECT position " +
+        "FROM   category_product " +
+        "WHERE  category_id = :category.id " +
+        "ORDER  BY position DESC " +
+        "LIMIT  1 "
+    )
+    public abstract Integer lastProductPosition(@BindBean("category") Category category);
+
+
+    @SqlUpdate
+    (
+        "INSERT INTO category_product " +
+        "            (category_id, " +
+        "             product_id, " +
+        "             position) " +
+        "VALUES      (:category.id, " +
+        "             :product.id, " +
+        "             :position) "
+    )
+    public abstract void addProduct(@BindBean("category") Category category, @BindBean("product") Product product,
+                                    @Bind("position") Integer position);
+
+
     public Category findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("category", slug, tenant);
     }
-
 
 }

@@ -6,19 +6,11 @@ import javax.inject.Inject;
 
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
-import org.mayocat.shop.store.CategoryStore;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.InvalidMoveOperation;
-import org.mayocat.shop.store.StoreException;
+import org.mayocat.shop.store.*;
 import org.mayocat.shop.store.rdbms.dbi.dao.CategoryDAO;
-import org.mayocat.shop.store.rdbms.dbi.dao.util.CollectionUtil;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
-
-import com.google.common.collect.Lists;
 
 @Component(hints={"jdbi", "default"})
 public class DBICategoryStore extends AbstractEntityStore implements CategoryStore, Initializable
@@ -81,6 +73,18 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
             this.dao.updatePositions(CATEGORY_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());
         }
 
+        this.dao.commit();
+    }
+
+    public void addProduct(Category category, Product product) {
+        this.dao.begin();
+        Integer position = this.dao.lastProductPosition(category);
+        if (position == null) {
+            position = 0;
+        } else {
+            position += 1;
+        }
+        this.dao.addProduct(category, product, position);
         this.dao.commit();
     }
 

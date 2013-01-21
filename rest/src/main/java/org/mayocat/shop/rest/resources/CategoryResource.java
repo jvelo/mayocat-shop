@@ -24,10 +24,7 @@ import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.CategoryRepresentation;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.store.InvalidMoveOperation;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.*;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -92,6 +89,22 @@ public class CategoryResource implements Resource
             return Response.noContent().build();
 
         } catch (InvalidMoveOperation e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
+        }
+    }
+
+    @Path("{slug}/addProduct")
+    @POST
+    @Timed
+    @Authorized
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.WILDCARD)
+    public Response addProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
+        try {
+            this.catalogService.addProductToCategory(slug, product);
+            return Response.noContent().build();
+        } catch (InvalidOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                     .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
