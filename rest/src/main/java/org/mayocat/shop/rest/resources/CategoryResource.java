@@ -20,15 +20,20 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
+import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.CategoryRepresentation;
+import org.mayocat.shop.rest.representations.EntityReference;
+import org.mayocat.shop.rest.representations.ProductRepresentation;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.*;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("CategoryResource")
@@ -49,23 +54,36 @@ public class CategoryResource implements Resource
     @Authorized
     public List<CategoryRepresentation> getAllCategories(
             @QueryParam("number") @DefaultValue("50") Integer number,
-            @QueryParam("offset") @DefaultValue("0") Integer offset)
+            @QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("expand") @DefaultValue("") String expand)
     {
-        return this.wrapInReprensentations(this.catalogService.findAllCategories(number, offset));
+        // FIXME support by default infinite number
+
+        if (expand.equals("productCount")) {
+            return this.wrapInReprensentationsWithCount(
+                    this.catalogService.findAllCategoriesWithProductCount());
+        }
+        else {
+            return this.wrapInReprensentations(this.catalogService.findAllCategories(number, offset));
+        }
     }
 
     @Path("{slug}")
     @GET
     @Timed
     @Authorized
-    public Object getCategory(@PathParam("slug") String slug)
+    public Object getCategory(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
-
         Category category = this.catalogService.findCategoryBySlug(slug);
         if (category == null) {
             return Response.status(404).build();
         }
-        return this.wrapInRepresentation(category);
+        if (!Strings.isNullOrEmpty(expand)) {
+            List<Product> products = this.catalogService.findProductsForCategory(category);
+            return this.wrapInRepresentation(category, products);
+        } else {
+            return this.wrapInRepresentation(category);
+        }
     }
 
     @Path("{slug}/move")
@@ -205,6 +223,15 @@ public class CategoryResource implements Resource
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private List<CategoryRepresentation> wrapInReprensentationsWithCount(List<EntityAndCount<Category>> categories)
+    {
+        List<CategoryRepresentation> result = new ArrayList<CategoryRepresentation>();
+        for (EntityAndCount<Category> entity : categories) {
+            result.add(this.wrapInRepresentation(entity.getEntity(), entity.getCount()));
+        }
+        return result;
+    }
+
     private List<CategoryRepresentation> wrapInReprensentations(List<Category> categories)
     {
         List<CategoryRepresentation> result = new ArrayList<CategoryRepresentation>();
@@ -217,5 +244,19 @@ public class CategoryResource implements Resource
     private CategoryRepresentation wrapInRepresentation(Category category)
     {
         return new CategoryRepresentation(category);
+    }
+
+    private CategoryRepresentation wrapInRepresentation(Category category, List<Product> products)
+    {
+        List<EntityReference> categoriesReferences = Lists.newArrayList();
+        for (Product product : products) {
+            categoriesReferences.add(new EntityReference(product.getTitle(), "/product/" + product.getSlug()));
+        }
+        return new CategoryRepresentation(category, categoriesReferences);
+    }
+
+    private CategoryRepresentation wrapInRepresentation(Category category, Long count)
+    {
+        return new CategoryRepresentation(count, category);
     }
 }

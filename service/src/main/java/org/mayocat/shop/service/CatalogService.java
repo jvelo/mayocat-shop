@@ -3,6 +3,7 @@ package org.mayocat.shop.service;
 import java.util.List;
 
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.*;
 import org.xwiki.component.annotation.Role;
@@ -25,6 +26,11 @@ public interface CatalogService
 
     List<Product> findAllProducts(int number, int offset);
 
+    /**
+     * @return all products that does not belong to any category
+     */
+    List<Product> findUncategorizedProducts();
+
     // Category operations
 
     void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException;
@@ -36,6 +42,12 @@ public interface CatalogService
      * @return all the categories this product is listed in
      */
     List<Category> findCategoriesForProduct(Product product);
+
+    /**
+     * @param category the category to find the products for
+     * @return all the products this category lists
+     */
+    List<Product> findProductsForCategory(Category category);
 
     /**
      * Adds a product to a category
@@ -133,4 +145,6 @@ public interface CatalogService
     Category findCategoryBySlug(String slug);
 
     List<Category> findAllCategories(int number, int offset);
+
+    List<EntityAndCount<Category>> findAllCategoriesWithProductCount();
 }

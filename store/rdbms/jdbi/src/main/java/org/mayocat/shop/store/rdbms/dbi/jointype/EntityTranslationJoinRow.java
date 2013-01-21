@@ -3,7 +3,7 @@ package org.mayocat.shop.store.rdbms.dbi.jointype;
 import java.util.Locale;
 import java.util.Map;
 
-public class EntityFullJoinRow
+public class EntityTranslationJoinRow
 {
     private Map<String, Object> entityData;
 

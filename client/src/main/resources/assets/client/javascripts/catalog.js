@@ -3,22 +3,45 @@
 angular.module('catalog', [])
     .service('catalogService', function ($http, configurationService) {
         return {
-            listProducts:function (callback) {
-                $http.get('/product/').success(function (data) {
-                    callback && callback.call(this, data);
+            hasCategories: function(callback) {
+                configurationService.get("shop.products.categories", function(hasCategories){
+                    callback && callback.call(this, hasCategories);
                 });
             },
+
+            listProducts:function (callback) {
+                this.hasCategories(function(hasCategories){
+                    if (!hasCategories) {
+                        $http.get('/product/').success(function (data) {
+                            callback && callback.call(this, data);
+                        });
+                    }
+                    else {
+                        $http.get('/product/?filter=uncategorized').success(function (data) {
+                            callback && callback.call(this, data);
+                        });
+                    }
+                });
+            },
+
+            listProductsForCategory:function (category, callback) {
+                $http.get('/category/' + category + "?expand=products").success(function (data) {
+                    console.log(data);
+                    callback && callback.call(this, data.products);
+                });
+            },
+
             listCategories:function (callback) {
-                var hasCategories = configurationService.get("shop.products.categories", function(hasCategories){
+                this.hasCategories(function(hasCategories){
                     if (!hasCategories) {
                         callback && callback.call(this, []);
                     }
-                    $http.get('/category/').success(function (data) {
+                    $http.get('/category/?expand=productCount').success(function (data) {
                         callback && callback.call(this, data);
                     });
                 });
             },
-            moveCategory:function (slug, targeg, position) {
+            moveCategory:function (slug, target, position) {
             },
             moveProduct:function (slug, target, position) {
                 $http.post('/category/_all/move',
@@ -53,6 +76,10 @@ angular.module('catalog', [])
             $location.url(href);
         };
 
+        catalogService.hasCategories(function (has) {
+            $scope.hasCategories = has;
+        });
+
         catalogService.listProducts(function (products) {
             $scope.products = products;
         });
@@ -60,6 +87,19 @@ angular.module('catalog', [])
         catalogService.listCategories(function (categories) {
             $scope.categories = categories;
         });
+
+        $scope.toggleExpand = function(category) {
+            if (typeof category.products === "undefined") {
+                catalogService.listProductsForCategory(category.slug, function(products){
+                    category.products = products;
+                    category.isExpanded = true;
+                    console.log(category.products);
+                });
+            }
+            else {
+                category.isExpanded = !category.isExpanded;
+            }
+        }
 
         $scope.changePosition = function () {
             if (typeof $scope.changeOperation === "undefined") {

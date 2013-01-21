@@ -16,9 +16,34 @@
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
             <li ng-repeat="category in categories" data-handle="{{category.slug}}">
                 <div class="row droptarget">
-                    <div class="span6">{{category.title}}</div>
-                    <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>
-                    <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                    <div>
+                        <div class="span6">
+
+                            <h3 ng-click="toggleExpand(category)">
+                                ►
+                                {{category.title}}
+                            </h3>
+                            <ng-pluralize count="category.numberOfProducts"
+                                          when="{'0': 'No product yet',
+                                             'one': '1 product',
+                                             'other': '{} products'}">
+                            </ng-pluralize>
+                            <div ng-show="category.isExpanded">
+                                <div class="span1"></div>
+                                <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+                                    <li ng-repeat="product in category.products" data-handle="{{product.slug}}">
+                                        <div class="row droptarget">
+                                            <div class="span6">{{product.title}}</div>
+                                            <div class="span1"><a ng-click="setRoute(product.href)">Edit</a></div>
+                                            <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>
+                        <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                    </div>
                 </div>
             </li>
         </ul>
@@ -27,6 +52,9 @@
     <!-- list remaining products (un-categorized products, or all products if the shop is configured to not
          have categories -->
     <div>
+        <h3 ng-show="hasCategories">
+            <em>Uncategorized products</em>
+        </h3>
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
             <li ng-repeat="product in products" data-handle="{{product.slug}}">
                 <div class="row droptarget">

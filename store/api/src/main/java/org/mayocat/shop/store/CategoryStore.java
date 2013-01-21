@@ -3,6 +3,7 @@ package org.mayocat.shop.store;
 import java.util.List;
 
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.xwiki.component.annotation.Role;
@@ -18,6 +19,8 @@ public interface CategoryStore extends Store<Category, Long>, HasOrderedCollecti
 
     void moveCategory(String categoryToMove, String categoryToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
+
+    List<EntityAndCount<Category>> findAllWithProductCount();
 
     List<Category> findAllForProduct(Product product);
 }

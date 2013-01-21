@@ -55,11 +55,16 @@ public class ProductResource implements Resource
     @GET
     @Timed
     @Authorized
-    public List<ProductRepresentation> getAllProducts(
+    public List<ProductRepresentation> getProducts(
             @QueryParam("number") @DefaultValue("50") Integer number,
-            @QueryParam("offset") @DefaultValue("0") Integer offset)
+            @QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("filter") @DefaultValue("") String filter)
     {
-        return this.wrapInReprensentations(this.catalogService.findAllProducts(number, offset));
+        if (filter.equals("uncategorized")) {
+            return this.wrapInReprensentations(this.catalogService.findUncategorizedProducts());
+        } else {
+            return this.wrapInReprensentations(this.catalogService.findAllProducts(number, offset));
+        }
     }
 
     @Path("{slug}")

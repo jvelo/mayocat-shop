@@ -3,13 +3,13 @@ package org.mayocat.shop.store.rdbms.dbi.mapper;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.shop.store.rdbms.dbi.jointype.EntityFullJoinRow;
+import org.mayocat.shop.store.rdbms.dbi.jointype.EntityTranslationJoinRow;
 
-public class EntityFullJoinRowMapper extends BaseMapMapper<EntityFullJoinRow>
+public class EntityTranslationsJoinRowMapper extends BaseMapMapper<EntityTranslationJoinRow>
 {
-    protected EntityFullJoinRow mapInternal(int index, Map<String, Object> data)
+    protected EntityTranslationJoinRow mapInternal(int index, Map<String, Object> data)
     {
-        EntityFullJoinRow entry = new EntityFullJoinRow();
+        EntityTranslationJoinRow entry = new EntityTranslationJoinRow();
         entry.setEntityData(data);
 
         extractTranslation(data, entry);
@@ -17,7 +17,7 @@ public class EntityFullJoinRowMapper extends BaseMapMapper<EntityFullJoinRow>
         return entry;
     }
 
-    private void extractTranslation(Map<String, Object> data, EntityFullJoinRow entry)
+    private void extractTranslation(Map<String, Object> data, EntityTranslationJoinRow entry)
     {
         if (data.get("translation.field") != null) {
             entry.setField((String) data.get("translation.field"));

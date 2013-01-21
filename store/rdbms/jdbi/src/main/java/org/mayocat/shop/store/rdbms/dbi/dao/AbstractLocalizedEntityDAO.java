@@ -12,8 +12,9 @@ import org.mayocat.shop.model.LocalizedEntity;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.Translations;
 import org.mayocat.shop.store.rdbms.dbi.dao.util.StringUtil;
-import org.mayocat.shop.store.rdbms.dbi.jointype.EntityFullJoinRow;
-import org.mayocat.shop.store.rdbms.dbi.mapper.EntityFullJoinRowMapper;
+import org.mayocat.shop.store.rdbms.dbi.extraction.EntityExtractor;
+import org.mayocat.shop.store.rdbms.dbi.jointype.EntityTranslationJoinRow;
+import org.mayocat.shop.store.rdbms.dbi.mapper.EntityTranslationsJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -53,14 +54,15 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
     }
 
     public E findBySlugWithTranslations(String type, String slug, Tenant tenant) {
-        List<EntityFullJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
+        List<EntityTranslationJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
 
         E entity = null;
         Class< E > thisEntityType = Generics.getTypeParameter(getClass(), LocalizedEntity.class);
         Translations translations = new Translations();
-        for (EntityFullJoinRow row : rows) {
+        EntityExtractor<E> extractor = new EntityExtractor<E>();
+        for (EntityTranslationJoinRow row : rows) {
             if (entity == null) {
-                entity = this.getEntity(row.getEntityData(), thisEntityType);
+                entity = extractor.extract(row.getEntityData(), thisEntityType);
             }
             String field = row.getField();
             if (field != null) {
@@ -77,51 +79,9 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         return entity;
     }
 
-    private E getEntity(Map<String, Object> entityData, Class< ? > type)
-    {
-        E entity;
-        try {
-            entity = (E) type.newInstance();
-            String entityType = type.getSimpleName().toLowerCase();
-            // TODO we will likely need to support custom table name mapping via annotation in the future
 
-
-            for (Method method : entity.getClass().getMethods()) {
-                if (method.getName().startsWith("set") && !method.getName().equals("setTranslations")
-                    && Character.isUpperCase(method.getName().charAt(3))) {
-                    // Found a setter.
-                    String field = StringUtil.snakify(method.getName().substring(3));
-
-                    Object value = Optional.absent();
-                    if (entityData.containsKey("entity." + field)) {
-                        value = entityData.get("entity." + field);
-                    }
-                    else if (entityData.containsKey(entityType + "." + field)) {
-                        value = entityData.get(entityType + "." + field);
-                    }
-
-                    boolean setterAccessible = method.isAccessible();
-                    method.setAccessible(true);
-                    method.invoke(entity, value);
-                    method.setAccessible(setterAccessible);
-                }
-            }
-            return entity;
-
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        } catch (SecurityException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
     
-    @RegisterMapper(EntityFullJoinRowMapper.class)
+    @RegisterMapper(EntityTranslationsJoinRowMapper.class)
     @SqlQuery
     (
         "SELECT * " 
@@ -138,5 +98,5 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
       + "       AND entity.type = '<type>' " 
       + "       AND entity.tenant_id = :tenant.id "
     )
-    abstract List<EntityFullJoinRow> findBySlugWithTranslationsRows(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    abstract List<EntityTranslationJoinRow> findBySlugWithTranslationsRows(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
 }

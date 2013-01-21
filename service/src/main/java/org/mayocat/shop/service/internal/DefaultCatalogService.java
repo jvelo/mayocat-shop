@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.*;
@@ -49,6 +50,11 @@ public class DefaultCatalogService implements CatalogService
         return this.productStore.get().findAll(number, offset);
     }
 
+    public List<Product> findUncategorizedProducts()
+    {
+        return this.productStore.get().findUncategorizedProducts();
+    }
+
     @Override
     public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
@@ -68,6 +74,12 @@ public class DefaultCatalogService implements CatalogService
     public List<Category> findCategoriesForProduct(Product product)
     {
         return this.categoryStore.get().findAllForProduct(product);
+    }
+
+    @Override
+    public List<Product> findProductsForCategory(Category category)
+    {
+        return this.productStore.get().findAllForCategory(category);
     }
 
     @Override
@@ -143,6 +155,12 @@ public class DefaultCatalogService implements CatalogService
     public List<Category> findAllCategories(int number, int offset)
     {
         return this.categoryStore.get().findAll(number, offset);
+    }
+
+    @Override
+    public List<EntityAndCount<Category>> findAllCategoriesWithProductCount()
+    {
+        return this.categoryStore.get().findAllWithProductCount();
     }
 
     @Override

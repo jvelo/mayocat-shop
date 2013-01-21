@@ -86,6 +86,12 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
         this.dao.commit();
     }
 
+    @Override
+    public List<Product> findUncategorizedProducts()
+    {
+        return this.dao.findUncategorized(getTenant());
+    }
+
     public List<Product> findAll()
     {
         return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant());
@@ -94,6 +100,17 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
     public List<Product> findAll(Integer number, Integer offset)
     {
         return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset);
+    }
+
+    public Product findBySlug(String slug)
+    {
+        return this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
+    }
+
+    @Override
+    public List<Product> findAllForCategory(Category category)
+    {
+        return this.dao.findAllForCategory(category);
     }
 
     @Override
@@ -109,15 +126,5 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
         this.dao = this.dbi.get().onDemand(ProductDAO.class);
     }
 
-    public Product findBySlug(String slug)
-    {
-        return this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
-    }
 
-    @Override
-    public List<Product> findAllInCategory(Category category, int number, int offset)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

@@ -2,10 +2,16 @@ package org.mayocat.shop.store.rdbms.dbi.dao;
 
 import java.util.List;
 
+import javax.ws.rs.core.Variant;
+
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.store.rdbms.dbi.extraction.EntityExtractor;
+import org.mayocat.shop.store.rdbms.dbi.jointype.EntityAndCountsJoinRow;
 import org.mayocat.shop.store.rdbms.dbi.mapper.CategoryMapper;
+import org.mayocat.shop.store.rdbms.dbi.mapper.EntityAndCountsJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -13,6 +19,8 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+
+import com.google.common.collect.ImmutableList;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapper(CategoryMapper.class)
@@ -103,9 +111,38 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     )
     public abstract void removeProduct(@BindBean("category") Category category, @BindBean("product") Product product);
 
+    @RegisterMapper(EntityAndCountsJoinRowMapper.class)
+    @SqlQuery
+    (
+        "SELECT *, " +
+        "       COUNT(product_id) " +
+        "FROM   entity " +
+        "       INNER JOIN category " +
+        "               ON entity.id = category.entity_id " +
+        "       RIGHT JOIN category_product " +
+        "               ON category_product.category_id = category.entity_id " +
+        "WHERE  entity.tenant_id = :tenant.id " +
+        "GROUP  BY entity.slug " +
+        "ORDER  BY title ASC "
+    )
+    abstract List<EntityAndCountsJoinRow> findWithProductCountRows(@BindBean("tenant") Tenant tenant);
+
     public Category findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("category", slug, tenant);
     }
 
+    public List<EntityAndCount<Category>> findAllWithProductCount(Tenant tenant)
+    {
+        List<EntityAndCountsJoinRow> rows = this.findWithProductCountRows(tenant);
+        ImmutableList.Builder<EntityAndCount<Category>> listBuilder = ImmutableList.builder();
+        EntityExtractor<Category> extractor = new EntityExtractor<Category>();
+        for (EntityAndCountsJoinRow row : rows) {
+            Category c = extractor.extract(row.getEntityData(), Category.class);
+            Long count = row.getCounts().get("product_id");
+            EntityAndCount<Category> entityAndCount = new EntityAndCount<Category>(c, count);
+            listBuilder.add(entityAndCount);
+        }
+        return listBuilder.build();
+    }
 }

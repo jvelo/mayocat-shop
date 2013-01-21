@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.mayocat.shop.model.Category;
+import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.store.*;
 import org.mayocat.shop.store.rdbms.dbi.dao.CategoryDAO;
@@ -74,6 +75,12 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         }
 
         this.dao.commit();
+    }
+
+    @Override
+    public List<EntityAndCount<Category>> findAllWithProductCount()
+    {
+        return this.dao.findAllWithProductCount(getTenant());
     }
 
     public void addProduct(Category category, Product product)
