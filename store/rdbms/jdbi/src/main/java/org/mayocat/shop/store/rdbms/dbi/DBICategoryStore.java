@@ -76,7 +76,8 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         this.dao.commit();
     }
 
-    public void addProduct(Category category, Product product) {
+    public void addProduct(Category category, Product product)
+    {
         this.dao.begin();
         Integer position = this.dao.lastProductPosition(category);
         if (position == null) {
@@ -86,6 +87,11 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         }
         this.dao.addProduct(category, product, position);
         this.dao.commit();
+    }
+
+    public void removeProduct(Category category, Product product)
+    {
+        this.dao.removeProduct(category, product);
     }
 
     public List<Category> findAllForProduct(Product product)

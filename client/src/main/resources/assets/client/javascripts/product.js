@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('product', ['ngResource'])
-    .controller('ProductController', ['$scope', '$routeParams', '$resource', '$location', 'catalogService',
+    .   controller('ProductController', ['$scope', '$routeParams', '$resource', '$location', 'catalogService',
     function ($scope, $routeParams, $resource, $location, catalogService) {
 
         $scope.slug = $routeParams.product;
@@ -14,7 +14,26 @@ angular.module('product', ['ngResource'])
             }
             else {
                 $scope.ProductResource.save({ "slug":$scope.slug }, $scope.product);
+                angular.forEach($scope.categories, function (category) {
+                    if (category.hasProduct && !category.hadProduct) {
+                        $scope.categoryOperation(category, "addProduct");
+                    }
+                    if (category.hadProduct && !category.hasProduct) {
+                        $scope.categoryOperation(category, "removeProduct");
+                    }
+                });
             }
+        };
+
+        $scope.categoryOperation = function (category, operation) {
+            $resource("/category/:slug/:operation", {"slug":category.slug, "operation" : operation}, {
+                "save":{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/x-www-form-urlencoded'
+                    }
+                }
+            }).save("product=" + $scope.product.slug, function () { });
         };
 
         $scope.ProductResource = $resource("/product/:slug");
@@ -28,17 +47,6 @@ angular.module('product', ['ngResource'])
                 slug:"",
                 title:""
             };
-        }
-
-        if (!$scope.isNew()) {
-            $scope.product = $scope.ProductResource.get({ "slug":$scope.slug, "expand":"categories" }, function () {
-                // Ensures the category initialization happens after the AJAX callback
-                $scope.initializeCategories();
-            })
-        }
-        else {
-            $scope.product = $scope.newProduct();
-            $scope.initializeCategories();
         }
 
         $scope.initializeCategories = function () {
@@ -59,6 +67,16 @@ angular.module('product', ['ngResource'])
                     });
                 });
             });
+        }
+
+        if (!$scope.isNew()) {
+            $scope.product = $scope.ProductResource.get({ "slug":$scope.slug, "expand":"categories" }, function () {
+                // Ensures the category initialization happens after the AJAX callback
+                $scope.initializeCategories();
+            });
+        }
+        else {
+            $scope.product = $scope.newProduct();
         }
 
     }]);

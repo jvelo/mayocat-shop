@@ -95,6 +95,13 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     public abstract void addProduct(@BindBean("category") Category category, @BindBean("product") Product product,
                                     @Bind("position") Integer position);
 
+    @SqlUpdate
+    (
+        "DELETE FROM category_product " +
+        "WHERE  category_id = :category.id " +
+        "       AND product_id = :product.id "
+    )
+    public abstract void removeProduct(@BindBean("category") Category category, @BindBean("product") Product product);
 
     public Category findBySlug(String slug, Tenant tenant)
     {

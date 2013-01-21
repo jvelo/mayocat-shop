@@ -45,6 +45,14 @@ public interface CatalogService
      */
     void addProductToCategory(String category, String product) throws InvalidOperation;
 
+    /**
+     * Adds a product to a category
+     *
+     * @param category the slug of the category to add the product to
+     * @param product the slug of the product to add
+     */
+    void removeProductFromCategory(String category, String product) throws InvalidOperation;
+
     enum InsertPosition
     {
         BEFORE,

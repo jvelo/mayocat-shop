@@ -18,15 +18,19 @@
 
     </div>
   </div>
+
   <div class="span4" ng-show="product.title != undefined">
     <div class="buttons">
       <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
     </div>
-    <p class="uri" ng-show="!isNew()">
-      <small><pre>/product/{{product.slug}}</pre></small>
-    </p>
 
-    <div class="well well-small" ng-show="categories.length > 0">
+    <p />
+
+    <div class="uri" ng-show="!isNew()">
+      <pre>/product/{{product.slug}}</pre>
+    </div>
+
+    <div class="well well-small" ng-show="!isNew() && categories.length > 0">
         <p><strong>Categories</strong></p>
         <ul class="list unstyled">
             <li ng-repeat="category in categories">

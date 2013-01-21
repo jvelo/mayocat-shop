@@ -98,7 +98,7 @@ public class CategoryResource implements Resource
     @POST
     @Timed
     @Authorized
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.TEXT_PLAIN})
     @Produces(MediaType.WILDCARD)
     public Response addProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
         try {
@@ -106,7 +106,24 @@ public class CategoryResource implements Resource
             return Response.noContent().build();
         } catch (InvalidOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
+                    .entity("Invalid operation").type(MediaType.TEXT_PLAIN_TYPE).build());
+        }
+    }
+
+
+    @Path("{slug}/removeProduct")
+    @POST
+    @Timed
+    @Authorized
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.TEXT_PLAIN})
+    @Produces(MediaType.WILDCARD)
+    public Response removeProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
+        try {
+            this.catalogService.removeProductFromCategory(slug, product);
+            return Response.noContent().build();
+        } catch (InvalidOperation e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid operation").type(MediaType.TEXT_PLAIN_TYPE).build());
         }
     }
 

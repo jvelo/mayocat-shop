@@ -79,10 +79,26 @@ public class DefaultCatalogService implements CatalogService
         }
         List<Category> categories = this.categoryStore.get().findAllForProduct(p);
         if (categories.contains(c)) {
-            // Already has it
+            // Already has it : nothing to do
             return;
         }
         this.categoryStore.get().addProduct(c, p);
+    }
+
+    @Override
+    public void removeProductFromCategory(String category, String product) throws InvalidOperation
+    {
+        Category c = this.findCategoryBySlug(category);
+        Product p = this.findProductBySlug(product);
+        if (p == null || c == null) {
+            throw new InvalidOperation("Product or category does not exist");
+        }
+        List<Category> categories = this.categoryStore.get().findAllForProduct(p);
+        if (!categories.contains(c)) {
+            // It does not contain it : nothing to do
+            return;
+        }
+        this.categoryStore.get().removeProduct(c, p);
     }
 
     @Override

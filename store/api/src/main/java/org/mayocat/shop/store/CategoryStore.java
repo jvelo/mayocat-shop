@@ -14,6 +14,8 @@ public interface CategoryStore extends Store<Category, Long>, HasOrderedCollecti
 
     void addProduct(Category category, Product product);
 
+    void removeProduct(Category c, Product p);
+
     void moveCategory(String categoryToMove, String categoryToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 
