@@ -1,6 +1,3 @@
-Mayocat Shop
-============
-
 ![Mayocat Logo](http://i.imgur.com/2TxYItk.png "Say Hello To The Mayo Cat")
 
 Mayocat Shop is an attempt at building a modern e-commerce and marketplace management platform on the JVM.
@@ -8,7 +5,7 @@ Mayocat Shop is an attempt at building a modern e-commerce and marketplace manag
 Roadmap
 -------
 
-While young, Mayocat Shop is under active development. An initial end-to-end version is planned for the end of April 2013.
+While young, Mayocat Shop is under active development. An initial end-to-end 1.0 version is planned for the end of April 2013.
 
 The road to there comprise several milestones :
 
