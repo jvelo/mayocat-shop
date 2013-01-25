@@ -75,6 +75,7 @@
     <module>search</module>
     <module>service</module>
     <module>authorization</module>
+    <module>views</module>
     <module>rest</module>
     <module>client</module>
     <module>application</module>
