@@ -26,16 +26,6 @@
         <artifactId>dropwizard-core</artifactId>
         <version>${dropwizard.version}</version>
     </dependency>
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-client</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-jdbi</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
 
     <!-- Testing -->
     <dependency>

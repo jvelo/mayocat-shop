@@ -13,32 +13,11 @@
   <description>RDBMS implementation of the store, based on JDBI</description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-observation-api</artifactId>
-      <version>${xwiki.version}</version>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>com.yammer.dropwizard</groupId>
       <artifactId>dropwizard-jdbi</artifactId>
       <version>${dropwizard.version}</version>
-    </dependency>
-
-    <!-- Don't know why this is not dragged by JDBI directly...
-         The @UseStringTemplate3StatementLocator annotation requires it... -->
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>stringtemplate</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-
-    <!-- Needed for EventListener interface -->
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-base</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -55,14 +34,16 @@
 
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration</artifactId>
+      <artifactId>mayocat-context</artifactId>
       <version>${project.version}</version>
     </dependency>
 
+    <!-- Don't know why this is not dragged by JDBI directly...
+         The @UseStringTemplate3StatementLocator annotation requires it... -->
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-context</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.antlr</groupId>
+      <artifactId>stringtemplate</artifactId>
+      <version>3.2.1</version>
     </dependency>
 
     <!-- Testing dependencies -->

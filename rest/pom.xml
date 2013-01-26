@@ -16,11 +16,6 @@
 
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-store-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-authorization</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -53,21 +48,5 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Drop Wizard --> 
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-core</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-auth</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-client</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
   </dependencies>
 </project>
