@@ -27,7 +27,7 @@ import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 
 /**
- * Processes resources and check for the presence of Mayocat-specific annotations on the resource method and/or class
+ * Processes resources and check for the presence of Mayocat-specific annotation on the resource method and/or class
  * and instrument the resource accordingly if necessary.
  *
  * @version $Id$
@@ -150,7 +150,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
 
     /**
-     * Request dispatcher provider that inspects Mayocat annotations on resources and declares the proper dispatchers
+     * Request dispatcher provider that inspects Mayocat annotation on resources and declares the proper dispatchers
      * when necessary.
      */
     private class AnnotationResourceMethodDispatchProvider implements ResourceMethodDispatchProvider

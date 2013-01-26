@@ -33,11 +33,6 @@ public class AbstractConfiguration extends Configuration
     @JsonProperty
     private SearchEngineConfiguration searchEngine = new SearchEngineConfiguration();
 
-    @Valid
-    @NotNull
-    @JsonProperty
-    private ShopConfiguration shop = new ShopConfiguration();
-
     public DataSourceConfiguration getDataSourceConfiguration()
     {
         return dataSource;
@@ -58,8 +53,4 @@ public class AbstractConfiguration extends Configuration
         return searchEngine;
     }
 
-    public ShopConfiguration getShop()
-    {
-        return shop;
-    }
 }

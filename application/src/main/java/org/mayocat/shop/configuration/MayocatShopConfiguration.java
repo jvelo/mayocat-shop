@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.mayocat.shop.configuration.general.GeneralConfiguration;
 import org.mayocat.shop.configuration.shop.ShopConfiguration;
+import org.mayocat.shop.configuration.theme.ThemeConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
@@ -24,6 +25,11 @@ public class MayocatShopConfiguration extends AbstractConfiguration
     @Valid
     @NotNull
     @JsonProperty
+    private ThemeConfiguration theme = new ThemeConfiguration();
+
+    @Valid
+    @NotNull
+    @JsonProperty
     private ShopConfiguration shop = new ShopConfiguration();
 
     public DatabaseConfiguration getDatabaseConfiguration()
@@ -36,7 +42,7 @@ public class MayocatShopConfiguration extends AbstractConfiguration
         return general;
     }
 
-    public ShopConfiguration getShopConfiguration()
+    public ShopConfiguration getShop()
     {
         return shop;
     }

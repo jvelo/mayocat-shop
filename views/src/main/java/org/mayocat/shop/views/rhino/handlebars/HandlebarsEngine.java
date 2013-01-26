@@ -13,10 +13,14 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import org.xwiki.component.annotation.Component;
+
+import javax.inject.Named;
 
 /**
  * @version $Id$
  */
+@Component
 public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEngine
 {
     private static final String HANDLEBARS_FILENAME = "handlebars.js";

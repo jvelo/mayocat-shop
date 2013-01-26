@@ -28,7 +28,7 @@ public abstract class AbstractRhinoEngine implements TemplateEngine
                         engineFileName,
                         0,
                         null);
-                engineContext.evaluateString(globalScope, ";var templates = {};", "foo", 0, null);
+                engineContext.evaluateString(globalScope, ";var templates = {};", "templates.js", 0, null);
             } finally {
                 Context.exit();
             }

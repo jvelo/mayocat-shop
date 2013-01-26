@@ -76,6 +76,7 @@
     <module>service</module>
     <module>authorization</module>
     <module>views</module>
+    <module>themes</module>
     <module>rest</module>
     <module>client</module>
     <module>application</module>

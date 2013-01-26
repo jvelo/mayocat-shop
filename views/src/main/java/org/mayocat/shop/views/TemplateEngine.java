@@ -1,8 +1,11 @@
 package org.mayocat.shop.views;
 
+import org.xwiki.component.annotation.Role;
+
 /**
  * @version $Id$
  */
+@Role
 public interface TemplateEngine
 {
     void register(Template template);

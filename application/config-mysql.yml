@@ -41,6 +41,10 @@ general:
       default: [de, fr_FR]
       configurable: true
 
+theme:
+  active:
+    default: default
+
 shop:
   products:
     stock:

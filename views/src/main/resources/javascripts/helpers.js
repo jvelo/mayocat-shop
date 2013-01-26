@@ -11,8 +11,11 @@ Object.extend = function(destination, source) {
     return destination;
 };
 
-Handlebars.registerHelper('include', function (templatename, options) {
-    var partial = Handlebars.partials[templatename];
+Handlebars.registerHelper('include', function (template, options) {
+    var partial = Handlebars.partials[template];
     var context = Object.extend(Object.extend({}, this), options.hash);
-    return new Handlebars.SafeString(partial(context));
+    if (typeof partial === "function") {
+      return new Handlebars.SafeString(partial(context));
+    }
+    return "Partial not found : " + template;
 });

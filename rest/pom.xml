@@ -40,6 +40,16 @@
       <artifactId>mayocat-service</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-views</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-themes</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Drop Wizard --> 
     <dependency>
