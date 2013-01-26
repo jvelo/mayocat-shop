@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources.api.v1;
+package org.mayocat.shop.api.v1.resources;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

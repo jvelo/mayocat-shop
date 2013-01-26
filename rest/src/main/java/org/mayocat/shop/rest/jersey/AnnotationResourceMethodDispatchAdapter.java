@@ -16,7 +16,6 @@ import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.resources.api.v1.UserResource;
 import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
@@ -141,9 +140,14 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
         private boolean isCreateUserResource()
         {
-            return UserResource.class.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
-                    && this.method.getHttpMethod().equals(HttpMethod.POST)
-                    && this.method.getResource().getPath().getValue().equals("/user/");
+            try {
+                Class userResourceClass = Class.forName("org.mayocat.shop.api.v1.UserResource");
+                return userResourceClass.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
+                        && this.method.getHttpMethod().equals(HttpMethod.POST)
+                        && this.method.getResource().getPath().getValue().equals("/api/1.0/user/");
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException("Could not find user resource class", e);
+            }
         }
     }
 

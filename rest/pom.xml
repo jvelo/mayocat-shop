@@ -9,7 +9,7 @@
   <artifactId>mayocat-rest</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat REST resources</name>
+  <name>Mayocat REST base module</name>
   <description>JAX-RS resources for the Mayocat application</description>
 
   <dependencies>
@@ -21,8 +21,9 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-search-api</artifactId>
+      <artifactId>mayocat-authorization</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
@@ -37,17 +38,18 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-views</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
       <artifactId>mayocat-themes</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Accounts service needed for the annotation resource method dispatcher -->
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-service</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.representations.api.v1;
+package org.mayocat.shop.api.v1.reprensentations;
 
 import java.util.List;
 

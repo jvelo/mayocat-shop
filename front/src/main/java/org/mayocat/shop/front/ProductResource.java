@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources.front;
+package org.mayocat.shop.front;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;

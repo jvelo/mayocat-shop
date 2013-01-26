@@ -1,13 +1,3 @@
 org.mayocat.shop.rest.jersey.AnnotationResourceMethodDispatchAdapter
-org.mayocat.shop.rest.resources.api.v1.CategoryResource
-org.mayocat.shop.rest.resources.api.v1.ConfigurationResource
-org.mayocat.shop.rest.resources.api.v1.LoginResource
-org.mayocat.shop.rest.resources.api.v1.LogoutResource
-org.mayocat.shop.rest.resources.api.v1.ProductResource
-org.mayocat.shop.rest.resources.api.v1.SearchResource
-org.mayocat.shop.rest.resources.api.v1.TenantResource
-org.mayocat.shop.rest.resources.api.v1.UserResource
-
 org.mayocat.shop.rest.jersey.BreakpointProvider
-org.mayocat.shop.rest.resources.front.ProductResource
 org.mayocat.shop.rest.views.FrontViewMessageBodyWriter

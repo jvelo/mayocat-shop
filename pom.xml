@@ -78,6 +78,8 @@
     <module>views</module>
     <module>themes</module>
     <module>rest</module>
+    <module>api</module>
+    <module>front</module>
     <module>client</module>
     <module>application</module>
   </modules>

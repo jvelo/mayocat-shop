@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources.api.v1;
+package org.mayocat.shop.api.v1.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +18,21 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.shop.api.v1.reprensentations.CategoryRepresentation;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.api.v1.CategoryRepresentation;
 import org.mayocat.shop.rest.representations.EntityReference;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.store.*;
+import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
+import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
+import org.mayocat.shop.store.InvalidOperation;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

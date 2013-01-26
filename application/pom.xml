@@ -13,14 +13,22 @@
   <description>Packaging of the MayocatShop application around DropWizard</description>
 
   <dependencies>
+
     <dependency>
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-observation-local</artifactId>
       <version>${xwiki.version}</version>
    </dependency>
+
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-rest</artifactId>
+      <artifactId>mayocat-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-front</artifactId>
       <version>${project.version}</version>
     </dependency>
 

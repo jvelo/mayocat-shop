@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources.api.v1;
+package org.mayocat.shop.api.v1.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +26,7 @@ import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReference;
-import org.mayocat.shop.rest.representations.api.v1.ProductRepresentation;
+import org.mayocat.shop.api.v1.reprensentations.ProductRepresentation;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;

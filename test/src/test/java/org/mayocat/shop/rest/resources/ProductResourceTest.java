@@ -4,7 +4,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mayocat.shop.rest.resources.api.v1.ProductResource;
+import org.mayocat.shop.rest.api.v1.resources.ProductResource;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
