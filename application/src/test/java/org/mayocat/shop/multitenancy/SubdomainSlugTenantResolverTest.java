@@ -1,6 +1,6 @@
 package org.mayocat.shop.multitenancy;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.hamcrest.Matchers;
 import org.jmock.Expectations;
@@ -11,14 +11,13 @@ import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
-import org.xwiki.test.AbstractMockingComponentTestCase;
-import org.xwiki.test.annotation.MockingRequirement;
+import org.xwiki.test.jmock.AbstractMockingComponentTestCase;
+import org.xwiki.test.jmock.annotation.MockingRequirement;
 
-public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTestCase
+@MockingRequirement(value = SubdomainSlugTenantResolver.class)
+public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTestCase<TenantResolver>
 {
-
-    @MockingRequirement(exceptions = MultitenancyConfiguration.class)
-    private SubdomainSlugTenantResolver tenantResolver;
+    private TenantResolver tenantResolver;
 
     private MultitenancyConfiguration configuration;
 
@@ -27,8 +26,7 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     /**
      * Setup mock dependencies before initializing the @MockingRequirement components.
      */
-    @Override
-    protected void setupDependencies() throws Exception
+    public void setupDependencies() throws Exception
     {
         // Allow to mock classes for mocking configuration instances
         getMockery().setImposteriser(ClassImposteriser.INSTANCE);
@@ -45,10 +43,14 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     @Override
     public void setUp() throws Exception
     {
+        getMockery().setImposteriser(ClassImposteriser.INSTANCE);
+        //this.setupDependencies();
+
         super.setUp();
 
         configuration = this.getComponentManager().getInstance(MultitenancyConfiguration.class);
         accountsService = this.getComponentManager().getInstance(AccountsService.class);
+        tenantResolver = getMockedComponent();
 
         getMockery().checking(new Expectations()
         {
@@ -75,16 +77,16 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     public void testMultitenancyNotActivatedReturnsDefaultTenant1() throws Exception
     {
         this.setUpExpectationsForMultitenancyNotActivated();
-        Assert.assertNotNull(this.tenantResolver.resolve("mayocatshop.com"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mayocatshop.com").getSlug());
+        assertNotNull(this.tenantResolver.resolve("mayocatshop.com"));
+        assertEquals("mytenant", this.tenantResolver.resolve("mayocatshop.com").getSlug());
     }
 
     @Test
     public void testMultitenancyNotActivatedReturnsDefaultTenant2() throws Exception
     {
         this.setUpExpectationsForMultitenancyNotActivated();
-        Assert.assertNotNull(this.tenantResolver.resolve("localhost"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("localhost").getSlug());
+        assertNotNull(this.tenantResolver.resolve("localhost"));
+        assertEquals("mytenant", this.tenantResolver.resolve("localhost").getSlug());
     }
 
     @Test
@@ -92,8 +94,8 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     {
         this.setUpExpectationsForMultitenancyActivated();
 
-        Assert.assertNotNull(this.tenantResolver.resolve("mytenant.mayocatshop.com"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.mayocatshop.com").getSlug());
+        assertNotNull(this.tenantResolver.resolve("mytenant.mayocatshop.com"));
+        assertEquals("mytenant", this.tenantResolver.resolve("mytenant.mayocatshop.com").getSlug());
     }
 
     @Test
@@ -101,8 +103,8 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     {
         this.setUpExpectationsForMultitenancyActivated();
 
-        Assert.assertNotNull(this.tenantResolver.resolve("mytenant.localhost"));
-        Assert.assertEquals("mytenant", this.tenantResolver.resolve("mytenant.localhost").getSlug());
+        assertNotNull(this.tenantResolver.resolve("mytenant.localhost"));
+        assertEquals("mytenant", this.tenantResolver.resolve("mytenant.localhost").getSlug());
     }
 
     @Test
@@ -110,7 +112,7 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     {
         this.setUpExpectationsForMultitenancyActivated();
 
-        Assert.assertNull(this.tenantResolver.resolve("localhost"));
+        assertNull(this.tenantResolver.resolve("localhost"));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
     {
         this.setUpExpectationsForMultitenancyActivated();
 
-        Assert.assertNull(this.tenantResolver.resolve("mayocatshop.com"));
+        assertNull(this.tenantResolver.resolve("mayocatshop.com"));
     }
 
     @Test

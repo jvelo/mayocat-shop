@@ -48,7 +48,7 @@
 
     <!-- Dependencies versions -->
     <dropwizard.version>0.6.1</dropwizard.version>
-    <xwiki.version>4.2-milestone-1</xwiki.version>
+    <xwiki.version>4.4.1</xwiki.version>
     <guava.version>12.0</guava.version>
     <elasticsearch.version>0.19.8</elasticsearch.version>
   </properties>
