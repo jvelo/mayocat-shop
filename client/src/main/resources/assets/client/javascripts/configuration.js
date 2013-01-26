@@ -4,7 +4,7 @@ angular.module('configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q) {
 
         var configuration,
-            configurationResource = $resource("/configuration/", {}, {
+            configurationResource = $resource("/api/1.0/configuration/", {}, {
                 update:{method:"PUT"}
             });
 

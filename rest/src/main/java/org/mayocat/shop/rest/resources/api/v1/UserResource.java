@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -18,6 +18,7 @@ import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.InvalidEntityException;
@@ -25,8 +26,8 @@ import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
 
-@Component("UserResource")
-@Path("/user/")
+@Component("/api/1.0/user/")
+@Path("/api/1.0/user/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant

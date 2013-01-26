@@ -16,7 +16,7 @@ import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.resources.UserResource;
+import org.mayocat.shop.rest.resources.api.v1.UserResource;
 import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 

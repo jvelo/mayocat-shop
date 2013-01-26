@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +26,8 @@ import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReference;
-import org.mayocat.shop.rest.representations.ProductRepresentation;
+import org.mayocat.shop.rest.representations.api.v1.ProductRepresentation;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
@@ -39,8 +40,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
-@Component("ProductResource")
-@Path("/product/")
+@Component("/api/1.0/product/")
+@Path("/api/1.0/product/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant

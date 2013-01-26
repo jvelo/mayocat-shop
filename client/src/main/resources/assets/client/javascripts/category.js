@@ -10,7 +10,7 @@ angular.module('category', ['ngResource'])
           $scope.CategoryResource.save({ "slug" : $scope.slug }, $scope.category);
         }
 
-        $scope.CategoryResource = $resource("/category/:slug");
+        $scope.CategoryResource = $resource("/api/1.0/category/:slug");
 
         $scope.category = $scope.CategoryResource.get({ "slug" : $scope.slug });
   }]);

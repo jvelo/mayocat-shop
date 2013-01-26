@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,9 @@ import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.CategoryRepresentation;
+import org.mayocat.shop.rest.representations.api.v1.CategoryRepresentation;
 import org.mayocat.shop.rest.representations.EntityReference;
-import org.mayocat.shop.rest.representations.ProductRepresentation;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.*;
 import org.slf4j.Logger;
@@ -36,8 +36,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
-@Component("CategoryResource")
-@Path("/category/")
+@Component("/api/1.0/category/")
+@Path("/api/1.0/category/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant

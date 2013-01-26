@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +14,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.context.Context;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.search.SearchEngine;
 import org.mayocat.shop.search.SearchEngineException;
 import org.xwiki.component.annotation.Component;
 
-@Component("SearchResource")
-@Path("/search/")
+@Component("/api/1.0/search/")
+@Path("/api/1.0/search/")
 @Produces(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class SearchResource implements Resource

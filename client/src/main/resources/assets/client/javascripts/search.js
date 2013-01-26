@@ -4,7 +4,7 @@ angular.module('search', [])
   .service('searchService', function($http){
     return {
       search: function(term, callback) {
-        $http.get('/search/?term=' + term).success(function(data) {
+        $http.get('/api/1.0/search/?term=' + term).success(function(data) {
           var result = [];
           for (var i=0; i<data.length; i++) {
             result.push(data[i]);
@@ -23,6 +23,7 @@ angular.module('search', [])
           $scope.suggestions = [];
         }
         $scope.setRoute = function(slug) {
+          // FIXME should get route from entity
           $location.url("/product/" + slug);
           $scope.clear();
         }

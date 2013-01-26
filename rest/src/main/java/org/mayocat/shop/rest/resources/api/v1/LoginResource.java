@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -16,11 +16,12 @@ import org.mayocat.shop.authorization.cookies.CookieCrypter;
 import org.mayocat.shop.authorization.cookies.EncryptionException;
 import org.mayocat.shop.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
-@Component("LoginResource")
-@Path("/login/")
+@Component("/api/1.0/login/")
+@Path("/api/1.0/login/")
 @ExistingTenant
 public class LoginResource implements Resource
 {

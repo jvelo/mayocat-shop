@@ -20,8 +20,8 @@ import org.xwiki.component.annotation.Component;
 /**
  * @version $Id$
  */
-@Component("FrontProductResource")
-@Path("/front/product/")
+@Component("/product/")
+@Path("/product/")
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant

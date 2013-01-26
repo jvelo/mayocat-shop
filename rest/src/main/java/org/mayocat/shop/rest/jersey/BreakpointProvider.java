@@ -1,21 +1,15 @@
 package org.mayocat.shop.rest.jersey;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
 
 import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.theme.annotation.Breakpoint;
 import org.mayocat.shop.theme.UserAgentBreakpointDetector;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.model.Parameter;
-import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.core.spi.component.ComponentContext;
 import com.sun.jersey.core.spi.component.ComponentScope;
-import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
 

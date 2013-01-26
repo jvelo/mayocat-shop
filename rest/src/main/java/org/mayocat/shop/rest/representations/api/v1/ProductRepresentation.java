@@ -1,8 +1,9 @@
-package org.mayocat.shop.rest.representations;
+package org.mayocat.shop.rest.representations.api.v1;
 
 import java.util.List;
 
 import org.mayocat.shop.model.Product;
+import org.mayocat.shop.rest.representations.EntityReference;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

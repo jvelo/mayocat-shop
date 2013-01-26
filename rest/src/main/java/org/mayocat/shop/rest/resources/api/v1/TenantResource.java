@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -15,13 +15,14 @@ import org.mayocat.shop.context.Context;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
-@Component("TenantResource")
-@Path("/tenant/")
+@Component("/api/1.0/tenant/")
+@Path("/api/1.0/tenant/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TenantResource implements Resource

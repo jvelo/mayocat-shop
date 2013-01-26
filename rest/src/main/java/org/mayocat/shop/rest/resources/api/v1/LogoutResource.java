@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.shop.rest.resources.api.v1;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -8,10 +8,11 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.annotation.Component;
 
-@Component("LogoutResource")
-@Path("/logout/")
+@Component("/api/1.0/logout/")
+@Path("/api/1.0/logout/")
 @ExistingTenant
 public class LogoutResource implements Resource
 {

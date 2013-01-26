@@ -80,7 +80,7 @@ mayocat.config(function($httpProvider) {
 
     function error(response) {
       var status = response.status;
-      if (status == 401 && response.config.url != '/login/') {
+      if (status == 401 && response.config.url != '/api/1.0/login/') {
         var deferred = $q.defer();
         var req = {
           config: response.config,
@@ -136,7 +136,7 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
       password: password,
       remember: remember
     };
-    $http.post('/login/', $.param(data), config)
+    $http.post('/api/1.0/login/', $.param(data), config)
       .success(function(data, status) {
         if (status == 200) {
           ping();
@@ -157,7 +157,7 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
     var config = {
       headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
     };
-    $http.post('/logout/', "", config).success(function() {
+    $http.post('/api/1.0/logout/', "", config).success(function() {
       ping();
       scope.$broadcast('event:authenticationRequired');
     });
@@ -167,7 +167,7 @@ mayocat.run(['$rootScope', '$http', function(scope, $http) {
    * Ping server to figure out if user is already logged in.
    */
   scope.ping = function() {
-    $http.get('/tenant/').success(function(data) {
+    $http.get('/api/1.0/tenant/').success(function(data) {
       scope.$broadcast('event:authenticationSuccessful', data);
     });
   }

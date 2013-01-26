@@ -20,7 +20,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/configuration').respond(sampleConfiguration);
+            httpBackend.when('GET', '/api/1.0/configuration').respond(sampleConfiguration);
 
             configurationService = $injector.get('configurationService');
         }));
@@ -77,7 +77,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector, $rootScope, $controller) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/configuration').respond({
+            httpBackend.when('GET', '/api/1.0/configuration').respond({
                 "module":{
                     "propertySet":{
                         "property":{
@@ -107,14 +107,14 @@ describe('Configuration', function () {
         it("Should prepare configuration object for submit", function () {
             httpBackend.flush();
             configurationController.configuration.module.propertySet.property.value = "Salut";
-            httpBackend.expectPUT("/configuration", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
+            httpBackend.expectPUT("/api/1.0/configuration", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
             configurationController.updateConfiguration();
         });
 
         it("Should prepare configuration object for submit when value is overriding but has not been changed",
             function () {
             httpBackend.flush();
-            httpBackend.expectPUT("/configuration", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
+            httpBackend.expectPUT("/api/1.0/configuration", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
             configurationController.updateConfiguration();
         });
     });

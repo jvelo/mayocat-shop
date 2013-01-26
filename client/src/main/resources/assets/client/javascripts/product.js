@@ -8,7 +8,7 @@ angular.module('product', ['ngResource'])
 
         $scope.updateProduct = function () {
             if ($scope.isNew()) {
-                $resource("/product/").save($scope.product, function (response) {
+                $resource("/api/1.0/product/").save($scope.product, function (response) {
                     $location.path(response.href);
                 });
             }
@@ -26,7 +26,7 @@ angular.module('product', ['ngResource'])
         };
 
         $scope.categoryOperation = function (category, operation) {
-            $resource("/category/:slug/:operation", {"slug":category.slug, "operation" : operation}, {
+            $resource("/api/1.0/category/:slug/:operation", {"slug":category.slug, "operation" : operation}, {
                 "save":{
                     method:'POST',
                     headers:{
@@ -36,7 +36,7 @@ angular.module('product', ['ngResource'])
             }).save("product=" + $scope.product.slug, function () { });
         };
 
-        $scope.ProductResource = $resource("/product/:slug");
+        $scope.ProductResource = $resource("/api/1.0/product/:slug");
 
         $scope.isNew = function () {
             return $scope.slug == "_new";
