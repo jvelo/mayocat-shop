@@ -10,4 +10,4 @@ org.mayocat.shop.rest.resources.UserResource
 
 org.mayocat.shop.rest.jersey.BreakpointProvider
 org.mayocat.shop.rest.resources.front.ProductResource
-org.mayocat.shop.rest.views.StoreFrontViewMessageBodyWriter
+org.mayocat.shop.rest.views.FrontViewMessageBodyWriter

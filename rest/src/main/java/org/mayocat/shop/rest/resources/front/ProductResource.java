@@ -6,14 +6,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.rest.views.StoreFrontView;
+import org.mayocat.shop.rest.views.FrontView;
 import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.theme.annotation.Breakpoint;
+import org.mayocat.shop.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -31,13 +32,12 @@ public class ProductResource implements Resource
 
     @Path("{slug}")
     @GET
-    public StoreFrontView getCategory(@PathParam("slug") String slug,
-            @Breakpoint org.mayocat.shop.theme.Breakpoint breakpoint)
+    public FrontView getCategory(@PathParam("slug") String slug, @Context Breakpoint breakpoint)
     {
         Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
-            return new StoreFrontView("404", breakpoint);
+            return new FrontView("404", breakpoint);
         }
-        return new StoreFrontView("product", breakpoint);
+        return new FrontView("product", breakpoint);
     }
 }

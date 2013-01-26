@@ -23,7 +23,7 @@ import com.sun.jersey.spi.inject.InjectableProvider;
  * @version $Id$
  */
 @Component("breakpoint")
-public class BreakpointProvider implements InjectableProvider<Breakpoint, Parameter>, Provider
+public class BreakpointProvider implements InjectableProvider<Context, Parameter>, Provider
 {
     @Inject
     private UserAgentBreakpointDetector breakpointDetector;
@@ -35,7 +35,7 @@ public class BreakpointProvider implements InjectableProvider<Breakpoint, Parame
     }
 
     @Override
-    public Injectable getInjectable(ComponentContext ic, Breakpoint breakpoint, Parameter parameter)
+    public Injectable getInjectable(ComponentContext ic, Context breakpoint, Parameter parameter)
     {
         return new BreakpointInjectable(breakpointDetector);
     }

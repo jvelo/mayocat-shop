@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class StoreFrontView
+public class FrontView
 {
     private String layout;
 
@@ -17,7 +17,7 @@ public class StoreFrontView
 
     private Map<String, Object> context;
 
-    public StoreFrontView(String layout, Breakpoint breakpoint)
+    public FrontView(String layout, Breakpoint breakpoint)
     {
         this.layout = layout;
         this.breakpoint = breakpoint;

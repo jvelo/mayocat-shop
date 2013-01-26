@@ -21,6 +21,7 @@ import javax.inject.Named;
  * @version $Id$
  */
 @Component
+@Named("handlebars")
 public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEngine
 {
     private static final String HANDLEBARS_FILENAME = "handlebars.js";
