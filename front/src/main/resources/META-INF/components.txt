@@ -1,1 +1,5 @@
-org.mayocat.shop.front.ProductResource
+org.mayocat.shop.front.resources.ProductResource
+org.mayocat.shop.front.internal.DefaultEntityFrontViewBuilder
+org.mayocat.shop.front.internal.DefaultEntityContextProviderSupplier
+org.mayocat.shop.front.internal.DefaultEntityContextProviderSupplier
+org.mayocat.shop.front.internal.ShopContextProviderRegistrar

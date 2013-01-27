@@ -1,4 +1,4 @@
-package org.mayocat.shop.front;
+package org.mayocat.shop.front.resources;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.mayocat.shop.front.EntityFrontViewBuilder;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
@@ -30,14 +31,17 @@ public class ProductResource implements Resource
     @Inject
     private CatalogService catalogService;
 
+    @Inject
+    private EntityFrontViewBuilder viewBuilder;
+
     @Path("{slug}")
     @GET
-    public FrontView getCategory(@PathParam("slug") String slug, @Context Breakpoint breakpoint)
+    public FrontView getProduct(@PathParam("slug") String slug, @Context Breakpoint breakpoint)
     {
         Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
-            return new FrontView("404", breakpoint);
+            return viewBuilder.build404(breakpoint);
         }
-        return new FrontView("product", breakpoint);
+        return viewBuilder.<Product> buildFrontView(product, breakpoint);
     }
 }

@@ -13,8 +13,11 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -24,13 +27,16 @@ import javax.inject.Named;
 @Named("handlebars")
 public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEngine
 {
+    @Inject
+    private Logger logger;
+
     private static final String HANDLEBARS_FILENAME = "handlebars.js";
 
     private static final String HANDLEBARS_HELPERS_FILENAME = "helpers.js";
 
-    private static final String HANDLEBARS_FILEPATH = "javascripts/" + HANDLEBARS_FILENAME;
+    private static final String HANDLEBARS_FILEPATH = "javascripts/vendor/" + HANDLEBARS_FILENAME;
 
-    private static final String HANDLEBARS_HELPERS_FILEPATH = "javascripts/" + HANDLEBARS_HELPERS_FILENAME;
+    private static final String HANDLEBARS_HELPERS_FILEPATH = "javascripts/handlebars/" + HANDLEBARS_HELPERS_FILENAME;
 
     public HandlebarsEngine() throws IOException
     {
@@ -113,8 +119,8 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                         null);
                 return stringWriter.toString();
             } catch (JavaScriptException e) {
-                // Fail hard on any compile time error for dust templates
-                throw new RuntimeException(e);
+                this.logger.warn("JavaScript error when rendering template {}", templateName) ;
+                throw (e);
             }
         } finally {
             Context.exit();

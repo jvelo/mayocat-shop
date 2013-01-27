@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 /**
  * @version $Id$
  */
-@Component
+@Component("frontViewMessageBodyWriter")
 public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.shop.base.Provider
 {
     @Inject

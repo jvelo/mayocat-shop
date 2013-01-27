@@ -36,14 +36,7 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     @Override
     public void run(C configuration, Environment environment) throws Exception
     {
-        // Initialize components and allow getting instances
-        componentManager = new EmbeddableComponentManager();
-
-        this.registerConfigurationsAsComponents(configuration);
-
-        this.registerComponents(configuration, environment);
-
-        componentManager.initialize(this.getClass().getClassLoader());
+        this.initializeComponentManager(configuration, environment);
 
         registerProviders(environment);
         registerResources(environment);
@@ -52,13 +45,21 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
         registerTasks(environment);
         registerManagedServices(environment);
 
-        ObservationManager observationManager = componentManager.getInstance(ObservationManager.class);
+        ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
     }
 
     protected ComponentManager getComponentManager()
     {
         return this.componentManager;
+    }
+
+    protected void initializeComponentManager(C configuration, Environment environment)
+    {
+        componentManager = new EmbeddableComponentManager();
+        this.registerConfigurationsAsComponents(configuration);
+        this.registerComponents(configuration, environment);
+        componentManager.initialize(this.getClass().getClassLoader());
     }
 
     private void registerManagedServices(Environment environment) throws ComponentLookupException

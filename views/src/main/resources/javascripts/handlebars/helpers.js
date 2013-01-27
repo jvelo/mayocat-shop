@@ -19,3 +19,7 @@ Handlebars.registerHelper('include', function (template, options) {
     }
     return "Partial not found : " + template;
 });
+
+Handlebars.registerHelper('resource', function (path, options) {
+    return "/resources/"  + path;
+});
