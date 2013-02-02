@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.shop.Slugifier;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
@@ -24,10 +25,13 @@ public class DefaultCatalogService implements CatalogService
     @Inject
     private Provider<CategoryStore> categoryStore;
 
+    @Inject
+    private Slugifier slugifier;
+
     public Product createProduct(Product entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
-            entity.setSlug(this.generateSlug(entity.getTitle()));
+            entity.setSlug(this.slugifier.slugify(entity.getTitle()));
         }
 
         productStore.get().create(entity);
@@ -59,7 +63,7 @@ public class DefaultCatalogService implements CatalogService
     public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
-            entity.setSlug(this.generateSlug(entity.getTitle()));
+            entity.setSlug(this.slugifier.slugify(entity.getTitle()));
         }
         this.categoryStore.get().create(entity);
     }
@@ -83,7 +87,8 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void addProductToCategory(String category, String product) throws InvalidOperation {
+    public void addProductToCategory(String category, String product) throws InvalidOperation
+    {
         Category c = this.findCategoryBySlug(category);
         Product p = this.findProductBySlug(product);
         if (p == null || c == null) {
@@ -165,7 +170,7 @@ public class DefaultCatalogService implements CatalogService
 
     @Override
     public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug)
-        throws InvalidMoveOperation
+            throws InvalidMoveOperation
     {
         this.moveProductInCategory(category, slugOfProductToMove, relativeSlug, InsertPosition.BEFORE);
     }
@@ -176,11 +181,4 @@ public class DefaultCatalogService implements CatalogService
     {
         throw new InvalidMoveOperation();
     }
-
-    private String generateSlug(String title)
-    {
-        return Normalizer.normalize(title.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "").replaceAll("\\s+", "-");
-    }
-
 }

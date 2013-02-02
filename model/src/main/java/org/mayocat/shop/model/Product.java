@@ -5,8 +5,10 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.shop.model.annotation.Localized;
 import org.mayocat.shop.model.annotation.SearchIndex;
+import org.mayocat.shop.model.reference.EntityReference;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 public class Product extends AbstractLocalizedEntity
 {
@@ -88,7 +90,19 @@ public class Product extends AbstractLocalizedEntity
     {
         this.onShelf = onShelf;
     }
-    
+
+    @Override
+    public EntityReference getReference()
+    {
+        return new EntityReference("product", getSlug(), Optional.<EntityReference>absent());
+    }
+
+    @Override
+    public EntityReference getParentReference()
+    {
+        return null;
+    }
+
     ////////////////////////////////////////////////
 
     @Override  

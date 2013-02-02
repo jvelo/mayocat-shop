@@ -123,8 +123,45 @@
     <addForeignKeyConstraint constraintName="USER_ENTITY_FK"
                              baseTableName="user" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="user" indexName="EMAIL_INDEX">
+    <createIndex tableName="user" indexName="USER_EMAIL_INDEX">
       <column name="email" />
+    </createIndex>
+
+    <!-- Attachments -->
+    <createTable tableName="attachment">
+      <column name="entity_id" type="bigint">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="extension" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="title" type="varchar(255)" />
+      <column name="data" type="mediumblob" />
+    </createTable>
+    <addForeignKeyConstraint constraintName="ATTACHMENT_ENTITY_FK"
+                             baseTableName="attachment" baseColumnNames="entity_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="attachment" indexName="ATTACHMENT_EXTENSION_INDEX">
+      <column name="extension" />
+    </createIndex>
+
+    <createTable tableName="thumbnail">
+      <column name="attachment_id" type="bigint">
+        <constraints nullable="false" />
+      </column>
+      <column name="hint" type="varchar(255)" />
+      <column name="x" type="int" />
+      <column name="y" type="int" />
+      <column name="width" type="int" />
+      <column name="height" type="int" />
+    </createTable>
+    <addPrimaryKey tableName="thumbnail"
+                   columnNames="attachment_id,hint" constraintName="THUMBNAIL_PK" />
+    <addForeignKeyConstraint constraintName="THUMBNAIL_IMAGE_FK"
+                             baseTableName="thumbnail" baseColumnNames="attachment_id"
+                             referencedTableName="attachment" referencedColumnNames="entity_id" />
+    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_INDEX">
+      <column name="hint" />
     </createIndex>
 
     <!-- Role table -->

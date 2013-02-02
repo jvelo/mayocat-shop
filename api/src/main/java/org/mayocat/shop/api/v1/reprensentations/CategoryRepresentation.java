@@ -3,7 +3,7 @@ package org.mayocat.shop.api.v1.reprensentations;
 import java.util.List;
 
 import org.mayocat.shop.model.Category;
-import org.mayocat.shop.rest.representations.EntityReference;
+import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -19,7 +19,7 @@ public class CategoryRepresentation
     private Long numberOfProducts = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<EntityReference> products = null;
+    private List<EntityReferenceRepresentation> products = null;
 
     private String href;
 
@@ -34,7 +34,7 @@ public class CategoryRepresentation
         this.numberOfProducts = numberOfProducts;
     }
 
-    public CategoryRepresentation(Category category, List<EntityReference> products)
+    public CategoryRepresentation(Category category, List<EntityReferenceRepresentation> products)
     {
         this.title = category.getTitle();
         this.description = category.getDescription();
@@ -74,7 +74,7 @@ public class CategoryRepresentation
         return href;
     }
 
-    public List<EntityReference> getProducts()
+    public List<EntityReferenceRepresentation> getProducts()
     {
         return products;
     }

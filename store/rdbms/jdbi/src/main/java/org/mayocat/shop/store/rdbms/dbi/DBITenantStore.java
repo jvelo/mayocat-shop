@@ -67,7 +67,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public List<Tenant> findAll(Integer number, Integer offset)
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return this.dao.findAll(number, offset);
     }
 
     @Override

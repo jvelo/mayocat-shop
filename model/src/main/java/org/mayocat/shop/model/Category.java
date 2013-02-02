@@ -6,8 +6,10 @@ import javax.validation.constraints.Size;
 import org.mayocat.shop.model.annotation.LocalizationFieldType;
 import org.mayocat.shop.model.annotation.Localized;
 import org.mayocat.shop.model.annotation.SearchIndex;
+import org.mayocat.shop.model.reference.EntityReference;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 public class Category extends AbstractLocalizedEntity
 {
@@ -68,7 +70,7 @@ public class Category extends AbstractLocalizedEntity
     {
         this.id = id;
     }
-    
+
     public String getTitle()
     {
         return title;
@@ -87,6 +89,18 @@ public class Category extends AbstractLocalizedEntity
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    @Override
+    public EntityReference getReference()
+    {
+        return new EntityReference("category", getSlug(), Optional.<EntityReference>absent());
+    }
+
+    @Override
+    public EntityReference getParentReference()
+    {
+        return null;
     }
 
     // //////////////////////////////////////////////

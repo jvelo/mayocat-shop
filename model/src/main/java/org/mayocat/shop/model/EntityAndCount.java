@@ -2,6 +2,8 @@ package org.mayocat.shop.model;
 
 /**
  * @version $Id$
+ *
+ * Represents a pair of an entity and a count associated with it.
  */
 public class EntityAndCount<E>
 {

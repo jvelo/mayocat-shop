@@ -1,5 +1,6 @@
 package org.mayocat.shop.api.v1.resources;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,8 +25,9 @@ import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
+import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.EntityReference;
+import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.shop.api.v1.reprensentations.ProductRepresentation;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
@@ -36,8 +38,11 @@ import org.mayocat.shop.store.InvalidMoveOperation;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("/api/1.0/product/")
@@ -45,7 +50,7 @@ import com.yammer.metrics.annotation.Timed;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
-public class ProductResource implements Resource
+public class ProductResource extends AbstractAttachmentResource implements Resource
 {
     @Inject
     private CatalogService catalogService;
@@ -86,6 +91,18 @@ public class ProductResource implements Resource
         }
     }
 
+    @Path("{slug}/attachments")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response addImages(@PathParam("slug") String slug, @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("title") String title)
+    {
+        EntityReference
+                parent = new EntityReference("product", slug, Optional.<EntityReference>absent());
+        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, Optional.of(parent));
+    }
+
     @Path("{slug}/move")
     @POST
     @Timed
@@ -105,7 +122,6 @@ public class ProductResource implements Resource
             }
 
             return Response.noContent().build();
-
         } catch (InvalidMoveOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                     .entity("Invalid move operation").type(MediaType.TEXT_PLAIN_TYPE).build());
@@ -184,9 +200,10 @@ public class ProductResource implements Resource
 
     private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories)
     {
-        List<EntityReference> categoriesReferences = Lists.newArrayList();
+        List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Category category : categories) {
-            categoriesReferences.add(new EntityReference(category.getTitle(), "/category/" + category.getSlug()));
+            categoriesReferences
+                    .add(new EntityReferenceRepresentation(category.getTitle(), "/category/" + category.getSlug()));
         }
         return new ProductRepresentation(product, categoriesReferences);
     }

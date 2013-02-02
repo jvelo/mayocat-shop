@@ -1,5 +1,6 @@
 org.mayocat.shop.api.v1.resources.CategoryResource
 org.mayocat.shop.api.v1.resources.ConfigurationResource
+org.mayocat.shop.api.v1.resources.AttachmentResource
 org.mayocat.shop.api.v1.resources.LoginResource
 org.mayocat.shop.api.v1.resources.LogoutResource
 org.mayocat.shop.api.v1.resources.ProductResource

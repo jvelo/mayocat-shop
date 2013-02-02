@@ -25,7 +25,7 @@ import org.mayocat.shop.model.EntityAndCount;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.EntityReference;
+import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -252,9 +252,9 @@ public class CategoryResource implements Resource
 
     private CategoryRepresentation wrapInRepresentation(Category category, List<Product> products)
     {
-        List<EntityReference> categoriesReferences = Lists.newArrayList();
+        List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Product product : products) {
-            categoriesReferences.add(new EntityReference(product.getTitle(), "/product/" + product.getSlug()));
+            categoriesReferences.add(new EntityReferenceRepresentation(product.getTitle(), "/product/" + product.getSlug()));
         }
         return new CategoryRepresentation(category, categoriesReferences);
     }

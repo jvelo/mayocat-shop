@@ -1,5 +1,7 @@
 package org.mayocat.shop.store.rdbms.dbi.dao;
 
+import java.util.List;
+
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.rdbms.dbi.mapper.TenantMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -7,6 +9,7 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 
@@ -56,4 +59,12 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
     )
     public abstract Tenant findBySlug(@Bind("slug") String slug);
 
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   tenant " +
+        "LIMIT  :number " +
+        "OFFSET :offset "
+    )
+    public abstract List<Tenant> findAll(@Bind("number") Integer number, @Bind("offset") Integer offset);
 }

@@ -8,6 +8,9 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.mayocat.shop.jackson.PasswordSerializer;
 import org.mayocat.shop.model.annotation.SearchIndex;
+import org.mayocat.shop.model.reference.EntityReference;
+
+import com.google.common.base.Optional;
 
 public class User implements Entity
 {
@@ -83,5 +86,17 @@ public class User implements Entity
     public void setSlug(String slug)
     {
         this.slug = slug;
+    }
+
+    @Override
+    public EntityReference getReference()
+    {
+        return new EntityReference("user", getSlug(), Optional.<EntityReference>absent());
+    }
+
+    @Override
+    public EntityReference getParentReference()
+    {
+        return null;
     }
 }

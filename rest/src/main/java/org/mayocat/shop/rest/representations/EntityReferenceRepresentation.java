@@ -3,13 +3,13 @@ package org.mayocat.shop.rest.representations;
 /**
  * @version $Id$
  */
-public class EntityReference
+public class EntityReferenceRepresentation
 {
     private String href;
 
     private String title;
 
-    public EntityReference(String title, String uri)
+    public EntityReferenceRepresentation(String title, String uri)
     {
         this.title = title;
         this.href = uri;

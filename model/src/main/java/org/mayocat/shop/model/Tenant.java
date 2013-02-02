@@ -6,8 +6,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.mayocat.shop.model.reference.EntityReference;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 public class Tenant implements Entity
 {
@@ -17,8 +19,6 @@ public class Tenant implements Entity
     @NotNull
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
     String slug;
-
-    Shop shop;
 
     private TenantConfiguration configuration;
 
@@ -64,16 +64,17 @@ public class Tenant implements Entity
         this.slug = slug;
     }
 
-    public Shop getShop()
+    @Override
+    public EntityReference getReference()
     {
-        return shop;
+        return new EntityReference("tenant", getSlug(), Optional.<EntityReference>absent());
     }
 
-    public void setShop(Shop shop)
+    @Override
+    public EntityReference getParentReference()
     {
-        this.shop = shop;
+        return null;
     }
-
     // ///////////////////////////////////////////////////////////
 
     @Override
