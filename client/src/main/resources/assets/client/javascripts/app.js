@@ -74,6 +74,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
         restrict: "E",
         templateUrl: "partials/imageUpload.html",
         scope: {
+            'requestedDropZone': '&dropZone',
             'requestedUploadUri': '&uploadUri'
         },
         link:  function postLink($scope, element, attrs) {
@@ -83,6 +84,12 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             $scope.uploadUri = typeof $scope.requestedUploadUri === "function"
                              ? $scope.requestedUploadUri()
                              : $scope.requestedUploadUri;
+
+            $scope.dropzone = typeof $scope.requestedDropZone === "string"
+                            ? $($scope.requestedDropZone)
+                            : $(element).find('.dropzone');
+
+            $scope.files = [];
 
             $scope.getPreviewUri = function (file, index) {
                 var deferred = $q.defer();
@@ -102,53 +109,79 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             }
 
             $scope.remove = function(index) {
-                $scope.files.splice(index, 1);
+                $scope.files[index] = null;
+            }
+
+            $scope.fileUploadFailed = function(index) {
+                $scope.$apply(function($scope){
+                    $scope.files[index].failed = true;
+                });
+            }
+
+            $scope.fileUploading = function(index, loaded, total) {
+                $scope.$apply(function($scope){
+                    $scope.files[index].progress = Math.round(loaded * 100 / total);
+                });
+            }
+
+            $scope.fileUploaded = function(index) {
+                $scope.$apply(function($scope){
+                    $scope.files[index].uploaded = true;
+                });
+            }
+
+            $scope.submit = function() {
+                for (var i=0; i<$scope.files.length; i++) {
+                    if ($scope.files[i] !== null) {
+                        $scope.files[i].progress = 0;
+                        $(element).fileupload('send', {files: $scope.files[i]});
+                    }
+                }
+            }
+
+            $scope.hasFiles = function() {
+                for (var i=0; i<$scope.files.length; i++) {
+                    if ($scope.files[i] !== null) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             // Extend the directive element with the jQuery file upload plugin
-            $scope.files = [];
             $(element).fileupload({
-                //dataType: '',
+                dropZone: $scope.dropzone,
                 url: $scope.uploadUri,
                 add: function(e, data) {
                     $scope.$apply(function($scope) {
                         for (var i = 0; i < data.files.length; i++) {
+                            // Usually there is just one
                             var index = $scope.files.push(data.files[i]) - 1;
+                            $scope.files[index].index = index;
                             $scope.getPreviewUri($scope.files[index], index).then(function(result) {
                                 $scope.files[result.index].previewUri = result.preview.src;
                                 $scope.files[result.index].previewWidth = result.preview.width;
                                 $scope.files[result.index].previewHeight = result.preview.height;
                             });
                         }
-                        $('button#startupload').on('click', function(e) {
-                            $scope.$apply(function($scope) {
-                                $scope.progressVisible = true;
-                            });
-                            data.submit();
-                        });
                     });
                 },
                 done: function(e, data) {
-                    $scope.progressVisible = false;
-                    //uploadComplete(e, data);
+                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                        $scope.fileUploaded(data.files[0].index);
+                    }
                 },
                 fail: function(e, data) {
+                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                        $scope.fileUploadFailed(data.files[0].index);
+                    }
                 },
                 progress: function(e, data) {
-                },
-                progressall: function(e, data) {
-                    uploadProgressAll(e, data);
+                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                        $scope.fileUploading(data.files[0].index, data.loaded, data.total);
+                    }
                 }
             });
-
-            function uploadProgressAll(evt, data) {
-                $scope.$apply(function() {
-                    $scope.progress = Math.round(data.loaded * 100 / data.total);
-                    if (data.loaded === data.total) {
-                        $scope.percentVisible = false;
-                    }
-                });
-            }
         }
     }
 }]);

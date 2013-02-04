@@ -3,8 +3,8 @@ html {
 }
 
 body {
-  background-color: #FCF7E2;
-  padding: 75px 25px 0px 25px;
+  background-color: white;
+  padding: 40px 0px 0;
   height: 100%;
   height: -webkit-calc(100% - 75px);
   height: -moz-calc(100% - 75px);
@@ -110,14 +110,27 @@ image-upload .editor ul li {
  min-height: 185px;
 }
 
+image-upload .editor ul li span.preview .meta .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100px;
+}
+
 image-upload .editor ul li span.preview > span {
   height: 100px;
   width: 100px;
-  display: inline-block;
+  display: table-cell;
   border: 1px solid lightgray;
+  text-align: center;
+  vertical-align: middle;
 }
 
 image-upload .editor ul li span.preview > div {
   font-size: 10px;
   text-align: center;
+}
+
+image-upload .editor ul li .progress {
+    height: 6px;
 }

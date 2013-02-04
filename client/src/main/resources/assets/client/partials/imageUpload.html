@@ -2,7 +2,7 @@
     <div class="controls">
         <div class="row-fluid">
             <div class="well">
-                <div id="dropbox">
+                <div class="dropzone">
                     <h4>Add images</h4>
                     <i class="icon-download-alt"/>
                     Drag images from your computer and drop them in this area
@@ -11,43 +11,66 @@
                         <input type="file" name="files" multiple="">
                      </span>
                 </div>
-                <div ng-show="files.length > 0" class="editor">
+                <div ng-show="hasFiles()" class="editor">
                     <hr/>
                     <ul class="unstyled">
-                        <li ng-repeat="file in files" class="fade in">
+                        <li ng-repeat="file in files" class="fade in" ng-show="file != null">
                             <span class="preview span2">
                                 <span class="fade in">
                                     <img src="{{file.previewUri}}"
                                          width="{{file.previewWidth}}"
                                          height="{{file.previewHeight}}" />
                                 </span>
-                                <div>
-                                    <div>{{file.webkitRelativePath || file.name}}</div>
-                                    <div>{{file.size/1024 | number:2}} KB</div>
+                                <div class="meta">
+                                    <div class="name" title="{{file.webkitRelativePath || file.name}}">
+                                        {{file.webkitRelativePath || file.name}}
+                                    </div>
+                                    <div class="size">{{file.size/1024 | number:2}} KB</div>
                                 </div>
                             </span>
-                            <span class="size span8">
-                                <input type="text" class="span12" placeholder="Image's title (alternative text)" />
+                            <span class="size span8" ng-show="!file.uploaded && !file.progress">
+                                <input type="text" class="span12" placeholder="Image's title (alternative text)"/>
                                 <textarea class="span12" rows="5" placeholder="Description (Optional)"></textarea>
                             </span>
-                            <span class="cancel span2">
+                            <span class="cancel span2" ng-show="!file.uploaded && !file.progress">
                                 <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
                                     Remove
                                 </button>
+                            </span>
+                            <span class="cancel span10" ng-show="file.progress">
+                                <div ng-show="!file.uploaded && !file.failed" class="alert">
+                                    Uploading...
+                                </div>
+                                <div ng-show="file.failed" class="alert alert-error">
+                                    Failed
+                                    <div class="pull-right">
+                                        <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                </div>
+                                <div ng-show="file.uploaded" class="alert alert-block">
+                                    Uploaded !
+                                    <div class="pull-right">
+                                        <button ng-show="!file.loaded" type="button" class="btn btn-primary" ng-click="remove($index)">
+                                            Edit thumbnails
+                                        </button>
+                                        <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="progress">
+                                    <div class="bar" ng-style="{'width': file.progress+'%'}"></div>
+                                </div>
                             </span>
                             <div class="clearfix"></div>
                         </li>
                     </ul>
                     <hr/>
-                    <div class="form-horizontal span8" ng-show="progressVisible">
-                        <div class="percent" ng-show="percentVisible">{{progress}}%</div>
-                        <div class="progress progress-striped active">
-                            <div class="bar" ng-style="{'width': progress+'%'}"></div>
-                            <div class="bar bar-danger" ng-show="!percentVisible" style="width: 20%;"></div>
-                        </div>
-                    </div>
                     <div class="pull-right" ng-show="files.length > 0">
-                        <button id="startupload" type="button" class="btn btn-primary" ng-click="uploadFile()">
+                        <button id="startupload" type="button" class="btn btn-primary" ng-click="submit()">
                             <i class="icon-upload icon-white"></i>
                             <span>Upload all</span>
                         </button>
