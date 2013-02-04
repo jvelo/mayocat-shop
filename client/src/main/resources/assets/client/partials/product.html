@@ -6,7 +6,7 @@
 
           <!-- Title -->
           <h1>
-            <input type="text" class="span12" ng-model="product.title" placeholder="Product's title" />
+            <input type="text" class="span12 title" ng-model="product.title" placeholder="Product's title" />
           </h1>
 
           <!-- Description -->
@@ -14,8 +14,18 @@
             <label>Description</label>
             <textarea class="span12" rows="10" ng-model="product.description" />
           </div>
-        </div>
 
+          <div>
+            <h3>Images</h3>
+            <ul>
+              <li ng-repeat="images in product.images"></li>
+            </ul>
+            <div class="alert" ng-show="product.images.length <= 0">
+                <strong>No image yet</strong> - use the area below to add images to this product.
+            </div>
+            <image-upload upload-uri="getImageUploadUri()"></image-upload>
+          </div>
+        </div>
     </div>
   </div>
 

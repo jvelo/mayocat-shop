@@ -92,3 +92,32 @@ div.main-container {
   content: '\274c';
   color: #E8503E;
 }
+
+input[type='text'].title {
+  font-size: 20px;
+  height: 50px;
+  padding-left: 9px;
+}
+
+/* File upload widget */
+
+image-upload .fileinput-button {
+  float: right;
+  margin-top: -5px;
+}
+
+image-upload .editor ul li {
+ min-height: 185px;
+}
+
+image-upload .editor ul li span.preview > span {
+  height: 100px;
+  width: 100px;
+  display: inline-block;
+  border: 1px solid lightgray;
+}
+
+image-upload .editor ul li span.preview > div {
+  font-size: 10px;
+  text-align: center;
+}

@@ -49,6 +49,10 @@ angular.module('product', ['ngResource'])
             };
         }
 
+        $scope.getImageUploadUri = function() {
+            return "/api/1.0/product/" + $scope.slug + "/attachment";
+        }
+
         $scope.initializeCategories = function () {
             catalogService.listCategories(function (categories) {
                 $scope.categories = categories;
@@ -73,6 +77,10 @@ angular.module('product', ['ngResource'])
             $scope.product = $scope.ProductResource.get({ "slug":$scope.slug, "expand":"categories" }, function () {
                 // Ensures the category initialization happens after the AJAX callback
                 $scope.initializeCategories();
+
+                // FIXME temporary until images are fetch via API
+                $scope.product.images = [];
+
             });
         }
         else {

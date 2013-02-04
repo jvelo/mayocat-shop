@@ -1,0 +1,60 @@
+<div class="control-group">
+    <div class="controls">
+        <div class="row-fluid">
+            <div class="well">
+                <div id="dropbox">
+                    <h4>Add images</h4>
+                    <i class="icon-download-alt"/>
+                    Drag images from your computer and drop them in this area
+                    <span class="btn fileinput-button">
+                        <span>Browse...</span>
+                        <input type="file" name="files" multiple="">
+                     </span>
+                </div>
+                <div ng-show="files.length > 0" class="editor">
+                    <hr/>
+                    <ul class="unstyled">
+                        <li ng-repeat="file in files" class="fade in">
+                            <span class="preview span2">
+                                <span class="fade in">
+                                    <img src="{{file.previewUri}}"
+                                         width="{{file.previewWidth}}"
+                                         height="{{file.previewHeight}}" />
+                                </span>
+                                <div>
+                                    <div>{{file.webkitRelativePath || file.name}}</div>
+                                    <div>{{file.size/1024 | number:2}} KB</div>
+                                </div>
+                            </span>
+                            <span class="size span8">
+                                <input type="text" class="span12" placeholder="Image's title (alternative text)" />
+                                <textarea class="span12" rows="5" placeholder="Description (Optional)"></textarea>
+                            </span>
+                            <span class="cancel span2">
+                                <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
+                                    Remove
+                                </button>
+                            </span>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <div class="form-horizontal span8" ng-show="progressVisible">
+                        <div class="percent" ng-show="percentVisible">{{progress}}%</div>
+                        <div class="progress progress-striped active">
+                            <div class="bar" ng-style="{'width': progress+'%'}"></div>
+                            <div class="bar bar-danger" ng-show="!percentVisible" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                    <div class="pull-right" ng-show="files.length > 0">
+                        <button id="startupload" type="button" class="btn btn-primary" ng-click="uploadFile()">
+                            <i class="icon-upload icon-white"></i>
+                            <span>Upload all</span>
+                        </button>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -21,7 +21,7 @@ public class Attachment implements Entity
 
     private InputStream data;
 
-    private EntityReference parent;
+    private EntityReference parentReference;
 
     public Attachment()
     {
@@ -84,17 +84,17 @@ public class Attachment implements Entity
     @Override
     public EntityReference getReference()
     {
-        return new EntityReference("attachment", getSlug(), Optional.fromNullable(this.parent));
+        return new EntityReference("attachment", getSlug(), Optional.fromNullable(this.parentReference));
     }
 
     @Override
     public EntityReference getParentReference()
     {
-        return this.parent;
+        return this.parentReference;
     }
 
-    public void setParent(EntityReference reference)
+    public void setParentReference(EntityReference reference)
     {
-        this.parent = parent;
+        this.parentReference = parentReference;
     }
 }

@@ -67,6 +67,93 @@ mayocat.directive('activeClass', ['$location', function(location) {
 
 
 /**
+ *
+ */
+mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
+    return {
+        restrict: "E",
+        templateUrl: "partials/imageUpload.html",
+        scope: {
+            'requestedUploadUri': '&uploadUri'
+        },
+        link:  function postLink($scope, element, attrs) {
+
+            // Get the upload URI the directive customer requested. It is either provided as a function,
+            // which we need to evaluate, or as a raw string.
+            $scope.uploadUri = typeof $scope.requestedUploadUri === "function"
+                             ? $scope.requestedUploadUri()
+                             : $scope.requestedUploadUri;
+
+            $scope.getPreviewUri = function (file, index) {
+                var deferred = $q.defer();
+                loadImage(file, function (preview) {
+                    deferred.resolve({
+                        index:index,
+                        preview:preview
+                    });
+                    $scope.$apply();
+                }, {
+                    maxWidth:100,
+                    maxHeight:100,
+                    canvas:false,
+                    noRevoke:true
+                });
+                return deferred.promise;
+            }
+
+            $scope.remove = function(index) {
+                $scope.files.splice(index, 1);
+            }
+
+            // Extend the directive element with the jQuery file upload plugin
+            $scope.files = [];
+            $(element).fileupload({
+                //dataType: '',
+                url: $scope.uploadUri,
+                add: function(e, data) {
+                    $scope.$apply(function($scope) {
+                        for (var i = 0; i < data.files.length; i++) {
+                            var index = $scope.files.push(data.files[i]) - 1;
+                            $scope.getPreviewUri($scope.files[index], index).then(function(result) {
+                                $scope.files[result.index].previewUri = result.preview.src;
+                                $scope.files[result.index].previewWidth = result.preview.width;
+                                $scope.files[result.index].previewHeight = result.preview.height;
+                            });
+                        }
+                        $('button#startupload').on('click', function(e) {
+                            $scope.$apply(function($scope) {
+                                $scope.progressVisible = true;
+                            });
+                            data.submit();
+                        });
+                    });
+                },
+                done: function(e, data) {
+                    $scope.progressVisible = false;
+                    //uploadComplete(e, data);
+                },
+                fail: function(e, data) {
+                },
+                progress: function(e, data) {
+                },
+                progressall: function(e, data) {
+                    uploadProgressAll(e, data);
+                }
+            });
+
+            function uploadProgressAll(evt, data) {
+                $scope.$apply(function() {
+                    $scope.progress = Math.round(data.loaded * 100 / data.total);
+                    if (data.loaded === data.total) {
+                        $scope.percentVisible = false;
+                    }
+                });
+            }
+        }
+    }
+}]);
+
+/**
  * Authentication/401 interception
  *
  * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application

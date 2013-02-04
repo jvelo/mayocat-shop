@@ -1,5 +1,6 @@
 package org.mayocat.shop.api.v1.resources;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +43,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
@@ -91,16 +94,24 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         }
     }
 
-    @Path("{slug}/attachments")
+    @Path("{slug}/attachment")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response addImages(@PathParam("slug") String slug, @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("title") String title)
+    public Response uploadMultipart(@PathParam("slug") String slug, FormDataMultiPart multiPart) throws IOException
     {
         EntityReference
                 parent = new EntityReference("product", slug, Optional.<EntityReference>absent());
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, Optional.of(parent));
+        List<FormDataBodyPart> fields = multiPart.getFields("files");
+        if (fields != null) {
+            for (FormDataBodyPart field : fields) {
+                String fileName = field.getFormDataContentDisposition().getFileName();
+                this.addAttachment(field.getValueAs(InputStream.class), fileName, "", Optional.of(parent));
+            }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No file were found int the request").build();
+        }
+        // TODO: construct a JSON map with each created attachment URI
+        return Response.noContent().build();
     }
 
     @Path("{slug}/move")
