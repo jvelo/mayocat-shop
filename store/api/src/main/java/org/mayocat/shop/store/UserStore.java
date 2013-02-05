@@ -9,7 +9,7 @@ import org.mayocat.shop.model.User;
 import org.mayocat.shop.model.Role;
 
 @org.xwiki.component.annotation.Role
-public interface UserStore extends Store<User, Long>
+public interface UserStore extends Store<User, Long>, EntityStore
 {
     void create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
 

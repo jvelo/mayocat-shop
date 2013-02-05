@@ -6,9 +6,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.mayocat.shop.model.Entity;
+import org.mayocat.shop.model.Identifiable;
 import org.mayocat.shop.model.Tenant;
 
-public interface Store<T extends Entity, K extends Serializable>
+public interface Store<T extends Identifiable, K extends Serializable>
 {
     void create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
     

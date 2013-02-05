@@ -18,10 +18,10 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 @Component(hints = {"jdbi", "default"})
-public class DBIUserStore extends AbstractEntityStore implements UserStore, Initializable
+public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
 {
-    @Inject
-    private DBIProvider dbi;
+    //@Inject
+    //private DBIProvider dbi;
 
     private UserDAO dao;
 
@@ -82,7 +82,8 @@ public class DBIUserStore extends AbstractEntityStore implements UserStore, Init
     
     public void initialize() throws InitializationException
     {
-        this.dao = this.dbi.get().onDemand(UserDAO.class);
+        this.dao = this.getDbi().onDemand(UserDAO.class);
+        super.initialize();
     }
 
 

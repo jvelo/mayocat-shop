@@ -1,17 +1,14 @@
 package org.mayocat.shop.store.rdbms.dbi.dao;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.shop.model.LocalizedEntity;
+import org.mayocat.shop.model.Localized;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.Translations;
-import org.mayocat.shop.store.rdbms.dbi.dao.util.StringUtil;
 import org.mayocat.shop.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.shop.store.rdbms.dbi.jointype.EntityTranslationJoinRow;
 import org.mayocat.shop.store.rdbms.dbi.mapper.EntityTranslationsJoinRowMapper;
@@ -21,10 +18,9 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
-import com.google.common.base.Optional;
 import com.yammer.dropwizard.util.Generics;
 
-public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> implements TranslationDAO,
+public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements TranslationDAO,
     EntityDAO<E>
 {
 
@@ -57,7 +53,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends LocalizedEntity> impl
         List<EntityTranslationJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
 
         E entity = null;
-        Class< E > thisEntityType = Generics.getTypeParameter(getClass(), LocalizedEntity.class);
+        Class< E > thisEntityType = Generics.getTypeParameter(getClass(), Localized.class);
         Translations translations = new Translations();
         EntityExtractor<E> extractor = new EntityExtractor<E>();
         for (EntityTranslationJoinRow row : rows) {

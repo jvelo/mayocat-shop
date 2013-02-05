@@ -2,8 +2,10 @@ package org.mayocat.shop.store.rdbms.dbi.dao;
 
 import java.util.List;
 
+import org.mayocat.shop.model.Child;
 import org.mayocat.shop.model.Entity;
 import org.mayocat.shop.model.Tenant;
+import org.mayocat.shop.model.reference.EntityReference;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
@@ -26,7 +28,14 @@ public interface EntityDAO< E extends Entity >
         "INSERT INTO entity (slug, type, tenant_id) VALUES (:entity.slug, :type, :tenant.id)"
     )
     Long createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
-    
+
+    @GetGeneratedKeys
+    @SqlUpdate
+    (
+        "INSERT INTO entity (slug, type, tenant_id, parent_id) VALUES (:entity.slug, :type, :tenant.id, :entity.parentId)"
+    )
+    Long createChildEntity(@BindBean("entity") Child entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+
     @SqlQuery
     (
         "SELECT id FROM entity WHERE slug = :entity.slug AND type = :type AND tenant_id = :tenant.id"
@@ -94,4 +103,17 @@ public interface EntityDAO< E extends Entity >
     )
     List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant,
             @Bind("number") Integer number, @Bind("offset") Integer offset);
+
+
+    @SqlQuery
+    (
+        "SELECT type, slug FROM entity WHERE entity.id = :id"
+    )
+    EntityReference getEntity(@Bind("id") Long id);
+
+    @SqlQuery
+    (
+        "SELECT id FROM entity WHERE entity.slug = :reference.slug AND entity.type = :reference.type and entity.tenant_id = :tenant.id"
+    )
+    Long getId(@BindBean("reference") EntityReference reference, @BindBean("tenant") Tenant tenant);
 }

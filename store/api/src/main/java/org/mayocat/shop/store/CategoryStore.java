@@ -9,7 +9,7 @@ import org.mayocat.shop.model.Tenant;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface CategoryStore extends Store<Category, Long>, HasOrderedCollections
+public interface CategoryStore extends Store<Category, Long>, EntityStore, HasOrderedCollections
 {
     Category findBySlug(String slug);
 

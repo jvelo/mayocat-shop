@@ -9,7 +9,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Attachment implements Entity
+public class Attachment implements Entity, Child
 {
     private Long id;
 
@@ -21,10 +21,19 @@ public class Attachment implements Entity
 
     private InputStream data;
 
-    private EntityReference parentReference;
+    private Long parentId;
+
+    private EntityReference reference;
 
     public Attachment()
     {
+        this(null);
+    }
+
+    public Attachment(EntityReference parentReference)
+    {
+        this.reference = new EntityReference("category", getSlug(), Optional.<EntityReference>fromNullable(
+                parentReference));
     }
 
     @Override
@@ -84,17 +93,17 @@ public class Attachment implements Entity
     @Override
     public EntityReference getReference()
     {
-        return new EntityReference("attachment", getSlug(), Optional.fromNullable(this.parentReference));
+        return this.reference;
     }
 
     @Override
-    public EntityReference getParentReference()
+    public Long getParentId()
     {
-        return this.parentReference;
+        return this.parentId;
     }
 
-    public void setParentReference(EntityReference reference)
+    public void setParentId(Long parentId)
     {
-        this.parentReference = parentReference;
+        this.parentId = parentId;
     }
 }

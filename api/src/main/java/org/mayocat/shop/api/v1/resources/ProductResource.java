@@ -22,14 +22,17 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.shop.api.v1.reprensentations.AttachmentRepresentation;
+import org.mayocat.shop.api.v1.reprensentations.FileRepresentation;
+import org.mayocat.shop.api.v1.reprensentations.ProductRepresentation;
 import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.model.Attachment;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.shop.api.v1.reprensentations.ProductRepresentation;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
@@ -42,10 +45,8 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
-import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("/api/1.0/product/")
@@ -92,6 +93,21 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         } else {
             return this.wrapInRepresentation(product);
         }
+    }
+
+    @Path("{slug}/attachment")
+    @GET
+    public List<AttachmentRepresentation> getAttachments()
+    {
+        List<AttachmentRepresentation> result = new ArrayList();
+        for (Attachment attachment : this.getAttachmentList()) {
+            FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
+                    "/attachment/" + attachment.getSlug() + "." + attachment.getExtension());
+            AttachmentRepresentation representation = new AttachmentRepresentation(
+                    "/attachment/" + attachment.getSlug(), attachment.getTitle(), fr);
+            result.add(representation);
+        }
+        return result;
     }
 
     @Path("{slug}/attachment")
@@ -214,7 +230,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Category category : categories) {
             categoriesReferences
-                    .add(new EntityReferenceRepresentation(category.getTitle(), "/category/" + category.getSlug()));
+                    .add(new EntityReferenceRepresentation("/category/" + category.getSlug(), category.getTitle()));
         }
         return new ProductRepresentation(product, categoriesReferences);
     }

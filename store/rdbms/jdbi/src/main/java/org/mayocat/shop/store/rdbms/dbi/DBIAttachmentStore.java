@@ -19,12 +19,9 @@ import org.xwiki.component.phase.InitializationException;
  * @version $Id$
  */
 @Component(hints = { "jdbi", "default" })
-public class DBIAttachmentStore extends AbstractEntityStore implements AttachmentStore, Initializable
+public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStore, Initializable
 {
     private static final String ATTACHMENT_TABLE_NAME = "attachment";
-
-    @Inject
-    private DBIProvider dbi;
 
     private AttachmentDAO dao;
 
@@ -37,30 +34,35 @@ public class DBIAttachmentStore extends AbstractEntityStore implements Attachmen
 
         this.dao.begin();
 
-        Long entityId = this.dao.createEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
+        Long entityId = this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
 
         this.dao.createAttachment(entityId, attachment);
 
         this.dao.commit();
     }
 
-    @Override public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
+    @Override
+    public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override public List<Attachment> findAll(Integer number, Integer offset)
+    @Override
+    public List<Attachment> findAll(Integer number, Integer offset)
+    {
+        return this.dao.findAll(ATTACHMENT_TABLE_NAME, getTenant());
+    }
+
+    @Override
+    public Attachment findById(Long id)
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override public Attachment findById(Long id)
+    @Override
+    public void initialize() throws InitializationException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override public void initialize() throws InitializationException
-    {
-        this.dao = this.dbi.get().onDemand(AttachmentDAO.class);
+        this.dao = this.getDbi().onDemand(AttachmentDAO.class);
+        super.initialize();
     }
 }

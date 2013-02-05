@@ -14,14 +14,11 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 @Component(hints={"jdbi", "default"})
-public class DBICategoryStore extends AbstractEntityStore implements CategoryStore, Initializable
+public class DBICategoryStore extends DBIEntityStore implements CategoryStore, Initializable
 {
     private static final String CATEGORY_TABLE_NAME = "category";
 
     public static final String CATEGORY_POSITION = "category.position";
-
-    @Inject
-    private DBIProvider dbi;
 
     private CategoryDAO dao;
 
@@ -121,13 +118,14 @@ public class DBICategoryStore extends AbstractEntityStore implements CategorySto
         return this.dao.findById(CATEGORY_TABLE_NAME, id);
     }
 
-    public void initialize() throws InitializationException
-    {
-        this.dao = this.dbi.get().onDemand(CategoryDAO.class);
-    }
-
     public Category findBySlug(String slug)
     {
         return this.dao.findBySlugWithTranslations(CATEGORY_TABLE_NAME, slug, getTenant());
+    }
+
+    public void initialize() throws InitializationException
+    {
+        this.dao = this.getDbi().onDemand(CategoryDAO.class);
+        super.initialize();
     }
 }

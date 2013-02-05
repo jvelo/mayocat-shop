@@ -38,7 +38,6 @@ public class User implements Entity
 
     public User()
     {
-        
     }
     
     public User(Long id)
@@ -94,9 +93,4 @@ public class User implements Entity
         return new EntityReference("user", getSlug(), Optional.<EntityReference>absent());
     }
 
-    @Override
-    public EntityReference getParentReference()
-    {
-        return null;
-    }
 }

@@ -7,6 +7,6 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface AttachmentStore extends Store<Attachment, Long>
+public interface AttachmentStore extends Store<Attachment, Long>, EntityStore
 {
 }

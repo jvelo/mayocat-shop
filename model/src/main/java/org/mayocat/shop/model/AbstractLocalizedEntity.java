@@ -2,7 +2,7 @@ package org.mayocat.shop.model;
 
 import java.util.Locale;
 
-public abstract class AbstractLocalizedEntity implements LocalizedEntity
+public abstract class AbstractLocalizedEntity implements Localized
 {
     private Translations translations;
 

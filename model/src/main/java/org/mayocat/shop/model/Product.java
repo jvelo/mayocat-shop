@@ -97,12 +97,6 @@ public class Product extends AbstractLocalizedEntity
         return new EntityReference("product", getSlug(), Optional.<EntityReference>absent());
     }
 
-    @Override
-    public EntityReference getParentReference()
-    {
-        return null;
-    }
-
     ////////////////////////////////////////////////
 
     @Override  

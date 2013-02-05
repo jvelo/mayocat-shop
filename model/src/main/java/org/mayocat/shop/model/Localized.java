@@ -2,7 +2,7 @@ package org.mayocat.shop.model;
 
 import java.util.Locale;
 
-public interface LocalizedEntity extends Entity
+public interface Localized extends Entity
 {
     String getLocalizedText(String field, Locale locale);
     

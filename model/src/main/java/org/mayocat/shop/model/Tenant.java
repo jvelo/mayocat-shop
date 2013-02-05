@@ -11,7 +11,7 @@ import org.mayocat.shop.model.reference.EntityReference;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
-public class Tenant implements Entity
+public class Tenant implements Identifiable, Slug
 {
     @JsonIgnore
     Long id;
@@ -64,17 +64,6 @@ public class Tenant implements Entity
         this.slug = slug;
     }
 
-    @Override
-    public EntityReference getReference()
-    {
-        return new EntityReference("tenant", getSlug(), Optional.<EntityReference>absent());
-    }
-
-    @Override
-    public EntityReference getParentReference()
-    {
-        return null;
-    }
     // ///////////////////////////////////////////////////////////
 
     @Override

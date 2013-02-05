@@ -1,6 +1,7 @@
 package org.mayocat.shop.api.v1.resources;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -30,6 +31,11 @@ public class AbstractAttachmentResource
     @Inject
     private Slugifier slugifier;
 
+    protected List<Attachment> getAttachmentList()
+    {
+        return this.attachmentStore.get().findAll(0, 0);
+    }
+
     protected Response addAttachment(InputStream data, String originalFilename, String title,
             Optional<EntityReference> parent)
     {
@@ -39,7 +45,7 @@ public class AbstractAttachmentResource
                     .type(MediaType.TEXT_PLAIN_TYPE).build();
         }
 
-        Attachment attachment = new Attachment();
+        Attachment attachment = new Attachment(parent.orNull());
 
         String fileName;
         String extension = null;
@@ -62,6 +68,10 @@ public class AbstractAttachmentResource
         attachment.setSlug(slug);
         attachment.setData(data);
         attachment.setTitle(title);
+
+        if (attachment.getReference().getParent() != null) {
+            attachment.setParentId(attachmentStore.get().getId(attachment.getReference().getParent()));
+        }
 
         return this.addAttachment(attachment, 0);
     }

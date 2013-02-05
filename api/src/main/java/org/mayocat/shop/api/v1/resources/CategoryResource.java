@@ -254,7 +254,8 @@ public class CategoryResource implements Resource
     {
         List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Product product : products) {
-            categoriesReferences.add(new EntityReferenceRepresentation(product.getTitle(), "/product/" + product.getSlug()));
+            categoriesReferences.add(new EntityReferenceRepresentation("/product/" + product.getSlug(),
+                    product.getTitle()));
         }
         return new CategoryRepresentation(category, categoriesReferences);
     }

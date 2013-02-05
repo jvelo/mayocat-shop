@@ -97,12 +97,6 @@ public class Category extends AbstractLocalizedEntity
         return new EntityReference("category", getSlug(), Optional.<EntityReference>absent());
     }
 
-    @Override
-    public EntityReference getParentReference()
-    {
-        return null;
-    }
-
     // //////////////////////////////////////////////
 
     @Override

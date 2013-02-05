@@ -19,12 +19,12 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 @Component(hints = { "jdbi", "default" })
-public class DBIProductStore extends AbstractEntityStore implements ProductStore, Initializable
+public class DBIProductStore extends DBIEntityStore implements ProductStore, Initializable
 {
     private static final String PRODUCT_POSITION = "product.position";
 
-    @Inject
-    private DBIProvider dbi;
+    //@Inject
+    //private DBIProvider dbi;
 
     private static final String PRODUCT_TABLE_NAME = "product";
 
@@ -123,7 +123,8 @@ public class DBIProductStore extends AbstractEntityStore implements ProductStore
     @Override
     public void initialize() throws InitializationException
     {
-        this.dao = this.dbi.get().onDemand(ProductDAO.class);
+        this.dao = this.getDbi().onDemand(ProductDAO.class);
+        super.initialize();
     }
 
 
