@@ -1,0 +1,59 @@
+logging:
+  loggers:
+      "org.mayocat": DEBUG
+  file:
+    archive: false
+
+multitenancy:
+  activated: false
+  defaultTenant: shop
+
+authentication:
+  cookieEncryptionKey: Change me here!
+
+dataSource:
+  name: "jdbi"
+
+database:
+  driverClass: org.postgresql.Driver
+  user: imac
+  password: 
+  url: jdbc:postgresql://127.0.0.1/shop
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQuery: "/* MayocatShop Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  checkConnectionHealthWhenIdleFor: 10s
+  closeConnectionIfIdleFor: 1 minute
+
+general:
+  name:
+    default: Your shop's name
+  locales:
+    main:
+      default: en
+      configurable: false
+      visible: true
+    others:
+      default: [de, fr_FR]
+      configurable: true
+
+theme:
+  active:
+    default: default
+
+shop:
+  products:
+    stock:
+      default: true
+    categories:
+      default: true
+    variants: 
+      default: true
+    priceVariesWithVariants:
+      default: true
+      configurable: false
+      visible: false

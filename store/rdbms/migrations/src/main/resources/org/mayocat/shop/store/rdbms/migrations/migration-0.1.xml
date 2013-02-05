@@ -12,7 +12,7 @@
       <column name="id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="version" type="smallint unsigned">
+      <column name="version" type="smallint">
         <constraints nullable="false" />
       </column>
       <column name="data" type="mediumtext" />
@@ -31,7 +31,7 @@
     <addForeignKeyConstraint constraintName="TENANT_CONFIGURATION_FK"
                              baseTableName="tenant" baseColumnNames="configuration_id"
                              referencedTableName="configuration" referencedColumnNames="id" />
-    <createIndex tableName="tenant" indexName="SLUG_INDEX">
+    <createIndex tableName="tenant" indexName="TENANT_SLUG_INDEX">
       <column name="slug" />
     </createIndex>
 
@@ -47,18 +47,22 @@
         <constraints nullable="false" />
       </column>
       <column name="tenant_id" type="bigint" />
+      <column name="parent_id" type="bigint" />
     </createTable>
-    <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id" constraintName="UNIQUE_SLUG_PER_TYPE_PER_TENANT" />
+    <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id" constraintName="ENTITY_UNIQUE_SLUG_PER_TYPE_PER_TENANT" />
     <addForeignKeyConstraint constraintName="ENTITY_TENANT_FK"
                              baseTableName="entity" baseColumnNames="tenant_id"
                              referencedTableName="tenant" referencedColumnNames="id" />
-    <createIndex tableName="entity" indexName="SLUG_INDEX">
+    <addForeignKeyConstraint constraintName="ENTITY_PARENT_FK"
+                             baseTableName="entity" baseColumnNames="parent_id"
+                             referencedTableName="entity" referencedColumnNames="id" />
+    <createIndex tableName="entity" indexName="ENTITY_SLUG_INDEX">
       <column name="slug" />
     </createIndex>
-    <createIndex tableName="entity" indexName="TYPE_INDEX">
+    <createIndex tableName="entity" indexName="ENTITY_TYPE_INDEX">
       <column name="type" />
     </createIndex>
-    <createIndex tableName="entity" indexName="TENANT_INDEX">
+    <createIndex tableName="entity" indexName="ENTITY_TENANT_INDEX">
       <column name="tenant_id" />
     </createIndex>
 
@@ -70,11 +74,11 @@
       <column name="entity_id" type="bigint" />
       <column name="field" type="varchar(255)" />
     </createTable>
-    <addUniqueConstraint tableName="translation" columnNames="entity_id,field" constraintName="UNIQUE_TRANSLATION_PER_FIELD_PER_ENTITY" />
+    <addUniqueConstraint tableName="translation" columnNames="entity_id,field" constraintName="TRANSLATION_UNIQUE_TRANSLATION_PER_FIELD_PER_ENTITY" />
     <addForeignKeyConstraint constraintName="TRANSLATION_ENTITY_FK"
                              baseTableName="translation" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="translation" indexName="FIELD_INDEX">
+    <createIndex tableName="translation" indexName="TRANSLATION_FIELD_INDEX">
       <column name="field" />
     </createIndex>
 
@@ -86,11 +90,11 @@
       <column name="locale" type="varchar(255)" />
       <column name="text" type="varchar(255)" />
     </createTable>
-    <addUniqueConstraint tableName="translation_small" columnNames="translation_id,locale" constraintName="UNIQUE_TRANSLATION_PER_LANG" />
+    <addUniqueConstraint tableName="translation_small" columnNames="translation_id,locale" constraintName="TRANSLATION_SMALL_UNIQUE_TRANSLATION_PER_LANG" />
     <addForeignKeyConstraint constraintName="TRANSLATION_SMALL_TRANSLATION_FK"
                              baseTableName="translation_small" baseColumnNames="translation_id"
                              referencedTableName="translation" referencedColumnNames="id" />
-    <createIndex tableName="translation_small" indexName="LANG_INDEX">
+    <createIndex tableName="translation_small" indexName="TRANSLATION_SMALL_LANG_INDEX">
       <column name="locale" />
     </createIndex>
 
@@ -102,11 +106,11 @@
       <column name="locale" type="varchar(255)" />
       <column name="text" type="mediumtext" />
     </createTable>
-    <addUniqueConstraint tableName="translation_medium" columnNames="translation_id,locale" constraintName="UNIQUE_TRANSLATION_PER_LANG" />
+    <addUniqueConstraint tableName="translation_medium" columnNames="translation_id,locale" constraintName="TRANSLATION_MEDIUM_UNIQUE_TRANSLATION_PER_LANG" />
     <addForeignKeyConstraint constraintName="TRANSLATION_MEDIUM_TRANSLATION_FK"
                              baseTableName="translation_medium" baseColumnNames="translation_id"
                              referencedTableName="translation" referencedColumnNames="id" />
-    <createIndex tableName="translation_medium" indexName="LANG_INDEX">
+    <createIndex tableName="translation_medium" indexName="TRANSLATION_MEDIUM_LANG_INDEX">
       <column name="locale" />
     </createIndex>
 
@@ -172,7 +176,7 @@
       <column name="user_id" type="bigint" />
       <column name="role" type="varchar(255)" />
     </createTable>
-    <addForeignKeyConstraint constraintName="ROLE_USER_FK"
+    <addForeignKeyConstraint constraintName="USER_ROLE_USER_KF"
                              baseTableName="user_role" baseColumnNames="user_id"
                              referencedTableName="user" referencedColumnNames="entity_id" />
 
@@ -181,7 +185,7 @@
       <column name="entity_id" type="bigint">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="position" type="smallint unsigned" />
+      <column name="position" type="smallint" />
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
       <column name="on_shelf" type="boolean" defaultValueBoolean="false" />
@@ -189,10 +193,10 @@
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="product" indexName="POSITION_INDEX">
+    <createIndex tableName="product" indexName="PRODUCT_POSITION_INDEX">
       <column name="position" />
     </createIndex>
-    <createIndex tableName="product" indexName="ON_SHELF_INDEX">
+    <createIndex tableName="product" indexName="PRODUCT_ON_SHELF_INDEX">
       <column name="on_shelf" />
     </createIndex>
 
@@ -201,14 +205,14 @@
       <column name="entity_id" type="bigint">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="position" type="smallint unsigned" />
+      <column name="position" type="smallint" />
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
     </createTable>
     <addForeignKeyConstraint constraintName="CATEGORY_ENTITY_FK"
                              baseTableName="category" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="category" indexName="POSITION_INDEX">
+    <createIndex tableName="category" indexName="CATEGORY_POSITION_INDEX">
       <column name="position" />
     </createIndex>
 
@@ -216,7 +220,7 @@
     <createTable tableName="category_product">
       <column name="category_id" type="bigint" />
       <column name="product_id" type="bigint" />
-      <column name="position" type="smallint unsigned" />
+      <column name="position" type="smallint" />
     </createTable>
     <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_CATEGORY_ENTITY_FK"
                              baseTableName="category_product" baseColumnNames="category_id"
@@ -226,7 +230,7 @@
                              referencedTableName="entity" referencedColumnNames="id" />
     <addPrimaryKey tableName="category_product"
                    columnNames="category_id,product_id" constraintName="CATEGORY_PRODUCT_PK" />
-    <createIndex tableName="category_product" indexName="POSITION_INDEX">
+    <createIndex tableName="category_product" indexName="CATEGORY_PRODUCT_POSITION_INDEX">
       <column name="position" />
     </createIndex>
 
