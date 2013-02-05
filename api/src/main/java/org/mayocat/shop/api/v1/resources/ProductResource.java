@@ -22,9 +22,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.api.v1.reprensentations.AttachmentRepresentation;
-import org.mayocat.shop.api.v1.reprensentations.FileRepresentation;
-import org.mayocat.shop.api.v1.reprensentations.ProductRepresentation;
+import org.mayocat.shop.api.v1.representations.AttachmentRepresentation;
+import org.mayocat.shop.api.v1.representations.FileRepresentation;
+import org.mayocat.shop.api.v1.representations.ProductRepresentation;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Attachment;
 import org.mayocat.shop.model.Category;

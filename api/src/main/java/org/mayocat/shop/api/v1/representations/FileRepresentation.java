@@ -1,4 +1,4 @@
-package org.mayocat.shop.api.v1.reprensentations;
+package org.mayocat.shop.api.v1.representations;
 
 /**
  * @version $Id$
