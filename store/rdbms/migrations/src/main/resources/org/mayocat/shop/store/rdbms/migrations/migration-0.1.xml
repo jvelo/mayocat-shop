@@ -114,8 +114,8 @@
       <column name="locale" />
     </createIndex>
 
-    <!-- User table -->
-    <createTable tableName="user">
+    <!-- Agents (Correspond to user in Mayocat, but user is a reserved word) -->
+    <createTable tableName="agent">
       <column name="entity_id" type="bigint">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -124,10 +124,10 @@
       </column>
       <column name="password" type="varchar(255)" />
     </createTable>
-    <addForeignKeyConstraint constraintName="USER_ENTITY_FK"
-                             baseTableName="user" baseColumnNames="entity_id"
+    <addForeignKeyConstraint constraintName="AGENT_ENTITY_FK"
+                             baseTableName="agent" baseColumnNames="entity_id"
                              referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="user" indexName="USER_EMAIL_INDEX">
+    <createIndex tableName="agent" indexName="AGENT_EMAIL_INDEX">
       <column name="email" />
     </createIndex>
 
@@ -169,16 +169,16 @@
     </createIndex>
 
     <!-- Role table -->
-    <createTable tableName="user_role">
+    <createTable tableName="agent_role">
       <column name="id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="user_id" type="bigint" />
+      <column name="agent_id" type="bigint" />
       <column name="role" type="varchar(255)" />
     </createTable>
-    <addForeignKeyConstraint constraintName="USER_ROLE_USER_KF"
-                             baseTableName="user_role" baseColumnNames="user_id"
-                             referencedTableName="user" referencedColumnNames="entity_id" />
+    <addForeignKeyConstraint constraintName="AGENT_ROLE_AGENT_KF"
+                             baseTableName="agent_role" baseColumnNames="agent_id"
+                             referencedTableName="agent" referencedColumnNames="entity_id" />
 
     <!-- Product table -->
     <createTable tableName="product">

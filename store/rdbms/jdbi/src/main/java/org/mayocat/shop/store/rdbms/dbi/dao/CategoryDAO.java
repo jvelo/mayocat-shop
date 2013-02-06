@@ -115,15 +115,15 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
     @SqlQuery
     (
         "SELECT *, " +
-        "       COUNT(product_id) " +
+        "       COALESCE(_count_categories.count, 0) AS _count " +
         "FROM   entity " +
         "       INNER JOIN category " +
         "               ON entity.id = category.entity_id " +
-        "       RIGHT JOIN category_product " +
-        "               ON category_product.category_id = category.entity_id " +
-        "WHERE  entity.tenant_id = :tenant.id " +
-        "GROUP  BY entity.slug " +
-        "ORDER  BY title ASC "
+        "       LEFT JOIN (SELECT category_product.category_id, " +
+        "                         COUNT(category_product.product_id) AS count " +
+        "                  FROM   category_product " +
+        "                  GROUP  BY category_product.category_id) _count_categories " +
+        "              ON _count_categories.category_id = category.entity_id "
     )
     abstract List<EntityAndCountsJoinRow> findWithProductCountRows(@BindBean("tenant") Tenant tenant);
 
@@ -139,7 +139,7 @@ public abstract class CategoryDAO extends AbstractLocalizedEntityDAO<Category> i
         EntityExtractor<Category> extractor = new EntityExtractor<Category>();
         for (EntityAndCountsJoinRow row : rows) {
             Category c = extractor.extract(row.getEntityData(), Category.class);
-            Long count = row.getCounts().get("product_id");
+            Long count = row.getCounts().get("_count");
             EntityAndCount<Category> entityAndCount = new EntityAndCount<Category>(c, count);
             listBuilder.add(entityAndCount);
         }

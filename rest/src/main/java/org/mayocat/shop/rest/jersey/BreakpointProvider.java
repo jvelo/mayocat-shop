@@ -1,36 +1,33 @@
 package org.mayocat.shop.rest.jersey;
 
+import java.lang.reflect.Type;
+
 import javax.inject.Inject;
-import javax.ws.rs.core.Context;
 
 import org.mayocat.shop.base.Provider;
+import org.mayocat.shop.theme.Breakpoint;
 import org.mayocat.shop.theme.UserAgentBreakpointDetector;
 import org.xwiki.component.annotation.Component;
 
-import com.sun.jersey.api.model.Parameter;
-import com.sun.jersey.core.spi.component.ComponentContext;
-import com.sun.jersey.core.spi.component.ComponentScope;
-import com.sun.jersey.spi.inject.Injectable;
-import com.sun.jersey.spi.inject.InjectableProvider;
+import com.sun.jersey.api.core.HttpContext;
 
 /**
  * @version $Id$
  */
 @Component("breakpoint")
-public class BreakpointProvider implements InjectableProvider<Context, Parameter>, Provider
+public class BreakpointProvider extends AbstractInjectableProvider<Breakpoint> implements Provider
 {
     @Inject
     private UserAgentBreakpointDetector breakpointDetector;
 
-    @Override
-    public ComponentScope getScope()
+    public BreakpointProvider()
     {
-        return ComponentScope.PerRequest;
+        super(Breakpoint.class);
     }
 
     @Override
-    public Injectable getInjectable(ComponentContext ic, Context breakpoint, Parameter parameter)
+    public Breakpoint getValue(HttpContext httpContext)
     {
-        return new BreakpointInjectable(breakpointDetector);
+        return this.breakpointDetector.getBreakpoint(httpContext.getRequest().getHeaderValue("User-Agent"));
     }
 }

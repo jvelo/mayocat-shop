@@ -31,6 +31,11 @@ public class AbstractAttachmentResource
     @Inject
     private Slugifier slugifier;
 
+    protected AttachmentStore getAttachmentStore()
+    {
+        return attachmentStore.get();
+    }
+
     protected List<Attachment> getAttachmentList()
     {
         return this.attachmentStore.get().findAll(0, 0);
@@ -51,7 +56,7 @@ public class AbstractAttachmentResource
         String extension = null;
 
         if (originalFilename.indexOf(".") > 0) {
-            extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
             attachment.setExtension(extension);
             fileName = StringUtils.removeEnd(originalFilename, "." + extension);
         } else {

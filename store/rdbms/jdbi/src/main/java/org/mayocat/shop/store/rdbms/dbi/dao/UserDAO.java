@@ -19,37 +19,37 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @UseStringTemplate3StatementLocator
 public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 {
-    private static final String USER_TABLE_NAME = "user";
+    private static final String USER_TABLE_NAME = "agent";
 
     @SqlUpdate
     (
-        "INSERT INTO user (entity_id, email, password) VALUES (:id, :user.email, :user.password)"
+        "INSERT INTO agent (entity_id, email, password) VALUES (:id, :user.email, :user.password)"
     )
     public abstract void create(@Bind("id") Long entityId, @BindBean("user") User user);
 
     @SqlUpdate
     (
-        "INSERT INTO user_role (user_id, role) VALUES (:userId, :role)"        
+        "INSERT INTO agent_role (agent_id, role) VALUES (:userId, :role)"
     )
     public abstract void addRoleToUser(@Bind("userId") Long userId, @Bind("role") String role);
     
     @SqlUpdate
     (
-        "UPDATE user SET email=:u.email, password=:u.password WHERE id=:u.id"
+        "UPDATE agent SET email=:u.email, password=:u.password WHERE id=:u.id"
     )
     public abstract void update(@BindBean("u") User user, @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     (
-        "SELECT * FROM entity INNER JOIN user ON entity.id=user.entity_id WHERE " +
-        "(user.email=:userNameOrEmail OR entity.slug=:userNameOrEmail) AND entity.tenant_id=:t.id AND entity.type='user'"
+        "SELECT * FROM entity INNER JOIN agent ON entity.id=agent.entity_id WHERE " +
+        "(agent.email=:userNameOrEmail OR entity.slug=:userNameOrEmail) AND entity.tenant_id=:t.id AND entity.type='user'"
     )
     public abstract User findByEmailOrUserNameAndTenant(@Bind("userNameOrEmail") String userNameOrEmail, @BindBean("t") Tenant tenant);
 
     @RegisterMapper(RoleMapper.class)
     @SqlQuery
     (
-        "SELECT * FROM user_role WHERE user_id = :user.id"
+        "SELECT * FROM agent_role WHERE agent_id = :user.id"
     )
     public abstract List<Role> findRolesForUser(@BindBean("user") User user);
 

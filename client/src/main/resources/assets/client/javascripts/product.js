@@ -49,6 +49,13 @@ angular.module('product', ['ngResource'])
             };
         }
 
+        $scope.reloadImages = function() {
+            // FIXME Attachment => Images
+            $scope.product.images = $resource("/api/1.0/product/:slug/attachment").get({
+                "slug": $scope.slug
+            });
+        }
+
         $scope.getImageUploadUri = function() {
             return "/api/1.0/product/" + $scope.slug + "/attachment";
         }
@@ -74,13 +81,11 @@ angular.module('product', ['ngResource'])
         }
 
         if (!$scope.isNew()) {
-            $scope.product = $scope.ProductResource.get({ "slug":$scope.slug, "expand":"categories" }, function () {
+            $scope.product = $scope.ProductResource.get({
+                "slug": $scope.slug,
+                "expand": ["categories", "images"] }, function () {
                 // Ensures the category initialization happens after the AJAX callback
                 $scope.initializeCategories();
-
-                // FIXME temporary until images are fetch via API
-                $scope.product.images = [];
-
             });
         }
         else {

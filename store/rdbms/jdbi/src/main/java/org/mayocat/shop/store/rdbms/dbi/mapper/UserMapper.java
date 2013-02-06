@@ -9,15 +9,13 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 public class UserMapper implements ResultSetMapper<User>
 {
-
     @Override
     public User map(int index, ResultSet result, StatementContext statementContext) throws SQLException
     {
-        User user = new User(result.getLong("entity.id"));
-        user.setEmail(result.getString("user.email"));
-        user.setPassword(result.getString("user.password"));
-        user.setSlug(result.getString("entity.slug"));
+        User user = new User(result.getLong("id"));
+        user.setEmail(result.getString("email"));
+        user.setPassword(result.getString("password"));
+        user.setSlug(result.getString("slug"));
         return user;
     }
-
 }

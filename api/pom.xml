@@ -29,6 +29,11 @@
       <artifactId>mayocat-service</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-image</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
         <groupId>com.sun.jersey.contribs</groupId>

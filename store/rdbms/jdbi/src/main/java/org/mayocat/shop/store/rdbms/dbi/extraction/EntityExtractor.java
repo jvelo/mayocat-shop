@@ -29,10 +29,8 @@ public class EntityExtractor<E>
                     String field = StringUtil.snakify(method.getName().substring(3));
 
                     Object value = null;
-                    if (entityData.containsKey("entity." + field)) {
-                        value = entityData.get("entity." + field);
-                    } else if (entityData.containsKey(entityType + "." + field)) {
-                        value = entityData.get(entityType + "." + field);
+                    if (entityData.containsKey(field)) {
+                        value = entityData.get(field);
                     }
 
                     boolean setterAccessible = method.isAccessible();

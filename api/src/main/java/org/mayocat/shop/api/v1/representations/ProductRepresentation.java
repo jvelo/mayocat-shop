@@ -18,16 +18,25 @@ public class ProductRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<EntityReferenceRepresentation> categories = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<AttachmentRepresentation> images = null;
+
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private String href;
 
     public ProductRepresentation(Product product)
     {
-        this(product, null);
+        this(product, null, null);
     }
 
     public ProductRepresentation(Product product, List<EntityReferenceRepresentation> categories)
+    {
+        this(product, categories, null);
+    }
+
+    public ProductRepresentation(Product product, List<EntityReferenceRepresentation> categories,
+            List<AttachmentRepresentation> images)
     {
         this.slug = product.getSlug();
         this.title = product.getTitle();
@@ -36,6 +45,7 @@ public class ProductRepresentation
         this.href = "/product/" + this.slug;
 
         this.categories = categories;
+        this.images = images;
     }
 
     public String getSlug()
@@ -61,5 +71,20 @@ public class ProductRepresentation
     public List<EntityReferenceRepresentation> getCategories()
     {
         return categories;
+    }
+
+    public void setCategories(List<EntityReferenceRepresentation> categories)
+    {
+        this.categories = categories;
+    }
+
+    public List<AttachmentRepresentation> getImages()
+    {
+        return images;
+    }
+
+    public void setImages(List<AttachmentRepresentation> images)
+    {
+        this.images = images;
     }
 }

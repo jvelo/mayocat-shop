@@ -21,9 +21,7 @@ public class EntityAndCountsJoinRowMapper extends BaseMapMapper<EntityAndCountsJ
         for (String key : rowData.keySet()) {
             if (isCountKey(key)) {
                 // This is a count row;
-                String countName = getCountName(key);
-                countBuilder.put(countName, (Long) rowData.get(key));
-
+                countBuilder.put(key, (Long) rowData.get(key));
             } else if (rowData.get(key) != null) {
                 dataBuilder.put(key, rowData.get(key));
             }
@@ -37,25 +35,6 @@ public class EntityAndCountsJoinRowMapper extends BaseMapMapper<EntityAndCountsJ
 
     private boolean isCountKey(String rowKey)
     {
-        return (rowKey.toLowerCase().startsWith("count(") || rowKey.toLowerCase().startsWith(".count("))
-                && rowKey.endsWith(")");
+        return (rowKey.toLowerCase().startsWith("_count"));
     }
-
-    private String getCountName(String rowKey)
-    {
-        try {
-            String count;
-            if (rowKey.toLowerCase().startsWith("count(")) {
-                count = rowKey.substring(6);
-            } else {
-                count = rowKey.substring(7);
-            }
-            count = count.substring(0, count.length() - 1);
-            return count;
-        } catch (Exception e) {
-            // Do nothing
-            return rowKey;
-        }
-    }
-
 }

@@ -99,6 +99,28 @@ input[type='text'].title {
   padding-left: 9px;
 }
 
+/* Product */
+
+.entity ul.thumbnails > li:first-child {
+  margin-left:0;
+}
+
+.entity ul.thumbnails > li{
+  margin-left:10px;
+  width:150px;
+}
+
+.entity ul.thumbnails .thumbnail {
+  text-align: center;
+}
+
+.entity ul.thumbnails .thumbnail .wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  height: 150px;
+  width: 150px;
+}
+
 /* File upload widget */
 
 image-upload .fileinput-button {
@@ -132,5 +154,5 @@ image-upload .editor ul li span.preview > div {
 }
 
 image-upload .editor ul li .progress {
-    height: 6px;
+  height: 6px;
 }

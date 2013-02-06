@@ -161,6 +161,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
     {
         private final ResourceMethodDispatchProvider provider;
 
+        // FIXME : useless ?
         private final Execution execution;
 
         public AnnotationResourceMethodDispatchProvider(Execution execution, ResourceMethodDispatchProvider provider)

@@ -75,7 +75,8 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
         templateUrl: "partials/imageUpload.html",
         scope: {
             'requestedDropZone': '&dropZone',
-            'requestedUploadUri': '&uploadUri'
+            'requestedUploadUri': '&uploadUri',
+            'onUpload': '&onUpload'
         },
         link:  function postLink($scope, element, attrs) {
 
@@ -88,6 +89,8 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             $scope.dropzone = typeof $scope.requestedDropZone === "string"
                             ? $($scope.requestedDropZone)
                             : $(element).find('.dropzone');
+
+
 
             $scope.files = [];
 
@@ -127,6 +130,9 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             $scope.fileUploaded = function(index) {
                 $scope.$apply(function($scope){
                     $scope.files[index].uploaded = true;
+                    if (typeof $scope.onUpload === "function") {
+                        $scope.onUpload();
+                    }
                 });
             }
 

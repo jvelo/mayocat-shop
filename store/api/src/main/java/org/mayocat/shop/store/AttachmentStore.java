@@ -9,4 +9,5 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface AttachmentStore extends Store<Attachment, Long>, EntityStore
 {
+    Attachment findBySlugAndExtension(String fileName, String extension);
 }

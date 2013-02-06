@@ -23,16 +23,16 @@ public class TenantMapper implements ResultSetMapper<Tenant>
     @Override
     public Tenant map(int index, ResultSet result, StatementContext statementContext) throws SQLException
     {
-        String slug = result.getString("tenant.slug");
+        String slug = result.getString("slug");
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
-        Integer configurationVersion = result.getInt("configuration.version");
+        Integer configurationVersion = result.getInt("version");
         TenantConfiguration configuration;
-        if (Strings.isNullOrEmpty(result.getString("configuration.data"))) {
+        if (Strings.isNullOrEmpty(result.getString("data"))) {
             configuration = new TenantConfiguration(configurationVersion, Collections.<String, Object>emptyMap());
         } else {
             try {
-                Map<String, Object> data = mapper.readValue(result.getString("configuration.data"),
+                Map<String, Object> data = mapper.readValue(result.getString("data"),
                         new TypeReference<Map<String, Object>>() {});
                 configuration = new TenantConfiguration(configurationVersion, data);
             } catch (IOException e) {
@@ -42,7 +42,7 @@ public class TenantMapper implements ResultSetMapper<Tenant>
             }
         }
 
-        Tenant tenant = new Tenant(result.getLong("tenant.id"), slug, configuration);
+        Tenant tenant = new Tenant(result.getLong("id"), slug, configuration);
         tenant.setSlug(slug);
 
         return tenant;

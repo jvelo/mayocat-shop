@@ -25,6 +25,7 @@ public class AttachmentMapper implements ResultSetMapper<Attachment>
         attachment.setTitle(resultSet.getString("title"));
         attachment.setSlug(resultSet.getString("slug"));
         attachment.setData(resultSet.getBinaryStream("data"));
+        attachment.setExtension(resultSet.getString("extension"));
         return attachment;
     }
 }

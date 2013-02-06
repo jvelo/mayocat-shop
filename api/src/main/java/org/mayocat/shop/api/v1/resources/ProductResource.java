@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -71,9 +73,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             @QueryParam("filter") @DefaultValue("") String filter)
     {
         if (filter.equals("uncategorized")) {
-            return this.wrapInReprensentations(this.catalogService.findUncategorizedProducts());
+            return this.wrapInRepresentations(this.catalogService.findUncategorizedProducts());
         } else {
-            return this.wrapInReprensentations(this.catalogService.findAllProducts(number, offset));
+            return this.wrapInRepresentations(this.catalogService.findAllProducts(number, offset));
         }
     }
 
@@ -87,9 +89,19 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (product == null) {
             return Response.status(404).build();
         }
-        if (!Strings.isNullOrEmpty(expand)) {
+        List<String> expansions = Strings.isNullOrEmpty(expand)
+                ? Collections.<String>emptyList()
+                : Arrays.asList(expand.split(","));
+
+        if (expansions.contains("categories")) {
             List<Category> categories = this.catalogService.findCategoriesForProduct(product);
-            return this.wrapInRepresentation(product, categories);
+            if (expansions.contains("images")) {
+                return this.wrapInRepresentation(product, categories, this.getAttachments(slug));
+            } else {
+                return this.wrapInRepresentation(product, categories, null);
+            }
+        } else if (expansions.contains("images")) {
+            return this.wrapInRepresentation(product, this.getAttachments(slug));
         } else {
             return this.wrapInRepresentation(product);
         }
@@ -97,7 +109,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     @Path("{slug}/attachment")
     @GET
-    public List<AttachmentRepresentation> getAttachments()
+    public List<AttachmentRepresentation> getAttachments(@PathParam("slug") String slug)
     {
         List<AttachmentRepresentation> result = new ArrayList();
         for (Attachment attachment : this.getAttachmentList()) {
@@ -211,7 +223,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<ProductRepresentation> wrapInReprensentations(List<Product> products)
+    private List<ProductRepresentation> wrapInRepresentations(List<Product> products)
     {
         List<ProductRepresentation> result = new ArrayList<ProductRepresentation>();
         for (Product product : products) {
@@ -225,13 +237,28 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         return new ProductRepresentation(product);
     }
 
-    private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories)
+    private ProductRepresentation wrapInRepresentation(Product product,
+            List<AttachmentRepresentation> images)
+    {
+        ProductRepresentation result = new ProductRepresentation(product);
+        if (images != null) {
+            result.setImages(images);
+        }
+        return result;
+    }
+
+    private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories,
+            List<AttachmentRepresentation> images)
     {
         List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Category category : categories) {
             categoriesReferences
                     .add(new EntityReferenceRepresentation("/category/" + category.getSlug(), category.getTitle()));
         }
-        return new ProductRepresentation(product, categoriesReferences);
+        ProductRepresentation result = new ProductRepresentation(product, categoriesReferences);
+        if (images != null) {
+            result.setImages(images);
+        }
+        return result;
     }
 }
