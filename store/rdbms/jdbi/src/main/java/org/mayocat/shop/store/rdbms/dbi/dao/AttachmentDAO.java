@@ -29,10 +29,12 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
         "            (entity_id, " +
         "             extension, " +
         "             title, " +
+        "             description, " +
         "             data) " +
         "VALUES      (:entity, " +
         "             :attachment.extension, " +
         "             :attachment.title, " +
+        "             :attachment.description, " +
         "             :data) "
     )
    void createAttachment(@Bind("entity") Long entityId, @BindBean("attachment") Attachment attachment,

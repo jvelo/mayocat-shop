@@ -1,8 +1,15 @@
 'use strict'
 
 angular.module('product', ['ngResource'])
-    .   controller('ProductController', ['$scope', '$routeParams', '$resource', '$location', 'catalogService',
-    function ($scope, $routeParams, $resource, $location, catalogService) {
+    .controller('ThumbnailsEditorController', ['$scope', '$rootScope',
+    function ($scope, $rootScope) {
+        $rootScope.$on('thumbnails:edit', function(event, image) {
+            $scope.image = image;
+        });
+    }])
+
+    .controller('ProductController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', 'catalogService',
+    function ($scope, $rootScope, $routeParams, $resource, $location, catalogService) {
 
         $scope.slug = $routeParams.product;
 
@@ -24,6 +31,10 @@ angular.module('product', ['ngResource'])
                 });
             }
         };
+
+        $scope.editThumbnails = function(image) {
+            $rootScope.$broadcast('thumbnails:edit', image);
+        }
 
         $scope.categoryOperation = function (category, operation) {
             $resource("/api/1.0/category/:slug/:operation", {"slug":category.slug, "operation" : operation}, {

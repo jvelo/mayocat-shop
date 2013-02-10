@@ -2,7 +2,6 @@ package org.mayocat.shop.configuration.general;
 
 import javax.validation.Valid;
 
-import org.mayocat.shop.configuration.Configuration;
 import org.mayocat.shop.configuration.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @version $Id$
  */
-public class GeneralConfiguration implements Configuration
+public class GeneralConfiguration
 {
     @Valid
     @JsonProperty

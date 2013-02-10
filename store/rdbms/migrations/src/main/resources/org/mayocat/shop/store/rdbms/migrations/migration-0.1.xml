@@ -140,6 +140,7 @@
         <constraints nullable="false" />
       </column>
       <column name="title" type="varchar(255)" />
+      <column name="description" type="mediumtext" />
       <column name="data" type="mediumblob" />
     </createTable>
     <addForeignKeyConstraint constraintName="ATTACHMENT_ENTITY_FK"

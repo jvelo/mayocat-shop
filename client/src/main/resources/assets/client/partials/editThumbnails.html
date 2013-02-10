@@ -1,0 +1,14 @@
+<div ng-controller="ThumbnailsEditorController">
+    <div class="modal-header">
+        <h3>Hello thumbnails</h3>
+    </div>
+    <form class="form-horizontal">
+        <div class="modal-body">
+            <img ng-src="/api/1.0{{image.file.href}}?width=150&height=150" />
+        </div>
+    </form>
+    <div class="modal-footer">
+        <a class="btn">Close</a>
+        <a class="btn btn-primary">Save changes</a>
+    </div>
+</div>

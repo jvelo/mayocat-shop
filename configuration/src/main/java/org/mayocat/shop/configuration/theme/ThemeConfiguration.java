@@ -28,4 +28,5 @@ public class ThemeConfiguration
     {
         return detectBreakpoints;
     }
+
 }

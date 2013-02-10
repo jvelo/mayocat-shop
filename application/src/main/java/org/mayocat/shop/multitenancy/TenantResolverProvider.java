@@ -15,7 +15,6 @@ import com.sun.jersey.spi.resource.Singleton;
 @Component
 public class TenantResolverProvider implements Provider<TenantResolver>
 {
-
     @Inject
     private MultitenancyConfiguration configuration;
 

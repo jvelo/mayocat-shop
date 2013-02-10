@@ -21,20 +21,26 @@
               <li ng-repeat="image in product.images">
                 <div class="thumbnail">
                     <div class="wrapper">
-                        <img ng-src="/api/1.0{{image.file.href}}?width=140&height=140">
+                        <img ng-src="/api/1.0{{image.file.href}}?width=150&height=150" />
                     </div>
                     <div class="caption">
-                        <p class="pull-right">
-                            <a ng-click="editThumbnail(image)" class="btn">Edit thumbnails</a>
-                        </p>
-                        <p class="pull-right">
-                            <a ng-click="editThumbnail(image)" class="btn">Edit information</a>
-                        </p>
+                        <div class="btn-group pull-right">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                Edit
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                               <li ng-click="editThumbnails(image)"
+                                   data-toggle="modal"
+                                   href="#editThumbnails">Thumbnails</li>
+                            </ul>
+                        </div>
                         <div class="clearfix"></div>
                     </div>
                 </div>
               </li>
             </ul>
+            <div class="modal hide fade" ng-include="'partials/editThumbnails.html'" id="editThumbnails"></div>
             <div class="alert" ng-show="product.images.length <= 0">
                 <strong>No image yet</strong> - use the area below to add images to this product.
             </div>

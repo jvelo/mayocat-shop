@@ -105,9 +105,10 @@ input[type='text'].title {
   margin-left:0;
 }
 
-.entity ul.thumbnails > li{
-  margin-left:10px;
-  width:150px;
+.entity ul.thumbnails > li {
+  margin-left: 0px;
+  margin-right: 10px;
+  width: 160px; /* 150 + 10 */
 }
 
 .entity ul.thumbnails .thumbnail {
@@ -119,6 +120,7 @@ input[type='text'].title {
   vertical-align: middle;
   height: 150px;
   width: 150px;
+  background-color: #eee;
 }
 
 /* File upload widget */

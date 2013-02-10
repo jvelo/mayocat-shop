@@ -29,6 +29,12 @@ database:
   checkConnectionHealthWhenIdleFor: 10s
   closeConnectionIfIdleFor: 1 minute
 
+platform:
+  thumbnails:
+    small:  100x200
+    medium: 200x400
+    large:  200x300
+
 general:
   name:
     default: Your shop's name
@@ -51,7 +57,9 @@ shop:
       default: true
     categories:
       default: true
-    variants: 
+      configurable: false
+      visible: true
+    variants:
       default: true
     priceVariesWithVariants:
       default: true

@@ -51,7 +51,6 @@ public class UserResource implements Resource
             if (context.getUser() == null) {
                 // This can only mean there is no user recorded in database,
                 // and this is the request to create the initial user.
-
                 this.accountsService.createInitialUser(user);
             } else {
                 this.accountsService.createUser(user);

@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.shop.configuration.Configuration;
+import org.mayocat.shop.configuration.ConfigurationSource;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.TenantConfiguration;
@@ -32,7 +32,7 @@ public class DefaultConfigurationService implements ConfigurationService
     private Provider<TenantStore> tenantStore;
 
     @Inject
-    private Map<String, Configuration> configurations;
+    private Map<String, ConfigurationSource> configurationSources;
 
     @Inject
     private Execution execution;
@@ -52,14 +52,13 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getConfiguration(String module) throws NoSuchModuleException
     {
-        if (!this.configurations.containsKey(module)) {
+        if (!this.configurationSources.containsKey(module)) {
             throw new NoSuchModuleException();
         }
 
         try {
             return (Map<String, Object>) getConfiguration().get(module);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             this.logger.warn("Attempt at accessing a configuration that is not an object");
         }
         return Collections.emptyMap();
@@ -82,7 +81,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public void updateConfiguration(String module, Map<String, Object> configuration) throws NoSuchModuleException
     {
-        if (!this.configurations.containsKey(module)) {
+        if (!this.configurationSources.containsKey(module)) {
             throw new NoSuchModuleException();
         }
 
@@ -97,8 +96,13 @@ public class DefaultConfigurationService implements ConfigurationService
     private Map<String, Object> mapFromConfigurations()
     {
         ObjectMapper mapper = new ObjectMapper();
+        Map configurationsToSerialize = Maps.newHashMap();
+        for (String hint : configurationSources.keySet()) {
+            ConfigurationSource c = configurationSources.get(hint);
+            configurationsToSerialize.put(hint, c.get());
+        }
         try {
-            String json = mapper.writeValueAsString(this.configurations);
+            String json = mapper.writeValueAsString(configurationsToSerialize);
             Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
             return result;
         } catch (JsonProcessingException e) {

@@ -13,6 +13,12 @@
   <description>Top level configuration for mayocat</description>
   <dependencies>
 
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- XWiki -->
     <dependency>
     <groupId>org.xwiki.commons</groupId>

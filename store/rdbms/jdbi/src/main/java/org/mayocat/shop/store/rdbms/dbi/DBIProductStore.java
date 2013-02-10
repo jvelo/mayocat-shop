@@ -23,9 +23,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 {
     private static final String PRODUCT_POSITION = "product.position";
 
-    //@Inject
-    //private DBIProvider dbi;
-
     private static final String PRODUCT_TABLE_NAME = "product";
 
     private ProductDAO dao;

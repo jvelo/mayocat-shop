@@ -8,7 +8,7 @@
                     Drag images from your computer and drop them in this area
                     <span class="btn fileinput-button">
                         <span>Browse...</span>
-                        <input type="file" name="files" multiple="">
+                        <input type="file" name="file" multiple="">
                      </span>
                 </div>
                 <div ng-show="hasFiles()" class="editor">
@@ -17,7 +17,7 @@
                         <li ng-repeat="file in files" class="fade in" ng-show="file != null">
                             <span class="preview span2">
                                 <span class="fade in">
-                                    <img src="{{file.previewUri}}"
+                                    <img ng-src="{{file.previewUri}}"
                                          width="{{file.previewWidth}}"
                                          height="{{file.previewHeight}}" />
                                 </span>
@@ -29,7 +29,7 @@
                                 </div>
                             </span>
                             <span class="size span8" ng-show="!file.uploaded && !file.progress">
-                                <input type="text" class="span12" placeholder="Image's title (alternative text)"/>
+                                <input type="text" ng-model="file.title" class="span12" placeholder="Image's title (alternative text)"/>
                                 <textarea class="span12" rows="5" placeholder="Description (Optional)"></textarea>
                             </span>
                             <span class="cancel span2" ng-show="!file.uploaded && !file.progress">

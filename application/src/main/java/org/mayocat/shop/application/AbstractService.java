@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.mayocat.shop.configuration.Configuration;
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.base.HealthCheck;
 import org.mayocat.shop.base.Managed;
 import org.mayocat.shop.base.Provider;
 import org.mayocat.shop.base.Task;
 import org.mayocat.shop.configuration.AbstractConfiguration;
+import org.mayocat.shop.configuration.thumbnails.jackson.ThumbnailsModule;
 import org.mayocat.shop.event.ApplicationStartedEvent;
 import org.mayocat.shop.rest.resources.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -22,6 +22,7 @@ import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 /**
@@ -32,6 +33,12 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     private EmbeddableComponentManager componentManager;
 
     protected abstract void registerComponents(C configuration, Environment environment);
+
+    @Override
+    public void initialize(Bootstrap<C> bootstrap)
+    {
+        bootstrap.getObjectMapperFactory().registerModule(new ThumbnailsModule());
+    }
 
     @Override
     public void run(C configuration, Environment environment) throws Exception
@@ -129,16 +136,6 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
                 try {
                     field.setAccessible(true);
                     Object value = field.get(configuration);
-
-                    if (Configuration.class.isAssignableFrom(value.getClass())) {
-                        DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
-                        // For mayocat injectable configurations, inject them as such
-                        // (this is useful for the configuration module that needs to get all configuration
-                        // injected as a map).
-                        cd.setRoleType(Configuration.class);
-                        cd.setRoleHint(field.getName());
-                        componentManager.registerComponent(cd, value);
-                    }
 
                     // Inject "as is" for components that only need an individual configuration
                     DefaultComponentDescriptor cd = new DefaultComponentDescriptor();

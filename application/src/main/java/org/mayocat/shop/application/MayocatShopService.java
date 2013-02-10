@@ -34,6 +34,8 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
     @Override
     public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
+        super.initialize(bootstrap);
+
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new MigrationsBundle<MayocatShopConfiguration>()

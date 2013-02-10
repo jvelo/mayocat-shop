@@ -47,7 +47,6 @@ public class ConfigurationResource implements Resource
     @Timed
     public Map<String, Object> getConfiguration()
     {
-        TenantConfiguration configuration = execution.getContext().getTenant().getConfiguration();
         return configurationService.getConfiguration();
     }
 

@@ -23,14 +23,16 @@ angular.module('configuration', ['ngResource'])
             return deferred.promise;
         }
 
-        var saveOriginalValues = function (configuration) {
-            var isConfigurable = function (node) {
-                return typeof node.configurable !== "undefined"
-                    && typeof node.value !== "undefined"
-                    && typeof node.default !== "undefined"
-                    && typeof node.visible !== "undefined";
-            }
+        var isConfigurable = function (node) {
+            return typeof node !== "undefined"
+                && node !== null
+                && typeof node.configurable !== "undefined"
+                && typeof node.value !== "undefined"
+                && typeof node.default !== "undefined"
+                && typeof node.visible !== "undefined";
+        }
 
+        var saveOriginalValues = function (configuration) {
             var walk = function (node) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
@@ -53,12 +55,7 @@ angular.module('configuration', ['ngResource'])
         }
 
         var prepareConfiguration = function (configuration) {
-            var isConfigurable = function (node) {
-                return typeof node.configurable !== "undefined"
-                    && typeof node.value !== "undefined"
-                    && typeof node.default !== "undefined"
-                    && typeof node.visible !== "undefined";
-            }
+
 
             var isStillDefaultValue = function (node) {
                 if (node.value === node.__originalValue && node.value === node.defaultValue) {

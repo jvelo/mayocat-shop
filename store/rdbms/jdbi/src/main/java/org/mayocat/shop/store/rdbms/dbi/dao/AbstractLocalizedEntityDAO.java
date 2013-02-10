@@ -80,7 +80,18 @@ public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements
     @RegisterMapper(EntityTranslationsJoinRowMapper.class)
     @SqlQuery
     (
-        "SELECT * " 
+        "SELECT entity.id, "
+      + "       entity.slug, "
+      + "       entity.type, "
+      + "       entity.tenant_id, "
+      + "       entity.parent_id, "
+      + "       product.position, "
+      + "       product.title, "
+      + "       product.description, "
+      + "       product.on_shelf, "
+      + "       translation.field as _translation_field, "
+      + "       COALESCE(translation_small.locale, translation_medium.locale) as _translation_locale, "
+      + "       COALESCE(translation_small.text, translation_medium.text) as _translation_text "
       + "FROM   entity " 
       + "       INNER JOIN <type> " 
       + "               ON entity.id = <type>.entity_id " 

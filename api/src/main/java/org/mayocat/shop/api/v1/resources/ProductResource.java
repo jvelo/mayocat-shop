@@ -47,8 +47,10 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
 @Component("/api/1.0/product/")
@@ -125,21 +127,15 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Path("{slug}/attachment")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadMultipart(@PathParam("slug") String slug, FormDataMultiPart multiPart) throws IOException
+    public Response addAttachment(@PathParam("slug") String slug,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
         EntityReference
                 parent = new EntityReference("product", slug, Optional.<EntityReference>absent());
-        List<FormDataBodyPart> fields = multiPart.getFields("files");
-        if (fields != null) {
-            for (FormDataBodyPart field : fields) {
-                String fileName = field.getFormDataContentDisposition().getFileName();
-                this.addAttachment(field.getValueAs(InputStream.class), fileName, "", Optional.of(parent));
-            }
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No file were found int the request").build();
-        }
-        // TODO: construct a JSON map with each created attachment URI
-        return Response.noContent().build();
+        return this
+                .addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description, Optional.of(parent));
     }
 
     @Path("{slug}/move")

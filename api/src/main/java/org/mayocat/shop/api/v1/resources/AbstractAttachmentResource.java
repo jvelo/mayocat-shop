@@ -41,7 +41,7 @@ public class AbstractAttachmentResource
         return this.attachmentStore.get().findAll(0, 0);
     }
 
-    protected Response addAttachment(InputStream data, String originalFilename, String title,
+    protected Response addAttachment(InputStream data, String originalFilename, String title, String description,
             Optional<EntityReference> parent)
     {
         if (data == null) {
@@ -73,6 +73,7 @@ public class AbstractAttachmentResource
         attachment.setSlug(slug);
         attachment.setData(data);
         attachment.setTitle(title);
+        attachment.setDescription(description);
 
         if (attachment.getReference().getParent() != null) {
             attachment.setParentId(attachmentStore.get().getId(attachment.getReference().getParent()));

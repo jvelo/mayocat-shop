@@ -16,6 +16,11 @@ public class AbstractConfiguration extends Configuration
     @Valid
     @NotNull
     @JsonProperty
+    private PlatformConfiguration platform = new PlatformConfiguration();
+
+    @Valid
+    @NotNull
+    @JsonProperty
     private DataSourceConfiguration dataSource = new DataSourceConfiguration();
 
     @Valid
@@ -53,4 +58,8 @@ public class AbstractConfiguration extends Configuration
         return searchEngine;
     }
 
+    public PlatformConfiguration getPlatform()
+    {
+        return platform;
+    }
 }

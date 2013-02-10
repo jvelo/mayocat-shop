@@ -3,9 +3,8 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
 
-public class MultitenancyConfiguration extends Configuration
+public class MultitenancyConfiguration
 {
     @Valid
     @JsonProperty

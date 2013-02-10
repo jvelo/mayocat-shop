@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.shop.api.v1.parameters.ImageOptions;
 import org.mayocat.shop.image.ImageService;
 import org.mayocat.shop.model.Attachment;
+import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
 import org.slf4j.Logger;
@@ -56,9 +57,10 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response addAttachment(@FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("title") String title)
+            @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, null);
+        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+                Optional.<EntityReference>absent());
     }
 
     @GET

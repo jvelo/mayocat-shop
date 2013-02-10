@@ -140,7 +140,13 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                 for (var i=0; i<$scope.files.length; i++) {
                     if ($scope.files[i] !== null) {
                         $scope.files[i].progress = 0;
-                        $(element).fileupload('send', {files: $scope.files[i]});
+                        $(element).fileupload('send', {
+                            files: $scope.files[i],
+                            formData: {
+                                "title" :  $scope.files[i].title,
+                                "description" :  $scope.files[i].description
+                            }
+                        });
                     }
                 }
             }
