@@ -12,10 +12,11 @@
   <title>Mayocat Shop - Administration</title>
 
   <!-- Included CSS Files -->
-  <link rel="stylesheet" href="stylesheets/bootstrap.css">
-  <link rel="stylesheet" href="stylesheets/mayocat.css">
-  <link rel="stylesheet" href="stylesheets/catalog.css">
-  <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css">
+  <link rel="stylesheet" href="stylesheets/bootstrap.css" />
+  <link rel="stylesheet" href="stylesheets/mayocat.css" />
+  <link rel="stylesheet" href="stylesheets/catalog.css" />
+  <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css" />
+  <link rel="stylesheet" href="javascripts/vendor/jcrop/css/jquery.Jcrop.min.css" />
 
   <!-- Vendor scripts -->
   <script src="javascripts/vendor/jquery.js"></script>
@@ -28,7 +29,8 @@
   <script src="javascripts/vendor/blueimp/jquery.iframe-transport.js"></script>
   <script src="javascripts/vendor/blueimp/load-image.min.js"></script>
   <script src="javascripts/vendor/blueimp/canvas-to-blob.min.js"></script>
-  <script src="javascripts/vendor/blueimp/jquery.fileupload-fp.js"></script
+  <script src="javascripts/vendor/blueimp/jquery.fileupload-fp.js"></script>
+  <script src="javascripts/vendor/jcrop/jquery.Jcrop.min.js"></script>
 
   <!-- Application scripts -->
   <script src="javascripts/app.js"></script>
@@ -51,6 +53,7 @@
     <div class="navbar-inner">
       <div class="container">
         <a class="brand" href="#" ng-bind="tenant.shop.name"></a>
+
         <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
           <div class="input-append">
             <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
@@ -62,6 +65,7 @@
             </li>
           </ul>
         </form>
+
         <div class="pull-right">
           <ul class="nav">
             <li class="dropdown">
