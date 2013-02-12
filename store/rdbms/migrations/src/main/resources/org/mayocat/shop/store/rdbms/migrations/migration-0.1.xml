@@ -154,19 +154,27 @@
       <column name="attachment_id" type="bigint">
         <constraints nullable="false" />
       </column>
+      <column name="source" type="varchar(255)" />
       <column name="hint" type="varchar(255)" />
+      <column name="ratio" type="varchar(255)" />
       <column name="x" type="int" />
       <column name="y" type="int" />
       <column name="width" type="int" />
       <column name="height" type="int" />
     </createTable>
     <addPrimaryKey tableName="thumbnail"
-                   columnNames="attachment_id,hint" constraintName="THUMBNAIL_PK" />
+                   columnNames="attachment_id,source,hint" constraintName="THUMBNAIL_PK" />
     <addForeignKeyConstraint constraintName="THUMBNAIL_IMAGE_FK"
                              baseTableName="thumbnail" baseColumnNames="attachment_id"
                              referencedTableName="attachment" referencedColumnNames="entity_id" />
     <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_INDEX">
       <column name="hint" />
+    </createIndex>
+    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_SOURCE">
+      <column name="source" />
+    </createIndex>
+    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_RATIO">
+      <column name="ratio" />
     </createIndex>
 
     <!-- Role table -->

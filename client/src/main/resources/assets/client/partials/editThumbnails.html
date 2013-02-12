@@ -1,10 +1,48 @@
 <div ng-controller="ThumbnailsEditorController">
     <div class="modal-header">
-        <h3>Hello thumbnails</h3>
+        <h3>Edit image thumbnails</h3>
     </div>
     <form class="form-horizontal">
         <div class="modal-body">
-            <img ng-src="/api/1.0{{image.file.href}}?width=150&height=150" />
+            <div class="pull-left">
+                <strong>
+                    Editing: {{currentSource}} - {{currentSize.name}} ({{currentSize.dimensions.width}}x{{currentSize.dimensions.height}})
+                </strong>
+                <ul class="unstyled">
+                    <li ng-repeat="source in ['platform', 'theme']">
+                        <ul class="unstyled">
+                            <li ng-repeat="size in configuration[source]" ng-show="isEdited(source, size)">
+                                <thumbnail-editor
+                                        width="size.dimensions.width"
+                                        height="size.dimensions.height"
+                                        image="'/api/1.0' + image.file.href"
+                                        >
+                                </thumbnail-editor>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div class="align-right">
+                    <h3>Pick thumbnail to edit</h3>
+                    <ul class="unstyled">
+                        <li ng-repeat="source in ['platform', 'theme']">
+                            <h4>{{source}}</h4>
+                            <ul class="unstyled">
+                                <li ng-repeat="size in configuration[source]" ng-click="edit(source, size)">
+                                    {{size.name}} - <code>{{size.dimensions.width}}x{{size.dimensions.height}}</code>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <hr />
+                <div class="preview">
+                    <h3>Preview</h3>
+                </div>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </form>
     <div class="modal-footer">

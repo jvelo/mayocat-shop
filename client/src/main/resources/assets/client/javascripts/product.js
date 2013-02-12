@@ -1,11 +1,39 @@
 'use strict'
 
 angular.module('product', ['ngResource'])
-    .controller('ThumbnailsEditorController', ['$scope', '$rootScope',
-    function ($scope, $rootScope) {
-        $rootScope.$on('thumbnails:edit', function(event, image) {
+
+    .controller('ThumbnailsEditorController', ['$scope', 'configurationService',
+    function ($scope, configurationService) {
+
+        $scope.currentSource = null;
+
+        $scope.edit = function(source, size) {
+            $scope.currentSource = source;
+            $scope.currentSize = size;
+        }
+
+        $scope.isEdited = function(source, size) {
+            if ($scope.currentSource === source
+             && $scope.currentSize.name === size.name) {
+                return true;
+            }
+            return false;
+        }
+
+        $scope.$on('thumbnails:edit', function(event, image) {
+            console.log('thumbnails:edit', image);
             $scope.image = image;
+            $scope.$broadcast('thumbnails:edit:ready', {
+                'image': image,
+            });
         });
+
+        configurationService.get(function(data){
+           $scope.configuration = data.thumbnails;
+           $scope.currentSource = "platform";
+           $scope.currentSize = $scope.configuration.platform[0];
+        });
+
     }])
 
     .controller('ProductController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', 'catalogService',

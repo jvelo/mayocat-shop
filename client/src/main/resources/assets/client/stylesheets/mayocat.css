@@ -29,6 +29,10 @@ body > div.loader {
   cursor: pointer;
 }
 
+.align-right {
+  text-align: right;
+}
+
 .entity.loading {
   background-position: left;
   margin-left: 0px;
@@ -157,4 +161,20 @@ image-upload .editor ul li span.preview > div {
 
 image-upload .editor ul li .progress {
   height: 6px;
+}
+
+/* Thumbnails editor */
+
+#editThumbnails {
+  width: 900px;
+  margin: -350px 0 0 -450px;
+}
+
+#editThumbnails .modal-body {
+  max-height: 550px;
+}
+
+#editThumbnails .modal-body .preview {
+  display: inline-block;
+  margin-left: 20px;
 }

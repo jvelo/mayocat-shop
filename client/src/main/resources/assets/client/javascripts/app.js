@@ -199,6 +199,31 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 }]);
 
 /**
+ *
+ */
+mayocat.directive('thumbnailEditor', ['$timeout', function factory($timeout) {
+    return {
+        restrict:"E",
+        scope:{
+            'image':'&',
+            'width':'&',
+            'height':'&'
+        },
+        link:function postLink($scope, element, attrs) {
+            $scope.$on('thumbnails:edit:ready', function (event, data) {
+                $(element).html("<img src='" + $scope.image() + "' >");
+                var image = $(element).find("img");
+                var api = $(image).Jcrop({
+                    boxWidth:500,
+                    boxHeight:500,
+                    aspectRatio:$scope.width() / $scope.height()
+                });
+            });
+        }
+    }
+}]);
+
+/**
  * Authentication/401 interception
  *
  * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
