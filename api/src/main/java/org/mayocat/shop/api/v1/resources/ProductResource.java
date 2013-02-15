@@ -215,7 +215,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             Product created = this.catalogService.createProduct(product);
 
             // TODO : URI factory
-            return Response.seeOther(new URI("/product/" + created.getSlug())).build();
+            return Response.seeOther(new URI("/api/1.0/product/" + created.getSlug())).build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {

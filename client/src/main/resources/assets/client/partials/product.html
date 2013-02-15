@@ -10,12 +10,12 @@
           </h1>
 
           <!-- Description -->
-          <div>
+          <div ng-show="!isNew()">
             <label>Description</label>
             <textarea class="span12" rows="10" ng-model="product.description" />
           </div>
 
-          <div>
+          <div ng-show="!isNew()">
             <h3>Images ({{product.images.length}})</h3>
             <ul class="thumbnails">
               <li ng-repeat="image in product.images">
@@ -52,7 +52,27 @@
 
   <div class="span4" ng-show="product.title != undefined">
     <div class="buttons">
-      <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
+      <div ng-show="isNew()">
+          <!-- Create new product -->
+          <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
+      </div>
+      <div ng-show="!isNew()">
+          {{product.onShelf}}
+          <div ng-show="product.onShelf == null">
+            <button ng-click="updateProduct()" class="btn btn-large btn-block btn">Save</button>
+            <button ng-click="publishProduct()" class="btn btn-large btn-block btn-primary">Publish online</button>
+          </div>
+          <div ng-show="product.onShelf != null">
+              <button ng-click="updateProduct()" class="btn btn-large btn-block btn">Update</button>
+              <div>
+                  <span ng-class="{strong: product.onShelf}">on shelf</span>
+                  <switch-button ng-model="product.onShelf"></switch-button>
+                  <span ng-class="{strong: !product.onShelf}">withdrawn from sale</span>
+              </div>
+          </div>
+          <!-- Publish / update product -->
+
+      </div>
     </div>
 
     <p />

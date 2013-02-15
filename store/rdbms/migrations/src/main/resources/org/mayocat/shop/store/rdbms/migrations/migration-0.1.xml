@@ -198,7 +198,7 @@
       <column name="position" type="smallint" />
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
-      <column name="on_shelf" type="boolean" defaultValueBoolean="false" />
+      <column name="on_shelf" type="boolean" />
     </createTable>
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"

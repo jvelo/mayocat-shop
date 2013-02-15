@@ -15,7 +15,7 @@ public class Product extends AbstractLocalizedEntity
     private Long id;
 
     @SearchIndex
-    private boolean onShelf = false;
+    private Boolean onShelf;
 
     @SearchIndex
     @NotNull
@@ -81,12 +81,12 @@ public class Product extends AbstractLocalizedEntity
         this.id = id;
     }
 
-    public boolean isOnShelf()
+    public Boolean getOnShelf()
     {
         return onShelf;
     }
 
-    public void setOnShelf(boolean onShelf)
+    public void setOnShelf(Boolean onShelf)
     {
         this.onShelf = onShelf;
     }
@@ -113,13 +113,15 @@ public class Product extends AbstractLocalizedEntity
        final Product other = (Product) obj;  
          
        return   Objects.equal(this.title, other.title)  
-             && Objects.equal(this.slug, other.slug);  
+             && Objects.equal(this.slug, other.slug)
+             && Objects.equal(this.description, other.description)
+             && Objects.equal(this.onShelf, other.onShelf);
     }  
     
     @Override
     public int hashCode()  
     {  
-        return Objects.hashCode(this.slug, this.title);  
+        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf);
     }
     
     @Override  
@@ -127,7 +129,8 @@ public class Product extends AbstractLocalizedEntity
     {  
        return Objects.toStringHelper(this)  
                  .addValue(this.title)  
-                 .addValue(this.slug)    
+                 .addValue(this.slug)
+                 .addValue(this.onShelf)
                  .toString();  
     }
 }

@@ -37,7 +37,8 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
     (
         "UPDATE product " +
         "SET    title = :product.title, " +
-        "       description = :product.description " +
+        "       description = :product.description," +
+        "       on_shelf = :product.onShelf " +
         "WHERE  entity_id = :product.id "
     )
     public abstract Integer update(@BindBean("product") Product product);

@@ -29,6 +29,10 @@ body > div.loader {
   cursor: pointer;
 }
 
+.strong {
+    font-weight: bold;
+}
+
 .align-right {
   text-align: right;
 }
@@ -183,4 +187,13 @@ thumbnail-editor > div {
   min-width:500px;
   background-color: #eee;
   margin-bottom: 8px;
+}
+
+switch-button {
+  margin-top: 15px;
+  display: inline-block;
+}
+
+switch-button button {
+  height: 18px;
 }
