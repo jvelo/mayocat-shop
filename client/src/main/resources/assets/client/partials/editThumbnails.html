@@ -1,5 +1,6 @@
 <div ng-controller="ThumbnailsEditorController" xmlns="http://www.w3.org/1999/html">
     <div class="modal-header">
+        <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Edit image thumbnails</h3>
     </div>
     <form class="form-horizontal">
@@ -48,15 +49,17 @@
                         </li>
                     </ul>
                 </div>
+                <!-- TODO
                 <hr />
                 <div class="preview">
                     <h3>Preview</h3>
                 </div>
+                -->
             </div>
             <div class="clearfix"></div>
         </div>
     </form>
     <div class="modal-footer">
-        <a class="btn">Close</a>
+        <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">Close</a>
     </div>
 </div>
