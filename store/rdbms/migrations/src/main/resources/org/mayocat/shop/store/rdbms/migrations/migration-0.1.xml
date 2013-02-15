@@ -150,6 +150,7 @@
       <column name="extension" />
     </createIndex>
 
+    <!-- Thumbnails -->
     <createTable tableName="thumbnail">
       <column name="attachment_id" type="bigint">
         <constraints nullable="false" />

@@ -178,3 +178,9 @@ image-upload .editor ul li .progress {
   display: inline-block;
   margin-left: 20px;
 }
+
+thumbnail-editor > div {
+  min-width:500px;
+  background-color: #eee;
+  margin-bottom: 8px;
+}

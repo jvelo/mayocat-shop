@@ -1,13 +1,10 @@
-<div ng-controller="ThumbnailsEditorController">
+<div ng-controller="ThumbnailsEditorController" xmlns="http://www.w3.org/1999/html">
     <div class="modal-header">
         <h3>Edit image thumbnails</h3>
     </div>
     <form class="form-horizontal">
         <div class="modal-body">
             <div class="pull-left">
-                <strong>
-                    Editing: {{currentSource}} - {{currentSize.name}} ({{currentSize.dimensions.width}}x{{currentSize.dimensions.height}})
-                </strong>
                 <ul class="unstyled">
                     <li ng-repeat="source in ['platform', 'theme']">
                         <ul class="unstyled">
@@ -16,8 +13,20 @@
                                         width="size.dimensions.width"
                                         height="size.dimensions.height"
                                         image="'/api/1.0' + image.file.href"
+                                        selection="getSelection(source, size)"
                                         >
                                 </thumbnail-editor>
+                                <p class="pull-left">
+                                    <small>
+                                        <em>Editing:</em>
+                                        <strong>{{currentSource}}</strong> -
+                                        <strong>{{currentSize.name}}</strong>
+                                        ({{currentSize.dimensions.width}}x{{currentSize.dimensions.height}})
+                                    </small>
+                                </p>
+                                <p class="pull-right">
+                                    <a class="btn btn-primary" ng-click="save()">Save and next</a>
+                                </p>
                             </li>
                         </ul>
                     </li>
@@ -31,7 +40,9 @@
                             <h4>{{source}}</h4>
                             <ul class="unstyled">
                                 <li ng-repeat="size in configuration[source]" ng-click="edit(source, size)">
+                                    <span ng-show="isEdited(source, size)">&rarr;</span>
                                     {{size.name}} - <code>{{size.dimensions.width}}x{{size.dimensions.height}}</code>
+                                    <i ng-class="getType(source, size)"></i>
                                 </li>
                             </ul>
                         </li>
@@ -47,6 +58,5 @@
     </form>
     <div class="modal-footer">
         <a class="btn">Close</a>
-        <a class="btn btn-primary">Save changes</a>
     </div>
 </div>

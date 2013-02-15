@@ -201,23 +201,68 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 /**
  *
  */
-mayocat.directive('thumbnailEditor', ['$timeout', function factory($timeout) {
+mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
     return {
         restrict:"E",
         scope:{
             'image':'&',
             'width':'&',
-            'height':'&'
+            'height':'&',
+            'selection' : '&'
         },
         link:function postLink($scope, element, attrs) {
             $scope.$on('thumbnails:edit:ready', function (event, data) {
-                $(element).html("<img src='" + $scope.image() + "' >");
-                var image = $(element).find("img");
-                var api = $(image).Jcrop({
-                    boxWidth:500,
-                    boxHeight:500,
-                    aspectRatio:$scope.width() / $scope.height()
+                var imageElement = $("<img />").load(
+                    function () {
+                        if ($scope.selection() === undefined) {
+
+                            // If no initial selection was passed to the widget, we compute the largest box
+                            // that can fit the desired thumbnail in.
+
+                            var sizeRatio = $scope.width() / $scope.height(),
+                                imageRatio = $(this).width() / $(this).height(),
+                                width,
+                                height;
+
+                            // FIXME sometimes the image width and height are still 0, even though we are in the
+                            // load callback.
+
+                            width = sizeRatio > imageRatio ? $(this).height() * sizeRatio : $(this).width();
+                            height = sizeRatio > imageRatio ? $(this).height() : $(this).width() * sizeRatio;
+
+                            var i = 0;
+                            var setSelection = function () {
+                                if (typeof $scope.api !== "undefined") {
+                                    $scope.api.setSelect([ 0, 0, width, height ]);
+                                }
+                                else {
+                                    // The image is loaded before the Jcrop API has been initialized fully.
+                                    // Wait 0.1 s
+                                    i++;
+                                    if (i < 10) {
+                                        setTimeout(setSelection, 100);
+                                    }
+                                    // Give up after 10 tries
+                                }
+                            }
+                            setSelection();
+                        }
+                    }
+                ).attr("src", $scope.image());
+                $(element).html($("<div/>").html(imageElement));
+
+                $(imageElement).Jcrop({
+                    boxWidth: 500,
+                    boxHeight: 500,
+                    setSelect: $scope.selection(),
+                    aspectRatio: $scope.width() / $scope.height(),
+                    onSelect: function(coordinates){
+                        $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
+                    }
+                }, function(){
+                    $scope.api = this;
                 });
+
             });
         }
     }

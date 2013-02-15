@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.ServletContext;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -18,11 +21,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.api.v1.parameters.ImageOptions;
+import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
 import org.mayocat.shop.image.ImageService;
+import org.mayocat.shop.image.util.ImageUtils;
 import org.mayocat.shop.model.Attachment;
+import org.mayocat.shop.model.Thumbnail;
 import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.shop.store.ThumbnailStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -40,6 +47,9 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
 {
     @Inject
     private ImageService imageService;
+
+    @Inject
+    private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
     private Logger logger;
@@ -62,6 +72,33 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
         return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.<EntityReference>absent());
     }
+
+    @PUT
+    @Path("/{slug}/thumbnail/")
+    public Response createThumbnail(@PathParam("slug") String slug, @Valid ThumbnailRepresentation thumbnailRepresentation)
+    {
+        Attachment file = this.getAttachmentStore().findBySlug(slug);
+
+        if (file == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        Thumbnail thumbnail = new Thumbnail();
+        thumbnail.setAttachmentId(file.getId());
+        thumbnail.setSource(thumbnailRepresentation.getSource());
+        thumbnail.setHint(thumbnailRepresentation.getHint());
+        thumbnail.setX(thumbnailRepresentation.getX());
+        thumbnail.setY(thumbnailRepresentation.getY());
+        thumbnail.setWidth(thumbnailRepresentation.getWidth());
+        thumbnail.setHeight(thumbnailRepresentation.getHeight());
+
+        thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
+
+        this.thumbnailStore.get().createOrUpdateThumbnail(thumbnail);
+
+        return Response.ok().build();
+    }
+
 
     @GET
     @Path("/{slug}.{ext}")

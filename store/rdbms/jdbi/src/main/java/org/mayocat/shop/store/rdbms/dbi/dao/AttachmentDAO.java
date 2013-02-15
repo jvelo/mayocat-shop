@@ -40,6 +40,18 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
    void createAttachment(@Bind("entity") Long entityId, @BindBean("attachment") Attachment attachment,
             @Bind("data") byte[] data);
 
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN attachment" +
+        "               ON entity.id = attachment.entity_id " +
+        "WHERE  entity.type = 'attachment' " +
+        "       AND entity.tenant_id = :tenant.id " +
+        "       AND entity.slug = :slug"
+    )
+    Attachment findBySlug(@Bind("slug") String slug,
+            @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     (
@@ -54,4 +66,5 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
    )
    Attachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
             @BindBean("tenant") Tenant tenant);
+
 }

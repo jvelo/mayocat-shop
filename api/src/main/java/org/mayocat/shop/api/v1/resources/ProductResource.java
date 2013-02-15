@@ -1,6 +1,5 @@
 package org.mayocat.shop.api.v1.resources;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -24,14 +24,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.api.v1.representations.AttachmentRepresentation;
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
+import org.mayocat.shop.api.v1.representations.ImageRepresentation;
 import org.mayocat.shop.api.v1.representations.ProductRepresentation;
+import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Attachment;
 import org.mayocat.shop.model.Category;
 import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
+import org.mayocat.shop.model.Thumbnail;
 import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
@@ -41,6 +43,7 @@ import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.InvalidMoveOperation;
+import org.mayocat.shop.store.ThumbnailStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -48,8 +51,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
@@ -62,6 +63,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 {
     @Inject
     private CatalogService catalogService;
+
+    @Inject
+    private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
     private Logger logger;
@@ -98,27 +102,32 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (expansions.contains("categories")) {
             List<Category> categories = this.catalogService.findCategoriesForProduct(product);
             if (expansions.contains("images")) {
-                return this.wrapInRepresentation(product, categories, this.getAttachments(slug));
+                return this.wrapInRepresentation(product, categories, this.getImages(slug));
             } else {
                 return this.wrapInRepresentation(product, categories, null);
             }
         } else if (expansions.contains("images")) {
-            return this.wrapInRepresentation(product, this.getAttachments(slug));
+            return this.wrapInRepresentation(product, this.getImages(slug));
         } else {
             return this.wrapInRepresentation(product);
         }
     }
 
-    @Path("{slug}/attachment")
+    @Path("{slug}/image")
     @GET
-    public List<AttachmentRepresentation> getAttachments(@PathParam("slug") String slug)
+    public List<ImageRepresentation> getImages(@PathParam("slug") String slug)
     {
-        List<AttachmentRepresentation> result = new ArrayList();
+        List<ImageRepresentation> result = new ArrayList();
         for (Attachment attachment : this.getAttachmentList()) {
             FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
                     "/attachment/" + attachment.getSlug() + "." + attachment.getExtension());
-            AttachmentRepresentation representation = new AttachmentRepresentation(
-                    "/attachment/" + attachment.getSlug(), attachment.getTitle(), fr);
+            List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
+            List<ThumbnailRepresentation> thumbnailRepresentations = Lists.newArrayList();
+            for (Thumbnail thumb : thumbnails) {
+                thumbnailRepresentations.add(new ThumbnailRepresentation(thumb));
+            }
+            ImageRepresentation representation = new ImageRepresentation(
+                    attachment.getTitle(), "/attachment/" + attachment.getSlug(), fr, thumbnailRepresentations);
             result.add(representation);
         }
         return result;
@@ -234,7 +243,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     }
 
     private ProductRepresentation wrapInRepresentation(Product product,
-            List<AttachmentRepresentation> images)
+            List<ImageRepresentation> images)
     {
         ProductRepresentation result = new ProductRepresentation(product);
         if (images != null) {
@@ -244,12 +253,12 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     }
 
     private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories,
-            List<AttachmentRepresentation> images)
+            List<ImageRepresentation> images)
     {
         List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
         for (Category category : categories) {
             categoriesReferences
-                    .add(new EntityReferenceRepresentation("/category/" + category.getSlug(), category.getTitle()));
+                    .add(new EntityReferenceRepresentation(category.getTitle(), "/category/" + category.getSlug()));
         }
         ProductRepresentation result = new ProductRepresentation(product, categoriesReferences);
         if (images != null) {

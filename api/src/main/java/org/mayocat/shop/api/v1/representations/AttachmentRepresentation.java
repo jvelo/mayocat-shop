@@ -11,7 +11,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
 
     public AttachmentRepresentation(String title, String uri, FileRepresentation file)
     {
-        super(uri, title);
+        super(title, uri);
         this.file = file;
     }
 

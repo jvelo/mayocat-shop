@@ -19,7 +19,7 @@ public class ProductRepresentation
     private List<EntityReferenceRepresentation> categories = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<AttachmentRepresentation> images = null;
+    private List<ImageRepresentation> images = null;
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ public class ProductRepresentation
     }
 
     public ProductRepresentation(Product product, List<EntityReferenceRepresentation> categories,
-            List<AttachmentRepresentation> images)
+            List<ImageRepresentation> images)
     {
         this.slug = product.getSlug();
         this.title = product.getTitle();
@@ -78,12 +78,12 @@ public class ProductRepresentation
         this.categories = categories;
     }
 
-    public List<AttachmentRepresentation> getImages()
+    public List<ImageRepresentation> getImages()
     {
         return images;
     }
 
-    public void setImages(List<AttachmentRepresentation> images)
+    public void setImages(List<ImageRepresentation> images)
     {
         this.images = images;
     }

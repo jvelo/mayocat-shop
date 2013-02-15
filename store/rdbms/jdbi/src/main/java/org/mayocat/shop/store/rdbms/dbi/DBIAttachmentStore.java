@@ -81,6 +81,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public Attachment findBySlug(String slug)
+    {
+        return this.dao.findBySlug(slug, getTenant());
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(AttachmentDAO.class);

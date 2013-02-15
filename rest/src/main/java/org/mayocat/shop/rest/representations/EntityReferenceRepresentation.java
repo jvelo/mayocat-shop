@@ -9,7 +9,7 @@ public class EntityReferenceRepresentation
 
     private String title;
 
-    public EntityReferenceRepresentation(String uri, String title)
+    public EntityReferenceRepresentation(String title, String uri)
     {
         this.title = title;
         this.href = uri;
