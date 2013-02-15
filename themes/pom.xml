@@ -9,7 +9,7 @@
   <artifactId>mayocat-themes</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat views</name>
+  <name>Mayocat Themes</name>
   <description>Themes</description>
 
   <dependencies>

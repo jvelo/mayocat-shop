@@ -9,7 +9,7 @@
   <artifactId>mayocat-views</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat views</name>
+  <name>Mayocat Views</name>
   <description>View support</description>
 
   <dependencies>
