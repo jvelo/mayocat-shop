@@ -44,7 +44,7 @@ mayocat.directive('switchButton', function() {
                 controller.$setViewValue(false);
             }
             controller.$render = function() {
-                if (typeof controller.viewValue !== 'undefined') {
+                if (typeof controller.$viewValue !== 'undefined') {
                     $scope[controller.$viewValue ? "on" : "off"]();
                 }
             };

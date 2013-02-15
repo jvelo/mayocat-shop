@@ -57,13 +57,12 @@
           <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
       </div>
       <div ng-show="!isNew()">
-          {{product.onShelf}}
           <div ng-show="product.onShelf == null">
             <button ng-click="updateProduct()" class="btn btn-large btn-block btn">Save</button>
             <button ng-click="publishProduct()" class="btn btn-large btn-block btn-primary">Publish online</button>
           </div>
           <div ng-show="product.onShelf != null">
-              <button ng-click="updateProduct()" class="btn btn-large btn-block btn">Update</button>
+              <button ng-click="updateProduct()" class="btn btn-large btn-block btn-primary">Update</button>
               <div>
                   <span ng-class="{strong: product.onShelf}">on shelf</span>
                   <switch-button ng-model="product.onShelf"></switch-button>
