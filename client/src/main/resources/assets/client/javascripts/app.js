@@ -10,9 +10,6 @@ var mayocat = angular.module('mayocat', [
     'jqui'
 ]);
 
-// config(['$locationProvider', function($locationProvider) {
-//   $locationProvider.html5Mode(true);
-// }]).
 mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
@@ -24,6 +21,9 @@ mayocat.config(['$routeProvider', function($routeProvider) {
       otherwise({redirectTo: '/'});
 }]);
 
+/**
+ * A switch button similar to the ios toggle switch
+ */
 mayocat.directive('switchButton', function() {
     return {
         require: 'ngModel',
@@ -96,7 +96,7 @@ mayocat.directive('activeClass', ['$location', function(location) {
 
 
 /**
- *
+ * Image upload directive.
  */
 mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
     return {
@@ -228,7 +228,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 }]);
 
 /**
- *
+ * Thumbnail editor directive
  */
 mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
     return {
