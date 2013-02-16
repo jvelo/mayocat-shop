@@ -99,8 +99,6 @@ angular.module('product', ['ngResource'])
                 "expand": ["categories", "images"] }, function () {
                 // Ensures the category initialization happens after the AJAX callback
                 $scope.initializeCategories();
-                console.log($scope.product);
-                console.log($scope.product.onShelf);
             });
         }
         else {
