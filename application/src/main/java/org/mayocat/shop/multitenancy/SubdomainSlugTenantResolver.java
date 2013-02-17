@@ -12,7 +12,6 @@ import org.mayocat.shop.configuration.MultitenancyConfiguration;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.service.AccountsService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

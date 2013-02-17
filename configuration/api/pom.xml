@@ -1,0 +1,51 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.mayocat</groupId>
+    <artifactId>mayocat-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>mayocat-configuration-api</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Mayocat Configuration - API</name>
+  <description>API - Top level configuration for mayocat</description>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- XWiki -->
+    <dependency>
+    <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${xwiki.version}</version>
+    </dependency>
+
+    <!-- Drop Wizard --> 
+    <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-core</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+</project>

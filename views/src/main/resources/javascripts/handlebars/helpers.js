@@ -21,5 +21,5 @@ Handlebars.registerHelper('include', function (template, options) {
 });
 
 Handlebars.registerHelper('resource', function (path, options) {
-    return "/resources/"  + path;
+    return "/resource/"  + path;
 });

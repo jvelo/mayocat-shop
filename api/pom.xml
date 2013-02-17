@@ -31,6 +31,11 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-configuration-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-image</artifactId>
       <version>${project.version}</version>
     </dependency>

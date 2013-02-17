@@ -1,5 +1,22 @@
-Hello, {{product.title}}
+<div class="product">
+  {{#product}}
+  <h2 class="fn">{{title}}</h2>
 
-{{product.description}}
+  {{#description}}
+  <p class="description">
+    {{this}}
+  </p>
+  {{/description}}
 
-
+  {{#images}}
+    {{#featured}}
+      <img class="photo" src="{{url_big}}" />
+    {{/featured}}
+    <ul class="images">
+     {{#all}}
+        <li class="thumbnail" src="{{url_small}}" />
+     {{/all}}
+    </ul>
+  {{/images}}
+  {{/product}}
+</div>

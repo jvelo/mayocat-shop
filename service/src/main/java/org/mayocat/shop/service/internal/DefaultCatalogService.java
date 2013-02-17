@@ -1,6 +1,5 @@
 package org.mayocat.shop.service.internal;
 
-import java.text.Normalizer;
 import java.util.List;
 
 import javax.inject.Inject;

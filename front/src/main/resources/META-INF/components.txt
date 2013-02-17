@@ -1,4 +1,6 @@
 org.mayocat.shop.front.resources.ProductResource
+org.mayocat.shop.front.resources.ResourceResource
+org.mayocat.shop.front.resources.HomeResource
 org.mayocat.shop.front.internal.DefaultEntityFrontViewBuilder
 org.mayocat.shop.front.internal.DefaultEntityContextProviderSupplier
 org.mayocat.shop.front.internal.DefaultEntityContextProviderSupplier

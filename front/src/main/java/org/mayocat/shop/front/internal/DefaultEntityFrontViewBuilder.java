@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.mayocat.shop.configuration.general.GeneralConfiguration;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.front.EntityContextProvider;
 import org.mayocat.shop.front.EntityContextProviderSupplier;
@@ -33,10 +35,10 @@ public class DefaultEntityFrontViewBuilder implements EntityFrontViewBuilder
     {
         FrontView frontView = new FrontView(layout, breakpoint);
 
-        Tenant tenant = execution.getContext().getTenant();
-        // FIXME find a way to get tenant configurations injected as value objects
-        Map<String, Object> generalConfiguration = (Map<String, Object>) tenant.getConfiguration().get("general");
-        final String title = (String) generalConfiguration.get("name");
+        GeneralConfiguration generalConfiguration = (GeneralConfiguration)
+                execution.getContext().getConfiguration(GeneralConfiguration.class);
+        final String title =  generalConfiguration.getName().getValue();
+
         String pageTitle = title;
 
         if (entity != null && providerSupplier.canSupply(entity.getClass())) {

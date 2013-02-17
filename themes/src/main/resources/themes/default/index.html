@@ -1,14 +1,46 @@
-<!doctype html>
-<html>
-  <head>
-    <title>{{page_title}}</title>
-    <link rel="stylesheet" href="" />
-  </head>
-  <body>
-    Hello, world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
 
-    <div id="main">
-      {{include layout}}
+    <title>{{page_title}}</title>
+
+    <meta property="og:image" content="{{page_thumbnail}}"/>
+    <!--[if IE]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="{{resource 'style.css'}}"/>
+</head>
+<body>
+
+<header class="container">
+    {{#site}}
+    <img src="{{logo_url}}"/>
+    <hgroup>
+        <h1>{{title}}</h1>
+
+        <h2>{{tagline}}</h2>
+    </hgroup>
+    {{/site}}
+
+    <nav>
+        {{#categories}}
+        <a href="{{category_url}}" {{#if current}}class="current"{{/if}}>{{title}}</a>
+        {{/categories}}
+    </nav>
+
+    <div class="cart">
+        <span class="total">27,30&euro;</span>
+        <img src="{{resource 'images/cart.png'}}"/>
     </div>
-  </body>
+
+    <div class="clearfix"></div>
+</header>
+
+<div id="main" class="container {{layout_name}}">
+    {{include layout}}
+</div>
+
+</body>
 </html>

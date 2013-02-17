@@ -1,3 +1,2 @@
 org.mayocat.shop.service.internal.DefaultAccountsService
 org.mayocat.shop.service.internal.DefaultCatalogService
-org.mayocat.shop.service.internal.DefaultConfigurationService
