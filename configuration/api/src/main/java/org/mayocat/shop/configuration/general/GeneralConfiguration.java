@@ -17,6 +17,10 @@ public class GeneralConfiguration
 
     @Valid
     @JsonProperty
+    private Configurable<String> tagline = new Configurable<String>("", true);
+
+    @Valid
+    @JsonProperty
     private LocalesConfiguration locales = new LocalesConfiguration();
 
     public LocalesConfiguration getLocales()
@@ -27,5 +31,10 @@ public class GeneralConfiguration
     public Configurable<String> getName()
     {
         return name;
+    }
+
+    public Configurable<String> getTagline()
+    {
+        return tagline;
     }
 }

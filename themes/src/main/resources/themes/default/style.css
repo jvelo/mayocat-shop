@@ -55,6 +55,11 @@ a:hover, a:focus, a:active {
     color: #00F;
 }
 
+h1 a {
+    text-decoration: none;
+    color: inherit !important;
+}
+
 a img {
     border: none;
 }
@@ -159,4 +164,19 @@ header div.cart {
     font-family: Georgia;
     font-size: 1.2em;
     font-style: italic;
+}
+
+div.product ul.images {
+    list-style: none;
+    margin-left: 0;
+    margin-bottom: 20px;
+}
+
+div.product ul.images li {
+    float: left;
+    margin-right: 3px;
+}
+
+div.product ul.images:after {
+    clear: both;
 }

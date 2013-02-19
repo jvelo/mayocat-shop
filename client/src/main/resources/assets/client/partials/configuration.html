@@ -15,9 +15,22 @@
             <label class="control-label" for="shopName">Name</label>
             <div class="controls">
               <input type="text" name="name" class="input-xlarge"
-                                 ng-model="configuration.general.name.value" 
+                                 ng-model="configuration.general.name.value"
                                  id="shopName"
                                  ng-disabled="!isConfigurable('general.name')" />
+            </div>
+          </div>
+
+          <!-- Shop tag line -->
+          <div class="control-group" ng-show="isVisible('general.tagline')"
+                                     ng-class="{default: isDefaultValue('general.tagline')}">
+            <label class="control-label" for="shopName">Tagline</label>
+            <div class="controls">
+              <textarea name="name" class="input-xlarge"
+                     ng-model="configuration.general.tagline.value"
+                     id="shopTagline"
+                     ng-disabled="!isConfigurable('general.tagline')">
+              </textarea>
             </div>
           </div>
 
@@ -34,7 +47,7 @@
 
           <!-- Other locales -->
           <div class="control-group" ng-show="isVisible('general.locales.others')" ng-class="{default: isDefaultValue('general.locales.others')}">
-            <label class="control-label" for="hasVariants">Other languages</label>
+            <label class="control-label" for="otherLocales">Other languages</label>
             <div class="controls">
               <input type="text" name="name" class="input-xlarge"
                                  ng-model="configuration.general.locales.others.value"
@@ -54,7 +67,7 @@
             <label class="control-label" for="categoriesEnabled">have categories</label>
             <div class="controls">
               <label class="checkbox">
-                <input type="checkbox" 
+                <input type="checkbox"
                        class="input"
                        id="categoriesEnabled"
                        ng-model="configuration.shop.products.categories.value" />
@@ -67,7 +80,7 @@
             <label class="control-label" for="stockEnabled">have stock</label>
             <div class="controls">
               <label class="checkbox">
-                <input type="checkbox" 
+                <input type="checkbox"
                        class="input"
                        id="stockEnabled"
                        ng-model="configuration.shop.products.stock.value" />
@@ -80,7 +93,7 @@
             <label class="control-label" for="variantsEnabled">have variants</label>
             <div class="controls">
               <label class="checkbox">
-                <input type="checkbox" 
+                <input type="checkbox"
                        class="input"
                        id="variantsEnabled"
                        ng-model="configuration.shop.products.variants.value" />

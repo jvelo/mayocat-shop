@@ -18,7 +18,7 @@
     {{#site}}
     <img src="{{logo_url}}"/>
     <hgroup>
-        <h1>{{title}}</h1>
+        <h1><a href="/">{{title}}</a></h1>
 
         <h2>{{tagline}}</h2>
     </hgroup>
@@ -26,7 +26,7 @@
 
     <nav>
         {{#categories}}
-        <a href="{{category_url}}" {{#if current}}class="current"{{/if}}>{{title}}</a>
+        <a href="{{url}}" {{#if current}}class="current"{{/if}}>{{title}}</a>
         {{/categories}}
     </nav>
 

@@ -10,13 +10,16 @@
 
   {{#images}}
     {{#featured}}
-      <img class="photo" src="{{url_big}}" />
+      <img class="photo" src="{{theme_large_url}}" />
     {{/featured}}
     <ul class="images">
      {{#all}}
-        <li class="thumbnail" src="{{url_small}}" />
+        <li class="thumbnail">
+            <img src="{{theme_small_url}}" />
+        </li>
      {{/all}}
     </ul>
+    <div class="clearfix"></div>
   {{/images}}
   {{/product}}
 </div>
