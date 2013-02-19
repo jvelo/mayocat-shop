@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.mayocat</groupId>
-    <artifactId>mayocat-parent</artifactId>
+    <artifactId>mayocat-configuration</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>mayocat-configuration-default</artifactId>
