@@ -27,7 +27,7 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration</artifactId>
+      <artifactId>mayocat-configuration-default</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
