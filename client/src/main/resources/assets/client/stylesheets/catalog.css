@@ -1,26 +1,26 @@
 #catalog ul.list {
-  /*list-style: none outside none;*/
-  margin-left: 0;
-  margin-top: 25px;
+    /*list-style: none outside none;*/
+    margin-left: 0;
+    margin-top: 25px;
 }
 
 #catalog ul li {
-  color: white;
-  border-top: 1px solid #DDDDDD;
-  line-height: 26px;
-  padding: 6px;
-  text-align: left;
-  vertical-align: top;
+    color: white;
+    border-top: 1px solid #DDDDDD;
+    line-height: 26px;
+    padding: 6px;
+    text-align: left;
+    vertical-align: top;
 }
 
 #catalog ul li:hover {
-  background-color: #F5F5F5;
+    background-color: #F5F5F5;
 }
 
 #catalog ul li div {
-  color: #333;
+    color: #333;
 }
 
 #catalog ul li div.row {
-  margin-left: 0;
+    margin-left: 0;
 }

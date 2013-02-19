@@ -19,7 +19,7 @@
                                 <span class="fade in">
                                     <img ng-src="{{file.previewUri}}"
                                          width="{{file.previewWidth}}"
-                                         height="{{file.previewHeight}}" />
+                                         height="{{file.previewHeight}}"/>
                                 </span>
                                 <div class="meta">
                                     <div class="name" title="{{file.webkitRelativePath || file.name}}">
@@ -29,7 +29,8 @@
                                 </div>
                             </span>
                             <span class="size span8" ng-show="!file.uploaded && !file.progress">
-                                <input type="text" ng-model="file.title" class="span12" placeholder="Image's title (alternative text)"/>
+                                <input type="text" ng-model="file.title" class="span12"
+                                       placeholder="Image's title (alternative text)"/>
                                 <textarea class="span12" rows="5" placeholder="Description (Optional)"></textarea>
                             </span>
                             <span class="cancel span2" ng-show="!file.uploaded && !file.progress">
@@ -44,7 +45,8 @@
                                 <div ng-show="file.failed" class="alert alert-error">
                                     Failed
                                     <div class="pull-right">
-                                        <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
+                                        <button ng-show="!file.loaded" type="button" class="btn"
+                                                ng-click="remove($index)">
                                             Dismiss
                                         </button>
                                     </div>
@@ -52,10 +54,12 @@
                                 <div ng-show="file.uploaded" class="alert alert-block">
                                     Uploaded !
                                     <div class="pull-right">
-                                        <button ng-show="!file.loaded" type="button" class="btn btn-primary" ng-click="remove($index)">
+                                        <button ng-show="!file.loaded" type="button" class="btn btn-primary"
+                                                ng-click="remove($index)">
                                             Edit thumbnails
                                         </button>
-                                        <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
+                                        <button ng-show="!file.loaded" type="button" class="btn"
+                                                ng-click="remove($index)">
                                             Dismiss
                                         </button>
                                     </div>
@@ -65,6 +69,7 @@
                                     <div class="bar" ng-style="{'width': file.progress+'%'}"></div>
                                 </div>
                             </span>
+
                             <div class="clearfix"></div>
                         </li>
                     </ul>
