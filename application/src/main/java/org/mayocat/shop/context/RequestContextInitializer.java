@@ -1,5 +1,6 @@
 package org.mayocat.shop.context;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -14,12 +15,14 @@ import org.mayocat.shop.authorization.Authenticator;
 import org.mayocat.shop.base.EventListener;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.model.User;
+import org.mayocat.shop.configuration.ConfigurationService;
 import org.mayocat.shop.multitenancy.TenantResolver;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.sun.jersey.api.core.InjectParam;
 
 /**
  * @version $Id$
@@ -29,10 +32,14 @@ import com.google.common.collect.Lists;
 public class RequestContextInitializer implements ServletRequestListener, EventListener
 {
     @Inject
-    protected Provider<TenantResolver> provider;
+    protected Provider<TenantResolver> tenantResolver;
 
     @Inject
     private Map<String, Authenticator> authenticators;
+
+    @Inject
+    private ConfigurationService configurationService;
+
 
     @Inject
     private Execution execution;
@@ -52,13 +59,16 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         }
 
         String host = getHost(servletRequestEvent);
-        Tenant tenant = this.provider.get().resolve(host);
+        Tenant tenant = this.tenantResolver.get().resolve(host);
 
         Context context = new Context(tenant, null);
 
         // Set the context in the execution already, even if we haven't figured out if there is a valid user yet.
-        // The context tenant is actually needed to find out the context user.
+        // The context tenant is actually needed to find out the context user and to initialize tenant configurations
         this.execution.setContext(context);
+
+        Map<Class, Object> configurations = configurationService.getConfigurations();
+        context.setConfigurations(configurations);
 
         Optional<User> user = Optional.absent();
         if (tenant != null) {

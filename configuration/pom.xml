@@ -7,39 +7,13 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>mayocat-configuration</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <name>Mayocat Configuration</name>
   <description>Top level configuration for mayocat</description>
-  <dependencies>
 
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-base</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- XWiki -->
-    <dependency>
-    <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-component-default</artifactId>
-      <version>${xwiki.version}</version>
-    </dependency>
-
-    <!-- Drop Wizard --> 
-    <dependency>
-        <groupId>com.yammer.dropwizard</groupId>
-        <artifactId>dropwizard-core</artifactId>
-        <version>${dropwizard.version}</version>
-    </dependency>
-
-    <!-- Testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.1</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
+  <modules>
+    <module>api</module>
+    <module>default</module>
+  </modules>
 </project>

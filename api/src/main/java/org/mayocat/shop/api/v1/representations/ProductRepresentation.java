@@ -15,6 +15,8 @@ public class ProductRepresentation
 
     private String description;
 
+    private Boolean onShelf;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<EntityReferenceRepresentation> categories = null;
 
@@ -41,6 +43,7 @@ public class ProductRepresentation
         this.slug = product.getSlug();
         this.title = product.getTitle();
         this.description = product.getDescription();
+        this.onShelf = product.getOnShelf();
 
         this.href = "/product/" + this.slug;
 
@@ -86,5 +89,16 @@ public class ProductRepresentation
     public void setImages(List<ImageRepresentation> images)
     {
         this.images = images;
+    }
+
+
+    public Boolean getOnShelf()
+    {
+        return onShelf;
+    }
+
+    public void setOnShelf(Boolean onShelf)
+    {
+        this.onShelf = onShelf;
     }
 }

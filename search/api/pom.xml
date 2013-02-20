@@ -22,7 +22,7 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration</artifactId>
+      <artifactId>mayocat-configuration-api</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

@@ -56,13 +56,13 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             String layout = themeManager.resolveLayoutName(frontView.getLayout() + ".html",
                     frontView.getBreakpoint());
 
-            frontView.putInContext("layout", layout);
+            frontView.getBindings().put("layout", layout);
 
             //
             engine.get().register(themeManager.resolve(frontView.getLayout() + ".html", frontView.getBreakpoint()));
 
             ObjectMapper mapper = new ObjectMapper();
-            String jsonContext = mapper.writeValueAsString(frontView.getContext());
+            String jsonContext = mapper.writeValueAsString(frontView.getBindings());
             engine.get().register(template);
 
             String rendered = engine.get().render(template.getName(), jsonContext);
@@ -72,4 +72,6 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             throw new WebApplicationException(e);
         }
     }
+
+
 }

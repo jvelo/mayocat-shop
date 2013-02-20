@@ -26,7 +26,6 @@ angular.module('catalog', [])
 
             listProductsForCategory:function (category, callback) {
                 $http.get('/api/1.0/category/' + category + "?expand=products").success(function (data) {
-                    console.log(data);
                     callback && callback.call(this, data.products);
                 });
             },

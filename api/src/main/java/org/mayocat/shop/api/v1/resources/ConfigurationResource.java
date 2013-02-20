@@ -16,11 +16,10 @@ import javax.ws.rs.core.Response;
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.model.Role;
-import org.mayocat.shop.model.TenantConfiguration;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.service.ConfigurationService;
-import org.mayocat.shop.service.NoSuchModuleException;
+import org.mayocat.shop.configuration.ConfigurationService;
+import org.mayocat.shop.configuration.NoSuchModuleException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -47,7 +46,7 @@ public class ConfigurationResource implements Resource
     @Timed
     public Map<String, Object> getConfiguration()
     {
-        return configurationService.getConfiguration();
+        return configurationService.getConfigurationAsJson();
     }
 
     @GET
@@ -56,7 +55,7 @@ public class ConfigurationResource implements Resource
     public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
     {
         try {
-            return configurationService.getConfiguration(module);
+            return configurationService.getConfigurationAsJson(module);
         } catch (NoSuchModuleException e) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .entity("No such module could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build());

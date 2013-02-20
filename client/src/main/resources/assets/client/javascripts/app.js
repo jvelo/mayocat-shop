@@ -2,6 +2,7 @@
 
 var mayocat = angular.module('mayocat', [
     'search',
+    'thumbnail',
     'product',
     'category',
     'catalog',
@@ -9,9 +10,6 @@ var mayocat = angular.module('mayocat', [
     'jqui'
 ]);
 
-// config(['$locationProvider', function($locationProvider) {
-//   $locationProvider.html5Mode(true);
-// }]).
 mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
@@ -22,6 +20,37 @@ mayocat.config(['$routeProvider', function($routeProvider) {
       when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
       otherwise({redirectTo: '/'});
 }]);
+
+/**
+ * A switch button similar to the ios toggle switch
+ */
+mayocat.directive('switchButton', function() {
+    return {
+        require: 'ngModel',
+        restrict: 'E',
+        template: '<div class="btn-group">' +
+            '<button class="btn on" ng-click="on()"></button>' +
+            '<button class="btn off" ng-click="off()"></button>' +
+            '</div>',
+        link: function($scope, element, attrs, controller) {
+            $scope.on = function() {
+                $(element).find(".btn.on").addClass("btn-primary");
+                $(element).find(".btn.off").removeClass("btn-primary");
+                controller.$setViewValue(true);
+            }
+            $scope.off = function() {
+                $(element).find(".btn.off").addClass("btn-primary");
+                $(element).find(".btn.on").removeClass("btn-primary");
+                controller.$setViewValue(false);
+            }
+            controller.$render = function() {
+                if (typeof controller.$viewValue !== 'undefined') {
+                    $scope[controller.$viewValue ? "on" : "off"]();
+                }
+            };
+        }
+    }
+});
 
 /**
  * 'active-class' directive for <a> elements or <li> elements with a children <a>.
@@ -67,7 +96,7 @@ mayocat.directive('activeClass', ['$location', function(location) {
 
 
 /**
- *
+ * Image upload directive.
  */
 mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
     return {
@@ -199,7 +228,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 }]);
 
 /**
- *
+ * Thumbnail editor directive
  */
 mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
     return {

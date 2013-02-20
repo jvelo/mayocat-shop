@@ -59,6 +59,12 @@
 
     <dependency>
       <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-configuration-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat</groupId>
       <artifactId>mayocat-client</artifactId>
       <version>${project.version}</version>
       <type>zip</type>

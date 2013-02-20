@@ -1,86 +1,89 @@
 <!DOCTYPE html>
 
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en" ng-app="mayocat"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" ng-app="mayocat"> <!--<![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" ng-app="mayocat"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" ng-app="mayocat"> <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width"/>
 
-  <title>Mayocat Shop - Administration</title>
+    <title>Mayocat Shop - Administration</title>
 
-  <!-- Included CSS Files -->
-  <link rel="stylesheet" href="stylesheets/bootstrap.css" />
-  <link rel="stylesheet" href="stylesheets/mayocat.css" />
-  <link rel="stylesheet" href="stylesheets/amphoria.css" />
-  <link rel="stylesheet" href="stylesheets/catalog.css" />
-  <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css" />
-  <link rel="stylesheet" href="javascripts/vendor/jcrop/css/jquery.Jcrop.min.css" />
+    <!-- Included CSS Files -->
+    <link rel="stylesheet" href="stylesheets/bootstrap.css"/>
+    <link rel="stylesheet" href="stylesheets/mayocat.css"/>
+    <link rel="stylesheet" href="stylesheets/catalog.css"/>
+    <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css"/>
+    <link rel="stylesheet" href="javascripts/vendor/jcrop/css/jquery.Jcrop.min.css"/>
 
-  <!-- Vendor scripts -->
-  <script src="javascripts/vendor/jquery.js"></script>
-  <script src="javascripts/vendor/jquery-ui-1.9.0.custom.min.js"></script>
-  <script src="javascripts/vendor/bootstrap.js"></script>
-  <script src="javascripts/vendor/angular/1.1.1/angular.min.js"></script>
-  <script src="javascripts/vendor/angular/1.1.1/angular-resource.min.js"></script>
-  <script src="javascripts/vendor/sortable-ng.js"></script>
-  <script src="javascripts/vendor/blueimp/jquery.fileupload.js"></script>
-  <script src="javascripts/vendor/blueimp/jquery.iframe-transport.js"></script>
-  <script src="javascripts/vendor/blueimp/load-image.min.js"></script>
-  <script src="javascripts/vendor/blueimp/canvas-to-blob.min.js"></script>
-  <script src="javascripts/vendor/blueimp/jquery.fileupload-fp.js"></script>
-  <script src="javascripts/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
+    <!-- Vendor scripts -->
+    <script src="javascripts/vendor/jquery.js"></script>
+    <script src="javascripts/vendor/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="javascripts/vendor/bootstrap.js"></script>
+    <script src="javascripts/vendor/angular/1.1.1/angular.min.js"></script>
+    <script src="javascripts/vendor/angular/1.1.1/angular-resource.min.js"></script>
+    <script src="javascripts/vendor/sortable-ng.js"></script>
+    <script src="javascripts/vendor/blueimp/jquery.fileupload.js"></script>
+    <script src="javascripts/vendor/blueimp/jquery.iframe-transport.js"></script>
+    <script src="javascripts/vendor/blueimp/load-image.min.js"></script>
+    <script src="javascripts/vendor/blueimp/canvas-to-blob.min.js"></script>
+    <script src="javascripts/vendor/blueimp/jquery.fileupload-fp.js"></script>
+    <script src="javascripts/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
 
-  <!-- Application scripts -->
-  <script src="javascripts/app.js"></script>
-  <script src="javascripts/controllers.js"></script>
-  <script src="javascripts/search.js"></script>
-  <script src="javascripts/catalog.js"></script>
-  <script src="javascripts/product.js"></script>
-  <script src="javascripts/category.js"></script>
-  <script src="javascripts/configuration.js"></script>
+    <!-- Application scripts -->
+    <script src="javascripts/app.js"></script>
+    <script src="javascripts/controllers.js"></script>
+    <script src="javascripts/search.js"></script>
+    <script src="javascripts/catalog.js"></script>
+    <script src="javascripts/thumbnail.js"></script>
+    <script src="javascripts/product.js"></script>
+    <script src="javascripts/category.js"></script>
+    <script src="javascripts/configuration.js"></script>
 
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+    <![endif]-->
 </head>
 <body ng-controller="AppController" ng-cloak>
 
   <!-- Top navigation bar 
   <div class="navbar navbar-fixed-top" ng-show="authenticated">
     <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" href="#" ng-bind="tenant.shop.name"></a>
+        <div class="container">
+            <a class="brand" href="#" ng-bind="tenant.shop.name"></a>
 
-        <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
-          <div class="input-append">
-            <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search" ng-model="term" />
-            <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
-          </div>
-          <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
-            <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.slug)">
-              <a><h4>{{suggestion.title}}</h4></a>
-            </li>
-          </ul>
-        </form>
+            <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
+                <div class="input-append">
+                    <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search"
+                           ng-model="term"/>
+                    <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
+                </div>
+                <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
+                    <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.slug)">
+                        <a><h4>{{suggestion.title}}</h4></a>
+                    </li>
+                </ul>
+            </form>
 
-        <div class="pull-right">
-          <ul class="nav">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span ng-bind="user.email"></span>
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li ng-click="logout()" class="clickable"><a>Logout</a></li>
-              </ul>
-            </li>
-          </ul>
+            <div class="pull-right">
+                <ul class="nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span ng-bind="user.email"></span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li ng-click="logout()" class="clickable"><a>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </div>
   </div>-->
 

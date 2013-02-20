@@ -1,0 +1,182 @@
+html {
+    font-size: 62.5%;
+}
+body {
+    margin: 0;
+    padding: 1em;
+    color: #121212;
+    font-family: Arial, Tahoma, Verdana, sans-serif;
+    font-size: 1.6em;
+    line-height: 1.3;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 1em 0 .5em 0;
+    line-height: 1.2;
+    font-weight: bold;
+    font-style: normal;
+}
+h1 {
+    font-size: 2.25em;
+}
+h2 {
+    font-size: 1.75em;
+}
+h3 {
+    font-size: 1.5em;
+}
+h4 {
+    font-size: 1.4em;
+}
+
+ul, ol {
+    margin: .75em 0 .75em 32px;
+    padding: 0;
+}
+
+p {
+    margin: .75em 0;
+}
+address {
+    margin: .75em 0;
+    font-style: normal;
+}
+
+a {
+    text-decoration: underline;
+}
+a:link {
+    color: #11C;
+}
+a:visited {
+    color: #339;
+}
+a:hover, a:focus, a:active {
+    color: #00F;
+}
+
+h1 a {
+    text-decoration: none;
+    color: inherit !important;
+}
+
+a img {
+    border: none;
+}
+
+em {
+    font-style: italic;
+}
+strong {
+    font-weight: bold;
+}
+
+form, fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+input, button, select {
+    vertical-align: middle;
+}
+
+/* Utils */
+
+.clearfix {
+    clear: both;
+}
+
+/* Layout */
+
+.container {
+    margin: 0 auto;
+    width: 960px;
+}
+
+ul.products {
+    margin: 0;
+    list-style-type: none;
+}
+
+ul.products li {
+    margin-right: 12.5px;
+    margin-bottom: 10.5px;
+    float: left;
+}
+
+ul.products img {
+    width: 178px;
+    height: 178px;
+}
+
+header h1 {
+    margin-bottom: 0;
+}
+
+header h2 {
+    color: lightgray;
+    font-family: Georgia;
+    font-size: 1.5em;
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 2.2em;
+}
+
+header hgroup {
+    width: 450px;
+    float: left;
+}
+
+nav {
+    font-size: 1.1em;
+    color: white;
+    float: right;
+    margin-top: 3.5em;
+    margin-right: 20px;
+}
+
+nav a {
+    background-color: #d3d3d3;
+    padding: 0.8em 0.5em;
+    text-decoration: none;
+}
+
+nav a.current {
+    background-color: black;
+}
+
+nav a.current:link,
+nav a.current:visited,
+nav a.current:hover {
+    color: white;
+}
+
+nav a:link,
+nav a:visited,
+nav a:hover {
+    color: black;
+}
+
+header div.cart {
+    float: right;
+    margin-right: 34px;
+    margin-top: 51px;
+    font-family: Georgia;
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+div.product ul.images {
+    list-style: none;
+    margin-left: 0;
+    margin-bottom: 20px;
+}
+
+div.product ul.images li {
+    float: left;
+    margin-right: 3px;
+}
+
+div.product ul.images:after {
+    clear: both;
+}

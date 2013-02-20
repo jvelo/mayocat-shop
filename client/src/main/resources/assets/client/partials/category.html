@@ -1,29 +1,31 @@
 <form>
-  <div class="span8">
-    <div class="entity" ng-class="{true: 'loading', false: ''}[category.title == undefined]">
+    <div class="span8">
+        <div class="entity" ng-class="{true: 'loading', false: ''}[category.title == undefined]">
 
-        <div ng-show="category.title">
+            <div ng-show="category.title">
 
-          <!-- Title -->
-          <h1>
-            <input type="text" class="span12" ng-model="category.title" />
-          </h1>
+                <!-- Title -->
+                <h1>
+                    <input type="text" class="span12" ng-model="category.title"/>
+                </h1>
 
-          <!-- Description -->
-          <div>
-            <label>Description</label>
-            <textarea class="span12" rows="10" ng-model="category.description" />
-          </div>
+                <!-- Description -->
+                <div>
+                    <label>Description</label>
+                    <textarea class="span12" rows="10" ng-model="category.description"/>
+                </div>
+            </div>
+
         </div>
-
     </div>
-  </div>
-  <div class="span4">
-    <div class="buttons">
-      <button ng-click="updateCategory()" class="btn btn-large btn-primary">Update</button>
+    <div class="span4">
+        <div class="buttons">
+            <button ng-click="updateCategory()" class="btn btn-large btn-primary">Update</button>
+        </div>
+        <p class="uri" ng-show="!isNew()">
+            <small>
+                <pre>/category/{{category.slug}}</pre>
+            </small>
+        </p>
     </div>
-    <p class="uri" ng-show="!isNew()">
-        <small><pre>/category/{{category.slug}}</pre></small>
-    </p>
-  </div>
 </form>
