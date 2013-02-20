@@ -14,6 +14,7 @@
   <!-- Included CSS Files -->
   <link rel="stylesheet" href="stylesheets/bootstrap.css" />
   <link rel="stylesheet" href="stylesheets/mayocat.css" />
+  <link rel="stylesheet" href="stylesheets/amphoria.css" />
   <link rel="stylesheet" href="stylesheets/catalog.css" />
   <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css" />
   <link rel="stylesheet" href="javascripts/vendor/jcrop/css/jquery.Jcrop.min.css" />
@@ -49,7 +50,7 @@
 </head>
 <body ng-controller="AppController" ng-cloak>
 
-  <!-- Top navigation bar -->
+  <!-- Top navigation bar 
   <div class="navbar navbar-fixed-top" ng-show="authenticated">
     <div class="navbar-inner">
       <div class="container">
@@ -82,92 +83,114 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 
   <!-- Main container -->
-  <div class="main-container" ng-show="authenticated">
+  <!-- <div class="main-container" ng-show="authenticated">
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span2">
-          <div class="sidebar-nav">
-
-            <!-- Orders -->
-            <ul class="nav nav-tabs nav-stacked">
-              <li active-class="active">
+        <div class="span2">-->
+          
+    <div class="sidebar-nav">
+    
+        <header>
+            <div class="logo"></div>
+            <h2>Baglio di Pianneto</h2>    
+            <small>www.bagliodipianneto.com</small> <br /><br />  
+            <small ng-click="logout()" class="clickable"><a>Logout</a></small>
+        </header>
+    
+        <!-- Orders -->
+        <ul class="nav nav-tabs nav-stacked">
+            <li active-class="active">
                 <a href="#/order/">
-                  <h2>Orders</h2>
-                  Follow and process your latest orders
+                    <h2>Orders</h2>
                 </a>
-              </li>
-            </ul>
-
-            <!-- Products, Contents, Theme, Statistics -->
-            <ul class="nav nav-tabs nav-stacked">
-              <li active-class="active">
+            </li>
+            <li active-class="active">
+                <a href="#/clients/">
+                    <h2>Clients</h2>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Products, Contents, Theme, Statistics -->
+        <ul class="nav nav-tabs nav-stacked">
+            <li active-class="active">
                 <a href="#/product/" other-active-href="#/category/">
-                  <h2>Products</h2>
-                  Add, delete and edit products of your catalog
+                    <h2>Products</h2>
                 </a>
-              </li>
-              <li active-class="active">
+            </li>
+            <li active-class="active">
                 <a href="#/pages/">
-                  <h2>Contents</h2>
-                  Edit pages and news of your site
+                    <h2>Contents</h2>
                 </a>
-              </li>
-            </ul>
-
-            <!-- Orders -->
-            <ul class="nav nav-tabs nav-stacked">
-              <li active-class="active">
+            </li>
+            <li active-class="active">
+                <a href="#/theme/">
+                    <h2>Theme</h2>
+                </a>
+            </li>
+            <li active-class="active">
+                <a href="#/statistics/">
+                    <h2>Statistics</h2>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Orders -->
+        <ul class="nav nav-tabs nav-stacked">
+            <li active-class="active">
                 <a href="#/configuration/">
-                  <h2>Parameters</h2>
-                  Configure your shop options
+                    <h2>Parameters</h2>
                 </a>
-              </li>
-            </ul>
-
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span10" ng-view>
-        </div><!--/span-->
-      </div><!--/row-->
-
-      <footer>
-      </footer>
-
-    </div><!--/.fluid-container-->
-  </div>
-
-  <!-- Initial AJAX loader -->
-  <div class="loader" ng-show="authenticated == undefined"></div>
-
-  <!-- Login modal -->
-  <div class="modal" ng-show="authenticated != undefined && !authenticated" id="myModal">
-    <form class="" ng-controller="LoginCtrl">
-      <div class="modal-header">
-        <h3>Authentication required</h3>
-      </div>
-      <div class="modal-body" >
-        <p>
-            <fieldset>
-              <label>User name or email</label>
-              <input type="text" class="span3" ng-model="username" />
-              <label>Password</label>
-              <input type="password" class="span3" ng-model="password" />
-              <label>Remember me</label>
-              <input type="checkbox" ng-model="remember" />
-            </fieldset>
-        </p>
-        <div class="alert" ng-show="authenticationFailed">
-        We could not authenticate you with these credentials.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
-      </div>
-    </form>
-  </div>
-  <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
+            </li>
+            <li active-class="active">
+                <a href="#/account/">
+                    <h2>My Account</h2>
+                </a>
+            </li>
+        </ul>
+              <!--</div><!--/.well -->
+            <!--</div><!--/span-->
+            <!--/span-->
+          <!--</div><!--/row-->
+        <!--</div><!--/.fluid-container-->
+    </div>
+  
+  
+	<div id="content" ng-view></div>
+  
+  
+    <!-- Initial AJAX loader -->
+    <div class="loader" ng-show="authenticated == undefined"></div>
+    
+    <!-- Login modal -->
+    <div class="modal" ng-show="authenticated != undefined && !authenticated" id="myModal">
+        <form class="" ng-controller="LoginCtrl">
+          <div class="modal-header">
+            <h3>Authentication required</h3>
+          </div>
+          <div class="modal-body" >
+            <p>
+                <fieldset>
+                  <label>User name or email</label>
+                  <input type="text" class="span3" ng-model="username" />
+                  <label>Password</label>
+                  <input type="password" class="span3" ng-model="password" />
+                  <label>Remember me</label>
+                  <input type="checkbox" ng-model="remember" />
+                </fieldset>
+            </p>
+            <div class="alert" ng-show="authenticationFailed">
+            We could not authenticate you with these credentials.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
+          </div>
+        </form>
+    </div>
+    <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
 </body>
 </html>

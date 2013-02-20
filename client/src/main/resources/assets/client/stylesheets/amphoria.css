@@ -1,0 +1,92 @@
+@charset "UTF-8";
+/* COLOR MANAGEMENT
+//////////////////////////////////////////////////////
+FONT				#333
+LINK				#b6191f
+BACKGROUND HEADER	#230000
+BORDER HEADER 1		#000
+BORDER HEADER 2		#442626
+BACKGROUND 1		#f8f3e9
+BACKGROUND 2		#fdfbf8
+BORDER 1			#dfdad1
+BORDER 2			#e9e7e5
+//////////////////////////////////////////////////////*/
+
+/*FONT*/
+body{
+	color:#333;
+}
+a{
+	color:#b6191f;
+	text-decoration:none;
+}
+.sidebar-nav a, #list a {
+	color:#333;
+}
+header a{
+	color:inherit !important;
+}
+/*HEADER*/
+header{
+	background-color:#230000;
+	color:#FFF;
+	border-color:#000;
+}
+header .logo{
+	background-image:url(../images/logo-amphoria.png);
+	width:36px;
+	height:65px;
+}
+/*LIST*/
+#list{
+	background-color:#fdfbf8;
+	border-color:#dfdad1;
+}
+#list .header{
+	background-color:#230000;
+	color:#FFF;
+	border-color:#442626;
+}
+#list li {
+	border-color:#e9e7e5;
+}
+#list li:hover, #list .icon-move {
+	background-color:#FFF;
+}
+
+/*MENU*/
+.sidebar-nav{
+	background-color:#f8f3e9;
+	border-color:#dfdad1;
+}
+.sidebar-nav ul{
+	border-bottom-color:#dfdad1;
+	border-top-color:#FFF;
+}
+.sidebar-nav ul li{
+	border-color:#f8f3e9;
+}
+.sidebar-nav ul li.active{
+	border-color:#dfdad1;
+	background-color:#fdfbf8;
+}
+
+/*FIELD*/
+input, textarea{
+	background-color:#FFF;
+	border-color:#ababab;
+}
+
+/*BOUTTON*/
+.btn-primary{
+	background-color:#b6191f;
+	color:#FFF;
+}
+
+Fond bouton : #444444
+
+
+Fond menu 2 {
+	background-color:#fdfbf8;
+}
+
