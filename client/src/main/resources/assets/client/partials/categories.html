@@ -1,27 +1,27 @@
 <div id="catalog">
-  <!-- header -->
-  <div class="page-header">
-    <div class="pull-right">
-      <a href="#/product/" class="btn">Manage products</a>
+    <!-- header -->
+    <div class="page-header">
+        <div class="pull-right">
+            <a href="#/product/" class="btn">Manage products</a>
+        </div>
+
+        <h1 class="">Categories</h1>
+    </div>
+    <div>
+        <button class="btn btn-primary btn-large">Add a new category</button>
     </div>
 
-    <h1 class="">Categories</h1>
-  </div>
-  <div>
-    <button class="btn btn-primary btn-large">Add a new category</button>
-  </div>
-
-  <!-- list/table -->
-  <div>
-    <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-      <li ng-repeat="category in categories" data-handle="{{category.slug}}">
-        <div class="row droptarget">
-          <div class="span6">{{category.title}}</div>
-          <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>
-          <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
-        </div>
-      </li>
-    </ul>
-  </div>
+    <!-- list/table -->
+    <div>
+        <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+            <li ng-repeat="category in categories" data-handle="{{category.slug}}">
+                <div class="row droptarget">
+                    <div class="span6">{{category.title}}</div>
+                    <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>
+                    <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                </div>
+            </li>
+        </ul>
+    </div>
 
 </div>

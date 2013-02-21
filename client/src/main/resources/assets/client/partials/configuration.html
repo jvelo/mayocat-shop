@@ -1,119 +1,132 @@
 <ng-form name="configurationForm">
-  <div id="configuration">
-    <div class="span8">
-      <!-- header -->
-      <div class="page-header">
-        <h1 class="">Parameters</h1>
-      </div>
-
-      <form class="form-horizontal" name="generalForm">
-        <fieldset>
-          <legend>Shop</legend>
-
-          <!-- Shop name -->
-          <div class="control-group" ng-show="isVisible('general.name')" ng-class="{default: isDefaultValue('general.name')}">
-            <label class="control-label" for="shopName">Name</label>
-            <div class="controls">
-              <input type="text" name="name" class="input-xlarge"
-                                 ng-model="configuration.general.name.value"
-                                 id="shopName"
-                                 ng-disabled="!isConfigurable('general.name')" />
+    <div id="configuration">
+        <div class="span8">
+            <!-- header -->
+            <div class="page-header">
+                <h1 class="">Parameters</h1>
             </div>
-          </div>
 
-          <!-- Shop tag line -->
-          <div class="control-group" ng-show="isVisible('general.tagline')"
-                                     ng-class="{default: isDefaultValue('general.tagline')}">
-            <label class="control-label" for="shopName">Tagline</label>
-            <div class="controls">
-              <textarea name="name" class="input-xlarge"
-                     ng-model="configuration.general.tagline.value"
-                     id="shopTagline"
-                     ng-disabled="!isConfigurable('general.tagline')">
-              </textarea>
-            </div>
-          </div>
+            <form class="form-horizontal" name="generalForm">
+                <fieldset>
+                    <legend>Shop</legend>
 
-          <!-- Default locale -->
-          <div class="control-group" ng-show="isVisible('general.locales.main')" ng-class="{default: isDefaultValue('general.locales.main')}">
-            <label class="control-label" for="defaultLocale">Default language</label>
-            <div class="controls">
-              <input type="text" name="name" class="input-xlarge"
-                                 ng-model="configuration.general.locales.main.value"
-                                 id="defaultLocale"
-                                 ng-disabled="!isConfigurable('general.locales.main')" />
-            </div>
-          </div>
+                    <!-- Shop name -->
+                    <div class="control-group" ng-show="isVisible('general.name')"
+                         ng-class="{default: isDefaultValue('general.name')}">
+                        <label class="control-label" for="shopName">Name</label>
 
-          <!-- Other locales -->
-          <div class="control-group" ng-show="isVisible('general.locales.others')" ng-class="{default: isDefaultValue('general.locales.others')}">
-            <label class="control-label" for="otherLocales">Other languages</label>
-            <div class="controls">
-              <input type="text" name="name" class="input-xlarge"
-                                 ng-model="configuration.general.locales.others.value"
-                                 id="otherLocales"
-                                 ng-disabled="!isConfigurable('general.locales.others')" />
-          </div>
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="configuration.general.name.value"
+                                   id="shopName"
+                                   ng-disabled="!isConfigurable('general.name')"/>
+                        </div>
+                    </div>
 
-        </fieldset>
-      </form>
+                    <!-- Shop tag line -->
+                    <div class="control-group" ng-show="isVisible('general.tagline')"
+                         ng-class="{default: isDefaultValue('general.tagline')}">
+                        <label class="control-label" for="shopName">Tagline</label>
 
-      <form class="form-horizontal" name="shopForm">
-        <fieldset>
-          <legend>Products</legend>
+                        <div class="controls">
+                            <textarea name="name" class="input-xlarge"
+                                      ng-model="configuration.general.tagline.value"
+                                      id="shopTagline"
+                                      ng-disabled="!isConfigurable('general.tagline')">
+                            </textarea>
+                        </div>
+                    </div>
 
-          <!-- Categories -->
-          <div class="control-group" ng-show="isVisible('shop.products.categories')" ng-class="{default: isDefaultValue('shop.products.categories')}">
-            <label class="control-label" for="categoriesEnabled">have categories</label>
-            <div class="controls">
-              <label class="checkbox">
-                <input type="checkbox"
-                       class="input"
-                       id="categoriesEnabled"
-                       ng-model="configuration.shop.products.categories.value" />
-              </label>
-            </div>
-          </div>
+                    <!-- Default locale -->
+                    <div class="control-group" ng-show="isVisible('general.locales.main')"
+                         ng-class="{default: isDefaultValue('general.locales.main')}">
+                        <label class="control-label" for="defaultLocale">Default language</label>
 
-          <!-- Stock -->
-          <div class="control-group" ng-show="isVisible('shop.products.stock')" ng-class="{default: isDefaultValue('shop.products.stock')}">
-            <label class="control-label" for="stockEnabled">have stock</label>
-            <div class="controls">
-              <label class="checkbox">
-                <input type="checkbox"
-                       class="input"
-                       id="stockEnabled"
-                       ng-model="configuration.shop.products.stock.value" />
-              </label>
-            </div>
-          </div>
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="configuration.general.locales.main.value"
+                                   id="defaultLocale"
+                                   ng-disabled="!isConfigurable('general.locales.main')"/>
+                        </div>
+                    </div>
 
-          <!-- Variants -->
-          <div class="control-group" ng-show="isVisible('shop.products.variants')" ng-class="{default: isDefaultValue('shop.products.variants')}">
-            <label class="control-label" for="variantsEnabled">have variants</label>
-            <div class="controls">
-              <label class="checkbox">
-                <input type="checkbox"
-                       class="input"
-                       id="variantsEnabled"
-                       ng-model="configuration.shop.products.variants.value" />
-              </label>
-            </div>
-          </div>
+                    <!-- Other locales -->
+                    <div class="control-group" ng-show="isVisible('general.locales.others')"
+                         ng-class="{default: isDefaultValue('general.locales.others')}">
+                        <label class="control-label" for="otherLocales">Other languages</label>
 
-        </fieldset>
-      </form>
-    </div>
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="configuration.general.locales.others.value"
+                                   id="otherLocales"
+                                   ng-disabled="!isConfigurable('general.locales.others')"/>
+                        </div>
 
-    <div class="span2">
-      <div class="buttons">
-        <button ng-click="updateConfiguration()"
-                class="btn btn-large btn-primary"
-                ng-disabled="!configurationForm.shopForm.$dirty
+                </fieldset>
+            </form>
+
+            <form class="form-horizontal" name="shopForm">
+                <fieldset>
+                    <legend>Products</legend>
+
+                    <!-- Categories -->
+                    <div class="control-group" ng-show="isVisible('shop.products.categories')"
+                         ng-class="{default: isDefaultValue('shop.products.categories')}">
+                        <label class="control-label" for="categoriesEnabled">have categories</label>
+
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox"
+                                       class="input"
+                                       id="categoriesEnabled"
+                                       ng-model="configuration.shop.products.categories.value"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="control-group" ng-show="isVisible('shop.products.stock')"
+                         ng-class="{default: isDefaultValue('shop.products.stock')}">
+                        <label class="control-label" for="stockEnabled">have stock</label>
+
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox"
+                                       class="input"
+                                       id="stockEnabled"
+                                       ng-model="configuration.shop.products.stock.value"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Variants -->
+                    <div class="control-group" ng-show="isVisible('shop.products.variants')"
+                         ng-class="{default: isDefaultValue('shop.products.variants')}">
+                        <label class="control-label" for="variantsEnabled">have variants</label>
+
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox"
+                                       class="input"
+                                       id="variantsEnabled"
+                                       ng-model="configuration.shop.products.variants.value"/>
+                            </label>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+
+        <div class="span2">
+            <div class="buttons">
+                <button ng-click="updateConfiguration()"
+                        class="btn btn-large btn-primary"
+                        ng-disabled="!configurationForm.shopForm.$dirty
                           && !configurationForm.generalForm.$dirty">
-                Update
-        </button>
-      </div>
+                    Update
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </ng-form>

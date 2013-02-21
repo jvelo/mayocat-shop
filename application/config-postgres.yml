@@ -25,15 +25,15 @@ database:
   validationQuery: "/* MayocatShop Health Check */ SELECT 1"
   minSize: 8
   maxSize: 32
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: true
   checkConnectionHealthWhenIdleFor: 10s
   closeConnectionIfIdleFor: 1 minute
 
 platform:
   thumbnails:
-    small:  100x200
+    small:  100x100
     medium: 200x400
-    large:  200x300
+    large:  800x200
 
 general:
   name:

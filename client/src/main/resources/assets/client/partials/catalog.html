@@ -1,5 +1,5 @@
 <!-- list -->
-<div id="list">
+<div id="list" ng-controller="CatalogController">
 
 	<div class="header">
     	<h2>All products</h2>
@@ -23,12 +23,12 @@
                             <li ng-repeat="product in category.products" data-handle="{{product.slug}}">
                                 <div class="row droptarget">
                                     <div><a ng-click="setRoute(product.href)">{{product.title}}</a></div>
-                                    <div><span class="dragme"><i class="icon-move"></i></span></div>
+                                    <div><span class="dragme move-handle"></span></div>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    <div><span class="dragme"><i class="icon-move"></i></span></div>
+                    <div><span class="dragme move-handle"></i></span></div>
                 </div>
             </li>
         </ul>
@@ -43,7 +43,7 @@
                 <li ng-repeat="product in products" data-handle="{{product.slug}}">
                     <div class="droptarget">
                         <div><a ng-click="setRoute(product.href)">{{product.title}}</a></div>
-                        <div><span class="dragme"><i class="icon-move"></i></span></div>
+                        <div><span class="dragme move-handle"></span></div>
                     </div>
                 </li>
             </ul>

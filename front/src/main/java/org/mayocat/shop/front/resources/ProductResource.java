@@ -49,7 +49,7 @@ public class ProductResource implements Resource, BindingsContants
     {
         Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
-            new FrontView("404", breakpoint);
+            return new FrontView("404", breakpoint);
         }
 
         FrontView result = new FrontView("product", breakpoint);

@@ -58,7 +58,7 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
             }});
         }
 
-        data.put("categories", categoriesBinding);
+        data.put(CATEGORIES, categoriesBinding);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
         data.put(PAGE_TITLE, config.getName().getValue());
