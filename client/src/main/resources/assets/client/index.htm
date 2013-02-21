@@ -14,25 +14,27 @@
     <title>Mayocat Shop - Administration</title>
 
     <!-- Included CSS Files -->
-    <link rel="stylesheet" href="stylesheets/bootstrap.css"/>
-    <link rel="stylesheet" href="stylesheets/mayocat.css"/>
-    <link rel="stylesheet" href="stylesheets/catalog.css"/>
-    <link rel="stylesheet" href="javascripts/vendor/blueimp/jquery.fileupload-ui.css"/>
-    <link rel="stylesheet" href="javascripts/vendor/jcrop/css/jquery.Jcrop.min.css"/>
+    <link rel="stylesheet/less" href="vendor/bootstrap/2.3.0/less/bootstrap.less">
+    <link rel="stylesheet/less" href="stylesheets/mayocat.less"/>
+    <link rel="stylesheet" href="vendor/blueimp/jquery.fileupload-ui.css"/>
+    <link rel="stylesheet" href="vendor/jcrop/css/jquery.Jcrop.min.css"/>
 
     <!-- Vendor scripts -->
-    <script src="javascripts/vendor/jquery.js"></script>
-    <script src="javascripts/vendor/jquery-ui-1.9.0.custom.min.js"></script>
-    <script src="javascripts/vendor/bootstrap.js"></script>
-    <script src="javascripts/vendor/angular/1.1.1/angular.min.js"></script>
-    <script src="javascripts/vendor/angular/1.1.1/angular-resource.min.js"></script>
-    <script src="javascripts/vendor/sortable-ng.js"></script>
-    <script src="javascripts/vendor/blueimp/jquery.fileupload.js"></script>
-    <script src="javascripts/vendor/blueimp/jquery.iframe-transport.js"></script>
-    <script src="javascripts/vendor/blueimp/load-image.min.js"></script>
-    <script src="javascripts/vendor/blueimp/canvas-to-blob.min.js"></script>
-    <script src="javascripts/vendor/blueimp/jquery.fileupload-fp.js"></script>
-    <script src="javascripts/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
+    <script src="vendor/lesscss/less-1.3.3.min.js"></script>
+    <script src="vendor/jquery.js"></script>
+    <script src="vendor/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="vendor/bootstrap/2.3.0/js/bootstrap-transition.js"></script>
+    <script src="vendor/bootstrap/2.3.0/js/bootstrap-modal.js"></script>
+    <script src="vendor/bootstrap/2.3.0/js/bootstrap-dropdown.js"></script>
+    <script src="vendor/angular/1.1.1/angular.min.js"></script>
+    <script src="vendor/angular/1.1.1/angular-resource.min.js"></script>
+    <script src="vendor/sortable-ng.js"></script>
+    <script src="vendor/blueimp/jquery.fileupload.js"></script>
+    <script src="vendor/blueimp/jquery.iframe-transport.js"></script>
+    <script src="vendor/blueimp/load-image.min.js"></script>
+    <script src="vendor/blueimp/canvas-to-blob.min.js"></script>
+    <script src="vendor/blueimp/jquery.fileupload-fp.js"></script>
+    <script src="vendor/jcrop/js/jquery.Jcrop.min.js"></script>
 
     <!-- Application scripts -->
     <script src="javascripts/app.js"></script>
@@ -51,73 +53,34 @@
 </head>
 <body ng-controller="AppController" ng-cloak>
 
-  <!-- Top navigation bar 
-  <div class="navbar navbar-fixed-top" ng-show="authenticated">
-    <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="#" ng-bind="tenant.shop.name"></a>
-
-            <form id="search" class="navbar-search pull-left" ng-controller="SearchController">
-                <div class="input-append">
-                    <input id="searchInput" type="text" class="search-query span6 offset2" placeholder="Search"
-                           ng-model="term"/>
-                    <span class="add-on close" ng-show="suggestions.length > 0" ng-click="clear()"></span>
-                </div>
-                <ul id="searchSuggestions" class="typeahead dropdown-menu" ng-show="suggestions.length > 0">
-                    <li ng-repeat="suggestion in suggestions" ng-click="setRoute(suggestion.slug)">
-                        <a><h4>{{suggestion.title}}</h4></a>
-                    </li>
-                </ul>
-            </form>
-
-            <div class="pull-right">
-                <ul class="nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span ng-bind="user.email"></span>
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li ng-click="logout()" class="clickable"><a>Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-  </div>-->
-
   <!-- Main container -->
-  <!-- <div class="main-container" ng-show="authenticated">
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">-->
-          
     <div class="sidebar-nav">
     
         <header>
-            <div class="logo"></div>
-            <h2>Baglio di Pianneto</h2>    
-            <small>www.bagliodipianneto.com</small> <br /><br />  
-            <small ng-click="logout()" class="clickable"><a>Logout</a></small>
+            <div class="logo" ng-click="setRoute('/')"></div>
+            <h2 class="brand" ng-bind="configuration.general.name.value"></h2>
+            <!-- <small>www.hostname.com</small> -->
+            <p>
+                <small ng-click="logout()" class="clickable"><a>Logout</a></small>
+            </p>
         </header>
     
-        <!-- Orders -->
-        <ul class="nav nav-tabs nav-stacked">
+        <!-- Orders + Customers -->
+        <ul class="">
             <li active-class="active">
                 <a href="#/order/">
                     <h2>Orders</h2>
                 </a>
             </li>
             <li active-class="active">
-                <a href="#/clients/">
-                    <h2>Clients</h2>
+                <a href="#/customer/">
+                    <h2>Customers</h2>
                 </a>
             </li>
         </ul>
         
         <!-- Products, Contents, Theme, Statistics -->
-        <ul class="nav nav-tabs nav-stacked">
+        <ul class="">
             <li active-class="active">
                 <a href="#/product/" other-active-href="#/category/">
                     <h2>Products</h2>
@@ -140,8 +103,8 @@
             </li>
         </ul>
         
-        <!-- Orders -->
-        <ul class="nav nav-tabs nav-stacked">
+        <!-- Parameters + My account -->
+        <ul class="">
             <li active-class="active">
                 <a href="#/configuration/">
                     <h2>Parameters</h2>
@@ -153,22 +116,29 @@
                 </a>
             </li>
         </ul>
-              <!--</div><!--/.well -->
-            <!--</div><!--/span-->
-            <!--/span-->
-          <!--</div><!--/row-->
-        <!--</div><!--/.fluid-container-->
+
     </div>
-  
-  
-	<div id="content" ng-view></div>
-  
-  
+
+	<div id="content">
+
+        <!--
+          Since there is no notion of "sub-view" or "multiple views" per route, we are include *all* sub-menus here
+          and we display them conditionally at the app controller level.
+          This has the advantage of pre-loading all subviews controllers/resources, but we have to be careful as the
+          number of sub-views grows that is scales properly and doesn't introduce performance issues (at the UI level,
+          or by making too much AJAX calls at once when the app loads, etc.
+          -->
+        <div ng-include class="sub-menu" src="'partials/catalog.html'" ng-show="isCatalog"></div>
+
+        <div role="main" id="main" ng-view></div>
+	</div>
+    <div class="clearfix"></div>
+
     <!-- Initial AJAX loader -->
     <div class="loader" ng-show="authenticated == undefined"></div>
     
     <!-- Login modal -->
-    <div class="modal" ng-show="authenticated != undefined && !authenticated" id="myModal">
+    <div class="modal" ng-show="authenticated != undefined && !authenticated" id="loginModal">
         <form class="" ng-controller="LoginCtrl">
           <div class="modal-header">
             <h3>Authentication required</h3>
@@ -194,5 +164,12 @@
         </form>
     </div>
     <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
+
+  <!-- Error modal -->
+  <div class="modal hide fade"
+       ng-include="'partials/serverError.html'"
+       modal-trigger="event:serverError"
+       id="errorModal"></div>
+
 </body>
 </html>
