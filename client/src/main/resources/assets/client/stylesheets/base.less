@@ -23,6 +23,10 @@ a {
   color: @linkColor;
   text-decoration: none;
 }
+a:hover {
+  color: @linkColorHover;
+  text-decoration: none;
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
@@ -56,7 +60,7 @@ h1.big {
 
 h1.small {
   font-size: 16px;
-  margin: 42px 0px 15px 0px;
+  margin: 48px 0px 15px 0px;
 }
 
 h3 {
@@ -66,10 +70,9 @@ h3 {
 /* Fields */
 
 input, textarea {
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  border: solid 1px;
+  .roundedCornersButton !important;
+  border: solid 1px @borderInput !important;
+  resize:none;
 }
 
 /* Buttons */
@@ -81,6 +84,13 @@ input, textarea {
 .btn-primary {
   background-color: @linkColor;
   color: #FFF;
+  background-image:none;
+  border:none;
+  .roundedCornersButton
+}
+
+.btn-primary:hover {
+  background-color: @linkColorHover;
 }
 
 /* Global loader */
