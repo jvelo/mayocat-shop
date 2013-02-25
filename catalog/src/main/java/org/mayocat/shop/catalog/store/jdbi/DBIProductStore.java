@@ -1,19 +1,19 @@
-package org.mayocat.shop.store.rdbms.dbi;
+package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.mayocat.shop.model.Category;
-import org.mayocat.shop.model.Product;
+import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.ProductStore;
+import org.mayocat.shop.store.rdbms.dbi.dao.ProductDAO;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.HasOrderedCollections;
 import org.mayocat.shop.store.InvalidEntityException;
 import org.mayocat.shop.store.InvalidMoveOperation;
-import org.mayocat.shop.store.ProductStore;
 import org.mayocat.shop.store.StoreException;
-import org.mayocat.shop.store.rdbms.dbi.dao.ProductDAO;
+import org.mayocat.shop.store.rdbms.dbi.DBIEntityStore;
+import org.mayocat.shop.store.rdbms.dbi.MoveEntityInListOperation;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -51,7 +51,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     {
         this.dao.begin();
 
-        Product originalProduct = this.dao.findBySlug(product.getSlug(), getTenant());
+        Product originalProduct = this.findBySlug(product.getSlug());
         if (originalProduct == null) {
             this.dao.commit();
             throw new EntityDoesNotExistException();
@@ -123,6 +123,4 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         this.dao = this.getDbi().onDemand(ProductDAO.class);
         super.initialize();
     }
-
-
 }

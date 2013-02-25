@@ -1,4 +1,4 @@
-package org.mayocat.shop.api.v1.resources;
+package org.mayocat.shop.catalog.api.resources;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -26,19 +26,20 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
-import org.mayocat.shop.api.v1.representations.ProductRepresentation;
 import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
+import org.mayocat.shop.api.v1.resources.AbstractAttachmentResource;
 import org.mayocat.shop.authorization.annotation.Authorized;
+import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
+import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.model.Attachment;
-import org.mayocat.shop.model.Category;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Role;
 import org.mayocat.shop.model.Thumbnail;
 import org.mayocat.shop.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.store.EntityAlreadyExistsException;
 import org.mayocat.shop.store.EntityDoesNotExistException;
 import org.mayocat.shop.store.InvalidEntityException;

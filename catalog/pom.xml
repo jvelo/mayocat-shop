@@ -6,46 +6,40 @@
     <artifactId>mayocat-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>mayocat-front</artifactId>
+  <artifactId>mayocat-catalog</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat Front</name>
-  <description>Front resources</description>
+  <name>Mayocat Catalog</name>
+  <description>Catalog (products, categories, etc.) management</description>
 
   <dependencies>
 
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-rest</artifactId>
+      <artifactId>mayocat-store-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-model</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat</groupId>
+      <artifactId>mayocat-base</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration-api</artifactId>
+      <artifactId>mayocat-store-rdbms-jdbi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-views</artifactId>
+      <artifactId>mayocat-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-themes</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-catalog</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-test-component</artifactId>
-      <version>${xwiki.version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 </project>

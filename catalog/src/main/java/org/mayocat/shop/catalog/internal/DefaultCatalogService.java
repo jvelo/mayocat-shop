@@ -1,4 +1,4 @@
-package org.mayocat.shop.service.internal;
+package org.mayocat.shop.catalog.internal;
 
 import java.util.List;
 
@@ -6,11 +6,18 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.shop.Slugifier;
-import org.mayocat.shop.model.Category;
+import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.store.CategoryStore;
+import org.mayocat.shop.catalog.store.ProductStore;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.model.EntityAndCount;
-import org.mayocat.shop.model.Product;
-import org.mayocat.shop.service.CatalogService;
-import org.mayocat.shop.store.*;
+import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.shop.store.EntityDoesNotExistException;
+import org.mayocat.shop.store.HasOrderedCollections;
+import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.shop.store.InvalidMoveOperation;
+import org.mayocat.shop.store.InvalidOperation;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;

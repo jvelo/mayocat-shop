@@ -1,19 +1,18 @@
 package org.mayocat.shop.front.bindings;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.configuration.general.GeneralConfiguration;
 import org.mayocat.shop.context.Execution;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.Bindings;
 import org.mayocat.shop.front.annotation.FrontBinding;
-import org.mayocat.shop.model.Category;
-import org.mayocat.shop.service.CatalogService;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;

@@ -1,9 +1,9 @@
-package org.mayocat.shop.store.rdbms.dbi.mapper;
+package org.mayocat.shop.catalog.store.jdbi.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.mayocat.shop.model.Product;
+import org.mayocat.shop.catalog.model.Product;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 

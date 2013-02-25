@@ -13,11 +13,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.rest.views.FrontView;
-import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 

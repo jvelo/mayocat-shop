@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.search.SearchEngine;
 import org.xwiki.component.annotation.Component;
 
@@ -34,9 +33,8 @@ public class BuildIndexTask extends Task implements org.mayocat.shop.base.Task
         output.println("(Re)building index...");
         output.flush();
 
-        Product test = new Product();
-        test.setSlug("hello");
-        this.searchEngine.get().index(test);
+        // TODO
+        // - does this task make sense ?
     }
 
 }

@@ -1,14 +1,15 @@
-package org.mayocat.shop.store.rdbms.dbi;
+package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.mayocat.shop.model.Category;
-import org.mayocat.shop.model.EntityAndCount;
-import org.mayocat.shop.model.Product;
-import org.mayocat.shop.store.*;
+import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.CategoryStore;
 import org.mayocat.shop.store.rdbms.dbi.dao.CategoryDAO;
+import org.mayocat.shop.model.EntityAndCount;
+import org.mayocat.shop.store.*;
+import org.mayocat.shop.store.rdbms.dbi.DBIEntityStore;
+import org.mayocat.shop.store.rdbms.dbi.MoveEntityInListOperation;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

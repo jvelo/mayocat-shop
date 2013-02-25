@@ -1,8 +1,10 @@
-package org.mayocat.shop.model;
+package org.mayocat.shop.catalog.model;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mayocat.shop.model.AbstractLocalizedEntity;
+import org.mayocat.shop.model.Translations;
 import org.mayocat.shop.model.annotation.LocalizationFieldType;
 import org.mayocat.shop.model.annotation.Localized;
 import org.mayocat.shop.model.annotation.SearchIndex;

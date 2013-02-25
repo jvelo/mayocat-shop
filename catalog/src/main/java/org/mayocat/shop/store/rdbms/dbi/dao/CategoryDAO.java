@@ -2,15 +2,13 @@ package org.mayocat.shop.store.rdbms.dbi.dao;
 
 import java.util.List;
 
-import javax.ws.rs.core.Variant;
-
-import org.mayocat.shop.model.Category;
+import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.jdbi.mapper.CategoryMapper;
 import org.mayocat.shop.model.EntityAndCount;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.model.Tenant;
 import org.mayocat.shop.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.shop.store.rdbms.dbi.jointype.EntityAndCountsJoinRow;
-import org.mayocat.shop.store.rdbms.dbi.mapper.CategoryMapper;
 import org.mayocat.shop.store.rdbms.dbi.mapper.EntityAndCountsJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;

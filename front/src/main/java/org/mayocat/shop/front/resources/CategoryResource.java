@@ -1,6 +1,5 @@
 package org.mayocat.shop.front.resources;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +13,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
-import org.mayocat.shop.model.Category;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.rest.views.FrontView;
-import org.mayocat.shop.service.CatalogService;
 import org.mayocat.shop.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 

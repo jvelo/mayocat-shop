@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.mayocat.shop.authorization.annotation.Authorized;
 import org.mayocat.shop.model.Entity;
-import org.mayocat.shop.model.Product;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.search.SearchEngine;
@@ -37,7 +36,6 @@ public class SearchResource implements Resource
     public List<Map<String, Object>> search(@QueryParam("term") String term)
     {
         List<Class< ? extends Entity>> classes = new ArrayList<Class< ? extends Entity>>();
-        classes.add(Product.class);
 
         try {
             return this.searchEngine.get().search(term, classes);
