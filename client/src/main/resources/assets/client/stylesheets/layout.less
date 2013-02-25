@@ -1,0 +1,170 @@
+/* Header */
+
+header {
+  width: 239px;
+  height: 95px;
+  border-right: solid 1px @borderHeaderStrong;
+  padding: 15px 0px;
+  background-color: @backgroundHeader;
+  color: #FFF;
+}
+
+header .logo {
+  background-image: url("../images/logo-header.png");
+  background-repeat: no-repeat;
+  background-size: 67px auto;
+  height: 80px;
+  width: 72px;
+  cursor: pointer;
+  float: left;
+  margin: 0px 7px;
+}
+
+header a {
+  color: inherit !important;
+}
+
+/* Left sidebar (menu) */
+
+.sidebar-nav a, #list a {
+  color: @fontColor;
+}
+
+.sidebar-nav {
+  width: 239px;
+  height: 100%;
+  float: left;
+  border-right: solid 1px;
+  background-color: @backgroundLight;
+  border-color: @borderStrong;
+}
+
+.sidebar-nav ul {
+  margin: 0px;
+  padding: 10px 0px 10px 0px;
+  list-style: none;
+  border-top: solid 1px #fff;
+  border-bottom: solid 1px @borderStrong;
+}
+
+.sidebar-nav ul:first-child {
+  border-top: none;
+}
+
+.sidebar-nav ul:last-child {
+  border-bottom: none;
+}
+
+.sidebar-nav ul li {
+  margin: 0px;
+  padding: 8px 0px 6px 15px;
+  width: 239px;
+  border-color: @backgroundLight;
+}
+
+.sidebar-nav ul li.active {
+  padding: 7px 0px 5px 15px;
+  border-top: solid 1px;
+  border-bottom: solid 1px;
+  border-color: @borderStrong;
+  background-color: @backgroundLighter;
+}
+
+/* List */
+
+#list {
+  width: 179px;
+  height: 100%;
+  float: left;
+  border-right: solid 1px;
+  background-color: @backgroundLighter;
+  border-color: @borderStrong;
+}
+
+#list .header {
+  width: 179px;
+  height: 95px;
+  padding: 60px 0px 0px 15px;
+  border-left: solid 1px;
+  background-color: @backgroundHeader;
+  color: #FFF;
+  border-color: @borderHeaderLight;
+}
+
+#list .category {
+  font-weight: bold;
+}
+
+#list ul {
+  width: 175px;
+  margin-left: 2px;
+}
+
+#list li {
+  position: relative;
+  border-bottom: solid 1px  @borderList;
+  padding: 11px 0px;
+}
+
+#list li:hover, #list .icon-move {
+  background-color: #FFF;
+}
+
+#list ul li {
+  padding-left: 15px;
+}
+
+#list ul ul li {
+  padding-left: 25px;
+}
+
+#list .move-handle {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 1px;
+  width: 39px;
+  height: 39px;
+  background-image: url(../images/icon-move.png);
+}
+
+#list li:hover .move-handle {
+  display: block;
+}
+
+/* General Layout <o */
+
+#content {
+  float: left;
+  height: 100%;
+  width: -webkit-calc(~"100% - 240px");
+  width: calc(~"100% - 240px"); // See http://stackoverflow.com/questions/11972084/less-aggressive-compilation-with-css3-calc
+// for why the tild TODO remove it when less.js 1.4+ is released
+}
+
+#content > .sub-menu {
+  float: left;
+}
+
+#main {
+  float: left;
+  max-width: 798px;
+  padding-left: 15px;
+  width: -webkit-calc(~"100% - 387px");
+  width: calc(~"100% - 387px");
+}
+
+#main article {
+  width: 460px;
+  float: left;
+  margin-right: 30px;
+}
+
+#main aside {
+  float: left;
+}
+
+.entity .block {
+  border-left: 2px solid #e3e1df;
+  padding-left: 10px;
+}

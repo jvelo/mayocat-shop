@@ -20,6 +20,7 @@ public class Tenant implements Identifiable, Slug
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
     String slug;
 
+    @JsonIgnore
     private TenantConfiguration configuration;
 
     ///////////////////////////////////////////////////

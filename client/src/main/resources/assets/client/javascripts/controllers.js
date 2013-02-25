@@ -19,7 +19,7 @@ function LoginCtrl($rootScope, $scope) {
   });
 }
 
-function AppController($rootScope, $scope) {
+function AppController($rootScope, $scope, $location) {
   // Ensure authenticated
   $scope.$parent.ping();
 
@@ -39,5 +39,20 @@ function AppController($rootScope, $scope) {
     $scope.authenticated = true;
     $scope.user = data.user;
     $scope.tenant = data.tenant;
+  });
+
+  $scope.isCatalog = false;
+
+  $scope.setRoute = function (href) {
+    $location.url(href);
+  };
+
+  $scope.$watch('location.path()', function(path) {
+      if (path.indexOf("/product/") == 0 || path.indexOf("/category/") == 0) {
+       $scope.isCatalog = true;
+      }
+      else {
+          $scope.isCatalog = false;
+      }
   });
 }
