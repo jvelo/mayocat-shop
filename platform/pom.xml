@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Mayocat Platform - Platform - Parent POM</name>
+  <name>Mayocat Platform - Parent POM</name>
   <description>The platform to build applications upon</description>
 
   <modules>

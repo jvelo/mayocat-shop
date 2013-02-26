@@ -68,12 +68,7 @@
 
   <modules>
     <module>platform</module>
-    <module>catalog</module>
-    <module>rest</module>
-    <module>api</module>
-    <module>front</module>
-    <module>client</module>
-    <module>application</module>
+    <module>shop</module>
   </modules>
 
   <profiles>
