@@ -24,7 +24,7 @@ import org.mayocat.shop.catalog.api.representations.CategoryRepresentation;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
-import org.mayocat.model.Role;
+import org.mayocat.accounts.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.base.Resource;

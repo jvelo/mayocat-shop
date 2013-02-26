@@ -1,0 +1,3 @@
+org.mayocat.accounts.internal.DefaultAccountsService
+org.mayocat.accounts.store.jdbi.DBIUserStore
+org.mayocat.accounts.store.jdbi.DBITenantStore

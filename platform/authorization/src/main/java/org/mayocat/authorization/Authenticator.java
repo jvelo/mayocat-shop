@@ -1,15 +1,16 @@
 package org.mayocat.authorization;
 
 import org.mayocat.authorization.cookies.CookieAuthenticator;
-import org.mayocat.model.Tenant;
-import org.mayocat.model.User;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.model.User;
 import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
 
 /**
  * An authenticator is capable of authentifying request based on the value of a certain header. Each authenticator only
- * respond to certain types of header name/value pairs. For example, a {@link BasicAuthenticator} will only accept to
+ * respond to certain types of header name/value pairs.
+ * For example, a {@link org.mayocat.authorization.basic.BasicAuthenticator} will only accept to
  * respond to the authentication challenge when passed a header "Authorization" with a value that starts with "Basic".
  * Similarly, a {@link CookieAuthenticator} will only accept to respond when passed a "Cookie" header and a value that
  * contains a certain number of cookies it needs (encrypted username and password, etc). Implementation must specify

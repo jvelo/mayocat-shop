@@ -2,8 +2,8 @@ package org.mayocat.context;
 
 import java.util.Map;
 
-import org.mayocat.model.Tenant;
-import org.mayocat.model.User;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.model.User;
 
 public class Context
 {

@@ -6,7 +6,7 @@ import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.CategoryMapper;
 import org.mayocat.model.EntityAndCount;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.store.rdbms.dbi.jointype.EntityAndCountsJoinRow;
 import org.mayocat.store.rdbms.dbi.mapper.EntityAndCountsJoinRowMapper;

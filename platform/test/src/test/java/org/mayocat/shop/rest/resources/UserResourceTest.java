@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mayocat.model.User;
+import org.mayocat.accounts.model.User;
 import org.mayocat.shop.rest.api.v1.resources.UserResource;
 import org.mayocat.shop.rest.api.v1.resources.UserResource;
 

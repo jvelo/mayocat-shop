@@ -3,7 +3,7 @@ package org.mayocat.store.rdbms.dbi;
 import javax.inject.Inject;
 
 import org.mayocat.context.Execution;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.reference.EntityReference;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.rdbms.dbi.dao.EntityDAO;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;

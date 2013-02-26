@@ -41,10 +41,10 @@
       <artifactId>mayocat-platform-themes</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- Accounts service needed for the annotation resource method dispatcher -->
+    <!-- Accounts module needed for the annotation resource method dispatcher -->
     <dependency>
       <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-service</artifactId>
+      <artifactId>mayocat-platform-accounts-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 

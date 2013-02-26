@@ -2,7 +2,7 @@ package org.mayocat.shop.api.v1.representations;
 
 import javax.validation.constraints.NotNull;
 
-import org.mayocat.model.Thumbnail;
+import org.mayocat.image.model.Thumbnail;
 
 /**
  * @version $Id$

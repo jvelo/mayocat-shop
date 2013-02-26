@@ -9,11 +9,11 @@ import javax.inject.Provider;
 
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.context.Execution;
-import org.mayocat.model.Tenant;
-import org.mayocat.model.TenantConfiguration;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;
-import org.mayocat.store.TenantStore;
+import org.mayocat.accounts.store.TenantStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -103,7 +103,7 @@ public class DefaultConfigurationService implements ConfigurationService
         this.tenantStore.get().updateConfiguration(configuration);
 
         // TODO throw an exception here when there are validation errors, so that it can be acknowledged to the
-        // REST service consumer ? (meaning the operation has been partially successful only)
+        // REST accounts consumer ? (meaning the operation has been partially successful only)
     }
 
     @Override

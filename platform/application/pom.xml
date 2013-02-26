@@ -13,15 +13,27 @@
   <name>Mayocat Platform - Application</name>
   <description>Abstract application module</description>
 
-    <properties>
-        <!-- FIXME 4 tests fail when launched in command line with :
-             NoSuchMethodorg.hamcrest.Matcher.describeMismatch(Ljava/lang/Object;Lorg/hamcrest/Description;)V
-             It's a dependency issue/conflict -->
-        <maven.test.skip>true</maven.test.skip>
-    </properties>
+  <properties>
+  <!-- FIXME 4 tests fail when launched in command line with :
+       NoSuchMethodorg.hamcrest.Matcher.describeMismatch(Ljava/lang/Object;Lorg/hamcrest/Description;)V
+        It's a dependency issue/conflict -->
+    <maven.test.skip>true</maven.test.skip>
+  </properties>
 
 
-    <dependencies>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-accounts-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-multitenancy</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.mayocat.platform</groupId>
@@ -40,13 +52,6 @@
     <dependency>
       <groupId>org.mayocat.platform</groupId>
       <artifactId>mayocat-platform-configuration-api</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-service</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

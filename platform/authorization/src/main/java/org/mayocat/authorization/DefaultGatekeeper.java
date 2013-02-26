@@ -3,7 +3,7 @@ package org.mayocat.authorization;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.store.UserStore;
+import org.mayocat.accounts.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

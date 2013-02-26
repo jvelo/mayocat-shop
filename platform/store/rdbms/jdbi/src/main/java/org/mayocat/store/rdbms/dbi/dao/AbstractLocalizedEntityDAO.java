@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.model.Localized;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Translations;
 import org.mayocat.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.store.rdbms.dbi.jointype.EntityTranslationJoinRow;

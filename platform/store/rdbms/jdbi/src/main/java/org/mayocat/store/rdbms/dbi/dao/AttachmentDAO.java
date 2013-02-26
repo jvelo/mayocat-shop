@@ -1,7 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import org.mayocat.model.Attachment;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.store.rdbms.dbi.mapper.AttachmentMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;

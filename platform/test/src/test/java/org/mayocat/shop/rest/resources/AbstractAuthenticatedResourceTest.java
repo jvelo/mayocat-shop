@@ -7,7 +7,7 @@ import junit.framework.Assert;
 import org.eclipse.jetty.util.B64Code;
 import org.junit.Before;
 import org.mayocat.shop.rest.api.v1.resources.UserResource;
-import org.mayocat.service.AccountsService;
+import org.mayocat.accounts.AccountsService;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;

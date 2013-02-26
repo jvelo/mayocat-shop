@@ -3,11 +3,12 @@ package org.mayocat.authorization.cookies;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.accounts.store.UserStore;
 import org.mayocat.authorization.Authenticator;
 import org.mayocat.authorization.PasswordManager;
-import org.mayocat.model.Tenant;
-import org.mayocat.model.User;
-import org.mayocat.store.UserStore;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

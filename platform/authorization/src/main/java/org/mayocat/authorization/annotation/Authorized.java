@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.mayocat.model.Role;
+import org.mayocat.accounts.model.Role;
 
 /**
  * This annotation is used to inject authenticated and authorized principal objects into protected JAX-RS resource

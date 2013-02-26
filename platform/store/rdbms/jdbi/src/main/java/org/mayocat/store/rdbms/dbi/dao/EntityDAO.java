@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
-import org.mayocat.model.Tenant;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.reference.EntityReference;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
