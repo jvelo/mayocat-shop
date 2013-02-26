@@ -1,1 +1,1 @@
-org.mayocat.shop.image.internal.DefaultImageService
+org.mayocat.image.internal.DefaultImageService

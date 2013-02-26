@@ -1,12 +1,10 @@
 package org.mayocat.shop.rest.jersey;
 
-import java.lang.reflect.Type;
-
 import javax.inject.Inject;
 
-import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.theme.Breakpoint;
-import org.mayocat.shop.theme.UserAgentBreakpointDetector;
+import org.mayocat.base.Provider;
+import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.core.HttpContext;

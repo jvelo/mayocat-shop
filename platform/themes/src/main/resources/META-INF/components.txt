@@ -1,2 +1,2 @@
-org.mayocat.shop.theme.internal.DefaultThemeManager
-org.mayocat.shop.theme.internal.DefaultUserAgentBreakpointDetector
+org.mayocat.theme.internal.DefaultThemeManager
+org.mayocat.theme.internal.DefaultUserAgentBreakpointDetector

@@ -1,5 +1,5 @@
-org.mayocat.shop.authorization.basic.BasicAuthenticator
-org.mayocat.shop.authorization.cookies.DefaultCookieCrypter
-org.mayocat.shop.authorization.cookies.CookieAuthenticator
-org.mayocat.shop.authorization.DefaultGatekeeper
-org.mayocat.shop.authorization.BCryptPasswordManager
+org.mayocat.authorization.basic.BasicAuthenticator
+org.mayocat.authorization.cookies.DefaultCookieCrypter
+org.mayocat.authorization.cookies.CookieAuthenticator
+org.mayocat.authorization.DefaultGatekeeper
+org.mayocat.authorization.BCryptPasswordManager

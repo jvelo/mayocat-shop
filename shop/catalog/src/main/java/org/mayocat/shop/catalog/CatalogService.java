@@ -3,13 +3,13 @@ package org.mayocat.shop.catalog;
 import java.util.List;
 
 import org.mayocat.shop.catalog.model.Category;
-import org.mayocat.shop.model.EntityAndCount;
+import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.InvalidEntityException;
-import org.mayocat.shop.store.InvalidMoveOperation;
-import org.mayocat.shop.store.InvalidOperation;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.InvalidMoveOperation;
+import org.mayocat.store.InvalidOperation;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -80,7 +80,7 @@ public interface CatalogService
      *
      * @param slugOfProductToMove the slug of the product to move
      * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
-     * @throws org.mayocat.shop.store.InvalidMoveOperation when no sense can be made of move parameters
+     * @throws org.mayocat.store.InvalidMoveOperation when no sense can be made of move parameters
      * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
      *      relative target.
      */
@@ -105,7 +105,7 @@ public interface CatalogService
      *      relative target.
      * @param slugOfCategoryToMove the slug of the category to move
      * @param slugOfCategoryToMoveBeforeOf the slug of the category to move before of
-     * @throws org.mayocat.shop.store.InvalidMoveOperation when no sense can be made of move parameters
+     * @throws org.mayocat.store.InvalidMoveOperation when no sense can be made of move parameters
      */
     void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
             throws InvalidMoveOperation;

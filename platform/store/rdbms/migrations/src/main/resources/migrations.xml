@@ -6,6 +6,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <include file="org/mayocat/shop/store/rdbms/migrations/migration-0.1.xml"/>
+  <include file="org/mayocat/store/rdbms/migrations/migration-0.1.xml"/>
 
 </databaseChangeLog>

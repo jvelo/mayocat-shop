@@ -3,9 +3,9 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.mayocat.shop.configuration.general.GeneralConfiguration;
-import org.mayocat.shop.configuration.shop.ShopConfiguration;
-import org.mayocat.shop.configuration.theme.ThemeConfiguration;
+import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.configuration.shop.ShopConfiguration;
+import org.mayocat.configuration.theme.ThemeConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.db.DatabaseConfiguration;

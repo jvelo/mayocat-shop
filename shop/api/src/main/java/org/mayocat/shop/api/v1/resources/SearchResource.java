@@ -13,12 +13,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.model.Entity;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.model.Entity;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.search.SearchEngine;
-import org.mayocat.shop.search.SearchEngineException;
+import org.mayocat.search.SearchEngine;
+import org.mayocat.search.SearchEngineException;
 import org.xwiki.component.annotation.Component;
 
 @Component("/api/1.0/search/")

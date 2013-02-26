@@ -2,8 +2,6 @@ package org.mayocat.shop.api.v1.representations;
 
 import java.util.List;
 
-import org.mayocat.shop.model.Thumbnail;
-
 /**
  * @version $Id$
  */

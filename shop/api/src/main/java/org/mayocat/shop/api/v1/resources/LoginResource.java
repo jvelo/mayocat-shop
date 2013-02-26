@@ -11,13 +11,13 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.mayocat.shop.authorization.PasswordManager;
-import org.mayocat.shop.authorization.cookies.CookieCrypter;
-import org.mayocat.shop.authorization.cookies.EncryptionException;
-import org.mayocat.shop.model.User;
+import org.mayocat.authorization.PasswordManager;
+import org.mayocat.authorization.cookies.CookieCrypter;
+import org.mayocat.authorization.cookies.EncryptionException;
+import org.mayocat.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.service.AccountsService;
+import org.mayocat.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
 @Component("/api/1.0/login/")

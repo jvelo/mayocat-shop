@@ -10,12 +10,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.mayocat.shop.Slugifier;
-import org.mayocat.shop.model.Attachment;
-import org.mayocat.shop.model.reference.EntityReference;
-import org.mayocat.shop.store.AttachmentStore;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.Slugifier;
+import org.mayocat.model.Attachment;
+import org.mayocat.model.reference.EntityReference;
+import org.mayocat.store.AttachmentStore;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.InvalidEntityException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;

@@ -12,16 +12,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.context.Context;
-import org.mayocat.shop.context.Execution;
-import org.mayocat.shop.model.Role;
-import org.mayocat.shop.model.User;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.context.Context;
+import org.mayocat.context.Execution;
+import org.mayocat.model.Role;
+import org.mayocat.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.service.AccountsService;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
-import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.service.AccountsService;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;

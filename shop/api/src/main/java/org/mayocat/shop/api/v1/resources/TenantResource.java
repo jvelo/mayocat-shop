@@ -10,15 +10,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.context.Context;
-import org.mayocat.shop.context.Execution;
-import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.model.User;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.context.Context;
+import org.mayocat.context.Execution;
+import org.mayocat.model.Tenant;
+import org.mayocat.model.User;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.service.AccountsService;
-import org.mayocat.shop.store.EntityDoesNotExistException;
-import org.mayocat.shop.store.InvalidEntityException;
+import org.mayocat.service.AccountsService;
+import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
 @Component("/api/1.0/tenant/")

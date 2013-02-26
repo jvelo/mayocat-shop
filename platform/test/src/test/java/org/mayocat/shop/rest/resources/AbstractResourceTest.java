@@ -2,17 +2,16 @@ package org.mayocat.shop.rest.resources;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.jdo.JDOHelper;
 
-import org.mayocat.shop.configuration.AuthenticationConfiguration;
-import org.mayocat.shop.configuration.DataSourceConfiguration;
-import org.mayocat.shop.configuration.MayocatShopConfiguration;
-import org.mayocat.shop.configuration.MultitenancyConfiguration;
-import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.store.TenantStore;
-import org.mayocat.shop.store.datanucleus.PersistenceManagerProvider;
+import org.mayocat.configuration.AuthenticationConfiguration;
+import org.mayocat.configuration.DataSourceConfiguration;
+import org.mayocat.configuration.MayocatShopConfiguration;
+import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.model.Tenant;
+import org.mayocat.store.TenantStore;
+import org.mayocat.store.datanucleus.PersistenceManagerProvider;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 
@@ -41,9 +40,9 @@ public abstract class AbstractResourceTest extends ResourceTest
 
         // Registering provider component implementations against the test
         // environment...
-        Map<String, org.mayocat.shop.base.Provider> providers =
-                componentManager.getInstanceMap(org.mayocat.shop.base.Provider.class);
-        for (Map.Entry<String, org.mayocat.shop.base.Provider> provider : providers.entrySet()) {
+        Map<String, org.mayocat.base.Provider> providers =
+                componentManager.getInstanceMap(org.mayocat.base.Provider.class);
+        for (Map.Entry<String, org.mayocat.base.Provider> provider : providers.entrySet()) {
             this.addResource(provider.getValue());
         }
     }

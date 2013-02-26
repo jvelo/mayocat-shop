@@ -3,7 +3,8 @@ package org.mayocat.shop.multitenancy;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.shop.configuration.MultitenancyConfiguration;
+import org.mayocat.multitenancy.TenantResolver;
+import org.mayocat.configuration.MultitenancyConfiguration;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;

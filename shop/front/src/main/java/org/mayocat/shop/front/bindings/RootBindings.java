@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.model.Category;
-import org.mayocat.shop.configuration.general.GeneralConfiguration;
-import org.mayocat.shop.context.Execution;
+import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.context.Execution;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.Bindings;
 import org.mayocat.shop.front.annotation.FrontBinding;

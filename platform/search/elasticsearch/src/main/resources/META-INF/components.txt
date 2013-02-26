@@ -1,3 +1,3 @@
-org.mayocat.shop.search.elasticsearch.BuildIndexTask
-org.mayocat.shop.search.elasticsearch.ElasticSearchSearchEngine
-org.mayocat.shop.search.elasticsearch.ElasticSearchManaged
+org.mayocat.search.elasticsearch.BuildIndexTask
+org.mayocat.search.elasticsearch.ElasticSearchSearchEngine
+org.mayocat.search.elasticsearch.ElasticSearchManaged

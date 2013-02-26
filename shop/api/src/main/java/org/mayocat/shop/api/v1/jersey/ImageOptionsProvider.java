@@ -1,15 +1,12 @@
 package org.mayocat.shop.api.v1.jersey;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
 import org.mayocat.shop.api.v1.parameters.ImageOptions;
-import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.rest.jersey.AbstractInjectableProvider;
+import org.mayocat.base.Provider;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;

@@ -5,7 +5,8 @@ import javax.inject.Named;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
-import org.mayocat.shop.base.EventListener;
+import org.mayocat.base.EventListener;
+import org.mayocat.multitenancy.TenantResolver;
 import org.xwiki.component.annotation.Component;
 
 @Component

@@ -1,5 +1,5 @@
-org.mayocat.shop.store.rdbms.dbi.DBIUserStore
-org.mayocat.shop.store.rdbms.dbi.DBITenantStore
-org.mayocat.shop.store.rdbms.dbi.DBIAttachmentStore
-org.mayocat.shop.store.rdbms.dbi.DBIEntityStore
-org.mayocat.shop.store.rdbms.dbi.DBIThumbnailStore
+org.mayocat.store.rdbms.dbi.DBIUserStore
+org.mayocat.store.rdbms.dbi.DBITenantStore
+org.mayocat.store.rdbms.dbi.DBIAttachmentStore
+org.mayocat.store.rdbms.dbi.DBIEntityStore
+org.mayocat.store.rdbms.dbi.DBIThumbnailStore

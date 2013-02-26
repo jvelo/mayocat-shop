@@ -18,7 +18,7 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.rest.resources.Resource;
 import org.mayocat.shop.rest.views.FrontView;
-import org.mayocat.shop.theme.Breakpoint;
+import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;

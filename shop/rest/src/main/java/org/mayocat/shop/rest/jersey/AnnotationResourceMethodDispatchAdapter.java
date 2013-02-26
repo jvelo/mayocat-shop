@@ -9,14 +9,14 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.authorization.Gatekeeper;
-import org.mayocat.shop.authorization.annotation.Authorized;
-import org.mayocat.shop.base.Provider;
-import org.mayocat.shop.context.Execution;
-import org.mayocat.shop.model.Role;
-import org.mayocat.shop.model.User;
+import org.mayocat.authorization.Gatekeeper;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.base.Provider;
+import org.mayocat.context.Execution;
+import org.mayocat.model.Role;
+import org.mayocat.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.service.AccountsService;
+import org.mayocat.service.AccountsService;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.core.HttpContext;

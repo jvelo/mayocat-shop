@@ -8,10 +8,11 @@ import javax.inject.Singleton;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
-import org.mayocat.shop.configuration.MultitenancyConfiguration;
-import org.mayocat.shop.model.Tenant;
-import org.mayocat.shop.service.AccountsService;
-import org.mayocat.shop.store.EntityAlreadyExistsException;
+import org.mayocat.multitenancy.TenantResolver;
+import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.model.Tenant;
+import org.mayocat.service.AccountsService;
+import org.mayocat.store.EntityAlreadyExistsException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

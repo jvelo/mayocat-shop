@@ -22,14 +22,14 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.shop.api.v1.parameters.ImageOptions;
 import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
-import org.mayocat.shop.image.ImageService;
-import org.mayocat.shop.image.util.ImageUtils;
-import org.mayocat.shop.model.Attachment;
-import org.mayocat.shop.model.Thumbnail;
-import org.mayocat.shop.model.reference.EntityReference;
+import org.mayocat.image.ImageService;
+import org.mayocat.image.util.ImageUtils;
+import org.mayocat.model.Attachment;
+import org.mayocat.model.Thumbnail;
+import org.mayocat.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.resources.Resource;
-import org.mayocat.shop.store.ThumbnailStore;
+import org.mayocat.store.ThumbnailStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 

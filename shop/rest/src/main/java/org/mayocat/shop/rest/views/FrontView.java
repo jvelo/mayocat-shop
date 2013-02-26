@@ -2,7 +2,7 @@ package org.mayocat.shop.rest.views;
 
 import java.util.Map;
 
-import org.mayocat.shop.theme.Breakpoint;
+import org.mayocat.theme.Breakpoint;
 
 import com.google.common.collect.Maps;
 

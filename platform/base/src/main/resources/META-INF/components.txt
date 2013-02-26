@@ -1,2 +1,2 @@
 org.mayocat.shop.multitenancy.TenantResolverProvider
-org.mayocat.shop.internal.DefaultSlugifier
+org.mayocat.internal.DefaultSlugifier

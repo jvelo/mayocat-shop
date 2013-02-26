@@ -1,2 +1,2 @@
-org.mayocat.shop.views.rhino.handlebars.HandlebarsEngine
-org.mayocat.shop.views.provider.TemplateEngineProvider
+org.mayocat.views.rhino.handlebars.HandlebarsEngine
+org.mayocat.views.provider.TemplateEngineProvider

@@ -3,10 +3,10 @@ package org.mayocat.shop.rest.views;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import org.mayocat.shop.theme.ThemeManager;
-import org.mayocat.shop.theme.internal.TemplateNotFoundException;
-import org.mayocat.shop.views.Template;
-import org.mayocat.shop.views.TemplateEngine;
+import org.mayocat.theme.ThemeManager;
+import org.mayocat.theme.internal.TemplateNotFoundException;
+import org.mayocat.views.Template;
+import org.mayocat.views.TemplateEngine;
 import org.xwiki.component.annotation.Component;
 
 import javax.inject.Inject;
@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
  * @version $Id$
  */
 @Component("frontViewMessageBodyWriter")
-public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.shop.base.Provider
+public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.base.Provider
 {
     @Inject
     private Provider<TemplateEngine> engine;
