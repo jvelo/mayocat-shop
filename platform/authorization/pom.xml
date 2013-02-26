@@ -2,24 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.mayocat</groupId>
-    <artifactId>mayocat-parent</artifactId>
+    <groupId>org.mayocat.platform</groupId>
+    <artifactId>mayocat-platform-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.mayocat.shop</groupId>
-  <artifactId>mayocat-shop-rest</artifactId>
+  <artifactId>mayocat-platform-authorization</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat Shop - REST base module</name>
-  <description>JAX-RS resources for the Mayocat application</description>
+  <name>Mayocat Platform - Authorization</name>
+  <description>Capabilities based authorization system</description>
 
   <dependencies>
-
     <dependency>
       <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-authorization</artifactId>
+      <artifactId>mayocat-platform-base</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-store-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-configuration-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mayocat.platform</groupId>
@@ -29,25 +38,19 @@
     </dependency>
     <dependency>
       <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-base</artifactId>
+      <artifactId>mayocat-platform-context</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-views</artifactId>
-      <version>${project.version}</version>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.7</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-themes</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.3m</version>
     </dependency>
-    <!-- Accounts service needed for the annotation resource method dispatcher -->
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
   </dependencies>
+
 </project>

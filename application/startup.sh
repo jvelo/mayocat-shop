@@ -10,7 +10,7 @@ fi
 
 java \
   $DEBUG \
-  -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/mayocat-application-1.0-SNAPSHOT.jar" \
+  -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/mayocat-shop-application-1.0-SNAPSHOT.jar" \
   org.mayocat.shop.application.MayocatShopService \
   server \
   config-postgres.yml

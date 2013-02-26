@@ -2,45 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.mayocat</groupId>
-    <artifactId>mayocat-parent</artifactId>
+    <groupId>org.mayocat.platform</groupId>
+    <artifactId>mayocat-platform-configuration</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.mayocat.shop</groupId>
-  <artifactId>mayocat-shop-front</artifactId>
+  <artifactId>mayocat-platform-configuration-api</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat Shop - Front</name>
-  <description>Front resources</description>
-
+  <name>Mayocat Platform - Configuration - API</name>
+  <description>API - Top level configuration for mayocat</description>
   <dependencies>
 
     <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-rest</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-configuration-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-views</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-themes</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-catalog</artifactId>
+      <artifactId>mayocat-platform-base</artifactId>
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- XWiki -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${xwiki.version}</version>
+    </dependency>
+
+    <!-- Drop Wizard --> 
+    <dependency>
+      <groupId>com.yammer.dropwizard</groupId>
+      <artifactId>dropwizard-core</artifactId>
+      <version>${dropwizard.version}</version>
+    </dependency>
+
+    <!-- Testing dependencies -->
     <dependency>
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-test-component</artifactId>

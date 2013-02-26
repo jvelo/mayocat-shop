@@ -6,37 +6,38 @@
     <artifactId>mayocat-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>mayocat-api</artifactId>
+  <groupId>org.mayocat.shop</groupId>
+  <artifactId>mayocat-shop-api</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat REST API</name>
+  <name>Mayocat Shop - REST API</name>
   <description>JAX-RS resources for the Mayocat application</description>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-rest</artifactId>
+      <groupId>org.mayocat.shop</groupId>
+      <artifactId>mayocat-shop-rest</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-search-api</artifactId>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-search-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-service</artifactId>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-service</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-configuration-default</artifactId>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-configuration-default</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mayocat</groupId>
-      <artifactId>mayocat-image</artifactId>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-image</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

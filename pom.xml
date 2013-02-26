@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Mayocat Shop - Parent POM</name>
+  <name>Mayocat - Parent POM</name>
   <description>Modern e-commerce and marketplace management on the JVM</description>
   <url>http://github.com/mayocat/mayocat-shop/</url>
 
@@ -67,17 +67,7 @@
   </repositories>
 
   <modules>
-    <module>configuration</module>
-    <module>model</module>
-    <module>base</module>
-    <module>store</module>
-    <module>context</module>
-    <module>search</module>
-    <module>service</module>
-    <module>authorization</module>
-    <module>views</module>
-    <module>themes</module>
-    <module>image</module>
+    <module>platform</module>
     <module>catalog</module>
     <module>rest</module>
     <module>api</module>
