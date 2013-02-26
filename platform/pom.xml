@@ -26,6 +26,8 @@
     <module>views</module>
     <module>themes</module>
     <module>image</module>
+    <module>rest</module>
+    <module>application</module>
   </modules>
 
   <profiles>

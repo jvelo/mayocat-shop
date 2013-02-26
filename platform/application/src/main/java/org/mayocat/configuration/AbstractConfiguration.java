@@ -1,4 +1,4 @@
-package org.mayocat.shop.configuration;
+package org.mayocat.configuration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

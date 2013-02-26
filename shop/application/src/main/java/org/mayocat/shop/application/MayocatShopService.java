@@ -3,6 +3,7 @@ package org.mayocat.shop.application;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.mayocat.application.AbstractService;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.skife.jdbi.v2.DBI;
@@ -19,12 +20,7 @@ import com.yammer.dropwizard.migrations.MigrationsBundle;
 
 public class MayocatShopService extends AbstractService<MayocatShopConfiguration>
 {
-    public static final String ADMIN_UI_PATH = "/admin/";
     public static final String CLIENT_RESOURCE_PATH = "/client/";
-
-    public static final Set<String> STATIC_PATHS = new HashSet<String>(){{
-            add(ADMIN_UI_PATH);
-    }};
 
     public static void main(String[] args) throws Exception
     {

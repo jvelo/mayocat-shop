@@ -1,4 +1,4 @@
-package org.mayocat.shop.multitenancy;
+package org.mayocat.multitenancy;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -6,7 +6,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
 import org.mayocat.base.EventListener;
-import org.mayocat.multitenancy.TenantResolver;
 import org.xwiki.component.annotation.Component;
 
 @Component

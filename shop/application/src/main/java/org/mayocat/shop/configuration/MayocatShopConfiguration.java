@@ -3,6 +3,7 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.configuration.AbstractConfiguration;
 import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.configuration.shop.ShopConfiguration;
 import org.mayocat.configuration.theme.ThemeConfiguration;

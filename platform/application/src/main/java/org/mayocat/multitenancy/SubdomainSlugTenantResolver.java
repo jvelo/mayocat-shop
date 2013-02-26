@@ -1,4 +1,4 @@
-package org.mayocat.shop.multitenancy;
+package org.mayocat.multitenancy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
-import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.configuration.MultitenancyConfiguration;
 import org.mayocat.model.Tenant;
 import org.mayocat.service.AccountsService;

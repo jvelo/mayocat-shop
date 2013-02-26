@@ -1,4 +1,4 @@
-package org.mayocat.shop.multitenancy;
+package org.mayocat.multitenancy;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,6 @@ import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
-import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.configuration.MultitenancyConfiguration;
 import org.mayocat.model.Tenant;
 import org.mayocat.service.AccountsService;

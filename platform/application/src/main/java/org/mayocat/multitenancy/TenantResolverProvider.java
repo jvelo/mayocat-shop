@@ -1,9 +1,8 @@
-package org.mayocat.shop.multitenancy;
+package org.mayocat.multitenancy;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.configuration.MultitenancyConfiguration;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;

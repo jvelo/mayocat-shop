@@ -16,8 +16,8 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-rest</artifactId>
+      <groupId>org.mayocat.platform</groupId>
+      <artifactId>mayocat-platform-rest</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -1,20 +1,22 @@
-package org.mayocat.shop.application;
+package org.mayocat.application;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.mayocat.base.EventListener;
 import org.mayocat.base.HealthCheck;
 import org.mayocat.base.Managed;
 import org.mayocat.base.Provider;
 import org.mayocat.base.Task;
-import org.mayocat.shop.configuration.AbstractConfiguration;
+import org.mayocat.configuration.AbstractConfiguration;
 import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 import org.mayocat.event.ApplicationStartedEvent;
-import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.base.Resource;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
@@ -30,9 +32,16 @@ import com.yammer.dropwizard.config.Environment;
  */
 public abstract class AbstractService<C extends AbstractConfiguration> extends Service<C>
 {
+    public static final String ADMIN_UI_PATH = "/admin/";
+
     private EmbeddableComponentManager componentManager;
 
     protected abstract void registerComponents(C configuration, Environment environment);
+
+    public static final Set<String> STATIC_PATHS = new HashSet<String>(){{
+        add(ADMIN_UI_PATH);
+    }};
+
 
     @Override
     public void initialize(Bootstrap<C> bootstrap)

@@ -2,16 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.mayocat.shop</groupId>
-    <artifactId>mayocat-shop-parent</artifactId>
+    <groupId>org.mayocat.platform</groupId>
+    <artifactId>mayocat-platform-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.mayocat.shop</groupId>
-  <artifactId>mayocat-shop-rest</artifactId>
+  <artifactId>mayocat-platform-rest</artifactId>
   <packaging>jar</packaging>
 
-  <name>Mayocat Shop - REST base module</name>
-  <description>JAX-RS resources for the Mayocat application</description>
+  <name>Mayocat Platform - REST base module</name>
+  <description>Base JAX-RS REST module</description>
 
   <dependencies>
 

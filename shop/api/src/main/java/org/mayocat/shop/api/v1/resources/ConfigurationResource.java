@@ -17,7 +17,7 @@ import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Execution;
 import org.mayocat.model.Role;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.base.Resource;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;
 import org.slf4j.Logger;

@@ -1,3 +1,0 @@
-org.mayocat.shop.multitenancy.SubdomainSlugTenantResolver
-org.mayocat.shop.multitenancy.SubdomainSlugTenantResolverServletEventListener
-org.mayocat.context.RequestContextInitializer

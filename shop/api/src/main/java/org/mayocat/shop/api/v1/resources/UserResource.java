@@ -18,7 +18,7 @@ import org.mayocat.context.Execution;
 import org.mayocat.model.Role;
 import org.mayocat.model.User;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.base.Resource;
 import org.mayocat.service.AccountsService;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;

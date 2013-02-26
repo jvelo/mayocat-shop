@@ -39,7 +39,7 @@ import org.mayocat.model.Thumbnail;
 import org.mayocat.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.base.Resource;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;

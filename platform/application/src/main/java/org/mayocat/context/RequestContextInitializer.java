@@ -9,7 +9,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 
-import org.mayocat.shop.application.MayocatShopService;
+import org.mayocat.application.AbstractService;
 import org.mayocat.authorization.Authenticator;
 import org.mayocat.base.EventListener;
 import org.mayocat.model.Tenant;
@@ -103,7 +103,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
 
     private boolean isStaticPath(String path) {
-        for (String staticPath : MayocatShopService.STATIC_PATHS) {
+        for (String staticPath : AbstractService.STATIC_PATHS) {
             if (path.startsWith(staticPath)) {
                 return true;
             }

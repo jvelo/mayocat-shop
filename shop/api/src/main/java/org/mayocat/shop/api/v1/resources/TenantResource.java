@@ -15,7 +15,7 @@ import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
 import org.mayocat.model.Tenant;
 import org.mayocat.model.User;
-import org.mayocat.shop.rest.resources.Resource;
+import org.mayocat.base.Resource;
 import org.mayocat.service.AccountsService;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;

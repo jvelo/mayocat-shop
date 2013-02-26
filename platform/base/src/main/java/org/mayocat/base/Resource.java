@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.base;
 
 import org.xwiki.component.annotation.Role;
 
