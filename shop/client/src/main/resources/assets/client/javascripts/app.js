@@ -13,12 +13,28 @@ var mayocat = angular.module('mayocat', [
 mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
-      when('/product/', {templateUrl: 'partials/catalog.html', controller: 'CatalogController'}).
+      when('/product/', {templateUrl: 'partials/products.html'}).
       when('/category/', {templateUrl: 'partials/categories.html', controller: 'CatalogController'}).
       when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
       when('/category/:category', {templateUrl: 'partials/category.html', controller: 'CategoryController'}).
       when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
       otherwise({redirectTo: '/'});
+}]);
+
+
+/**
+ * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
+ */
+mayocat.directive('modalTrigger',['$rootScope', function($rootScope) {
+    return {
+        restrict: "A",
+        link: function($scope, element, attrs) {
+            var event = attrs.modalTrigger;
+            $rootScope.$on(event, function(){
+               $(element).modal("show");
+            });
+        }
+    }
 }]);
 
 /**
@@ -118,7 +134,6 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             $scope.dropzone = typeof $scope.requestedDropZone === "string"
                             ? $($scope.requestedDropZone)
                             : $(element).find('.dropzone');
-
 
 
             $scope.files = [];
@@ -332,12 +347,50 @@ mayocat.config(function($httpProvider) {
   $httpProvider.responseInterceptors.push(interceptor);
 });
 
-mayocat.run(['$rootScope', '$http', function(scope, $http) {
+
+/**
+ * Internal Server Error / 500 interception
+ */
+mayocat.config(function($httpProvider) {
+    var interceptor = ['$rootScope','$q', function(scope, $q) {
+
+        function success(response) {
+            return response;
+        }
+
+        function error(response) {
+            var status = response.status;
+            if (status == 500) {
+                scope.$broadcast('event:serverError');
+            }
+            return response;
+        }
+
+        return function(promise) {
+            return promise.then(success, error);
+        }
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
+});
+
+/**
+ * TODO: move this in the AppController
+ */
+mayocat.run(['$rootScope', '$http', 'configurationService', function(scope, $http, configurationService) {
 
   /**
    * Holds all the requests which failed due to 401 response.
    */
   scope.requests401 = [];
+
+ /**
+  * On 'event:authenticationSuccessful', resend all the 401 requests.
+  */
+  scope.$on('event:authenticationSuccessful', function() {
+      configurationService.get(function(configuration) {
+          scope.configuration = configuration;
+      });
+  });
 
   /**
    * On 'event:authenticationSuccessful', resend all the 401 requests.
