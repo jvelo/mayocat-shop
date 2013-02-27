@@ -1,181 +1,184 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mayocat.shop</groupId>
+        <artifactId>mayocat-shop-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <groupId>org.mayocat.shop</groupId>
-    <artifactId>mayocat-shop-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <groupId>org.mayocat.shop</groupId>
-  <artifactId>mayocat-shop-application</artifactId>
-  <packaging>jar</packaging>
+    <artifactId>mayocat-shop-application</artifactId>
+    <packaging>jar</packaging>
 
-  <name>Mayocat Shop - Application</name>
-  <description>Packaging of the MayocatShop application around DropWizard</description>
+    <name>Mayocat Shop - Application</name>
+    <description>Packaging of the MayocatShop application around DropWizard</description>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-observation-local</artifactId>
-      <version>${xwiki.version}</version>
-   </dependency>
-
-   <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-application</artifactId>
-      <version>${project.version}</version>
-   </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-front</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-search-elasticsearch</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-store-rdbms-migrations</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-configuration-default</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mayocat.shop</groupId>
-      <artifactId>mayocat-shop-client</artifactId>
-      <version>${project.version}</version>
-      <type>zip</type>
-    </dependency>
-  </dependencies>
-  <build>
-
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-dependency-plugin</artifactId>
-         <version>2.4</version>
-         <executions>
-           <!-- Copy client in target/assets -->
-           <execution>
-             <id>unpack-client</id>
-             <phase>process-sources</phase>
-             <goals>
-               <goal>unpack-dependencies</goal>
-             </goals>
-             <configuration>
-               <includeGroupIds>org.mayocat.shop</includeGroupIds>
-               <includeArtifactIds>mayocat-shop-client</includeArtifactIds>
-               <outputDirectory>${project.build.directory}/</outputDirectory> 
-             </configuration>
-           </execution>
-         </executions>
-       </plugin>
-
-      <!-- Shade everything else -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.4</version>
-        <configuration>
-
-          <createDependencyReducedPom>true</createDependencyReducedPom>
-          <filters>
-            <filter>
-              <artifact>*:*</artifact>
-              <excludes>
-                <exclude>META-INF/*.SF</exclude>
-                <exclude>META-INF/*.DSA</exclude>
-                <exclude>META-INF/*.RSA</exclude>
-              </excludes>
-            </filter>
-          </filters>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <excludes>
-                  <exclude>org.mayocat.shop:mayocat-shop-client</exclude>
-                </excludes>
-              </artifactSet>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/components.txt</resource>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.mayocat.shop.application.MayocatShopService</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>hsqldb</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencies>
         <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <version>2.0.0</version>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-observation-local</artifactId>
+            <version>${xwiki.version}</version>
         </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>postgres</id>
-      <dependencies>
+
         <dependency>
-          <groupId>postgresql</groupId>
-          <artifactId>postgresql</artifactId>
-          <version>9.1-901.jdbc4</version>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-application</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
-          <groupId>commons-dbcp</groupId>
-          <artifactId>commons-dbcp</artifactId>
-          <version>1.4</version>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-front</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-search-elasticsearch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-store-rdbms-migrations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-configuration-default</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-client</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <!-- Copy client in target/assets -->
+                    <execution>
+                        <id>unpack-client</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.mayocat.shop</includeGroupIds>
+                            <includeArtifactIds>mayocat-shop-client</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Shade everything else -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.mayocat.shop:mayocat-shop-client</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/components.txt</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.mayocat.shop.application.MayocatShopService</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>hsqldb</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>2.0.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>postgres</id>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>9.1-901.jdbc4</version>
+                </dependency>
+                <dependency>
+                    <groupId>commons-dbcp</groupId>
+                    <artifactId>commons-dbcp</artifactId>
+                    <version>1.4</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

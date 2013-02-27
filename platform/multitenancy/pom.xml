@@ -1,34 +1,34 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.mayocat.platform</groupId>
-    <artifactId>mayocat-platform-parent</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mayocat.platform</groupId>
+        <artifactId>mayocat-platform-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>mayocat-platform-multitenancy</artifactId>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>mayocat-platform-multitenancy</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
-  <name>Mayocat Platform - Multitenancy</name>
-  <description>Multitenancy related interfaces</description>
+    <name>Mayocat Platform - Multitenancy</name>
+    <description>Multitenancy related interfaces</description>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-accounts-api</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-accounts-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- XWiki -->
-    <dependency>
-        <groupId>org.xwiki.commons</groupId>
-        <artifactId>xwiki-commons-component-default</artifactId>
-        <version>${xwiki.version}</version>
-    </dependency>
+        <!-- XWiki -->
+        <dependency>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-component-default</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
 </project>
