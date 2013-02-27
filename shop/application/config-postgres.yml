@@ -51,7 +51,16 @@ theme:
   active:
     default: default
 
-shop:
+catalog:
+  currencies:
+      main:
+        default: EUR
+        visible: true
+        configurable: false
+      others:
+        default: [USD, JPY]
+        visible: true
+        configurable: true
   products:
     stock:
       default: true

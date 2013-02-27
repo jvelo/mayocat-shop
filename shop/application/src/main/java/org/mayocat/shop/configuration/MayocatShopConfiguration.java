@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.mayocat.configuration.AbstractConfiguration;
 import org.mayocat.configuration.general.GeneralConfiguration;
-import org.mayocat.configuration.shop.ShopConfiguration;
+import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
 import org.mayocat.configuration.theme.ThemeConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,7 +31,7 @@ public class MayocatShopConfiguration extends AbstractConfiguration
     @Valid
     @NotNull
     @JsonProperty
-    private ShopConfiguration shop = new ShopConfiguration();
+    private CatalogConfiguration catalog = new CatalogConfiguration();
 
     public DatabaseConfiguration getDatabaseConfiguration()
     {
@@ -43,8 +43,13 @@ public class MayocatShopConfiguration extends AbstractConfiguration
         return general;
     }
 
-    public ShopConfiguration getShop()
+    public CatalogConfiguration getCatalogConfiguration()
     {
-        return shop;
+        return catalog;
+    }
+
+    public ThemeConfiguration getThemeConfiguration()
+    {
+        return theme;
     }
 }

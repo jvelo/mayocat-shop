@@ -1,4 +1,3 @@
 org.mayocat.configuration.source.GeneralConfigurationSource
-org.mayocat.configuration.source.ShopConfigurationSource
 org.mayocat.configuration.source.ThemeConfigurationSource
 org.mayocat.configuration.source.ThumbnailsConfigurationSource

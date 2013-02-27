@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.mayocat.application.AbstractService;
+import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopConfiguration;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.skife.jdbi.v2.DBI;
@@ -31,6 +32,8 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
     public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
     {
         super.initialize(bootstrap);
+
+        bootstrap.getObjectMapperFactory().registerModule(new MoneyModule());
 
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());

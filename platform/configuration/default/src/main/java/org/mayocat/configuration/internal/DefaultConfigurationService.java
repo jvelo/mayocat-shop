@@ -2,11 +2,13 @@ package org.mayocat.configuration.internal;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.base.JacksonModule;
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Tenant;
@@ -19,6 +21,7 @@ import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 
@@ -35,6 +38,9 @@ public class DefaultConfigurationService implements ConfigurationService
     private Map<String, ConfigurationSource> configurationSources;
 
     @Inject
+    private List<JacksonModule> jacksonModules;
+
+    @Inject
     private Execution execution;
 
     @Inject
@@ -43,7 +49,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<Class, Object> getConfigurations()
     {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = getObjectMapper();
         Map<String, Object> mergedConfiguration = getConfigurationAsJson();
         Map<Class, Object> configurations = Maps.newHashMap();
         for (String source : configurationSources.keySet()) {
@@ -123,7 +129,7 @@ public class DefaultConfigurationService implements ConfigurationService
 
     private Map<String, Object> readConfigurationsAsJson()
     {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = getObjectMapper();
         Map configurationsToSerialize = Maps.newHashMap();
         for (String hint : configurationSources.keySet()) {
             ConfigurationSource c = configurationSources.get(hint);
@@ -131,7 +137,7 @@ public class DefaultConfigurationService implements ConfigurationService
         }
         try {
             String json = mapper.writeValueAsString(configurationsToSerialize);
-            Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
             return result;
         } catch (JsonProcessingException e) {
             this.logger.error("Failed to convert configurations to map", e);
@@ -139,5 +145,19 @@ public class DefaultConfigurationService implements ConfigurationService
             this.logger.error("Failed to convert configurations to map", e);
         }
         return Collections.emptyMap();
+    }
+
+    private ObjectMapper getObjectMapper()
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        for (JacksonModule module : jacksonModules) {
+            try {
+                mapper.registerModule((Module) module);
+            } catch (ClassCastException e) {
+                this.logger.warn("Failed to register a Jackson module. Is it a fastxml Module class ?");
+                // Ignore
+            }
+        }
+        return mapper;
     }
 }

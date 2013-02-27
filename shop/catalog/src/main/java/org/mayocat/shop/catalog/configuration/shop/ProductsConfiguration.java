@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ProductsConfiguration
 {
+
     @Valid
     @JsonProperty
     private Configurable<Boolean> stock = new Configurable<Boolean>(true);

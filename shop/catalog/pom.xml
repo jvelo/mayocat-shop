@@ -42,5 +42,18 @@
             <artifactId>mayocat-shop-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-money</artifactId>
+            <version>0.8</version>
+        </dependency>
+
+        <!-- Testing dependencies -->
+        <dependency>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-test-component</artifactId>
+            <version>${xwiki.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

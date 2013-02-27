@@ -61,17 +61,48 @@
                                    id="otherLocales"
                                    ng-disabled="!isConfigurable('general.locales.others')"/>
                         </div>
+                    </div>
 
                 </fieldset>
             </form>
 
             <form class="form-horizontal" name="shopForm">
                 <fieldset>
+                    <legend>Currencies</legend>
+
+                    <!-- Default currency -->
+                    <div class="control-group" ng-show="isVisible('catalog.currencies.main')"
+                         ng-class="{default: isDefaultValue('catalog.currencies.main')}">
+                        <label class="control-label" for="defaultCurrency">Default language</label>
+
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="configuration.catalog.currencies.main.value"
+                                   id="defaultCurrency"
+                                   ng-disabled="!isConfigurable('catalog.currencies.main')"/>
+                        </div>
+                    </div>
+
+                    <!-- Other currencies -->
+                    <div class="control-group" ng-show="isVisible('catalog.currencies.others')"
+                         ng-class="{default: isDefaultValue('catalog.currencies.others')}">
+                        <label class="control-label" for="otherCurrencies">Other languages</label>
+
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="configuration.catalog.currencies.others.value"
+                                   id="otherCurrencies"
+                                   ng-disabled="!isConfigurable('catalog.currencies.others')"/>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
                     <legend>Products</legend>
 
                     <!-- Categories -->
-                    <div class="control-group" ng-show="isVisible('shop.products.categories')"
-                         ng-class="{default: isDefaultValue('shop.products.categories')}">
+                    <div class="control-group" ng-show="isVisible('catalog.products.categories')"
+                         ng-class="{default: isDefaultValue('catalog.products.categories')}">
                         <label class="control-label" for="categoriesEnabled">have categories</label>
 
                         <div class="controls">
@@ -79,14 +110,14 @@
                                 <input type="checkbox"
                                        class="input"
                                        id="categoriesEnabled"
-                                       ng-model="configuration.shop.products.categories.value"/>
+                                       ng-model="configuration.catalog.products.categories.value"/>
                             </label>
                         </div>
                     </div>
 
                     <!-- Stock -->
-                    <div class="control-group" ng-show="isVisible('shop.products.stock')"
-                         ng-class="{default: isDefaultValue('shop.products.stock')}">
+                    <div class="control-group" ng-show="isVisible('catalog.products.stock')"
+                         ng-class="{default: isDefaultValue('catalog.products.stock')}">
                         <label class="control-label" for="stockEnabled">have stock</label>
 
                         <div class="controls">
@@ -94,14 +125,14 @@
                                 <input type="checkbox"
                                        class="input"
                                        id="stockEnabled"
-                                       ng-model="configuration.shop.products.stock.value"/>
+                                       ng-model="configuration.catalog.products.stock.value"/>
                             </label>
                         </div>
                     </div>
 
                     <!-- Variants -->
-                    <div class="control-group" ng-show="isVisible('shop.products.variants')"
-                         ng-class="{default: isDefaultValue('shop.products.variants')}">
+                    <div class="control-group" ng-show="isVisible('catalog.products.variants')"
+                         ng-class="{default: isDefaultValue('catalog.products.variants')}">
                         <label class="control-label" for="variantsEnabled">have variants</label>
 
                         <div class="controls">
@@ -109,7 +140,7 @@
                                 <input type="checkbox"
                                        class="input"
                                        id="variantsEnabled"
-                                       ng-model="configuration.shop.products.variants.value"/>
+                                       ng-model="configuration.catalog.products.variants.value"/>
                             </label>
                         </div>
                     </div>

@@ -4,7 +4,7 @@ angular.module('catalog', [])
     .service('catalogService', function ($http, configurationService) {
         return {
             hasCategories: function(callback) {
-                configurationService.get("shop.products.categories", function(hasCategories){
+                configurationService.get("catalog.products.categories", function(hasCategories){
                     callback && callback.call(this, hasCategories);
                 });
             },
@@ -115,7 +115,7 @@ angular.module('catalog', [])
             $scope.changeOperation = undefined;
         }
 
-        configurationService.get("shop.products.categories", function(value){
+        configurationService.get("catalog.products.categories", function(value){
           $scope.hasCategories = value;
         });
     }]);
