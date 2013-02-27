@@ -3,3 +3,4 @@ org.mayocat.shop.catalog.store.jdbi.DBICategoryStore
 org.mayocat.shop.catalog.store.jdbi.DBIProductStore
 org.mayocat.shop.catalog.api.resources.ProductResource
 org.mayocat.shop.catalog.api.resources.CategoryResource
+org.mayocat.shop.catalog.configuration.source.ShopConfigurationSource

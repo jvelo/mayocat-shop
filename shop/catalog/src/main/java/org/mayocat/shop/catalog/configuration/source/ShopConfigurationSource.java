@@ -1,9 +1,9 @@
-package org.mayocat.configuration.source;
+package org.mayocat.shop.catalog.configuration.source;
 
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationSource;
-import org.mayocat.configuration.shop.ShopConfiguration;
+import org.mayocat.shop.catalog.configuration.shop.ShopConfiguration;
 import org.xwiki.component.annotation.Component;
 
 /**

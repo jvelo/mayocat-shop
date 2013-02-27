@@ -1,4 +1,4 @@
-package org.mayocat.configuration.shop;
+package org.mayocat.shop.catalog.configuration.shop;
 
 import javax.validation.Valid;
 
