@@ -19,6 +19,7 @@
     <module>front</module>
     <module>api</module>
     <module>client</module>
+    <module>themes</module>
     <module>application</module>
   </modules>
 

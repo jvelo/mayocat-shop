@@ -45,6 +45,7 @@
                         <include>assets/client/javascripts/category.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/configuration.js</include>
+                        <include>assets/client/javascripts/money.js</include>
                         <include>assets/client/javascripts/app.js</include>
                     </sourceIncludes>
                     <specIncludes>

@@ -69,6 +69,13 @@
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-themes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
 

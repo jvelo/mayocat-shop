@@ -1,10 +1,13 @@
 package org.mayocat.shop.front.resources;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,7 +17,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.ConfigurationSource;
+import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.context.Execution;
 import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
@@ -37,6 +44,10 @@ import com.google.common.collect.Maps;
 public class ProductResource implements Resource, BindingsContants
 {
     @Inject
+    @Named("catalog")
+    private Map<String, ConfigurationSource> configurationSources;
+
+    @Inject
     private CatalogService catalogService;
 
     @Inject
@@ -47,7 +58,7 @@ public class ProductResource implements Resource, BindingsContants
     public FrontView getProduct(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
-        Product product = this.catalogService.findProductBySlug(slug);
+        final Product product = this.catalogService.findProductBySlug(slug);
         if (product == null) {
             return new FrontView("404", breakpoint);
         }
@@ -63,6 +74,33 @@ public class ProductResource implements Resource, BindingsContants
         Map<String, Object> productContext = Maps.newHashMap();
         productContext.put("title", product.getTitle());
         productContext.put("description", product.getDescription());
+
+        // Prices
+        if (product.getPrice() != null) {
+            final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
+            final GeneralConfiguration generalConfiguration =
+                    (GeneralConfiguration) configurationSources.get("general").get();
+
+            final Locale locale = generalConfiguration.getLocales().getMainLocale().getValue();
+            final Currency currency = configuration.getCurrencies().getMainCurrency().getValue();
+            productContext.put("price", new HashMap<String, Object>()
+            {{
+                    put("amount", product.getPrice());
+                    put("currency", new HashMap<String, Object>()
+                    {{
+                            put("code", currency.getCurrencyCode());
+                            put("symbol", currency.getSymbol(locale));
+                    }});
+            }});
+
+            // TODO
+            // - distinguish between two symbols : "absolute" and "internationalized" (i.e. "$" vs. "US$")
+            // - look into amount formatting.
+            // Check http://joda-money.sourceforge.net/apidocs/org/joda/money/format/MoneyFormatter.html
+            // - handle multiple prices (unit, discounts, etc.)
+        }
+
+        // Images
         productContext.put("images", new HashMap<String, Object>()
         {{
             put("featured", new HashMap<String, Object>() {{

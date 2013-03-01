@@ -20,4 +20,9 @@ public class CatalogConfiguration
     {
         return products;
     }
+
+    public CurrenciesConfiguration getCurrencies()
+    {
+        return currencies;
+    }
 }
