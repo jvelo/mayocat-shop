@@ -199,6 +199,7 @@
       <column name="title" type="varchar(255)" />
       <column name="description" type="mediumtext" />
       <column name="on_shelf" type="boolean" />
+      <column name="price" type="numeric(18,4)" />
     </createTable>
     <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                              baseTableName="product" baseColumnNames="entity_id"

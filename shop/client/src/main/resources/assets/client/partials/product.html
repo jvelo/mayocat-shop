@@ -59,12 +59,12 @@
                 <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
             </div>
             <div ng-show="!isNew()">
-                <div ng-show="product.onShelf == null">
+                <div ng-show="product.onShelf == undefined">
                     <button ng-click="updateProduct()" class="btn btn-large btn">Save</button>
                     <button ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online
                     </button>
                 </div>
-                <div ng-show="product.onShelf != null">
+                <div ng-show="product.onShelf != undefined">
                     <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
                     <div>
                         <span ng-class="{strong: product.onShelf}">on shelf</span>
@@ -80,13 +80,21 @@
         <div class="uri" ng-show="!isNew()">
             <pre>/product/{{product.slug}}</pre>
         </div>
-        <div class="well well-small" ng-show="!isNew() && categories.length > 0">
-            <p><strong>Categories</strong></p>
+
+        <div class="block" ng-show="!isNew() && categories.length > 0">
+            <h3>Categories</h3>
             <ul class="list unstyled">
                 <li ng-repeat="category in categories">
                     <input type="checkbox" ng-model="category.hasProduct"/> {{category.title}}
                 </li>
             </ul>
+        </div>
+
+        <div class="block" ng-show="!isNew() && categories.length > 0">
+            <h3>Price</h3>
+            <div>
+                <money-amount ng-model="product.price" currency="EUR" />
+            </div>
         </div>
     </aside>
 </form>

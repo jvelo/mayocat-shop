@@ -1,5 +1,7 @@
 package org.mayocat.shop.catalog.model;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,6 +34,9 @@ public class Product extends AbstractLocalizedEntity
     @Localized
     @SearchIndex
     private String description;
+
+    @SearchIndex
+    private BigDecimal price;
 
     public Product()
     {
@@ -92,6 +97,16 @@ public class Product extends AbstractLocalizedEntity
         this.onShelf = onShelf;
     }
 
+    public BigDecimal getPrice()
+    {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price)
+    {
+        this.price = price;
+    }
+
     @Override
     public EntityReference getReference()
     {
@@ -116,13 +131,14 @@ public class Product extends AbstractLocalizedEntity
        return   Objects.equal(this.title, other.title)  
              && Objects.equal(this.slug, other.slug)
              && Objects.equal(this.description, other.description)
-             && Objects.equal(this.onShelf, other.onShelf);
+             && Objects.equal(this.onShelf, other.onShelf)
+             && Objects.equal(this.price, other.price);
     }  
     
     @Override
     public int hashCode()  
     {  
-        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf);
+        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf, this.price);
     }
     
     @Override  
@@ -132,6 +148,7 @@ public class Product extends AbstractLocalizedEntity
                  .addValue(this.title)  
                  .addValue(this.slug)
                  .addValue(this.onShelf)
+                 .addValue(this.price)
                  .toString();  
     }
 }

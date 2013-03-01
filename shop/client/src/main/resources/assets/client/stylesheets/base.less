@@ -45,10 +45,6 @@ ul, li {
   max-width: 237px;
 }
 
-input.title {
-  font-size: 22px;
-}
-
 small {
   font-size: 11px;
 }
@@ -70,9 +66,22 @@ h3 {
 /* Fields */
 
 input, textarea {
-  .roundedCornersButton !important;
   border: solid 1px @borderInput !important;
   resize:none;
+}
+
+input[type='text'].title {
+  font-size: 22px;
+  height: 39px;
+  padding-left: 9px;
+}
+
+.entity input[type='text'], .entity textarea {
+  width: 100%;
+}
+
+.input-append .add-on, .input-prepend .add-on {
+  line-height: 12px;
 }
 
 /* Buttons */
@@ -86,7 +95,6 @@ input, textarea {
   color: #FFF;
   background-image:none;
   border:none;
-  .roundedCornersButton
 }
 
 .btn-primary:hover {
@@ -160,12 +168,8 @@ div.main-container {
   max-height: 40px;
 }
 
-input[type='text'].title {
-  font-size: 20px;
-  height: 39px;
-  padding-left: 9px;
-}
-
-.entity input[type='text'], .entity textarea {
-  width: 100%;
+/* Reset some bootstrap border radius */
+pre,
+.well {
+  border-radius: 0;
 }

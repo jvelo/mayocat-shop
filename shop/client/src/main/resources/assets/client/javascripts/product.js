@@ -99,6 +99,14 @@ angular.module('product', ['ngResource'])
                 "expand": ["categories", "images"] }, function () {
                 // Ensures the category initialization happens after the AJAX callback
                 $scope.initializeCategories();
+
+                if ($scope.product.onShelf == null) {
+                    // "null" does not seem to be evaluated properly in angular directives
+                    // (like ng-show="something != null")
+                    // Thus, we convert "null"onShelf to undefined to be able to have that "high impedance" state in
+                    // angular directives.
+                    $scope.product.onShelf = undefined;
+                }
             });
         }
         else {

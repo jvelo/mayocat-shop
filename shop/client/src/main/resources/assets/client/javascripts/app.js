@@ -7,6 +7,7 @@ var mayocat = angular.module('mayocat', [
     'category',
     'catalog',
     'configuration',
+    'money',
     'jqui'
 ]);
 

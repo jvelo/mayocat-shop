@@ -1,5 +1,6 @@
 package org.mayocat.shop.catalog.api.representations;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
@@ -17,6 +18,8 @@ public class ProductRepresentation
     private String description;
 
     private Boolean onShelf;
+
+    private BigDecimal price;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<EntityReferenceRepresentation> categories = null;
@@ -45,6 +48,7 @@ public class ProductRepresentation
         this.title = product.getTitle();
         this.description = product.getDescription();
         this.onShelf = product.getOnShelf();
+        this.price = product.getPrice();
 
         this.href = "/product/" + this.slug;
 
@@ -101,5 +105,15 @@ public class ProductRepresentation
     public void setOnShelf(Boolean onShelf)
     {
         this.onShelf = onShelf;
+    }
+
+    public BigDecimal getPrice()
+    {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price)
+    {
+        this.price = price;
     }
 }

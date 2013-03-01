@@ -17,6 +17,7 @@ public class ProductMapper implements ResultSetMapper<Product>
         product.setTitle(resultSet.getString("title"));
         product.setDescription(resultSet.getString("description"));
         product.setOnShelf(resultSet.getBoolean("on_shelf"));
+        product.setPrice(resultSet.getBigDecimal("price"));
 
         return product;
     }

@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.configuration.shop;
 
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -15,21 +16,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class CurrenciesConfiguration
 {
-
     @Valid
     @JsonProperty("main")
-    private Configurable<CurrencyUnit> mainCurrency = new Configurable(CurrencyUnit.EUR);
+    private Configurable<Currency> mainCurrency = new Configurable(CurrencyUnit.EUR);
 
     @Valid
     @JsonProperty("others")
-    private Configurable<List<CurrencyUnit>> otherCurrencies = new Configurable(Collections.emptyList());
+    private Configurable<List<Currency>> otherCurrencies = new Configurable(Collections.emptyList());
 
-    public Configurable<CurrencyUnit> getMainCurrency()
+    public Configurable<Currency> getMainCurrency()
     {
         return mainCurrency;
     }
 
-    public Configurable<List<CurrencyUnit>> getOtherCurrencies()
+    public Configurable<List<Currency>> getOtherCurrencies()
     {
         return otherCurrencies;
     }

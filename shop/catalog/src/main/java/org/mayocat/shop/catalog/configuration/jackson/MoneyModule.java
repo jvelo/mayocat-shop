@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.configuration.jackson;
 
 import java.io.IOException;
+import java.util.Currency;
 
 import org.joda.money.CurrencyUnit;
 import org.mayocat.base.JacksonModule;
@@ -29,23 +30,13 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 @Component("money")
 public class MoneyModule extends Module implements JacksonModule
 {
-    private static class CurrencyUnitDeserializer extends JsonDeserializer<CurrencyUnit>
+    private static class CurrencyDeserializer extends JsonDeserializer<Currency>
     {
         @Override
-        public CurrencyUnit deserialize(JsonParser jp, DeserializationContext ctxt)
+        public Currency deserialize(JsonParser jp, DeserializationContext ctxt)
                 throws IOException, JsonProcessingException
         {
-            return CurrencyUnit.of(jp.getText());
-        }
-    }
-
-    private static class CurrencyUnitSerializer extends JsonSerializer<CurrencyUnit>
-    {
-        @Override
-        public void serialize(CurrencyUnit value, JsonGenerator jgen, SerializerProvider provider)
-                throws IOException, JsonProcessingException
-        {
-            jgen.writeString(value.getCurrencyCode());
+            return Currency.getInstance(jp.getText());
         }
     }
 
@@ -56,22 +47,10 @@ public class MoneyModule extends Module implements JacksonModule
                 DeserializationConfig config,
                 BeanDescription beanDesc) throws JsonMappingException
         {
-            if (CurrencyUnit.class.isAssignableFrom(type.getRawClass())) {
-                return new CurrencyUnitDeserializer();
+            if (Currency.class.isAssignableFrom(type.getRawClass())) {
+                return new CurrencyDeserializer();
             }
             return super.findBeanDeserializer(type, config, beanDesc);
-        }
-    }
-
-    private static class MoneySerializers extends Serializers.Base
-    {
-        @Override
-        public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc)
-        {
-            if (CurrencyUnit.class.isAssignableFrom(type.getRawClass())) {
-                return new CurrencyUnitSerializer();
-            }
-            return super.findSerializer(config, type, beanDesc);
         }
     }
 
@@ -90,7 +69,6 @@ public class MoneyModule extends Module implements JacksonModule
     @Override
     public void setupModule(SetupContext context)
     {
-        context.addSerializers(new MoneySerializers());
         context.addDeserializers(new MoneyDeserializers());
     }
 }

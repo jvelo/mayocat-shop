@@ -1,5 +1,7 @@
 package org.mayocat.shop.catalog.configuration.jackson;
 
+import java.util.Currency;
+
 import org.joda.money.CurrencyUnit;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +31,7 @@ public class MoneyTest
     @Test
     public void testCurrencyDeserialization() throws Exception
     {
-        Assert.assertEquals(CurrencyUnit.EUR, mapper.readValue("\"EUR\"", CurrencyUnit.class));
+        Assert.assertEquals(Currency.getInstance("EUR"), mapper.readValue("\"EUR\"", Currency.class));
     }
 
 }
