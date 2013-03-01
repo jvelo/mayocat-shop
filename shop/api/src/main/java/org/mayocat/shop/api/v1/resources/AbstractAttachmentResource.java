@@ -12,7 +12,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mayocat.Slugifier;
 import org.mayocat.model.Attachment;
-import org.mayocat.model.reference.EntityReference;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
@@ -42,7 +41,7 @@ public class AbstractAttachmentResource
     }
 
     protected Response addAttachment(InputStream data, String originalFilename, String title, String description,
-            Optional<EntityReference> parent)
+            Optional<Long> parent)
     {
         if (data == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -50,7 +49,7 @@ public class AbstractAttachmentResource
                     .type(MediaType.TEXT_PLAIN_TYPE).build();
         }
 
-        Attachment attachment = new Attachment(parent.orNull());
+        Attachment attachment = new Attachment();
 
         String fileName;
         String extension = null;
@@ -75,8 +74,8 @@ public class AbstractAttachmentResource
         attachment.setTitle(title);
         attachment.setDescription(description);
 
-        if (attachment.getReference().getParent() != null) {
-            attachment.setParentId(attachmentStore.get().getId(attachment.getReference().getParent()));
+        if (parent.isPresent()) {
+            attachment.setParentId(parent.get());
         }
 
         return this.addAttachment(attachment, 0);

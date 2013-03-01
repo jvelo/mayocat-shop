@@ -2,10 +2,9 @@ package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
-import org.mayocat.accounts.model.Tenant;
-import org.mayocat.model.reference.EntityReference;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
@@ -104,16 +103,4 @@ public interface EntityDAO< E extends Entity >
     List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant,
             @Bind("number") Integer number, @Bind("offset") Integer offset);
 
-
-    @SqlQuery
-    (
-        "SELECT type, slug FROM entity WHERE entity.id = :id"
-    )
-    EntityReference getEntity(@Bind("id") Long id);
-
-    @SqlQuery
-    (
-        "SELECT id FROM entity WHERE entity.slug = :reference.slug AND entity.type = :reference.type and entity.tenant_id = :tenant.id"
-    )
-    Long getId(@BindBean("reference") EntityReference reference, @BindBean("tenant") Tenant tenant);
 }

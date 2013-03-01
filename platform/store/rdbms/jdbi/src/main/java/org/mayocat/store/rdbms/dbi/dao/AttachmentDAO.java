@@ -1,7 +1,10 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
+import java.util.List;
+
 import org.mayocat.model.Attachment;
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.model.Entity;
 import org.mayocat.store.rdbms.dbi.mapper.AttachmentMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
@@ -34,6 +37,18 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
     )
    void createAttachment(@Bind("entity") Long entityId, @BindBean("attachment") Attachment attachment,
             @Bind("data") byte[] data);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN attachment" +
+        "               ON entity.id = attachment.entity_id " +
+        "WHERE  entity.type = 'attachment' " +
+        "       AND entity.parent_id = :entity.id"
+    )
+    List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity);
+
 
     @SqlQuery
     (

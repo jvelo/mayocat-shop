@@ -9,9 +9,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.mayocat.jackson.PasswordSerializer;
 import org.mayocat.model.Entity;
 import org.mayocat.model.annotation.SearchIndex;
-import org.mayocat.model.reference.EntityReference;
-
-import com.google.common.base.Optional;
 
 public class User implements Entity
 {
@@ -40,14 +37,14 @@ public class User implements Entity
     public User()
     {
     }
-    
+
     public User(Long id)
     {
         this.id = id;
     }
-    
+
     // /////////////////////////////////////////////////
-    
+
     public String getEmail()
     {
         return email;
@@ -77,7 +74,7 @@ public class User implements Entity
     {
         this.id = id;
     }
-    
+
     public String getSlug()
     {
         return this.slug;
@@ -87,11 +84,4 @@ public class User implements Entity
     {
         this.slug = slug;
     }
-
-    @Override
-    public EntityReference getReference()
-    {
-        return new EntityReference("user", getSlug(), Optional.<EntityReference>absent());
-    }
-
 }

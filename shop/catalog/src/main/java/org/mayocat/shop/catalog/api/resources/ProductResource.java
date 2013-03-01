@@ -24,27 +24,27 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.accounts.model.Role;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.base.Resource;
+import org.mayocat.image.model.Thumbnail;
+import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.model.Attachment;
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
 import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
 import org.mayocat.shop.api.v1.resources.AbstractAttachmentResource;
-import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.model.Attachment;
-import org.mayocat.accounts.model.Role;
-import org.mayocat.image.model.Thumbnail;
-import org.mayocat.model.reference.EntityReference;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.base.Resource;
+import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.InvalidMoveOperation;
-import org.mayocat.image.store.ThumbnailStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -67,6 +67,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private Provider<AttachmentStore> attachmentStore;
 
     @Inject
     private Logger logger;
@@ -119,7 +122,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     public List<ImageRepresentation> getImages(@PathParam("slug") String slug)
     {
         List<ImageRepresentation> result = new ArrayList();
-        for (Attachment attachment : this.getAttachmentList()) {
+        Product product = this.catalogService.findProductBySlug(slug);
+        if (product == null) {
+            throw new WebApplicationException(Response.status(404).build());
+        }
+        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(product)) {
             FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
                     "/attachment/" + attachment.getSlug() + "." + attachment.getExtension());
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
@@ -142,10 +149,13 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
-        EntityReference
-                parent = new EntityReference("product", slug, Optional.<EntityReference>absent());
-        return this
-                .addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description, Optional.of(parent));
+        Product product = this.catalogService.findProductBySlug(slug);
+        if (product == null) {
+            return Response.status(404).build();
+        }
+
+        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+                Optional.of(product.getId()));
     }
 
     @Path("{slug}/move")

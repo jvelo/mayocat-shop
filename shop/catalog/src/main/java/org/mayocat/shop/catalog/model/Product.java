@@ -8,10 +8,8 @@ import javax.validation.constraints.Size;
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
-import org.mayocat.model.reference.EntityReference;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 public class Product extends AbstractLocalizedEntity
 {
@@ -105,12 +103,6 @@ public class Product extends AbstractLocalizedEntity
     public void setPrice(BigDecimal price)
     {
         this.price = price;
-    }
-
-    @Override
-    public EntityReference getReference()
-    {
-        return new EntityReference("product", getSlug(), Optional.<EntityReference>absent());
     }
 
     ////////////////////////////////////////////////

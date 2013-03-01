@@ -2,9 +2,8 @@ package org.mayocat.store.rdbms.dbi;
 
 import javax.inject.Inject;
 
-import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.model.reference.EntityReference;
+import org.mayocat.context.Execution;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.rdbms.dbi.dao.EntityDAO;
 import org.skife.jdbi.v2.DBI;
@@ -35,18 +34,6 @@ public class DBIEntityStore implements EntityStore, Initializable
     protected Tenant getTenant()
     {
         return this.execution.getContext().getTenant();
-    }
-
-    @Override
-    public EntityReference getReference(Long id)
-    {
-        return this.dao.getEntity(id);
-    }
-
-    @Override
-    public Long getId(EntityReference reference)
-    {
-        return this.dao.getId(reference, getTenant());
     }
 
     @Override

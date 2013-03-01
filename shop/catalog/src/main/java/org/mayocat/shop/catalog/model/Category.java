@@ -8,10 +8,8 @@ import org.mayocat.model.Translations;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
-import org.mayocat.model.reference.EntityReference;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 public class Category extends AbstractLocalizedEntity
 {
@@ -91,12 +89,6 @@ public class Category extends AbstractLocalizedEntity
     public void setDescription(String description)
     {
         this.description = description;
-    }
-
-    @Override
-    public EntityReference getReference()
-    {
-        return new EntityReference("category", getSlug(), Optional.<EntityReference>absent());
     }
 
     // //////////////////////////////////////////////

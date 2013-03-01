@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.mayocat.model.Attachment;
+import org.mayocat.model.Entity;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -83,6 +84,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     public Attachment findBySlug(String slug)
     {
         return this.dao.findBySlug(slug, getTenant());
+    }
+
+    @Override
+    public List<Attachment> findAllChildrenOf(Entity parent)
+    {
+        return this.dao.findAttachmentsOfEntity(parent);
     }
 
     @Override

@@ -1,10 +1,8 @@
 package org.mayocat.model;
 
 import java.io.InputStream;
-
-import org.mayocat.model.reference.EntityReference;
-
-import com.google.common.base.Optional;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * @version $Id$
@@ -25,17 +23,8 @@ public class Attachment implements Entity, Child
 
     private Long parentId;
 
-    private EntityReference reference;
-
     public Attachment()
     {
-        this(null);
-    }
-
-    public Attachment(EntityReference parentReference)
-    {
-        this.reference = new EntityReference("category", getSlug(), Optional.<EntityReference>fromNullable(
-                parentReference));
     }
 
     @Override
@@ -103,12 +92,6 @@ public class Attachment implements Entity, Child
     }
 
     @Override
-    public EntityReference getReference()
-    {
-        return this.reference;
-    }
-
-    @Override
     public Long getParentId()
     {
         return this.parentId;
@@ -118,4 +101,5 @@ public class Attachment implements Entity, Child
     {
         this.parentId = parentId;
     }
+
 }
