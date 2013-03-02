@@ -53,15 +53,6 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
     @Inject
     private Logger logger;
 
-    private static final List<String> IMAGE_EXTENSIONS = new ArrayList<String>();
-
-    static {
-        IMAGE_EXTENSIONS.add("jpg");
-        IMAGE_EXTENSIONS.add("jpeg");
-        IMAGE_EXTENSIONS.add("gif");
-        IMAGE_EXTENSIONS.add("png");
-    }
-
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response addAttachment(@FormDataParam("file") InputStream uploadedInputStream,
@@ -99,50 +90,5 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
     }
 
 
-    @GET
-    @Path("/{slug}.{ext}")
-    public Response downloadFile(@PathParam("slug") String slug, @PathParam("ext") String extension,
-            @Context ServletContext servletContext, @Context Optional<ImageOptions> imageOptions)
-    {
-        String fileName = slug + "." + extension;
-        Attachment file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
-        if (file == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
 
-        if (imageOptions.isPresent()) {
-            if (!IMAGE_EXTENSIONS.contains(extension)) {
-                // Refuse to treat a request with image options for a non-image attachment
-                return Response.status(Response.Status.BAD_REQUEST).entity("Image options are not supported for non-" +
-                        "image attachments").build();
-            } else {
-                try {
-                    Image image = imageService.readImage(file.getData());
-                    Optional<Dimension> newDimension = imageService.newDimension(image,
-                            imageOptions.get().getWidth(),
-                            imageOptions.get().getHeight());
-
-                    if (newDimension.isPresent()) {
-                        return Response.ok(imageService.scaleImage(image, newDimension.get()),
-                                servletContext.getMimeType(fileName))
-                                .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
-                                .build();
-                    }
-
-                    return Response.ok(image, servletContext.getMimeType(fileName))
-                            .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
-                            .build();
-
-
-                } catch (IOException e) {
-                    this.logger.warn("Failed to scale image for attachment [{slug}]", slug);
-                    return Response.serverError().entity("Failed to scale image").build();
-                }
-            }
-        }
-
-        return Response.ok(file.getData(), servletContext.getMimeType(fileName))
-                .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
-                .build();
-    }
 }

@@ -128,14 +128,14 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         }
         for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(product)) {
             FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
-                    "/attachment/" + attachment.getSlug() + "." + attachment.getExtension());
+                    "/image/" + attachment.getSlug() + "." + attachment.getExtension());
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
             List<ThumbnailRepresentation> thumbnailRepresentations = Lists.newArrayList();
             for (Thumbnail thumb : thumbnails) {
                 thumbnailRepresentations.add(new ThumbnailRepresentation(thumb));
             }
             ImageRepresentation representation = new ImageRepresentation(
-                    attachment.getTitle(), "/attachment/" + attachment.getSlug(), fr, thumbnailRepresentations);
+                    attachment.getTitle(), "/image/" + attachment.getSlug(), fr, thumbnailRepresentations);
             result.add(representation);
         }
         return result;

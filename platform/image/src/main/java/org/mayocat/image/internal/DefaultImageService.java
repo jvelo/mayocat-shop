@@ -1,8 +1,8 @@
 package org.mayocat.image.internal;
 
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +35,24 @@ public class DefaultImageService implements ImageService
                 (int) Math.round(dimension.getHeight())
         );
         BufferedImage newImage = resampleOp.filter((BufferedImage) image, null);
-        return (RenderedImage) newImage;
+        return newImage;
+    }
+
+    @Override
+    public RenderedImage cropImage(Image image, Rectangle boundaries)
+    {
+        BufferedImage original = (BufferedImage) image;
+
+        if (boundaries != null) {
+            try {
+                original = original.getSubimage(new Double(boundaries.getX()).intValue(),
+                        new Double(boundaries.getY()).intValue(), new Double(boundaries.getWidth()).intValue(),
+                        new Double(boundaries.getHeight()).intValue());
+            } catch (RasterFormatException e) {
+                // Nevermind, we will use the original image, not cropped
+            }
+        }
+        return original;
     }
 
     @Override

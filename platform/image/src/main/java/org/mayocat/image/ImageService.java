@@ -33,6 +33,8 @@ public interface ImageService
      */
     RenderedImage scaleImage(Image image, Dimension dimension);
 
+    RenderedImage cropImage(Image image, Rectangle boundaries);
+
     /**
      * Computes the dimension (width and height) an image will have, respecting its original aspect ratio when adapting
      * one of its original dimension (width or height). If a value for both dimension it set by the caller, this method

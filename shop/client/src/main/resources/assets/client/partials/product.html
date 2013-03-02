@@ -23,7 +23,7 @@
                     <li ng-repeat="image in product.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="/api/1.0{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <div class="btn-group pull-right">

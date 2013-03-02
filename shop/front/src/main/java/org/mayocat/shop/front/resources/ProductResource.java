@@ -3,11 +3,15 @@ package org.mayocat.shop.front.resources;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.context.Execution;
+import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
 import org.mayocat.shop.catalog.model.Product;
@@ -28,6 +33,7 @@ import org.mayocat.shop.front.bindings.BindingsContants;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.base.Resource;
 import org.mayocat.shop.rest.views.FrontView;
+import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
@@ -52,6 +58,18 @@ public class ProductResource implements Resource, BindingsContants
 
     @Inject
     private FrontBindingManager bindingManager;
+
+    @Inject
+    private Provider<AttachmentStore> attachmentStore;
+
+    private final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();
+
+    static {
+        IMAGE_EXTENSIONS.add("jpg");
+        IMAGE_EXTENSIONS.add("jpeg");
+        IMAGE_EXTENSIONS.add("png");
+        IMAGE_EXTENSIONS.add("gif");
+    }
 
     @Path("{slug}")
     @GET
@@ -100,12 +118,29 @@ public class ProductResource implements Resource, BindingsContants
             // - handle multiple prices (unit, discounts, etc.)
         }
 
+        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
+        List<Attachment> images = new ArrayList<Attachment>();
+        for (Attachment attachment : attachments) {
+            if (isImage(attachment)) {
+                images.add(attachment);
+            }
+        }
+
+        final String featuredImage;
+        if (images.size() > 0) {
+            // For now the featured image will be the first one
+            featuredImage = "/attachment/" + images.get(0).getSlug() + "." + images.get(0).getExtension();
+        }
+        else {
+            featuredImage = "http://placehold.it/450x450";
+        }
+
         // Images
         productContext.put("images", new HashMap<String, Object>()
         {{
             put("featured", new HashMap<String, Object>() {{
                 put("theme_small_url", "http://placehold.it/150x150");
-                put("theme_large_url", "http://placehold.it/450x450");
+                put("theme_large_url", featuredImage);
             }});
             put("all", new ArrayList<Map<String, Object>>(){{
                 add(new HashMap<String, Object>(){{
@@ -131,5 +166,10 @@ public class ProductResource implements Resource, BindingsContants
         result.putBindings(bindings);
 
         return result;
+    }
+
+    private static boolean isImage(Attachment attachment)
+    {
+        return IMAGE_EXTENSIONS.contains(attachment.getExtension().toLowerCase());
     }
 }

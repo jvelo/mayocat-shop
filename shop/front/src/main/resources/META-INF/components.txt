@@ -1,3 +1,4 @@
+org.mayocat.shop.front.resources.ImageResource
 org.mayocat.shop.front.resources.ProductResource
 org.mayocat.shop.front.resources.ResourceResource
 org.mayocat.shop.front.resources.CategoryResource
