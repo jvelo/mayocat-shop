@@ -174,10 +174,11 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 
             $scope.fileUploaded = function(index) {
                 $scope.$apply(function($scope){
-                    $scope.files[index].uploaded = true;
                     if (typeof $scope.onUpload === "function") {
                         $scope.onUpload();
                     }
+                    // Remove the file from list
+                    $scope.files.splice(index, 1);
                 });
             }
 

@@ -64,8 +64,8 @@ angular.module('product', ['ngResource'])
         }
 
         $scope.reloadImages = function() {
-            $scope.product.images = $resource("/api/1.0/product/:slug/image").get({
-                "slug": $scope.slug
+            $scope.product.images = $http.get("/api/1.0/product/" + $scope.slug + "/image").success(function(data){
+                $scope.product.images = data;
             });
         }
 
