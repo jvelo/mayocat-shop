@@ -1,4 +1,4 @@
-package org.mayocat.theme.internal;
+package org.mayocat.theme;
 
 /**
  * @version $Id$

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.mayocat.configuration.theme.ThemeConfiguration;
 import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;

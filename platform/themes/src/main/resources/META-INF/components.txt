@@ -1,2 +1,0 @@
-org.mayocat.theme.internal.DefaultThemeManager
-org.mayocat.theme.internal.DefaultUserAgentBreakpointDetector

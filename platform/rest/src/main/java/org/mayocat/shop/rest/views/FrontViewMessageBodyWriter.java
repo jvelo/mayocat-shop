@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import org.mayocat.theme.ThemeManager;
-import org.mayocat.theme.internal.TemplateNotFoundException;
+import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.xwiki.component.annotation.Component;

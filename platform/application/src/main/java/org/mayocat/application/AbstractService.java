@@ -26,6 +26,7 @@ import org.xwiki.observation.ObservationManager;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 /**
  * @version $Id$
@@ -35,6 +36,8 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     public static final String ADMIN_UI_PATH = "/admin/";
 
     private EmbeddableComponentManager componentManager;
+
+    private ObjectMapperFactory objectMapperFactory;
 
     protected abstract void registerComponents(C configuration, Environment environment);
 
@@ -47,6 +50,8 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     public void initialize(Bootstrap<C> bootstrap)
     {
         bootstrap.getObjectMapperFactory().registerModule(new ThumbnailsModule());
+
+        this.objectMapperFactory = bootstrap.getObjectMapperFactory();
     }
 
     @Override
@@ -74,6 +79,7 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     {
         componentManager = new EmbeddableComponentManager();
         this.registerConfigurationsAsComponents(configuration);
+        this.registerObjectMapperFactoryAsComponent();
         this.registerComponents(configuration, environment);
         componentManager.initialize(this.getClass().getClassLoader());
     }
@@ -134,6 +140,14 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
         for (Map.Entry<String, Resource> provider : providers.entrySet()) {
             environment.addProvider(provider.getValue());
         }
+    }
+
+    private void registerObjectMapperFactoryAsComponent()
+    {
+        DefaultComponentDescriptor<ObjectMapperFactory> cd =
+                new DefaultComponentDescriptor<ObjectMapperFactory>();
+        cd.setRoleType(ObjectMapperFactory.class);
+        componentManager.registerComponent(cd, this.objectMapperFactory);
     }
 
     private void registerConfigurationsAsComponents(C configuration)

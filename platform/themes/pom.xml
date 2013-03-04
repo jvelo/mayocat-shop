@@ -7,48 +7,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-themes</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>Mayocat Platform - Themes</name>
+    <name>Mayocat Platform - Themes - Parent POM</name>
     <description>Themes</description>
 
-    <dependencies>
+    <modules>
+      <module>api</module>
+      <module>default</module>
+    </modules>
 
-        <!-- XWiki -->
-        <dependency>
-            <groupId>org.xwiki.commons</groupId>
-            <artifactId>xwiki-commons-component-default</artifactId>
-            <version>${xwiki.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-configuration-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-views</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Testing dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
 </project>

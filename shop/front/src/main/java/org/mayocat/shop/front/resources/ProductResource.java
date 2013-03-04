@@ -24,17 +24,22 @@ import javax.ws.rs.core.UriInfo;
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.context.Execution;
+import org.mayocat.image.model.Image;
+import org.mayocat.image.model.Thumbnail;
+import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
+import org.mayocat.shop.front.builder.ProductBindingBuilder;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.base.Resource;
 import org.mayocat.shop.rest.views.FrontView;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Maps;
@@ -62,6 +67,12 @@ public class ProductResource implements Resource, BindingsContants
     @Inject
     private Provider<AttachmentStore> attachmentStore;
 
+    @Inject
+    private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private Execution execution;
+
     private final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();
 
     static {
@@ -88,79 +99,24 @@ public class ProductResource implements Resource, BindingsContants
         bindings.put(PAGE_TITLE, product.getTitle());
         bindings.put(PAGE_DESCRIPTION, product.getDescription());
 
-        // TODO Introduce a notion of "Front representation"
-        Map<String, Object> productContext = Maps.newHashMap();
-        productContext.put("title", product.getTitle());
-        productContext.put("description", product.getDescription());
+        final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
+        final GeneralConfiguration generalConfiguration =
+            (GeneralConfiguration) configurationSources.get("general").get();
 
-        // Prices
-        if (product.getPrice() != null) {
-            final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
-            final GeneralConfiguration generalConfiguration =
-                    (GeneralConfiguration) configurationSources.get("general").get();
-
-            final Locale locale = generalConfiguration.getLocales().getMainLocale().getValue();
-            final Currency currency = configuration.getCurrencies().getMainCurrency().getValue();
-            productContext.put("price", new HashMap<String, Object>()
-            {{
-                    put("amount", product.getPrice());
-                    put("currency", new HashMap<String, Object>()
-                    {{
-                            put("code", currency.getCurrencyCode());
-                            put("symbol", currency.getSymbol(locale));
-                    }});
-            }});
-
-            // TODO
-            // - distinguish between two symbols : "absolute" and "internationalized" (i.e. "$" vs. "US$")
-            // - look into amount formatting.
-            // Check http://joda-money.sourceforge.net/apidocs/org/joda/money/format/MoneyFormatter.html
-            // - handle multiple prices (unit, discounts, etc.)
-        }
+        Theme theme = this.execution.getContext().getTheme();
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
-        List<Attachment> images = new ArrayList<Attachment>();
+        List<Image> images = new ArrayList<Image>();
         for (Attachment attachment : attachments) {
             if (isImage(attachment)) {
-                images.add(attachment);
+                List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
+                Image image = new Image(attachment, thumbnails);
+                images.add(image);
             }
         }
 
-        final String featuredImage;
-        if (images.size() > 0) {
-            // For now the featured image will be the first one
-            featuredImage = "/attachment/" + images.get(0).getSlug() + "." + images.get(0).getExtension();
-        }
-        else {
-            featuredImage = "http://placehold.it/450x450";
-        }
-
-        // Images
-        productContext.put("images", new HashMap<String, Object>()
-        {{
-            put("featured", new HashMap<String, Object>() {{
-                put("theme_small_url", "http://placehold.it/150x150");
-                put("theme_large_url", featuredImage);
-            }});
-            put("all", new ArrayList<Map<String, Object>>(){{
-                add(new HashMap<String, Object>(){{
-                    put("theme_small_url", "http://placehold.it/150x150");
-                    put("theme_large_url", "http://placehold.it/450x450");
-                }});
-                add(new HashMap<String, Object>(){{
-                    put("theme_small_url", "http://placehold.it/150x150");
-                    put("theme_large_url", "http://placehold.it/450x450");
-                }});
-                add(new HashMap<String, Object>(){{
-                    put("theme_small_url", "http://placehold.it/150x150");
-                    put("theme_large_url", "http://placehold.it/450x450");
-                }});
-                add(new HashMap<String, Object>(){{
-                    put("theme_small_url", "http://placehold.it/150x150");
-                    put("theme_large_url", "http://placehold.it/450x450");
-                }});
-            }});
-        }});
+        ProductBindingBuilder builder = new ProductBindingBuilder(configuration, generalConfiguration, theme);
+        Map<String, Object> productContext = builder.build(product, images);
 
         bindings.put("product", productContext);
         result.putBindings(bindings);

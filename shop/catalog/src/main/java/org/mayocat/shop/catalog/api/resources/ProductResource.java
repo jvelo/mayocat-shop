@@ -69,9 +69,6 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
-    private Provider<AttachmentStore> attachmentStore;
-
-    @Inject
     private Logger logger;
 
     @GET
@@ -126,7 +123,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (product == null) {
             throw new WebApplicationException(Response.status(404).build());
         }
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(product)) {
+        for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product)) {
             FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
                     "/image/" + attachment.getSlug() + "." + attachment.getExtension());
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);

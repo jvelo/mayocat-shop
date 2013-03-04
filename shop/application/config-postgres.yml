@@ -16,7 +16,7 @@ dataSource:
 
 database:
   driverClass: org.postgresql.Driver
-  user: imac
+  user: postgres
   password: 
   url: jdbc:postgresql://127.0.0.1/shop
   properties:
@@ -40,11 +40,11 @@ general:
     default: Your shop's name
   locales:
     main:
-      default: en
+      default: fr_FR
       configurable: false
       visible: true
     others:
-      default: [de, fr_FR]
+      default: []
       configurable: true
 
 theme:

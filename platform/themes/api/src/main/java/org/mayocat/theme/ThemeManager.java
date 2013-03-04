@@ -1,6 +1,6 @@
 package org.mayocat.theme;
 
-import org.mayocat.theme.internal.TemplateNotFoundException;
+import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
 import org.xwiki.component.annotation.Role;
 

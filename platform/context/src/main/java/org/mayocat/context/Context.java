@@ -4,12 +4,17 @@ import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.theme.Theme;
+
+import sun.awt.windows.ThemeReader;
 
 public class Context
 {
     private Tenant tenant;
 
     private User user;
+
+    private Theme theme;
 
     private Map<Class, Object> configurations = null;
 
@@ -44,6 +49,20 @@ public class Context
         }
         this.tenant = tenant;
     }
+
+    public Theme getTheme()
+    {
+        return theme;
+    }
+
+    public void setTheme(Theme theme)
+    {
+        if (this.theme != null) {
+            throw new RuntimeException("Illegal attempt at replacing already initialized thtme");
+        }
+        this.theme = theme;
+    }
+
 
     public void setConfigurations(Map<Class, Object> configurations)
     {

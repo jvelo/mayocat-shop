@@ -1,5 +1,6 @@
 package org.mayocat.context;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,7 +16,10 @@ import org.mayocat.base.EventListener;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.theme.ThemeConfiguration;
 import org.mayocat.multitenancy.TenantResolver;
+import org.mayocat.theme.ThemeLoader;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -38,9 +42,14 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     @Inject
     private ConfigurationService configurationService;
 
+    @Inject
+    private ThemeLoader themeLoader;
 
     @Inject
     private Execution execution;
+
+    @Inject
+    private Logger logger;
 
     public void requestDestroyed(ServletRequestEvent servletRequestEvent)
     {
@@ -56,6 +65,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
             return;
         }
 
+        // 1. Tenant
+
         String host = getHost(servletRequestEvent);
         Tenant tenant = this.tenantResolver.get().resolve(host);
 
@@ -65,8 +76,12 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         // The context tenant is actually needed to find out the context user and to initialize tenant configurations
         this.execution.setContext(context);
 
+        // 2. Configurations
+
         Map<Class, Object> configurations = configurationService.getConfigurations();
         context.setConfigurations(configurations);
+
+        // 3. User
 
         Optional<User> user = Optional.absent();
         if (tenant != null) {
@@ -81,8 +96,24 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
                 }
             }
         }
-
         context.setUser(user.orNull());
+
+        // 4. Theme
+        ThemeConfiguration configuration = (ThemeConfiguration)
+                this.configurationService.getConfiguration(ThemeConfiguration.class);
+        String activeTheme = configuration.getActive().getValue();
+        try {
+            context.setTheme(themeLoader.load(activeTheme));
+        } catch (IOException e) {
+            logger.warn("Failed to load theme with name [{}]", activeTheme);
+            String defaultTheme = configuration.getActive().getDefaultValue();
+            try {
+                context.setTheme(themeLoader.load(defaultTheme));
+            } catch (IOException e1) {
+                logger.error("Failed to load default theme with name [{}]", defaultTheme);
+                throw new RuntimeException(e1);
+            }
+        }
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)
