@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-themes</artifactId>
+            <artifactId>mayocat-platform-themes-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- Accounts module needed for the annotation resource method dispatcher -->
