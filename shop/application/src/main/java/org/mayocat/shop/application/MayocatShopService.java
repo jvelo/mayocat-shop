@@ -51,9 +51,7 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
             throws ClassNotFoundException, ComponentRepositoryException
     {
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi =
-                factory.build(environment, configuration.getDatabaseConfiguration(), configuration
-                        .getDataSourceConfiguration().getName());
+        final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "jdbi");
         final DBIProvider dbi = new DBIProvider()
         {
             @Override

@@ -11,12 +11,9 @@ multitenancy:
 authentication:
   cookieEncryptionKey: Change me here!
 
-dataSource:
-  name: "jdbi"
-
 database:
   driverClass: org.postgresql.Driver
-  user: postgres
+  user: imac
   password: 
   url: jdbc:postgresql://127.0.0.1/shop
   properties:
@@ -32,8 +29,6 @@ database:
 platform:
   thumbnails:
     small:  100x100
-    medium: 200x400
-    large:  800x200
 
 general:
   name:

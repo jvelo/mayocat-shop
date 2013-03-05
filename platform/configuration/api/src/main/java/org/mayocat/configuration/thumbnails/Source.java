@@ -1,19 +1,23 @@
 package org.mayocat.configuration.thumbnails;
 
 /**
-* @version $Id$
-*/
+ * @version $Id$
+ */
 public enum Source
 {
-    PLATFORM ("platform"),
-    THEME ("name");
+    PLATFORM("platform"),
+    THEME("theme");
 
     private final String name;
-    Source(String name) {
+
+    Source(String name)
+    {
         this.name = name;
     }
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return name;
     }
 }

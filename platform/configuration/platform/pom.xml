@@ -6,34 +6,22 @@
         <artifactId>mayocat-platform-configuration</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>mayocat-platform-configuration-default</artifactId>
+    <artifactId>mayocat-platform-configuration-platform</artifactId>
     <packaging>jar</packaging>
 
-    <name>Mayocat Platform - Configuration</name>
-    <description>Top level configuration for mayocat</description>
+    <name>Mayocat Platform - Configuration - Platform</name>
+    <description>Platform configuration</description>
     <dependencies>
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-configuration-platform</artifactId>
+            <artifactId>mayocat-platform-configuration-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-context</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-accounts-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

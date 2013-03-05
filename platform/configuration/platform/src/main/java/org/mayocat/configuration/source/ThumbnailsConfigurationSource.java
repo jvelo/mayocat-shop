@@ -7,9 +7,14 @@ import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.configuration.PlatformConfiguration;
+import org.mayocat.configuration.thumbnails.Dimensions;
 import org.mayocat.configuration.thumbnails.Source;
 import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
+import org.mayocat.context.Execution;
+import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.annotation.InstantiationStrategy;
+import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
@@ -20,12 +25,18 @@ import com.google.common.collect.Maps;
  * @version $Id$
  */
 @Component("thumbnails")
+@InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class ThumbnailsConfigurationSource implements Initializable, ConfigurationSource
 {
     @Inject
     private PlatformConfiguration source;
 
-    Map<Source, List<ThumbnailDefinition>> thumbnailDefinitions;
+    @Inject
+    private Execution execution;
+
+    private boolean themeThumbnailsInitialized = false;
+
+    private Map<Source, List<ThumbnailDefinition>> thumbnailDefinitions;
 
     @Override
     public void initialize() throws InitializationException
@@ -41,6 +52,21 @@ public class ThumbnailsConfigurationSource implements Initializable, Configurati
     @Override
     public Object get()
     {
+        if (!themeThumbnailsInitialized && this.execution.getContext().getTheme() != null) {
+            // Lazy theme thumbnails initialization
+
+            Theme activeTheme = this.execution.getContext().getTheme();
+            List<ThumbnailDefinition> themeThumbnailDefinitions = Lists.newArrayList();
+            Map<String, Dimensions> themeThumbnails = activeTheme.getThumbnails();
+
+            for (String name : themeThumbnails.keySet()) {
+                themeThumbnailDefinitions.add(new ThumbnailDefinition(name, themeThumbnails.get(name)));
+            }
+
+            this.thumbnailDefinitions.put(Source.THEME, themeThumbnailDefinitions);
+            this.themeThumbnailsInitialized = true;
+        }
+
         return this.thumbnailDefinitions;
     }
 }
