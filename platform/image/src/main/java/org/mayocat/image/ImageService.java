@@ -33,7 +33,25 @@ public interface ImageService
      */
     RenderedImage scaleImage(Image image, Dimension dimension);
 
+    /**
+     * Crops an image in the passed rectangle boundaries
+     *
+     * @param image the image to crop
+     * @param boundaries the rectangle to crop the image in
+     * @return the cropped image as a rendered image
+     */
     RenderedImage cropImage(Image image, Rectangle boundaries);
+
+    /**
+     * Computes the largest rectangle of the passed image that respect the passed dimension ratio. Cropped areas are
+     * divided equally at the two extremities (top/bottom or left/right).
+     *
+     * @param image the image to get the bounding rectangle for
+     * @param dimension the dimension (width vs. height ratio) to fit
+     * @return the image boundaries as an optional rectangle. If the rectangle is absent, it means there is an exact
+     * match between the dimension passed and the image aspect ratio, so that no cropping is necessary.
+     */
+    Optional<Rectangle> getFittingRectangle(Image image, Dimension dimension);
 
     /**
      * Computes the dimension (width and height) an image will have, respecting its original aspect ratio when adapting

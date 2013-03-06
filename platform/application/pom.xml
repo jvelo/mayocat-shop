@@ -123,13 +123,6 @@
             <version>2.6.0-RC2</version>
         </dependency>
 
-        <!-- Used to mock configuration classes -->
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
-            <version>2.6.0-RC2</version>
-        </dependency>
-
     </dependencies>
 
 </project>

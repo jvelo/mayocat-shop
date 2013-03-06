@@ -51,7 +51,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
     }
 
     @GET
-    @Path("thumbnails/{slug}_{x}_{y}_{width}_{height}.{ext}")
+    @Path("thumbnails/{slug}_{x: [0-9]+}_{y: [0-9]+}_{width: [0-9]+}_{height: [0-9]+}.{ext}")
     public Response downloadThumbnail(@PathParam("slug") String slug, @PathParam("ext") String extension,
             @PathParam("x") Integer x, @PathParam("y") Integer y, @PathParam("width") Integer width,
             @PathParam("height") Integer height, @Context ServletContext servletContext,
@@ -116,20 +116,42 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
 
             try {
                 Image image = imageService.readImage(file.getData());
-                Optional<Dimension> newDimension = imageService.newDimension(image,
-                        imageOptions.get().getWidth(),
-                        imageOptions.get().getHeight());
 
-                if (newDimension.isPresent()) {
-                    return Response.ok(imageService.scaleImage(image, newDimension.get()),
-                            servletContext.getMimeType(fileName))
+                if (imageOptions.get().getHeight().isPresent() && imageOptions.get().getWidth().isPresent()) {
+                    // Both width and height set -> calculate a fitting box
+
+                    Dimension dimension =
+                            new Dimension(imageOptions.get().getWidth().get(), imageOptions.get().getHeight().get());
+                    Optional<Rectangle> fittingBox = imageService.getFittingRectangle(image, dimension);
+
+                    RenderedImage scaled;
+
+                    if (fittingBox.isPresent()) {
+                        RenderedImage cropped = imageService.cropImage(image, fittingBox.get());
+                        scaled = imageService.scaleImage((Image) cropped, dimension);
+                    } else {
+                        scaled = imageService.scaleImage(image, dimension);
+                    }
+
+                    return Response.ok(scaled, servletContext.getMimeType(fileName))
+                            .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
+                            .build();
+                } else {
+                    Optional<Dimension> newDimension = imageService.newDimension(image,
+                            imageOptions.get().getWidth(),
+                            imageOptions.get().getHeight());
+
+                    if (newDimension.isPresent()) {
+                        return Response.ok(imageService.scaleImage(image, newDimension.get()),
+                                servletContext.getMimeType(fileName))
+                                .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
+                                .build();
+                    }
+
+                    return Response.ok(image, servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();
                 }
-
-                return Response.ok(image, servletContext.getMimeType(fileName))
-                        .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
-                        .build();
             } catch (IOException e) {
                 this.logger.warn("Failed to scale image for attachment [{slug}]", slug);
                 return Response.serverError().entity("Failed to scale image").build();

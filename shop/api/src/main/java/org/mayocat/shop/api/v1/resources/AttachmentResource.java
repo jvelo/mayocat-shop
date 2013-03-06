@@ -48,9 +48,6 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
     private ImageService imageService;
 
     @Inject
-    private Provider<ThumbnailStore> thumbnailStore;
-
-    @Inject
     private Logger logger;
 
     @POST
@@ -62,33 +59,5 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
         return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.<Long>absent());
     }
-
-    @PUT
-    @Path("/{slug}/thumbnail/")
-    public Response createThumbnail(@PathParam("slug") String slug, @Valid ThumbnailRepresentation thumbnailRepresentation)
-    {
-        Attachment file = this.getAttachmentStore().findBySlug(slug);
-
-        if (file == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        Thumbnail thumbnail = new Thumbnail();
-        thumbnail.setAttachmentId(file.getId());
-        thumbnail.setSource(thumbnailRepresentation.getSource());
-        thumbnail.setHint(thumbnailRepresentation.getHint());
-        thumbnail.setX(thumbnailRepresentation.getX());
-        thumbnail.setY(thumbnailRepresentation.getY());
-        thumbnail.setWidth(thumbnailRepresentation.getWidth());
-        thumbnail.setHeight(thumbnailRepresentation.getHeight());
-
-        thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
-
-        this.thumbnailStore.get().createOrUpdateThumbnail(thumbnail);
-
-        return Response.ok().build();
-    }
-
-
 
 }

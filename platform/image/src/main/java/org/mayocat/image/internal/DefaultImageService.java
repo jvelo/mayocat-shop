@@ -6,6 +6,7 @@ import java.awt.image.RasterFormatException;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import javax.imageio.ImageIO;
 
@@ -53,6 +54,41 @@ public class DefaultImageService implements ImageService
             }
         }
         return original;
+    }
+
+    @Override
+    public Optional<Rectangle> getFittingRectangle(Image image, Dimension dimension)
+    {
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+
+        double aspectRatio = (double) imageWidth / (double) imageHeight;
+        double dimensionRatio = dimension.getWidth() / dimension.getHeight();
+
+        if (aspectRatio == dimensionRatio) {
+            // Exact ratio match
+            return Optional.absent();
+        }
+
+        int width;
+        int height;
+        int x;
+        int y;
+
+        if (aspectRatio < dimensionRatio) {
+            // Width is limitating, calculate height
+            x = 0;
+            width = imageWidth;
+            height = Double.valueOf(width / dimensionRatio).intValue();
+            y = (imageHeight - height) / 2;
+        } else {
+            // Height is limitating, calculate width
+            y = 0;
+            height = imageHeight;
+            width = Double.valueOf(height * dimensionRatio).intValue();
+            x = (imageWidth - width) / 2;
+        }
+        return Optional.of(new Rectangle(x, y, width, height));
     }
 
     @Override

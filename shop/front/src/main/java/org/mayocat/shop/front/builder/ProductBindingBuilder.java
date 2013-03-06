@@ -109,11 +109,11 @@ public class ProductBindingBuilder
             if (bestFit.isPresent()) {
                 String url =
                         MessageFormat.format("/image/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
+                                image.getAttachment().getSlug(),
                                 bestFit.get().getX(),
                                 bestFit.get().getY(),
                                 bestFit.get().getWidth(),
                                 bestFit.get().getHeight(),
-                                image.getAttachment().getSlug(),
                                 image.getAttachment().getExtension(),
                                 dimensions.getWidth(),
                                 dimensions.getHeight());
