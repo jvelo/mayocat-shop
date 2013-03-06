@@ -51,7 +51,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
     }
 
     @GET
-    @Path("thumbnails/{slug}_{x: [0-9]+}_{y: [0-9]+}_{width: [0-9]+}_{height: [0-9]+}.{ext}")
+    @Path("thumbnails/{slug}_{x: \\d+}_{y: \\d+}_{width: \\d+}_{height: \\d+}.{ext}")
     public Response downloadThumbnail(@PathParam("slug") String slug, @PathParam("ext") String extension,
             @PathParam("x") Integer x, @PathParam("y") Integer y, @PathParam("width") Integer width,
             @PathParam("height") Integer height, @Context ServletContext servletContext,
