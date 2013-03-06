@@ -52,10 +52,9 @@ import com.google.common.collect.Maps;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class ProductResource implements Resource, BindingsContants
+public class ProductResource extends AbstractFrontResource implements Resource, BindingsContants
 {
     @Inject
-    @Named("catalog")
     private Map<String, ConfigurationSource> configurationSources;
 
     @Inject
@@ -73,14 +72,7 @@ public class ProductResource implements Resource, BindingsContants
     @Inject
     private Execution execution;
 
-    private final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();
 
-    static {
-        IMAGE_EXTENSIONS.add("jpg");
-        IMAGE_EXTENSIONS.add("jpeg");
-        IMAGE_EXTENSIONS.add("png");
-        IMAGE_EXTENSIONS.add("gif");
-    }
 
     @Path("{slug}")
     @GET
@@ -122,10 +114,5 @@ public class ProductResource implements Resource, BindingsContants
         result.putBindings(bindings);
 
         return result;
-    }
-
-    private static boolean isImage(Attachment attachment)
-    {
-        return IMAGE_EXTENSIONS.contains(attachment.getExtension().toLowerCase());
     }
 }

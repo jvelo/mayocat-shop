@@ -48,6 +48,7 @@ public class ProductBindingBuilder
 
         productContext.put("title", product.getTitle());
         productContext.put("description", product.getDescription());
+        productContext.put("href", "/product/" + product.getSlug());
 
         // Prices
         if (product.getPrice() != null) {

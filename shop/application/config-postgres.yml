@@ -13,7 +13,7 @@ authentication:
 
 database:
   driverClass: org.postgresql.Driver
-  user: imac
+  user: postgres
   password: 
   url: jdbc:postgresql://127.0.0.1/shop
   properties:

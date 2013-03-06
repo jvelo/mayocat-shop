@@ -1,10 +1,12 @@
 package org.mayocat.shop.front.resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,12 +15,23 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.ConfigurationSource;
+import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.context.Execution;
+import org.mayocat.image.model.Image;
+import org.mayocat.image.model.Thumbnail;
+import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.base.Resource;
+import org.mayocat.shop.front.builder.ProductBindingBuilder;
 import org.mayocat.shop.rest.views.FrontView;
+import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;
@@ -30,13 +43,25 @@ import com.google.common.collect.Lists;
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-public class HomeResource implements Resource
+public class HomeResource extends AbstractFrontResource implements Resource
 {
+    @Inject
+    private Map<String, ConfigurationSource> configurationSources;
+
     @Inject
     private FrontBindingManager bindingManager;
 
     @Inject
     private CatalogService catalogService;
+
+    @Inject
+    private Provider<AttachmentStore> attachmentStore;
+
+    @Inject
+    private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private Execution execution;
 
     @GET
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
@@ -47,18 +72,28 @@ public class HomeResource implements Resource
 
         List<Product> productList = catalogService.findAllProducts(20, 0);
         List<Map<String, Object>> productsBinding = Lists.newArrayList();
-        for (final Product p : productList) {
-            productsBinding.add(new HashMap<String, Object>() {{
-                put("href", "/product/" + p.getSlug());
-                put("title", p.getTitle());
-                put("description", p.getDescription());
-                put("images", new HashMap<String, Object>() {{
-                    put("featured", new HashMap<String, Object>() {{
-                        put("theme_small_url", "http://placehold.it/150x150");
-                        put("theme_large_url", "http://placehold.it/450x450");
-                    }});
-                }});
-            }});
+
+        final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
+        final GeneralConfiguration generalConfiguration =
+                (GeneralConfiguration) configurationSources.get("general").get();
+        Theme theme = this.execution.getContext().getTheme();
+
+        ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration,
+                generalConfiguration, theme);
+
+        for (final Product product : productList) {
+            List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
+            List<Image> images = new ArrayList<Image>();
+            for (Attachment attachment : attachments) {
+                if (isImage(attachment)) {
+                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
+                    Image image = new Image(attachment, thumbnails);
+                    images.add(image);
+                }
+            }
+
+            Map<String, Object> productContext = productBindingBuilder.build(product, images);
+            productsBinding.add(productContext);
         }
 
         bindings.put("products", productsBinding);
