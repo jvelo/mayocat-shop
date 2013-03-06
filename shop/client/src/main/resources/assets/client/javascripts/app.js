@@ -178,7 +178,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                         $scope.onUpload();
                     }
                     // Remove the file from list
-                    $scope.files.splice(index, 1);
+                    $scope.files[index] = null;
                 });
             }
 
