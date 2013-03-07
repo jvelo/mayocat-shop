@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 /**
+ * The type of a settings field whose value can be overridden at the tenant level. Useful for {@link
+ * org.mayocat.base.ExposedSettings} settings classes.
+ *
  * @version $Id$
  */
 public class Configurable<T>
