@@ -26,18 +26,18 @@
             <version>1.0.0.GA</version>
         </dependency>
 
+        <!-- Drag jackson deps from DW -->
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
         <!-- hashCode, equals, etc. helpers -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-        </dependency>
-
-        <!-- JSON annotation -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.9</version>
         </dependency>
 
         <!-- Testing dependencies -->

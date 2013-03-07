@@ -4,11 +4,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.mayocat.jackson.PasswordSerializer;
 import org.mayocat.model.Entity;
 import org.mayocat.model.annotation.SearchIndex;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class User implements Entity
 {

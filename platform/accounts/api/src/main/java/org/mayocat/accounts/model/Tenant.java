@@ -3,10 +3,10 @@ package org.mayocat.accounts.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.mayocat.model.Identifiable;
 import org.mayocat.model.Slug;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 
 public class Tenant implements Identifiable, Slug

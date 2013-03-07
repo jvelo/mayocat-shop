@@ -15,18 +15,8 @@ public class ThemeConfiguration
     @JsonProperty
     private Configurable<String> active = new Configurable<String>("default");
 
-    @Valid
-    @JsonProperty
-    private Configurable<Boolean> detectBreakpoints = new Configurable<Boolean>(true);
-
     public Configurable<String> getActive()
     {
         return active;
     }
-
-    public Configurable<Boolean> getDetectBreakpoints()
-    {
-        return detectBreakpoints;
-    }
-
 }

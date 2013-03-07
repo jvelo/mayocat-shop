@@ -1,5 +1,6 @@
 package org.mayocat.theme;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mayocat.configuration.thumbnails.Dimensions;
@@ -13,5 +14,5 @@ public interface Theme
 
     Map<String, Dimensions> getThumbnails();
 
-    String getStringProperty(String key);
+    List<Model> getModels();
 }

@@ -13,11 +13,11 @@ import org.xwiki.component.annotation.Component;
 public class CatalogConfigurationSource implements ConfigurationSource
 {
     @Inject
-    private CatalogConfiguration shopConfiguration;
+    private CatalogConfiguration catalogConfiguration;
 
     @Override
     public Object get()
     {
-        return shopConfiguration;
+        return catalogConfiguration;
     }
 }

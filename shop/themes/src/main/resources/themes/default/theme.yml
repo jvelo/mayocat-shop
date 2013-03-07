@@ -1,4 +1,27 @@
 name: Default theme
+description: >
+            Et harum quidem rerum facilis est et expedita distinctio.
+            Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit.
+            Quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.
+
 thumbnails:
   small:  200x200
   large: 500x300
+
+models:
+  - file:   models/product_fancy.html
+    name:   Fancy page
+    for:    product
+  - file:   models/product_special.html
+    name:   Special page
+    for:    [product, page]
+
+addons:
+  - name: brand
+    type: string
+    for: product
+  - name: custom_id
+    type: integer
+    for: [product, page]
+

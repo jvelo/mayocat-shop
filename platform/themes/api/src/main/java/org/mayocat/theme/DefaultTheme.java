@@ -1,5 +1,6 @@
 package org.mayocat.theme;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -22,7 +23,10 @@ public class DefaultTheme implements Theme
     @JsonProperty
     private Map<String, Dimensions> thumbnails = Maps.newHashMap();
 
-    private Map<String, Object> properties = Maps.newHashMap();
+    @Valid
+    @JsonProperty
+    private List<Model> models;
+
 
     @Override
     public String getName()
@@ -36,8 +40,9 @@ public class DefaultTheme implements Theme
         return thumbnails;
     }
 
-    public String getStringProperty(String key)
+    @Override
+    public List<Model> getModels()
     {
-        return (String) properties.get(key);
+        return models;
     }
 }
