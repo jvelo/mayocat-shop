@@ -4,9 +4,26 @@ angular.module('configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q) {
 
         var configuration,
-            configurationResource = $resource("/api/1.0/configuration/", {}, {
+            configurationResource = $resource("/api/1.0/configuration/gestalt"),
+            settings,
+            settingsResource = $resource("/api/1.0/configuration/settings", {}, {
                 update:{method:"PUT"}
             });
+
+        var getSettings = function () {
+            var deferred = $q.defer();
+            if (settings != null) {
+                deferred.resolve(settings);
+            }
+            else {
+                settingsResource.get(function (result) {
+                    saveOriginalValues(result);
+                    settings = result;
+                    deferred.resolve(settings);
+                });
+            }
+            return deferred.promise;
+        };
 
         var getConfiguration = function () {
             var deferred = $q.defer();
@@ -15,13 +32,12 @@ angular.module('configuration', ['ngResource'])
             }
             else {
                 configurationResource.get(function (result) {
-                    saveOriginalValues(result);
                     configuration = result;
                     deferred.resolve(configuration);
                 });
             }
             return deferred.promise;
-        }
+        };
 
         var isConfigurable = function (node) {
             return typeof node !== "undefined"
@@ -32,7 +48,7 @@ angular.module('configuration', ['ngResource'])
                 && typeof node.visible !== "undefined";
         }
 
-        var saveOriginalValues = function (configuration) {
+        var saveOriginalValues = function (settings) {
             var walk = function (node) {
                 for (var property in node) {
                     if (node.hasOwnProperty(property)) {
@@ -51,11 +67,10 @@ angular.module('configuration', ['ngResource'])
                 }
             }
 
-            walk(configuration);
+            walk(settings);
         }
 
-        var prepareConfiguration = function (configuration) {
-
+        var prepareSettings = function (settings) {
 
             var isStillDefaultValue = function (node) {
                 if (node.value === node.__originalValue && node.value === node.defaultValue) {
@@ -86,7 +101,7 @@ angular.module('configuration', ['ngResource'])
                 return container;
             }
 
-            return walk(configuration, {});
+            return walk(settings, {});
         };
 
         return {
@@ -119,7 +134,7 @@ angular.module('configuration', ['ngResource'])
                             // The configuration does not exist
                             callback && callback(undefined);
                         }
-                        callback && callback(configurationElement.value);
+                        callback && callback(configurationElement);
                         return;
                     }
                     catch (error) {
@@ -130,77 +145,116 @@ angular.module('configuration', ['ngResource'])
             },
 
             /**
-             * Updates the configuration with the passed configuration, hitting the /configuration PUT API.
+             * Gets access to either the whole settings object, or to a single settings property.
              *
-             * @param {Object} config the configuration object to put
+             * To get access to the whole settings object :
+             *
+             * configurationService.getSettings(function(settings){
+             *   // Something something settings
+             * });
+             *
+             * To get access to a single settings property :
+             *
+             * configurationService.get("module.sample.property", function(value){
+             *   // Something with value
+             * });
+             */
+            getSettings:function () {
+                var path = arguments.length === 2 ? arguments[0] : undefined,
+                    callback = arguments.length === 2 ? arguments[1] : arguments[0];
+                getSettings().then(function (settings) {
+                    if (typeof path === "undefined") {
+                        callback(settings);
+                        return;
+                    }
+                    try {
+                        var setting = eval("settings." + path);
+                        if (typeof setting === "undefined") {
+                            // The configuration does not exist
+                            callback && callback(undefined);
+                        }
+                        callback && callback(setting);
+                        return;
+                    }
+                    catch (error) {
+                        callback && callback(undefined);
+                        return;
+                    }
+                });
+            },
+
+            /**
+             * Updates the settings with the passed settings, hitting the /settings PUT API.
+             *
+             * @param {Object} config the settings object to put
              */
             put:function (config) {
-                configurationResource.update(prepareConfiguration(configuration));
+                settingsResource.update(prepareSettings(settings));
             },
 
             /**
-             * Checks if a configuration property is visible (i.e. should be exposed to users) or not.
+             * Checks if a settings property is visible (i.e. should be exposed to users) or not.
              *
-             * @param {Object} configuration the configuration object to test a path for visibility for.
-             * @param {String} path the configuration path to test visibility for. For example: "general.locales.main"
-             * @return {*} undefined if the configuration does not exists at this path for this configuration object,
-             * false if the configuration is not visible (i.e. it should not be exposed to the users), true if it is.
+             * @param {Object} settings the settings object to test a path for visibility for.
+             * @param {String} path the settings path to test visibility for. For example: "general.locales.main"
+             * @return {*} undefined if the settings does not exists at this path for this settings object,
+             * false if the settings is not visible (i.e. it should not be exposed to the users), true if it is.
              */
-            isVisible:function (configuration, path) {
-                if (typeof configuration === "undefined") {
+            isVisible:function (settings, path) {
+                if (typeof settings === "undefined") {
                     return;
                 }
-                var configurationElement = eval("configuration." + path);
-                if (typeof configurationElement === "undefined") {
-                    // The configuration does not exist
+                var settingsElement = eval("settings." + path);
+                if (typeof settingsElement === "undefined") {
+                    // The settings does not exist
                     return;
                 }
-                return typeof configurationElement.visible === "undefined"
-                    || configurationElement.visible;
+                return typeof settingsElement.visible === "undefined"
+                    || settingsElement.visible;
             },
 
             /**
-             * Checks if a configuration property is configurable (users are allowed to override the value set at the
+             * Checks if a settings property is configurable (users are allowed to override the value set at the
              * platform level) or not.
              *
-             * @param {Object} configuration the configuration object to test a path for configurability for.
-             * @param {String} path the configuration path to test configurability for.
+             * @param {Object} settings the settings object to test a path for configurability for.
+             * @param {String} path the settings path to test configurability for.
              * For example: "general.locales.main"
-             * @return {Boolean|undefined} undefined if the configuration does not exists at this path for this
-             * configuration object, false if the configuration is not configurable, true if it is.
+             * @return {Boolean|undefined} undefined if the settings does not exists at this path for this
+             * settings object, false if the settings is not configurable, true if it is.
              */
-            isConfigurable:function (configuration, path) {
-                if (typeof configuration === "undefined") {
+            isConfigurable:function (settings, path) {
+                if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var configurationElement = eval("configuration." + path);
-                if (typeof configurationElement === "undefined") {
-                    // The configuration does not exist
+                var settingsElement = eval("settings." + path);
+                if (typeof settingsElement === "undefined") {
+                    // The settings does not exist
                     return undefined;
                 }
-                return typeof configurationElement.configurable === "undefined"
-                    || configurationElement.configurable;
+                return typeof settingsElement.configurable === "undefined"
+                    || settingsElement.configurable;
             },
 
             /**
-             * Checks if a configuration property value is the default value (the one set at the platform level).
+             * Checks if a settings property value is the default value (the one set at the platform level).
              *
-             * @param {Object} configuration the configuration object to check the default value with
-             * @param {String} path the path of the configuration to check if the value is the default one for
-             * @return {Boolean|undefined} undefined if the configuration does not exists at this path for this
-             * configuration object, true if the value for this configuration path is the default one, false otherwise
+             * @param {Object} settings the settings object to check the default value with
+             * @param {String} path the path of the settings to check if the value is the default one for
+             * @return {Boolean|undefined} undefined if the settings does not exists at this path for this
+             * settings object, true if the value for this settings path is the default one, false otherwise
              */
-            isDefaultValue:function (configuration, path) {
-                if (typeof configuration === "undefined") {
+            isDefaultValue:function (settings, path) {
+                if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var configurationElement = eval("configuration." + path);
-                if (typeof configurationElement === "undefined") {
-                    // The configuration does not exist
+                var settingsElement = eval("settings." + path);
+                if (typeof settingsElement === "undefined") {
+                    // The settings does not exist
                     return undefined;
                 }
-                return typeof configurationElement.default !== "undefined"
-                    && angular.equals(configurationElement.default, configurationElement.value);
+                return typeof settingsElement.default !== "undefined"
+                    && angular.equals(settingsElement.default, settingsElement.value);
 
             }
         };
@@ -209,24 +263,24 @@ angular.module('configuration', ['ngResource'])
 
     function ($scope, configurationService) {
 
-        $scope.updateConfiguration = function () {
-            configurationService.put($scope.configuration);
+        $scope.updateSettings = function () {
+            configurationService.put($scope.settings);
         };
 
         $scope.isVisible = function (path) {
-            return configurationService.isVisible($scope.configuration, path);
+            return configurationService.isVisible($scope.settings, path);
         }
 
         $scope.isConfigurable = function (path) {
-            return configurationService.isConfigurable($scope.configuration, path);
+            return configurationService.isConfigurable($scope.settings, path);
         }
 
         $scope.isDefaultValue = function (path) {
-            return configurationService.isDefaultValue($scope.configuration, path);
+            return configurationService.isDefaultValue($scope.confsettingsiguration, path);
         };
 
-        configurationService.get(function (configuration) {
-            $scope.configuration = configuration;
+        configurationService.getSettings(function (settings) {
+            $scope.settings = settings;
         });
     }
 

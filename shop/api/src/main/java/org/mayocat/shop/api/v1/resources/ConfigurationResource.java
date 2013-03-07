@@ -44,6 +44,7 @@ public class ConfigurationResource implements Resource
 
     @GET
     @Timed
+    @Path("settings")
     public Map<String, Object> getConfiguration()
     {
         return configurationService.getSettingsAsJson();
@@ -51,7 +52,7 @@ public class ConfigurationResource implements Resource
 
     @GET
     @Timed
-    @Path("{module}")
+    @Path("settings/{module}")
     public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
     {
         try {
@@ -64,7 +65,7 @@ public class ConfigurationResource implements Resource
 
     @PUT
     @Timed
-    @Path("{module}")
+    @Path("settings/{module}")
     @Authorized(roles = Role.ADMIN)
     public Response updateModuleConfiguration(@PathParam("module") String module, Map<String, Object> configuration)
     {
@@ -76,6 +77,14 @@ public class ConfigurationResource implements Resource
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No such module could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
+    }
+
+    @GET
+    @Timed
+    @Path("gestalt")
+    public Map<String, Object> getGestaltConfiguration()
+    {
+        return configurationService.getGestaltConfiguration();
     }
 
     @PUT

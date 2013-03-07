@@ -23,7 +23,5 @@ public interface ConfigurationService
 
     Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException;
 
-    //
-
     Map<String, Object> getGestaltConfiguration();
 }

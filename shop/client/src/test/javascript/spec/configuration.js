@@ -3,7 +3,7 @@ describe('Configuration', function () {
     describe('Service', function () {
         var configurationService,
             httpBackend,
-            sampleConfiguration = {
+            sampleSettings = {
                 "module":{
                     "propertySet":{
                         "property":{
@@ -20,7 +20,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/api/1.0/configuration').respond(sampleConfiguration);
+            httpBackend.when('GET', '/api/1.0/configuration/settings').respond(sampleSettings);
 
             configurationService = $injector.get('configurationService');
         }));
@@ -29,9 +29,9 @@ describe('Configuration', function () {
             expect(configurationService).toBeDefined();
         });
 
-        it("Should offer access to the whole configuration object", function () {
+        it("Should offer access to the whole settings object", function () {
             var config;
-            configurationService.get(function(c){
+            configurationService.getSettings(function(c){
                 config = c;
             });
             httpBackend.flush();
@@ -46,9 +46,9 @@ describe('Configuration', function () {
             });
         });
 
-        it("Should offer access to individual configuration properties", function () {
+        it("Should offer access to individual settings properties", function () {
             var property;
-            configurationService.get("module.propertySet.property", function(p){
+            configurationService.getSettings("module.propertySet.property", function(p){
                 property = p;
             });
             httpBackend.flush();
@@ -58,13 +58,13 @@ describe('Configuration', function () {
             }, "Configuration property never returned", 100);
 
             runs(function(){
-                expect(property).toBe("Hello");
+                expect(property.value).toBe("Hello");
             });
         });
 
         it("Should verify a configuration configurability and visibility", function () {
-            expect(configurationService.isConfigurable(sampleConfiguration, "module.propertySet.property")).toBe(false);
-            expect(configurationService.isVisible(sampleConfiguration, "module.propertySet.property")).toBe(true);
+            expect(configurationService.isConfigurable(sampleSettings, "module.propertySet.property")).toBe(false);
+            expect(configurationService.isVisible(sampleSettings, "module.propertySet.property")).toBe(true);
         });
     });
 
@@ -77,7 +77,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector, $rootScope, $controller) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/api/1.0/configuration').respond({
+            httpBackend.when('GET', '/api/1.0/configuration/settings').respond({
                 "module":{
                     "propertySet":{
                         "property":{
@@ -101,21 +101,21 @@ describe('Configuration', function () {
 
         it("Should save original values", function () {
             httpBackend.flush();
-            expect(configurationController.configuration.module.propertySet.property.__originalValue).toBe("Hello");
+            expect(configurationController.settings.module.propertySet.property.__originalValue).toBe("Hello");
         });
 
-        it("Should prepare configuration object for submit", function () {
+        it("Should prepare settings object for submit", function () {
             httpBackend.flush();
-            configurationController.configuration.module.propertySet.property.value = "Salut";
-            httpBackend.expectPUT("/api/1.0/configuration", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
-            configurationController.updateConfiguration();
+            configurationController.settings.module.propertySet.property.value = "Salut";
+            httpBackend.expectPUT("/api/1.0/configuration/settings", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
+            configurationController.updateSettings();
         });
 
         it("Should prepare configuration object for submit when value is overriding but has not been changed",
             function () {
             httpBackend.flush();
-            httpBackend.expectPUT("/api/1.0/configuration", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
-            configurationController.updateConfiguration();
+            httpBackend.expectPUT("/api/1.0/configuration/settings", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
+            configurationController.updateSettings();
         });
     });
 

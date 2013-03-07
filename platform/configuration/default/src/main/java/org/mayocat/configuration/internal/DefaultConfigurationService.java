@@ -12,7 +12,9 @@ import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.base.ExposedSettings;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;
+import org.mayocat.configuration.jackson.GestaltConfigurationModule;
 import org.mayocat.context.Execution;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -36,6 +38,9 @@ public class DefaultConfigurationService implements ConfigurationService
     private Map<String, ExposedSettings> exposedSettings;
 
     @Inject
+    private Map<String, GestaltConfigurationSource> gestaltConfigurationSources;
+
+    @Inject
     private ObjectMapperFactory objectMapperFactory;
 
     @Inject
@@ -43,6 +48,11 @@ public class DefaultConfigurationService implements ConfigurationService
 
     @Inject
     private Logger logger;
+
+    /**
+     * Exposed settings, as provided by the platform
+     */
+    private Map<String, Object> exposedPlatformSettingsAsJson;
 
     @Override
     public Map<Class, Object> getSettings()
@@ -76,7 +86,7 @@ public class DefaultConfigurationService implements ConfigurationService
     public Map<String, Object> getSettingsAsJson()
     {
         Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
-        Map<String, Object> platformConfiguration = this.readConfigurationsAsJson();
+        Map<String, Object> platformConfiguration = this.getExposedPlatformSettingsAsJson();
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
         return merger.merge();
     }
@@ -99,7 +109,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public void updateSettings(Map<String, Object> data)
     {
-        ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(readConfigurationsAsJson(), data);
+        ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(getExposedPlatformSettingsAsJson(), data);
         ValidConfigurationEnforcer.ValidationResult result = enforcer.enforce();
 
         TenantConfiguration configuration =
@@ -128,13 +138,38 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getGestaltConfiguration()
     {
-        return null;
+        ObjectMapper mapper = getObjectMapper();
+        mapper.registerModule(new GestaltConfigurationModule());
+
+        Map<String, Object> result = Maps.newHashMap();
+        for (String key : this.gestaltConfigurationSources.keySet()) {
+            Object value = this.gestaltConfigurationSources.get(key).get();
+            if (ExposedSettings.class.isAssignableFrom(value.getClass())) {
+                // If the gestalt source returns an "exposed setting", then we get the version merged with the tenant
+                // configuration.
+                Class<? extends ExposedSettings> configurationClass = (Class<? extends ExposedSettings>) value.getClass();
+                value = this.getSettings(configurationClass);
+            }
+            result.put(key, value);
+        }
+        try {
+            return mapper.readValue(mapper.writeValueAsString(result), new TypeReference<Map<String, Object>>(){});
+        } catch (JsonProcessingException e) {
+            this.logger.error("Failed to convert gestalt configuration [{}]", e);
+            throw new RuntimeException(e);
+        }  catch (IOException e) {
+            this.logger.error("Failed to convert configurations to map", e);
+            throw new RuntimeException(e);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private Map<String, Object> readConfigurationsAsJson()
+    private Map<String, Object> getExposedPlatformSettingsAsJson()
     {
+        if (exposedPlatformSettingsAsJson != null) {
+            return exposedPlatformSettingsAsJson;
+        }
         ObjectMapper mapper = getObjectMapper();
         Map configurationsToSerialize = Maps.newHashMap();
         for (String hint : exposedSettings.keySet()) {
@@ -142,8 +177,8 @@ public class DefaultConfigurationService implements ConfigurationService
         }
         try {
             String json = mapper.writeValueAsString(configurationsToSerialize);
-            Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
-            return result;
+            exposedPlatformSettingsAsJson = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+            return exposedPlatformSettingsAsJson;
         } catch (JsonProcessingException e) {
             this.logger.error("Failed to convert configurations to map", e);
         } catch (IOException e) {
