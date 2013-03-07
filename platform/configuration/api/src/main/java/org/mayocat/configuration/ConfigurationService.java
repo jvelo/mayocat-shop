@@ -2,6 +2,7 @@ package org.mayocat.configuration;
 
 import java.util.Map;
 
+import org.mayocat.base.ExposedSettings;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -12,8 +13,7 @@ public interface ConfigurationService
 {
     Map<Class, Object> getSettings();
 
-    // TODO generify <T super ExposedSettings>
-    Object getSettings(Class c);
+    <T extends ExposedSettings> T getSettings(Class<T> c);
 
     void updateSettings(Map<String, Object> configuration);
 

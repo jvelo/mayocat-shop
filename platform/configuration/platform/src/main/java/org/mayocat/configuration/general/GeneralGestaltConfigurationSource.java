@@ -1,4 +1,4 @@
-package org.mayocat.configuration.source;
+package org.mayocat.configuration.general;
 
 import javax.inject.Inject;
 

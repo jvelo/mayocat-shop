@@ -38,8 +38,7 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
     @FrontBinding(path = "/")
     public void contributeRootBindings(@Bindings Map data)
     {
-        final GeneralSettings config =
-                (GeneralSettings) execution.getContext().getSettings(GeneralSettings.class);
+        final GeneralSettings config =  execution.getContext().getSettings(GeneralSettings.class);
 
         data.put(SITE, new HashMap() {{
             put(SITE_TITLE, config.getName().getValue());

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.base.ExposedSettings;
 import org.mayocat.theme.Theme;
 
 public class Context
@@ -56,7 +57,7 @@ public class Context
     public void setTheme(Theme theme)
     {
         if (this.theme != null) {
-            throw new RuntimeException("Illegal attempt at replacing already initialized theme");
+            throw new RuntimeException("Illegal attempt at replacing already initialized the");
         }
         this.theme = theme;
     }
@@ -69,13 +70,13 @@ public class Context
         this.settings = settings;
     }
 
-    public Object getSettings(Class c)
+    public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
         if (settings == null) {
             throw new RuntimeException("Illegal attempt at accessing a configuration before they are initialized");
         }
         if (settings.containsKey(c)) {
-            return this.settings.get(c);
+            return (T) this.settings.get(c);
         }
         return null;
     }

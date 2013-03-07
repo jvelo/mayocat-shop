@@ -73,12 +73,12 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
 
             Scriptable compileScope = context.newObject(getScope());
             compileScope.setParentScope(getScope());
-            compileScope.put("source", compileScope, template.getContent());
+            compileScope.put("gestalt", compileScope, template.getContent());
             compileScope.put("name", compileScope, template.getName());
 
             try {
                 context.evaluateString(compileScope,
-                        "templates[name] = Handlebars.compile(source);",
+                        "templates[name] = Handlebars.compile(gestalt);",
                         "JHBSCompiler",
                         0,
                         null);

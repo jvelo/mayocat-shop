@@ -1,4 +1,4 @@
-package org.mayocat.configuration.source;
+package org.mayocat.configuration.gestalt;
 
 import java.util.List;
 import java.util.Map;

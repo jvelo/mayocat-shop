@@ -1,4 +1,4 @@
-package org.mayocat.configuration.source;
+package org.mayocat.configuration.theme;
 
 import java.util.List;
 

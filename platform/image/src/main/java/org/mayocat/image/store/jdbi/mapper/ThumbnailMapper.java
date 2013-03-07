@@ -18,7 +18,7 @@ public class ThumbnailMapper implements ResultSetMapper<Thumbnail>
         Thumbnail thumbnail = new Thumbnail();
         thumbnail.setAttachmentId(result.getLong("attachment_id"));
         thumbnail.setHint(result.getString("hint"));
-        thumbnail.setSource(result.getString("source"));
+        thumbnail.setSource(result.getString("gestalt"));
         thumbnail.setRatio(result.getString("ratio"));
         thumbnail.setX(result.getInt("x"));
         thumbnail.setY(result.getInt("y"));

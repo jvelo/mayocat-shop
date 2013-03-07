@@ -67,9 +67,9 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
-    public Object getSettings(Class c)
+    public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
-        return this.getSettings().get(c);
+        return (T) this.getSettings().get(c);
     }
 
     @Override

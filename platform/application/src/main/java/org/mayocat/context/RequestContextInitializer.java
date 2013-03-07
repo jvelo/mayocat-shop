@@ -100,7 +100,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 4. Theme
 
-        ThemeSettings themeSettings = (ThemeSettings)
+        ThemeSettings themeSettings =
                 this.configurationService.getSettings(ThemeSettings.class);
         if (themeSettings != null) {
             String activeTheme = themeSettings.getActive().getValue();
