@@ -57,7 +57,7 @@ public class Context
     public void setTheme(Theme theme)
     {
         if (this.theme != null) {
-            throw new RuntimeException("Illegal attempt at replacing already initialized the");
+            throw new RuntimeException("Illegal attempt at replacing already initialized theme");
         }
         this.theme = theme;
     }
