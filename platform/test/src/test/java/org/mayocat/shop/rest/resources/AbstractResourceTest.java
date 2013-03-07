@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.jdo.JDOHelper;
 
-import org.mayocat.configuration.AuthenticationConfiguration;
+import org.mayocat.configuration.AuthenticationSettings;
 import org.mayocat.configuration.DataSourceConfiguration;
 import org.mayocat.configuration.MayocatShopConfiguration;
-import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.store.datanucleus.PersistenceManagerProvider;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -51,8 +51,8 @@ public abstract class AbstractResourceTest extends ResourceTest
         for (Class<?> clazz : Arrays.<Class<?>> asList(
             MayocatShopConfiguration.class,
             DataSourceConfiguration.class,
-            MultitenancyConfiguration.class,
-            AuthenticationConfiguration.class
+            MultitenancySettings.class,
+            AuthenticationSettings.class
         )) {
             DefaultComponentDescriptor cd =
                 new DefaultComponentDescriptor();

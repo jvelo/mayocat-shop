@@ -46,7 +46,7 @@ public class ConfigurationResource implements Resource
     @Timed
     public Map<String, Object> getConfiguration()
     {
-        return configurationService.getConfigurationAsJson();
+        return configurationService.getSettingsAsJson();
     }
 
     @GET
@@ -55,7 +55,7 @@ public class ConfigurationResource implements Resource
     public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
     {
         try {
-            return configurationService.getConfigurationAsJson(module);
+            return configurationService.getSettingsAsJson(module);
         } catch (NoSuchModuleException e) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .entity("No such module could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build());
@@ -69,7 +69,7 @@ public class ConfigurationResource implements Resource
     public Response updateModuleConfiguration(@PathParam("module") String module, Map<String, Object> configuration)
     {
         try {
-            configurationService.updateConfiguration(module, configuration);
+            configurationService.updateSettings(module, configuration);
             return Response.noContent().build();
         }
         catch (NoSuchModuleException e) {
@@ -83,7 +83,7 @@ public class ConfigurationResource implements Resource
     @Authorized(roles = Role.ADMIN)
     public Response updateModuleConfiguration(Map<String, Object> configuration)
     {
-        configurationService.updateConfiguration(configuration);
+        configurationService.updateSettings(configuration);
         return Response.noContent().build();
     }
 }

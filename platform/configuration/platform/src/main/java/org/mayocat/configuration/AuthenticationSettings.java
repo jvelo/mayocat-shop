@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthenticationConfiguration
+public class AuthenticationSettings
 {
     @Valid
     @JsonProperty

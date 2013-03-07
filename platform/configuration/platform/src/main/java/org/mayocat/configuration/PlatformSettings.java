@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class PlatformConfiguration
+public class PlatformSettings
 {
     @Valid
     @JsonProperty

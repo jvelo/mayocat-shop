@@ -16,7 +16,7 @@ import org.mayocat.base.EventListener;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.theme.ThemeConfiguration;
+import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.theme.ThemeLoader;
 import org.slf4j.Logger;
@@ -78,8 +78,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 2. Configurations
 
-        Map<Class, Object> configurations = configurationService.getConfigurations();
-        context.setConfigurations(configurations);
+        Map<Class, Object> configurations = configurationService.getSettings();
+        context.setSettings(configurations);
 
         // 3. User
 
@@ -99,19 +99,22 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         context.setUser(user.orNull());
 
         // 4. Theme
-        ThemeConfiguration configuration = (ThemeConfiguration)
-                this.configurationService.getConfiguration(ThemeConfiguration.class);
-        String activeTheme = configuration.getActive().getValue();
-        try {
-            context.setTheme(themeLoader.load(activeTheme));
-        } catch (IOException e) {
-            logger.warn("Failed to load theme with name [{}]", activeTheme);
-            String defaultTheme = configuration.getActive().getDefaultValue();
+
+        ThemeSettings themeSettings = (ThemeSettings)
+                this.configurationService.getSettings(ThemeSettings.class);
+        if (themeSettings != null) {
+            String activeTheme = themeSettings.getActive().getValue();
             try {
-                context.setTheme(themeLoader.load(defaultTheme));
-            } catch (IOException e1) {
-                logger.error("Failed to load default theme with name [{}]", defaultTheme);
-                throw new RuntimeException(e1);
+                context.setTheme(themeLoader.load(activeTheme));
+            } catch (IOException e) {
+                logger.warn("Failed to load theme with name [{}]", activeTheme);
+                String defaultTheme = themeSettings.getActive().getDefaultValue();
+                try {
+                    context.setTheme(themeLoader.load(defaultTheme));
+                } catch (IOException e1) {
+                    logger.error("Failed to load default theme with name [{}]", defaultTheme);
+                    throw new RuntimeException(e1);
+                }
             }
         }
     }

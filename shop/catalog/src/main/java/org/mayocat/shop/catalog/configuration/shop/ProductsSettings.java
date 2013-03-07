@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @version $Id$
  */
-public class ProductsConfiguration
+public class ProductsSettings
 {
 
     @Valid

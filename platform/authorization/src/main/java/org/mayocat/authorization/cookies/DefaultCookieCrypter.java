@@ -9,7 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
-import org.mayocat.configuration.AuthenticationConfiguration;
+import org.mayocat.configuration.AuthenticationSettings;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -20,7 +20,7 @@ public class DefaultCookieCrypter implements CookieCrypter
 {
     
     @Inject
-    private AuthenticationConfiguration configuration;
+    private AuthenticationSettings configuration;
     
     @Inject
     private Logger logger;

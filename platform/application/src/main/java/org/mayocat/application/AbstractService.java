@@ -9,11 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mayocat.base.EventListener;
+import org.mayocat.base.ExposedSettings;
 import org.mayocat.base.HealthCheck;
 import org.mayocat.base.Managed;
 import org.mayocat.base.Provider;
 import org.mayocat.base.Task;
-import org.mayocat.configuration.AbstractConfiguration;
+import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.base.Resource;
@@ -31,7 +32,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
 /**
  * @version $Id$
  */
-public abstract class AbstractService<C extends AbstractConfiguration> extends Service<C>
+public abstract class AbstractService<C extends AbstractSettings> extends Service<C>
 {
     public static final String ADMIN_UI_PATH = "/admin/";
 
@@ -78,7 +79,7 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
     protected void initializeComponentManager(C configuration, Environment environment)
     {
         componentManager = new EmbeddableComponentManager();
-        this.registerConfigurationsAsComponents(configuration);
+        this.registerSettingsAsComponents(configuration);
         this.registerObjectMapperFactoryAsComponent();
         this.registerComponents(configuration, environment);
         componentManager.initialize(this.getClass().getClassLoader());
@@ -150,21 +151,30 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
         componentManager.registerComponent(cd, this.objectMapperFactory);
     }
 
-    private void registerConfigurationsAsComponents(C configuration)
+    private void registerSettingsAsComponents(C settings)
     {
-        List<Field> configurationFields = getAllFields(configuration.getClass());
-        for (Field field : configurationFields) {
+        List<Field> settingsFields = getAllFields(settings.getClass());
+        for (Field field : settingsFields) {
             boolean isAccessible = field.isAccessible();
             try {
                 try {
                     field.setAccessible(true);
-                    Object value = field.get(configuration);
+                    Object value = field.get(settings);
 
-                    // Inject "as is" for components that only need an individual configuration
+                    // Inject "as is" for components that only need an individual settings
                     DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
                     cd.setRoleType(value.getClass());
-
                     componentManager.registerComponent(cd, value);
+
+                    if (ExposedSettings.class.isAssignableFrom(value.getClass())) {
+
+                        // Inject as settings
+                        ExposedSettings exposedSettings = (ExposedSettings) value;
+                        DefaultComponentDescriptor cd2 = new DefaultComponentDescriptor();
+                        cd2.setRoleType(ExposedSettings.class);
+                        cd2.setRoleHint(exposedSettings.getKey());
+                        componentManager.registerComponent(cd2, value);
+                    }
                 } finally {
                     field.setAccessible(isAccessible);
                 }
@@ -175,8 +185,8 @@ public abstract class AbstractService<C extends AbstractConfiguration> extends S
 
         DefaultComponentDescriptor<C> cd =
                 new DefaultComponentDescriptor<C>();
-        cd.setRoleType(configuration.getClass());
-        componentManager.registerComponent(cd, configuration);
+        cd.setRoleType(settings.getClass());
+        componentManager.registerComponent(cd, settings);
     }
 
     private static List<Field> getAllFields(Class<?> type)

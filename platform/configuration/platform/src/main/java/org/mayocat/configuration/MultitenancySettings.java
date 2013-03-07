@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MultitenancyConfiguration
+public class MultitenancySettings
 {
     @Valid
     @JsonProperty

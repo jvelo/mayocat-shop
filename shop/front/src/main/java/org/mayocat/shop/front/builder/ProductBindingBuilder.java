@@ -1,8 +1,6 @@
 package org.mayocat.shop.front.builder;
 
-import java.awt.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.HashMap;
@@ -10,12 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.thumbnails.Dimensions;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
-import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
+import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.theme.Theme;
 
@@ -28,17 +26,17 @@ import com.google.common.collect.Maps;
  */
 public class ProductBindingBuilder
 {
-    private CatalogConfiguration catalogConfiguration;
+    private CatalogSettings catalogSettings;
 
-    private GeneralConfiguration generalConfiguration;
+    private GeneralSettings generalSettings;
 
     private Theme theme;
 
-    public ProductBindingBuilder(CatalogConfiguration catalogConfiguration, GeneralConfiguration generalConfiguration,
+    public ProductBindingBuilder(CatalogSettings catalogSettings, GeneralSettings generalSettings,
             Theme theme)
     {
-        this.catalogConfiguration = catalogConfiguration;
-        this.generalConfiguration = generalConfiguration;
+        this.catalogSettings = catalogSettings;
+        this.generalSettings = generalSettings;
         this.theme = theme;
     }
 
@@ -52,8 +50,8 @@ public class ProductBindingBuilder
 
         // Prices
         if (product.getPrice() != null) {
-            final Locale locale = generalConfiguration.getLocales().getMainLocale().getValue();
-            final Currency currency = catalogConfiguration.getCurrencies().getMainCurrency().getValue();
+            final Locale locale = generalSettings.getLocales().getMainLocale().getValue();
+            final Currency currency = catalogSettings.getCurrencies().getMainCurrency().getValue();
             productContext.put("price", new HashMap<String, Object>()
             {
                 {

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.theme.ThemeConfiguration;
+import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.ThemeManager;
@@ -24,7 +24,7 @@ public class DefaultThemeManager implements ThemeManager
     private final static String THEMES_ROOT_FOLDER = "themes";
 
     @Inject
-    private ThemeConfiguration themeConfiguration;
+    private ThemeSettings themeSettings;
 
     @Inject
     private UserAgentBreakpointDetector breakpointDetector;
@@ -67,7 +67,7 @@ public class DefaultThemeManager implements ThemeManager
     {
         if (!Strings.isNullOrEmpty(breakpoint.getFolder())) {
             String url =
-                    THEMES_ROOT_FOLDER + "/" + themeConfiguration.getActive().getValue() + "/" + breakpoint.getFolder() + "/" +
+                    THEMES_ROOT_FOLDER + "/" + themeSettings.getActive().getValue() + "/" + breakpoint.getFolder() + "/" +
                             name;
             try {
                 Resources.getResource(url);
@@ -78,7 +78,7 @@ public class DefaultThemeManager implements ThemeManager
                 // fallback on default breakpoint
             }
         }
-        String url = THEMES_ROOT_FOLDER + "/" + themeConfiguration.getActive().getValue() + "/" + name;
+        String url = THEMES_ROOT_FOLDER + "/" + themeSettings.getActive().getValue() + "/" + name;
         try {
             Resources.getResource(url);
             return url;

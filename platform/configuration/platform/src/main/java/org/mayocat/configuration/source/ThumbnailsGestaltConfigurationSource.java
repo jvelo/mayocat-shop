@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.ConfigurationSource;
-import org.mayocat.configuration.PlatformConfiguration;
+import org.mayocat.configuration.GestaltConfigurationSource;
+import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.thumbnails.Dimensions;
 import org.mayocat.configuration.thumbnails.Source;
 import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
@@ -26,10 +26,10 @@ import com.google.common.collect.Maps;
  */
 @Component("thumbnails")
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class ThumbnailsConfigurationSource implements Initializable, ConfigurationSource
+public class ThumbnailsGestaltConfigurationSource implements Initializable, GestaltConfigurationSource
 {
     @Inject
-    private PlatformConfiguration source;
+    private PlatformSettings source;
 
     @Inject
     private Execution execution;

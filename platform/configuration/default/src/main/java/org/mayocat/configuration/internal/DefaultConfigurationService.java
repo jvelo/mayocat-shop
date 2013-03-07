@@ -2,28 +2,26 @@ package org.mayocat.configuration.internal;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.base.JacksonModule;
-import org.mayocat.configuration.ConfigurationSource;
-import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
+import org.mayocat.accounts.store.TenantStore;
+import org.mayocat.base.ExposedSettings;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;
-import org.mayocat.accounts.store.TenantStore;
+import org.mayocat.context.Execution;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 /**
  * @version $Id$
@@ -35,10 +33,10 @@ public class DefaultConfigurationService implements ConfigurationService
     private Provider<TenantStore> tenantStore;
 
     @Inject
-    private Map<String, ConfigurationSource> configurationSources;
+    private Map<String, ExposedSettings> exposedSettings;
 
     @Inject
-    private List<JacksonModule> jacksonModules;
+    private ObjectMapperFactory objectMapperFactory;
 
     @Inject
     private Execution execution;
@@ -47,14 +45,14 @@ public class DefaultConfigurationService implements ConfigurationService
     private Logger logger;
 
     @Override
-    public Map<Class, Object> getConfigurations()
+    public Map<Class, Object> getSettings()
     {
         ObjectMapper mapper = getObjectMapper();
-        Map<String, Object> mergedConfiguration = getConfigurationAsJson();
+        Map<String, Object> mergedConfiguration = getSettingsAsJson();
         Map<Class, Object> configurations = Maps.newHashMap();
-        for (String source : configurationSources.keySet()) {
+        for (String source : exposedSettings.keySet()) {
             Map<String, Object> merged = (Map<String, Object>) mergedConfiguration.get(source);
-            Class c = configurationSources.get(source).get().getClass();
+            Class c = exposedSettings.get(source).getClass();
             try {
                 String json = mapper.writeValueAsString(merged);
                 Object result = mapper.readValue(json, c);
@@ -69,13 +67,13 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
-    public Object getConfiguration(Class c)
+    public Object getSettings(Class c)
     {
-        return this.getConfigurations().get(c);
+        return this.getSettings().get(c);
     }
 
     @Override
-    public Map<String, Object> getConfigurationAsJson()
+    public Map<String, Object> getSettingsAsJson()
     {
         Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
         Map<String, Object> platformConfiguration = this.readConfigurationsAsJson();
@@ -84,14 +82,14 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
-    public Map<String, Object> getConfigurationAsJson(String moduleName) throws NoSuchModuleException
+    public Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException
     {
-        if (!this.configurationSources.containsKey(moduleName)) {
+        if (!this.exposedSettings.containsKey(moduleName)) {
             throw new NoSuchModuleException();
         }
 
         try {
-            return (Map<String, Object>) getConfigurationAsJson().get(moduleName);
+            return (Map<String, Object>) getSettingsAsJson().get(moduleName);
         } catch (ClassCastException e) {
             this.logger.warn("Attempt at accessing a configuration that is not an object");
         }
@@ -99,7 +97,7 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
-    public void updateConfiguration(Map<String, Object> data)
+    public void updateSettings(Map<String, Object> data)
     {
         ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(readConfigurationsAsJson(), data);
         ValidConfigurationEnforcer.ValidationResult result = enforcer.enforce();
@@ -113,9 +111,9 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
-    public void updateConfiguration(String module, Map<String, Object> configuration) throws NoSuchModuleException
+    public void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException
     {
-        if (!this.configurationSources.containsKey(module)) {
+        if (!this.exposedSettings.containsKey(module)) {
             throw new NoSuchModuleException();
         }
 
@@ -124,20 +122,27 @@ public class DefaultConfigurationService implements ConfigurationService
         Map<String, Object> data = Maps.newHashMap(currentConfiguration.getData());
 
         data.put(module, configuration);
-        this.updateConfiguration(data);
+        this.updateSettings(data);
     }
+
+    @Override
+    public Map<String, Object> getGestaltConfiguration()
+    {
+        return null;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private Map<String, Object> readConfigurationsAsJson()
     {
         ObjectMapper mapper = getObjectMapper();
         Map configurationsToSerialize = Maps.newHashMap();
-        for (String hint : configurationSources.keySet()) {
-            ConfigurationSource c = configurationSources.get(hint);
-            configurationsToSerialize.put(hint, c.get());
+        for (String hint : exposedSettings.keySet()) {
+            configurationsToSerialize.put(hint, exposedSettings.get(hint));
         }
         try {
             String json = mapper.writeValueAsString(configurationsToSerialize);
-            Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> result = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
             return result;
         } catch (JsonProcessingException e) {
             this.logger.error("Failed to convert configurations to map", e);
@@ -149,15 +154,6 @@ public class DefaultConfigurationService implements ConfigurationService
 
     private ObjectMapper getObjectMapper()
     {
-        ObjectMapper mapper = new ObjectMapper();
-        for (JacksonModule module : jacksonModules) {
-            try {
-                mapper.registerModule((Module) module);
-            } catch (ClassCastException e) {
-                this.logger.warn("Failed to register a Jackson module. Is it a fastxml Module class ?");
-                // Ignore
-            }
-        }
-        return mapper;
+        return objectMapperFactory.build();
     }
 }

@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @version $Id$
  */
-public class CurrenciesConfiguration
+public class CurrenciesSettings
 {
     @Valid
     @JsonProperty("main")

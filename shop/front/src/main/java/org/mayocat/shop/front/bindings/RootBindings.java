@@ -6,9 +6,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.model.Category;
-import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.context.Execution;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.Bindings;
@@ -38,8 +38,8 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
     @FrontBinding(path = "/")
     public void contributeRootBindings(@Bindings Map data)
     {
-        final GeneralConfiguration config =
-                (GeneralConfiguration) execution.getContext().getConfiguration(GeneralConfiguration.class);
+        final GeneralSettings config =
+                (GeneralSettings) execution.getContext().getSettings(GeneralSettings.class);
 
         data.put(SITE, new HashMap() {{
             put(SITE_TITLE, config.getName().getValue());

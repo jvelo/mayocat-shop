@@ -7,7 +7,7 @@ import javax.inject.Provider;
 import javax.validation.Valid;
 
 import org.mayocat.authorization.PasswordManager;
-import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
@@ -33,7 +33,7 @@ public class DefaultAccountsService implements AccountsService
     private PasswordManager passwordManager;
 
     @Inject
-    private MultitenancyConfiguration multitenancyConfiguration;
+    private MultitenancySettings multitenancyConfiguration;
 
     @Override
     public void createInitialUser(User user) throws EntityAlreadyExistsException, InvalidEntityException

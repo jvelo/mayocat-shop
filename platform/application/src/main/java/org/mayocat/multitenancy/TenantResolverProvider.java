@@ -3,7 +3,7 @@ package org.mayocat.multitenancy;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.configuration.MultitenancySettings;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
@@ -16,7 +16,7 @@ import com.sun.jersey.spi.resource.Singleton;
 public class TenantResolverProvider implements Provider<TenantResolver>
 {
     @Inject
-    private MultitenancyConfiguration configuration;
+    private MultitenancySettings configuration;
 
     @Inject
     private Logger logger;

@@ -3,7 +3,7 @@ package org.mayocat.search;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.configuration.SearchEngineConfiguration;
+import org.mayocat.configuration.SearchEngineSettings;
 import org.slf4j.Logger;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
@@ -12,7 +12,7 @@ public class SearchEngineProvider implements Provider<SearchEngine>
 {
 
     @Inject
-    private SearchEngineConfiguration configuration;
+    private SearchEngineSettings configuration;
 
     @Inject
     private ComponentManager componentManager;

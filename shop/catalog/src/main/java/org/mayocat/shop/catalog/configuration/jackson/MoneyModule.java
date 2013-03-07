@@ -3,11 +3,8 @@ package org.mayocat.shop.catalog.configuration.jackson;
 import java.io.IOException;
 import java.util.Currency;
 
-import org.joda.money.CurrencyUnit;
-import org.mayocat.base.JacksonModule;
 import org.xwiki.component.annotation.Component;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
@@ -17,18 +14,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.Deserializers;
-import com.fasterxml.jackson.databind.ser.Serializers;
 
 /**
  * @version $Id$
  */
 @Component("money")
-public class MoneyModule extends Module implements JacksonModule
+public class MoneyModule extends Module
 {
     private static class CurrencyDeserializer extends JsonDeserializer<Currency>
     {

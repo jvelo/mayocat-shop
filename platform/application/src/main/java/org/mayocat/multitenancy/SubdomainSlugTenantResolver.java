@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
-import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -36,7 +36,7 @@ public class SubdomainSlugTenantResolver implements TenantResolver, ServletReque
     private Logger logger;
 
     @Inject
-    private MultitenancyConfiguration configuration;
+    private MultitenancySettings configuration;
 
     public void requestDestroyed()
     {

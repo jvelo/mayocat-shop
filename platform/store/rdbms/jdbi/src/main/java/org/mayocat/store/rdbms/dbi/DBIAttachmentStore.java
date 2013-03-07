@@ -59,7 +59,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     @Override
     public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        //To change body of implemented methods use File | ExposedSettings | File Templates.
     }
 
     @Override

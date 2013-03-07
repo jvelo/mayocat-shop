@@ -7,7 +7,7 @@ import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
-import org.mayocat.configuration.MultitenancyConfiguration;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.AccountsService;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -19,7 +19,7 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
 {
     private TenantResolver tenantResolver;
 
-    private MultitenancyConfiguration configuration;
+    private MultitenancySettings configuration;
 
     private AccountsService accountsService;
 
@@ -31,11 +31,11 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
         // Allow to mock classes for mocking configuration instances
         getMockery().setImposteriser(ClassImposteriser.INSTANCE);
 
-        configuration = getMockery().mock(MultitenancyConfiguration.class);
+        configuration = getMockery().mock(MultitenancySettings.class);
  
-        DefaultComponentDescriptor<MultitenancyConfiguration> cd =
-            new DefaultComponentDescriptor<MultitenancyConfiguration>();
-        cd.setRoleType(MultitenancyConfiguration.class);
+        DefaultComponentDescriptor<MultitenancySettings> cd =
+            new DefaultComponentDescriptor<MultitenancySettings>();
+        cd.setRoleType(MultitenancySettings.class);
         this.getComponentManager().registerComponent(cd, this.configuration);
     }
 
@@ -48,7 +48,7 @@ public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTes
 
         super.setUp();
 
-        configuration = this.getComponentManager().getInstance(MultitenancyConfiguration.class);
+        configuration = this.getComponentManager().getInstance(MultitenancySettings.class);
         accountsService = this.getComponentManager().getInstance(AccountsService.class);
         tenantResolver = getMockedComponent();
 

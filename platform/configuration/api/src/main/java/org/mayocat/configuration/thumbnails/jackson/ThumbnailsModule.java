@@ -2,7 +2,6 @@ package org.mayocat.configuration.thumbnails.jackson;
 
 import java.io.IOException;
 
-import org.mayocat.base.JacksonModule;
 import org.mayocat.configuration.thumbnails.Dimensions;
 import org.xwiki.component.annotation.Component;
 
@@ -22,7 +21,7 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
  * @version $Id$
  */
 @Component("thumbnails")
-public class ThumbnailsModule extends Module implements JacksonModule
+public class ThumbnailsModule extends Module
 {
     private static class DimensionDeserializer extends JsonDeserializer<Dimensions>
     {

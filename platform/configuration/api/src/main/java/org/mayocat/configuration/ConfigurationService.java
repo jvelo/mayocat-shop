@@ -10,15 +10,20 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface ConfigurationService
 {
-    Map<Class, Object> getConfigurations();
+    Map<Class, Object> getSettings();
 
-    Object getConfiguration(Class c);
+    // TODO generify <T super ExposedSettings>
+    Object getSettings(Class c);
 
-    Map<String, Object> getConfigurationAsJson();
+    void updateSettings(Map<String, Object> configuration);
 
-    Map<String, Object> getConfigurationAsJson(String moduleName) throws NoSuchModuleException;
+    void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException;
 
-    void updateConfiguration(Map<String, Object> configuration);
+    Map<String, Object> getSettingsAsJson();
 
-    void updateConfiguration(String module, Map<String, Object> configuration) throws NoSuchModuleException;
+    Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException;
+
+    //
+
+    Map<String, Object> getGestaltConfiguration();
 }

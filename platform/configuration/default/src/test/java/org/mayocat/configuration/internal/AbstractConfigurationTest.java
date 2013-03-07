@@ -3,7 +3,7 @@ package org.mayocat.configuration.internal;
 import java.io.IOException;
 import java.util.Map;
 
-import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.configuration.general.GeneralSettings;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ public class AbstractConfigurationTest
         return Resources.toString(Resources.getResource(uri), Charsets.UTF_8);
     }
 
-    protected Map<String, Object> getConfiguration(GeneralConfiguration configuration) throws Exception
+    protected Map<String, Object> getConfiguration(GeneralSettings configuration) throws Exception
     {
         ObjectMapper mapper = new ObjectMapper();
         String asJson = mapper.writeValueAsString(configuration);

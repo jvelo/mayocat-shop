@@ -1,16 +1,10 @@
 package org.mayocat.shop.front.resources;
 
 import java.util.ArrayList;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,15 +16,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.ConfigurationSource;
-import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.configuration.shop.CatalogConfiguration;
+import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
@@ -42,8 +35,6 @@ import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -92,10 +83,10 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         bindings.put(PAGE_TITLE, product.getTitle());
         bindings.put(PAGE_DESCRIPTION, product.getDescription());
 
-        final CatalogConfiguration configuration = (CatalogConfiguration)
-                configurationService.getConfiguration(CatalogConfiguration.class);
-        final GeneralConfiguration generalConfiguration = (GeneralConfiguration)
-                configurationService.getConfiguration(GeneralConfiguration.class);
+        final CatalogSettings configuration = (CatalogSettings)
+                configurationService.getSettings(CatalogSettings.class);
+        final GeneralSettings generalSettings = (GeneralSettings)
+                configurationService.getSettings(GeneralSettings.class);
 
         Theme theme = this.execution.getContext().getTheme();
 
@@ -109,7 +100,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             }
         }
 
-        ProductBindingBuilder builder = new ProductBindingBuilder(configuration, generalConfiguration, theme);
+        ProductBindingBuilder builder = new ProductBindingBuilder(configuration, generalSettings, theme);
         Map<String, Object> productContext = builder.build(product, images);
 
         bindings.put("product", productContext);

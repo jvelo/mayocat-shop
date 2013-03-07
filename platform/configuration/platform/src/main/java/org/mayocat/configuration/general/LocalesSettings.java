@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @version $Id$
  */
-public class LocalesConfiguration
+public class LocalesSettings
 {
     @Valid
     @JsonProperty("main")

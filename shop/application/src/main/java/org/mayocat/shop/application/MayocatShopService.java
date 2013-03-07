@@ -1,11 +1,8 @@
 package org.mayocat.shop.application;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.mayocat.application.AbstractService;
 import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
-import org.mayocat.shop.configuration.MayocatShopConfiguration;
+import org.mayocat.shop.configuration.MayocatShopSettings;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -19,7 +16,7 @@ import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 import com.yammer.dropwizard.migrations.MigrationsBundle;
 
-public class MayocatShopService extends AbstractService<MayocatShopConfiguration>
+public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
     public static final String CLIENT_RESOURCE_PATH = "/client/";
 
@@ -29,7 +26,7 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
     }
 
     @Override
-    public void initialize(Bootstrap<MayocatShopConfiguration> bootstrap)
+    public void initialize(Bootstrap<MayocatShopSettings> bootstrap)
     {
         super.initialize(bootstrap);
 
@@ -37,17 +34,17 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
 
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
-        bootstrap.addBundle(new MigrationsBundle<MayocatShopConfiguration>()
+        bootstrap.addBundle(new MigrationsBundle<MayocatShopSettings>()
         {
             @Override
-            public DatabaseConfiguration getDatabaseConfiguration(MayocatShopConfiguration configuration)
+            public DatabaseConfiguration getDatabaseConfiguration(MayocatShopSettings configuration)
             {
                 return configuration.getDatabaseConfiguration();
             }
         });
     }
 
-    private void registerDBIFactoryComponent(Environment environment, MayocatShopConfiguration configuration)
+    private void registerDBIFactoryComponent(Environment environment, MayocatShopSettings configuration)
             throws ClassNotFoundException, ComponentRepositoryException
     {
         final DBIFactory factory = new DBIFactory();
@@ -66,7 +63,7 @@ public class MayocatShopService extends AbstractService<MayocatShopConfiguration
     }
 
     @Override
-    protected void registerComponents(MayocatShopConfiguration configuration, Environment environment)
+    protected void registerComponents(MayocatShopSettings configuration, Environment environment)
     {
         try {
             this.registerDBIFactoryComponent(environment, configuration);

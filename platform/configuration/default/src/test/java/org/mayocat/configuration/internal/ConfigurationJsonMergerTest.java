@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mayocat.configuration.general.GeneralConfiguration;
+import org.mayocat.configuration.general.GeneralSettings;
 
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
@@ -19,14 +19,14 @@ import junit.framework.Assert;
  */
 public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
 {
-    private GeneralConfiguration defaultConfiguration = new GeneralConfiguration();
+    private GeneralSettings defaultConfiguration = new GeneralSettings();
 
-    private GeneralConfiguration localesNotConfigurableConfiguration;
+    private GeneralSettings localesNotConfigurableConfiguration;
 
     private final Validator validator = new Validator();
 
-    private final ConfigurationFactory<GeneralConfiguration> factory =
-            ConfigurationFactory.forClass(GeneralConfiguration.class, validator);
+    private final ConfigurationFactory<GeneralSettings> factory =
+            ConfigurationFactory.forClass(GeneralSettings.class, validator);
 
     @Before
     public void setUp() throws Exception

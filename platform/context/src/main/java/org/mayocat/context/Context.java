@@ -6,8 +6,6 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.theme.Theme;
 
-import sun.awt.windows.ThemeReader;
-
 public class Context
 {
     private Tenant tenant;
@@ -16,7 +14,7 @@ public class Context
 
     private Theme theme;
 
-    private Map<Class, Object> configurations = null;
+    private Map<Class, Object> settings = null;
 
     public Context(Tenant tenant, User user)
     {
@@ -58,27 +56,26 @@ public class Context
     public void setTheme(Theme theme)
     {
         if (this.theme != null) {
-            throw new RuntimeException("Illegal attempt at replacing already initialized thtme");
+            throw new RuntimeException("Illegal attempt at replacing already initialized theme");
         }
         this.theme = theme;
     }
 
-
-    public void setConfigurations(Map<Class, Object> configurations)
+    public void setSettings(Map<Class, Object> settings)
     {
-        if (this.configurations != null) {
-            throw new RuntimeException("Illegal attempt at replacing already initialized configurations");
+        if (this.settings != null) {
+            throw new RuntimeException("Illegal attempt at replacing already initialized settings");
         }
-        this.configurations = configurations;
+        this.settings = settings;
     }
 
-    public Object getConfiguration(Class c)
+    public Object getSettings(Class c)
     {
-        if (configurations == null) {
+        if (settings == null) {
             throw new RuntimeException("Illegal attempt at accessing a configuration before they are initialized");
         }
-        if (configurations.containsKey(c)) {
-            return this.configurations.get(c);
+        if (settings.containsKey(c)) {
+            return this.settings.get(c);
         }
         return null;
     }
