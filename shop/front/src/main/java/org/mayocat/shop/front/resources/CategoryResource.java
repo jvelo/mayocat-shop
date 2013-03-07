@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.context.Execution;
@@ -57,7 +58,7 @@ public class CategoryResource extends AbstractFrontResource implements Resource,
     private FrontBindingManager bindingManager;
 
     @Inject
-    private Map<String, ConfigurationSource> configurationSources;
+    private ConfigurationService configurationService;
 
     @Inject
     private Provider<AttachmentStore> attachmentStore;
@@ -106,9 +107,10 @@ public class CategoryResource extends AbstractFrontResource implements Resource,
         List<Product> products = catalogService.findProductsForCategory(category);
         List<Map<String, Object>> productsBinding = Lists.newArrayList();
 
-        final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
-        final GeneralConfiguration generalConfiguration =
-                (GeneralConfiguration) configurationSources.get("general").get();
+        final CatalogConfiguration configuration = (CatalogConfiguration)
+                configurationService.getConfiguration(CatalogConfiguration.class);
+        final GeneralConfiguration generalConfiguration = (GeneralConfiguration)
+                configurationService.getConfiguration(GeneralConfiguration.class);
         Theme theme = this.execution.getContext().getTheme();
 
         ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration,

@@ -21,6 +21,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.ConfigurationSource;
 import org.mayocat.configuration.general.GeneralConfiguration;
 import org.mayocat.context.Execution;
@@ -55,7 +56,7 @@ import com.google.common.collect.Maps;
 public class ProductResource extends AbstractFrontResource implements Resource, BindingsContants
 {
     @Inject
-    private Map<String, ConfigurationSource> configurationSources;
+    private ConfigurationService configurationService;
 
     @Inject
     private CatalogService catalogService;
@@ -91,9 +92,10 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         bindings.put(PAGE_TITLE, product.getTitle());
         bindings.put(PAGE_DESCRIPTION, product.getDescription());
 
-        final CatalogConfiguration configuration = (CatalogConfiguration) configurationSources.get("catalog").get();
-        final GeneralConfiguration generalConfiguration =
-            (GeneralConfiguration) configurationSources.get("general").get();
+        final CatalogConfiguration configuration = (CatalogConfiguration)
+                configurationService.getConfiguration(CatalogConfiguration.class);
+        final GeneralConfiguration generalConfiguration = (GeneralConfiguration)
+                configurationService.getConfiguration(GeneralConfiguration.class);
 
         Theme theme = this.execution.getContext().getTheme();
 
