@@ -39,6 +39,11 @@
         </developer>
     </developers>
 
+    <issueManagement>
+        <url>https://github.com/mayocat/mayocat-shop/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
     <properties>
         <!-- Java 6 -->
         <maven.compiler.source>6</maven.compiler.source>
