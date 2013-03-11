@@ -24,4 +24,3 @@ addons:
   - name: custom_id
     type: json
     for: [product, page]
-

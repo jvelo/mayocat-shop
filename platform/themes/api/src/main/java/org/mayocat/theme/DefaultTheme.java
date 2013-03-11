@@ -1,10 +1,13 @@
 package org.mayocat.theme;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.mayocat.configuration.AddonDefinition;
 import org.mayocat.configuration.thumbnails.Dimensions;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,8 +19,13 @@ import com.google.common.collect.Maps;
 public class DefaultTheme implements Theme
 {
     @Valid
+    @NotBlank
     @JsonProperty
     private String name;
+
+    @Valid
+    @JsonProperty
+    private String description = "";
 
     @Valid
     @JsonProperty
@@ -25,13 +33,22 @@ public class DefaultTheme implements Theme
 
     @Valid
     @JsonProperty
-    private List<Model> models;
+    private List<Model> models = Collections.emptyList();
 
+    @Valid
+    @JsonProperty
+    private List<AddonDefinition> addons = Collections.emptyList();
 
     @Override
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description;
     }
 
     @Override
@@ -44,5 +61,11 @@ public class DefaultTheme implements Theme
     public List<Model> getModels()
     {
         return models;
+    }
+
+    @Override
+    public List<AddonDefinition> getAddons()
+    {
+        return this.addons;
     }
 }

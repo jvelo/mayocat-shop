@@ -1,3 +1,0 @@
-org.mayocat.configuration.general.GeneralGestaltConfigurationSource
-org.mayocat.configuration.theme.ThemeGestaltConfigurationSource
-org.mayocat.configuration.gestalt.ThumbnailsGestaltConfigurationSource

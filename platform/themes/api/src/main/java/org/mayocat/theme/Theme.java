@@ -3,6 +3,7 @@ package org.mayocat.theme;
 import java.util.List;
 import java.util.Map;
 
+import org.mayocat.configuration.AddonDefinition;
 import org.mayocat.configuration.thumbnails.Dimensions;
 
 /**
@@ -12,7 +13,11 @@ public interface Theme
 {
     String getName();
 
+    String getDescription();
+
     Map<String, Dimensions> getThumbnails();
 
     List<Model> getModels();
+
+    List<AddonDefinition> getAddons();
 }
