@@ -1,250 +1,254 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <changeSet id="1" author="jvelo">
+    <changeSet id="1" author="jvelo">
 
-    <!-- Configuration table -->
-    <createTable tableName="configuration">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="version" type="smallint">
-        <constraints nullable="false" />
-      </column>
-      <column name="data" type="mediumtext" />
-    </createTable>
+        <!-- Configuration table -->
+        <createTable tableName="configuration">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="mediumtext"/>
+        </createTable>
 
-    <!-- Tenant table -->
-    <createTable tableName="tenant">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="slug" type="varchar(255)">
-        <constraints nullable="false" unique="true" />
-      </column>
-      <column name="configuration_id" type="bigint" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="TENANT_CONFIGURATION_FK"
-                             baseTableName="tenant" baseColumnNames="configuration_id"
-                             referencedTableName="configuration" referencedColumnNames="id" />
-    <createIndex tableName="tenant" indexName="TENANT_SLUG_INDEX">
-      <column name="slug" />
-    </createIndex>
+        <!-- Tenant table -->
+        <createTable tableName="tenant">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="slug" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="configuration_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="TENANT_CONFIGURATION_FK"
+                baseTableName="tenant" baseColumnNames="configuration_id"
+                referencedTableName="configuration" referencedColumnNames="id"/>
+        <createIndex tableName="tenant" indexName="TENANT_SLUG_INDEX">
+            <column name="slug"/>
+        </createIndex>
 
-    <!-- Entity table -->
-    <createTable tableName="entity">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="slug" type="varchar(255)">
-        <constraints nullable="false" />
-      </column>
-      <column name="type" type="varchar(255)">
-        <constraints nullable="false" />
-      </column>
-      <column name="tenant_id" type="bigint" />
-      <column name="parent_id" type="bigint" />
-    </createTable>
-    <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id" constraintName="ENTITY_UNIQUE_SLUG_PER_TYPE_PER_TENANT" />
-    <addForeignKeyConstraint constraintName="ENTITY_TENANT_FK"
-                             baseTableName="entity" baseColumnNames="tenant_id"
-                             referencedTableName="tenant" referencedColumnNames="id" />
-    <addForeignKeyConstraint constraintName="ENTITY_PARENT_FK"
-                             baseTableName="entity" baseColumnNames="parent_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="entity" indexName="ENTITY_SLUG_INDEX">
-      <column name="slug" />
-    </createIndex>
-    <createIndex tableName="entity" indexName="ENTITY_TYPE_INDEX">
-      <column name="type" />
-    </createIndex>
-    <createIndex tableName="entity" indexName="ENTITY_TENANT_INDEX">
-      <column name="tenant_id" />
-    </createIndex>
+        <!-- Entity table -->
+        <createTable tableName="entity">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="slug" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tenant_id" type="bigint"/>
+            <column name="parent_id" type="bigint"/>
+        </createTable>
+        <addUniqueConstraint tableName="entity" columnNames="slug,type,tenant_id"
+                constraintName="ENTITY_UNIQUE_SLUG_PER_TYPE_PER_TENANT"/>
+        <addForeignKeyConstraint constraintName="ENTITY_TENANT_FK"
+                baseTableName="entity" baseColumnNames="tenant_id"
+                referencedTableName="tenant" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="ENTITY_PARENT_FK"
+                baseTableName="entity" baseColumnNames="parent_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="entity" indexName="ENTITY_SLUG_INDEX">
+            <column name="slug"/>
+        </createIndex>
+        <createIndex tableName="entity" indexName="ENTITY_TYPE_INDEX">
+            <column name="type"/>
+        </createIndex>
+        <createIndex tableName="entity" indexName="ENTITY_TENANT_INDEX">
+            <column name="tenant_id"/>
+        </createIndex>
 
-    <!-- Translations -->
-    <createTable tableName="translation">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="entity_id" type="bigint" />
-      <column name="field" type="varchar(255)" />
-    </createTable>
-    <addUniqueConstraint tableName="translation" columnNames="entity_id,field" constraintName="TRANSLATION_UNIQUE_TRANSLATION_PER_FIELD_PER_ENTITY" />
-    <addForeignKeyConstraint constraintName="TRANSLATION_ENTITY_FK"
-                             baseTableName="translation" baseColumnNames="entity_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="translation" indexName="TRANSLATION_FIELD_INDEX">
-      <column name="field" />
-    </createIndex>
+        <!-- Translations -->
+        <createTable tableName="translation">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="entity_id" type="bigint"/>
+            <column name="field" type="varchar(255)"/>
+        </createTable>
+        <addUniqueConstraint tableName="translation" columnNames="entity_id,field"
+                constraintName="TRANSLATION_UNIQUE_TRANSLATION_PER_FIELD_PER_ENTITY"/>
+        <addForeignKeyConstraint constraintName="TRANSLATION_ENTITY_FK"
+                baseTableName="translation" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="translation" indexName="TRANSLATION_FIELD_INDEX">
+            <column name="field"/>
+        </createIndex>
 
-    <createTable tableName="translation_small">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="translation_id" type="bigint" />
-      <column name="locale" type="varchar(255)" />
-      <column name="text" type="varchar(255)" />
-    </createTable>
-    <addUniqueConstraint tableName="translation_small" columnNames="translation_id,locale" constraintName="TRANSLATION_SMALL_UNIQUE_TRANSLATION_PER_LANG" />
-    <addForeignKeyConstraint constraintName="TRANSLATION_SMALL_TRANSLATION_FK"
-                             baseTableName="translation_small" baseColumnNames="translation_id"
-                             referencedTableName="translation" referencedColumnNames="id" />
-    <createIndex tableName="translation_small" indexName="TRANSLATION_SMALL_LANG_INDEX">
-      <column name="locale" />
-    </createIndex>
+        <createTable tableName="translation_small">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="translation_id" type="bigint"/>
+            <column name="locale" type="varchar(255)"/>
+            <column name="text" type="varchar(255)"/>
+        </createTable>
+        <addUniqueConstraint tableName="translation_small" columnNames="translation_id,locale"
+                constraintName="TRANSLATION_SMALL_UNIQUE_TRANSLATION_PER_LANG"/>
+        <addForeignKeyConstraint constraintName="TRANSLATION_SMALL_TRANSLATION_FK"
+                baseTableName="translation_small" baseColumnNames="translation_id"
+                referencedTableName="translation" referencedColumnNames="id"/>
+        <createIndex tableName="translation_small" indexName="TRANSLATION_SMALL_LANG_INDEX">
+            <column name="locale"/>
+        </createIndex>
 
-    <createTable tableName="translation_medium">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="translation_id" type="bigint" />
-      <column name="locale" type="varchar(255)" />
-      <column name="text" type="mediumtext" />
-    </createTable>
-    <addUniqueConstraint tableName="translation_medium" columnNames="translation_id,locale" constraintName="TRANSLATION_MEDIUM_UNIQUE_TRANSLATION_PER_LANG" />
-    <addForeignKeyConstraint constraintName="TRANSLATION_MEDIUM_TRANSLATION_FK"
-                             baseTableName="translation_medium" baseColumnNames="translation_id"
-                             referencedTableName="translation" referencedColumnNames="id" />
-    <createIndex tableName="translation_medium" indexName="TRANSLATION_MEDIUM_LANG_INDEX">
-      <column name="locale" />
-    </createIndex>
+        <createTable tableName="translation_medium">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="translation_id" type="bigint"/>
+            <column name="locale" type="varchar(255)"/>
+            <column name="text" type="mediumtext"/>
+        </createTable>
+        <addUniqueConstraint tableName="translation_medium" columnNames="translation_id,locale"
+                constraintName="TRANSLATION_MEDIUM_UNIQUE_TRANSLATION_PER_LANG"/>
+        <addForeignKeyConstraint constraintName="TRANSLATION_MEDIUM_TRANSLATION_FK"
+                baseTableName="translation_medium" baseColumnNames="translation_id"
+                referencedTableName="translation" referencedColumnNames="id"/>
+        <createIndex tableName="translation_medium" indexName="TRANSLATION_MEDIUM_LANG_INDEX">
+            <column name="locale"/>
+        </createIndex>
 
-    <!-- Agents (Correspond to user in Mayocat, but user is a reserved word) -->
-    <createTable tableName="agent">
-      <column name="entity_id" type="bigint">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="email" type="varchar(255)">
-        <constraints nullable="false" />
-      </column>
-      <column name="password" type="varchar(255)" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="AGENT_ENTITY_FK"
-                             baseTableName="agent" baseColumnNames="entity_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="agent" indexName="AGENT_EMAIL_INDEX">
-      <column name="email" />
-    </createIndex>
+        <!-- Agents (Correspond to user in Mayocat, but user is a reserved word) -->
+        <createTable tableName="agent">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="AGENT_ENTITY_FK"
+                baseTableName="agent" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="agent" indexName="AGENT_EMAIL_INDEX">
+            <column name="email"/>
+        </createIndex>
 
-    <!-- Attachments -->
-    <createTable tableName="attachment">
-      <column name="entity_id" type="bigint">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="extension" type="varchar(255)">
-        <constraints nullable="false" />
-      </column>
-      <column name="title" type="varchar(255)" />
-      <column name="description" type="mediumtext" />
-      <column name="data" type="mediumblob" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="ATTACHMENT_ENTITY_FK"
-                             baseTableName="attachment" baseColumnNames="entity_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="attachment" indexName="ATTACHMENT_EXTENSION_INDEX">
-      <column name="extension" />
-    </createIndex>
+        <!-- Attachments -->
+        <createTable tableName="attachment">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="extension" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)"/>
+            <column name="description" type="mediumtext"/>
+            <column name="data" type="mediumblob"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="ATTACHMENT_ENTITY_FK"
+                baseTableName="attachment" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="attachment" indexName="ATTACHMENT_EXTENSION_INDEX">
+            <column name="extension"/>
+        </createIndex>
 
-    <!-- Thumbnails -->
-    <createTable tableName="thumbnail">
-      <column name="attachment_id" type="bigint">
-        <constraints nullable="false" />
-      </column>
-      <column name="source" type="varchar(255)" />
-      <column name="hint" type="varchar(255)" />
-      <column name="ratio" type="varchar(255)" />
-      <column name="x" type="int" />
-      <column name="y" type="int" />
-      <column name="width" type="int" />
-      <column name="height" type="int" />
-    </createTable>
-    <addPrimaryKey tableName="thumbnail"
-                   columnNames="attachment_id,source,hint" constraintName="THUMBNAIL_PK" />
-    <addForeignKeyConstraint constraintName="THUMBNAIL_IMAGE_FK"
-                             baseTableName="thumbnail" baseColumnNames="attachment_id"
-                             referencedTableName="attachment" referencedColumnNames="entity_id" />
-    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_INDEX">
-      <column name="hint" />
-    </createIndex>
-    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_SOURCE">
-      <column name="source" />
-    </createIndex>
-    <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_RATIO">
-      <column name="ratio" />
-    </createIndex>
+        <!-- Thumbnails -->
+        <createTable tableName="thumbnail">
+            <column name="attachment_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="varchar(255)"/>
+            <column name="hint" type="varchar(255)"/>
+            <column name="ratio" type="varchar(255)"/>
+            <column name="x" type="int"/>
+            <column name="y" type="int"/>
+            <column name="width" type="int"/>
+            <column name="height" type="int"/>
+        </createTable>
+        <addPrimaryKey tableName="thumbnail"
+                columnNames="attachment_id,source,hint" constraintName="THUMBNAIL_PK"/>
+        <addForeignKeyConstraint constraintName="THUMBNAIL_IMAGE_FK"
+                baseTableName="thumbnail" baseColumnNames="attachment_id"
+                referencedTableName="attachment" referencedColumnNames="entity_id"/>
+        <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_INDEX">
+            <column name="hint"/>
+        </createIndex>
+        <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_SOURCE">
+            <column name="source"/>
+        </createIndex>
+        <createIndex tableName="thumbnail" indexName="THUMBNAIL_HINT_RATIO">
+            <column name="ratio"/>
+        </createIndex>
 
-    <!-- Role table -->
-    <createTable tableName="agent_role">
-      <column name="id" type="bigint" autoIncrement="true">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="agent_id" type="bigint" />
-      <column name="role" type="varchar(255)" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="AGENT_ROLE_AGENT_KF"
-                             baseTableName="agent_role" baseColumnNames="agent_id"
-                             referencedTableName="agent" referencedColumnNames="entity_id" />
+        <!-- Role table -->
+        <createTable tableName="agent_role">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="agent_id" type="bigint"/>
+            <column name="role" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="AGENT_ROLE_AGENT_KF"
+                baseTableName="agent_role" baseColumnNames="agent_id"
+                referencedTableName="agent" referencedColumnNames="entity_id"/>
 
-    <!-- Product table -->
-    <createTable tableName="product">
-      <column name="entity_id" type="bigint">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="position" type="smallint" />
-      <column name="title" type="varchar(255)" />
-      <column name="description" type="mediumtext" />
-      <column name="on_shelf" type="boolean" />
-      <column name="price" type="numeric(18,4)" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
-                             baseTableName="product" baseColumnNames="entity_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="product" indexName="PRODUCT_POSITION_INDEX">
-      <column name="position" />
-    </createIndex>
-    <createIndex tableName="product" indexName="PRODUCT_ON_SHELF_INDEX">
-      <column name="on_shelf" />
-    </createIndex>
+        <!-- Product table -->
+        <createTable tableName="product">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position" type="smallint"/>
+            <column name="title" type="varchar(255)"/>
+            <column name="description" type="mediumtext"/>
+            <column name="on_shelf" type="boolean"/>
+            <column name="price" type="numeric(18,4)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
+                baseTableName="product" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="product" indexName="PRODUCT_POSITION_INDEX">
+            <column name="position"/>
+        </createIndex>
+        <createIndex tableName="product" indexName="PRODUCT_ON_SHELF_INDEX">
+            <column name="on_shelf"/>
+        </createIndex>
 
-    <!-- Category table -->
-    <createTable tableName="category">
-      <column name="entity_id" type="bigint">
-        <constraints primaryKey="true" nullable="false" />
-      </column>
-      <column name="position" type="smallint" />
-      <column name="title" type="varchar(255)" />
-      <column name="description" type="mediumtext" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="CATEGORY_ENTITY_FK"
-                             baseTableName="category" baseColumnNames="entity_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <createIndex tableName="category" indexName="CATEGORY_POSITION_INDEX">
-      <column name="position" />
-    </createIndex>
+        <!-- Category table -->
+        <createTable tableName="category">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position" type="smallint"/>
+            <column name="title" type="varchar(255)"/>
+            <column name="description" type="mediumtext"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="CATEGORY_ENTITY_FK"
+                baseTableName="category" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="category" indexName="CATEGORY_POSITION_INDEX">
+            <column name="position"/>
+        </createIndex>
 
-    <!-- Category <-> Product -->
-    <createTable tableName="category_product">
-      <column name="category_id" type="bigint" />
-      <column name="product_id" type="bigint" />
-      <column name="position" type="smallint" />
-    </createTable>
-    <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_CATEGORY_ENTITY_FK"
-                             baseTableName="category_product" baseColumnNames="category_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_PRODUCT_ENTITY_FK"
-                             baseTableName="category_product" baseColumnNames="product_id"
-                             referencedTableName="entity" referencedColumnNames="id" />
-    <addPrimaryKey tableName="category_product"
-                   columnNames="category_id,product_id" constraintName="CATEGORY_PRODUCT_PK" />
-    <createIndex tableName="category_product" indexName="CATEGORY_PRODUCT_POSITION_INDEX">
-      <column name="position" />
-    </createIndex>
+        <!-- Category <-> Product -->
+        <createTable tableName="category_product">
+            <column name="category_id" type="bigint"/>
+            <column name="product_id" type="bigint"/>
+            <column name="position" type="smallint"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_CATEGORY_ENTITY_FK"
+                baseTableName="category_product" baseColumnNames="category_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="CATEGORY_PRODUCT_PRODUCT_ENTITY_FK"
+                baseTableName="category_product" baseColumnNames="product_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addPrimaryKey tableName="category_product"
+                columnNames="category_id,product_id" constraintName="CATEGORY_PRODUCT_PK"/>
+        <createIndex tableName="category_product" indexName="CATEGORY_PRODUCT_POSITION_INDEX">
+            <column name="position"/>
+        </createIndex>
 
-  </changeSet>
+    </changeSet>
 
 </databaseChangeLog>
