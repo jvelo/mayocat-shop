@@ -50,6 +50,15 @@
                 <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
             </div>
         </div>
+
+        <div ng-show="addons.length > 0">
+            <div class="block" ng-repeat="addon in addons">
+                <h3>{{addon.display}}</h3>
+                <addon definition=addon></addon>
+            </div>
+        </div>
+
+
     </article>
     </div>
     <aside ng-show="product.title != undefined">
@@ -92,8 +101,9 @@
 
         <div class="block" ng-show="!isNew() && categories.length > 0">
             <h3>Price</h3>
+
             <div>
-                <money-amount ng-model="product.price" currency="EUR" />
+                <money-amount ng-model="product.price" currency="EUR"/>
             </div>
         </div>
     </aside>

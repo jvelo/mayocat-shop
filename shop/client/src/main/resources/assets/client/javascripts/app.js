@@ -244,6 +244,51 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
     }
 }]);
 
+mayocat.directive("addonFieldString", [function ($compile) {
+    return {
+        restrict:"E",
+        scope: {
+            name:'@',
+            placeholder:'@',
+            value: '@'
+        },
+        template: "<input type='text' name={{name}} placeholder={{placeholder}} value={{value}} />"
+    };
+}]);
+
+mayocat.directive("addon", ['$compile', function ($compile) {
+    return {
+        scope: {
+            addon:'=definition'
+        },
+        restrict: "E",
+        link: function (scope, element, attrs) {
+            scope.$watch(
+                'addon',
+                function(definition) {
+                    var displayer;
+                    switch (definition.type) {
+                        case 'string':
+                        default:
+                            displayer = "<addon-field-string name={{addon.name}} " +
+                                "placeholder={{addon.placeholder}}>";
+                            break;
+                    }
+
+                    // The "template" option allow to override default behavior
+                    if (typeof definition.template !== 'undefined') {
+                        displayer = definition.template;
+                    }
+
+                    element.html(displayer);
+
+                    $compile(element.contents())(scope);
+                }
+            );
+        }
+    }
+}]);
+
 /**
  * Thumbnail editor directive
  */

@@ -19,6 +19,7 @@ models:
 
 addons:
   - name: brand
+    display: Brand
     type: string
     for: product
   - name: custom_id

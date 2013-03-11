@@ -44,7 +44,10 @@ public class DefaultThemeTest
         Assert.assertEquals(2, theme.getAddons().size());
         AddonDefinition firstAddon = theme.getAddons().get(0);
         Assert.assertEquals("brand", firstAddon.getName());
+        Assert.assertEquals("Brand", firstAddon.getDisplayName());
         Assert.assertEquals(AddonFieldType.STRING, firstAddon.getType());
+        AddonDefinition secondAddon = theme.getAddons().get(1);
+        Assert.assertEquals("custom_id", secondAddon.getDisplayName());
         List<String> entities = Lists.newArrayList("product");
         Assert.assertEquals(entities, firstAddon.getEntities().get());
         Assert.assertEquals(2, theme.getModels().size());
@@ -69,3 +72,4 @@ public class DefaultThemeTest
         Assert.assertEquals(0, theme.getModels().size());
     }
 }
+

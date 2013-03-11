@@ -3,8 +3,8 @@
 angular.module('product', ['ngResource'])
 
     .controller('ProductController', [
-        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location', 'catalogService',
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService) {
+        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location', 'catalogService', 'configurationService',
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, configurationService) {
 
             $scope.slug = $routeParams.product;
 
@@ -113,5 +113,12 @@ angular.module('product', ['ngResource'])
             else {
                 $scope.product = $scope.newProduct();
             }
+
+            $scope.addons = [];
+            configurationService.get("entities", function (entities) {
+                if (typeof entities !== 'undefined') {
+                    $scope.addons = typeof entities.product !== 'undefined' ? entities.product.addons : [];
+                }
+            });
 
         }]);
