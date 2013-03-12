@@ -2,6 +2,7 @@ package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
+import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -36,12 +37,14 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         this.dao.begin();
 
         Long entityId = this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        product.setId(entityId);
         Integer lastIndex = this.dao.lastPosition(getTenant());
         if (lastIndex == null) {
             lastIndex = 0;
         }
-        this.dao.create(entityId, lastIndex + 1, product);
+        this.dao.createProduct(entityId, lastIndex + 1, product);
         this.dao.insertTranslations(entityId, product.getTranslations());
+        this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
     }
@@ -57,7 +60,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             throw new EntityDoesNotExistException();
         }
         product.setId(originalProduct.getId());
-        Integer updatedRows = this.dao.update(product);
+        Integer updatedRows = this.dao.updateProduct(product);
+        this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
 
@@ -101,7 +105,10 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     public Product findBySlug(String slug)
     {
-        return this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
+        Product product = this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
+        List<Addon> addons = this.dao.findAddons(product);
+        product.setAddons(addons);
+        return product;
     }
 
     @Override
@@ -113,8 +120,10 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Override
     public Product findById(Long id)
     {
-        // TODO Auto-generated method stub
-        return null;
+        Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
+        List<Addon> addons = this.dao.findAddons(product);
+        product.setAddons(addons);
+        return product;
     }
 
     @Override

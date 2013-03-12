@@ -1,17 +1,20 @@
 package org.mayocat.shop.catalog.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
+import org.mayocat.model.Addon;
+import org.mayocat.model.HasAddons;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Product extends AbstractLocalizedEntity
+public class Product extends AbstractLocalizedEntity implements HasAddons
 {
     private Long id;
 
@@ -35,6 +38,8 @@ public class Product extends AbstractLocalizedEntity
 
     @SearchIndex
     private BigDecimal price;
+
+    private List<Addon> addons;
 
     public Product()
     {
@@ -105,6 +110,17 @@ public class Product extends AbstractLocalizedEntity
         this.price = price;
     }
 
+    @Override
+    public List<Addon> getAddons()
+    {
+        return this.addons;
+    }
+
+    @Override
+    public boolean conveyAddons()
+    {
+        return this.addons != null;
+    }
     ////////////////////////////////////////////////
 
     @Override  
@@ -124,13 +140,14 @@ public class Product extends AbstractLocalizedEntity
              && Objects.equal(this.slug, other.slug)
              && Objects.equal(this.description, other.description)
              && Objects.equal(this.onShelf, other.onShelf)
-             && Objects.equal(this.price, other.price);
+             && Objects.equal(this.price, other.price)
+             && Objects.equal(this.addons, other.addons);
     }  
     
     @Override
     public int hashCode()  
     {  
-        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf, this.price);
+        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf, this.price, this.addons);
     }
     
     @Override  
@@ -142,5 +159,10 @@ public class Product extends AbstractLocalizedEntity
                  .addValue(this.onShelf)
                  .addValue(this.price)
                  .toString();  
+    }
+
+    public void setAddons(List<Addon> addons)
+    {
+        this.addons = addons;
     }
 }

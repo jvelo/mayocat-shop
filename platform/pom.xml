@@ -24,6 +24,7 @@
         <module>accounts</module>
         <module>multitenancy</module>
         <module>authorization</module>
+        <module>addons</module>
         <module>views</module>
         <module>themes</module>
         <module>image</module>

@@ -101,6 +101,9 @@ angular.module('product', ['ngResource'])
                     // Ensures the category initialization happens after the AJAX callback
                     $scope.initializeCategories();
 
+                    // Same for addons
+                    $scope.initializeAddons();
+
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -112,13 +115,48 @@ angular.module('product', ['ngResource'])
             }
             else {
                 $scope.product = $scope.newProduct();
+                $scope.initializeAddons();
             }
 
-            $scope.addons = [];
-            configurationService.get("entities", function (entities) {
-                if (typeof entities !== 'undefined') {
-                    $scope.addons = typeof entities.product !== 'undefined' ? entities.product.addons : [];
+            $scope.getAddonIndex = function (definition) {
+                if (!$scope.product || !$scope.product.addons) {
+                    return -1;
                 }
-            });
+                for (var i = 0; i < $scope.product.addons.length; i++) {
+                    var addon = $scope.product.addons[i];
+                    if (addon.name == definition.name
+                        // && addon.source && definition.source TODO: put source in addon gestalt configuration
+                        && addon.source == 'theme' ) {
+                        return i;
+                    }
+                }
+                return -1;
+            };
+
+            $scope.initializeAddons = function() {
+                $scope.addons = [];
+                configurationService.get("entities", function (entities) {
+                    if (typeof entities !== 'undefined') {
+                        var definitions = entities.product.addons;
+                        for (var i=0; i<definitions.length; i++) {
+                            var index = $scope.getAddonIndex(definitions[i]);
+                            if (index < 0) {
+                                // Create addon container lazily
+                                $scope.product.addons.push({
+                                    'name': definitions[i].name,
+                                    source: "theme",
+                                    type: definitions[i].type,
+                                    value: null
+                                });
+                                index = $scope.getAddonIndex(definitions[i]);
+                            }
+                            $scope.addons.push({
+                                definition: definitions[i],
+                                index: index
+                            });
+                        }
+                    }
+                });
+            }
 
         }]);

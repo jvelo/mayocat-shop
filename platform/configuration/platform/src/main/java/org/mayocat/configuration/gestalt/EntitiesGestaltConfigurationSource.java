@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.AddonDefinition;
+import org.mayocat.addons.model.AddonDefinition;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.context.Execution;
 import org.mayocat.theme.Theme;

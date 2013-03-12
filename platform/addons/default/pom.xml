@@ -3,16 +3,28 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat.platform</groupId>
-        <artifactId>mayocat-platform-accounts</artifactId>
+        <artifactId>mayocat-platform-addons</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>mayocat-platform-accounts-api</artifactId>
+    <artifactId>mayocat-platform-addons-default</artifactId>
     <packaging>jar</packaging>
 
-    <name>Mayocat Platform - Accounts - API</name>
-    <description>Tenant and user accounts</description>
+    <name>Mayocat Platform - Addons - API</name>
+    <description>Addons</description>
 
     <dependencies>
+        <!-- Drop Wizard -->
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-base</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-model</artifactId>
@@ -21,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-api</artifactId>
+            <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

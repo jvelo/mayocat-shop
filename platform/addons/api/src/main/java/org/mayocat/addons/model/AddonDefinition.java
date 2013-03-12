@@ -1,8 +1,9 @@
-package org.mayocat.configuration;
+package org.mayocat.addons.model;
 
 import java.util.List;
 
 import org.mayocat.jackson.OptionalStringListDeserializer;
+import org.mayocat.model.AddonFieldType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -27,6 +27,9 @@ public class ProductRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<AddonRepresentation> addons = null;
+
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private String href;
@@ -115,5 +118,15 @@ public class ProductRepresentation
     public void setPrice(BigDecimal price)
     {
         this.price = price;
+    }
+
+    public List<AddonRepresentation> getAddons()
+    {
+        return addons;
+    }
+
+    public void setAddons(List<AddonRepresentation> addons)
+    {
+        this.addons = addons;
     }
 }

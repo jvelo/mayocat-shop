@@ -67,6 +67,30 @@
             <column name="tenant_id"/>
         </createIndex>
 
+        <!-- Addons -->
+        <createTable tableName="addon">
+            <column name="entity_id" type="bigint" />
+            <column name="source" type="varchar(255)" />
+            <column name="hint" type="varchar(255)" />
+            <column name="name" type="varchar(255)" />
+            <column name="type" type="varchar(255)" />
+            <column name="value" type="varchar(2000)" />
+        </createTable>
+        <addUniqueConstraint tableName="addon" columnNames="entity_id,source,hint,name"
+                constraintName="ADDON_UNIQUE_ADDON_NAME_PER_SOURCE_HINT_ENTITY"/>
+        <addForeignKeyConstraint constraintName="ADDON_ENTITY_FK"
+                baseTableName="addon" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="addon" indexName="ADDON_NAME_INDEX">
+            <column name="name" />
+        </createIndex>
+        <createIndex tableName="addon" indexName="ADDON_SOURCE_INDEX">
+            <column name="source" />
+        </createIndex>
+        <createIndex tableName="addon" indexName="ADDON_HINT_INDEX">
+            <column name="hint" />
+        </createIndex>
+
         <!-- Translations -->
         <createTable tableName="translation">
             <column name="id" type="bigint" autoIncrement="true">

@@ -29,12 +29,16 @@ import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.base.Resource;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.model.Addon;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
 import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
 import org.mayocat.shop.api.v1.resources.AbstractAttachmentResource;
 import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.api.representations.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
@@ -247,7 +251,15 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     private ProductRepresentation wrapInRepresentation(Product product)
     {
-        return new ProductRepresentation(product);
+        ProductRepresentation pr = new ProductRepresentation(product);
+        if (product.conveyAddons()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : product.getAddons()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            pr.setAddons(addons);
+        }
+        return pr;
     }
 
     private ProductRepresentation wrapInRepresentation(Product product,
@@ -256,6 +268,13 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         ProductRepresentation result = new ProductRepresentation(product);
         if (images != null) {
             result.setImages(images);
+        }
+        if (product.conveyAddons()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : product.getAddons()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            result.setAddons(addons);
         }
         return result;
     }
@@ -271,6 +290,13 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         ProductRepresentation result = new ProductRepresentation(product, categoriesReferences);
         if (images != null) {
             result.setImages(images);
+        }
+        if (product.conveyAddons()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : product.getAddons()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            result.setAddons(addons);
         }
         return result;
     }

@@ -3,7 +3,7 @@ package org.mayocat.theme;
 import java.util.List;
 import java.util.Map;
 
-import org.mayocat.configuration.AddonDefinition;
+import org.mayocat.addons.model.AddonDefinition;
 import org.mayocat.configuration.thumbnails.Dimensions;
 
 /**

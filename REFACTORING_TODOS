@@ -1,0 +1,1 @@
+- Change the getAddons() + conveyAddon() API to Optional<List<Addon>> getAddons() in product

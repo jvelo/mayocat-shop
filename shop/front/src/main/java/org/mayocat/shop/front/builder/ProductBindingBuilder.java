@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.mayocat.addons.model.AddonDefinition;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.thumbnails.Dimensions;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
+import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.theme.Theme;
@@ -90,7 +92,35 @@ public class ProductBindingBuilder
         imagesContext.put("all", allImages);
         productContext.put("images", imagesContext);
 
+        // Addons
+
+        if (product.conveyAddons()) {
+            Map<String, Object> themeAddonsContext = Maps.newHashMap();
+            List<AddonDefinition> themeAddons = theme.getAddons();
+            for (AddonDefinition definition : themeAddons) {
+                Optional<Addon> addon = findAddon(definition, product.getAddons());
+                if (addon.isPresent()) {
+                    themeAddonsContext.put(definition.getName(), addon.get().getValue());
+                } else {
+                    themeAddonsContext.put(definition.getName(), null);
+                }
+            }
+            productContext.put("theme_addons", themeAddonsContext);
+        }
+
         return productContext;
+    }
+
+    private Optional<Addon> findAddon(AddonDefinition definition, List<Addon> addons)
+    {
+        for (Addon addon : addons) {
+            if (addon.getName().equals(definition.getName()) &&
+                    addon.getSource().toJson().equals("theme"))
+            {
+                return Optional.of(addon);
+            }
+        }
+        return Optional.absent();
     }
 
     private Map<String, String> createImageContext(Image image)

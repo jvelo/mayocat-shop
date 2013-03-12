@@ -2,10 +2,12 @@ package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
 
+import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Category;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.store.rdbms.jdbi.AddonsDAO;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -14,10 +16,13 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+
 @RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
 public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>,
-        PositionedDAO<Product>
+        PositionedDAO<Product>, AddonsDAO<Product>
 {
     @SqlUpdate
     (
@@ -31,8 +36,9 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         "             :product.title, " +
         "             :product.description) "
     )
-    public abstract void create(@Bind("id") Long entityId, @Bind("position") Integer position, @BindBean("product") Product product);
-    
+    public abstract void createProduct(@Bind("id") Long entityId, @Bind("position") Integer position,
+            @BindBean("product") Product product);
+
     @SqlUpdate
     (
         "UPDATE product " +
@@ -42,8 +48,8 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         "       price = :product.price " +
         "WHERE  entity_id = :product.id "
     )
-    public abstract Integer update(@BindBean("product") Product product);
-    
+    public abstract Integer updateProduct(@BindBean("product") Product product);
+
     @SqlQuery
     (
         "SELECT product.position FROM entity INNER JOIN product ON entity.id = product.entity_id " +
@@ -83,5 +89,37 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         return this.findBySlugWithTranslations("product", slug, tenant);
     }
 
+    public void createOrUpdateAddons(Product entity)
+    {
+        if (!entity.conveyAddons()) {
+            return;
+        }
+        List<Addon> existing = this.findAddons(entity);
+        for (Addon addon : entity.getAddons()) {
+            Optional<Addon> original = findAddons(existing, addon);
+            if (original.isPresent()) {
+                this.updateAddon(entity, addon);
+            } else {
+                this.createAddon(entity, addon);
+            }
+        }
+    }
+
+    private Optional<Addon> findAddons(List<Addon> existing, Addon addon)
+    {
+        Addon found = null;
+        for (Addon a : existing) {
+            if (a.getSource().equals(addon.getSource())
+                    && a.getName().equals(addon.getName()))
+            {
+                if (!Strings.isNullOrEmpty(a.getHint()) && a.getHint().equals(addon.getHint())) {
+                    return Optional.of(a);
+                } else {
+                    found = a;
+                }
+            }
+        }
+        return Optional.fromNullable(found);
+    }
 
 }

@@ -16,6 +16,12 @@
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-addons-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-views</artifactId>
             <version>${project.version}</version>
         </dependency>

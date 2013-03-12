@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mayocat.configuration.AddonDefinition;
-import org.mayocat.configuration.AddonFieldType;
+import org.mayocat.addons.model.AddonDefinition;
+import org.mayocat.model.AddonFieldType;
 import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,8 @@ public class DefaultThemeTest
         Theme theme = mapper.readValue(themeConfig, DefaultTheme.class);
 
         Assert.assertEquals("Default theme", theme.getName());
-        Assert.assertTrue(theme.getDescription().startsWith("Et harum quidem rerum facilis est et expedita distinctio."));
+        Assert.assertTrue(
+                theme.getDescription().startsWith("Et harum quidem rerum facilis est et expedita distinctio."));
         Assert.assertEquals(2, theme.getAddons().size());
         AddonDefinition firstAddon = theme.getAddons().get(0);
         Assert.assertEquals("brand", firstAddon.getName());
@@ -55,7 +56,6 @@ public class DefaultThemeTest
         Assert.assertEquals("Fancy page", firstModel.getName());
         Assert.assertEquals("models/product_fancy.html", firstModel.getFile());
         Assert.assertEquals(entities, firstModel.getEntities().get());
-
     }
 
     @Test

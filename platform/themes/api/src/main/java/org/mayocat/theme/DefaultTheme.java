@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.mayocat.configuration.AddonDefinition;
+import org.mayocat.addons.model.AddonDefinition;
 import org.mayocat.configuration.thumbnails.Dimensions;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
