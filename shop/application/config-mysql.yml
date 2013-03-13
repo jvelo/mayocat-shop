@@ -49,7 +49,7 @@ shop:
   products:
     stock:
       default: true
-    categories:
+    collections:
       default: true
     variants: 
       default: true

@@ -18,7 +18,7 @@ public class ProductsSettings
 
     @Valid
     @JsonProperty
-    private Configurable<Boolean> categories = new Configurable<Boolean>(true);
+    private Configurable<Boolean> collections = new Configurable<Boolean>(true);
 
     @Valid
     @JsonProperty
@@ -29,9 +29,9 @@ public class ProductsSettings
     private Configurable<Boolean> priceVariesWithVariants = new Configurable<Boolean>(true);
 
 
-    public Configurable<Boolean> getCategories()
+    public Configurable<Boolean> getCollections()
     {
-        return this.categories;
+        return this.collections;
     }
 
     public Configurable<Boolean> getVariants()

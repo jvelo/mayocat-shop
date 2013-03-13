@@ -2,7 +2,7 @@ package org.mayocat.shop.catalog;
 
 import java.util.List;
 
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -14,7 +14,7 @@ import org.xwiki.component.annotation.Role;
 
 /**
  * Regroup product, product variants and catalog operations.
- * 
+ *
  * @version $Id$
  */
 @Role
@@ -31,43 +31,43 @@ public interface CatalogService
     List<Product> findAllProducts(int number, int offset);
 
     /**
-     * @return all products that does not belong to any category
+     * @return all products that does not belong to any collection
      */
-    List<Product> findUncategorizedProducts();
+    List<Product> findOrphanProducts();
 
-    // Category operations
+    // Collection operations
 
-    void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException;
+    void createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
-    void updateCategory(Category entity) throws EntityDoesNotExistException, InvalidEntityException;
+    void updateCollection(Collection entity) throws EntityDoesNotExistException, InvalidEntityException;
 
     /**
-     * @param product the product to find the categories for
-     * @return all the categories this product is listed in
+     * @param product the product to find the collections for
+     * @return all the collections this product is listed in
      */
-    List<Category> findCategoriesForProduct(Product product);
+    List<Collection> findCollectionsForProduct(Product product);
 
     /**
-     * @param category the category to find the products for
-     * @return all the products this category lists
+     * @param collection the collection to find the products for
+     * @return all the products this collection lists
      */
-    List<Product> findProductsForCategory(Category category);
+    List<Product> findProductsForCollection(Collection collection);
 
     /**
-     * Adds a product to a category
+     * Adds a product to a collection
      *
-     * @param category the slug of the category to add the product to
+     * @param collection the slug of the collection to add the product to
      * @param product the slug of the product to add
      */
-    void addProductToCategory(String category, String product) throws InvalidOperation;
+    void addProductToCollection(String collection, String product) throws InvalidOperation;
 
     /**
-     * Adds a product to a category
+     * Adds a product to a collection
      *
-     * @param category the slug of the category to add the product to
+     * @param collection the slug of the collection to add the product to
      * @param product the slug of the product to add
      */
-    void removeProductFromCategory(String category, String product) throws InvalidOperation;
+    void removeProductFromCollection(String collection, String product) throws InvalidOperation;
 
     enum InsertPosition
     {
@@ -81,8 +81,8 @@ public interface CatalogService
      * @param slugOfProductToMove the slug of the product to move
      * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
      * @throws org.mayocat.store.InvalidMoveOperation when no sense can be made of move parameters
-     * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
-     *      relative target.
+     * @see {@link #moveProductInCollection(org.mayocat.shop.catalog.model.Collection, String, String, InsertPosition)}
+     *      Inserts the product before the relative target.
      */
     void moveProduct(String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
             throws InvalidMoveOperation;
@@ -99,56 +99,55 @@ public interface CatalogService
             throws InvalidMoveOperation;
 
     /**
-     * Moves a category relatively to another, and shifts other categories as necessary.
+     * Moves a collection relatively to another, and shifts other collections as necessary.
      *
-     * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
-     *      relative target.
-     * @param slugOfCategoryToMove the slug of the category to move
-     * @param slugOfCategoryToMoveBeforeOf the slug of the category to move before of
+     * @param slugOfCollectionToMove the slug of the collection to move
+     * @param slugOfCollectionToMoveBeforeOf the slug of the collection to move before of
      * @throws org.mayocat.store.InvalidMoveOperation when no sense can be made of move parameters
+     * @see {@link #moveProductInCollection(org.mayocat.shop.catalog.model.Collection, String, String, InsertPosition)}
+     *      Inserts the product before the relative target.
      */
-    void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
+    void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveBeforeOf)
             throws InvalidMoveOperation;
 
-
     /**
-     * Moves a category relatively to another, and shifts other categories as necessary.
+     * Moves a collection relatively to another, and shifts other collections as necessary.
      *
-     * @param slugOfCategoryToMove the slug of the category to move
-     * @param slugOfCategoryToMoveBeforeOf the slug of the category to move before of
+     * @param slugOfCollectionToMove the slug of the collection to move
+     * @param slugOfCollectionToMoveBeforeOf the slug of the collection to move before of
      * @param position the relative insert position : before or after
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
-    void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf, InsertPosition position)
+    void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveBeforeOf, InsertPosition position)
             throws InvalidMoveOperation;
 
     /**
-     * @see {@link #moveProductInCategory(Category, String, String, InsertPosition)} Inserts the product before the
-     *      relative target.
-     * @param category the category in which to move the project in
+     * @param collection the collection in which to move the project in
      * @param slugOfProductToMove the slug of the project to move
      * @param slugOfProductToMoveBeforeOf the slug of the product to move before of
      * @throws InvalidMoveOperation when no sense can be made of move parameters
+     * @see {@link #moveProductInCollection(org.mayocat.shop.catalog.model.Collection, String, String, InsertPosition)}
+     *      Inserts the product before the relative target.
      */
-    void moveProductInCategory(Category category, String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
-        throws InvalidMoveOperation;
+    void moveProductInCollection(Collection collection, String slugOfProductToMove, String slugOfProductToMoveBeforeOf)
+            throws InvalidMoveOperation;
 
     /**
-     * Move a product in a category. This operation changes the position of a product within a category, and shifts
-     * other products within the same category as necessary.
-     * 
-     * @param category the category in which to move the project in
+     * Move a product in a collection. This operation changes the position of a product within a collection, and shifts
+     * other products within the same collection as necessary.
+     *
+     * @param collection the collection in which to move the project in
      * @param slugOfProductToMove the slug of the project to move
      * @param relativeSlug the slug of the product to move relative to
      * @param position the relative insert position : before or after
      * @throws InvalidMoveOperation when no sense can be made of move parameters
      */
-    void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
+    void moveProductInCollection(Collection collection, String slugOfProductToMove, String relativeSlug,
             InsertPosition position) throws InvalidMoveOperation;
 
-    Category findCategoryBySlug(String slug);
+    Collection findCollectionBySlug(String slug);
 
-    List<Category> findAllCategories(int number, int offset);
+    List<Collection> findAllCollections(int number, int offset);
 
-    List<EntityAndCount<Category>> findAllCategoriesWithProductCount();
+    List<EntityAndCount<Collection>> findAllCollectionsWithProductCount();
 }

@@ -5,19 +5,19 @@
             <a href="#/product/" class="btn">Manage products</a>
         </div>
 
-        <h1 class="">Categories</h1>
+        <h1 class="">Collections</h1>
     </div>
     <div>
-        <button class="btn btn-primary btn-large">Add a new category</button>
+        <button class="btn btn-primary btn-large">Add a new collection</button>
     </div>
 
     <!-- list/table -->
     <div>
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-            <li ng-repeat="category in categories" data-handle="{{category.slug}}">
+            <li ng-repeat="collection in collection" data-handle="{{collection.slug}}">
                 <div class="row droptarget">
-                    <div class="span6">{{category.title}}</div>
-                    <div class="span1"><a ng-click="setRoute(category.href)">Edit</a></div>
+                    <div class="span6">{{collection.title}}</div>
+                    <div class="span1"><a ng-click="setRoute(collection.href)">Edit</a></div>
                     <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
                 </div>
             </li>

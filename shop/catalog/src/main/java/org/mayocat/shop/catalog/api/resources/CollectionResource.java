@@ -20,8 +20,8 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.api.representations.CategoryRepresentation;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.api.representations.CollectionRepresentation;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.accounts.model.Role;
@@ -40,12 +40,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
-@Component("/api/1.0/category/")
-@Path("/api/1.0/category/")
+@Component("/api/1.0/collection/")
+@Path("/api/1.0/collection/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
-public class CategoryResource implements Resource
+public class CollectionResource implements Resource
 {
     @Inject
     private CatalogService catalogService;
@@ -56,7 +56,7 @@ public class CategoryResource implements Resource
     @GET
     @Timed
     @Authorized
-    public List<CategoryRepresentation> getAllCategories(
+    public List<CollectionRepresentation> getAllCollections(
             @QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
             @QueryParam("expand") @DefaultValue("") String expand)
@@ -65,10 +65,10 @@ public class CategoryResource implements Resource
 
         if (expand.equals("productCount")) {
             return this.wrapInReprensentationsWithCount(
-                    this.catalogService.findAllCategoriesWithProductCount());
+                    this.catalogService.findAllCollectionsWithProductCount());
         }
         else {
-            return this.wrapInReprensentations(this.catalogService.findAllCategories(number, offset));
+            return this.wrapInReprensentations(this.catalogService.findAllCollections(number, offset));
         }
     }
 
@@ -76,17 +76,17 @@ public class CategoryResource implements Resource
     @GET
     @Timed
     @Authorized
-    public Object getCategory(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
+    public Object getCollection(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
-        Category category = this.catalogService.findCategoryBySlug(slug);
-        if (category == null) {
+        Collection collection = this.catalogService.findCollectionBySlug(slug);
+        if (collection == null) {
             return Response.status(404).build();
         }
         if (!Strings.isNullOrEmpty(expand)) {
-            List<Product> products = this.catalogService.findProductsForCategory(category);
-            return this.wrapInRepresentation(category, products);
+            List<Product> products = this.catalogService.findProductsForCollection(collection);
+            return this.wrapInRepresentation(collection, products);
         } else {
-            return this.wrapInRepresentation(category);
+            return this.wrapInRepresentation(collection);
         }
     }
 
@@ -97,15 +97,15 @@ public class CategoryResource implements Resource
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.WILDCARD)
     public Response move(@PathParam("slug") String slug,
-            @FormParam("before") String slugOfCategoryToMoveBeforeOf,
-            @FormParam("after") String slugOfCategoryToMoveAfterOf)
+            @FormParam("before") String slugOfCollectionToMoveBeforeOf,
+            @FormParam("after") String slugOfCollectionToMoveAfterOf)
     {
         try {
-            if (!Strings.isNullOrEmpty(slugOfCategoryToMoveAfterOf)) {
-                this.catalogService.moveCategory(slug,
-                        slugOfCategoryToMoveAfterOf, CatalogService.InsertPosition.AFTER);
+            if (!Strings.isNullOrEmpty(slugOfCollectionToMoveAfterOf)) {
+                this.catalogService.moveCollection(slug,
+                        slugOfCollectionToMoveAfterOf, CatalogService.InsertPosition.AFTER);
             } else {
-                this.catalogService.moveCategory(slug, slugOfCategoryToMoveBeforeOf);
+                this.catalogService.moveCollection(slug, slugOfCollectionToMoveBeforeOf);
             }
 
             return Response.noContent().build();
@@ -124,7 +124,7 @@ public class CategoryResource implements Resource
     @Produces(MediaType.WILDCARD)
     public Response addProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
         try {
-            this.catalogService.addProductToCategory(slug, product);
+            this.catalogService.addProductToCollection(slug, product);
             return Response.noContent().build();
         } catch (InvalidOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
@@ -141,7 +141,7 @@ public class CategoryResource implements Resource
     @Produces(MediaType.WILDCARD)
     public Response removeProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
         try {
-            this.catalogService.removeProductFromCategory(slug, product);
+            this.catalogService.removeProductFromCollection(slug, product);
             return Response.noContent().build();
         } catch (InvalidOperation e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
@@ -160,13 +160,13 @@ public class CategoryResource implements Resource
         @FormParam("after") String slugOfProductToMoveAfterOf)
     {
         try {
-            Category category = this.catalogService.findCategoryBySlug(slug);
+            Collection collection = this.catalogService.findCollectionBySlug(slug);
 
             if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterOf)) {
-                this.catalogService.moveProductInCategory(category, slugOfProductToMove,
+                this.catalogService.moveProductInCollection(collection, slugOfProductToMove,
                         slugOfProductToMoveAfterOf, CatalogService.InsertPosition.AFTER);
             } else {
-                this.catalogService.moveProductInCategory(category, slugOfProductToMove,
+                this.catalogService.moveProductInCollection(collection, slugOfProductToMove,
                         slugOfProductToMoveBeforeOf);
             }
 
@@ -182,18 +182,18 @@ public class CategoryResource implements Resource
     @POST
     @Timed
     @Authorized
-    public Response updateCategory(@PathParam("slug") String slug,
-            Category updatedCategory)
+    public Response updateCollection(@PathParam("slug") String slug,
+            Collection updatedCollection)
     {
         try {
-            this.catalogService.updateCategory(updatedCategory);
+            this.catalogService.updateCollection(updatedCollection);
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No category with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+                    .entity("No collection with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
@@ -201,8 +201,8 @@ public class CategoryResource implements Resource
     @PUT
     @Timed
     @Authorized
-    public Response replaceCategory(@PathParam("slug") String slug,
-        Category newCategory)
+    public Response replaceCollection(@PathParam("slug") String slug,
+            Collection newCollection)
     {
         // TODO
         throw new RuntimeException("Not implemented");
@@ -211,57 +211,57 @@ public class CategoryResource implements Resource
     @POST
     @Timed
     @Authorized(roles = { Role.ADMIN })
-    public Response createCategory(Category category)
+    public Response createCollection(Collection collection)
     {
         try {
-            this.catalogService.createCategory(category);
+            this.catalogService.createCollection(collection);
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
-                .entity("A Category with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+                .entity("A Collection with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<CategoryRepresentation> wrapInReprensentationsWithCount(List<EntityAndCount<Category>> categories)
+    private List<CollectionRepresentation> wrapInReprensentationsWithCount(List<EntityAndCount<Collection>> collections)
     {
-        List<CategoryRepresentation> result = new ArrayList<CategoryRepresentation>();
-        for (EntityAndCount<Category> entity : categories) {
+        List<CollectionRepresentation> result = new ArrayList<CollectionRepresentation>();
+        for (EntityAndCount<Collection> entity : collections) {
             result.add(this.wrapInRepresentation(entity.getEntity(), entity.getCount()));
         }
         return result;
     }
 
-    private List<CategoryRepresentation> wrapInReprensentations(List<Category> categories)
+    private List<CollectionRepresentation> wrapInReprensentations(List<Collection> collections)
     {
-        List<CategoryRepresentation> result = new ArrayList<CategoryRepresentation>();
-        for (Category category : categories) {
-            result.add(this.wrapInRepresentation(category));
+        List<CollectionRepresentation> result = new ArrayList<CollectionRepresentation>();
+        for (Collection collection : collections) {
+            result.add(this.wrapInRepresentation(collection));
         }
         return result;
     }
 
-    private CategoryRepresentation wrapInRepresentation(Category category)
+    private CollectionRepresentation wrapInRepresentation(Collection collection)
     {
-        return new CategoryRepresentation(category);
+        return new CollectionRepresentation(collection);
     }
 
-    private CategoryRepresentation wrapInRepresentation(Category category, List<Product> products)
+    private CollectionRepresentation wrapInRepresentation(Collection collection, List<Product> products)
     {
-        List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
+        List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Product product : products) {
-            categoriesReferences.add(new EntityReferenceRepresentation(product.getTitle(), "/product/" + product.getSlug()
+            collectionsReferences.add(new EntityReferenceRepresentation(product.getTitle(), "/product/" + product.getSlug()
             ));
         }
-        return new CategoryRepresentation(category, categoriesReferences);
+        return new CollectionRepresentation(collection, collectionsReferences);
     }
 
-    private CategoryRepresentation wrapInRepresentation(Category category, Long count)
+    private CollectionRepresentation wrapInRepresentation(Collection collection, Long count)
     {
-        return new CategoryRepresentation(count, category);
+        return new CollectionRepresentation(count, collection);
     }
 }

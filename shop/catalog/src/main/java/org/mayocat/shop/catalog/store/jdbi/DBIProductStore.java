@@ -3,7 +3,7 @@ package org.mayocat.shop.catalog.store.jdbi;
 import java.util.List;
 
 import org.mayocat.model.Addon;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
@@ -70,15 +70,15 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
     }
 
-    public void moveProduct(String productToMove, String productToMoveRelativeTo,
+    public void moveProduct(String collectionToMove, String collectionToMoveRelativeTo,
             HasOrderedCollections.RelativePosition relativePosition) throws InvalidMoveOperation
     {
         this.dao.begin();
 
         List<Product> allProducts = this.findAll();
         MoveEntityInListOperation<Product> moveOp =
-                new MoveEntityInListOperation<Product>(allProducts, productToMove,
-                        productToMoveRelativeTo, relativePosition);
+                new MoveEntityInListOperation<Product>(allProducts, collectionToMove,
+                        collectionToMoveRelativeTo, relativePosition);
 
         if (moveOp.hasMoved()) {
             this.dao.updatePositions(PRODUCT_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());
@@ -88,9 +88,9 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
-    public List<Product> findUncategorizedProducts()
+    public List<Product> findOrphanProducts()
     {
-        return this.dao.findUncategorized(getTenant());
+        return this.dao.findOrphanProducts(getTenant());
     }
 
     public List<Product> findAll()
@@ -112,9 +112,9 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
-    public List<Product> findAllForCategory(Category category)
+    public List<Product> findAllForCollection(Collection collection)
     {
-        return this.dao.findAllForCategory(category);
+        return this.dao.findAllForCollection(collection);
     }
 
     @Override

@@ -6,8 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.Slugifier;
-import org.mayocat.shop.catalog.model.Category;
-import org.mayocat.shop.catalog.store.CategoryStore;
+import org.mayocat.shop.catalog.model.Collection;
+import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
@@ -29,7 +29,7 @@ public class DefaultCatalogService implements CatalogService
     private Provider<ProductStore> productStore;
 
     @Inject
-    private Provider<CategoryStore> categoryStore;
+    private Provider<CollectionStore> collectionStore;
 
     @Inject
     private Slugifier slugifier;
@@ -60,68 +60,68 @@ public class DefaultCatalogService implements CatalogService
         return this.productStore.get().findAll(number, offset);
     }
 
-    public List<Product> findUncategorizedProducts()
+    public List<Product> findOrphanProducts()
     {
-        return this.productStore.get().findUncategorizedProducts();
+        return this.productStore.get().findOrphanProducts();
     }
 
     @Override
-    public void createCategory(Category entity) throws InvalidEntityException, EntityAlreadyExistsException
+    public void createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.slugifier.slugify(entity.getTitle()));
         }
-        this.categoryStore.get().create(entity);
+        this.collectionStore.get().create(entity);
     }
 
     @Override
-    public void updateCategory(Category entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void updateCollection(Collection entity) throws EntityDoesNotExistException, InvalidEntityException
     {
-        this.categoryStore.get().update(entity);
+        this.collectionStore.get().update(entity);
     }
 
     @Override
-    public List<Category> findCategoriesForProduct(Product product)
+    public List<Collection> findCollectionsForProduct(Product product)
     {
-        return this.categoryStore.get().findAllForProduct(product);
+        return this.collectionStore.get().findAllForProduct(product);
     }
 
     @Override
-    public List<Product> findProductsForCategory(Category category)
+    public List<Product> findProductsForCollection(Collection collection)
     {
-        return this.productStore.get().findAllForCategory(category);
+        return this.productStore.get().findAllForCollection(collection);
     }
 
     @Override
-    public void addProductToCategory(String category, String product) throws InvalidOperation
+    public void addProductToCollection(String collection, String product) throws InvalidOperation
     {
-        Category c = this.findCategoryBySlug(category);
+        Collection c = this.findCollectionBySlug(collection);
         Product p = this.findProductBySlug(product);
         if (p == null || c == null) {
-            throw new InvalidOperation("Product or category does not exist");
+            throw new InvalidOperation("Product or collection does not exist");
         }
-        List<Category> categories = this.categoryStore.get().findAllForProduct(p);
-        if (categories.contains(c)) {
+        List<Collection> collections = this.collectionStore.get().findAllForProduct(p);
+        if (collections.contains(c)) {
             // Already has it : nothing to do
             return;
         }
-        this.categoryStore.get().addProduct(c, p);
+        this.collectionStore.get().addProduct(c, p);
     }
 
     @Override
-    public void removeProductFromCategory(String category, String product) throws InvalidOperation
+    public void removeProductFromCollection(String collection, String product) throws InvalidOperation
     {
-        Category c = this.findCategoryBySlug(category);
+        Collection c = this.findCollectionBySlug(collection);
         Product p = this.findProductBySlug(product);
         if (p == null || c == null) {
-            throw new InvalidOperation("Product or category does not exist");
+            throw new InvalidOperation("Product or collection does not exist");
         }
-        List<Category> categories = this.categoryStore.get().findAllForProduct(p);
-        if (!categories.contains(c)) {
+        List<Collection> collections = this.collectionStore.get().findAllForProduct(p);
+        if (!collections.contains(c)) {
             // It does not contain it : nothing to do
             return;
         }
-        this.categoryStore.get().removeProduct(c, p);
+        this.collectionStore.get().removeProduct(c, p);
     }
 
     @Override
@@ -141,48 +141,48 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToMoveBeforeOf)
+    public void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveBeforeOf)
             throws InvalidMoveOperation
     {
-        this.moveCategory(slugOfCategoryToMove, slugOfCategoryToMoveBeforeOf, InsertPosition.BEFORE);
+        this.moveCollection(slugOfCollectionToMove, slugOfCollectionToMoveBeforeOf, InsertPosition.BEFORE);
     }
 
     @Override
-    public void moveCategory(String slugOfCategoryToMove, String slugOfCategoryToRelativeTo,
+    public void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveBeforeOf,
             InsertPosition position) throws InvalidMoveOperation
     {
-        this.categoryStore.get().moveCategory(slugOfCategoryToMove, slugOfCategoryToRelativeTo,
+        this.collectionStore.get().moveCollection(slugOfCollectionToMove, slugOfCollectionToMoveBeforeOf,
                 position.equals(InsertPosition.AFTER) ? HasOrderedCollections.RelativePosition.AFTER :
                         HasOrderedCollections.RelativePosition.BEFORE);
     }
 
     @Override
-    public Category findCategoryBySlug(String slug)
+    public Collection findCollectionBySlug(String slug)
     {
-        return this.categoryStore.get().findBySlug(slug);
+        return this.collectionStore.get().findBySlug(slug);
     }
 
     @Override
-    public List<Category> findAllCategories(int number, int offset)
+    public List<Collection> findAllCollections(int number, int offset)
     {
-        return this.categoryStore.get().findAll(number, offset);
+        return this.collectionStore.get().findAll(number, offset);
     }
 
     @Override
-    public List<EntityAndCount<Category>> findAllCategoriesWithProductCount()
+    public List<EntityAndCount<Collection>> findAllCollectionsWithProductCount()
     {
-        return this.categoryStore.get().findAllWithProductCount();
+        return this.collectionStore.get().findAllWithProductCount();
     }
 
     @Override
-    public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug)
+    public void moveProductInCollection(Collection collection, String slugOfProductToMove, String relativeSlug)
             throws InvalidMoveOperation
     {
-        this.moveProductInCategory(category, slugOfProductToMove, relativeSlug, InsertPosition.BEFORE);
+        this.moveProductInCollection(collection, slugOfProductToMove, relativeSlug, InsertPosition.BEFORE);
     }
 
     @Override
-    public void moveProductInCategory(Category category, String slugOfProductToMove, String relativeSlug,
+    public void moveProductInCollection(Collection collection, String slugOfProductToMove, String relativeSlug,
             InsertPosition insertPosition) throws InvalidMoveOperation
     {
         throw new InvalidMoveOperation();

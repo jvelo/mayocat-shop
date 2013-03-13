@@ -89,16 +89,16 @@
             <pre>/product/{{product.slug}}</pre>
         </div>
 
-        <div class="block" ng-show="!isNew() && categories.length > 0">
-            <h3>Categories</h3>
+        <div class="block" ng-show="!isNew() && collections.length > 0">
+            <h3>Collections</h3>
             <ul class="list unstyled">
-                <li ng-repeat="category in categories">
-                    <input type="checkbox" ng-model="category.hasProduct"/> {{category.title}}
+                <li ng-repeat="collection in collections">
+                    <input type="checkbox" ng-model="collection.hasProduct"/> {{collection.title}}
                 </li>
             </ul>
         </div>
 
-        <div class="block" ng-show="!isNew() && categories.length > 0">
+        <div class="block" ng-show="!isNew() && collections.length > 0">
             <h3>Price</h3>
 
             <div>

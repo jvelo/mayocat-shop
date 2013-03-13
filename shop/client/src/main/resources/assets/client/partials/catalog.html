@@ -5,22 +5,22 @@
     	<h2>All products</h2>
     </div>
 
-    <!-- list categories -->
-    <div ng-show="hasCategories">
+    <!-- list collections -->
+    <div ng-show="hasCollections">
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-            <li ng-repeat="category in categories" data-handle="{{category.slug}}">
+            <li ng-repeat="collection in collections" data-handle="{{collection.slug}}">
                 <div class="droptarget">
-                    <span class="category" ng-click="toggleExpand(category)">
-                        <a ng-click="setRoute(category.href)">{{category.title}}</a>
+                    <span class="collection" ng-click="toggleExpand(collection)">
+                        <a ng-click="setRoute(collection.href)">{{collection.title}}</a>
                     </span>
-                    <ng-pluralize count="category.numberOfProducts"
+                    <ng-pluralize count="collection.numberOfProducts"
                                   when="{'0': 'No product yet',
                                      'one': '1 product',
                                      'other': '{} products'}">
                     </ng-pluralize>
-                    <div ng-show="category.isExpanded">
+                    <div ng-show="collection.isExpanded">
                         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                            <li ng-repeat="product in category.products" data-handle="{{product.slug}}">
+                            <li ng-repeat="product in collection.products" data-handle="{{product.slug}}">
                                 <div class="row droptarget">
                                     <div><a ng-click="setRoute(product.href)">{{product.title}}</a></div>
                                     <div><span class="dragme move-handle"></span></div>
@@ -34,10 +34,10 @@
         </ul>
     </div>
 
-    <!-- list remaining products (un-categorized products, or all products if the shop is configured to not have categories -->
+    <!-- list remaining products (orphan products, or all products if the shop is configured to not have collections -->
     <div>
-        <ul ng-show="hasCategories">
-            <li><span class="category">Uncategorized products</span></li>
+        <ul ng-show="hasCollections">
+            <li><span class="collection">Uncategorized products</span></li>
             
             <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
                 <li ng-repeat="product in products" data-handle="{{product.slug}}">

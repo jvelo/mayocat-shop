@@ -59,7 +59,7 @@ catalog:
   products:
     stock:
       default: true
-    categories:
+    collections:
       default: true
       configurable: false
       visible: true

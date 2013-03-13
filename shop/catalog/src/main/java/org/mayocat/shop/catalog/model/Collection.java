@@ -11,7 +11,7 @@ import org.mayocat.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Category extends AbstractLocalizedEntity
+public class Collection extends AbstractLocalizedEntity
 {
     private Long id;
 
@@ -29,23 +29,23 @@ public class Category extends AbstractLocalizedEntity
     @SearchIndex
     private String description;
 
-    public Category()
+    public Collection()
     {
         super();
     }
 
-    public Category(Translations translations)
+    public Collection(Translations translations)
     {
         super(translations);
     }
 
-    public Category(Long id)
+    public Collection(Long id)
     {
         super();
         this.id = id;
     }
 
-    public Category(Long id, Translations translations)
+    public Collection(Long id, Translations translations)
     {
         super(translations);
         this.id = id;
@@ -102,7 +102,7 @@ public class Category extends AbstractLocalizedEntity
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Category other = (Category) obj;
+        final Collection other = (Collection) obj;
 
         return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
             && Objects.equal(this.description, other.description);

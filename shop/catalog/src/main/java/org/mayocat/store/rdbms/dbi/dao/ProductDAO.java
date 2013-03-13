@@ -3,7 +3,7 @@ package org.mayocat.store.rdbms.dbi.dao;
 import java.util.List;
 
 import org.mayocat.model.Addon;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
 import org.mayocat.accounts.model.Tenant;
@@ -64,25 +64,25 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         "       INNER JOIN product " +
         "               ON product.entity_id = entity.id " +
         "WHERE  NOT EXISTS (SELECT product_id " +
-        "                   FROM   category_product " +
+        "                   FROM   collection_product " +
         "                   WHERE  product_id = entity.id) " +
         "       AND entity.tenant_id = 1 " +
         "ORDER  BY product.position ASC "
     )
-    public abstract List<Product> findUncategorized(@BindBean("tenant")Tenant tenant);
+    public abstract List<Product> findOrphanProducts(@BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     (
         "SELECT * " +
-        "FROM   category_product " +
+        "FROM   collection_product " +
         "       INNER JOIN entity " +
-        "               ON entity.id = category_product.product_id " +
+        "               ON entity.id = collection_product.product_id " +
         "       INNER JOIN product " +
-        "               ON product.entity_id = category_product.product_id " +
-        "WHERE  category_product.category_id = :category.id " +
-        "ORDER  BY category_product.position "
+        "               ON product.entity_id = collection_product.product_id " +
+        "WHERE  collection_product.collection_id = :collection.id " +
+        "ORDER  BY collection_product.position "
     )
-    public abstract List<Product> findAllForCategory(@BindBean("category")Category category);
+    public abstract List<Product> findAllForCollection(@BindBean("collection") Collection collection);
 
     public Product findBySlug(String slug, Tenant tenant)
     {

@@ -30,8 +30,6 @@ import org.mayocat.base.Resource;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
@@ -40,11 +38,10 @@ import org.mayocat.shop.api.v1.resources.AbstractAttachmentResource;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.api.representations.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -84,7 +81,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             @QueryParam("filter") @DefaultValue("") String filter)
     {
         if (filter.equals("uncategorized")) {
-            return this.wrapInRepresentations(this.catalogService.findUncategorizedProducts());
+            return this.wrapInRepresentations(this.catalogService.findOrphanProducts());
         } else {
             return this.wrapInRepresentations(this.catalogService.findAllProducts(number, offset));
         }
@@ -104,12 +101,12 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 ? Collections.<String>emptyList()
                 : Arrays.asList(expand.split(","));
 
-        if (expansions.contains("categories")) {
-            List<Category> categories = this.catalogService.findCategoriesForProduct(product);
+        if (expansions.contains("collections")) {
+            List<Collection> collections = this.catalogService.findCollectionsForProduct(product);
             if (expansions.contains("images")) {
-                return this.wrapInRepresentation(product, categories, this.getImages(slug));
+                return this.wrapInRepresentation(product, collections, this.getImages(slug));
             } else {
-                return this.wrapInRepresentation(product, categories, null);
+                return this.wrapInRepresentation(product, collections, null);
             }
         } else if (expansions.contains("images")) {
             return this.wrapInRepresentation(product, this.getImages(slug));
@@ -279,15 +276,15 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         return result;
     }
 
-    private ProductRepresentation wrapInRepresentation(Product product, List<Category> categories,
+    private ProductRepresentation wrapInRepresentation(Product product, List<Collection> collections,
             List<ImageRepresentation> images)
     {
-        List<EntityReferenceRepresentation> categoriesReferences = Lists.newArrayList();
-        for (Category category : categories) {
-            categoriesReferences
-                    .add(new EntityReferenceRepresentation(category.getTitle(), "/category/" + category.getSlug()));
+        List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
+        for (Collection collection : collections) {
+            collectionsReferences
+                    .add(new EntityReferenceRepresentation(collection.getTitle(), "/collection/" + collection.getSlug()));
         }
-        ProductRepresentation result = new ProductRepresentation(product, categoriesReferences);
+        ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {
             result.setImages(images);
         }

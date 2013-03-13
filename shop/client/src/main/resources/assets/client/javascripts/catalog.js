@@ -3,15 +3,15 @@
 angular.module('catalog', [])
     .service('catalogService', function ($http, configurationService) {
         return {
-            hasCategories: function(callback) {
-                configurationService.get("catalog.products.categories", function(hasCategories){
-                    callback && callback.call(this, hasCategories);
+            hasCollections: function(callback) {
+                configurationService.get("catalog.products.collections", function(hasCollections){
+                    callback && callback.call(this, hasCollections);
                 });
             },
 
             listProducts:function (callback) {
-                this.hasCategories(function(hasCategories){
-                    if (!hasCategories) {
+                this.hasCollections(function(hasCollections){
+                    if (!hasCollections) {
                         $http.get('/api/1.0/product/').success(function (data) {
                             callback && callback.call(this, data);
                         });
@@ -24,26 +24,26 @@ angular.module('catalog', [])
                 });
             },
 
-            listProductsForCategory:function (category, callback) {
-                $http.get('/api/1.0/category/' + category + "?expand=products").success(function (data) {
+            listProductsForCollection:function (collection, callback) {
+                $http.get('/api/1.0/collection/' + collection + "?expand=products").success(function (data) {
                     callback && callback.call(this, data.products);
                 });
             },
 
-            listCategories:function (callback) {
-                this.hasCategories(function(hasCategories){
-                    if (!hasCategories) {
+            listCollections:function (callback) {
+                this.hasCollections(function(hasCollections){
+                    if (!hasCollections) {
                         callback && callback.call(this, []);
                     }
-                    $http.get('/api/1.0/category/?expand=productCount').success(function (data) {
+                    $http.get('/api/1.0/collection/?expand=productCount').success(function (data) {
                         callback && callback.call(this, data);
                     });
                 });
             },
-            moveCategory:function (slug, target, position) {
+            moveCollection:function (slug, target, position) {
             },
             moveProduct:function (slug, target, position) {
-                $http.post('/api/1.0/category/_all/move',
+                $http.post('/api/1.0/collection/_all/move',
                     "product=" + slug + "&" + position + "=" + target,
                     { "headers":{'Content-Type':'application/x-www-form-urlencoded'} })
                     .success(function (data) {
@@ -75,28 +75,27 @@ angular.module('catalog', [])
             $location.url(href);
         };
 
-        catalogService.hasCategories(function (has) {
-            $scope.hasCategories = has;
+        catalogService.hasCollections(function (has) {
+            $scope.hasCollections = has;
         });
 
         catalogService.listProducts(function (products) {
             $scope.products = products;
         });
 
-        catalogService.listCategories(function (categories) {
-            $scope.categories = categories;
+        catalogService.listCollections(function (collections) {
+            $scope.collections = collections;
         });
 
-        $scope.toggleExpand = function(category) {
-            if (typeof category.products === "undefined") {
-                catalogService.listProductsForCategory(category.slug, function(products){
-                    category.products = products;
-                    category.isExpanded = true;
-                    console.log(category.products);
+        $scope.toggleExpand = function(collection) {
+            if (typeof collection.products === "undefined") {
+                catalogService.listProductsForCollection(collection.slug, function(products){
+                    collection.products = products;
+                    collection.isExpanded = true;
                 });
             }
             else {
-                category.isExpanded = !category.isExpanded;
+                collection.isExpanded = !collection.isExpanded;
             }
         }
 
@@ -115,7 +114,7 @@ angular.module('catalog', [])
             $scope.changeOperation = undefined;
         }
 
-        configurationService.get("catalog.products.categories", function(value){
-          $scope.hasCategories = value;
+        configurationService.get("catalog.products.collections", function(value){
+          $scope.hasCollections = value;
         });
     }]);

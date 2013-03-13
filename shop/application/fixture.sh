@@ -9,7 +9,7 @@ curl -i -H "Content-Type: application/json" -X POST -d " \
   "                                                      \
   http://localhost:8080/api/1.0/user/
 
-echo -e "\n\nAdding some categories...\n"
+echo -e "\n\nAdding some collections...\n"
 
 curl -i -H "Content-Type: application/json"                            \
         -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
@@ -18,7 +18,7 @@ curl -i -H "Content-Type: application/json"                            \
     \"title\"    : \"Vehicles\"                                        \
   }                                                                    \
   "                                                                    \
-  http://localhost:8080/api/1.0/category/
+  http://localhost:8080/api/1.0/collection/
 
 curl -i -H "Content-Type: application/json"                            \
         -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
@@ -27,7 +27,7 @@ curl -i -H "Content-Type: application/json"                            \
     \"title\"    : \"Garments\"                                        \
   }                                                                    \
   "                                                                    \
-  http://localhost:8080/api/1.0/category/
+  http://localhost:8080/api/1.0/collection/
 
 echo -e "\n\nAdding some products...\n"
 

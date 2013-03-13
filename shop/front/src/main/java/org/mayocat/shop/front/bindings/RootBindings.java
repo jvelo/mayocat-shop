@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.context.Execution;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.Bindings;
@@ -45,18 +45,18 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
             put(SITE_TAGLINE, config.getTagline().getValue());
         }});
 
-        List<Category> categories = this.catalogService.findAllCategories(20, 0);
-        List<Map<String, Object>> categoriesBinding = Lists.newArrayList();
+        List<Collection> collections = this.catalogService.findAllCollections(20, 0);
+        List<Map<String, Object>> collectionsBinding = Lists.newArrayList();
 
-        for (final Category category : categories) {
-            categoriesBinding.add(new HashMap<String, Object>(){{
-                put("url", "/category/" + category.getSlug());
-                put("title", category.getTitle());
-                put("description", category.getDescription());
+        for (final Collection collection : collections) {
+            collectionsBinding.add(new HashMap<String, Object>(){{
+                put("url", "/collection/" + collection.getSlug());
+                put("title", collection.getTitle());
+                put("description", collection.getDescription());
             }});
         }
 
-        data.put(CATEGORIES, categoriesBinding);
+        data.put(COLLECTIONS, collectionsBinding);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
         data.put(PAGE_TITLE, config.getName().getValue());

@@ -24,12 +24,12 @@ angular.module('product', ['ngResource'])
                 }
                 else {
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product);
-                    angular.forEach($scope.categories, function (category) {
-                        if (category.hasProduct && !category.hadProduct) {
-                            $scope.categoryOperation(category, "addProduct");
+                    angular.forEach($scope.collections, function (collection) {
+                        if (collection.hasProduct && !collection.hadProduct) {
+                            $scope.collectionOperation(collection, "addProduct");
                         }
-                        if (category.hadProduct && !category.hasProduct) {
-                            $scope.categoryOperation(category, "removeProduct");
+                        if (collection.hadProduct && !collection.hasProduct) {
+                            $scope.collectionOperation(collection, "removeProduct");
                         }
                     });
                 }
@@ -39,8 +39,8 @@ angular.module('product', ['ngResource'])
                 $rootScope.$broadcast('thumbnails:edit', image);
             }
 
-            $scope.categoryOperation = function (category, operation) {
-                $resource("/api/1.0/category/:slug/:operation", {"slug": category.slug, "operation": operation}, {
+            $scope.collectionOperation = function (collection, operation) {
+                $resource("/api/1.0/collection/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
                     "save": {
                         method: 'POST',
                         headers: {
@@ -74,20 +74,20 @@ angular.module('product', ['ngResource'])
                 return "/api/1.0/product/" + $scope.slug + "/attachment";
             }
 
-            $scope.initializeCategories = function () {
-                catalogService.listCategories(function (categories) {
-                    $scope.categories = categories;
-                    angular.forEach($scope.categories, function (category) {
-                        angular.forEach($scope.product.categories, function (c) {
-                            if (category.href == c.href) {
+            $scope.initializeCollections = function () {
+                catalogService.listCollections(function (collections) {
+                    $scope.collections = collections;
+                    angular.forEach($scope.collections, function (collection) {
+                        angular.forEach($scope.product.collections, function (c) {
+                            if (collection.href == c.href) {
                                 // hasProduct => used as model
-                                category.hasProduct = true
+                                collection.hasProduct = true
                                 // hadProduct => used when saving to see if we need to update anything
-                                category.hadProduct = true
+                                collection.hadProduct = true
                             }
-                            else if (!category.hasProduct) {
-                                category.hasProduct = false;
-                                category.hadProduct = false;
+                            else if (!collection.hasProduct) {
+                                collection.hasProduct = false;
+                                collection.hadProduct = false;
                             }
                         });
                     });
@@ -97,9 +97,9 @@ angular.module('product', ['ngResource'])
             if (!$scope.isNew()) {
                 $scope.product = $scope.ProductResource.get({
                     "slug": $scope.slug,
-                    "expand": ["categories", "images"] }, function () {
-                    // Ensures the category initialization happens after the AJAX callback
-                    $scope.initializeCategories();
+                    "expand": ["collections", "images"] }, function () {
+                    // Ensures the collection initialization happens after the AJAX callback
+                    $scope.initializeCollections();
 
                     // Same for addons
                     $scope.initializeAddons();

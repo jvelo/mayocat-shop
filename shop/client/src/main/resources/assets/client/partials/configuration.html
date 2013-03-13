@@ -100,17 +100,17 @@
                 <fieldset>
                     <legend>Products</legend>
 
-                    <!-- Categories -->
-                    <div class="control-group" ng-show="isVisible('catalog.products.categories')"
-                         ng-class="{default: isDefaultValue('catalog.products.categories')}">
-                        <label class="control-label" for="categoriesEnabled">have categories</label>
+                    <!-- Collections -->
+                    <div class="control-group" ng-show="isVisible('catalog.products.collections')"
+                         ng-class="{default: isDefaultValue('catalog.products.collections')}">
+                        <label class="control-label" for="collectionsEnabled">have collections</label>
 
                         <div class="controls">
                             <label class="checkbox">
                                 <input type="checkbox"
                                        class="input"
-                                       id="categoriesEnabled"
-                                       ng-model="settings.catalog.products.categories.value"/>
+                                       id="collectionsEnabled"
+                                       ng-model="settings.catalog.products.collections.value"/>
                             </label>
                         </div>
                     </div>

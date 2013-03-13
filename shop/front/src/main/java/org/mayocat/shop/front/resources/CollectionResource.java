@@ -24,7 +24,7 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
@@ -43,12 +43,12 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-@Component("/category/")
-@Path("/category/")
+@Component("/collection/")
+@Path("/collection/")
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CategoryResource extends AbstractFrontResource implements Resource, BindingsContants
+public class CollectionResource extends AbstractFrontResource implements Resource, BindingsContants
 {
     @Inject
     private CatalogService catalogService;
@@ -70,26 +70,26 @@ public class CategoryResource extends AbstractFrontResource implements Resource,
 
     @Path("{slug}")
     @GET
-    public FrontView getCategory(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
+    public FrontView getCollection(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
-        Category category = catalogService.findCategoryBySlug(slug);
-        if (category == null) {
+        Collection collection = catalogService.findCollectionBySlug(slug);
+        if (collection == null) {
             return new FrontView("404", breakpoint);
         }
 
-        FrontView result = new FrontView("category", breakpoint);
+        FrontView result = new FrontView("collection", breakpoint);
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 
-        bindings.put(PAGE_TITLE, category.getTitle());
-        bindings.put(PAGE_DESCRIPTION, category.getDescription());
+        bindings.put(PAGE_TITLE, collection.getTitle());
+        bindings.put(PAGE_DESCRIPTION, collection.getDescription());
 
-        // Sets the "current" flag on the current category
+        // Sets the "current" flag on the current collection
         try {
-            List<Map<String, Object>> categories = (List<Map<String, Object>>) bindings.get(CATEGORIES);
-            for (Map<String, Object> c : categories) {
-                if (c.containsKey("url") && c.get("url").equals("/category/" + category.getSlug())) {
+            List<Map<String, Object>> collections = (List<Map<String, Object>>) bindings.get(COLLECTIONS);
+            for (Map<String, Object> c : collections) {
+                if (c.containsKey("url") && c.get("url").equals("/collection/" + collection.getSlug())) {
                     c.put("current", true);
                 }
             }
@@ -99,11 +99,11 @@ public class CategoryResource extends AbstractFrontResource implements Resource,
         }
 
         // TODO Introduce a notion of "Front representation"
-        Map<String, Object> categoryContext = Maps.newHashMap();
-        categoryContext.put("title", category.getTitle());
-        categoryContext.put("description", category.getDescription());
+        Map<String, Object> collectionContext = Maps.newHashMap();
+        collectionContext.put("title", collection.getTitle());
+        collectionContext.put("description", collection.getDescription());
 
-        List<Product> products = catalogService.findProductsForCategory(category);
+        List<Product> products = catalogService.findProductsForCollection(collection);
         List<Map<String, Object>> productsBinding = Lists.newArrayList();
 
         final CatalogSettings configuration = (CatalogSettings)
@@ -130,9 +130,9 @@ public class CategoryResource extends AbstractFrontResource implements Resource,
             productsBinding.add(productContext);
         }
 
-        categoryContext.put("products", productsBinding);
+        collectionContext.put("products", productsBinding);
 
-        bindings.put("category", categoryContext);
+        bindings.put("collection", collectionContext);
 
         result.putBindings(bindings);
 

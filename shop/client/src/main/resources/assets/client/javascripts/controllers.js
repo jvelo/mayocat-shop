@@ -48,7 +48,7 @@ function AppController($rootScope, $scope, $location) {
   };
 
   $scope.$watch('location.path()', function(path) {
-      if (path.indexOf("/product/") == 0 || path.indexOf("/category/") == 0) {
+      if (path.indexOf("/product/") == 0 || path.indexOf("/collection/") == 0) {
        $scope.isCatalog = true;
       }
       else {

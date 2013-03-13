@@ -1,0 +1,30 @@
+<h1 class="small" ng-show="!isNew()">Edit collection</h1>
+<h1 class="small" ng-show="isNew()">New collection</h1>
+
+<form>
+    <article class="entity" ng-class="{true: 'loading', false: ''}[collection.title == undefined]">
+
+        <div ng-show="collection.title">
+
+            <!-- Title -->
+            <input type="text" class="title" ng-model="collection.title"/>
+
+            <!-- Description -->
+            <div>
+                <label>Description</label>
+                <textarea rows="10" ng-model="collection.description"/>
+            </div>
+        </div>
+
+    </article>
+    <aside>
+        <div class="buttons">
+            <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+        </div>
+        <p class="uri" ng-show="!isNew()">
+            <small>
+                <pre>/collection/{{collection.slug}}</pre>
+            </small>
+        </p>
+    </aside>
+</form>

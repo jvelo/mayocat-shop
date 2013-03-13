@@ -2,7 +2,7 @@ package org.mayocat.shop.catalog.store;
 
 import java.util.List;
 
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.HasOrderedCollections;
@@ -15,10 +15,10 @@ public interface ProductStore extends Store<Product, Long>, HasOrderedCollection
 {    
     Product findBySlug(String slug);
 
-    void moveProduct(String categoryToMove, String categoryToMoveRelativeTo, RelativePosition relativePosition)
+    void moveProduct(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 
-    List<Product> findUncategorizedProducts();
+    List<Product> findOrphanProducts();
 
-    List<Product> findAllForCategory(Category category);
+    List<Product> findAllForCollection(Collection collection);
 }

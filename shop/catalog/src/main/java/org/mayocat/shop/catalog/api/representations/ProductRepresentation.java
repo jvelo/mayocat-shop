@@ -22,7 +22,7 @@ public class ProductRepresentation
     private BigDecimal price;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<EntityReferenceRepresentation> categories = null;
+    private List<EntityReferenceRepresentation> collections = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
@@ -39,12 +39,12 @@ public class ProductRepresentation
         this(product, null, null);
     }
 
-    public ProductRepresentation(Product product, List<EntityReferenceRepresentation> categories)
+    public ProductRepresentation(Product product, List<EntityReferenceRepresentation> collections)
     {
-        this(product, categories, null);
+        this(product, collections, null);
     }
 
-    public ProductRepresentation(Product product, List<EntityReferenceRepresentation> categories,
+    public ProductRepresentation(Product product, List<EntityReferenceRepresentation> collections,
             List<ImageRepresentation> images)
     {
         this.slug = product.getSlug();
@@ -55,7 +55,7 @@ public class ProductRepresentation
 
         this.href = "/product/" + this.slug;
 
-        this.categories = categories;
+        this.collections = collections;
         this.images = images;
     }
 
@@ -79,14 +79,14 @@ public class ProductRepresentation
         return href;
     }
 
-    public List<EntityReferenceRepresentation> getCategories()
+    public List<EntityReferenceRepresentation> getCollections()
     {
-        return categories;
+        return collections;
     }
 
-    public void setCategories(List<EntityReferenceRepresentation> categories)
+    public void setCollections(List<EntityReferenceRepresentation> collections)
     {
-        this.categories = categories;
+        this.collections = collections;
     }
 
     public List<ImageRepresentation> getImages()

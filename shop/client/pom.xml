@@ -42,7 +42,7 @@
                         <include>assets/client/javascripts/search.js</include>
                         <include>assets/client/javascripts/product.js</include>
                         <include>assets/client/javascripts/thumbnail.js</include>
-                        <include>assets/client/javascripts/category.js</include>
+                        <include>assets/client/javascripts/collection.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/money.js</include>

@@ -2,12 +2,12 @@ package org.mayocat.shop.catalog.api.representations;
 
 import java.util.List;
 
-import org.mayocat.shop.catalog.model.Category;
+import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-public class CategoryRepresentation
+public class CollectionRepresentation
 {
     private String title;
 
@@ -23,33 +23,33 @@ public class CategoryRepresentation
 
     private String href;
 
-    public CategoryRepresentation(Category category)
+    public CollectionRepresentation(Collection collection)
     {
-        this(category, null);
+        this(collection, null);
     }
 
-    public CategoryRepresentation(Long numberOfProducts, Category category)
+    public CollectionRepresentation(Long numberOfProducts, Collection collection)
     {
-        this(category, null);
+        this(collection, null);
         this.numberOfProducts = numberOfProducts;
     }
 
-    public CategoryRepresentation(Category category, List<EntityReferenceRepresentation> products)
+    public CollectionRepresentation(Collection collection, List<EntityReferenceRepresentation> products)
     {
-        this.title = category.getTitle();
-        this.description = category.getDescription();
-        this.slug = category.getSlug();
+        this.title = collection.getTitle();
+        this.description = collection.getDescription();
+        this.slug = collection.getSlug();
 
-        this.href = "/category/" + this.slug;
+        this.href = "/collection/" + this.slug;
 
         this.products = products;
         if (products != null) {
             // FIXME
-            // This assumes that ALL products for a category gets passed.
+            // This assumes that ALL products for a collection gets passed.
             // We might want that if we decide that the product is not designed to handle thousands of products
-            // per category.
-            // There is the (future, potential) case of "marketplace categories" to consider though,
-            // where a single category is shared across tenant and can have a large number of products.
+            // per collection.
+            // There is the (future, potential) case of "marketplace collections" to consider though,
+            // where a single collection is shared across tenant and can have a large number of products.
             this.numberOfProducts = Long.valueOf(products.size());
         }
     }

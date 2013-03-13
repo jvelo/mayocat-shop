@@ -1,7 +1,7 @@
 org.mayocat.shop.front.resources.ImageResource
 org.mayocat.shop.front.resources.ProductResource
 org.mayocat.shop.front.resources.ResourceResource
-org.mayocat.shop.front.resources.CategoryResource
+org.mayocat.shop.front.resources.CollectionResource
 org.mayocat.shop.front.resources.HomeResource
 org.mayocat.shop.front.internal.DefaultFrontBindingManager
 org.mayocat.shop.front.bindings.RootBindings
