@@ -53,7 +53,7 @@
 
         <div ng-show="addons.length > 0">
             <div class="block" ng-repeat="addon in addons">
-                <h3>{{addon.definition.display}}</h3>
+                <h3>{{addon.definition.name}}</h3>
                 <addon definition=addon.definition value="product.addons[addon.index].value"></addon>
             </div>
         </div>

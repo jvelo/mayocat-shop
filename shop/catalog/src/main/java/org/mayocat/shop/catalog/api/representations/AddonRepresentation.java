@@ -13,17 +13,17 @@ public class AddonRepresentation
 
     private String source;
 
-    private String hint;
+    private String group;
 
-    private String name;
+    private String key;
 
     public AddonRepresentation(Addon addon)
     {
         this.value = addon.getValue();
         this.type = addon.getType().toJson();
-        this.hint = addon.getHint();
+        this.group = addon.getGroup();
         this.source = addon.getSource().toJson();
-        this.name = addon.getName();
+        this.key = addon.getKey();
     }
 
     public Object getValue()
@@ -56,23 +56,23 @@ public class AddonRepresentation
         this.source = source;
     }
 
-    public String getHint()
+    public String getGroup()
     {
-        return hint;
+        return group;
     }
 
-    public void setHint(String hint)
+    public void setGroup(String group)
     {
-        this.hint = hint;
+        this.group = group;
     }
 
-    public String getName()
+    public String getKey()
     {
-        return name;
+        return key;
     }
 
-    public void setName(String name)
+    public void setKey(String key)
     {
-        this.name = name;
+        this.key = key;
     }
 }

@@ -271,7 +271,7 @@ mayocat.directive("addon", ['$compile', function ($compile) {
                     switch (definition.type) {
                         case 'string':
                         default:
-                            displayer = "<addon-field-string name={{addon.name}} " +
+                            displayer = "<addon-field-string name={{addon.key}} " +
                                 "placeholder={{addon.placeholder}} value={{value}}>";
                             break;
                     }
@@ -285,7 +285,6 @@ mayocat.directive("addon", ['$compile', function ($compile) {
 
                     var updated = $compile(element.contents())(scope);
 
-
                     $(element).on("change", function() {
                         var serialized = $("<form/>").html($(element).clone()).serializeArray();
                         if (serialized.length === 1) {
@@ -294,9 +293,11 @@ mayocat.directive("addon", ['$compile', function ($compile) {
                         else {
                             var value = serialized;
                         }
+
                         scope.$apply(function($scope){
-                            scope.value = value;
+                            $scope.value = value;
                         });
+
                     });
                     // TODO maybe do this with mutation observers instead?
                 }

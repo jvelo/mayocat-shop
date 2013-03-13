@@ -110,9 +110,9 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         Addon found = null;
         for (Addon a : existing) {
             if (a.getSource().equals(addon.getSource())
-                    && a.getName().equals(addon.getName()))
+                    && a.getKey().equals(addon.getKey()))
             {
-                if (!Strings.isNullOrEmpty(a.getHint()) && a.getHint().equals(addon.getHint())) {
+                if (!Strings.isNullOrEmpty(a.getGroup()) && a.getGroup().equals(addon.getGroup())) {
                     return Optional.of(a);
                 } else {
                     found = a;

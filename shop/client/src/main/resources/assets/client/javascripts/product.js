@@ -124,7 +124,7 @@ angular.module('product', ['ngResource'])
                 }
                 for (var i = 0; i < $scope.product.addons.length; i++) {
                     var addon = $scope.product.addons[i];
-                    if (addon.name == definition.name
+                    if (addon.key == definition.key
                         // && addon.source && definition.source TODO: put source in addon gestalt configuration
                         && addon.source == 'theme' ) {
                         return i;
@@ -143,7 +143,8 @@ angular.module('product', ['ngResource'])
                             if (index < 0) {
                                 // Create addon container lazily
                                 $scope.product.addons.push({
-                                    'name': definitions[i].name,
+                                    'key': definitions[i].key,
+                                    'group': definitions[i].group,
                                     source: "theme",
                                     type: definitions[i].type,
                                     value: null

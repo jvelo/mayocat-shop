@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mayocat.addons.model.AddonDefinition;
-import org.mayocat.model.AddonFieldType;
 import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,11 +43,11 @@ public class DefaultThemeTest
                 theme.getDescription().startsWith("Et harum quidem rerum facilis est et expedita distinctio."));
         Assert.assertEquals(2, theme.getAddons().size());
         AddonDefinition firstAddon = theme.getAddons().get(0);
-        Assert.assertEquals("brand", firstAddon.getName());
-        Assert.assertEquals("Brand", firstAddon.getDisplayName());
-        Assert.assertEquals(AddonFieldType.STRING, firstAddon.getType());
+        Assert.assertEquals("brand", firstAddon.getKey());
+        Assert.assertEquals("Brand", firstAddon.getName());
+        Assert.assertEquals("string", firstAddon.getType());
         AddonDefinition secondAddon = theme.getAddons().get(1);
-        Assert.assertEquals("custom_id", secondAddon.getDisplayName());
+        Assert.assertEquals("custom_id", secondAddon.getName());
         List<String> entities = Lists.newArrayList("product");
         Assert.assertEquals(entities, firstAddon.getEntities().get());
         Assert.assertEquals(2, theme.getModels().size());

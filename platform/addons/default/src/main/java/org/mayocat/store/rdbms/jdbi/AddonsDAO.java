@@ -30,14 +30,14 @@ public interface AddonsDAO<T extends HasAddons>
         "INSERT INTO addon " +
         "            (entity_id, " +
         "             source, " +
-        "             hint, " +
-        "             name," +
+        "             addon_group, " +
+        "             addon_key," +
         "             type," +
         "             value) " +
         "VALUES      (:entity.id, " +
         "             :addon.source, " +
-        "             :addon.hint, " +
-        "             :addon.name," +
+        "             :addon.group, " +
+        "             :addon.key," +
         "             :addon.type," +
         "             :addon.value) "
     )
@@ -50,7 +50,8 @@ public interface AddonsDAO<T extends HasAddons>
         "    value = :addon.value " +
         "WHERE entity_id = :entity.id " +
         "AND   source = :addon.source " +
-        "AND   name = :addon.name "
+        "AND   addon_key = :addon.key " +
+        "AND   addon_group = :addon.group "
     )
     void updateAddon(@BindBean("entity") T entity, @BindAddon("addon")Addon addon);
 }

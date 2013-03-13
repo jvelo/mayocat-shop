@@ -100,9 +100,9 @@ public class ProductBindingBuilder
             for (AddonDefinition definition : themeAddons) {
                 Optional<Addon> addon = findAddon(definition, product.getAddons());
                 if (addon.isPresent()) {
-                    themeAddonsContext.put(definition.getName(), addon.get().getValue());
+                    themeAddonsContext.put(definition.getKey(), addon.get().getValue());
                 } else {
-                    themeAddonsContext.put(definition.getName(), null);
+                    themeAddonsContext.put(definition.getKey(), null);
                 }
             }
             productContext.put("theme_addons", themeAddonsContext);
@@ -114,7 +114,7 @@ public class ProductBindingBuilder
     private Optional<Addon> findAddon(AddonDefinition definition, List<Addon> addons)
     {
         for (Addon addon : addons) {
-            if (addon.getName().equals(definition.getName()) &&
+            if (addon.getKey().equals(definition.getKey()) &&
                     addon.getSource().toJson().equals("theme"))
             {
                 return Optional.of(addon);

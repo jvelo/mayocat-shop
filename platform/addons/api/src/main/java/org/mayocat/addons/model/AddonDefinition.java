@@ -16,10 +16,9 @@ import com.google.common.base.Strings;
  */
 public class AddonDefinition
 {
-    private String name;
+    private String key;
 
-    @JsonProperty("display")
-    private String displayName;
+    private String name;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String placeholder;
@@ -27,18 +26,18 @@ public class AddonDefinition
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String template;
 
-    private AddonFieldType type;
+    private String type;
 
     @JsonDeserialize(using = OptionalStringListDeserializer.class)
     @JsonProperty("for")
     private Optional<List<String>> entities = Optional.absent();
 
-    public String getName()
+    public String getKey()
     {
-        return name;
+        return key;
     }
 
-    public AddonFieldType getType()
+    public String getType()
     {
         return type;
     }
@@ -48,9 +47,9 @@ public class AddonDefinition
         return entities;
     }
 
-    public String getDisplayName()
+    public String getName()
     {
-        return Strings.isNullOrEmpty(this.displayName) ? this.getName() : this.displayName;
+        return Strings.isNullOrEmpty(this.name) ? this.getKey() : this.name;
     }
 
     public String getPlaceholder()

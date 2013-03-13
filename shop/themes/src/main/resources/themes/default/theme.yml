@@ -18,13 +18,13 @@ models:
     for:    [product, page]
 
 addons:
-  - name: brand
-    display: Brand
+  - key: brand
+    name: Brand
     type: string
     placeholder: Product's brand
     for: product
-  - name: custom_id
-    display: Custom ID
+  - key: custom_id
+    name: Custom ID
     type: json
     placeholder: 160
     template: <input type='number' step="20" max="200" name={{addon.name}} placeholder={{addon.placeholder}} />

@@ -71,24 +71,24 @@
         <createTable tableName="addon">
             <column name="entity_id" type="bigint" />
             <column name="source" type="varchar(255)" />
-            <column name="hint" type="varchar(255)" />
-            <column name="name" type="varchar(255)" />
+            <column name="addon_group" type="varchar(255)" /> <!-- "group" is a reserved keyword -->
             <column name="type" type="varchar(255)" />
+            <column name="addon_key" type="varchar(255)" /> <!-- "key" is a reserved keyword -->
             <column name="value" type="varchar(2000)" />
         </createTable>
-        <addUniqueConstraint tableName="addon" columnNames="entity_id,source,hint,name"
-                constraintName="ADDON_UNIQUE_ADDON_NAME_PER_SOURCE_HINT_ENTITY"/>
+        <addUniqueConstraint tableName="addon" columnNames="entity_id,source,addon_group,addon_key"
+                constraintName="ADDON_UNIQUE_ADDON_KEY_PER_SOURCE_GROUP_ENTITY"/>
         <addForeignKeyConstraint constraintName="ADDON_ENTITY_FK"
                 baseTableName="addon" baseColumnNames="entity_id"
                 referencedTableName="entity" referencedColumnNames="id"/>
-        <createIndex tableName="addon" indexName="ADDON_NAME_INDEX">
-            <column name="name" />
+        <createIndex tableName="addon" indexName="ADDON_KEY_INDEX">
+            <column name="addon_key" />
         </createIndex>
         <createIndex tableName="addon" indexName="ADDON_SOURCE_INDEX">
             <column name="source" />
         </createIndex>
-        <createIndex tableName="addon" indexName="ADDON_HINT_INDEX">
-            <column name="hint" />
+        <createIndex tableName="addon" indexName="ADDON_GROUP_INDEX">
+            <column name="addon_group" />
         </createIndex>
 
         <!-- Translations -->

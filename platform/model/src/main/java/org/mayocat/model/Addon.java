@@ -9,9 +9,9 @@ public class Addon<T>
 
     private AddonSource source;
 
-    private String hint;
+    private String group;
 
-    private String name;
+    private String key;
 
     private AddonFieldType type;
 
@@ -25,14 +25,14 @@ public class Addon<T>
         return source;
     }
 
-    public String getHint()
+    public String getGroup()
     {
-        return hint;
+        return group;
     }
 
-    public String getName()
+    public String getKey()
     {
-        return name;
+        return key;
     }
 
     public AddonFieldType getType()
@@ -50,14 +50,14 @@ public class Addon<T>
         this.source = source;
     }
 
-    public void setHint(String hint)
+    public void setGroup(String group)
     {
-        this.hint = hint;
+        this.group = group;
     }
 
-    public void setName(String name)
+    public void setKey(String key)
     {
-        this.name = name;
+        this.key = key;
     }
 
     public void setType(AddonFieldType type)

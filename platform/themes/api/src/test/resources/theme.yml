@@ -18,10 +18,10 @@ models:
     for:    [product, page]
 
 addons:
-  - name: brand
-    display: Brand
+  - key: brand
+    name: Brand
     type: string
     for: product
-  - name: custom_id
+  - key: custom_id
     type: json
     for: [product, page]
