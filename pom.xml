@@ -104,6 +104,7 @@
 
     <modules>
         <module>platform</module>
+        <module>cms</module>
         <module>shop</module>
     </modules>
 
