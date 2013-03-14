@@ -1,4 +1,4 @@
-package org.mayocat.shop.api.v1.representations;
+package org.mayocat.shop.rest.representations;
 
 import org.mayocat.image.model.Image;
 import org.mayocat.model.Attachment;

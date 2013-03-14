@@ -1,0 +1,2 @@
+org.mayocat.cms.pages.store.jdbi.DBIPageStore
+org.mayocat.cms.pages.api.resources.PageResource

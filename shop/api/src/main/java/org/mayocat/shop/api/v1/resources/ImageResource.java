@@ -13,7 +13,7 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.image.util.ImageUtils;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
+import org.mayocat.shop.rest.representations.ThumbnailRepresentation;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.store.AttachmentStore;
 import org.xwiki.component.annotation.Component;

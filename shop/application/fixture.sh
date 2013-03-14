@@ -63,3 +63,22 @@ curl -i -H "Content-Type: application/json"                            \
   }                                                                    \
   "                                                                    \
   http://localhost:8080/api/1.0/product/
+
+echo -e "\n\nAdding some pages...\n"
+
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"James Swasey House\"                              \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/page/
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"2003 Grand Prix Americas (Champ Car)\"            \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/page/

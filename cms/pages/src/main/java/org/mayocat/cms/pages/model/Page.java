@@ -34,6 +34,17 @@ public class Page extends AbstractLocalizedEntity implements Child
     @SearchIndex
     private String content;
 
+    public Page()
+    {
+
+    }
+
+    public Page(Long id)
+    {
+        setId(id);
+    }
+
+
     public Long getId()
     {
         return id;

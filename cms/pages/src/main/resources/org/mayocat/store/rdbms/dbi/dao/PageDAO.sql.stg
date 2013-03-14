@@ -1,0 +1,18 @@
+group PageDAO;
+
+lastPosition() ::= <<
+    SELECT page.position
+    FROM entity
+    INNER JOIN page ON entity.id = page.entity_id
+    WHERE entity.type = 'page'
+        AND entity.tenant_id = :tenant.id
+    ORDER BY position DESC LIMIT 1
+>>
+
+createPage() ::= <<
+    INSERT INTO page (entity_id, position, title, content)
+    VALUES (:id,
+            :position,
+            :page.title,
+            :page.content)
+>>

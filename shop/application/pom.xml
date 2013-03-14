@@ -64,6 +64,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mayocat.cms</groupId>
+            <artifactId>mayocat-cms-pages</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-client</artifactId>
             <version>${project.version}</version>

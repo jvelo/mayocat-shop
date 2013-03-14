@@ -218,6 +218,22 @@
                 baseTableName="agent_role" baseColumnNames="agent_id"
                 referencedTableName="agent" referencedColumnNames="entity_id"/>
 
+        <!-- Page table -->
+        <createTable tableName="page">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position" type="smallint"/>
+            <column name="title" type="varchar(255)"/>
+            <column name="content" type="mediumtext"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="PAGE_ENTITY_FK"
+                baseTableName="page" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="page" indexName="PAGE_POSITION_INDEX">
+            <column name="position"/>
+        </createIndex>
+
         <!-- Product table -->
         <createTable tableName="product">
             <column name="entity_id" type="bigint">
