@@ -1,33 +1,17 @@
 package org.mayocat.shop.api.v1.resources;
 
-import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.ServletContext;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.base.Resource;
 import org.mayocat.image.ImageService;
-import org.mayocat.image.model.Thumbnail;
-import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.image.util.ImageUtils;
-import org.mayocat.model.Attachment;
-import org.mayocat.shop.api.v1.parameters.ImageOptions;
-import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
+import org.mayocat.shop.rest.AbstractAttachmentResource;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;

@@ -18,4 +18,6 @@ public interface AttachmentStore extends Store<Attachment, Long>, EntityStore
     Attachment findBySlugAndExtension(String fileName, String extension);
 
     List<Attachment> findAllChildrenOf(Entity parent);
+
+    List<Attachment> findAllChildrenOf(Entity parent, List<String> extensions);
 }

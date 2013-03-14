@@ -1,5 +1,7 @@
 package org.mayocat.shop.api.v1.representations;
 
+import org.mayocat.model.Attachment;
+
 /**
  * @version $Id$
  */
@@ -7,7 +9,16 @@ public class FileRepresentation
 {
     private String extension;
 
+    /**
+     * "Public" URI at which this file contents is served. This is not an API URI, but a frontal, public facing URI.
+     */
     private String href;
+
+    public FileRepresentation(Attachment attachment, String href)
+    {
+        this.extension = attachment.getExtension();
+        this.href = href;
+    }
 
     public FileRepresentation(String extension, String href)
     {

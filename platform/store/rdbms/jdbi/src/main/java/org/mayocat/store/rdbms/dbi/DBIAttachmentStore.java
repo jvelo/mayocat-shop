@@ -93,6 +93,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public List<Attachment> findAllChildrenOf(Entity parent, List<String> extensions)
+    {
+        return this.dao.findAttachmentsOfEntity(parent);
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(AttachmentDAO.class);

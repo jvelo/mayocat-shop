@@ -13,6 +13,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 /**
  * @version $Id$
@@ -49,6 +50,18 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
     )
     List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity);
 
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN attachment" +
+        "               ON entity.id = attachment.entity_id " +
+        "WHERE  entity.type = 'attachment' " +
+        "       AND attachment.extension in (<extensions>)" +
+        "       AND entity.parent_id = :entity.id"
+    )
+    List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity,
+            @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
     (

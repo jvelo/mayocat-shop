@@ -130,7 +130,7 @@ angular.module('thumbnail', ['ngResource'])
                     "height":$scope.currentCoordinates.height,
                     "ratio":reduce($scope.currentSize.dimensions.width, $scope.currentSize.dimensions.height)
                 };
-                $resource("/api/1.0" + $scope.image.href + "/thumbnail/", {}, {
+                $resource($scope.image.href + "/thumbnail/", {}, {
                     "save":{
                         "method":"PUT"
                     }

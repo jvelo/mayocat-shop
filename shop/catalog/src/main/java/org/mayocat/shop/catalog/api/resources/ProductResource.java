@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.base.Resource;
+import org.mayocat.image.ImageService;
+import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
@@ -34,12 +36,12 @@ import org.mayocat.model.Attachment;
 import org.mayocat.shop.api.v1.representations.FileRepresentation;
 import org.mayocat.shop.api.v1.representations.ImageRepresentation;
 import org.mayocat.shop.api.v1.representations.ThumbnailRepresentation;
-import org.mayocat.shop.api.v1.resources.AbstractAttachmentResource;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.api.representations.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.rest.AbstractAttachmentResource;
 import org.mayocat.shop.rest.annotation.ExistingTenant;
 import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -124,18 +126,17 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (product == null) {
             throw new WebApplicationException(Response.status(404).build());
         }
-        for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product)) {
-            FileRepresentation fr = new FileRepresentation(attachment.getExtension(),
-                    "/image/" + attachment.getSlug() + "." + attachment.getExtension());
+
+        for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product,
+                Arrays.asList("png", "jpg", "jpeg", "gif")))
+        {
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-            List<ThumbnailRepresentation> thumbnailRepresentations = Lists.newArrayList();
-            for (Thumbnail thumb : thumbnails) {
-                thumbnailRepresentations.add(new ThumbnailRepresentation(thumb));
-            }
-            ImageRepresentation representation = new ImageRepresentation(
-                    attachment.getTitle(), "/image/" + attachment.getSlug(), fr, thumbnailRepresentations);
+            Image image = new Image(attachment, thumbnails);
+            ImageRepresentation representation = new ImageRepresentation(image);
+
             result.add(representation);
         }
+
         return result;
     }
 
@@ -282,7 +283,8 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Collection collection : collections) {
             collectionsReferences
-                    .add(new EntityReferenceRepresentation(collection.getTitle(), "/collection/" + collection.getSlug()));
+                    .add(new EntityReferenceRepresentation(collection.getTitle(),
+                            "/collection/" + collection.getSlug()));
         }
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {
