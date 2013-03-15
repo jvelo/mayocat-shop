@@ -1,5 +1,7 @@
 package org.mayocat.shop.catalog.api.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,14 +216,19 @@ public class CollectionResource implements Resource
     public Response createCollection(Collection collection)
     {
         try {
-            this.catalogService.createCollection(collection);
+            Collection created = this.catalogService.createCollection(collection);
 
-            return Response.ok().build();
+            // Respond with a created URI relative to this API URL.
+            // This will add a location header like http://host/api/<version>/collection/my-created-collection
+            return Response.created(new URI(created.getSlug())).build();
+
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                 .entity("A Collection with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        } catch (URISyntaxException e) {
+            throw new WebApplicationException(e);
         }
     }
 

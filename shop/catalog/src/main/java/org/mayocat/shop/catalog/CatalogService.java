@@ -37,7 +37,7 @@ public interface CatalogService
 
     // Collection operations
 
-    void createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException;
+    Collection createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException;
 
     void updateCollection(Collection entity) throws EntityDoesNotExistException, InvalidEntityException;
 

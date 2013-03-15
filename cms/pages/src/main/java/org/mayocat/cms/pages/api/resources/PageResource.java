@@ -100,7 +100,10 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
             Page created = pageStore.get().findBySlug(page.getSlug());
 
-            return Response.seeOther(new URI("/api/1.0/page/" + created.getSlug())).build();
+            // Respond with a created URI relative to this API URL.
+            // This will add a location header like http://host/api/<version>/page/my-created-product
+            return Response.created(new URI(created.getSlug())).build();
+
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {

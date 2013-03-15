@@ -66,12 +66,14 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException
+    public Collection createCollection(Collection entity) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (Strings.isNullOrEmpty(entity.getSlug())) {
             entity.setSlug(this.slugifier.slugify(entity.getTitle()));
         }
         this.collectionStore.get().create(entity);
+
+        return this.findCollectionBySlug(entity.getSlug());
     }
 
     @Override

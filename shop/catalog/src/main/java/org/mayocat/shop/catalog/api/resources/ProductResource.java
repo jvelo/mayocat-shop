@@ -183,6 +183,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @POST
     @Timed
     @Authorized
+    // Partial update : NOT idempotent
     public Response updateProduct(@PathParam("slug") String slug,
             Product updatedProduct)
     {
@@ -221,8 +222,10 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         try {
             Product created = this.catalogService.createProduct(product);
 
-            // TODO : URI factory
-            return Response.seeOther(new URI("/api/1.0/product/" + created.getSlug())).build();
+            // Respond with a created URI relative to this API URL.
+            // This will add a location header like http://host/api/<version>/product/my-created-product
+            return Response.created(new URI(created.getSlug())).build();
+
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {

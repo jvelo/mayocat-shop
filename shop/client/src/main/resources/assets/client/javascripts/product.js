@@ -17,9 +17,12 @@ angular.module('product', ['ngResource'])
                 if ($scope.isNew()) {
                     $http.post("/api/1.0/product/", $scope.product)
                         .success(function (data, status, headers, config) {
-                            $location.path("/product/" + data.slug);
+                            var fragments = headers("location").split('/'),
+                                slug = fragments[fragments.length - 1];
+                            $location.url("/product/" + slug);
                         })
                         .error(function (data, status, headers, config) {
+                            // TODO handle 409 conflict
                         });
                 }
                 else {
@@ -60,7 +63,8 @@ angular.module('product', ['ngResource'])
             $scope.newProduct = function () {
                 return {
                     slug: "",
-                    title: ""
+                    title: "",
+                    addons: []
                 };
             }
 
@@ -92,30 +96,6 @@ angular.module('product', ['ngResource'])
                         });
                     });
                 });
-            }
-
-            if (!$scope.isNew()) {
-                $scope.product = $scope.ProductResource.get({
-                    "slug": $scope.slug,
-                    "expand": ["collections", "images"] }, function () {
-                    // Ensures the collection initialization happens after the AJAX callback
-                    $scope.initializeCollections();
-
-                    // Same for addons
-                    $scope.initializeAddons();
-
-                    if ($scope.product.onShelf == null) {
-                        // "null" does not seem to be evaluated properly in angular directives
-                        // (like ng-show="something != null")
-                        // Thus, we convert "null"onShelf to undefined to be able to have that "high impedance" state in
-                        // angular directives.
-                        $scope.product.onShelf = undefined;
-                    }
-                });
-            }
-            else {
-                $scope.product = $scope.newProduct();
-                $scope.initializeAddons();
             }
 
             $scope.getAddonIndex = function (definition) {
@@ -158,6 +138,32 @@ angular.module('product', ['ngResource'])
                         }
                     }
                 });
+            }
+
+            // Initialize existing product or new product
+
+            if (!$scope.isNew()) {
+                $scope.product = $scope.ProductResource.get({
+                    "slug": $scope.slug,
+                    "expand": ["collections", "images"] }, function () {
+                    // Ensures the collection initialization happens after the AJAX callback
+                    $scope.initializeCollections();
+
+                    // Same for addons
+                    $scope.initializeAddons();
+
+                    if ($scope.product.onShelf == null) {
+                        // "null" does not seem to be evaluated properly in angular directives
+                        // (like ng-show="something != null")
+                        // Thus, we convert "null"onShelf to undefined to be able to have that "high impedance" state in
+                        // angular directives.
+                        $scope.product.onShelf = undefined;
+                    }
+                });
+            }
+            else {
+                $scope.product = $scope.newProduct();
+                $scope.initializeAddons();
             }
 
         }]);
