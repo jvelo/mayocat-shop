@@ -183,11 +183,14 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
             // Checks for methods or classes that requires authorization
             if (method.getMethod().isAnnotationPresent(Authorized.class)
-                    || method.getClass().isAnnotationPresent(Authorized.class)) {
+                    || method.getDeclaringResource().getResourceClass().isAnnotationPresent(Authorized.class))
+            {
 
-                Authorized annotation = method.getDeclaringResource().getAnnotation(Authorized.class);
+                Authorized annotation;
                 if (method.isAnnotationPresent(Authorized.class)) {
                     annotation = method.getAnnotation(Authorized.class);
+                } else {
+                    annotation = method.getDeclaringResource().getResourceClass().getAnnotation(Authorized.class);
                 }
 
                 dispatcher = new CheckAuthorizationMethodDispatcher(method, annotation, dispatcher);
