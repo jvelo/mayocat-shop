@@ -491,7 +491,7 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function(scope, $htt
     $http.post('/api/1.0/login/', $.param(data), config)
       .success(function(data, status) {
         if (status == 200) {
-          ping();
+          scope.ping();
         }
         else {
           scope.$broadcast('event:authenticationFailure');
@@ -510,7 +510,7 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function(scope, $htt
       headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
     };
     $http.post('/api/1.0/logout/', "", config).success(function() {
-      ping();
+      scope.ping();
       scope.$broadcast('event:authenticationRequired');
     });
   });
