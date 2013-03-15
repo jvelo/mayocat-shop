@@ -41,6 +41,7 @@ Namely:
 - Return 201 Created with location header on resource creation
 - "href" property in resources for linking (canonical URL)
 - versioning in URL
+- "Resource expansion"
 - ...
 
 
