@@ -57,7 +57,7 @@
 <body ng-controller="AppController" ng-cloak>
 
   <!-- Main container -->
-    <div class="sidebar-nav">
+    <div class="sidebar-nav" ng-show="authenticated">
     
         <header>
             <div class="logo" ng-click="setRoute('/')"></div>
@@ -122,7 +122,7 @@
 
     </div>
 
-	<div id="content">
+	<div id="content" ng-show="authenticated">
 
         <!--
           Since there is no notion of "sub-view" or "multiple views" per route, we are include *all* sub-menus here
