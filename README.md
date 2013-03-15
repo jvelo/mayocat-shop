@@ -28,4 +28,4 @@ One corollary of building on this stack is the fact the back-end service can be 
 
 ---
 
-Copyright 2012-2013 Jérôme Velociter
+Copyright 2012-2013 Jérôme Velociter and contributors
