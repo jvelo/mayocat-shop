@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.jersey;
+package org.mayocat.rest.jersey;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.mayocat.base.Provider;
 import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
-import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.accounts.AccountsService;
 import org.xwiki.component.annotation.Component;
 

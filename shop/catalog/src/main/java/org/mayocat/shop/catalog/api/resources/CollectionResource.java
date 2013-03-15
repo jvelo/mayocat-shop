@@ -27,8 +27,8 @@ import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.accounts.model.Role;
-import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.base.Resource;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -69,6 +69,9 @@ public class CollectionResource implements Resource
             return this.wrapInReprensentationsWithCount(
                     this.catalogService.findAllCollectionsWithProductCount());
         }
+        //else if (expand.equals("products")) {
+             // TODO
+        //}
         else {
             return this.wrapInReprensentations(this.catalogService.findAllCollections(number, offset));
         }
@@ -261,7 +264,8 @@ public class CollectionResource implements Resource
     {
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Product product : products) {
-            collectionsReferences.add(new EntityReferenceRepresentation(product.getTitle(), "/product/" + product.getSlug()
+            collectionsReferences.add(new EntityReferenceRepresentation(product.getTitle(), product.getSlug(),
+                    "/api/1.0/product/" + product.getSlug()
             ));
         }
         return new CollectionRepresentation(collection, collectionsReferences);

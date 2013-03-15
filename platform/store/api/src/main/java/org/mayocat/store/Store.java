@@ -13,6 +13,8 @@ public interface Store<T extends Identifiable, K extends Serializable>
     
     void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException;
 
+    Integer countAll();
+
     List<T> findAll(Integer number, Integer offset);
 
     T findById(K id);

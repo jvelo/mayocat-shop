@@ -42,17 +42,24 @@ function AppController($rootScope, $scope, $location) {
   });
 
   $scope.isCatalog = false;
+  $scope.isPages = false;
 
   $scope.setRoute = function (href) {
     $location.url(href);
   };
 
   $scope.$watch('location.path()', function(path) {
-      if (path.indexOf("/product/") == 0 || path.indexOf("/collection/") == 0) {
-       $scope.isCatalog = true;
-      }
-      else {
-          $scope.isCatalog = false;
-      }
+      $scope.isCatalog = false;
+      $scope.isPages = false;
+      angular.forEach(["/catalog", "/product/", "/collection/"], function(catalogPath) {
+          if (path.indexOf(catalogPath) == 0) {
+              $scope.isCatalog = true;
+          }
+      });
+      angular.forEach(["/contents", "/page/"], function(pagePage) {
+          if (path.indexOf([pagePage]) == 0) {
+              $scope.isPages = true;
+          }
+      });
   });
 }

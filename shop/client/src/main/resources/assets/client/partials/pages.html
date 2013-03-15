@@ -1,0 +1,18 @@
+<!-- list -->
+<div id="list" ng-controller="PagesController">
+
+    <div class="header">
+        <h2>All pages</h2>
+    </div>
+
+    <!-- list pages -->
+    <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+        <li ng-repeat="page in pages" data-handle="{{page.slug}}">
+            <div class="row droptarget listItem">
+                <div><a ng-click="setRoute('/page/' + page.slug)">{{page.title}}</a></div>
+                <div><span class="dragme move-handle"></span></div>
+            </div>
+        </li>
+    </ul>
+
+</div>

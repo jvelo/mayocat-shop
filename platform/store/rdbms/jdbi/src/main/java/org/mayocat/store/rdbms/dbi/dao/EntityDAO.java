@@ -88,6 +88,18 @@ public interface EntityDAO< E extends Entity >
     List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
+
+    @SqlQuery
+    (
+        "SELECT count(*) " +
+        "FROM   entity " +
+        "       INNER JOIN <type>" +
+        "               ON entity.id = <type>.entity_id " +
+        "WHERE  entity.type = '<type>' " +
+        "       AND entity.tenant_id = :tenant.id "
+    )
+    Integer countAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
+
     @SqlQuery
     (
         "SELECT * " +

@@ -63,6 +63,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public Integer countAll()
+    {
+        return this.dao.countAll(ATTACHMENT_TABLE_NAME, getTenant());
+    }
+
+    @Override
     public List<Attachment> findAll(Integer number, Integer offset)
     {
         return this.dao.findAll(ATTACHMENT_TABLE_NAME, getTenant());

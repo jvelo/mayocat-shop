@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.rest.resources;
 
 import java.util.Arrays;
 import java.util.Map;

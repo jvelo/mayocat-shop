@@ -63,7 +63,13 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     @Override
     public List<Page> findAll(Integer number, Integer offset)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.dao.findAll(PAGE_TABLE_NAME, getTenant(), number, offset);
+    }
+
+    @Override
+    public Integer countAll()
+    {
+        return this.dao.countAll(PAGE_TABLE_NAME, getTenant());
     }
 
     @Override

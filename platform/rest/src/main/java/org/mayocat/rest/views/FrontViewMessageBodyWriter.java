@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.views;
+package org.mayocat.rest.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

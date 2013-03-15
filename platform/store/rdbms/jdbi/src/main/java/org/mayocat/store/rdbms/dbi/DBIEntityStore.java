@@ -41,4 +41,6 @@ public class DBIEntityStore implements EntityStore, Initializable
     {
         this.dao = dbi.get().onDemand(EntityDAO.class);
     }
+
+
 }

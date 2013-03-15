@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.representations;
+package org.mayocat.rest.representations;
 
 import javax.validation.constraints.NotNull;
 

@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.representations;
+package org.mayocat.rest.representations;
 
 /**
  * @version $Id$
@@ -9,10 +9,13 @@ public class EntityReferenceRepresentation
 
     private String title;
 
-    public EntityReferenceRepresentation(String title, String uri)
+    private String slug;
+
+    public EntityReferenceRepresentation(String title, String slug, String uri)
     {
         this.title = title;
         this.href = uri;
+        this.slug = slug;
     }
 
     public String getTitle()
@@ -23,5 +26,10 @@ public class EntityReferenceRepresentation
     public String getHref()
     {
         return href;
+    }
+
+    public String getSlug()
+    {
+        return slug;
     }
 }

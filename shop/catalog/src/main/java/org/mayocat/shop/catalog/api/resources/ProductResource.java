@@ -37,10 +37,10 @@ import org.mayocat.shop.catalog.api.representations.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.rest.AbstractAttachmentResource;
-import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.shop.rest.representations.ImageRepresentation;
+import org.mayocat.rest.resources.AbstractAttachmentResource;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -283,8 +283,8 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Collection collection : collections) {
             collectionsReferences
-                    .add(new EntityReferenceRepresentation(collection.getTitle(),
-                            "/collection/" + collection.getSlug()));
+                    .add(new EntityReferenceRepresentation(collection.getTitle(), collection.getSlug(),
+                            "/api/1.0/collection/" + collection.getSlug()));
         }
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {

@@ -85,6 +85,9 @@ angular.module('catalog', [])
 
         catalogService.listCollections(function (collections) {
             $scope.collections = collections;
+            angular.forEach($scope.collections, function(collection) {
+               $scope.toggleExpand(collection);
+            });
         });
 
         $scope.toggleExpand = function(collection) {

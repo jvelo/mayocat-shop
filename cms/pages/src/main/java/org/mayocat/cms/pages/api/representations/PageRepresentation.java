@@ -3,7 +3,7 @@ package org.mayocat.cms.pages.api.representations;
 import java.util.List;
 
 import org.mayocat.cms.pages.model.Page;
-import org.mayocat.shop.rest.representations.ImageRepresentation;
+import org.mayocat.rest.representations.ImageRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class PageRepresentation
 {
     private String slug;
+
+    private String href;
 
     private String title;
 
@@ -26,6 +28,7 @@ public class PageRepresentation
     public PageRepresentation(Page page)
     {
         this.slug = page.getSlug();
+        this.href = "/api/1.0/page/" + page.getSlug();
         this.title = page.getTitle();
         this.content = page.getContent();
     }
@@ -43,6 +46,11 @@ public class PageRepresentation
     public String getContent()
     {
         return content;
+    }
+
+    public String getHref()
+    {
+        return href;
     }
 
     public List<ImageRepresentation> getImages()

@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.base.Resource;
 import org.xwiki.component.annotation.Component;
 

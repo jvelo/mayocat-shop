@@ -1,3 +1,3 @@
-org.mayocat.shop.rest.jersey.AnnotationResourceMethodDispatchAdapter
-org.mayocat.shop.rest.jersey.BreakpointProvider
-org.mayocat.shop.rest.views.FrontViewMessageBodyWriter
+org.mayocat.rest.jersey.AnnotationResourceMethodDispatchAdapter
+org.mayocat.rest.jersey.BreakpointProvider
+org.mayocat.rest.views.FrontViewMessageBodyWriter

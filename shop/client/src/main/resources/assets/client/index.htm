@@ -31,7 +31,7 @@
     <script src="vendor/sortable-ng.js"></script>
     <script src="vendor/blueimp/jquery.fileupload.js"></script>
     <script src="vendor/blueimp/jquery.iframe-transport.js"></script>
-    <script src="vendor/blueimp/load-image.min.js"></script>
+    <script src="vendor/blueimp/load-imge.min.js"></script>
     <script src="vendor/blueimp/canvas-to-blob.min.js"></script>
     <script src="vendor/blueimp/jquery.fileupload-fp.js"></script>
     <script src="vendor/jcrop/js/jquery.Jcrop.min.js"></script>
@@ -42,6 +42,8 @@
     <script src="javascripts/controllers.js"></script>
     <script src="javascripts/search.js"></script>
     <script src="javascripts/catalog.js"></script>
+    <script src="javascripts/pages.js"></script>
+    <script src="javascripts/page.js"></script>
     <script src="javascripts/thumbnail.js"></script>
     <script src="javascripts/product.js"></script>
     <script src="javascripts/collection.js"></script>
@@ -83,12 +85,12 @@
         <!-- Products, Contents, Theme, Statistics -->
         <ul class="">
             <li active-class="active">
-                <a href="#/product/" other-active-href="#/collection/">
+                <a href="#/catalog" other-active-href="#/collection/,#/product/">
                     <h2>Products</h2>
                 </a>
             </li>
             <li active-class="active">
-                <a href="#/pages/">
+                <a href="#/contents" other-active-href="#/page/">
                     <h2>Contents</h2>
                 </a>
             </li>
@@ -130,6 +132,7 @@
           or by making too much AJAX calls at once when the app loads, etc.
           -->
         <div ng-include class="sub-menu" src="'partials/catalog.html'" ng-show="isCatalog"></div>
+        <div ng-include class="sub-menu" src="'partials/pages.html'" ng-show="isPages"></div>
 
         <div role="main" id="main" ng-view></div>
 	</div>

@@ -3,9 +3,9 @@ package org.mayocat.shop.catalog.api.representations;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.mayocat.shop.rest.representations.ImageRepresentation;
+import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -53,7 +53,7 @@ public class ProductRepresentation
         this.onShelf = product.getOnShelf();
         this.price = product.getPrice();
 
-        this.href = "/product/" + this.slug;
+        this.href = "/api/1.0/product/" + this.slug;
 
         this.collections = collections;
         this.images = images;

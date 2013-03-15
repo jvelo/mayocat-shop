@@ -93,6 +93,8 @@ header a {
 
 #list .collection {
   font-weight: bold;
+  text-transform: uppercase;
+  font-size: 11px;
 }
 
 #list ul {
@@ -100,22 +102,37 @@ header a {
   margin-left: 2px;
 }
 
-#list li {
-  position: relative;
-  border-bottom: solid 1px  @borderList;
+#list li li {
   padding: 11px 0px;
+  border-bottom: solid 1px  @borderList;
+}
+
+#list li {
+  padding: 11px 0px 0px 0px;
+  position: relative;
+  border-bottom: none;
+
+}
+
+#list li.hasChildren {
+  border-bottom: solid 1px  @borderList;
 }
 
 #list li:hover, #list .icon-move {
   background-color: #FFF;
 }
 
-#list ul li {
-  padding-left: 15px;
+#list ul li div.listItem {
+  border-bottom: solid 1px  @borderList;
+  padding: 0px 15px 11px;
 }
 
 #list ul ul li {
   padding-left: 25px;
+}
+
+#list ul ul li:last-child {
+  border-bottom: none;
 }
 
 #list .move-handle {
@@ -128,7 +145,7 @@ header a {
   background-image: url(../images/icon-move.png);
 }
 
-#list li:hover .move-handle {
+#list li:hover > div > div > .move-handle {
   display: block;
 }
 

@@ -1,0 +1,88 @@
+<h1 class="small" ng-show="!isNew()">Edit page</h1>
+<h1 class="small" ng-show="isNew()">New page</h1>
+
+<form>
+    <article class="entity" ng-class="{true: 'loading', false: ''}[page.title == undefined]">
+
+        <div ng-show="page.title != undefined">
+
+            <!-- Title -->
+            <h1>
+                <input type="text" class="title" ng-model="page.title" placeholder="Page's title"/>
+            </h1>
+
+            <!-- Description -->
+            <div ng-show="!isNew()">
+                <label>Content</label>
+                <textarea class="" rows="10" ng-model="page.content"/>
+            </div>
+
+            <div class="block" ng-show="!isNew()">
+                <h3>Images ({{page.images.length}})</h3>
+                <ul class="thumbnails">
+                    <li ng-repeat="image in page.images">
+                        <div class="thumbnail">
+                            <div class="wrapper">
+                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                            </div>
+                            <div class="caption">
+                                <div class="btn-group pull-right">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Edit
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="editThumbnails(image)"
+                                            data-toggle="modal"
+                                            href="#editThumbnails">Thumbnails
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="modal hide fade" ng-include="'partials/editThumbnails.html'" id="editThumbnails"></div>
+                <div class="alert" ng-show="page.images.length <= 0">
+                    <strong>No image yet</strong> - use the area below to add images to this page.
+                </div>
+                <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
+            </div>
+        </div>
+
+        <div ng-show="addons.length > 0 && !isNew()">
+            <div class="block" ng-repeat="addon in addons">
+                <h3>{{addon.definition.name}}</h3>
+                <addon definition=addon.definition value="page.addons[addon.index].value"></addon>
+            </div>
+        </div>
+
+    </article>
+    </div>
+    <aside ng-show="page.title != undefined">
+        <div class="buttons">
+            <div ng-show="isNew()">
+                <!-- Create new page -->
+                <button ng-click="updatePage()" class="btn btn-large btn-primary">Create</button>
+            </div>
+            <div ng-show="!isNew()">
+                <div ng-show="page.published == undefined">
+                    <button ng-click="updatePage()" class="btn btn-large btn">Save</button>
+                    <button ng-click="publishPage()" class="btn btn-large btn-primary">Publish online
+                    </button>
+                </div>
+                <div ng-show="page.published != undefined">
+                    <button ng-click="updatePage()" class="btn btn-large btn-primary">Update</button>
+                </div>
+                <!-- Publish / update product -->
+            </div>
+        </div>
+        <p/>
+
+        <div class="uri" ng-show="!isNew()">
+            <pre>/page/{{page.slug}}</pre>
+        </div>
+
+    </aside>
+</form>

@@ -3,7 +3,7 @@ package org.mayocat.shop.catalog.api.representations;
 import java.util.List;
 
 import org.mayocat.shop.catalog.model.Collection;
-import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -40,7 +40,7 @@ public class CollectionRepresentation
         this.description = collection.getDescription();
         this.slug = collection.getSlug();
 
-        this.href = "/collection/" + this.slug;
+        this.href = "/api/1.0/collection/" + this.slug;
 
         this.products = products;
         if (products != null) {

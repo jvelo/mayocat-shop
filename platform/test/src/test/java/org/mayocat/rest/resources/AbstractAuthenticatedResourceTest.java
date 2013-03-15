@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.rest.resources;
 
 import javax.ws.rs.core.MediaType;
 
@@ -6,7 +6,7 @@ import junit.framework.Assert;
 
 import org.eclipse.jetty.util.B64Code;
 import org.junit.Before;
-import org.mayocat.shop.rest.api.v1.resources.UserResource;
+import org.mayocat.rest.api.v1.resources.UserResource;
 import org.mayocat.accounts.AccountsService;
 
 import com.sun.jersey.api.client.ClientResponse;

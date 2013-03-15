@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.views;
+package org.mayocat.rest.views;
 
 import java.util.Map;
 

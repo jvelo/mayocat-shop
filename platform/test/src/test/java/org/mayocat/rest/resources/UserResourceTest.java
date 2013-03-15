@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.resources;
+package org.mayocat.rest.resources;
 
 import javax.ws.rs.core.MediaType;
 
@@ -7,8 +7,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mayocat.accounts.model.User;
-import org.mayocat.shop.rest.api.v1.resources.UserResource;
-import org.mayocat.shop.rest.api.v1.resources.UserResource;
+import org.mayocat.rest.api.v1.resources.UserResource;
+import org.mayocat.rest.api.v1.resources.UserResource;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;

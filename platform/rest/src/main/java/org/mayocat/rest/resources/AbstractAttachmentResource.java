@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest;
+package org.mayocat.rest.resources;
 
 import java.io.InputStream;
 import java.util.List;

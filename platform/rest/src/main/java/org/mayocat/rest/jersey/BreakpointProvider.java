@@ -1,4 +1,4 @@
-package org.mayocat.shop.rest.jersey;
+package org.mayocat.rest.jersey;
 
 import javax.inject.Inject;
 

@@ -10,11 +10,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,15 +26,17 @@ import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.base.Resource;
 import org.mayocat.cms.pages.api.representations.PageRepresentation;
+import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.rest.AbstractAttachmentResource;
-import org.mayocat.shop.rest.annotation.ExistingTenant;
-import org.mayocat.shop.rest.representations.ImageRepresentation;
+import org.mayocat.rest.resources.AbstractAttachmentResource;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
@@ -64,16 +68,26 @@ public class PageResource extends AbstractAttachmentResource implements Resource
     private Provider<PageStore> pageStore;
 
     @GET
-    public Object listPages()
+    public Object listPages(@QueryParam("number") @DefaultValue("100") Integer number,
+            @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
-        List<PageRepresentation> result = Lists.newArrayList();
-        List<Page> pages = pageStore.get().findAll(0, 0);
+        List<EntityReferenceRepresentation> pageReferences = Lists.newArrayList();
+        List<Page> pages = pageStore.get().findAll(number, offset);
 
         for (Page page : pages) {
-            result.add(new PageRepresentation(page));
+            pageReferences.add(new EntityReferenceRepresentation(page.getTitle(), page.getSlug(),
+                    "/api/1.0/page/" + page.getSlug()));
         }
 
-        return result;
+        ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
+                new ResultSetRepresentation<EntityReferenceRepresentation>(
+                        "/api/1.0/page/",
+                        number,
+                        offset,
+                        pageReferences
+                );
+
+        return resultSet;
     }
 
     @GET
@@ -103,7 +117,6 @@ public class PageResource extends AbstractAttachmentResource implements Resource
             // Respond with a created URI relative to this API URL.
             // This will add a location header like http://host/api/<version>/page/my-created-product
             return Response.created(new URI(created.getSlug())).build();
-
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {

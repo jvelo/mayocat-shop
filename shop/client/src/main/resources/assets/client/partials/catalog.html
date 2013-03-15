@@ -8,21 +8,19 @@
     <!-- list collections -->
     <div ng-show="hasCollections">
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-            <li ng-repeat="collection in collections" data-handle="{{collection.slug}}">
+            <li ng-repeat="collection in collections" data-handle="{{collection.slug}}"
+                ng-class="{hasChildren: collection.products.length > 0}">
                 <div class="droptarget">
-                    <span class="collection" ng-click="toggleExpand(collection)">
-                        <a ng-click="setRoute(collection.href)">{{collection.title}}</a>
-                    </span>
-                    <ng-pluralize count="collection.numberOfProducts"
-                                  when="{'0': 'No product yet',
-                                     'one': '1 product',
-                                     'other': '{} products'}">
-                    </ng-pluralize>
-                    <div ng-show="collection.isExpanded">
+                    <div class="listItem">
+                        <span class="collection" ng-click="toggleExpand(collection)">
+                            <a ng-click="setRoute('/collection/' + collection.slug)">{{collection.title}}</a>
+                        </span>
+                    </div>
+                    <div ng-show="collection.isExpanded && collection.products.length > 0">
                         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
                             <li ng-repeat="product in collection.products" data-handle="{{product.slug}}">
                                 <div class="row droptarget">
-                                    <div><a ng-click="setRoute(product.href)">{{product.title}}</a></div>
+                                    <div><a ng-click="setRoute('/product/' + product.slug)">{{product.title}}</a></div>
                                     <div><span class="dragme move-handle"></span></div>
                                 </div>
                             </li>
@@ -36,17 +34,20 @@
 
     <!-- list remaining products (orphan products, or all products if the shop is configured to not have collections -->
     <div>
-        <ul ng-show="hasCollections">
-            <li><span class="collection">Uncategorized products</span></li>
-            
-            <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                <li ng-repeat="product in products" data-handle="{{product.slug}}">
-                    <div class="droptarget">
-                        <div><a ng-click="setRoute(product.href)">{{product.title}}</a></div>
-                        <div><span class="dragme move-handle"></span></div>
-                    </div>
-                </li>
-            </ul>
+        <ul >
+            <li>
+                <div class="listItem" ng-show="hasCollections">
+                    <span class="collection">Uncategorized</span>
+                </div>
+                <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+                    <li ng-repeat="product in products" data-handle="{{product.slug}}">
+                        <div class="droptarget">
+                            <div><a ng-click="setRoute('/product/' + product.slug)">{{product.title}}</a></div>
+                            <div><span class="dragme move-handle"></span></div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
     	</ul>
     </div>
 </div>

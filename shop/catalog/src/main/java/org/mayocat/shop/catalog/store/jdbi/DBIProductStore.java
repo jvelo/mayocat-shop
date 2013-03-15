@@ -103,6 +103,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset);
     }
 
+    @Override
+    public Integer countAll()
+    {
+        return this.dao.countAll(PRODUCT_TABLE_NAME, getTenant());
+    }
+
     public Product findBySlug(String slug)
     {
         Product product = this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());

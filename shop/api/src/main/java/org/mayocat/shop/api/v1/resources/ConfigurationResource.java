@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Role;
-import org.mayocat.shop.rest.annotation.ExistingTenant;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.base.Resource;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;

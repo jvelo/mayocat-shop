@@ -27,7 +27,7 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.base.Resource;
 import org.mayocat.shop.front.builder.ProductBindingBuilder;
-import org.mayocat.shop.rest.views.FrontView;
+import org.mayocat.rest.views.FrontView;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;

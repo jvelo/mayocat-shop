@@ -2,4 +2,5 @@
   - Same for getTranslations()
   - => maybe create our own option type with an appropriate semantic like MaybeLoaded<Addons>, MaybeLoaded<Translations> etc.
 - Move entity schemas in their own modules (products, collections, etc.)
+- Use ResultSetRepresentation in catalog lists
 

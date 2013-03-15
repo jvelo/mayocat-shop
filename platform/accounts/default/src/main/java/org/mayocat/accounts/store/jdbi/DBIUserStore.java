@@ -19,6 +19,7 @@ import org.xwiki.component.phase.InitializationException;
 @Component(hints = {"jdbi", "default"})
 public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
 {
+    public static final String USER_TABLE_NAME = "user";
     //@Inject
     //private DBIProvider dbi;
 
@@ -32,7 +33,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
         this.dao.begin();
 
-        this.dao.createEntity(user, "user", getTenant());
+        this.dao.createEntity(user, USER_TABLE_NAME, getTenant());
         Long entityId = this.dao.getId(user, "user", getTenant());
         this.dao.create(entityId, user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
@@ -72,6 +73,12 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     public void update(User entity) throws InvalidEntityException
     {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public Integer countAll()
+    {
+        return this.dao.countAll(USER_TABLE_NAME, getTenant());
     }
 
     public List<Role> findRolesForUser(User user)

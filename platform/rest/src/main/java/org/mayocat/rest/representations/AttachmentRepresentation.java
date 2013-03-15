@@ -1,8 +1,6 @@
-package org.mayocat.shop.rest.representations;
+package org.mayocat.rest.representations;
 
-import org.mayocat.image.model.Image;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.rest.representations.EntityReferenceRepresentation;
 
 /**
  * @version $Id$
@@ -13,7 +11,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
 
     public AttachmentRepresentation(Attachment attachment)
     {
-        super(attachment.getTitle(), buildAttachmentApiHref(attachment));
+        super(attachment.getTitle(), attachment.getSlug(), buildAttachmentApiHref(attachment));
         this.file = buildFileRepresentation(attachment);
     }
 
@@ -28,7 +26,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
      */
     public AttachmentRepresentation(Attachment attachment, String uri, FileRepresentation file)
     {
-        super(attachment.getTitle(), uri);
+        super(attachment.getTitle(), attachment.getSlug(), uri);
         this.file = file;
     }
 

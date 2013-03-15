@@ -55,6 +55,13 @@ public class DBITenantStore implements TenantStore, Initializable
     }
 
     @Override
+    public Integer countAll()
+    {
+        // TODO
+        return -1;
+    }
+
+    @Override
     public void updateConfiguration(TenantConfiguration configuration)
     {
         try {
