@@ -26,6 +26,25 @@ The high level philosophy behind Mayocat Shop architecture is described in [this
 
 One corollary of building on this stack is the fact the back-end service can be viewed as just a RESTful HTTP API. The user-facing back-office consumes this API and is built with [AngularJS](http://angularjs.org).
 
+REST Principles
+---------------
+
+Mayocat API RESTful URL design follows the principle of "pragmatic" REST.
+
+- Mostly inspired by this talk by, Les Hazlewood : [REST+JSON API Design - Best Practices for Developers](http://www.youtube.com/watch?v=hdSrT4yjS1g)
+- Also interesting are [the WhiteHouse API standards](https://github.com/WhiteHouse/api-standards)
+
+Namely:
+- By default JSON only. Exceptions on a per case basis
+- Singular resource pathes (/product/abc rather than /products/abc). This is a design choice for matching with public URI (http://host/product/abc -> http://host/api/v1/product/abc).
+- POST for partial updates (not idempotent operations)
+- Return 201 Created with location header on resource creation
+- "href" property in resources for linking (canonical URL)
+- versioning in URL
+- ...
+
+
+
 ---
 
 Copyright 2012-2013 Jérôme Velociter and contributors
