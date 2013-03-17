@@ -9,9 +9,10 @@
     {{/description}}
 
     {{#theme_addons}}
-    <div>
-        <strong>BRAND: {{brand}}</strong>
-    </div>
+    <dl>
+      <dt>BRAND</dt><dd>{{characteristics.brand}}</dd>
+      <dt>MANUFACTURER</dt><dd>{{characteristics.manufacturer}}</dd>
+    </dl>
     {{/theme_addons}}
 
     {{#price}}
@@ -23,12 +24,12 @@
 
     {{#images}}
     {{#featured}}
-    <img class="photo" src="{{theme_large_url}}"/>
+    <img class="photo" src="{{theme_large_url}}" />
     {{/featured}}
     <ul class="images">
         {{#all}}
         <li class="thumbnail">
-            <img src="{{theme_small_url}}"/>
+            <img src="{{theme_small_url}}" />
         </li>
         {{/all}}
     </ul>

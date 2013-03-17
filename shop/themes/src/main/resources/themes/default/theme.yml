@@ -18,15 +18,16 @@ models:
     for:    [product, page]
 
 addons:
-  - key: brand
-    name: Brand
-    type: string
-    placeholder: Product's brand
+  characteristics:
+    name: Characteristics
+    text: Short help text that is displayed under the addon group
     for: product
-  - key: custom_id
-    name: Custom ID
-    type: json
-    placeholder: 160
-    template: <input type='number' step="20" max="200" name={{addon.name}} placeholder={{addon.placeholder}} />
-    for: [product, page]
-
+    fields:
+      brand:
+        name: Brand
+        type: string
+        placeholder: Enter the product's brand
+      manufacturer:
+        name: Manufacturer
+        type: string
+        placeholder: Enter the product's manufacturer

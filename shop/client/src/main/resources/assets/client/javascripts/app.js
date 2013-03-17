@@ -256,7 +256,7 @@ mayocat.directive("addonFieldString", [function ($compile) {
             placeholder:'@',
             value: '@'
         },
-        template: "<input type='text' name={{name}} placeholder={{placeholder}} value={{value}} />"
+        template: "<input type='text' name='whatever' placeholder={{placeholder}} value={{value}} />"
     };
 }]);
 
@@ -275,8 +275,7 @@ mayocat.directive("addon", ['$compile', function ($compile) {
                     switch (definition.type) {
                         case 'string':
                         default:
-                            displayer = "<addon-field-string name={{addon.key}} " +
-                                "placeholder={{addon.placeholder}} value={{value}}>";
+                            displayer = "<addon-field-string placeholder={{addon.placeholder}} value={{value}}>";
                             break;
                     }
 

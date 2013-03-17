@@ -18,10 +18,24 @@ models:
     for:    [product, page]
 
 addons:
-  - key: brand
-    name: Brand
-    type: string
-    for: product
-  - key: custom_id
-    type: json
+  group1:
+    name: Addon group 1
+    text: Short help text that is displayed under the addon group
     for: [product, page]
+    fields:
+      brand:
+        name: Brand
+        type: string
+        placeholder: Enter the product's brand
+  group2:
+    name: Other group
+    text: Bla-bla
+    fields:
+      field1:
+        name: Field 1
+        type: string
+        placeholder: My field
+      field2:
+        name: Field 2
+        type: wysiwyg
+        placeholder: My other field

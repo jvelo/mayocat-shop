@@ -17,7 +17,6 @@ import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 
 @RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
@@ -96,7 +95,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         }
         List<Addon> existing = this.findAddons(entity);
         for (Addon addon : entity.getAddons()) {
-            Optional<Addon> original = findAddons(existing, addon);
+            Optional<Addon> original = findAddon(existing, addon);
             if (original.isPresent()) {
                 this.updateAddon(entity, addon);
             } else {
@@ -105,21 +104,16 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         }
     }
 
-    private Optional<Addon> findAddons(List<Addon> existing, Addon addon)
+    private Optional<Addon> findAddon(List<Addon> existing, Addon addon)
     {
-        Addon found = null;
         for (Addon a : existing) {
             if (a.getSource().equals(addon.getSource())
-                    && a.getKey().equals(addon.getKey()))
+                    && a.getKey().equals(addon.getKey()) && a.getGroup().equals(addon.getGroup()))
             {
-                if (!Strings.isNullOrEmpty(a.getGroup()) && a.getGroup().equals(addon.getGroup())) {
-                    return Optional.of(a);
-                } else {
-                    found = a;
-                }
+                return Optional.of(a);
             }
         }
-        return Optional.fromNullable(found);
+        return Optional.absent();
     }
 
 }

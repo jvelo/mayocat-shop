@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.addons.model.AddonDefinition;
+import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonField;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.thumbnails.Dimensions;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
-import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.theme.Theme;
@@ -96,14 +96,23 @@ public class ProductBindingBuilder
 
         if (product.conveyAddons()) {
             Map<String, Object> themeAddonsContext = Maps.newHashMap();
-            List<AddonDefinition> themeAddons = theme.getAddons();
-            for (AddonDefinition definition : themeAddons) {
-                Optional<Addon> addon = findAddon(definition, product.getAddons());
-                if (addon.isPresent()) {
-                    themeAddonsContext.put(definition.getKey(), addon.get().getValue());
-                } else {
-                    themeAddonsContext.put(definition.getKey(), null);
+            Map<String, AddonGroup> themeAddons = theme.getAddons();
+            for (String groupKey : themeAddons.keySet()) {
+
+                AddonGroup group = themeAddons.get(groupKey);
+                Map<String, Object> groupContext = Maps.newHashMap();
+
+                for (String field : group.getFields().keySet()) {
+                    AddonField definition = group.getFields().get(field);
+                    Optional<org.mayocat.model.Addon> addon = findAddon(groupKey, field, product.getAddons());
+                    if (addon.isPresent()) {
+                        groupContext.put(field, addon.get().getValue());
+                    } else {
+                        groupContext.put(field, null);
+                    }
                 }
+
+                themeAddonsContext.put(groupKey, groupContext);
             }
             productContext.put("theme_addons", themeAddonsContext);
         }
@@ -111,10 +120,10 @@ public class ProductBindingBuilder
         return productContext;
     }
 
-    private Optional<Addon> findAddon(AddonDefinition definition, List<Addon> addons)
+    private Optional<org.mayocat.model.Addon> findAddon(String group, String key, List<org.mayocat.model.Addon> addons)
     {
-        for (Addon addon : addons) {
-            if (addon.getKey().equals(definition.getKey()) &&
+        for (org.mayocat.model.Addon addon : addons) {
+            if (addon.getKey().equals(key) && addon.getGroup().equals(group) &&
                     addon.getSource().toJson().equals("theme"))
             {
                 return Optional.of(addon);
