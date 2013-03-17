@@ -66,3 +66,23 @@ switch-button {
 switch-button button {
   height: 18px;
 }
+
+/* Entity link */
+
+.uri {
+  padding: 10px;
+  background:@backgroundLight;
+  margin-bottom: 10px;
+  border: 1px solid @borderStrong;
+
+  a {
+    background: url("../images/externallinkicon.gif") center right no-repeat;
+    font-family: monospace;
+    color: @fontColor;
+    padding-right: 15px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

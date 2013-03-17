@@ -94,7 +94,9 @@
         <p/>
 
         <div class="uri" ng-show="!isNew()">
-            <pre>/product/{{product.slug}}</pre>
+            <a href="/product/{{product.slug}}" target="_new">
+                /product/{{product.slug}}
+            </a>
         </div>
 
         <div class="block" ng-show="!isNew() && collections.length > 0">
