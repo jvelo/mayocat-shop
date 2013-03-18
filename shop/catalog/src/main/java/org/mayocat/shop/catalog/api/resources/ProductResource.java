@@ -33,7 +33,7 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.api.representations.AddonRepresentation;
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -250,9 +250,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     private ProductRepresentation wrapInRepresentation(Product product)
     {
         ProductRepresentation pr = new ProductRepresentation(product);
-        if (product.conveyAddons()) {
+        if (product.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
-            for (Addon a : product.getAddons()) {
+            for (Addon a : product.getAddons().get()) {
                 addons.add(new AddonRepresentation(a));
             }
             pr.setAddons(addons);
@@ -267,9 +267,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (images != null) {
             result.setImages(images);
         }
-        if (product.conveyAddons()) {
+        if (product.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
-            for (Addon a : product.getAddons()) {
+            for (Addon a : product.getAddons().get()) {
                 addons.add(new AddonRepresentation(a));
             }
             result.setAddons(addons);
@@ -290,9 +290,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         if (images != null) {
             result.setImages(images);
         }
-        if (product.conveyAddons()) {
+        if (product.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
-            for (Addon a : product.getAddons()) {
+            for (Addon a : product.getAddons().get()) {
                 addons.add(new AddonRepresentation(a));
             }
             result.setAddons(addons);

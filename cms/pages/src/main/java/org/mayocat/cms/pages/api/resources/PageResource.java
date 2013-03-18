@@ -23,9 +23,11 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.Slugifier;
 import org.mayocat.accounts.model.Role;
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.base.Resource;
 import org.mayocat.cms.pages.api.representations.PageRepresentation;
+import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
@@ -38,6 +40,7 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
@@ -98,7 +101,15 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         if (page == null) {
             return Response.status(404).build();
         }
-        return new PageRepresentation(page);
+        PageRepresentation representation = new PageRepresentation(page);
+        if (page.getAddons().isLoaded()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : page.getAddons().get()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            representation.setAddons(addons);
+        }
+        return representation;
     }
 
     @POST
@@ -124,6 +135,32 @@ public class PageResource extends AbstractAttachmentResource implements Resource
                     .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e);
+        }
+    }
+
+    @Path("{slug}")
+    @POST
+    @Timed
+    @Authorized
+    // Partial update : NOT idempotent
+    public Response updatePage(@PathParam("slug") String slug,
+            Page updatedPage)
+    {
+        try {
+            Page page = this.pageStore.get().findBySlug(slug);
+            if (page == null) {
+                return Response.status(404).build();
+            } else {
+                updatedPage.setSlug(slug);
+                this.pageStore.get().update(updatedPage);
+            }
+
+            return Response.ok().build();
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 

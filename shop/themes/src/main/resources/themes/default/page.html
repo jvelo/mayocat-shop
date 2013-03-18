@@ -1,0 +1,32 @@
+<div class="page">
+    {{#page}}
+    <h2 class="fn">{{title}}</h2>
+
+    {{#content}}
+    <p class="description">
+        {{this}}
+    </p>
+    {{/content}}
+
+    {{#theme_addons}}
+    <dl>
+        <dt>WRITTEN BY</dt>
+        <dd>{{metadata.written_by}}</dd>
+    </dl>
+    {{/theme_addons}}
+
+    {{#images}}
+    {{#featured}}
+    <img class="photo" src="{{theme_large_url}}"/>
+    {{/featured}}
+    <ul class="images">
+        {{#all}}
+        <li class="thumbnail">
+            <img src="{{theme_small_url}}"/>
+        </li>
+        {{/all}}
+    </ul>
+    <div class="clearfix"></div>
+    {{/images}}
+    {{/page}}
+</div>

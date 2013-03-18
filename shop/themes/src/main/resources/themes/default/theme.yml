@@ -31,3 +31,11 @@ addons:
         name: Manufacturer
         type: string
         placeholder: Enter the product's manufacturer
+  metadata:
+    name: Metadata
+    for: page
+    fields:
+      written_by:
+        name: Written by
+        type: string
+        placeholder: Page's author

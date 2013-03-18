@@ -3,6 +3,7 @@ package org.mayocat.shop.catalog.api.representations;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;

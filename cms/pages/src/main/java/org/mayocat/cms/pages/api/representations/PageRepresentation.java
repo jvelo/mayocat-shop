@@ -2,6 +2,7 @@ package org.mayocat.cms.pages.api.representations;
 
 import java.util.List;
 
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.rest.representations.ImageRepresentation;
 
@@ -14,6 +15,8 @@ public class PageRepresentation
 {
     private String slug;
 
+    private Boolean published;
+
     private String href;
 
     private String title;
@@ -23,11 +26,15 @@ public class PageRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<AddonRepresentation> addons = null;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public PageRepresentation(Page page)
     {
         this.slug = page.getSlug();
+        this.published = page.getPublished();
         this.href = "/api/1.0/page/" + page.getSlug();
         this.title = page.getTitle();
         this.content = page.getContent();
@@ -53,8 +60,23 @@ public class PageRepresentation
         return href;
     }
 
+    public Boolean getPublished()
+    {
+        return published;
+    }
+
     public List<ImageRepresentation> getImages()
     {
         return images;
+    }
+
+    public List<AddonRepresentation> getAddons()
+    {
+        return addons;
+    }
+
+    public void setAddons(List<AddonRepresentation> addons)
+    {
+        this.addons = addons;
     }
 }

@@ -7,7 +7,5 @@ import java.util.List;
  */
 public interface HasAddons
 {
-    List<Addon> getAddons();
-
-    boolean conveyAddons();
+    PerhapsLoaded<List<Addon>> getAddons();
 }

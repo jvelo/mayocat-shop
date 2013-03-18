@@ -3,8 +3,8 @@
 angular.module('page', ['ngResource'])
 
     .controller('PageController', [
-        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location',
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location) {
+        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location', 'addonsService',
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService) {
 
             $scope.slug = $routeParams.page;
 
@@ -58,12 +58,20 @@ angular.module('page', ['ngResource'])
                 return "/api/1.0/page/" + $scope.slug + "/attachment";
             }
 
+            $scope.initializeAddons = function () {
+                addonsService.initialize("page", $scope.page).then(function (addons) {
+                    $scope.addons = addons;
+                });
+            }
+
             // Initialize existing page or new page
 
             if (!$scope.isNew()) {
                 $scope.page = $scope.PageResource.get({
                     "slug": $scope.slug,
                     "expand": ["images"] }, function () {
+
+                    $scope.initializeAddons();
 
                     if ($scope.page.published == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -76,6 +84,7 @@ angular.module('page', ['ngResource'])
             }
             else {
                 $scope.page = $scope.newPage();
+                $scope.initializeAddons();
             }
 
         }]);

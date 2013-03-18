@@ -6,9 +6,11 @@ import javax.validation.Valid;
 
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
+import org.mayocat.model.Addon;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.PageDAO;
 import org.xwiki.component.annotation.Component;
@@ -28,13 +30,6 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     private PageDAO dao;
 
     @Override
-    public Page findBySlug(String slug)
-    {
-        Page page = this.dao.findBySlugWithTranslations(PAGE_TABLE_NAME, slug, getTenant());
-        return page;
-    }
-
-    @Override
     public void create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(PAGE_TABLE_NAME, page.getSlug(), getTenant()) != null) {
@@ -50,14 +45,31 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
             lastIndex = 0;
         }
         this.dao.createPage(entityId, lastIndex + 1, page);
+        this.dao.insertTranslations(entityId, page.getTranslations());
+        this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();
     }
 
     @Override
-    public void update(@Valid Page entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Page page) throws EntityDoesNotExistException, InvalidEntityException
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.dao.begin();
+
+        Page originalPage = this.findBySlug(page.getSlug());
+        if (originalPage == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+        page.setId(originalPage.getId());
+        Integer updatedRows = this.dao.updatePage(page);
+        this.dao.createOrUpdateAddons(page);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating page");
+        }
     }
 
     @Override
@@ -73,9 +85,21 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
+    public Page findBySlug(String slug)
+    {
+        Page page = this.dao.findBySlugWithTranslations(PAGE_TABLE_NAME, slug, getTenant());
+        List<Addon> addons = this.dao.findAddons(page);
+        page.setAddons(addons);
+        return page;
+    }
+
+    @Override
     public Page findById(Long id)
     {
-        return this.dao.findById(PAGE_TABLE_NAME, id);
+        Page page = this.dao.findById(PAGE_TABLE_NAME, id);
+        List<Addon> addons = this.dao.findAddons(page);
+        page.setAddons(addons);
+        return page;
     }
 
     @Override

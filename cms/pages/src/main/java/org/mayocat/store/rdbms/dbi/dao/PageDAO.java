@@ -3,6 +3,8 @@ package org.mayocat.store.rdbms.dbi.dao;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.jdbi.mapper.PageMapper;
+import org.mayocat.store.rdbms.jdbi.AddonsDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -17,7 +19,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @RegisterMapper(PageMapper.class)
 @UseStringTemplate3StatementLocator
 public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implements Transactional<PageDAO>,
-        PositionedDAO<Page>
+        PositionedDAO<Page>, AddonsDAO<Page>
 {
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
@@ -25,4 +27,12 @@ public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implement
     @SqlUpdate
     public abstract void createPage(@Bind("id") Long entityId, @Bind("position") Integer position,
             @BindBean("page") Page product);
+
+    @SqlUpdate
+    public abstract Integer updatePage(@BindBean("page") Page product);
+
+    public void createOrUpdateAddons(Page entity)
+    {
+        AddonsHelper.createOrUpdateAddons(this, entity);
+    }
 }

@@ -1,6 +1,7 @@
 'use strict';
 
 var mayocat = angular.module('mayocat', [
+    'addons',
     'search',
     'thumbnail',
     'product',

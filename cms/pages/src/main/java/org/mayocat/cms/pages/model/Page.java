@@ -1,10 +1,15 @@
 package org.mayocat.cms.pages.model;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
+import org.mayocat.model.Addon;
 import org.mayocat.model.Child;
+import org.mayocat.model.HasAddons;
+import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
@@ -14,7 +19,7 @@ import com.google.common.base.Objects;
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child
+public class Page extends AbstractLocalizedEntity implements Child, HasAddons
 {
     private Long id;
 
@@ -25,6 +30,9 @@ public class Page extends AbstractLocalizedEntity implements Child
     @Size(min = 1)
     private String slug;
 
+    @SearchIndex
+    private Boolean published;
+
     @Localized(type = LocalizationFieldType.SMALL)
     @SearchIndex
     @NotNull
@@ -34,16 +42,16 @@ public class Page extends AbstractLocalizedEntity implements Child
     @SearchIndex
     private String content;
 
+    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.empty();
+
     public Page()
     {
-
     }
 
     public Page(Long id)
     {
         setId(id);
     }
-
 
     public Long getId()
     {
@@ -63,6 +71,16 @@ public class Page extends AbstractLocalizedEntity implements Child
     public void setSlug(String slug)
     {
         this.slug = slug;
+    }
+
+    public Boolean getPublished()
+    {
+        return published;
+    }
+
+    public void setPublished(Boolean published)
+    {
+        this.published = published;
     }
 
     public String getTitle()
@@ -97,6 +115,17 @@ public class Page extends AbstractLocalizedEntity implements Child
     public void setParentId(Long id)
     {
         this.parentId = id;
+    }
+
+    @Override
+    public PerhapsLoaded<List<Addon>> getAddons()
+    {
+        return addons;
+    }
+
+    public void setAddons(List<Addon> addons)
+    {
+        this.addons = new PerhapsLoaded<List<Addon>>(addons);
     }
 
     // //////////////////////////////////////////////

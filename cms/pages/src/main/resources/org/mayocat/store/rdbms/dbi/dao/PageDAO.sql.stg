@@ -16,3 +16,11 @@ createPage() ::= <<
             :page.title,
             :page.content)
 >>
+
+updatePage() ::= <<
+    UPDATE page
+    SET title = :page.title,
+        content = :page.content,
+        published = :page.published
+    WHERE entity_id = :page.id
+>>

@@ -58,6 +58,22 @@
             </div>
         </div>
 
+        <div ng-show="addons.length > 0 && !isNew()">
+            <div class="block" ng-repeat="group in addons">
+                <h3>{{group.name}}</h3>
+                <p ng-show="group.text && group.text != ''">
+                    {{group.text}}
+                </p>
+                <ul>
+                    <li ng-repeat="addon in group.fields">
+                        {{addon.definition.name}}
+
+                        <addon definition="addon.definition" value="page.addons[addon.index].value"></addon>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </article>
     </div>
     <aside ng-show="page.title != undefined">
@@ -75,7 +91,7 @@
                 <div ng-show="page.published != undefined">
                     <button ng-click="updatePage()" class="btn btn-large btn-primary">Update</button>
                 </div>
-                <!-- Publish / update product -->
+                <!-- Publish / update page -->
             </div>
         </div>
         <p/>

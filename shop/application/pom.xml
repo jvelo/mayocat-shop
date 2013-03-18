@@ -29,13 +29,13 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-api</artifactId>
+            <artifactId>mayocat-shop-catalog</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-front</artifactId>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-front</artifactId>
             <version>${project.version}</version>
         </dependency>
 

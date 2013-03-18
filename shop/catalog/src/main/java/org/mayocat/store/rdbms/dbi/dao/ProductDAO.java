@@ -8,6 +8,7 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.store.rdbms.jdbi.AddonsDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -90,30 +91,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
 
     public void createOrUpdateAddons(Product entity)
     {
-        if (!entity.conveyAddons()) {
-            return;
-        }
-        List<Addon> existing = this.findAddons(entity);
-        for (Addon addon : entity.getAddons()) {
-            Optional<Addon> original = findAddon(existing, addon);
-            if (original.isPresent()) {
-                this.updateAddon(entity, addon);
-            } else {
-                this.createAddon(entity, addon);
-            }
-        }
-    }
-
-    private Optional<Addon> findAddon(List<Addon> existing, Addon addon)
-    {
-        for (Addon a : existing) {
-            if (a.getSource().equals(addon.getSource())
-                    && a.getKey().equals(addon.getKey()) && a.getGroup().equals(addon.getGroup()))
-            {
-                return Optional.of(a);
-            }
-        }
-        return Optional.absent();
+        AddonsHelper.createOrUpdateAddons(this, entity);
     }
 
 }

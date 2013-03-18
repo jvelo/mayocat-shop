@@ -69,12 +69,14 @@
 
         <!-- Addons -->
         <createTable tableName="addon">
-            <column name="entity_id" type="bigint" />
-            <column name="source" type="varchar(255)" />
-            <column name="addon_group" type="varchar(255)" /> <!-- "group" is a reserved keyword -->
-            <column name="type" type="varchar(255)" />
-            <column name="addon_key" type="varchar(255)" /> <!-- "key" is a reserved keyword -->
-            <column name="value" type="varchar(2000)" />
+            <column name="entity_id" type="bigint"/>
+            <column name="source" type="varchar(255)"/>
+            <column name="addon_group" type="varchar(255)"/>
+            <!-- "group" is a reserved keyword -->
+            <column name="type" type="varchar(255)"/>
+            <column name="addon_key" type="varchar(255)"/>
+            <!-- "key" is a reserved keyword -->
+            <column name="value" type="varchar(2000)"/>
         </createTable>
         <addUniqueConstraint tableName="addon" columnNames="entity_id,source,addon_group,addon_key"
                 constraintName="ADDON_UNIQUE_ADDON_KEY_PER_SOURCE_GROUP_ENTITY"/>
@@ -82,13 +84,13 @@
                 baseTableName="addon" baseColumnNames="entity_id"
                 referencedTableName="entity" referencedColumnNames="id"/>
         <createIndex tableName="addon" indexName="ADDON_KEY_INDEX">
-            <column name="addon_key" />
+            <column name="addon_key"/>
         </createIndex>
         <createIndex tableName="addon" indexName="ADDON_SOURCE_INDEX">
-            <column name="source" />
+            <column name="source"/>
         </createIndex>
         <createIndex tableName="addon" indexName="ADDON_GROUP_INDEX">
-            <column name="addon_group" />
+            <column name="addon_group"/>
         </createIndex>
 
         <!-- Translations -->
@@ -223,6 +225,7 @@
             <column name="entity_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="published" type="boolean"/>
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="content" type="mediumtext"/>
@@ -233,16 +236,19 @@
         <createIndex tableName="page" indexName="PAGE_POSITION_INDEX">
             <column name="position"/>
         </createIndex>
+        <createIndex tableName="page" indexName="PAGE_PUBLISHED_INDEX">
+            <column name="published"/>
+        </createIndex>
 
         <!-- Product table -->
         <createTable tableName="product">
             <column name="entity_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="on_shelf" type="boolean"/>
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="description" type="mediumtext"/>
-            <column name="on_shelf" type="boolean"/>
             <column name="price" type="numeric(18,4)"/>
         </createTable>
         <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"

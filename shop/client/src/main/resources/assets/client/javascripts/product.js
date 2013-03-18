@@ -3,8 +3,16 @@
 angular.module('product', ['ngResource'])
 
     .controller('ProductController', [
-        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location', 'catalogService', 'configurationService',
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, configurationService) {
+        '$scope',
+        '$rootScope',
+        '$routeParams',
+        '$resource',
+        '$http',
+        '$location',
+        'catalogService',
+        'addonsService',
+
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService) {
 
             $scope.slug = $routeParams.product;
 
@@ -51,7 +59,7 @@ angular.module('product', ['ngResource'])
                         }
                     }
                 }).save("product=" + $scope.product.slug, function () {
-                    });
+                });
             };
 
             $scope.ProductResource = $resource("/api/1.0/product/:slug");
@@ -98,65 +106,11 @@ angular.module('product', ['ngResource'])
                 });
             }
 
-            $scope.getAddonIndex = function (group, field, source) {
-                if (!$scope.product || !$scope.product.addons) {
-                    return -1;
-                }
-                for (var i = 0; i < $scope.product.addons.length; i++) {
-                    var addon = $scope.product.addons[i];
-                    if (addon.key == field
-                        // && addon.source == source TODO: put source in addon gestalt configuration
-                        && addon.source == 'theme'
-                        && addon.group == group) {
-                        return i;
-                    }
-                }
-                return -1;
-            };
-
             $scope.initializeAddons = function () {
-                $scope.addons = [];
-                configurationService.get("entities", function (entities) {
-                    if (typeof entities !== 'undefined') {
-                        var addons = entities.product.addons;
-                        for (var groupKey in addons) {
-                            if (addons.hasOwnProperty(groupKey)) {
-                                var group = addons[groupKey];
-                                var definitions = group.fields;
-                                var currentGroupIndex = $scope.addons.push({
-                                    key: groupKey,
-                                    name : group.name,
-                                    text: group.text,
-                                    fields: []
-                                }) - 1;
-                                for (var key in definitions) {
-                                    if (definitions.hasOwnProperty(key)) {
-                                        var index = $scope.getAddonIndex(groupKey, key),
-                                            definition = definitions[key];
-                                        if (index < 0) {
-                                            // Create addon container lazily
-                                            $scope.product.addons.push({
-                                                'key': key,
-                                                'group': groupKey,
-                                                source: "theme",
-                                                type: definition.type,
-                                                value: null
-                                            });
-                                            index = $scope.getAddonIndex(groupKey, key);
-                                        }
-                                        $scope.addons[currentGroupIndex].fields.push({
-                                            key: key,
-                                            definition: definition,
-                                            index: index
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
+                addonsService.initialize("product", $scope.product).then(function (addons) {
+                    $scope.addons = addons;
                 });
             }
-
 
             // Initialize existing product or new product
 
