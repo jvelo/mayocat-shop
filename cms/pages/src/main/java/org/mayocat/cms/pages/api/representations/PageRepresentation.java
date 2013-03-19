@@ -15,6 +15,9 @@ public class PageRepresentation
 {
     private String slug;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String model;
+
     private Boolean published;
 
     private String href;
@@ -34,6 +37,7 @@ public class PageRepresentation
     public PageRepresentation(Page page)
     {
         this.slug = page.getSlug();
+        this.model = page.getModel().orNull();
         this.published = page.getPublished();
         this.href = "/api/1.0/page/" + page.getSlug();
         this.title = page.getTitle();
@@ -78,5 +82,15 @@ public class PageRepresentation
     public void setAddons(List<AddonRepresentation> addons)
     {
         this.addons = addons;
+    }
+
+    public String getModel()
+    {
+        return model;
+    }
+
+    public void setModel(String model)
+    {
+        this.model = model;
     }
 }

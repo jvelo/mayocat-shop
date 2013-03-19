@@ -7,6 +7,8 @@ import org.mayocat.shop.catalog.model.Product;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.google.common.base.Strings;
+
 public class ProductMapper implements ResultSetMapper<Product>
 {
     @Override
@@ -18,7 +20,10 @@ public class ProductMapper implements ResultSetMapper<Product>
         product.setDescription(resultSet.getString("description"));
         product.setOnShelf(resultSet.getBoolean("on_shelf"));
         product.setPrice(resultSet.getBigDecimal("price"));
-
+        String model = resultSet.getString("model");
+        if (!Strings.isNullOrEmpty(model)) {
+            product.setModel(model);
+        }
         return product;
     }
 }

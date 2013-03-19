@@ -10,12 +10,14 @@ thumbnails:
   large: 500x300
 
 models:
-  - file:   models/product_fancy.html
-    name:   Fancy page
-    for:    product
-  - file:   models/product_special.html
-    name:   Special page
-    for:    [product, page]
+  about:
+    name: About
+    file: page/page_about.html
+    for: page
+  hound:
+    name: Hound
+    file: product_hound.html
+    for: product
 
 addons:
   group1:

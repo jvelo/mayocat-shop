@@ -3,8 +3,16 @@
 angular.module('page', ['ngResource'])
 
     .controller('PageController', [
-        '$scope', '$rootScope', '$routeParams', '$resource', '$http', '$location', 'addonsService',
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService) {
+        '$scope',
+        '$rootScope',
+        '$routeParams',
+        '$resource',
+        '$http',
+        '$location',
+        'addonsService',
+        'configurationService',
+
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, configurationService) {
 
             $scope.slug = $routeParams.page;
 
@@ -64,6 +72,23 @@ angular.module('page', ['ngResource'])
                 });
             }
 
+            $scope.initializeModels = function() {
+                $scope.models = [];
+                configurationService.get("entities", function (entities) {
+                    if (typeof entities.page !== 'undefined') {
+                        for (var modelId in entities.page.models) {
+                            if (entities.page.models.hasOwnProperty(modelId)) {
+                                var model = entities.page.models[modelId];
+                                $scope.models.push({
+                                    id: modelId,
+                                    name: model.name
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
             // Initialize existing page or new page
 
             if (!$scope.isNew()) {
@@ -72,6 +97,7 @@ angular.module('page', ['ngResource'])
                     "expand": ["images"] }, function () {
 
                     $scope.initializeAddons();
+                    $scope.initializeModels();
 
                     if ($scope.page.published == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -85,6 +111,7 @@ angular.module('page', ['ngResource'])
             else {
                 $scope.page = $scope.newPage();
                 $scope.initializeAddons();
+                $scope.initializeModels();
             }
 
         }]);

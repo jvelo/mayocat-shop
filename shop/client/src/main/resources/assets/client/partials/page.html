@@ -102,5 +102,12 @@
             </a>
         </div>
 
+        <div class="block" ng-show="!isNew() && models.length > 0">
+            <h3>Model</h3>
+            <select ng-model="page.model" ng-options="model.id as model.name for model in models">
+                <option value="">Default model</option>
+            </select>
+        </div>
+
     </aside>
 </form>

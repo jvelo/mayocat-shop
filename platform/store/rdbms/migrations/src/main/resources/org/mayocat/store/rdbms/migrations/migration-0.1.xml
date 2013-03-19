@@ -225,6 +225,7 @@
             <column name="entity_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="model" type="varchar(255)"/>
             <column name="published" type="boolean"/>
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
@@ -245,6 +246,7 @@
             <column name="entity_id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="model" type="varchar(255)"/>
             <column name="on_shelf" type="boolean"/>
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>

@@ -17,7 +17,7 @@ public interface Theme
 
     Map<String, Dimensions> getThumbnails();
 
-    List<Model> getModels();
+    Map<String, Model> getModels();
 
     Map<String, AddonGroup> getAddons();
 }

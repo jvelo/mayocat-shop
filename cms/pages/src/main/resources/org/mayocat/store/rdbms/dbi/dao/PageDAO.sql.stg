@@ -10,8 +10,9 @@ lastPosition() ::= <<
 >>
 
 createPage() ::= <<
-    INSERT INTO page (entity_id, position, title, content)
+    INSERT INTO page (entity_id, model, position, title, content)
     VALUES (:id,
+            :page.model,
             :position,
             :page.title,
             :page.content)
@@ -20,6 +21,7 @@ createPage() ::= <<
 updatePage() ::= <<
     UPDATE page
     SET title = :page.title,
+        model = :page.model,
         content = :page.content,
         published = :page.published
     WHERE entity_id = :page.id

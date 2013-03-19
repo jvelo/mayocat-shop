@@ -9,13 +9,15 @@ import javax.validation.constraints.Size;
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
-public class Product extends AbstractLocalizedEntity implements HasAddons
+public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel
 {
     private Long id;
 
@@ -41,6 +43,8 @@ public class Product extends AbstractLocalizedEntity implements HasAddons
     private BigDecimal price;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.empty();
+
+    private Optional<String> model = Optional.absent();
 
     public Product()
     {
@@ -120,6 +124,17 @@ public class Product extends AbstractLocalizedEntity implements HasAddons
     public void setAddons(List<Addon> addons)
     {
         this.addons = new PerhapsLoaded<List<Addon>>(addons);
+    }
+
+    public void setModel(String model)
+    {
+        this.model = Optional.fromNullable(model);
+    }
+
+    @Override
+    public Optional<String> getModel()
+    {
+        return model;
     }
 
     ////////////////////////////////////////////////

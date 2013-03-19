@@ -11,8 +11,10 @@ angular.module('product', ['ngResource'])
         '$location',
         'catalogService',
         'addonsService',
+        'configurationService',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService,
+            configurationService) {
 
             $scope.slug = $routeParams.product;
 
@@ -112,6 +114,23 @@ angular.module('product', ['ngResource'])
                 });
             }
 
+            $scope.initializeModels = function() {
+                $scope.models = [];
+                configurationService.get("entities", function (entities) {
+                    if (typeof entities.product !== 'undefined') {
+                        for (var modelId in entities.product.models) {
+                            if (entities.product.models.hasOwnProperty(modelId)) {
+                                var model = entities.product.models[modelId];
+                                $scope.models.push({
+                                    id: modelId,
+                                    name: model.name
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
             // Initialize existing product or new product
 
             if (!$scope.isNew()) {
@@ -123,6 +142,7 @@ angular.module('product', ['ngResource'])
 
                     // Same for addons
                     $scope.initializeAddons();
+                    $scope.initializeModels();
 
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -136,6 +156,7 @@ angular.module('product', ['ngResource'])
             else {
                 $scope.product = $scope.newProduct();
                 $scope.initializeAddons();
+                $scope.initializeModels();
             }
 
         }])

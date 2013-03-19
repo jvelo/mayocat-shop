@@ -43,6 +43,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
     (
         "UPDATE product " +
         "SET    title = :product.title, " +
+        "       model = :product.model, " +
         "       description = :product.description," +
         "       on_shelf = :product.onShelf," +
         "       price = :product.price " +

@@ -9,17 +9,19 @@ import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Child;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child, HasAddons
+public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel
 {
     private Long id;
 
@@ -43,6 +45,8 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons
     private String content;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.empty();
+
+    private Optional<String> model = Optional.absent();
 
     public Page()
     {
@@ -128,6 +132,17 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons
         this.addons = new PerhapsLoaded<List<Addon>>(addons);
     }
 
+    public void setModel(String model)
+    {
+        this.model = Optional.fromNullable(model);
+    }
+
+    @Override
+    public Optional<String> getModel()
+    {
+        return this.model;
+    }
+
     // //////////////////////////////////////////////
 
     @Override
@@ -156,4 +171,6 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
+
+
 }

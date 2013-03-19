@@ -1,6 +1,5 @@
 package org.mayocat.configuration.gestalt;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -8,12 +7,12 @@ import javax.inject.Inject;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.context.Execution;
+import org.mayocat.theme.Model;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -56,13 +55,82 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             }
         }
 
+        Map<String, Model> models = theme.getModels();
+
+        // Step 1 : add models for some entities
+
+        for (String modelId : models.keySet()) {
+            Model model = models.get(modelId);
+            if (model.getEntities().isPresent()) {
+                for (String entity : model.getEntities().get()) {
+                    addModelsToEntity(entities, entity, modelId, model);
+                }
+            }
+        }
+
+        // Step 2 add addon groups for all entities
+
+        for (String modelId : models.keySet()) {
+            Model model = models.get(modelId);
+            if (!model.getEntities().isPresent()) {
+                for (String entity : entities.keySet()) {
+                    addModelsToEntity(entities, entity, modelId, model);
+                }
+            }
+        }
+
         // FIXME: Need a way to list all entities
+        // -> this will be implemented by the notion of "module"
 
         return entities;
     }
 
+    private interface EntitiesMapTransformation
+    {
+        void apply(Map<String, Object> entity, Object... arguments);
+    }
+
+    private void addModelsToEntity(Map<String, Map<String, Object>> entities, String entity, String modelId,
+            Model model)
+    {
+        this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
+        {
+            @Override
+            public void apply(Map<String, Object> entity, Object... arguments)
+            {
+                if (entity.containsKey("models")) {
+                    ((Map) entity.get("models")).put(arguments[0], arguments[1]);
+                } else {
+                    Map map = Maps.newHashMap();
+                    map.put(arguments[0], arguments[1]);
+                    entity.put("models", map);
+                }
+            }
+        }, modelId, model);
+    }
+
     private void addAddonGroupToEntity(Map<String, Map<String, Object>> entities, String entity, String groupKey,
             AddonGroup group)
+    {
+        this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
+        {
+            @Override
+            public void apply(Map<String, Object> entity, Object... arguments)
+            {
+                if (entity.containsKey("addons")) {
+                    ((Map) entity.get("addons")).put(arguments[0], arguments[1]);
+                } else {
+                    Map map = Maps.newHashMap();
+                    map.put(arguments[0], arguments[1]);
+                    entity.put("addons", map);
+                }
+            }
+        }, groupKey, group);
+    }
+
+    private void transformEntitiesMap(Map<String, Map<String, Object>> entities, String entity,
+            EntitiesMapTransformation transfornation,
+            Object... argument)
     {
         Map<String, Object> entityMap;
         if (!entities.containsKey(entity)) {
@@ -70,12 +138,6 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             entities.put(entity, entityMap);
         }
         entityMap = entities.get(entity);
-        if (entityMap.containsKey("addons")) {
-            ((Map) entityMap.get("addons")).put(groupKey, group);
-        } else {
-            Map map = Maps.newHashMap();
-            map.put(groupKey, group);
-            entityMap.put("addons", map);
-        }
+        transfornation.apply(entityMap, argument);
     }
 }

@@ -33,7 +33,7 @@ public class DefaultTheme implements Theme
 
     @Valid
     @JsonProperty
-    private List<Model> models = Collections.emptyList();
+    private Map<String, Model> models = Maps.newHashMap();
 
     @Valid
     @JsonProperty
@@ -58,7 +58,7 @@ public class DefaultTheme implements Theme
     }
 
     @Override
-    public List<Model> getModels()
+    public Map<String, Model> getModels()
     {
         return models;
     }

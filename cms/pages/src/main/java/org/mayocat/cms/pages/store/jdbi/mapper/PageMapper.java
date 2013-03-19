@@ -7,6 +7,8 @@ import org.mayocat.cms.pages.model.Page;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.google.common.base.Strings;
+
 /**
  * @version $Id$
  */
@@ -20,6 +22,10 @@ public class PageMapper implements ResultSetMapper<Page>
         page.setTitle(resultSet.getString("title"));
         page.setSlug(resultSet.getString("slug"));
         page.setContent(resultSet.getString("content"));
+        String model = resultSet.getString("model");
+        if (!Strings.isNullOrEmpty(model)) {
+            page.setModel(model);
+        }
 
         return page;
     }

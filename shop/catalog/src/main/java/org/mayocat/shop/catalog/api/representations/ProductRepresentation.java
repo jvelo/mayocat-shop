@@ -14,6 +14,9 @@ public class ProductRepresentation
 {
     private String slug;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String model;
+
     private String title;
 
     private String description;
@@ -49,6 +52,7 @@ public class ProductRepresentation
             List<ImageRepresentation> images)
     {
         this.slug = product.getSlug();
+        this.model = product.getModel().orNull();
         this.title = product.getTitle();
         this.description = product.getDescription();
         this.onShelf = product.getOnShelf();
@@ -129,5 +133,15 @@ public class ProductRepresentation
     public void setAddons(List<AddonRepresentation> addons)
     {
         this.addons = addons;
+    }
+
+    public String getModel()
+    {
+        return model;
+    }
+
+    public void setModel(String model)
+    {
+        this.model = model;
     }
 }
