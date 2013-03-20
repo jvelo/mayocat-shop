@@ -30,7 +30,8 @@ public class DefaultImageServiceTest
         BufferedImage image = new BufferedImage(120, 200, BufferedImage.TYPE_INT_ARGB);
 
         Rectangle expected = new Rectangle(0, 50, 120, 100);
-        Optional<Rectangle> box = this.mocker.getMockedComponent().getFittingRectangle(image, new Dimension(120, 100));
+        Optional<Rectangle> box =
+                this.mocker.getComponentUnderTest().getFittingRectangle(image, new Dimension(120, 100));
 
         Assert.assertEquals(expected, box.get());
     }
@@ -43,14 +44,15 @@ public class DefaultImageServiceTest
         BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_INT_ARGB);
 
         Rectangle expected = new Rectangle(100, 0, 400, 400);
-        Optional<Rectangle> box = this.mocker.getMockedComponent().getFittingRectangle(image, new Dimension(150, 150));
+        Optional<Rectangle> box =
+                this.mocker.getComponentUnderTest().getFittingRectangle(image, new Dimension(150, 150));
 
         Assert.assertEquals(expected, box.get());
 
         image = new BufferedImage(400, 300, BufferedImage.TYPE_INT_ARGB);
 
         expected = new Rectangle(50, 0, 300, 300);
-        box = this.mocker.getMockedComponent().getFittingRectangle(image, new Dimension(150, 150));
+        box = this.mocker.getComponentUnderTest().getFittingRectangle(image, new Dimension(150, 150));
 
         Assert.assertEquals(expected, box.get());
     }
@@ -59,7 +61,7 @@ public class DefaultImageServiceTest
     public void testGetFittingBoxWhenAspectRatioMatchesDimensions() throws Exception
     {
         BufferedImage image = new BufferedImage(120, 100, BufferedImage.TYPE_INT_ARGB);
-        Optional<Rectangle> box = this.mocker.getMockedComponent().getFittingRectangle(image, new Dimension(12, 10));
+        Optional<Rectangle> box = this.mocker.getComponentUnderTest().getFittingRectangle(image, new Dimension(12, 10));
 
         Assert.assertNull(box.orNull());
     }

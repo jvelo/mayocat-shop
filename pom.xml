@@ -52,10 +52,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependencies versions -->
-        <dropwizard.version>0.6.1</dropwizard.version>
-        <xwiki.version>4.4.1</xwiki.version>
-        <guava.version>13.0.1</guava.version>
-        <elasticsearch.version>0.19.8</elasticsearch.version>
+        <dropwizard.version>0.6.2</dropwizard.version>
+        <xwiki.version>4.5.2</xwiki.version>
+        <guava.version>14.0.1</guava.version>
+        <elasticsearch.version>0.20.5</elasticsearch.version>
     </properties>
 
     <repositories>
