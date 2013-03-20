@@ -7,19 +7,19 @@ public class Template
 {
     private String content;
 
-    private String name;
+    private String id;
 
     private boolean partial;
 
-    public Template(String name, String content)
+    public Template(String id, String content)
     {
-        this(name, content, false);
+        this(id, content, false);
     }
 
-    public Template(String name, String content, boolean partial)
+    public Template(String id, String content, boolean partial)
     {
         this.content = content;
-        this.name = name;
+        this.id = id;
         this.partial = partial;
     }
 
@@ -28,9 +28,9 @@ public class Template
         return content;
     }
 
-    public String getName()
+    public String getId()
     {
-        return name;
+        return id;
     }
 
     public boolean isPartial()

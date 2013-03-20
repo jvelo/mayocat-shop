@@ -2,7 +2,7 @@ package org.mayocat.rest.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import org.mayocat.context.Context;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
@@ -53,25 +53,21 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     {
         try {
             Template template = themeManager.resolveIndex(frontView.getBreakpoint());
-            String layout = themeManager.resolveLayoutName(frontView.getLayout() + ".html",
-                    frontView.getBreakpoint());
+            Template layout = themeManager.resolve(frontView.getLayout() + ".html", frontView.getBreakpoint());
 
-            frontView.getBindings().put("layout", layout);
-
-            //
-            engine.get().register(themeManager.resolve(frontView.getLayout() + ".html", frontView.getBreakpoint()));
+            frontView.getBindings().put("layout", layout.getId());
 
             ObjectMapper mapper = new ObjectMapper();
             String jsonContext = mapper.writeValueAsString(frontView.getBindings());
+
+            engine.get().register(layout);
             engine.get().register(template);
 
-            String rendered = engine.get().render(template.getName(), jsonContext);
+            String rendered = engine.get().render(template.getId(), jsonContext);
 
             entityStream.write(rendered.getBytes());
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(e);
         }
     }
-
-
 }

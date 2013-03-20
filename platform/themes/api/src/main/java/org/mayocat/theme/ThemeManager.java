@@ -13,6 +13,4 @@ public interface ThemeManager
     Template resolveIndex(Breakpoint breakpoint) throws TemplateNotFoundException;
 
     Template resolve(String name, Breakpoint breakpoint) throws TemplateNotFoundException;
-
-    String resolveLayoutName(String layoutName, Breakpoint breakpoint) throws TemplateNotFoundException;
 }
