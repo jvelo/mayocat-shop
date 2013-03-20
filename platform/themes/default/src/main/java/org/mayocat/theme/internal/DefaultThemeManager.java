@@ -2,6 +2,7 @@ package org.mayocat.theme.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -9,12 +10,15 @@ import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.context.Execution;
 import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.Model;
 import org.mayocat.theme.TemplateNotFoundException;
+import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
@@ -40,7 +44,7 @@ public class DefaultThemeManager implements ThemeManager
     private UserAgentBreakpointDetector breakpointDetector;
 
     @Override
-    public Template resolveIndex(Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template resolveIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(INDEX_HTML, breakpoint);
@@ -52,7 +56,7 @@ public class DefaultThemeManager implements ThemeManager
     }
 
     @Override
-    public Template resolve(String name, Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template resolveTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(name, breakpoint);
@@ -61,6 +65,16 @@ public class DefaultThemeManager implements ThemeManager
         } catch (IOException e) {
             throw new TemplateNotFoundException(e);
         }
+    }
+
+    @Override
+    public Optional<String> resolveModelPath(String id)
+    {
+        Map<String, Model> models = getTheme().getModels();
+        if (models.containsKey(id)) {
+            return Optional.fromNullable(models.get(id).getFile());
+        }
+        return Optional.absent();
     }
 
     private String generateTemplateId(String layoutName, Breakpoint breakpoint)
@@ -74,9 +88,9 @@ public class DefaultThemeManager implements ThemeManager
 
     private String getTemplateContent(String name, Breakpoint breakpoint) throws TemplateNotFoundException, IOException
     {
-        String result = getTemplateContent(getActiveTheme(), name, breakpoint);
+        String result = getTemplateContent(getActiveThemeId(), name, breakpoint);
         if (result == null) {
-            result = getTemplateContent(getDefaultTheme(), name, breakpoint);
+            result = getTemplateContent(getDefaultThemeId(), name, breakpoint);
         }
         if (result == null) {
             throw new TemplateNotFoundException();
@@ -154,12 +168,17 @@ public class DefaultThemeManager implements ThemeManager
         return null;
     }
 
-    private String getActiveTheme()
+    private Theme getTheme()
+    {
+        return execution.getContext().getTheme();
+    }
+
+    private String getActiveThemeId()
     {
         return themeSettings.getActive().getValue();
     }
 
-    private String getDefaultTheme()
+    private String getDefaultThemeId()
     {
         return themeSettings.getActive().getDefaultValue();
     }

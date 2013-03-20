@@ -75,7 +75,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             return new FrontView("404", breakpoint);
         }
 
-        FrontView result = new FrontView("product", breakpoint);
+        FrontView result = new FrontView("product", product.getModel(), breakpoint);
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 

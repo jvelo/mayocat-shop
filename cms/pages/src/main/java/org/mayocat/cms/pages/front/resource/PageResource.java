@@ -69,7 +69,7 @@ public class PageResource extends AbstractFrontResource implements Resource
             return new FrontView("404", breakpoint);
         }
 
-        FrontView result = new FrontView("page", breakpoint);
+        FrontView result = new FrontView("page", page.getModel(), breakpoint);
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 

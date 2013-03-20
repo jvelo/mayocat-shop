@@ -1,8 +1,8 @@
 package org.mayocat.rest.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 
-import org.mayocat.context.Context;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
@@ -52,8 +52,26 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             throws IOException, WebApplicationException
     {
         try {
-            Template template = themeManager.resolveIndex(frontView.getBreakpoint());
-            Template layout = themeManager.resolve(frontView.getLayout() + ".html", frontView.getBreakpoint());
+
+            Template template = themeManager.resolveIndexTemplate(frontView.getBreakpoint());
+            Template layout = null;
+
+            if (frontView.getModel().isPresent()) {
+                Optional<String> path = themeManager.resolveModelPath(frontView.getModel().get());
+                if (path.isPresent()) {
+                    try {
+                    layout = themeManager.resolveTemplate(path.get(), frontView.getBreakpoint());
+                    }
+                    catch (TemplateNotFoundException e) {
+                        // Keep going
+                    }
+                }
+                // else just fallback on the default layout
+            }
+
+            if (layout == null) {
+                layout = themeManager.resolveTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
+            }
 
             frontView.getBindings().put("layout", layout.getId());
 
