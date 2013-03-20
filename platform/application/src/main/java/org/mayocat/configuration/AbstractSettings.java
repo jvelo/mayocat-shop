@@ -3,6 +3,8 @@ package org.mayocat.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.configuration.general.FilesSettings;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
 
@@ -29,6 +31,11 @@ public class AbstractSettings extends Configuration
     @Valid
     @NotNull
     @JsonProperty
+    private FilesSettings files = new FilesSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
     private SearchEngineSettings searchEngine = new SearchEngineSettings();
 
     public MultitenancySettings getMultitenancySettings()
@@ -49,5 +56,10 @@ public class AbstractSettings extends Configuration
     public PlatformSettings getPlatformSettings()
     {
         return platform;
+    }
+
+    public FilesSettings getFilesSettings()
+    {
+        return files;
     }
 }

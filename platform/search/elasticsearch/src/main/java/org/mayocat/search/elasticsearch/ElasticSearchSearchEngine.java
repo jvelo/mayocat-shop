@@ -28,6 +28,7 @@ import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.model.Entity;
 import org.mayocat.model.annotation.SearchIndex;
 import org.mayocat.model.event.EntityCreatedEvent;
@@ -48,6 +49,9 @@ import com.yammer.dropwizard.lifecycle.Managed;
 @Singleton
 public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initializable
 {
+
+    @Inject
+    private FilesSettings filesSettings;
 
     @Inject
     private Logger logger;
@@ -139,6 +143,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     {
         try {
             final Builder settings = ImmutableSettings.settingsBuilder();
+            settings.put("path.data", filesSettings.getPermanentDirectory());
             settings.put("client.transport.sniff", true);
             settings.build();
 

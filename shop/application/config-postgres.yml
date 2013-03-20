@@ -1,19 +1,16 @@
+
+# Environment settings
+# --------------------
+
 logging:
   loggers:
       "org.mayocat": DEBUG
   file:
     archive: false
 
-multitenancy:
-  activated: false
-  defaultTenant: shop
-
-authentication:
-  cookieEncryptionKey: Change me here!
-
 database:
   driverClass: org.postgresql.Driver
-  user: imac
+  user: postgres
   password: 
   url: jdbc:postgresql://127.0.0.1/shop
   properties:
@@ -25,6 +22,20 @@ database:
   checkConnectionWhileIdle: true
   checkConnectionHealthWhenIdleFor: 10s
   closeConnectionIfIdleFor: 1 minute
+
+files:
+  permanentDirectory: data
+  temporaryDirectory: tmp
+
+multitenancy:
+  activated: false
+  defaultTenant: shop
+
+authentication:
+  cookieEncryptionKey: Change me here!
+
+# Application settings
+# --------------------
 
 platform:
   thumbnails:

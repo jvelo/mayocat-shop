@@ -1,4 +1,4 @@
-package org.mayocat.configuration.general;
+package org.mayocat.configuration.gestalt;
 
 import javax.inject.Inject;
 
