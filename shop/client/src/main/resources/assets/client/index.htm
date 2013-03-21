@@ -45,6 +45,8 @@
     <script src="javascripts/catalog.js"></script>
     <script src="javascripts/pages.js"></script>
     <script src="javascripts/page.js"></script>
+    <script src="javascripts/articles.js"></script>
+    <script src="javascripts/article.js"></script>
     <script src="javascripts/thumbnail.js"></script>
     <script src="javascripts/product.js"></script>
     <script src="javascripts/collection.js"></script>
@@ -91,9 +93,21 @@
                 </a>
             </li>
             <li active-class="active">
-                <a href="#/contents" other-active-href="#/page/">
+                <a href="#/contents" other-active-href="#/page/,#/news">
                     <h2>Contents</h2>
                 </a>
+                <ul ng-show="isNews || isPages" class="sub-menu">
+                    <li active-class="active">
+                        <a href="#/contents" other-active-href="#/page/">
+                        Pages
+                        </a>
+                    </li>
+                    <li active-class="active">
+                        <a href="#/news">
+                        News
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li active-class="active">
                 <a href="#/theme/">
@@ -132,8 +146,9 @@
           number of sub-views grows that is scales properly and doesn't introduce performance issues (at the UI level,
           or by making too much AJAX calls at once when the app loads, etc.
           -->
-        <div ng-include class="sub-menu" src="'partials/catalog.html'" ng-show="isCatalog"></div>
-        <div ng-include class="sub-menu" src="'partials/pages.html'" ng-show="isPages"></div>
+        <div ng-include class="sub-list" src="'partials/catalog.html'" ng-show="isCatalog"></div>
+        <div ng-include class="sub-list" src="'partials/pages.html'" ng-show="isPages"></div>
+        <div ng-include class="sub-list" src="'partials/articles.html'" ng-show="isNews"></div>
 
         <div role="main" id="main" ng-view></div>
 	</div>

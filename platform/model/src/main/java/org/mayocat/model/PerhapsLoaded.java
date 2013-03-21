@@ -16,7 +16,7 @@ public class PerhapsLoaded<T> implements Serializable
 {
     private T reference;
 
-    public static PerhapsLoaded empty()
+    public static PerhapsLoaded notLoaded()
     {
         return new PerhapsLoaded(null);
     }

@@ -1,0 +1,19 @@
+group ArticleDAO;
+
+createArticle() ::= <<
+    INSERT INTO article (entity_id, model, title, content)
+    VALUES (:id,
+            :article.model,
+            :article.title,
+            :article.content)
+>>
+
+updateArticle() ::= <<
+    UPDATE article
+    SET title = :article.title,
+        model = :article.model,
+        content = :article.content,
+        published = :article.published,
+        publication_date = :article.publicationDate
+    WHERE entity_id = :article.id
+>>

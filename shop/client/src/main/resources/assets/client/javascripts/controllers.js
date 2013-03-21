@@ -43,6 +43,7 @@ function AppController($rootScope, $scope, $location) {
 
     $scope.isCatalog = false;
     $scope.isPages = false;
+    $scope.isNews = false;
 
     $scope.setRoute = function (href) {
         $location.url(href);
@@ -51,6 +52,7 @@ function AppController($rootScope, $scope, $location) {
     $scope.$watch('location.path()', function (path) {
         $scope.isCatalog = false;
         $scope.isPages = false;
+        $scope.isNews = false;
         angular.forEach(["/catalog", "/product/", "/collection/"], function (catalogPath) {
             if (path.indexOf(catalogPath) == 0) {
                 $scope.isCatalog = true;
@@ -59,6 +61,11 @@ function AppController($rootScope, $scope, $location) {
         angular.forEach(["/contents", "/page/"], function (pagePage) {
             if (path.indexOf([pagePage]) == 0) {
                 $scope.isPages = true;
+            }
+        });
+        angular.forEach(["/news", "/article/"], function (newsPage) {
+            if (path.indexOf([newsPage]) == 0) {
+                $scope.isNews = true;
             }
         });
     });

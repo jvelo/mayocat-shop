@@ -1,5 +1,6 @@
-package org.mayocat.cms.pages.model;
+package org.mayocat.cms.news.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -7,7 +8,6 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
-import org.mayocat.model.Child;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
@@ -21,70 +21,78 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel
+public class Article extends AbstractLocalizedEntity implements HasAddons, HasModel
 {
     private Long id;
-
-    private Long parentId = null;
 
     @SearchIndex
     @NotNull
     @Size(min = 1)
     private String slug;
 
-    @SearchIndex
-    private Boolean published;
-
     @Localized(type = LocalizationFieldType.SMALL)
     @SearchIndex
     @NotNull
-    private String title;
+    public String title;
 
-    @Localized(type = LocalizationFieldType.MEDIUM)
+    public String content;
+
     @SearchIndex
-    private String content;
+    private Boolean published;
+
+    private Date publicationDate;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     private Optional<String> model = Optional.absent();
 
-    public Page()
+    public Article()
     {
     }
-
-    public Page(Long id)
+    public Article(Long id)
     {
-        setId(id);
+        this.setId(id);
     }
 
+    @Override
+    public PerhapsLoaded<List<Addon>> getAddons()
+    {
+        return addons;
+    }
+
+    @Override
+    public Optional<String> getModel()
+    {
+        return model;
+    }
+
+    @Override
     public Long getId()
     {
         return id;
     }
 
+    @Override
     public void setId(Long id)
     {
         this.id = id;
     }
 
+    @Override
     public String getSlug()
     {
         return slug;
     }
 
+    @Override
     public void setSlug(String slug)
     {
         this.slug = slug;
     }
 
-    public Boolean getPublished()
+    public void setAddons(List<Addon> addons)
     {
-        return published;
-    }
-
-    public void setPublished(Boolean published)
-    {
-        this.published = published;
+        this.addons = new PerhapsLoaded(addons);
     }
 
     public String getTitle()
@@ -107,40 +115,24 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
         this.content = content;
     }
 
-    // //////////////////////////////////////////////
-
-    @Override
-    public Long getParentId()
+    public Boolean getPublished()
     {
-        return this.parentId;
+        return published;
     }
 
-    @Override
-    public void setParentId(Long id)
+    public void setPublished(Boolean published)
     {
-        this.parentId = id;
+        this.published = published;
     }
 
-    @Override
-    public PerhapsLoaded<List<Addon>> getAddons()
+    public Date getPublicationDate()
     {
-        return addons;
+        return publicationDate;
     }
 
-    public void setAddons(List<Addon> addons)
+    public void setPublicationDate(Date publicationDate)
     {
-        this.addons = new PerhapsLoaded<List<Addon>>(addons);
-    }
-
-    public void setModel(String model)
-    {
-        this.model = Optional.fromNullable(model);
-    }
-
-    @Override
-    public Optional<String> getModel()
-    {
-        return this.model;
+        this.publicationDate = publicationDate;
     }
 
     // //////////////////////////////////////////////
@@ -154,7 +146,7 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Page other = (Page) obj;
+        final Article other = (Article) obj;
 
         return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.content, other.content);
@@ -171,6 +163,4 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
-
-
 }

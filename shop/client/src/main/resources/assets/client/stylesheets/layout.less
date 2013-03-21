@@ -62,12 +62,16 @@ header a {
   border-color: @backgroundLight;
 }
 
-.sidebar-nav ul li.active {
+.sidebar-nav > ul > li.active {
   padding: 7px 0px 5px 15px;
   border-top: solid 1px;
   border-bottom: solid 1px;
   border-color: @borderStrong;
   background-color: @backgroundLighter;
+}
+
+.sidebar-nav ul.sub-menu > li.active {
+  font-weight: bold;
 }
 
 /* List */
@@ -159,7 +163,7 @@ header a {
 // for why the tild TODO remove it when less.js 1.4+ is released
 }
 
-#content > .sub-menu {
+#content > .sub-list {
   float: left;
 }
 

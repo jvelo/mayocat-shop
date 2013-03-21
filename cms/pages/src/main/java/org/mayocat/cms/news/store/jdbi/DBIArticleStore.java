@@ -1,0 +1,106 @@
+package org.mayocat.cms.news.store.jdbi;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.mayocat.cms.news.model.Article;
+import org.mayocat.cms.news.store.ArticleStore;
+import org.mayocat.model.Addon;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.StoreException;
+import org.mayocat.store.rdbms.dbi.DBIEntityStore;
+import org.mayocat.store.rdbms.dbi.dao.ArticleDAO;
+import org.xwiki.component.annotation.Component;
+import org.xwiki.component.phase.Initializable;
+import org.xwiki.component.phase.InitializationException;
+
+/**
+ * @version $Id$
+ */
+@Component(hints = { "jdbi", "default" })
+public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Initializable
+{
+    private ArticleDAO dao;
+
+    private static final String ARTICLE_TABLE_NAME = "article";
+
+    @Override
+    public void create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
+    {
+        if (this.dao.findBySlug(ARTICLE_TABLE_NAME, article.getSlug(), getTenant()) != null) {
+            throw new EntityAlreadyExistsException();
+        }
+
+        this.dao.begin();
+
+        Long entityId = this.dao.createEntity(article, ARTICLE_TABLE_NAME, getTenant());
+        article.setId(entityId);
+
+        this.dao.createArticle(entityId, article);
+        this.dao.insertTranslations(entityId, article.getTranslations());
+        this.dao.createOrUpdateAddons(article);
+
+        this.dao.commit();
+    }
+
+    @Override
+    public void update(@Valid Article article) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        this.dao.begin();
+
+        Article originalArticle = this.findBySlug(article.getSlug());
+        if (originalArticle == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+        article.setId(originalArticle.getId());
+        Integer updatedRows = this.dao.updateArticle(article);
+        this.dao.createOrUpdateAddons(article);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating article");
+        }
+    }
+
+    @Override
+    public Integer countAll()
+    {
+        return this.dao.countAll(ARTICLE_TABLE_NAME, getTenant());
+    }
+
+    @Override
+    public List<Article> findAll(Integer number, Integer offset)
+    {
+        return this.dao.findAll(ARTICLE_TABLE_NAME, getTenant(), number, offset);
+    }
+
+    @Override
+    public Article findBySlug(String slug)
+    {
+        Article article = this.dao.findBySlugWithTranslations(ARTICLE_TABLE_NAME, slug, getTenant());
+        List<Addon> addons = this.dao.findAddons(article);
+        article.setAddons(addons);
+        return article;
+    }
+
+    @Override
+    public Article findById(Long id)
+    {
+        Article article = this.dao.findById(ARTICLE_TABLE_NAME, id);
+        List<Addon> addons = this.dao.findAddons(article);
+        article.setAddons(addons);
+        return article;
+    }
+
+    @Override
+    public void initialize() throws InitializationException
+    {
+        this.dao = this.getDbi().onDemand(ArticleDAO.class);
+        super.initialize();
+    }
+}

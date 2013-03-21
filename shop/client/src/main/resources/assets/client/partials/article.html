@@ -1,0 +1,113 @@
+<h1 class="small" ng-show="!isNew()">Edit article</h1>
+<h1 class="small" ng-show="isNew()">New article</h1>
+
+<form>
+    <article class="entity" ng-class="{true: 'loading', false: ''}[article.title == undefined]">
+
+        <div ng-show="article.title != undefined">
+
+            <!-- Title -->
+            <h1>
+                <input type="text" class="title" ng-model="article.title" placeholder="article's title"/>
+            </h1>
+
+            <!-- Description -->
+            <div ng-show="!isNew()">
+                <label>Content</label>
+                <textarea class="" rows="10" ng-model="article.content"/>
+            </div>
+
+            <div class="block" ng-show="!isNew()">
+                <h3>Images ({{article.images.length}})</h3>
+                <ul class="thumbnails">
+                    <li ng-repeat="image in article.images">
+                        <div class="thumbnail">
+                            <div class="wrapper">
+                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                            </div>
+                            <div class="caption">
+                                <div class="btn-group pull-right">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Edit
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="editThumbnails(image)"
+                                            data-toggle="modal"
+                                            href="#editThumbnails">Thumbnails
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="modal hide fade" ng-include="'partials/editThumbnails.html'" id="editThumbnails"></div>
+                <div class="alert" ng-show="article.images.length <= 0">
+                    <strong>No image yet</strong> - use the area below to add images to this article.
+                </div>
+                <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
+            </div>
+        </div>
+
+        <div ng-show="addons.length > 0 && !isNew()">
+            <div class="block" ng-repeat="addon in addons">
+                <h3>{{addon.definition.name}}</h3>
+                <addon definition=addon.definition value="article.addons[addon.index].value"></addon>
+            </div>
+        </div>
+
+        <div ng-show="addons.length > 0 && !isNew()">
+            <div class="block" ng-repeat="group in addons">
+                <h3>{{group.name}}</h3>
+                <p ng-show="group.text && group.text != ''">
+                    {{group.text}}
+                </p>
+                <ul>
+                    <li ng-repeat="addon in group.fields">
+                        {{addon.definition.name}}
+
+                        <addon definition="addon.definition" value="article.addons[addon.index].value"></addon>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </article>
+    </div>
+    <aside ng-show="article.title != undefined">
+        <div class="buttons">
+            <div ng-show="isNew()">
+                <!-- Create new article -->
+                <button ng-click="updateArticle()" class="btn btn-large btn-primary">Create</button>
+            </div>
+            <div ng-show="!isNew()">
+                <div ng-show="article.published == undefined">
+                    <button ng-click="updateArticle()" class="btn btn-large btn">Save</button>
+                    <button ng-click="publishArticle()" class="btn btn-large btn-primary">Publish online
+                    </button>
+                </div>
+                <div ng-show="article.published != undefined">
+                    <button ng-click="updateArticle()" class="btn btn-large btn-primary">Update</button>
+                </div>
+                <!-- Publish / update article -->
+            </div>
+        </div>
+        <p/>
+
+        <div class="uri" ng-show="!isNew()">
+            <a href="/news/{{article.slug}}" target="_new">
+                /news/{{article.slug}}
+            </a>
+        </div>
+
+        <div class="block" ng-show="!isNew() && models.length > 0">
+            <h3>Model</h3>
+            <select ng-model="article.model" ng-options="model.id as model.name for model in models">
+                <option value="">Default model</option>
+            </select>
+        </div>
+
+    </aside>
+</form>

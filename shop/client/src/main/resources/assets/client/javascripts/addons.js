@@ -25,7 +25,7 @@ angular.module('addons', ['ngResource'])
                 var entityAddons = [];
                 var deferred = $q.defer();
                 configurationService.get("entities", function (entities) {
-                    if (typeof entities !== 'undefined') {
+                    if (typeof entities !== 'undefined' && typeof entities[entityName] !== 'undefined') {
                         var addons = entities[entityName].addons;
                         for (var groupKey in addons) {
                             if (addons.hasOwnProperty(groupKey)) {

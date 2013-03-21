@@ -22,14 +22,14 @@ public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implement
         PositionedDAO<Page>, AddonsDAO<Page>
 {
     @SqlQuery
-    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+         public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
     @SqlUpdate
     public abstract void createPage(@Bind("id") Long entityId, @Bind("position") Integer position,
-            @BindBean("page") Page product);
+            @BindBean("page") Page page);
 
     @SqlUpdate
-    public abstract Integer updatePage(@BindBean("page") Page product);
+    public abstract Integer updatePage(@BindBean("page") Page page);
 
     public void createOrUpdateAddons(Page entity)
     {

@@ -42,7 +42,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     @SearchIndex
     private BigDecimal price;
 
-    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.empty();
+    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     private Optional<String> model = Optional.absent();
 

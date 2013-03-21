@@ -82,3 +82,38 @@ curl -i -H "Content-Type: application/json"                            \
   }                                                                    \
   "                                                                    \
   http://localhost:8080/api/1.0/page/
+
+echo -e "\n\nAdding some news articles...\n"
+
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"Olfactory sulcus\"                                \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/news/
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"Alexander Zwo\"                                   \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/news/
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"World Day for International Justice\"             \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/news/
+curl -i -H "Content-Type: application/json"                            \
+        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
+        -X POST -d "                                                   \
+  {                                                                    \
+    \"title\"    : \"Hrebenne, Hrubieszów County\"                     \
+  }                                                                    \
+  "                                                                    \
+  http://localhost:8080/api/1.0/news/

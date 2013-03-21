@@ -43,6 +43,8 @@
                         <include>assets/client/javascripts/product.js</include>
                         <include>assets/client/javascripts/thumbnail.js</include>
                         <include>assets/client/javascripts/collection.js</include>
+                        <include>assets/client/javascripts/articles.js</include>
+                        <include>assets/client/javascripts/article.js</include>
                         <include>assets/client/javascripts/pages.js</include>
                         <include>assets/client/javascripts/page.js</include>
                         <include>assets/client/javascripts/catalog.js</include>

@@ -241,6 +241,27 @@
             <column name="published"/>
         </createIndex>
 
+        <!-- News article table -->
+        <createTable tableName="article">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="model" type="varchar(255)"/>
+            <column name="published" type="boolean"/>
+            <column name="publication_date" type="timestamp"/>
+            <column name="title" type="varchar(255)"/>
+            <column name="content" type="mediumtext"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="ARTICLE_ENTITY_FK"
+                baseTableName="article" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="article" indexName="ARTICLE_PUBLICATION_DATE_INDEX">
+            <column name="publication_date"/>
+        </createIndex>
+        <createIndex tableName="article" indexName="ARTICLE_PUBLISHED_INDEX">
+            <column name="published"/>
+        </createIndex>
+
         <!-- Product table -->
         <createTable tableName="product">
             <column name="entity_id" type="bigint">
