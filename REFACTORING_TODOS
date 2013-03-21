@@ -6,3 +6,4 @@
 - Check usage of plural in package names (i.e. representations vs. representation)
 - Move to UUID for entities
 - Change thumbnails config format to be more in line with addons/models
+- AbstractLocalizedEntity -> IsLocalized interface
