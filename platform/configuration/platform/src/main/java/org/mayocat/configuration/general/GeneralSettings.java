@@ -25,7 +25,7 @@ public class GeneralSettings implements ExposedSettings
 
     @Valid
     @JsonProperty
-    private Configurable<TimeZone> timeZone = new Configurable<TimeZone>(TimeZone.getTimeZone("GMT"), true);
+    private Configurable<TimeZone> timeZone = new Configurable<TimeZone>(TimeZone.getDefault(), true);
 
     @Valid
     @JsonProperty
