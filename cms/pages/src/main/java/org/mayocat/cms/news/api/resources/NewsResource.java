@@ -163,7 +163,8 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 if (isJustBeingPublished(article, updatedArticle) && updatedArticle.getPublicationDate() == null) {
                     // If the article is being published and has no publication date, set it to right now
                     GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
-                    DateTime now = new DateTime().withZone(DateTimeZone.forTimeZone(settings.getTimeZone().getValue()));
+                    DateTime now = new DateTime()
+                            .withZone(DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue()));
                     updatedArticle.setPublicationDate(now.toLocalDateTime().toDate());
                 }
 

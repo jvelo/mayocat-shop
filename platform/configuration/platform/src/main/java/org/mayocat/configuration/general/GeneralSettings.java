@@ -25,11 +25,11 @@ public class GeneralSettings implements ExposedSettings
 
     @Valid
     @JsonProperty
-    private Configurable<TimeZone> timeZone = new Configurable<TimeZone>(TimeZone.getDefault(), true);
+    private LocalesSettings locales = new LocalesSettings();
 
     @Valid
     @JsonProperty
-    private LocalesSettings locales = new LocalesSettings();
+    private TimeSettings time = new TimeSettings();
 
     public LocalesSettings getLocales()
     {
@@ -46,9 +46,9 @@ public class GeneralSettings implements ExposedSettings
         return tagline;
     }
 
-    public Configurable<TimeZone> getTimeZone()
+    public TimeSettings getTime()
     {
-        return timeZone;
+        return time;
     }
 
     @Override
