@@ -33,12 +33,12 @@ public class PageBindingBuilder
 
     public Map<String, Object> build(final Page page, List<Image> images)
     {
-        Map<String, Object> productContext = Maps.newHashMap();
+        Map<String, Object> pageContext = Maps.newHashMap();
 
-        productContext.put("title", page.getTitle());
-        productContext.put("content", page.getContent());
-        productContext.put("published", page.getPublished());
-        productContext.put("href", "/page/" + page.getSlug());
+        pageContext.put("title", page.getTitle());
+        pageContext.put("content", page.getContent());
+        pageContext.put("published", page.getPublished());
+        pageContext.put("href", "/page/" + page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
@@ -55,7 +55,7 @@ public class PageBindingBuilder
         }
 
         imagesContext.put("all", allImages);
-        productContext.put("images", imagesContext);
+        pageContext.put("images", imagesContext);
 
         // Addons
 
@@ -79,9 +79,9 @@ public class PageBindingBuilder
 
                 themeAddonsContext.put(groupKey, groupContext);
             }
-            productContext.put("theme_addons", themeAddonsContext);
+            pageContext.put("theme_addons", themeAddonsContext);
         }
 
-        return productContext;
+        return pageContext;
     }
 }

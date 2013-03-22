@@ -89,6 +89,12 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
+    public List<Article> findAllPublished(Integer offset, Integer number)
+    {
+        return this.dao.findAllPublished(getTenant(), number, offset);
+    }
+
+    @Override
     public Article findById(Long id)
     {
         Article article = this.dao.findById(ARTICLE_TABLE_NAME, id);
