@@ -37,6 +37,19 @@
                         </div>
                     </div>
 
+                    <!-- Shop timezone -->
+                    <div class="control-group" ng-show="isVisible('general.timeZone')"
+                         ng-class="{default: isDefaultValue('general.timeZone')}">
+                        <label class="control-label" for="shopTimeZone">Time zone</label>
+
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="settings.general.timeZone.value"
+                                   id="shopTimeZone"
+                                   ng-disabled="!isConfigurable('general.timeZone')"/>
+                        </div>
+                    </div>
+
                     <!-- Default locale -->
                     <div class="control-group" ng-show="isVisible('general.locales.main')"
                          ng-class="{default: isDefaultValue('general.locales.main')}">

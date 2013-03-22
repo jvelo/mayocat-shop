@@ -31,6 +31,7 @@ public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
     @Before
     public void setUp() throws Exception
     {
+
         File notConfigurableConfigurationFile = new File(Resources.getResource(
                 "configuration/locales-not-configurable.yml").toURI());
         localesNotConfigurableConfiguration = factory.build(notConfigurableConfigurationFile);

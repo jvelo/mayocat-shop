@@ -22,6 +22,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.mayocat.Slugifier;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
@@ -30,6 +32,8 @@ import org.mayocat.base.Resource;
 import org.mayocat.cms.news.api.representations.ArticleRepresentation;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
+import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -70,6 +74,9 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
     @Inject
     private Provider<ArticleStore> articleStore;
+
+    @Inject
+    private ConfigurationService configurationService;
 
     @GET
     public Object listArticles(@QueryParam("number") @DefaultValue("100") Integer number,
@@ -155,7 +162,9 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 updatedArticle.setSlug(slug);
                 if (isJustBeingPublished(article, updatedArticle) && updatedArticle.getPublicationDate() == null) {
                     // If the article is being published and has no publication date, set it to right now
-                    updatedArticle.setPublicationDate(new Date());
+                    GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
+                    DateTime now = new DateTime().withZone(DateTimeZone.forTimeZone(settings.getTimeZone().getValue()));
+                    updatedArticle.setPublicationDate(now.toLocalDateTime().toDate());
                 }
 
                 this.articleStore.get().update(updatedArticle);

@@ -15,6 +15,7 @@ import org.mayocat.base.Managed;
 import org.mayocat.base.Provider;
 import org.mayocat.base.Task;
 import org.mayocat.configuration.AbstractSettings;
+import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.base.Resource;
@@ -51,6 +52,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     public void initialize(Bootstrap<C> bootstrap)
     {
         bootstrap.getObjectMapperFactory().registerModule(new ThumbnailsModule());
+        bootstrap.getObjectMapperFactory().registerModule(new TimeZoneModule());
 
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
     }

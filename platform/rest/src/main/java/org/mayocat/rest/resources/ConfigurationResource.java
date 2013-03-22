@@ -90,6 +90,7 @@ public class ConfigurationResource implements Resource
     @PUT
     @Timed
     @Authorized(roles = Role.ADMIN)
+    @Path("settings")
     public Response updateModuleConfiguration(Map<String, Object> configuration)
     {
         configurationService.updateSettings(configuration);

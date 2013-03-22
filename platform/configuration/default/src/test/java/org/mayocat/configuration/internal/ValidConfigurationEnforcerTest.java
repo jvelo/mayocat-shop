@@ -19,9 +19,9 @@ import junit.framework.Assert;
  */
 public class ValidConfigurationEnforcerTest extends AbstractConfigurationTest
 {
-    private GeneralSettings defaultConfiguration = new GeneralSettings();
+    private GeneralSettings defaultSettings = new GeneralSettings();
 
-    private GeneralSettings localesNotConfigurablesConfiguration;
+    private GeneralSettings localesNotConfigurablesSettings;
 
     private final Validator validator = new Validator();
 
@@ -33,13 +33,13 @@ public class ValidConfigurationEnforcerTest extends AbstractConfigurationTest
     {
         File notConfigurableConfigurationFile = new File(Resources.getResource(
                 "configuration/locales-not-configurable.yml").toURI());
-        localesNotConfigurablesConfiguration = factory.build(notConfigurableConfigurationFile);
+        localesNotConfigurablesSettings = factory.build(notConfigurableConfigurationFile);
     }
 
     @Test
     public void testEnforceValidConfiguration() throws Exception
     {
-        Map<String, Object> generalConfiguration = getConfiguration(defaultConfiguration);
+        Map<String, Object> generalConfiguration = getConfiguration(defaultSettings);
         Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
         ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(generalConfiguration, tenantConfiguration);
 
@@ -56,7 +56,7 @@ public class ValidConfigurationEnforcerTest extends AbstractConfigurationTest
     @Test
     public void testEnforceValidConfigurationWhenNotConfigurable() throws Exception
     {
-        Map<String, Object> generalConfiguration = getConfiguration(localesNotConfigurablesConfiguration);
+        Map<String, Object> generalConfiguration = getConfiguration(localesNotConfigurablesSettings);
         Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
         ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(generalConfiguration, tenantConfiguration);
 

@@ -1,5 +1,7 @@
 package org.mayocat.configuration.general;
 
+import java.util.TimeZone;
+
 import javax.validation.Valid;
 
 import org.mayocat.base.ExposedSettings;
@@ -23,6 +25,10 @@ public class GeneralSettings implements ExposedSettings
 
     @Valid
     @JsonProperty
+    private Configurable<TimeZone> timeZone = new Configurable<TimeZone>(TimeZone.getTimeZone("GMT"), true);
+
+    @Valid
+    @JsonProperty
     private LocalesSettings locales = new LocalesSettings();
 
     public LocalesSettings getLocales()
@@ -38,6 +44,11 @@ public class GeneralSettings implements ExposedSettings
     public Configurable<String> getTagline()
     {
         return tagline;
+    }
+
+    public Configurable<TimeZone> getTimeZone()
+    {
+        return timeZone;
     }
 
     @Override

@@ -1,12 +1,10 @@
 package org.mayocat.configuration.jackson;
 
 import java.io.IOException;
+import java.util.TimeZone;
 
-import org.mayocat.configuration.Configurable;
 import org.mayocat.configuration.thumbnails.Dimensions;
-import org.xwiki.component.annotation.Component;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
@@ -16,33 +14,42 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.Deserializers;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import com.fasterxml.jackson.databind.ser.Serializers;
 
 /**
  * @version $Id$
  */
-public class GestaltConfigurationModule extends Module
+public class TimeZoneModule extends Module
 {
-    private static class ConfigurableSerializer extends JsonSerializer<Configurable>
+    private static class TimeZoneDeserializer extends JsonDeserializer<TimeZone>
     {
         @Override
-        public void serialize(Configurable value, JsonGenerator jgen, SerializerProvider provider)
+        public TimeZone deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
                 throws IOException, JsonProcessingException
         {
-            provider.defaultSerializeValue(value.getValue(), jgen);
+            return TimeZone.getTimeZone(jsonParser.getText());
+        }
+    }
+
+    private static class TimeZoneDeserializers extends Deserializers.Base
+    {
+        @Override
+        public JsonDeserializer<?> findBeanDeserializer(JavaType type,
+                DeserializationConfig config,
+                BeanDescription beanDesc) throws JsonMappingException
+        {
+            if (TimeZone.class.isAssignableFrom(type.getRawClass())) {
+                return new TimeZoneDeserializer();
+            }
+            return super.findBeanDeserializer(type, config, beanDesc);
         }
     }
 
     @Override
     public String getModuleName()
     {
-        return "gestaltConfiguration";
+        return "MayocatTimeZoneModule";
     }
 
     @Override
@@ -52,10 +59,8 @@ public class GestaltConfigurationModule extends Module
     }
 
     @Override
-    public void setupModule(SetupContext context)
+    public void setupModule(SetupContext setupContext)
     {
-        SimpleSerializers serializers = new SimpleSerializers();
-        serializers.addSerializer(Configurable.class, new ConfigurableSerializer());
-        context.addSerializers(serializers);
+        setupContext.addDeserializers(new TimeZoneDeserializers());
     }
 }

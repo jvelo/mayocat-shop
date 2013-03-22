@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 /**
  * @version $Id$
  */
-@Component("thumbnails")
 public class ThumbnailsModule extends Module
 {
     private static class DimensionDeserializer extends JsonDeserializer<Dimensions>
