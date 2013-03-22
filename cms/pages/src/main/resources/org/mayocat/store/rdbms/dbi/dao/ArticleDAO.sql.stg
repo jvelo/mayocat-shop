@@ -17,3 +17,15 @@ updateArticle() ::= <<
         publication_date = :article.publicationDate
     WHERE entity_id = :article.id
 >>
+
+findAllPublished() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN article ON entity.id = article.entity_id
+    WHERE   entity.type = 'article'
+        AND entity.tenant_id = :tenant.id
+        AND article.published = true
+    ORDER BY article.publication_date DESC
+    LIMIT  :number
+    OFFSET :offset
+>>

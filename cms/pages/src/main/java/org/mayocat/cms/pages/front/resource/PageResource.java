@@ -61,7 +61,7 @@ public class PageResource extends AbstractFrontResource implements Resource
 
     @Path("{slug}")
     @GET
-    public FrontView getProduct(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
+    public FrontView getPage(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
         final Page page = pageStore.get().findBySlug(slug);
