@@ -57,8 +57,8 @@ angular.module('article', ['ngResource'])
         }
 
         $scope.reloadImages = function () {
-            $scope.page.images = $http.get("/api/1.0/news/" + $scope.slug + "/image").success(function (data) {
-                $scope.page.images = data;
+            $scope.article.images = $http.get("/api/1.0/news/" + $scope.slug + "/image").success(function (data) {
+                $scope.article.images = data;
             });
         }
 

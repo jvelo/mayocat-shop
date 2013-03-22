@@ -48,6 +48,12 @@ public class ArticleRepresentation
         this.publicationDate = article.getPublicationDate();
     }
 
+    public ArticleRepresentation(Article article, List<ImageRepresentation> images)
+    {
+        this(article);
+        this.images = images;
+    }
+
     public String getSlug()
     {
         return slug;

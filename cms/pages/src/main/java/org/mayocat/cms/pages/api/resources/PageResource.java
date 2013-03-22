@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,9 +63,6 @@ import com.yammer.metrics.annotation.Timed;
 public class PageResource extends AbstractAttachmentResource implements Resource
 {
     @Inject
-    private Slugifier slugifier;
-
-    @Inject
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
@@ -95,13 +93,25 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
     @GET
     @Path("{slug}")
-    public Object getPage(@PathParam("slug") String slug)
+    public Object getPage(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
         Page page = pageStore.get().findBySlug(slug);
         if (page == null) {
             return Response.status(404).build();
         }
-        PageRepresentation representation = new PageRepresentation(page);
+
+        List<String> expansions = Strings.isNullOrEmpty(expand)
+                ? Collections.<String>emptyList()
+                : Arrays.asList(expand.split(","));
+
+        PageRepresentation representation;
+        if (expansions.contains("images")) {
+            representation= new PageRepresentation(page, getImages(slug));
+        }
+        else {
+            representation= new PageRepresentation(page);
+        }
+
         if (page.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
             for (Addon a : page.getAddons().get()) {
@@ -119,7 +129,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
     {
         try {
             if (Strings.isNullOrEmpty(page.getSlug())) {
-                page.setSlug(this.slugifier.slugify(page.getTitle()));
+                page.setSlug(this.getSlugifier().slugify(page.getTitle()));
             }
             this.pageStore.get().create(page);
 

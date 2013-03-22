@@ -1,5 +1,7 @@
 package org.mayocat.store;
 
+import java.util.Collections;
+
 import com.google.common.collect.ImmutableList;
 
 public class InvalidEntityException extends Exception
@@ -10,10 +12,16 @@ public class InvalidEntityException extends Exception
     private static final long serialVersionUID = 645796421122785119L;
     
     private final ImmutableList<String> errors;
-        
-    public InvalidEntityException(String message, Iterable<String> errors)
+
+    public InvalidEntityException(String message)
     {
         super(message);
+        errors = ImmutableList.of();
+    }
+
+    public InvalidEntityException(String message, Iterable<String> errors)
+    {
+       super(message);
         this.errors = ImmutableList.copyOf(errors);
     }
 

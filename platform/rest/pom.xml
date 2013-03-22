@@ -13,7 +13,6 @@
     <description>Base JAX-RS REST module</description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-authorization</artifactId>

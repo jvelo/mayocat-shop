@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
@@ -15,9 +16,16 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.dao.AttachmentDAO;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicMatch;
 
 /**
  * @version $Id$
@@ -28,6 +36,9 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     private static final String ATTACHMENT_TABLE_NAME = "attachment";
 
     private AttachmentDAO dao;
+
+    @Inject
+    private Logger logger;
 
     @Override
     public void create(Attachment attachment) throws EntityAlreadyExistsException, InvalidEntityException
@@ -48,6 +59,20 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
             // This memory cost is mitigated by the fact the image upload operation is (relatively) not so frequent,
             // and that platform administrator can setup max upload file size.
             byte[] bytes = IOUtils.toByteArray(data);
+
+            if (Strings.isNullOrEmpty(attachment.getExtension())) {
+                // If there is no extension, try to guess it from the byte array
+
+                Optional<String> guessedExtension = guessExtension(bytes);
+                if (guessedExtension.isPresent()) {
+                    attachment.setExtension(guessedExtension.get());
+                }
+                else {
+                    throw new InvalidEntityException("No extension were set in attachment entity and we failed to " +
+                            "guess one");
+                }
+            }
+
             this.dao.createAttachment(entityId, attachment, bytes);
         } catch (IOException e) {
             throw new StoreException(e);
@@ -109,6 +134,24 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     {
         this.dao = this.getDbi().onDemand(AttachmentDAO.class);
         super.initialize();
+    }
+
+    private Optional<String> guessExtension(byte[] bytes)
+    {
+        try {
+            // No extension : try to guess it
+            Magic parser = new Magic();
+            MagicMatch match = parser.getMagicMatch(bytes);
+            String guessedExtension = match.getExtension();
+            if (!Strings.isNullOrEmpty(guessedExtension)) {
+                return Optional.of(guessedExtension);
+            } else {
+                return Optional.absent();
+            }
+        } catch (Exception e) {
+            this.logger.warn("Error while attempting to guess attachment extension", e);
+            return Optional.absent();
+        }
     }
 
 

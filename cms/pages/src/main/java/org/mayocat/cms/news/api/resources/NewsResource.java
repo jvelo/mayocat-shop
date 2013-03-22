@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -67,9 +68,6 @@ import com.yammer.metrics.annotation.Timed;
 public class NewsResource extends AbstractAttachmentResource implements Resource
 {
     @Inject
-    private Slugifier slugifier;
-
-    @Inject
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
@@ -103,13 +101,26 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
     @GET
     @Path("{slug}")
-    public Object getArticle(@PathParam("slug") String slug)
+    public Object getArticle(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
         Article article = articleStore.get().findBySlug(slug);
         if (article == null) {
             return Response.status(404).build();
         }
-        ArticleRepresentation representation = new ArticleRepresentation(article);
+
+        List<String> expansions = Strings.isNullOrEmpty(expand)
+                ? Collections.<String>emptyList()
+                : Arrays.asList(expand.split(","));
+
+        ArticleRepresentation representation;
+        if (expansions.contains("images")) {
+            representation= new ArticleRepresentation(article, getImages(slug));
+        }
+        else {
+            representation= new ArticleRepresentation(article);
+        }
+
+
         if (article.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
             for (Addon a : article.getAddons().get()) {
@@ -127,7 +138,7 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
     {
         try {
             if (Strings.isNullOrEmpty(article.getSlug())) {
-                article.setSlug(this.slugifier.slugify(article.getTitle()));
+                article.setSlug(this.getSlugifier().slugify(article.getTitle()));
             }
             this.articleStore.get().create(article);
 

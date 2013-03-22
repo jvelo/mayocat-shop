@@ -44,6 +44,12 @@ public class PageRepresentation
         this.content = page.getContent();
     }
 
+    public PageRepresentation(Page page, List<ImageRepresentation> images)
+    {
+        this(page);
+        this.images = images;
+    }
+
     public String getSlug()
     {
         return slug;
