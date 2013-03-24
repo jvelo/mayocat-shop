@@ -19,6 +19,7 @@
     <module>client</module>
     <module>themes</module>
     <module>application</module>
+    <module>distribution</module>
   </modules>
 
 </project>

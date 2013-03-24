@@ -1,0 +1,49 @@
+<assembly>
+  <id>distribution</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.mayocat.shop:mayocat-shop-application</include>
+        <include>postgresql:postgresql</include>
+        <include>commons-dbcp:commons-dbcp</include>
+      </includes>
+      <outputDirectory>lib/</outputDirectory>
+      <unpack>false</unpack>
+      <!-- Needed to prevent warning since our project has a pom packaging and is not producing any artifact -->
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
+    <dependencySet>
+      <includes>
+        <include>org.mayocat.shop:mayocat-shop-client</include>
+      </includes>
+      <outputDirectory>client</outputDirectory>
+      <unpack>true</unpack>
+      <!-- Needed to prevent warning since our project has a pom packaging and is not producing any artifact -->
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
+    <dependencySet>
+      <includes>
+        <include>org.mayocat.shop:mayocat-shop-themes</include>
+      </includes>
+      <unpackOptions>
+        <excludes>
+            <exclude>META-INF/**</exclude>
+        </excludes>
+      </unpackOptions>
+      <outputDirectory>data</outputDirectory>
+      <unpack>true</unpack>
+      <!-- Needed to prevent warning since our project has a pom packaging and is not producing any artifact -->
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
+  </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/resources</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>

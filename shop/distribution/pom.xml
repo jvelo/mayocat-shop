@@ -6,11 +6,46 @@
         <artifactId>mayocat-shop-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>mayocat-shop-themes</artifactId>
+    <groupId>org.mayocat.shop</groupId>
+    <artifactId>mayocat-shop-distribution</artifactId>
     <packaging>pom</packaging>
 
-    <name>Mayocat Shop - Themes</name>
-    <description>Bundled themes</description>
+    <name>Mayocat Shop - Distribution</name>
+    <description>Distribution package of MayocatShop</description>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-client</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-themes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <!-- Assembly -->
