@@ -16,7 +16,7 @@ import org.mayocat.authorization.cookies.CookieCrypter;
 import org.mayocat.authorization.cookies.EncryptionException;
 import org.mayocat.accounts.model.User;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.accounts.AccountsService;
 import org.xwiki.component.annotation.Component;
 

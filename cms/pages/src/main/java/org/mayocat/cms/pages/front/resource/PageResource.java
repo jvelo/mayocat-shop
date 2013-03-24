@@ -15,7 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.front.builder.PageBindingBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;

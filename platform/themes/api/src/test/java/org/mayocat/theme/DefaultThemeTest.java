@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mayocat.addons.model.AddonField;
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -30,7 +29,6 @@ public class DefaultThemeTest
     public void setUp() throws Exception
     {
         objectMapperFactory = new ObjectMapperFactory();
-        objectMapperFactory.registerModule(new ThumbnailsModule());
     }
 
     @Test

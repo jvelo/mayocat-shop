@@ -1,3 +1,2 @@
 org.mayocat.image.internal.DefaultImageService
 org.mayocat.image.store.jdbi.DBIThumbnailStore
-org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule

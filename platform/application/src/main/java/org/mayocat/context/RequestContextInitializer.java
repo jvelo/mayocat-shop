@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.mayocat.application.AbstractService;
 import org.mayocat.authorization.Authenticator;
-import org.mayocat.base.EventListener;
+import org.mayocat.event.EventListener;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ConfigurationService;

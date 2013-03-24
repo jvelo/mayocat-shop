@@ -1,6 +1,9 @@
 package org.mayocat.shop.application;
 
 import org.mayocat.application.AbstractService;
+import org.mayocat.cms.news.NewsModule;
+import org.mayocat.cms.pages.PagesModule;
+import org.mayocat.shop.catalog.CatalogModule;
 import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopSettings;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
@@ -42,6 +45,10 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
                 return configuration.getDatabaseConfiguration();
             }
         });
+
+        addModule(new PagesModule());
+        addModule(new NewsModule());
+        addModule(new CatalogModule());
     }
 
     private void registerDBIFactoryComponent(Environment environment, MayocatShopSettings configuration)

@@ -6,7 +6,10 @@ import javax.inject.Inject;
 
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.GestaltConfigurationSource;
+import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.context.Execution;
+import org.mayocat.meta.EntityMeta;
+import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.theme.Model;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
@@ -23,41 +26,54 @@ import com.google.common.collect.Maps;
 public class EntitiesGestaltConfigurationSource implements GestaltConfigurationSource
 {
     @Inject
+    private EntityMetaRegistry entityMetaRegistry;
+
+    @Inject
     private Execution execution;
 
     @Override
     public Object get()
     {
         Map<String, Map<String, Object>> entities = Maps.newLinkedHashMap();
+        for (EntityMeta meta : entityMetaRegistry.getEntities()) {
+            Map data = Maps.newHashMap();
+            entities.put(meta.getEntityName(), data);
+        }
 
         Theme theme = execution.getContext().getTheme();
-        Map<String, AddonGroup> addons = theme.getAddons();
 
-        // Step 1 : add addon groups specified for some entities
+        addAddons(entities, theme.getAddons());
+        addModels(entities, theme.getModels());
+        addThumbnails(entities, theme.getThumbnails());
 
-        for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
-            if (group.getEntities().isPresent()) {
-                for (String entity : group.getEntities().get()) {
-                    addAddonGroupToEntity(entities, entity, groupKey, group);
+        return entities;
+    }
+
+    private void addThumbnails(Map<String, Map<String, Object>> entities, Map<String, ThumbnailDefinition> thumbnails)
+    {
+        // Step 1 : add thumbnails defined explicitly for some entities
+        for (String thumbnailKey : thumbnails.keySet()) {
+            ThumbnailDefinition thumbnailDefinition = thumbnails.get(thumbnailKey);
+            if (thumbnailDefinition.getEntities().isPresent()) {
+                for (String entity : thumbnailDefinition.getEntities().get()) {
+                    addThumbnailDefinitionToEntity(entities, entity, "theme", thumbnailKey, thumbnailDefinition);
                 }
             }
         }
-
-        // Step 2 add addon groups for all entities
-
-        for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
-            if (!group.getEntities().isPresent()) {
+        // Step 2 add thumbnails groups for all entities
+        for (String modelId : thumbnails.keySet()) {
+            ThumbnailDefinition thumbnailDefinition = thumbnails.get(modelId);
+            if (!thumbnailDefinition.getEntities().isPresent()) {
                 for (String entity : entities.keySet()) {
-                    addAddonGroupToEntity(entities, entity, groupKey, group);
+                    addThumbnailDefinitionToEntity(entities, entity, "theme", modelId, thumbnailDefinition);
                 }
             }
         }
+    }
 
-        Map<String, Model> models = theme.getModels();
-
-        // Step 1 : add models for some entities
+    private void addModels(Map<String, Map<String, Object>> entities, Map<String, Model> models)
+    {
+        // Step 1 : add models defined explicitly for some entities
 
         for (String modelId : models.keySet()) {
             Model model = models.get(modelId);
@@ -67,9 +83,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
                 }
             }
         }
-
         // Step 2 add addon groups for all entities
-
         for (String modelId : models.keySet()) {
             Model model = models.get(modelId);
             if (!model.getEntities().isPresent()) {
@@ -78,16 +92,56 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
                 }
             }
         }
+    }
 
-        // FIXME: Need a way to list all entities
-        // -> this will be implemented by the notion of "module"
-
-        return entities;
+    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroup> addons)
+    {
+        // Step 1 : add addon groups defined explicitly for some entities
+        for (String groupKey : addons.keySet()) {
+            AddonGroup group = addons.get(groupKey);
+            if (group.getEntities().isPresent()) {
+                for (String entity : group.getEntities().get()) {
+                    addAddonGroupToEntity(entities, entity, groupKey, group);
+                }
+            }
+        }
+        // Step 2 add addon groups for all entities
+        for (String groupKey : addons.keySet()) {
+            AddonGroup group = addons.get(groupKey);
+            if (!group.getEntities().isPresent()) {
+                for (String entity : entities.keySet()) {
+                    addAddonGroupToEntity(entities, entity, groupKey, group);
+                }
+            }
+        }
     }
 
     private interface EntitiesMapTransformation
     {
         void apply(Map<String, Object> entity, Object... arguments);
+    }
+
+    private void addThumbnailDefinitionToEntity(Map<String, Map<String, Object>> entities, String entity,
+            final String source, String modelId, ThumbnailDefinition thumbnailDefinition)
+    {
+        this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
+        {
+            @Override
+            public void apply(Map<String, Object> entity, Object... arguments)
+            {
+                Map map;
+                if (entity.containsKey("thumbnails")) {
+                    map = (Map) entity.get("thumbnails");
+                } else {
+                    map = Maps.newHashMap();
+                }
+                if (!map.containsKey(source)) {
+                    map.put(source, Maps.newHashMap());
+                }
+                ((Map) map.get(source)).put(arguments[0], arguments[1]);
+                entity.put("thumbnails", map);
+            }
+        }, modelId, thumbnailDefinition);
     }
 
     private void addModelsToEntity(Map<String, Map<String, Object>> entities, String entity, String modelId,

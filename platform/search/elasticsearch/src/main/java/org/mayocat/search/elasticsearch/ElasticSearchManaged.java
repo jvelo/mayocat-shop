@@ -3,7 +3,7 @@ package org.mayocat.search.elasticsearch;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.mayocat.base.Managed;
+import org.mayocat.lifecycle.Managed;
 import org.mayocat.search.SearchEngine;
 import org.xwiki.component.annotation.Component;
 

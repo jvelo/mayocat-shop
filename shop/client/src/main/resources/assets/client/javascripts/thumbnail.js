@@ -14,6 +14,18 @@ angular.module('thumbnail', ['ngResource'])
 
         $scope.currentSource = null;
 
+        $scope.keys = function(object) {
+            var keys = [];
+            if (typeof object === "undefined") {
+                return keys;
+            }
+            for (key in object) {
+                object.hasOwnProperty(key)
+                keys.push(key);
+            }
+            return keys;
+        }
+
         $scope.edit = function(source, size) {
             $scope.currentSource = source;
             $scope.currentSize = size;
@@ -52,7 +64,7 @@ angular.module('thumbnail', ['ngResource'])
         }
 
         $scope.isEdited = function(source, size) {
-            if ($scope.currentSource === source && $scope.currentSize.name === size.name) {
+            if ($scope.currentSource === source && $scope.currentSize.id === size.id) {
                 return true;
             }
             return false;
@@ -67,13 +79,13 @@ angular.module('thumbnail', ['ngResource'])
                     return "icon-resize-horizontal";
                 }
             }
-            return "icon-remove";
+            return;
         }
 
         $scope.find = function(source, size) {
             var found;
             angular.forEach($scope.image.thumbnails, function (thumbnail) {
-                var ratioEquals = thumbnail.ratio === reduce(size.dimensions.width, size.dimensions.height);
+                var ratioEquals = thumbnail.ratio === reduce(size.width, size.height);
                 if (source == thumbnail.source && size.name == thumbnail.hint && ratioEquals) {
                     found = thumbnail;
                 }
@@ -84,7 +96,7 @@ angular.module('thumbnail', ['ngResource'])
         $scope.findSameRatio = function(source, size) {
             var found;
             angular.forEach($scope.image.thumbnails, function (thumbnail) {
-                var ratioEquals = thumbnail.ratio === reduce(size.dimensions.width, size.dimensions.height);
+                var ratioEquals = thumbnail.ratio === reduce(size.width, size.height);
                 if (ratioEquals) {
                     found = thumbnail;
                 }
@@ -101,11 +113,19 @@ angular.module('thumbnail', ['ngResource'])
             };
         });
 
-        $scope.$on('thumbnails:edit', function(event, image) {
+        $scope.$on('thumbnails:edit', function(event, entityType, image) {
             $scope.image = image;
-            $scope.$broadcast('thumbnails:edit:ready', {
-                'image': image
-            });
+            $scope.entityType = entityType;
+
+            var themeSource = $scope.configuration[$scope.entityType].thumbnails.theme,
+                currentSize;
+            for (key in themeSource) {
+                themeSource[key].id = key;
+                if (themeSource.hasOwnProperty(key) && typeof currentSize === "undefined") {
+                    currentSize = themeSource[key];
+                }
+            }
+            $scope.currentSize = currentSize;
         });
 
         $scope.addOrUpdateThumbnail = function (data) {
@@ -122,13 +142,13 @@ angular.module('thumbnail', ['ngResource'])
         $scope.save = function () {
             if (typeof $scope.currentCoordinates !== "undefined") {
                 var data = {
-                    "hint":$scope.currentSize.name,
+                    "hint":$scope.currentSize.id,
                     "source":$scope.currentSource,
                     "x":$scope.currentCoordinates.x,
                     "y":$scope.currentCoordinates.y,
                     "width":$scope.currentCoordinates.width,
                     "height":$scope.currentCoordinates.height,
-                    "ratio":reduce($scope.currentSize.dimensions.width, $scope.currentSize.dimensions.height)
+                    "ratio":reduce($scope.currentSize.width, $scope.currentSize.height)
                 };
                 $resource($scope.image.href + "/thumbnail/", {}, {
                     "save":{
@@ -142,9 +162,8 @@ angular.module('thumbnail', ['ngResource'])
         }
 
         configurationService.get(function(data){
-            $scope.configuration = data.thumbnails;
-            $scope.currentSource = "platform";
-            $scope.currentSize = $scope.configuration.platform[0];
+            $scope.configuration = data.entities;
+            $scope.currentSource = "theme";
         });
 
     }]);

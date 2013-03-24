@@ -1,4 +1,4 @@
-package org.mayocat.base;
+package org.mayocat.health;
 
 import org.xwiki.component.annotation.Role;
 

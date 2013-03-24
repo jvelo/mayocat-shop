@@ -2,7 +2,6 @@ package org.mayocat.configuration;
 
 import java.util.Map;
 
-import org.mayocat.base.ExposedSettings;
 import org.xwiki.component.annotation.Role;
 
 /**

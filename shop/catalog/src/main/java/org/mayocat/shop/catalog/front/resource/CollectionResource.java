@@ -30,7 +30,7 @@ import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
 import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;

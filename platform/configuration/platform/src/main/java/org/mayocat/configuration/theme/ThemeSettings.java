@@ -2,7 +2,7 @@ package org.mayocat.configuration.theme;
 
 import javax.validation.Valid;
 
-import org.mayocat.base.ExposedSettings;
+import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.model.Entity;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.SearchEngineException;
 import org.xwiki.component.annotation.Component;

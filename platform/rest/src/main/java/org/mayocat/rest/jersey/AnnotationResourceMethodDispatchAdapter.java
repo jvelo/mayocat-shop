@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.base.Provider;
+import org.mayocat.rest.Provider;
 import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;

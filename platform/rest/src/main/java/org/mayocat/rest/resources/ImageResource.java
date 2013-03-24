@@ -8,7 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.image.util.ImageUtils;
@@ -17,6 +17,8 @@ import org.mayocat.rest.representations.ThumbnailRepresentation;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.store.AttachmentStore;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Strings;
 
 /**
  * @version $Id$
@@ -52,7 +54,9 @@ public class ImageResource implements Resource
         thumbnail.setWidth(thumbnailRepresentation.getWidth());
         thumbnail.setHeight(thumbnailRepresentation.getHeight());
 
-        thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
+        if (Strings.isNullOrEmpty(thumbnail.getRatio())) {
+            thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
+        }
 
         this.thumbnailStore.get().createOrUpdateThumbnail(thumbnail);
 

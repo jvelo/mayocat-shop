@@ -15,7 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;

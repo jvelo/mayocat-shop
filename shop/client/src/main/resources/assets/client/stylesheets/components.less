@@ -20,6 +20,34 @@ thumbnail-editor > div {
   margin-bottom: 8px;
 }
 
+div.thumbnails-list {
+  padding-left: 20px;
+  width: calc(~"100% - 500px");
+  width: -webkit-calc(~"100% - 500px");
+}
+
+div.thumbnails-list h3 {
+  line-height: 20px;
+}
+
+div.thumbnails-list h3 i {
+  opacity: 0.2;
+  margin-left: 10px;
+}
+
+div.thumbnails-list span.dimensions {
+  padding-top:10px;
+}
+
+div.thumbnails-list ul li a {
+  color: @fontColor;
+}
+
+div.thumbnails-list ul li.active a,
+div.thumbnails-list ul li.active a:hover {
+  background: lightgrey;
+}
+
 /* File upload widget */
 
 image-upload .fileinput-button {

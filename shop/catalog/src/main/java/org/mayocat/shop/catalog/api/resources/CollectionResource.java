@@ -29,7 +29,7 @@ import org.mayocat.model.EntityAndCount;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;

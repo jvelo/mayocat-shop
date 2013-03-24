@@ -2,7 +2,7 @@ package org.mayocat.rest.jersey;
 
 import javax.inject.Inject;
 
-import org.mayocat.base.Provider;
+import org.mayocat.rest.Provider;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.xwiki.component.annotation.Component;

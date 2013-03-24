@@ -3,8 +3,6 @@ package org.mayocat.configuration.jackson;
 import java.io.IOException;
 import java.util.TimeZone;
 
-import org.mayocat.configuration.thumbnails.Dimensions;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;

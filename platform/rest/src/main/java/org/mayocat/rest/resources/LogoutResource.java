@@ -8,7 +8,7 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.xwiki.component.annotation.Component;
 
 @Component("/api/1.0/logout/")

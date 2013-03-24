@@ -49,7 +49,7 @@ angular.module('product', ['ngResource'])
             };
 
             $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', image);
+                $rootScope.$broadcast('thumbnails:edit', "product", image);
             }
 
             $scope.collectionOperation = function (collection, operation) {

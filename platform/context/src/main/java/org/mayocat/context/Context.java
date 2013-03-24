@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
-import org.mayocat.base.ExposedSettings;
+import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.theme.Theme;
 
 public class Context

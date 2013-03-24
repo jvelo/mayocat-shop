@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.jdo.JDOHelper;
 
+import org.mayocat.rest.Provider;
 import org.mayocat.configuration.AuthenticationSettings;
 import org.mayocat.configuration.DataSourceConfiguration;
 import org.mayocat.configuration.MayocatShopConfiguration;
@@ -39,9 +40,9 @@ public abstract class AbstractResourceTest extends ResourceTest
 
         // Registering provider component implementations against the test
         // environment...
-        Map<String, org.mayocat.base.Provider> providers =
-                componentManager.getInstanceMap(org.mayocat.base.Provider.class);
-        for (Map.Entry<String, org.mayocat.base.Provider> provider : providers.entrySet()) {
+        Map<String, Provider> providers =
+                componentManager.getInstanceMap(Provider.class);
+        for (Map.Entry<String, Provider> provider : providers.entrySet()) {
             this.addResource(provider.getValue());
         }
     }

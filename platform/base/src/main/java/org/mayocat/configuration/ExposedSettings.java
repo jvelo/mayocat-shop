@@ -1,4 +1,4 @@
-package org.mayocat.base;
+package org.mayocat.configuration;
 
 /**
  * @version $Id$

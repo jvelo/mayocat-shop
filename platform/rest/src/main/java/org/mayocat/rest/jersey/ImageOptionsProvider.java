@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Context;
 
-import org.mayocat.base.Provider;
+import org.mayocat.rest.Provider;
 import org.mayocat.rest.parameters.ImageOptions;
 import org.xwiki.component.annotation.Component;
 

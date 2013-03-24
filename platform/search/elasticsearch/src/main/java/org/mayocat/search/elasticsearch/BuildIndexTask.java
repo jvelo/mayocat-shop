@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.yammer.dropwizard.tasks.Task;
 
 @Component("bi")
-public class BuildIndexTask extends Task implements org.mayocat.base.Task
+public class BuildIndexTask extends Task implements org.mayocat.task.Task
 {
 
     @Inject

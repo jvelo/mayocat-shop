@@ -22,11 +22,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.Slugifier;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.api.representations.PageRepresentation;
 import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ResultSetRepresentation;

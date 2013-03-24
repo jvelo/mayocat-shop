@@ -1,6 +1,13 @@
 package org.mayocat.configuration.thumbnails;
 
+import java.util.List;
+
+import org.mayocat.jackson.OptionalStringListDeserializer;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Optional;
 
 /**
  * @version $Id$
@@ -11,31 +18,40 @@ public class ThumbnailDefinition
     private String name;
 
     @JsonProperty
-    private Dimensions dimensions;
+    private Integer width;
 
-    public ThumbnailDefinition(String name, Dimensions dimensions)
-    {
-        this.name = name;
-        this.dimensions = dimensions;
-    }
+    @JsonProperty
+    private Integer height;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String description;
+
+    @JsonDeserialize(using = OptionalStringListDeserializer.class)
+    @JsonProperty("for")
+    private Optional<List<String>> entities = Optional.absent();
 
     public String getName()
     {
         return name;
     }
 
-    public void setName(String name)
+    public Integer getWidth()
     {
-        this.name = name;
+        return width;
     }
 
-    public Dimensions getDimensions()
+    public Integer getHeight()
     {
-        return dimensions;
+        return height;
     }
 
-    public void setDimensions(Dimensions dimensions)
+    public String getDescription()
     {
-        this.dimensions = dimensions;
+        return description;
+    }
+
+    public Optional<List<String>> getEntities()
+    {
+        return entities;
     }
 }

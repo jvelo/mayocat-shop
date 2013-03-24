@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
  * @version $Id$
  */
 @Component("frontViewMessageBodyWriter")
-public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.base.Provider
+public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.rest.Provider
 {
     @Inject
     private Provider<TemplateEngine> engine;

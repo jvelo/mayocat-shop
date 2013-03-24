@@ -9,9 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
-import org.mayocat.rest.resources.AbstractAttachmentResource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;

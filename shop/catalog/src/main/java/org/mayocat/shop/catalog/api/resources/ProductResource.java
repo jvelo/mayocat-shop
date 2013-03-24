@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;

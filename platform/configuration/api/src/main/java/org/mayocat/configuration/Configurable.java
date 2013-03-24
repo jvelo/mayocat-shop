@@ -6,7 +6,7 @@ import com.yammer.dropwizard.validation.ValidationMethod;
 
 /**
  * The type of a settings field whose value can be overridden at the tenant level. Useful for {@link
- * org.mayocat.base.ExposedSettings} settings classes.
+ * ExposedSettings} settings classes.
  *
  * @version $Id$
  */

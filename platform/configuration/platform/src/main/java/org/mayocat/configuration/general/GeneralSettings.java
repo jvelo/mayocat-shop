@@ -1,10 +1,8 @@
 package org.mayocat.configuration.general;
 
-import java.util.TimeZone;
-
 import javax.validation.Valid;
 
-import org.mayocat.base.ExposedSettings;
+import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

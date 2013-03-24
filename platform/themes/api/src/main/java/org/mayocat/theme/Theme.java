@@ -1,10 +1,9 @@
 package org.mayocat.theme;
 
-import java.util.List;
 import java.util.Map;
 
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.configuration.thumbnails.Dimensions;
+import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 
 /**
  * @version $Id$
@@ -15,7 +14,7 @@ public interface Theme
 
     String getDescription();
 
-    Map<String, Dimensions> getThumbnails();
+    Map<String, ThumbnailDefinition> getThumbnails();
 
     Map<String, Model> getModels();
 

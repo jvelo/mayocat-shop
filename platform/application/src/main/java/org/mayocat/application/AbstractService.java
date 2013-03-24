@@ -8,23 +8,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mayocat.base.EventListener;
-import org.mayocat.base.ExposedSettings;
-import org.mayocat.base.HealthCheck;
-import org.mayocat.base.Managed;
-import org.mayocat.base.Provider;
-import org.mayocat.base.Task;
+import org.mayocat.event.EventListener;
+import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.health.HealthCheck;
+import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
+import org.mayocat.lifecycle.Managed;
+import org.mayocat.Module;
+import org.mayocat.meta.EntityMeta;
+import org.mayocat.meta.EntityMetaRegistry;
+import org.mayocat.rest.Provider;
+import org.mayocat.task.Task;
+import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.jackson.TimeZoneModule;
-import org.mayocat.configuration.thumbnails.jackson.ThumbnailsModule;
 import org.mayocat.event.ApplicationStartedEvent;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
+import com.google.common.collect.Maps;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -41,20 +48,34 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
     private ObjectMapperFactory objectMapperFactory;
 
+    private Map<String, Module> modules = Maps.newHashMap();
+
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(AbstractService.class);
+
     protected abstract void registerComponents(C configuration, Environment environment);
 
-    public static final Set<String> STATIC_PATHS = new HashSet<String>(){{
-        add(ADMIN_UI_PATH);
-    }};
+    public static final Set<String> STATIC_PATHS = new HashSet<String>()
+    {{
+            add(ADMIN_UI_PATH);
+        }};
 
+    protected void addModule(Module module)
+    {
+        if (this.modules.containsKey(module.getName())) {
+            LOGGER.error("Module with name [" + module.getName() + "] already exists. Refusing to start.");
+            System.exit(1);
+        }
+        this.modules.put(module.getName(), module);
+    }
 
     @Override
     public void initialize(Bootstrap<C> bootstrap)
     {
-        bootstrap.getObjectMapperFactory().registerModule(new ThumbnailsModule());
         bootstrap.getObjectMapperFactory().registerModule(new TimeZoneModule());
 
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
+
+        this.addModule(new AccountsModule());
     }
 
     @Override
@@ -81,9 +102,12 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     protected void initializeComponentManager(C configuration, Environment environment)
     {
         componentManager = new EmbeddableComponentManager();
+
         this.registerSettingsAsComponents(configuration);
         this.registerObjectMapperFactoryAsComponent();
+        this.registerEntityMetaRegistryAsComponent();
         this.registerComponents(configuration, environment);
+
         componentManager.initialize(this.getClass().getClassLoader());
     }
 
@@ -145,10 +169,32 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         }
     }
 
+    private void registerEntityMetaRegistryAsComponent()
+    {
+        Map<String, EntityMeta> entities = Maps.newHashMap();
+
+        for (Module module : modules.values()) {
+            for (EntityMeta meta : module.getEntities()) {
+                if (entities.containsKey(meta.getEntityName())) {
+                    LOGGER.error(
+                            "Entity with name [" + meta.getEntityName() + "] already registered. Refusing to start.");
+                    System.exit(1);
+                }
+                entities.put(meta.getEntityName(), meta);
+            }
+        }
+
+        EntityMetaRegistry registry = new DefaultEntityMetaRegistry(new ArrayList(entities.values()));
+
+        DefaultComponentDescriptor<EntityMetaRegistry> cd = new DefaultComponentDescriptor<EntityMetaRegistry>();
+        cd.setRoleType(EntityMetaRegistry.class);
+
+        componentManager.registerComponent(cd, registry);
+    }
+
     private void registerObjectMapperFactoryAsComponent()
     {
-        DefaultComponentDescriptor<ObjectMapperFactory> cd =
-                new DefaultComponentDescriptor<ObjectMapperFactory>();
+        DefaultComponentDescriptor<ObjectMapperFactory> cd = new DefaultComponentDescriptor<ObjectMapperFactory>();
         cd.setRoleType(ObjectMapperFactory.class);
         componentManager.registerComponent(cd, this.objectMapperFactory);
     }

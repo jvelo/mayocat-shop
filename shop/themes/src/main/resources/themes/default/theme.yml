@@ -6,8 +6,14 @@ description: >
             Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.
 
 thumbnails:
-  small:  200x200
-  large: 500x300
+  small:
+    width: 200
+    height: 200
+    name: Small
+  large:
+    width: 500
+    height: 300
+    name: Large
 
 models:
   about:

@@ -1,4 +1,4 @@
-package org.mayocat.base;
+package org.mayocat.lifecycle;
 
 import org.xwiki.component.annotation.Role;
 

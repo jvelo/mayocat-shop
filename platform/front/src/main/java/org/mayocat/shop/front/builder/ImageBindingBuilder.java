@@ -3,7 +3,7 @@ package org.mayocat.shop.front.builder;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import org.mayocat.configuration.thumbnails.Dimensions;
+import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
@@ -32,9 +32,9 @@ public class ImageBindingBuilder
                 "." + image.getAttachment().getExtension());
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
-            // TODO validate dimension name
-            Dimensions dimensions = theme.getThumbnails().get(dimensionName);
-            Optional<Thumbnail> bestFit = findBestFit(image, dimensions);
+            ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+            Optional<Thumbnail> bestFit = findBestFit(image, definition.getWidth(),
+                    definition.getHeight());
 
             if (bestFit.isPresent()) {
                 String url =
@@ -45,16 +45,16 @@ public class ImageBindingBuilder
                                 bestFit.get().getWidth(),
                                 bestFit.get().getHeight(),
                                 image.getAttachment().getExtension(),
-                                dimensions.getWidth(),
-                                dimensions.getHeight());
+                                definition.getWidth(),
+                                definition.getHeight());
                 context.put("theme_" + dimensionName + "_url", url);
             } else {
                 String url =
                         MessageFormat.format("/image/{0}.{1}?width={2}&height={3}",
                                 image.getAttachment().getSlug(),
                                 image.getAttachment().getExtension(),
-                                dimensions.getWidth(),
-                                dimensions.getHeight());
+                                definition.getWidth(),
+                                definition.getHeight());
                 context.put("theme_" + dimensionName + "_url", url);
             }
         }
@@ -67,23 +67,23 @@ public class ImageBindingBuilder
         context.put("url", "http://placehold.it/800x800");
         for (String dimensionName : theme.getThumbnails().keySet()) {
 
-            Dimensions dimensions = theme.getThumbnails().get(dimensionName);
-            String url = MessageFormat.format("http://placehold.it/{0}x{1}", dimensions.getWidth(),
-                    dimensions.getHeight());
+            ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+            String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
+                    definition.getHeight());
             context.put("theme_" + dimensionName + "_url", url);
         }
         return context;
     }
 
-    private Optional<Thumbnail> findBestFit(Image image, Dimensions dimensions)
+    private Optional<Thumbnail> findBestFit(Image image, Integer width, Integer height)
     {
         Thumbnail foundRatio = null;
-        String expectedRatio = ImageUtils.imageRatio(dimensions.getWidth(), dimensions.getHeight());
+        String expectedRatio = ImageUtils.imageRatio(width, height);
 
         for (Thumbnail thumbnail : image.getThumbnails()) {
             if (thumbnail.getRatio().equals(expectedRatio)) {
-                if (thumbnail.getWidth().equals(dimensions.getWidth())
-                        && thumbnail.getHeight().equals(dimensions.getHeight()))
+                if (thumbnail.getWidth().equals(width)
+                        && thumbnail.getHeight().equals(height))
                 {
                     // Exact match, stop searching
                     return Optional.of(thumbnail);

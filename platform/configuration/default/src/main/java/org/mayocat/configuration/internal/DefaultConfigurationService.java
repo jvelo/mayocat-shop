@@ -10,7 +10,7 @@ import javax.inject.Provider;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
-import org.mayocat.base.ExposedSettings;
+import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;

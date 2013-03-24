@@ -9,10 +9,11 @@
                 <ul class="unstyled">
                     <li ng-repeat="source in ['platform', 'theme']">
                         <ul class="unstyled">
-                            <li ng-repeat="size in configuration[source]" ng-show="isEdited(source, size)">
+                            <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                                ng-show="isEdited(source, size)">
                                 <thumbnail-editor
-                                        width="size.dimensions.width"
-                                        height="size.dimensions.height"
+                                        width="size.width"
+                                        height="size.height"
                                         image="image.file.href"
                                         selection="getSelection(source, size)"
                                         >
@@ -22,7 +23,7 @@
                                         <em>Editing:</em>
                                         <strong>{{currentSource}}</strong> -
                                         <strong>{{currentSize.name}}</strong>
-                                        ({{currentSize.dimensions.width}}x{{currentSize.dimensions.height}})
+                                        ({{currentSize.width}}x{{currentSize.height}})
                                     </small>
                                 </p>
                                 <p class="pull-right">
@@ -33,29 +34,32 @@
                     </li>
                 </ul>
             </div>
-            <div>
-                <div class="align-right">
-                    <h3>Pick thumbnail to edit</h3>
-                    <ul class="unstyled">
-                        <li ng-repeat="source in ['platform', 'theme']">
-                            <h4>{{source}}</h4>
-                            <ul class="unstyled">
-                                <li ng-repeat="size in configuration[source]" ng-click="edit(source, size)">
-                                    <span ng-show="isEdited(source, size)">&rarr;</span>
-                                    {{size.name}} - <code>{{size.dimensions.width}}x{{size.dimensions.height}}</code>
-                                    <i ng-class="getType(source, size)"></i>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <!-- TODO
-                <hr />
-                <div class="preview">
-                    <h3>Preview</h3>
-                </div>
-                -->
+            <div class="pull-left thumbnails-list">
+                <ul class="nav nav-tabs nav-stacked" ng-repeat="source in ['platform', 'theme']"
+                    ng-show="keys(configuration[entityType].thumbnails[source]).length > 0">
+                    <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                        ng-class="{active: isEdited(source, size)}">
+                        <a ng-click="edit(source, size)">
+                            <h3 class="pull-left">
+                                {{size.name}}
+                                <small>({{source}})</small>
+                                <i ng-class="getType(source, size)"></i>
+                            </h3>
+                            <span class="pull-right dimensions">
+                                {{size.width}} x {{size.height}}
+                            </span>
+
+                            <div class="clearfix"></div>
+                        </a>
+                    </li>
+                </ul>
             </div>
+            <!-- TODO
+            <hr />
+            <div class="preview">
+                <h3>Preview</h3>
+            </div>
+            -->
             <div class="clearfix"></div>
         </div>
     </form>

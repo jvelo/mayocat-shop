@@ -2,13 +2,11 @@ package org.mayocat.shop.catalog.configuration.jackson;
 
 import java.util.Currency;
 
-import org.joda.money.CurrencyUnit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mayocat.configuration.thumbnails.Dimensions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

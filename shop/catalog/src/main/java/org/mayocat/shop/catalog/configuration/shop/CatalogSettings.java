@@ -2,7 +2,7 @@ package org.mayocat.shop.catalog.configuration.shop;
 
 import javax.validation.Valid;
 
-import org.mayocat.base.ExposedSettings;
+import org.mayocat.configuration.ExposedSettings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

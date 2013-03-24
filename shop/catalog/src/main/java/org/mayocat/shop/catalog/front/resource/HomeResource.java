@@ -25,7 +25,7 @@ import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.base.Resource;
+import org.mayocat.rest.Resource;
 import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
