@@ -10,13 +10,12 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 
-import org.mayocat.application.AbstractService;
-import org.mayocat.authorization.Authenticator;
-import org.mayocat.event.EventListener;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.application.AbstractService;
+import org.mayocat.authorization.Authenticator;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.theme.ThemeSettings;
+import org.mayocat.event.EventListener;
 import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.theme.ThemeLoader;
 import org.slf4j.Logger;
@@ -100,22 +99,10 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 4. Theme
 
-        ThemeSettings themeSettings =
-                this.configurationService.getSettings(ThemeSettings.class);
-        if (themeSettings != null) {
-            String activeTheme = themeSettings.getActive().getValue();
-            try {
-                context.setTheme(themeLoader.load(activeTheme));
-            } catch (IOException e) {
-                logger.warn("Failed to load theme with name [{}]", activeTheme);
-                String defaultTheme = themeSettings.getActive().getDefaultValue();
-                try {
-                    context.setTheme(themeLoader.load(defaultTheme));
-                } catch (IOException e1) {
-                    logger.error("Failed to load default theme with name [{}]", defaultTheme);
-                    throw new RuntimeException(e1);
-                }
-            }
+        try {
+            context.setTheme(themeLoader.load());
+        } catch (IOException e) {
+            logger.warn("Failed to load theme");
         }
     }
 

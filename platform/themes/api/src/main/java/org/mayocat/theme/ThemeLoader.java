@@ -10,5 +10,5 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface ThemeLoader
 {
-    Theme load(String name) throws IOException;
+    Theme load() throws IOException;
 }
