@@ -80,6 +80,7 @@
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-themes</artifactId>
             <version>${project.version}</version>
+            <type>zip</type>
         </dependency>
 
     </dependencies>
