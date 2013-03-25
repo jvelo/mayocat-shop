@@ -24,22 +24,22 @@ database:
   closeConnectionIfIdleFor: 1 minute
 
 files:
-  permanentDirectory: data
-  temporaryDirectory: tmp
+  permanentDirectory: /usr/local/data/
+  temporaryDirectory: /var/tmp
 
 multitenancy:
-  activated: false
+  activated: true
   defaultTenant: shop
 
 authentication:
-  cookieEncryptionKey: Change me here!
+  cookieEncryptionKey: Change me here !
 
 # Application settings
 # --------------------
 
 general:
   name:
-    default: Your shop's name
+    default: "Your shop's name"
   locales:
     main:
       default: en_US
@@ -47,11 +47,12 @@ general:
       visible: true
     others:
       default: []
-      configurable: true
+      configurable: false
 
 theme:
   active:
     default: default
+    configurable: true
 
 catalog:
   currencies:
