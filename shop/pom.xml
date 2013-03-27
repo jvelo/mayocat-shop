@@ -16,6 +16,7 @@
 
   <modules>
     <module>catalog</module>
+    <module>cart</module>
     <module>client</module>
     <module>themes</module>
     <module>application</module>

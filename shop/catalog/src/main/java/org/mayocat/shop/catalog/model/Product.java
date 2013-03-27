@@ -17,7 +17,7 @@ import org.mayocat.model.annotation.SearchIndex;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
-public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel
+public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, Purchasable
 {
     private Long id;
 
@@ -106,6 +106,11 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     }
 
     public BigDecimal getPrice()
+    {
+        return price;
+    }
+
+    public BigDecimal getUnitPrice()
     {
         return price;
     }

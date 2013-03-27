@@ -50,15 +50,16 @@ public class ProductBindingBuilder
         productContext.put("title", product.getTitle());
         productContext.put("description", product.getDescription());
         productContext.put("href", "/product/" + product.getSlug());
+        productContext.put("slug", product.getSlug());
 
         // Prices
-        if (product.getPrice() != null) {
+        if (product.getUnitPrice() != null) {
             final Locale locale = generalSettings.getLocales().getMainLocale().getValue();
             final Currency currency = catalogSettings.getCurrencies().getMainCurrency().getValue();
             productContext.put("price", new HashMap<String, Object>()
             {
                 {
-                    put("amount", product.getPrice());
+                    put("amount", product.getUnitPrice());
                     put("currency", new HashMap<String, Object>()
                     {
                         {

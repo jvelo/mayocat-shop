@@ -2,6 +2,13 @@
     {{#product}}
     <h2 class="fn">{{title}}</h2>
 
+        <form action="/cart" method="post">
+            <div>
+                <input type="hidden" name="product" value="{{slug}}" />
+                <input type="submit" value="Add to cart" />
+            </div>
+        </form>
+
     {{#description}}
     <p class="description">
         {{this}}
