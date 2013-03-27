@@ -16,5 +16,7 @@ public interface ThemeManager
 
     Template resolveTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException;
 
+    ThemeResource resolveResource(String name, Breakpoint breakpoint);
+
     Optional<String> resolveModelPath(String id);
 }

@@ -76,6 +76,19 @@
                         </div>
                     </div>
 
+                    <!-- Theme -->
+                    <div class="control-group" ng-show="isVisible('theme.active')"
+                         ng-class="{default: isDefaultValue('theme.active')}">
+                        <label class="control-label" for="theme">Theme</label>
+
+                        <div class="controls">
+                            <input type="text" name="name" class="input-xlarge"
+                                   ng-model="settings.theme.active.value"
+                                   id="theme"
+                                   ng-disabled="!isConfigurable('theme.active')"/>
+                        </div>
+                    </div>
+
                 </fieldset>
             </form>
 
