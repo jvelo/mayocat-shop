@@ -20,6 +20,8 @@ mayocat.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
       when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
       when('/contents', {templateUrl: 'partials/contents.html'}).
+      when('/orders', {templateUrl: 'partials/orders.html'}).
+      when('/customers', {templateUrl: 'partials/customers.html'}).
       when('/news', {templateUrl: 'partials/news.html'}).
       when('/page/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
       when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController'}).
