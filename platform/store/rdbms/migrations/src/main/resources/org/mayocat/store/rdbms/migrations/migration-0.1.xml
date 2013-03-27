@@ -230,9 +230,13 @@
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="content" type="mediumtext"/>
+            <column name="featured_image_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint constraintName="PAGE_ENTITY_FK"
                 baseTableName="page" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="PAGE_FEATURED_IMAGE_FK"
+                baseTableName="page" baseColumnNames="featured_image_id"
                 referencedTableName="entity" referencedColumnNames="id"/>
         <createIndex tableName="page" indexName="PAGE_POSITION_INDEX">
             <column name="position"/>
@@ -251,9 +255,13 @@
             <column name="publication_date" type="timestamp"/>
             <column name="title" type="varchar(255)"/>
             <column name="content" type="mediumtext"/>
+            <column name="featured_image_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint constraintName="ARTICLE_ENTITY_FK"
                 baseTableName="article" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="ARTICLE_FEATURED_IMAGE_FK"
+                baseTableName="article" baseColumnNames="featured_image_id"
                 referencedTableName="entity" referencedColumnNames="id"/>
         <createIndex tableName="article" indexName="ARTICLE_PUBLICATION_DATE_INDEX">
             <column name="publication_date"/>
@@ -273,9 +281,14 @@
             <column name="title" type="varchar(255)"/>
             <column name="description" type="mediumtext"/>
             <column name="price" type="numeric(18,4)"/>
+            <column name="stock" type="smallint" />
+            <column name="featured_image_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                 baseTableName="product" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="PRODUCT_FEATURED_IMAGE_FK"
+                baseTableName="product" baseColumnNames="featured_image_id"
                 referencedTableName="entity" referencedColumnNames="id"/>
         <createIndex tableName="product" indexName="PRODUCT_POSITION_INDEX">
             <column name="position"/>
@@ -292,10 +305,14 @@
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="description" type="mediumtext"/>
+            <column name="featured_image_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint constraintName="COLLECTION_ENTITY_FK"
                 baseTableName="collection" baseColumnNames="entity_id"
-                referencedTableName="entity" referencedColumnNames="id"/>
+                referencedTableName="entity" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="COLLECTION_FEATURED_IMAGE_FK"
+                baseTableName="collection" baseColumnNames="featured_image_id"
+                referencedTableName="entity" referencedColumnNames="id" />
         <createIndex tableName="collection" indexName="COLLECTION_POSITION_INDEX">
             <column name="position"/>
         </createIndex>

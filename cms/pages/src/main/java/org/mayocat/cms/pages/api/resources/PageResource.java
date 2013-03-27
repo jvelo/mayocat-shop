@@ -25,6 +25,8 @@ import javax.ws.rs.core.Response;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.api.representations.PageRepresentation;
 import org.mayocat.model.Addon;
@@ -105,7 +107,15 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
         PageRepresentation representation;
         if (expansions.contains("images")) {
-            representation= new PageRepresentation(page, getImages(slug));
+            List<ImageRepresentation> images = getImages(slug);
+            representation = new PageRepresentation(page, images);
+            if (images != null) {
+                for (ImageRepresentation image : images) {
+                    if (image.isFeaturedImage()) {
+                        representation.setFeaturedImage(image);
+                    }
+                }
+            }
         }
         else {
             representation= new PageRepresentation(page);
@@ -153,15 +163,46 @@ public class PageResource extends AbstractAttachmentResource implements Resource
     @Authorized
     // Partial update : NOT idempotent
     public Response updatePage(@PathParam("slug") String slug,
-            Page updatedPage)
+            PageRepresentation updatedPageRepresentation)
     {
         try {
             Page page = this.pageStore.get().findBySlug(slug);
             if (page == null) {
                 return Response.status(404).build();
             } else {
-                updatedPage.setSlug(slug);
-                this.pageStore.get().update(updatedPage);
+                page.setTitle(updatedPageRepresentation.getTitle());
+                page.setContent(updatedPageRepresentation.getContent());
+                page.setModel(updatedPageRepresentation.getModel());
+                page.setPublished(updatedPageRepresentation.getPublished());
+
+                // Addons
+                List<Addon> addons = Lists.newArrayList();
+                for (AddonRepresentation addonRepresentation : updatedPageRepresentation.getAddons()) {
+                    Addon addon = new Addon();
+                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                    addon.setValue(addonRepresentation.getValue());
+                    addon.setKey(addonRepresentation.getKey());
+                    addon.setGroup(addonRepresentation.getGroup());
+                    addons.add(addon);
+                }
+
+                page.setAddons(addons);
+
+                // Featured image
+                if (updatedPageRepresentation.getFeaturedImage() != null) {
+                    ImageRepresentation representation = updatedPageRepresentation.getFeaturedImage();
+
+                    Attachment featuredImage =
+                            this.getAttachmentStore().findBySlugAndExtension(representation.getSlug(),
+                                    representation.getFile().getExtension());
+                    if (featuredImage != null) {
+                        page.setFeaturedImageId(featuredImage.getId());
+                    }
+                }
+
+
+                this.pageStore.get().update(page);
             }
 
             return Response.ok().build();
@@ -189,6 +230,12 @@ public class PageResource extends AbstractAttachmentResource implements Resource
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
             Image image = new Image(attachment, thumbnails);
             ImageRepresentation representation = new ImageRepresentation(image);
+
+            if (page.getFeaturedImageId() != null) {
+                if (page.getFeaturedImageId().equals(attachment.getId())) {
+                    representation.setFeatured(true);
+                }
+            }
 
             result.add(representation);
         }

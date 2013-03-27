@@ -5,6 +5,7 @@ import java.util.List;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 
 /**
@@ -14,15 +15,45 @@ public class ImageRepresentation extends AttachmentRepresentation
 {
     private List<ThumbnailRepresentation> thumbnails;
 
-    public ImageRepresentation(Image image)
+    private Boolean featured = null;
+
+    public ImageRepresentation()
+    {
+        // No-arg constructor required for Jackson deserialization
+        super();
+    }
+
+    public ImageRepresentation(Image image, Boolean featured)
     {
         super(image.getAttachment(), buildImageApiHref(image), buildFileRepresentation(image));
         this.thumbnails = buildThumbnailsRepresentation(image);
+        this.featured = featured;
+    }
+
+    public ImageRepresentation(Image image)
+    {
+        this(image, null);
     }
 
     public List<ThumbnailRepresentation> getThumbnails()
     {
         return thumbnails;
+    }
+
+    @JsonIgnore
+    public boolean isFeaturedImage()
+    {
+        return featured != null && featured;
+    }
+
+    public Boolean getFeatured()
+    {
+        return featured;
+    }
+
+    public void setFeatured(Boolean featured)
+    {
+        this.featured = featured;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

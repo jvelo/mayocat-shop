@@ -3,6 +3,7 @@
 var mayocat = angular.module('mayocat', [
     'addons',
     'search',
+    'image',
     'thumbnail',
     'product',
     'collection',

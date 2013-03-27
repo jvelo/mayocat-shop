@@ -27,6 +27,8 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.cms.news.api.representations.ArticleRepresentation;
 import org.mayocat.cms.news.model.Article;
@@ -112,12 +114,18 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
         ArticleRepresentation representation;
         if (expansions.contains("images")) {
-            representation= new ArticleRepresentation(article, getImages(slug));
+            List<ImageRepresentation> images = getImages(slug);
+            representation = new ArticleRepresentation(article, images);
+            if (images != null) {
+                for (ImageRepresentation image : images) {
+                    if (image.isFeaturedImage()) {
+                        representation.setFeaturedImage(image);
+                    }
+                }
+            }
+        } else {
+            representation = new ArticleRepresentation(article);
         }
-        else {
-            representation= new ArticleRepresentation(article);
-        }
-
 
         if (article.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
@@ -161,23 +169,57 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
     @Authorized
     // Partial update : NOT idempotent
     public Response updateArticle(@PathParam("slug") String slug,
-            Article updatedArticle)
+            ArticleRepresentation updatedArticleRepresentation)
     {
         try {
             Article article = this.articleStore.get().findBySlug(slug);
             if (article == null) {
                 return Response.status(404).build();
             } else {
-                updatedArticle.setSlug(slug);
-                if (isJustBeingPublished(article, updatedArticle) && updatedArticle.getPublicationDate() == null) {
+
+                article.setTitle(updatedArticleRepresentation.getTitle());
+                article.setContent(updatedArticleRepresentation.getContent());
+                article.setPublished(updatedArticleRepresentation.getPublished());
+
+                if (isJustBeingPublished(article, updatedArticleRepresentation) &&
+                        updatedArticleRepresentation.getPublicationDate() == null)
+                {
                     // If the article is being published and has no publication date, set it to right now
                     GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
                     DateTime now = new DateTime()
                             .withZone(DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue()));
-                    updatedArticle.setPublicationDate(now.toLocalDateTime().toDate());
+                    article.setPublicationDate(now.toLocalDateTime().toDate());
+                } else {
+                    article.setPublicationDate(updatedArticleRepresentation.getPublicationDate());
                 }
 
-                this.articleStore.get().update(updatedArticle);
+                // Addons
+                List<Addon> addons = Lists.newArrayList();
+                for (AddonRepresentation addonRepresentation : updatedArticleRepresentation.getAddons()) {
+                    Addon addon = new Addon();
+                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                    addon.setValue(addonRepresentation.getValue());
+                    addon.setKey(addonRepresentation.getKey());
+                    addon.setGroup(addonRepresentation.getGroup());
+                    addons.add(addon);
+                }
+
+                article.setAddons(addons);
+
+                // Featured image
+                if (updatedArticleRepresentation.getFeaturedImage() != null) {
+                    ImageRepresentation representation = updatedArticleRepresentation.getFeaturedImage();
+
+                    Attachment featuredImage =
+                            this.getAttachmentStore().findBySlugAndExtension(representation.getSlug(),
+                                    representation.getFile().getExtension());
+                    if (featuredImage != null) {
+                        article.setFeaturedImageId(featuredImage.getId());
+                    }
+                }
+
+                this.articleStore.get().update(article);
             }
 
             return Response.ok().build();
@@ -206,6 +248,12 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
             Image image = new Image(attachment, thumbnails);
             ImageRepresentation representation = new ImageRepresentation(image);
 
+            if (article.getFeaturedImageId() != null) {
+                if (article.getFeaturedImageId().equals(attachment.getId())) {
+                    representation.setFeatured(true);
+                }
+            }
+
             result.add(representation);
         }
 
@@ -229,7 +277,7 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 Optional.of(article.getId()));
     }
 
-    private static boolean isJustBeingPublished(Article originalArticle, Article updatedArticle)
+    private static boolean isJustBeingPublished(Article originalArticle, ArticleRepresentation updatedArticle)
     {
         return (originalArticle.getPublished() == null || !originalArticle.getPublished()) &&
                 (updatedArticle.getPublished() != null && updatedArticle.getPublished());

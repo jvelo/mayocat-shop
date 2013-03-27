@@ -30,12 +30,20 @@ public class ArticleRepresentation
     private Date publicationDate;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ImageRepresentation featuredImage = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public ArticleRepresentation()
+    {
+        // No-arg constructor required for Jackson de-serialization
+    }
 
     public ArticleRepresentation(Article article)
     {
@@ -102,5 +110,25 @@ public class ArticleRepresentation
     public void setModel(String model)
     {
         this.model = model;
+    }
+
+    public Date getPublicationDate()
+    {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Date publicationDate)
+    {
+        this.publicationDate = publicationDate;
+    }
+
+    public ImageRepresentation getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageRepresentation featuredImage)
+    {
+        this.featuredImage = featuredImage;
     }
 }

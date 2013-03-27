@@ -10,9 +10,11 @@ angular.module('page', ['ngResource'])
         '$http',
         '$location',
         'addonsService',
+        'imageService',
         'configurationService',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, configurationService) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService,
+                  configurationService) {
 
             $scope.slug = $routeParams.page;
 
@@ -60,6 +62,10 @@ angular.module('page', ['ngResource'])
                 $scope.page.images = $http.get("/api/1.0/page/" + $scope.slug + "/image").success(function (data) {
                     $scope.page.images = data;
                 });
+            }
+
+            $scope.selectFeatureImage = function (image) {
+                imageService.selectFeatured($scope.page, image);
             }
 
             $scope.getImageUploadUri = function () {

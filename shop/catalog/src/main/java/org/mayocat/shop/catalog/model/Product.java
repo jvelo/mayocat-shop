@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.Localized;
@@ -17,7 +18,7 @@ import org.mayocat.model.annotation.SearchIndex;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
-public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel
+public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage
 {
     private Long id;
 
@@ -41,6 +42,10 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     @SearchIndex
     private BigDecimal price;
+
+    private Integer stock;
+
+    private Long featuredImageId;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
@@ -137,6 +142,27 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
         return model;
     }
 
+    @Override
+    public Long getFeaturedImageId()
+    {
+        return this.featuredImageId;
+    }
+
+    public void setFeaturedImageId(Long featuredImageId)
+    {
+        this.featuredImageId = featuredImageId;
+    }
+
+    public Integer getStock()
+    {
+        return stock;
+    }
+
+    public void setStock(Integer stock)
+    {
+        this.stock = stock;
+    }
+
     ////////////////////////////////////////////////
 
     @Override
@@ -155,13 +181,26 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
                 && Objects.equal(this.description, other.description)
                 && Objects.equal(this.onShelf, other.onShelf)
                 && Objects.equal(this.price, other.price)
-                && Objects.equal(this.addons, other.addons);
+                && Objects.equal(this.addons, other.addons)
+                && Objects.equal(this.model, other.model)
+                && Objects.equal(this.stock, other.stock)
+                && Objects.equal(this.featuredImageId, other.featuredImageId);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.slug, this.title, this.description, this.onShelf, this.price, this.addons);
+        return Objects.hashCode(
+                this.slug,
+                this.title,
+                this.description,
+                this.onShelf,
+                this.price,
+                this.addons,
+                this.stock,
+                this.featuredImageId,
+                this.model
+        );
     }
 
     @Override
@@ -171,7 +210,6 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
                 .addValue(this.title)
                 .addValue(this.slug)
                 .addValue(this.onShelf)
-                .addValue(this.price)
                 .toString();
     }
 }

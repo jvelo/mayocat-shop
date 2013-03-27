@@ -11,10 +11,11 @@ angular.module('product', ['ngResource'])
         '$location',
         'catalogService',
         'addonsService',
+        'imageService',
         'configurationService',
 
         function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService,
-            configurationService) {
+            imageService, configurationService) {
 
             $scope.slug = $routeParams.product;
 
@@ -82,6 +83,10 @@ angular.module('product', ['ngResource'])
                 $scope.product.images = $http.get("/api/1.0/product/" + $scope.slug + "/image").success(function (data) {
                     $scope.product.images = data;
                 });
+            }
+
+            $scope.selectFeatureImage = function (image) {
+                imageService.selectFeatured($scope.product, image);
             }
 
             $scope.getImageUploadUri = function () {

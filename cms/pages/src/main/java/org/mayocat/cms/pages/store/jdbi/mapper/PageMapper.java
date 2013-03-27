@@ -22,6 +22,12 @@ public class PageMapper implements ResultSetMapper<Page>
         page.setTitle(resultSet.getString("title"));
         page.setSlug(resultSet.getString("slug"));
         page.setContent(resultSet.getString("content"));
+
+        long featuredImageId = resultSet.getLong("featured_image_id");
+        if (featuredImageId > 0) {
+            page.setFeaturedImageId(featuredImageId);
+        }
+
         String model = resultSet.getString("model");
         if (!Strings.isNullOrEmpty(model)) {
             page.setModel(model);

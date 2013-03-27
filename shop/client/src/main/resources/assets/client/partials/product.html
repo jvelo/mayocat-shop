@@ -26,6 +26,8 @@
                                 <img ng-src="{{image.file.href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
+                                <span class="featured-star" ng-class="{featured: image.featured}"
+                                      ng-click="selectFeatureImage(image)" />
                                 <div class="btn-group pull-right">
                                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                                         Edit
@@ -115,11 +117,19 @@
             </ul>
         </div>
 
-        <div class="block" ng-show="!isNew() && collections.length > 0">
+        <div class="block" ng-show="!isNew()">
             <h3>Price</h3>
 
             <div>
                 <money-amount ng-model="product.price" currency="EUR"/>
+            </div>
+        </div>
+
+        <div class="block" ng-show="!isNew()">
+            <h3>Stock</h3>
+
+            <div>
+                <input type="text" placeholder="Initial stock" ng-model="product.stock" />
             </div>
         </div>
     </aside>

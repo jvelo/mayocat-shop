@@ -20,10 +20,16 @@ public class ProductMapper implements ResultSetMapper<Product>
         product.setDescription(resultSet.getString("description"));
         product.setOnShelf(resultSet.getBoolean("on_shelf"));
         product.setPrice(resultSet.getBigDecimal("price"));
+        long featuredImageId = resultSet.getLong("featured_image_id");
+        if (featuredImageId > 0) {
+            product.setFeaturedImageId(featuredImageId);
+        }
+
         String model = resultSet.getString("model");
         if (!Strings.isNullOrEmpty(model)) {
             product.setModel(model);
         }
         return product;
+
     }
 }

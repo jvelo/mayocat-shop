@@ -9,6 +9,12 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
 {
     private FileRepresentation file;
 
+    public AttachmentRepresentation()
+    {
+        // No-arg constructor required for Jackson deserialization
+        super();
+    }
+
     public AttachmentRepresentation(Attachment attachment)
     {
         super(attachment.getTitle(), attachment.getSlug(), buildAttachmentApiHref(attachment));

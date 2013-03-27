@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
@@ -130,6 +132,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
             Image image = new Image(attachment, thumbnails);
             ImageRepresentation representation = new ImageRepresentation(image);
+            if (product.getFeaturedImageId() != null) {
+                if (product.getFeaturedImageId().equals(attachment.getId())) {
+                    representation.setFeatured(true);
+                }
+            }
 
             result.add(representation);
         }
@@ -185,14 +192,48 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Authorized
     // Partial update : NOT idempotent
     public Response updateProduct(@PathParam("slug") String slug,
-            Product updatedProduct)
+            ProductRepresentation updatedProductRepresentation)
     {
         try {
             Product product = this.catalogService.findProductBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             } else {
-                this.catalogService.updateProduct(updatedProduct);
+                product.setId(product.getId());
+                product.setTitle(updatedProductRepresentation.getTitle());
+                product.setDescription(updatedProductRepresentation.getDescription());
+                product.setModel(updatedProductRepresentation.getModel());
+                product.setOnShelf(updatedProductRepresentation.getOnShelf());
+                product.setPrice(updatedProductRepresentation.getPrice());
+                product.setStock(updatedProductRepresentation.getStock());
+
+                // Addons
+                List<Addon> addons = Lists.newArrayList();
+                for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
+                    Addon addon = new Addon();
+                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                    addon.setValue(addonRepresentation.getValue());
+                    addon.setKey(addonRepresentation.getKey());
+                    addon.setGroup(addonRepresentation.getGroup());
+                    addons.add(addon);
+                }
+
+                product.setAddons(addons);
+
+                // Featured image
+                if (updatedProductRepresentation.getFeaturedImage() != null) {
+                    ImageRepresentation representation = updatedProductRepresentation.getFeaturedImage();
+
+                    Attachment featuredImage =
+                            this.getAttachmentStore().findBySlugAndExtension(representation.getSlug(),
+                                    representation.getFile().getExtension());
+                    if (featuredImage != null) {
+                        product.setFeaturedImageId(featuredImage.getId());
+                    }
+                }
+
+                this.catalogService.updateProduct(product);
             }
 
             return Response.ok().build();
@@ -266,6 +307,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         ProductRepresentation result = new ProductRepresentation(product);
         if (images != null) {
             result.setImages(images);
+            for (ImageRepresentation image: images) {
+                if (image.isFeaturedImage()) {
+                    result.setFeaturedImage(image);
+                }
+            }
         }
         if (product.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();
@@ -289,6 +335,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {
             result.setImages(images);
+            for (ImageRepresentation image: images) {
+                if (image.isFeaturedImage()) {
+                    result.setFeaturedImage(image);
+                }
+            }
         }
         if (product.getAddons().isLoaded()) {
             List<AddonRepresentation> addons = Lists.newArrayList();

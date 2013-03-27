@@ -21,6 +21,11 @@ public class ArticleMapper implements ResultSetMapper<Article>
         article.setContent(resultSet.getString("content"));
         article.setSlug(resultSet.getString("slug"));
         article.setPublished(resultSet.getBoolean("published"));
+        long featuredImageId = resultSet.getLong("featured_image_id");
+        if (featuredImageId > 0) {
+            article.setFeaturedImageId(featuredImageId);
+        }
+
         return article;
     }
 }

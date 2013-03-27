@@ -14,6 +14,11 @@ public class FileRepresentation
      */
     private String href;
 
+    public FileRepresentation()
+    {
+        // No-arg constructor required for Jackson deserialization
+    }
+
     public FileRepresentation(Attachment attachment, String href)
     {
         this.extension = attachment.getExtension();

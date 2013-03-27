@@ -15,6 +15,10 @@ public class CollectionMapper implements ResultSetMapper<Collection>
         Collection collection = new Collection(result.getLong("id"));
         collection.setSlug(result.getString("slug"));
         collection.setTitle(result.getString("title"));
+        long featuredImageId = result.getLong("featured_image_id");
+        if (featuredImageId > 0) {
+            collection.setFeaturedImageId(featuredImageId);
+        }
         return collection;
     }
 }

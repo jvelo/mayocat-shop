@@ -11,6 +11,11 @@ public class EntityReferenceRepresentation
 
     private String slug;
 
+    public EntityReferenceRepresentation()
+    {
+        // No-arg constructor required for Jackson deserialization
+    }
+
     public EntityReferenceRepresentation(String title, String slug, String uri)
     {
         this.title = title;

@@ -84,6 +84,34 @@ image-upload .editor ul li .progress {
   height: 6px;
 }
 
+/* Featured image selector */
+span.featured-star {
+
+  display: inline-block;
+  float: left;
+  padding-top: 7px;
+  color: @borderStrong;
+  cursor: pointer;
+
+  &:hover {
+    color: #FDD017;
+  }
+
+  &:before {
+    content: "\2606";
+    font-size: 26px;
+  }
+
+  &.featured {
+    cursor: auto;
+    color: #FDD017;
+    &:before {
+      content: "\2605";
+    }
+  }
+
+}
+
 /* Switch button */
 
 switch-button {

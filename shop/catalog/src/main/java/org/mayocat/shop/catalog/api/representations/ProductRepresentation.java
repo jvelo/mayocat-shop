@@ -8,7 +8,9 @@ import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductRepresentation
 {
@@ -25,6 +27,11 @@ public class ProductRepresentation
 
     private BigDecimal price;
 
+    private Integer stock;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ImageRepresentation featuredImage = null;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<EntityReferenceRepresentation> collections = null;
 
@@ -37,6 +44,11 @@ public class ProductRepresentation
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private String href;
+
+    public ProductRepresentation()
+    {
+        // No-arg constructor required for Jackson de-serialization
+    }
 
     public ProductRepresentation(Product product)
     {
@@ -57,6 +69,7 @@ public class ProductRepresentation
         this.description = product.getDescription();
         this.onShelf = product.getOnShelf();
         this.price = product.getPrice();
+        this.stock = product.getStock();
 
         this.href = "/api/1.0/product/" + this.slug;
 
@@ -104,7 +117,6 @@ public class ProductRepresentation
         this.images = images;
     }
 
-
     public Boolean getOnShelf()
     {
         return onShelf;
@@ -144,4 +156,25 @@ public class ProductRepresentation
     {
         this.model = model;
     }
+
+    public Integer getStock()
+    {
+        return stock;
+    }
+
+    public void setStock(Integer stock)
+    {
+        this.stock = stock;
+    }
+
+    public ImageRepresentation getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageRepresentation featuredImage)
+    {
+        this.featuredImage = featuredImage;
+    }
+
 }

@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
+import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Translations;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
@@ -11,7 +12,7 @@ import org.mayocat.model.annotation.SearchIndex;
 
 import com.google.common.base.Objects;
 
-public class Collection extends AbstractLocalizedEntity
+public class Collection extends AbstractLocalizedEntity implements HasFeaturedImage
 {
     private Long id;
 
@@ -28,6 +29,8 @@ public class Collection extends AbstractLocalizedEntity
     @Localized(type = LocalizationFieldType.MEDIUM)
     @SearchIndex
     private String description;
+
+    private Long featuredImageId;
 
     public Collection()
     {
@@ -89,6 +92,17 @@ public class Collection extends AbstractLocalizedEntity
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    @Override
+    public Long getFeaturedImageId()
+    {
+        return featuredImageId;
+    }
+
+    public void setFeaturedImageId(Long featuredImageId)
+    {
+        this.featuredImageId = featuredImageId;
     }
 
     // //////////////////////////////////////////////

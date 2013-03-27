@@ -1,11 +1,12 @@
 group ArticleDAO;
 
 createArticle() ::= <<
-    INSERT INTO article (entity_id, model, title, content)
+    INSERT INTO article (entity_id, model, title, content, featured_image_id)
     VALUES (:id,
             :article.model,
             :article.title,
-            :article.content)
+            :article.content,
+            :article.featuredImageId)
 >>
 
 updateArticle() ::= <<
@@ -14,7 +15,8 @@ updateArticle() ::= <<
         model = :article.model,
         content = :article.content,
         published = :article.published,
-        publication_date = :article.publicationDate
+        publication_date = :article.publicationDate,
+        featured_image_id = :article.featuredImageId
     WHERE entity_id = :article.id
 >>
 

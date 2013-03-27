@@ -66,14 +66,14 @@ public class CollectionResource implements Resource
         // FIXME support by default infinite number
 
         if (expand.equals("productCount")) {
-            return this.wrapInReprensentationsWithCount(
+            return this.wrapInRepresentationsWithCount(
                     this.catalogService.findAllCollectionsWithProductCount());
         }
         //else if (expand.equals("products")) {
              // TODO
         //}
         else {
-            return this.wrapInReprensentations(this.catalogService.findAllCollections(number, offset));
+            return this.wrapInRepresentations(this.catalogService.findAllCollections(number, offset));
         }
     }
 
@@ -237,7 +237,7 @@ public class CollectionResource implements Resource
 
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<CollectionRepresentation> wrapInReprensentationsWithCount(List<EntityAndCount<Collection>> collections)
+    private List<CollectionRepresentation> wrapInRepresentationsWithCount(List<EntityAndCount<Collection>> collections)
     {
         List<CollectionRepresentation> result = new ArrayList<CollectionRepresentation>();
         for (EntityAndCount<Collection> entity : collections) {
@@ -246,7 +246,7 @@ public class CollectionResource implements Resource
         return result;
     }
 
-    private List<CollectionRepresentation> wrapInReprensentations(List<Collection> collections)
+    private List<CollectionRepresentation> wrapInRepresentations(List<Collection> collections)
     {
         List<CollectionRepresentation> result = new ArrayList<CollectionRepresentation>();
         for (Collection collection : collections) {

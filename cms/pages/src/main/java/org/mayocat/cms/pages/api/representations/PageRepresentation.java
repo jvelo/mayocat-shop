@@ -27,12 +27,20 @@ public class PageRepresentation
     private String content;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ImageRepresentation featuredImage = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public PageRepresentation()
+    {
+        // No-arg constructor required for Jackson de-serialization
+    }
 
     public PageRepresentation(Page page)
     {
@@ -98,5 +106,15 @@ public class PageRepresentation
     public void setModel(String model)
     {
         this.model = model;
+    }
+
+    public ImageRepresentation getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageRepresentation featuredImage)
+    {
+        this.featuredImage = featuredImage;
     }
 }

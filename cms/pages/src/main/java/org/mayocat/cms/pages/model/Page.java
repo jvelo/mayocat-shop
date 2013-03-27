@@ -9,6 +9,7 @@ import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Child;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
@@ -21,7 +22,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel
+public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel, HasFeaturedImage
 {
     private Long id;
 
@@ -47,6 +48,8 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     private Optional<String> model = Optional.absent();
+
+    private Long featuredImageId;
 
     public Page()
     {
@@ -143,6 +146,17 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
         return this.model;
     }
 
+    @Override
+    public Long getFeaturedImageId()
+    {
+        return featuredImageId;
+    }
+
+    public void setFeaturedImageId(Long featuredImageId)
+    {
+        this.featuredImageId = featuredImageId;
+    }
+
     // //////////////////////////////////////////////
 
     @Override
@@ -156,14 +170,23 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
         }
         final Page other = (Page) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
-                && Objects.equal(this.content, other.content);
+        return Objects.equal(this.title, other.title)
+                && Objects.equal(this.slug, other.slug)
+                && Objects.equal(this.content, other.content)
+                && Objects.equal(this.published, other.published)
+                && Objects.equal(this.addons, other.addons);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.slug, this.title, this.content);
+        return Objects.hashCode(
+                this.slug,
+                this.title,
+                this.content,
+                this.published,
+                this.addons
+        );
     }
 
     @Override
@@ -171,6 +194,4 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
-
-
 }

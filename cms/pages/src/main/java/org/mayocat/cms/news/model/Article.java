@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
@@ -21,7 +22,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Article extends AbstractLocalizedEntity implements HasAddons, HasModel
+public class Article extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage
 {
     private Long id;
 
@@ -45,6 +46,8 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     private Optional<String> model = Optional.absent();
+
+    private Long featuredImageId;
 
     public Article()
     {
@@ -135,6 +138,17 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
         this.publicationDate = publicationDate;
     }
 
+    @Override
+    public Long getFeaturedImageId()
+    {
+        return featuredImageId;
+    }
+
+    public void setFeaturedImageId(Long featuredImageId)
+    {
+        this.featuredImageId = featuredImageId;
+    }
+
     // //////////////////////////////////////////////
 
     @Override
@@ -163,4 +177,5 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
+
 }

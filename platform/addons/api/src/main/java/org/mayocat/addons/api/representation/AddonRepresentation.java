@@ -17,6 +17,11 @@ public class AddonRepresentation
 
     private String key;
 
+    public AddonRepresentation()
+    {
+        // No-arg constructor for Jackson de-serialization
+    }
+
     public AddonRepresentation(Addon addon)
     {
         this.value = addon.getValue();

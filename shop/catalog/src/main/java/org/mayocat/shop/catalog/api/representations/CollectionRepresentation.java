@@ -2,6 +2,7 @@ package org.mayocat.shop.catalog.api.representations;
 
 import java.util.List;
 
+import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 
@@ -21,7 +22,18 @@ public class CollectionRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<EntityReferenceRepresentation> products = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ImageRepresentation featuredImage = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ImageRepresentation> images = null;
+
     private String href;
+
+    public CollectionRepresentation()
+    {
+        // No-arg constructor required for Jackson de-serialization
+    }
 
     public CollectionRepresentation(Collection collection)
     {
@@ -82,5 +94,25 @@ public class CollectionRepresentation
     public Long getNumberOfProducts()
     {
         return numberOfProducts;
+    }
+
+    public ImageRepresentation getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageRepresentation featuredImage)
+    {
+        this.featuredImage = featuredImage;
+    }
+
+    public List<ImageRepresentation> getImages()
+    {
+        return images;
+    }
+
+    public void setImages(List<ImageRepresentation> images)
+    {
+        this.images = images;
     }
 }
