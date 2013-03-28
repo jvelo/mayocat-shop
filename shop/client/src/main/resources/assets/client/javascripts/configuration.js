@@ -73,7 +73,7 @@ angular.module('configuration', ['ngResource'])
         var prepareSettings = function (settings) {
 
             var isStillDefaultValue = function (node) {
-                if (node.value === node.__originalValue && node.value === node.defaultValue) {
+                if (angular.equals(node.value, node.__originalValue) && angular.equals(node.value, node.default)) {
                     // Nothing changed
                     return true;
                 }
@@ -100,6 +100,8 @@ angular.module('configuration', ['ngResource'])
                 }
                 return container;
             }
+
+            // TODO: clean object graph of empty paths like this : "catalog":{"currencies":{},"products":{}}
 
             return walk(settings, {});
         };

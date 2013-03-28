@@ -10,7 +10,7 @@ logging:
 
 database:
   driverClass: org.postgresql.Driver
-  user: imac
+  user: postgres
   password: 
   url: jdbc:postgresql://127.0.0.1/shop
   properties:
@@ -63,20 +63,20 @@ theme:
 
 catalog:
   currencies:
-      main:
-        default: EUR
-        visible: true
-        configurable: false
-      others:
-        default: [USD, JPY]
-        visible: true
-        configurable: true
+    main:
+      default: EUR
+      visible: true
+      configurable: false
+    others:
+      default: [USD, JPY]
+      visible: true
+      configurable: true
   products:
     stock:
       default: true
     collections:
       default: true
-      configurable: false
+      configurable: true
       visible: true
     variants:
       default: true
