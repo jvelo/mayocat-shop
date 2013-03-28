@@ -29,6 +29,7 @@ angular.module('page', ['ngResource'])
                         .success(function (data, status, headers, config) {
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
+                            $rootScope.$broadcast('pages:refreshList');
                             $location.url("/page/" + slug);
                         })
                         .error(function (data, status, headers, config) {
@@ -36,7 +37,9 @@ angular.module('page', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.PageResource.save({ "slug": $scope.slug }, $scope.page);
+                    $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function(){
+                        $rootScope.$broadcast('pages:refreshList');
+                    });
                 }
             };
 
@@ -129,6 +132,7 @@ angular.module('page', ['ngResource'])
                     "slug" : $scope.slug
                 }, function(){
                     $rootScope.$broadcast('page:dismissConfirmDelete');
+                    $rootScope.$broadcast('pages:refreshList');
                     $location.url("/contents");
                 });
             }

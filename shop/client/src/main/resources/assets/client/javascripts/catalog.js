@@ -79,16 +79,18 @@ angular.module('catalog', [])
             $scope.hasCollections = has;
         });
 
-        catalogService.listProducts(function (products) {
-            $scope.products = products;
-        });
-
-        catalogService.listCollections(function (collections) {
-            $scope.collections = collections;
-            angular.forEach($scope.collections, function(collection) {
-               $scope.toggleExpand(collection);
+        $scope.refreshCatalog = function () {
+            catalogService.listProducts(function (products) {
+                $scope.products = products;
             });
-        });
+
+            catalogService.listCollections(function (collections) {
+                $scope.collections = collections;
+                angular.forEach($scope.collections, function (collection) {
+                    $scope.toggleExpand(collection);
+                });
+            });
+        }
 
         $scope.toggleExpand = function(collection) {
             if (typeof collection.products === "undefined") {
@@ -120,4 +122,10 @@ angular.module('catalog', [])
         configurationService.get("catalog.products.collections", function(value){
           $scope.hasCollections = value;
         });
+
+        $scope.refreshCatalog();
+
+        $scope.$on("catalog:refreshCatalog", function(){
+            $scope.refreshCatalog();
+        })
     }]);

@@ -46,13 +46,16 @@ angular.module('article', ['ngResource'])
                         var fragments = headers("location").split('/'),
                             slug = fragments[fragments.length - 1];
                         $location.url("/news/" + slug);
+                        $rootScope.$broadcast("news:articles:refreshList");
                     })
                     .error(function (data, status, headers, config) {
                         // TODO handle 409 conflict
                     });
             }
             else {
-                $scope.ArticleResource.save({ "slug": $scope.slug }, $scope.article);
+                $scope.ArticleResource.save({ "slug": $scope.slug }, $scope.article, function() {
+                    $rootScope.$broadcast("news:articles:refreshList");
+                });
             }
         };
 
@@ -166,6 +169,7 @@ angular.module('article', ['ngResource'])
                 "slug" : $scope.slug
             }, function(){
                 $rootScope.$broadcast('article:dismissConfirmDelete');
+                $rootScope.$broadcast("news:articles:refreshList");
                 $location.url("/contents");
             });
         }

@@ -30,6 +30,7 @@ angular.module('product', ['ngResource'])
                         .success(function (data, status, headers, config) {
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
+                            $rootScope.$broadcast('catalog:refreshCatalog');
                             $location.url("/product/" + slug);
                         })
                         .error(function (data, status, headers, config) {
@@ -37,7 +38,9 @@ angular.module('product', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product);
+                    $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function(){
+                        $rootScope.$broadcast('catalog:refreshCatalog');
+                    });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
                             $scope.collectionOperation(collection, "addProduct");
@@ -173,6 +176,7 @@ angular.module('product', ['ngResource'])
                     "slug" : $scope.slug
                 }, function(){
                     $rootScope.$broadcast('product:dismissConfirmDelete');
+                    $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });
             }

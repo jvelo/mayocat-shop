@@ -7,7 +7,9 @@ angular.module('collection', ['ngResource'])
             $scope.slug = $routeParams.collection;
 
             $scope.updateCollection = function () {
-                $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection);
+                $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function(){
+                    $rootScope.$broadcast('catalog:refreshCatalog');
+                });
             }
 
             $scope.CollectionResource = $resource("/api/1.0/collection/:slug");
@@ -23,6 +25,7 @@ angular.module('collection', ['ngResource'])
                     "slug": $scope.slug
                 }, function () {
                     $rootScope.$broadcast('collection:dismissConfirmDelete');
+                    $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });
             }
