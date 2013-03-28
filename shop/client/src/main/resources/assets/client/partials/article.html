@@ -124,6 +124,45 @@
             </div>
         </div>
 
+        <div class="block" ng-show="!isNew()">
+            <div ng-show="article.published != undefined">
+                <div>
+                    <span ng-class="{strong: article.published}">published</span>
+                    <switch-button ng-model="article.published"></switch-button>
+                    <span ng-class="{strong: !article.published}">unpublished</span>
+                </div>
+            </div>
+            <div ng-show="article.published">
+                <p>
+                    Published on {{article.publicationDate | timestampAsDate:'LLL' }}
+                    <br/>
+                    <small ng-click="changePublicationDate()">
+                        Change publication date
+                    </small>
+                </p>
+
+                <div ng-show="newPublicationDate != null">
+                    <div class="input-append date" id="datePicker">
+                        <input type="text" ng-model="newPublicationDate" data-date-format="yyyy-mm-dd" bs-datepicker>
+                        <span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+
+                    <br/>
+
+                    <div class="input-append" id="timePicker">
+                        <input type="text" ng-model="newPublicationTime">
+                        <span class="add-on"><i class="icon-time"></i></span>
+                    </div>
+
+                    <div>
+                        <a class="btn" ng-click="cancelChangePublicationDate()">Cancel</a>
+                        <a class="btn btn-info" ng-click="validateNewPublicationDate()">Change date</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="block" ng-show="!isNew() && models.length > 0">
             <h3>Model</h3>
             <select ng-model="article.model" ng-options="model.id as model.name for model in models">

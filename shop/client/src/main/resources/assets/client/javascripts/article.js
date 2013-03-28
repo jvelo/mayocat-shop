@@ -11,10 +11,26 @@ angular.module('article', ['ngResource'])
     '$location',
     'addonsService',
     'imageService',
+    'timeService',
     'configurationService',
 
     function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService,
-              configurationService) {
+              timeService, configurationService) {
+
+        /**
+         * Helper function to parse time entered by a user.
+         *
+         * @param input the user entered input
+         * @return {Boolean|String} false if no sensible time could be parse, the formatted time as HH:MM otherwise
+         */
+        var parseUserEnteredTime = function (input) {
+            var result = false, matches;
+            var re = /^\s*([01]?\d|2[0-3]):?([0-5]\d)\s*$/;
+            if ((matches = input.match(re))) {
+                result = (matches[1].length == 2 ? "" : "0") + matches[1] + ":" + matches[2];
+            }
+            return result;
+        }
 
         $scope.slug = $routeParams.article;
 
@@ -39,6 +55,27 @@ angular.module('article', ['ngResource'])
                 $scope.ArticleResource.save({ "slug": $scope.slug }, $scope.article);
             }
         };
+
+        $scope.changePublicationDate = function () {
+            $scope.newPublicationDate = timeService.convertTimestamp($scope.article.publicationDate, "YYYY-MM-DD");
+            $scope.newPublicationTime = timeService.convertTimestamp($scope.article.publicationDate, "HH:mm");
+        }
+
+        $scope.validateNewPublicationDate = function () {
+            var newTime = parseUserEnteredTime($scope.newPublicationTime);
+            if (!newTime) {
+                // old is the new new
+                newTime = timeService.convertTimestamp($scope.article.publicationDate, "HH:mm");
+            }
+            var newDate = $scope.newPublicationDate + " " + newTime;
+            $scope.article.publicationDate = timeService.convert(newDate, "YYYY-MM-DD HH:mm", "X");
+            $scope.cancelChangePublicationDate();
+        }
+
+        $scope.cancelChangePublicationDate = function () {
+            $scope.newPublicationDate = null;
+            $scope.newPublicationTime = null;
+        }
 
         $scope.editThumbnails = function (image) {
             $rootScope.$broadcast('thumbnails:edit', image);

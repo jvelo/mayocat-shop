@@ -39,7 +39,7 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     public String content;
 
     @SearchIndex
-    private Boolean published;
+    private Boolean published = null;
 
     private Date publicationDate;
 

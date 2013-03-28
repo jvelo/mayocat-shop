@@ -14,7 +14,9 @@ var mayocat = angular.module('mayocat', [
     'article',
     'configuration',
     'money',
-    'jqui'
+    'time',
+    'jqui',
+    '$strap.directives'
 ]);
 
 mayocat.config(['$routeProvider', function($routeProvider) {

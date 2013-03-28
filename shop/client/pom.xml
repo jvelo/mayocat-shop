@@ -36,6 +36,8 @@
                         <include>assets/client/vendor/angular/1.1.1/angular-resource.min.js</include>
                         <include>assets/client/vendor/angular/1.1.1/angular-mocks.js</include>
                         <include>assets/client/vendor/sortable-ng.js</include>
+                        <include>assets/client/vendor/moment.min.js</include>
+                        <include>assets/client/vendor/angular-strap.min.js</include>
                     </preloadSources>
                     <sourceIncludes>
                         <include>assets/client/javascripts/controllers.js</include>
@@ -51,6 +53,7 @@
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/money.js</include>
+                        <include>assets/client/javascripts/time.js</include>
                         <include>assets/client/javascripts/addons.js</include>
                         <include>assets/client/javascripts/app.js</include>
                     </sourceIncludes>

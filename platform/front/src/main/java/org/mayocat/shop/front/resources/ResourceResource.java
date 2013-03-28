@@ -2,7 +2,6 @@ package org.mayocat.shop.front.resources;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.inject.Inject;
@@ -13,16 +12,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.ThemeResource;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 /**
@@ -35,34 +31,34 @@ public class ResourceResource implements Resource
     @Inject
     private ThemeManager themeManager;
 
+    @Inject
+    private Logger logger;
+
     @GET
     @Path("{path:.+}")
     public Response getResource(@PathParam("path") String resource, @Context Breakpoint breakpoint) throws Exception
     {
-        try {
-
-            ThemeResource themeResource = themeManager.resolveResource(resource, breakpoint);
-            if (resource == null) {
-                throw new WebApplicationException(404);
-            }
-
-            File file;
-            URI uri;
-
-            switch (themeResource.getType()) {
-                default:
-                case FILE:
-                    uri = new URI(themeResource.getPath());
-                case CLASSPATH_RESOURCE:
-                    uri = Resources.getResource(themeResource.getPath()).toURI();
-            }
-
-            file = new File(uri);
-            String mimeType = getMimetype(file);
-            return Response.ok(file, mimeType).build();
-        } catch (IllegalArgumentException e) {
+        ThemeResource themeResource = themeManager.resolveResource(resource, breakpoint);
+        if (resource == null) {
+            logger.debug("Resource [{}] with breakpoint [{}] not found", resource, breakpoint);
             throw new WebApplicationException(404);
         }
+
+        File file;
+
+        switch (themeResource.getType()) {
+            default:
+            case FILE:
+                file = new File(themeResource.getPath());
+                break;
+            case CLASSPATH_RESOURCE:
+                URI uri = Resources.getResource(themeResource.getPath()).toURI();
+                file = new File(uri);
+                break;
+        }
+
+        String mimeType = getMimetype(file);
+        return Response.ok(file, mimeType).build();
     }
 
     private String getMimetype(File file)

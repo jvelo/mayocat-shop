@@ -181,7 +181,6 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
                 article.setTitle(updatedArticleRepresentation.getTitle());
                 article.setContent(updatedArticleRepresentation.getContent());
-                article.setPublished(updatedArticleRepresentation.getPublished());
 
                 if (isJustBeingPublished(article, updatedArticleRepresentation) &&
                         updatedArticleRepresentation.getPublicationDate() == null)
@@ -194,6 +193,8 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 } else {
                     article.setPublicationDate(updatedArticleRepresentation.getPublicationDate());
                 }
+
+                article.setPublished(updatedArticleRepresentation.getPublished());
 
                 // Addons
                 List<Addon> addons = Lists.newArrayList();

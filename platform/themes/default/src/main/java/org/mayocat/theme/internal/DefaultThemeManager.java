@@ -18,6 +18,7 @@ import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.ThemeResource;
 import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;
+import org.slf4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -44,6 +45,9 @@ public class DefaultThemeManager implements ThemeManager
 
     @Inject
     private UserAgentBreakpointDetector breakpointDetector;
+
+    @Inject
+    private Logger logger;
 
     @Override
     public Template resolveIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
@@ -79,6 +83,7 @@ public class DefaultThemeManager implements ThemeManager
             }
             return result;
         } catch (IOException e) {
+            this.logger.warn("I/O Exception while resolving resource []", name, e);
             return null;
         }
     }
@@ -170,7 +175,7 @@ public class DefaultThemeManager implements ThemeManager
 
         // 3.2 Fallback (without breakpoint)
         try {
-            path = url + "/" + name;
+            path = url + name;
             Resources.getResource(path);
             return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
         } catch (IllegalArgumentException e) {
