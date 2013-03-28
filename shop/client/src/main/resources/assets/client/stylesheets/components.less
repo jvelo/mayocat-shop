@@ -50,9 +50,13 @@ div.thumbnails-list ul li.active a:hover {
 
 /* File upload widget */
 
+image-upload .well {
+  height:120px;
+}
+
 image-upload .fileinput-button {
-  float: right;
-  margin-top: -5px;
+  float: left;
+  margin-top: 5px;
 }
 
 image-upload .editor ul li {
@@ -126,14 +130,11 @@ switch-button button {
 /* Entity link */
 
 .uri {
-  padding: 10px;
-  background:@backgroundLight;
   margin-bottom: 10px;
-  border: 1px solid @borderStrong;
   max-width: 250px;
 
   a {
-    background: url("../images/externallinkicon.gif") center right no-repeat;
+    background: url("../images/externallinkicon.gif") top right no-repeat;
     font-family: monospace;
     color: @fontColor;
     padding-right: 15px;

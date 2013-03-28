@@ -23,14 +23,27 @@ a {
   color: @linkColor;
   text-decoration: none;
 }
+
 a:hover {
   color: @linkColorHover;
   text-decoration: none;
 }
 
+@font-face {
+    font-family: 'latolight';
+    src: url('../fonts/lato-light-webfont.eot');
+    src: url('../fonts/lato-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/lato-light-webfont.woff') format('woff'),
+         url('../fonts/lato-light-webfont.ttf') format('truetype'),
+         url('../fonts/lato-light-webfont.svg#latolight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
   margin: 0px;
+  font-family: 'latolight';
 }
 
 ul, li {
@@ -39,10 +52,8 @@ ul, li {
   margin: 0px;
 }
 
-.sidebar-nav h2, header h2, #list .header h2 {
-  font-size: 16px;
-  line-height: 16px;
-  max-width: 237px;
+.sidebar-nav li h2 {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 small {
@@ -51,23 +62,37 @@ small {
 
 h1.big {
   font-size: 40px;
-  margin: 37px 0px 15px 0px;
+  margin: 41px 0px 15px 0px;
 }
 
 h1.small {
-  font-size: 16px;
+  font-size: 18px;
   margin: 48px 0px 15px 0px;
+}
+
+.sidebar-nav header h2, .header h2 {
+  font-size: 18px;
+  line-height: 16px;
+  max-width: 237px;
+}
+
+.sidebar-nav h2 {
+  font-size: 16px;
+  line-height: 20px;
+  max-width: 237px;
 }
 
 h3 {
   font-size: 16px;
+  line-height: 20px;
+  margin: 0px 0px 10px 0px;
 }
 
 /* Fields */
 
 input, textarea {
   border: solid 1px @borderInput !important;
-  resize:none;
+  resize: none;
 }
 
 input[type='text'].title {
@@ -76,12 +101,20 @@ input[type='text'].title {
   padding-left: 9px;
 }
 
-.entity input[type='text'], .entity textarea {
+.entity textarea, .entity input[type='text'] {
   width: 100%;
 }
 
+h1 input[type='text'] {
+  height: 40px !important;
+}
+
+input[type='text'], input[type='password'] {
+  height: 30px !important;
+}
+
 .input-append .add-on, .input-prepend .add-on {
-  line-height: 12px;
+  height: auto !important;
 }
 
 /* Buttons */
@@ -93,12 +126,16 @@ input[type='text'].title {
 .btn-primary {
   background-color: @linkColor;
   color: #FFF;
-  background-image:none;
-  border:none;
+  background-image: none;
+  border: none;
 }
 
 .btn-primary:hover {
   background-color: @linkColorHover;
+}
+
+.btn-large {
+  margin: 0px 0px 10px 0px;
 }
 
 /* Global loader */
@@ -143,12 +180,6 @@ body > div.loader {
 
 .control-group.default input {
   opacity: 0.7;
-}
-
-body div.modal {
-/** Reset bootstrap modal border radius */ //  border-radius: 0;
-//  -webkit-border-radius: 0;
-//  -moz-border-radius: 0;
 }
 
 .clickable:hover {

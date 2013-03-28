@@ -31,6 +31,7 @@ header a {
 }
 
 .sidebar-nav {
+  position: fixed;
   width: 239px;
   height: 100%;
   float: left;
@@ -70,6 +71,14 @@ header a {
   background-color: @backgroundLighter;
 }
 
+.sidebar-nav ul.sub-menu {
+  padding: 5px 0px 5px 15px;
+}
+
+.sidebar-nav ul.sub-menu li {
+  padding: 2px 0px 2px 0px;
+}
+
 .sidebar-nav ul.sub-menu > li.active {
   font-weight: bold;
 }
@@ -106,37 +115,40 @@ header a {
   margin-left: 2px;
 }
 
-#list li li {
-  padding: 11px 0px;
-  border-bottom: solid 1px  @borderList;
-}
-
 #list li {
-  padding: 11px 0px 0px 0px;
+  padding: 0px;
   position: relative;
   border-bottom: none;
-
 }
 
 #list li.hasChildren {
   border-bottom: solid 1px  @borderList;
 }
 
-#list li:hover, #list .icon-move {
-  background-color: #FFF;
-}
-
-#list ul li div.listItem {
+#list .droptarget {
+  padding: 11px 0px 11px 0px;
   border-bottom: solid 1px  @borderList;
-  padding: 0px 15px 11px;
 }
 
-#list ul ul li {
-  padding-left: 25px;
+#list ul li:first-child > .droptarget {
+  border-top: solid 1px  @borderList;
 }
 
-#list ul ul li:last-child {
-  border-bottom: none;
+#list .droptarget:hover {
+  background-color: #FFF;
+  z-index: 100;
+}
+
+#list .droptarget .listItem {
+  padding: 0px 0px 0px 15px;
+}
+
+#list .listItem {
+  padding: 11px 0px 11px 15px;
+}
+
+#list ul ul li .droptarget {
+  padding-left: 25px !important;
 }
 
 #list .move-handle {
@@ -147,6 +159,7 @@ header a {
   width: 39px;
   height: 39px;
   background-image: url(../images/icon-move.png);
+  background-color: #FFF;
 }
 
 #list li:hover > div > div > .move-handle {
@@ -158,6 +171,7 @@ header a {
 #content {
   float: left;
   height: 100%;
+  margin: 0px 0px 0px 239px;
   width: -webkit-calc(~"100% - 240px");
   width: calc(~"100% - 240px"); // See http://stackoverflow.com/questions/11972084/less-aggressive-compilation-with-css3-calc
 // for why the tild TODO remove it when less.js 1.4+ is released
@@ -165,14 +179,16 @@ header a {
 
 #content > .sub-list {
   float: left;
+  height: 100%;
+  position: fixed;
 }
 
 #main {
-  float: left;
-  //max-width: 798px;
+  float: left; //max-width: 798px;
   padding-left: 15px;
   width: -webkit-calc(~"100% - 185px");
   width: calc(~"100% - 185px");
+  margin: 0px 0px 0px 179px;
 }
 
 #main article {
@@ -192,11 +208,18 @@ header a {
   margin-bottom: 25px;
 }
 
-#main aside .block.delete {
-  color: @borderInput;
+#main .entity .block:hover,
+#main aside .block:hover {
+  border-left: 2px solid #c3bcb6 !important;
+}
 
-  &:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
+#main .entity .block p, {
+  font-size: 11px;
+  line-height: 14px;
+}
+
+#main .intro {
+  float: left;
+  width: 250px;
+  margin: 0px 25px 0px 0px;
 }
