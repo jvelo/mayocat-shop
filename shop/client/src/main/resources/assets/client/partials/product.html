@@ -2,7 +2,7 @@
 <h1 class="small" ng-show="isNew()">New product</h1>
 
 <form>
-    <article class="entity" ng-class="{true: 'loading', false: ''}[product.title == undefined]">
+    <article class="entity" ng-class="{'loading': product.title === undefined}">
 
         <div ng-show="product.title != undefined">
 
@@ -74,16 +74,23 @@
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new product -->
-                <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
+                <div class="hasLoading">
+                    <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
             </div>
             <div ng-show="!isNew()">
                 <div ng-show="product.onShelf == undefined">
-                    <button ng-click="updateProduct()" class="btn btn-large btn">Save</button>
-                    <button ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online
-                    </button>
+                    <div class="hasLoading">
+                        <button ng-click="updateProduct()" class="btn btn-large btn">Save</button>
+                        <button ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online</button>
+                    </div>
                 </div>
                 <div ng-show="product.onShelf != undefined">
-                    <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
+                    <div class="hasLoading">
+                        <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
                     <div>
                         <span ng-class="{strong: product.onShelf}">on shelf</span>
                         <switch-button ng-model="product.onShelf"></switch-button>

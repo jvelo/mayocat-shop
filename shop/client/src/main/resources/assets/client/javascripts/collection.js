@@ -7,7 +7,9 @@ angular.module('collection', ['ngResource'])
             $scope.slug = $routeParams.collection;
 
             $scope.updateCollection = function () {
-                $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function(){
+                $scope.isSaving = true;
+                $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function () {
+                    $scope.isSaving = false;
                     $rootScope.$broadcast('catalog:refreshCatalog');
                 });
             }

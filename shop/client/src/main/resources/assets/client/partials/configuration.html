@@ -176,13 +176,14 @@
         </div>
 
         <div class="span2">
-            <div class="buttons">
+            <div class="buttons hasLoading">
                 <button ng-click="updateSettings()"
                         class="btn btn-large btn-primary"
                         ng-disabled="!settingsForm.shopForm.$dirty
                           && !settingsForm.generalForm.$dirty">
                     Update
                 </button>
+                <span ng-class="{'loading': isSaving}"></span>
             </div>
         </div>
     </div>

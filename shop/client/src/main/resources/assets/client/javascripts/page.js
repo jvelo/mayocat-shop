@@ -24,20 +24,24 @@ angular.module('page', ['ngResource'])
             }
 
             $scope.updatePage = function () {
+                $scope.isSaving = true;
                 if ($scope.isNew()) {
                     $http.post("/api/1.0/page/", $scope.page)
                         .success(function (data, status, headers, config) {
+                            $scope.isSaving = false;
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
                             $rootScope.$broadcast('pages:refreshList');
                             $location.url("/page/" + slug);
                         })
                         .error(function (data, status, headers, config) {
+                            $scope.isSaving = false;
                             // TODO handle 409 conflict
                         });
                 }
                 else {
                     $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function(){
+                        $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');
                     });
                 }

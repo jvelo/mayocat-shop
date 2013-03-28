@@ -2,7 +2,7 @@
 <h1 class="small" ng-show="isNew()">New collection</h1>
 
 <form>
-    <article class="entity" ng-class="{true: 'loading', false: ''}[collection.title == undefined]">
+    <article class="entity" ng-class="{'loading':collection.title == undefined}">
 
         <div ng-show="collection.title">
 
@@ -19,7 +19,10 @@
     </article>
     <aside>
         <div class="buttons">
-            <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+            <div class="hasLoading">
+                <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+                <span ng-class="{'loading': isSaving}"></span>
+            </div>
         </div>
 
         <p/>

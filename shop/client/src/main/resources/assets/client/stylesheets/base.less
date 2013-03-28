@@ -153,6 +153,26 @@ body > div.loader {
 .loading {
   background: url('../images/loader-small.gif') no-repeat center center;
   min-height: 34px;
+  min-width: 34px;
+  display: inline-block;
+}
+
+.hasLoading {
+  .loading {
+    float: left;
+    margin: 4px 7px;
+  }
+
+  button {
+    float: left;
+    margin-right: 5px;
+  }
+
+  &:after {
+    clear:both;
+    display: table;
+    content:"";
+  }
 }
 
 /* Pointer cursor */

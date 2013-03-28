@@ -82,16 +82,24 @@
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new article -->
-                <button ng-click="updateArticle()" class="btn btn-large btn-primary">Create</button>
+                <div class="hasLoading">
+                    <button ng-click="updateArticle()" class="btn btn-large btn-primary">Create</button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
             </div>
             <div ng-show="!isNew()">
                 <div ng-show="article.published == undefined">
-                    <button ng-click="updateArticle()" class="btn btn-large btn">Save</button>
-                    <button ng-click="publishArticle()" class="btn btn-large btn-primary">Publish online
-                    </button>
+                    <div class="hasLoading">
+                        <button ng-click="updateArticle()" class="btn btn-large btn">Save</button>
+                        <button ng-click="publishArticle()" class="btn btn-large btn-primary">Publish online</button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
                 </div>
                 <div ng-show="article.published != undefined">
-                    <button ng-click="updateArticle()" class="btn btn-large btn-primary">Update</button>
+                    <div class="hasLoading">
+                        <button ng-click="updateArticle()" class="btn btn-large btn-primary">Update</button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
                 </div>
                 <!-- Publish / update article -->
             </div>

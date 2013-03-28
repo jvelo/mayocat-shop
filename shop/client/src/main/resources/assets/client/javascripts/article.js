@@ -40,20 +40,24 @@ angular.module('article', ['ngResource'])
         }
 
         $scope.updateArticle = function () {
+            $scope.isSaving = true;
             if ($scope.isNew()) {
                 $http.post("/api/1.0/news/", $scope.article)
                     .success(function (data, status, headers, config) {
+                        $scope.isSaving = false;
                         var fragments = headers("location").split('/'),
                             slug = fragments[fragments.length - 1];
                         $location.url("/news/" + slug);
                         $rootScope.$broadcast("news:articles:refreshList");
                     })
                     .error(function (data, status, headers, config) {
+                        $scope.isSaving = false;
                         // TODO handle 409 conflict
                     });
             }
             else {
                 $scope.ArticleResource.save({ "slug": $scope.slug }, $scope.article, function() {
+                    $scope.isSaving = false;
                     $rootScope.$broadcast("news:articles:refreshList");
                 });
             }

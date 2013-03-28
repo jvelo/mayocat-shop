@@ -26,19 +26,24 @@ angular.module('product', ['ngResource'])
 
             $scope.updateProduct = function () {
                 if ($scope.isNew()) {
+                    $scope.isSaving = true;
                     $http.post("/api/1.0/product/", $scope.product)
                         .success(function (data, status, headers, config) {
+                            $scope.isSaving = false;
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
                             $rootScope.$broadcast('catalog:refreshCatalog');
                             $location.url("/product/" + slug);
                         })
                         .error(function (data, status, headers, config) {
+                            $scope.isSaving = false;
                             // TODO handle 409 conflict
                         });
                 }
                 else {
+                    $scope.isSaving = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function(){
+                        $scope.isSaving = false;
                         $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                     angular.forEach($scope.collections, function (collection) {

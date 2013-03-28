@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('configuration', ['ngResource'])
-    .factory('configurationService', function ($resource, $q) {
+    .factory('configurationService', function ($resource, $q, $rootScope) {
 
         var configuration,
             configurationResource = $resource("/api/1.0/configuration/gestalt"),
@@ -106,6 +106,10 @@ angular.module('configuration', ['ngResource'])
             return walk(settings, {});
         };
 
+        $rootScope.$on("configuration:updated", function(){
+            configuration = undefined;
+        });
+
         return {
             /**
              * Gets access to either the whole configuration object, or to a single configuration property.
@@ -189,9 +193,10 @@ angular.module('configuration', ['ngResource'])
              * Updates the settings with the passed settings, hitting the /settings PUT API.
              *
              * @param {Object} config the settings object to put
+             * @param {Function} callback the callback function
              */
-            put:function (config) {
-                settingsResource.update(prepareSettings(settings));
+            put:function (config, callback) {
+                settingsResource.update(prepareSettings(settings), callback);
             },
 
             /**
@@ -261,12 +266,17 @@ angular.module('configuration', ['ngResource'])
             }
         };
     })
-    .controller('ConfigurationController', ['$scope', 'configurationService',
+    .controller('ConfigurationController', ['$scope', '$rootScope', 'configurationService',
 
-    function ($scope, configurationService) {
+    function ($scope, $rootScope, configurationService) {
 
         $scope.updateSettings = function () {
-            configurationService.put($scope.settings);
+            $scope.isSaving = true;
+            configurationService.put($scope.settings, function() {
+                $scope.isSaving = false;
+                $rootScope.$broadcast("configuration:updated");
+                $rootScope.$broadcast("catalog:refreshCatalog");
+            });
         };
 
         $scope.isVisible = function (path) {

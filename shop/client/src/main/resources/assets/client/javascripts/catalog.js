@@ -75,11 +75,11 @@ angular.module('catalog', [])
             $location.url(href);
         };
 
-        catalogService.hasCollections(function (has) {
-            $scope.hasCollections = has;
-        });
-
         $scope.refreshCatalog = function () {
+            catalogService.hasCollections(function (has) {
+                $scope.hasCollections = has;
+            });
+
             catalogService.listProducts(function (products) {
                 $scope.products = products;
             });
@@ -125,7 +125,7 @@ angular.module('catalog', [])
 
         $scope.refreshCatalog();
 
-        $scope.$on("catalog:refreshCatalog", function(){
+        $scope.$on("catalog:refreshCatalog", function() {
             $scope.refreshCatalog();
         })
     }]);
