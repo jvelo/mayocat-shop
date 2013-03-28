@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -127,6 +128,10 @@ public class CollectionResource implements Resource
     @Authorized
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.TEXT_PLAIN})
     @Produces(MediaType.WILDCARD)
+    // TODO
+    // A better approach would be to have a POST {slug}/elements for adding new products to a collection
+    // a DELETE {slug}/elements/{elementSlug} for removing
+    // and a POST {slug}/elements/{elementSlug} for moving position
     public Response addProduct(@PathParam("slug") String slug, @FormParam("product") String product) {
         try {
             this.catalogService.addProductToCollection(slug, product);
@@ -211,6 +216,23 @@ public class CollectionResource implements Resource
     {
         // TODO
         throw new RuntimeException("Not implemented");
+    }
+
+    @Path("{slug}")
+    @DELETE
+    @Authorized
+    @Consumes(MediaType.WILDCARD)
+    public Response deleteCollection(@PathParam("slug") String slug)
+    {
+        try {
+            this.catalogService.deleteCollection(slug);
+
+            return Response.noContent().build();
+        }
+        catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No collection with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
     }
 
     @POST

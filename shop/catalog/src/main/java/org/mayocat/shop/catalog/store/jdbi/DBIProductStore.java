@@ -2,6 +2,8 @@ package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -70,6 +72,21 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
     }
 
+    @Override
+    public void delete(@Valid Product entity) throws EntityDoesNotExistException
+    {
+        Integer updatedRows = 0;
+        this.dao.begin();
+        updatedRows += this.dao.deleteAddons(entity);
+        updatedRows += this.dao.deleteEntityEntityById(PRODUCT_TABLE_NAME, entity.getId());
+        updatedRows += this.dao.deleteEntityById(entity.getId());
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new EntityDoesNotExistException("No rows was updated when trying to delete product");
+        }
+    }
+
     public void moveProduct(String collectionToMove, String collectionToMoveRelativeTo,
             HasOrderedCollections.RelativePosition relativePosition) throws InvalidMoveOperation
     {
@@ -112,8 +129,10 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     public Product findBySlug(String slug)
     {
         Product product = this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
-        List<Addon> addons = this.dao.findAddons(product);
-        product.setAddons(addons);
+        if (product != null) {
+            List<Addon> addons = this.dao.findAddons(product);
+            product.setAddons(addons);
+        }
         return product;
     }
 

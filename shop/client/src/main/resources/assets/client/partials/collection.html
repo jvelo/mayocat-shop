@@ -21,10 +21,34 @@
         <div class="buttons">
             <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
         </div>
-        <p class="uri" ng-show="!isNew()">
-            <small>
-                <pre>/collection/{{collection.slug}}</pre>
-            </small>
-        </p>
+
+        <p/>
+
+        <div class="uri" ng-show="!isNew()">
+            <a href="/collection/{{collection.slug}}" target="_new">
+                /collection/{{collection.slug}}
+            </a>
+        </div>
+
+        <div class="block delete" ng-show="!isNew()">
+            <small ng-click="confirmDeletion()">delete this collection</small>
+        </div>
+        <div class="modal hide fade"
+             modal-trigger="collection:confirmDelete"
+             modal-dismiss="collection:dismissConfirmDelete"
+             id="confirmDeleteCollectionModal">
+            <div class="modal-header">
+                <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Confirm deletion</h3>
+            </div>
+            <div class="modal-body">
+                Please confirm you want to delete this collection. There's no coming back !
+            </div>
+            <div class="modal-footer">
+                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">Cancel</a>
+                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">Delete this collection</a>
+            </div>
+        </div>
+
     </aside>
 </form>

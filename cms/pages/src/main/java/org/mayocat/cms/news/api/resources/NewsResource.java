@@ -11,6 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -27,6 +28,7 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.cms.pages.model.Page;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
@@ -228,6 +230,28 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No Article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
+    }
+
+    @Path("{slug}")
+    @DELETE
+    @Consumes(MediaType.WILDCARD)
+    @Authorized
+    public Response deleteArticle(@PathParam("slug") String slug)
+    {
+        Article page = this.articleStore.get().findBySlug(slug);
+
+        if (page == null) {
+            return Response.status(404).build();
+        }
+
+        try {
+            this.articleStore.get().delete(page);
+
+            return Response.noContent().build();
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 

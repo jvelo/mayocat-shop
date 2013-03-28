@@ -2,6 +2,8 @@ package org.mayocat.accounts.store.jdbi;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
@@ -73,6 +75,12 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     public void update(User entity) throws InvalidEntityException
     {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void delete(@Valid User entity) throws EntityDoesNotExistException
+    {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override

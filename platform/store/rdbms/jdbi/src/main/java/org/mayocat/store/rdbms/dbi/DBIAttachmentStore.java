@@ -88,6 +88,20 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public void delete(@Valid Attachment entity) throws EntityDoesNotExistException
+    {
+        Integer updatedRows = 0;
+        this.dao.begin();
+        updatedRows += this.dao.deleteEntityEntityById(ATTACHMENT_TABLE_NAME, entity.getId());
+        updatedRows += this.dao.deleteEntityById(entity.getId());
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new EntityDoesNotExistException("No rows was updated when trying to delete attachment");
+        }
+    }
+
+    @Override
     public Integer countAll()
     {
         return this.dao.countAll(ATTACHMENT_TABLE_NAME, getTenant());

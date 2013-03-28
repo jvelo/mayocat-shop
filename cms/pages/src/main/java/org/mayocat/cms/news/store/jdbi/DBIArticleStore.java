@@ -68,6 +68,21 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
+    public void delete(@Valid Article entity) throws EntityDoesNotExistException
+    {
+        Integer updatedRows = 0;
+        this.dao.begin();
+        updatedRows += this.dao.deleteAddons(entity);
+        updatedRows += this.dao.deleteEntityEntityById(ARTICLE_TABLE_NAME, entity.getId());
+        updatedRows += this.dao.deleteEntityById(entity.getId());
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new EntityDoesNotExistException("No rows was updated when trying to delete article");
+        }
+    }
+
+    @Override
     public Integer countAll()
     {
         return this.dao.countAll(ARTICLE_TABLE_NAME, getTenant());
@@ -83,8 +98,10 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     public Article findBySlug(String slug)
     {
         Article article = this.dao.findBySlugWithTranslations(ARTICLE_TABLE_NAME, slug, getTenant());
-        List<Addon> addons = this.dao.findAddons(article);
-        article.setAddons(addons);
+        if (article != null) {
+            List<Addon> addons = this.dao.findAddons(article);
+            article.setAddons(addons);
+        }
         return article;
     }
 

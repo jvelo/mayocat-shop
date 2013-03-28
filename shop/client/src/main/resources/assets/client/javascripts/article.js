@@ -120,4 +120,17 @@ angular.module('article', ['ngResource'])
             $scope.initializeModels();
         }
 
+        $scope.confirmDeletion = function() {
+            $rootScope.$broadcast('article:confirmDelete');
+        }
+
+        $scope.deleteArticle = function() {
+            $scope.ArticleResource.delete({
+                "slug" : $scope.slug
+            }, function(){
+                $rootScope.$broadcast('article:dismissConfirmDelete');
+                $location.url("/contents");
+            });
+        }
+
     }]);

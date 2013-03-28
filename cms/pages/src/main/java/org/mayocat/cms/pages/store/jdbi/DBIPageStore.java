@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.model.Addon;
@@ -73,6 +74,21 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
+    public void delete(@Valid Page entity) throws EntityDoesNotExistException
+    {
+        Integer updatedRows = 0;
+        this.dao.begin();
+        updatedRows += this.dao.deleteAddons(entity);
+        updatedRows += this.dao.deleteEntityEntityById(PAGE_TABLE_NAME, entity. getId());
+        updatedRows += this.dao.deleteEntityById(entity.getId());
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new EntityDoesNotExistException("No rows was updated when trying to delete page");
+        }
+    }
+
+    @Override
     public List<Page> findAll(Integer number, Integer offset)
     {
         return this.dao.findAll(PAGE_TABLE_NAME, getTenant(), number, offset);
@@ -88,8 +104,10 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     public Page findBySlug(String slug)
     {
         Page page = this.dao.findBySlugWithTranslations(PAGE_TABLE_NAME, slug, getTenant());
-        List<Addon> addons = this.dao.findAddons(page);
-        page.setAddons(addons);
+        if (page != null) {
+            List<Addon> addons = this.dao.findAddons(page);
+            page.setAddons(addons);
+        }
         return page;
     }
 

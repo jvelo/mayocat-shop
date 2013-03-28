@@ -177,6 +177,30 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
+    public void deleteProduct(String productSlug) throws EntityDoesNotExistException
+    {
+        Product product = this.findProductBySlug(productSlug);
+
+        if (product == null) {
+            throw new EntityDoesNotExistException();
+        }
+
+        this.productStore.get().delete(product);
+    }
+
+    @Override
+    public void deleteCollection(String collectionSlug) throws EntityDoesNotExistException
+    {
+        Collection collection = this.findCollectionBySlug(collectionSlug);
+
+        if (collection == null) {
+            throw new EntityDoesNotExistException();
+        }
+
+        this.collectionStore.get().delete(collection);
+    }
+
+    @Override
     public void moveProductInCollection(Collection collection, String slugOfProductToMove, String relativeSlug)
             throws InvalidMoveOperation
     {

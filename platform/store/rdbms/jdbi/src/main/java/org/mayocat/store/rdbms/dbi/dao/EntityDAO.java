@@ -35,6 +35,18 @@ public interface EntityDAO< E extends Entity >
     )
     Long createChildEntity(@BindBean("entity") Child entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
 
+    @SqlUpdate
+    (
+        "DELETE FROM entity WHERE entity.id = :id"
+    )
+    Integer deleteEntityById(@Bind("id") Long id);
+
+    @SqlUpdate
+    (
+        "DELETE FROM <type> WHERE <type>.entity_id = :id"
+    )
+    Integer deleteEntityEntityById(@Define("type") String type, @Bind("id") Long id);
+
     @SqlQuery
     (
         "SELECT id FROM entity WHERE slug = :entity.slug AND type = :type AND tenant_id = :tenant.id"

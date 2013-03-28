@@ -11,6 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -208,6 +209,29 @@ public class PageResource extends AbstractAttachmentResource implements Resource
             return Response.ok().build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
+    }
+
+    @Path("{slug}")
+    @DELETE
+    @Authorized
+    @Consumes(MediaType.WILDCARD)
+    public Response deletePage(@PathParam("slug") String slug)
+    {
+        Page page = this.pageStore.get().findBySlug(slug);
+
+        if (page == null) {
+            return Response.status(404).build();
+        }
+
+        try {
+            this.pageStore.get().delete(page);
+
+            return Response.noContent().build();
+
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();

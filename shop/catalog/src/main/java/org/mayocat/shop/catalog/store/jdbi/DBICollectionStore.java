@@ -2,6 +2,8 @@ package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
@@ -57,6 +59,21 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
             throw new StoreException("No rows was updated when updating collection");
         }
     }
+
+    @Override
+    public void delete(@Valid Collection entity) throws EntityDoesNotExistException
+    {
+        Integer updatedRows = 0;
+        this.dao.begin();
+        updatedRows += this.dao.deleteEntityEntityById(COLLECTION_TABLE_NAME, entity.getId());
+        updatedRows += this.dao.deleteEntityById(entity.getId());
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new EntityDoesNotExistException("No rows was updated when trying to delete collection");
+        }
+    }
+
 
     public void moveCollection(String collectionToMove, String collectionToMoveRelativeTo,
             RelativePosition relativePosition) throws InvalidMoveOperation

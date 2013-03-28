@@ -3,6 +3,7 @@ package org.mayocat.accounts.store.jdbi;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
@@ -10,6 +11,7 @@ import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.accounts.store.jdbi.dao.TenantDAO;
 import org.mayocat.context.Execution;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.xwiki.component.annotation.Component;
@@ -52,6 +54,12 @@ public class DBITenantStore implements TenantStore, Initializable
     public void update(Tenant entity) throws InvalidEntityException
     {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void delete(@Valid Tenant entity) throws EntityDoesNotExistException
+    {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override

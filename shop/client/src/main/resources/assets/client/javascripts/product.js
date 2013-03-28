@@ -164,5 +164,18 @@ angular.module('product', ['ngResource'])
                 $scope.initializeModels();
             }
 
+            $scope.confirmDeletion = function() {
+                $rootScope.$broadcast('product:confirmDelete');
+            }
+
+            $scope.deleteProduct = function() {
+                $scope.ProductResource.delete({
+                    "slug" : $scope.slug
+                }, function(){
+                    $rootScope.$broadcast('product:dismissConfirmDelete');
+                    $location.url("/catalog");
+                });
+            }
+
         }])
 ;

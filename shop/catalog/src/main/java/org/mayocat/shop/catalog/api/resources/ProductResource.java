@@ -11,6 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -240,6 +241,23 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
+    }
+
+    @Path("{slug}")
+    @DELETE
+    @Authorized
+    @Consumes(MediaType.WILDCARD)
+    public Response deleteProduct(@PathParam("slug") String slug)
+    {
+        try {
+            this.catalogService.deleteProduct(slug);
+
+            return Response.noContent().build();
+        }
+        catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }

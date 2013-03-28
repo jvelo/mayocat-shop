@@ -150,4 +150,8 @@ public interface CatalogService
     List<Collection> findAllCollections(int number, int offset);
 
     List<EntityAndCount<Collection>> findAllCollectionsWithProductCount();
+
+    void deleteProduct(String productSlug) throws EntityDoesNotExistException;
+
+    void deleteCollection(String collectionSlug) throws EntityDoesNotExistException;
 }

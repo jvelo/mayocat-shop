@@ -54,4 +54,11 @@ public interface AddonsDAO<T extends HasAddons>
         "AND   addon_group = :addon.group "
     )
     void updateAddon(@BindBean("entity") T entity, @BindAddon("addon")Addon addon);
+
+    @SqlUpdate
+    (
+        "DELETE FROM addon " +
+        "WHERE       addon.entity_id = :entity.id"
+    )
+    Integer deleteAddons(@BindBean("entity") T entity);
 }
