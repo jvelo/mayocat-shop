@@ -2,7 +2,7 @@
 <h1 class="small" ng-show="isNew()">New article</h1>
 
 <form>
-    <article class="entity" ng-class="{true: 'loading', false: ''}[article.title == undefined]">
+    <article class="entity" ng-class="{'loading': article.title == undefined}">
 
         <div ng-show="article.title != undefined">
 
