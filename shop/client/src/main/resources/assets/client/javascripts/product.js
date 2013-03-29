@@ -14,8 +14,7 @@ angular.module('product', ['ngResource'])
         'imageService',
         'configurationService',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService,
-            imageService, configurationService) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService, imageService, configurationService) {
 
             $scope.slug = $routeParams.product;
 
@@ -42,7 +41,7 @@ angular.module('product', ['ngResource'])
                 }
                 else {
                     $scope.isSaving = true;
-                    $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function(){
+                    $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
                         $scope.isSaving = false;
                         $rootScope.$broadcast('catalog:refreshCatalog');
                     });
@@ -70,7 +69,7 @@ angular.module('product', ['ngResource'])
                         }
                     }
                 }).save("product=" + $scope.product.slug, function () {
-                });
+                    });
             };
 
             $scope.ProductResource = $resource("/api/1.0/product/:slug");
@@ -127,7 +126,7 @@ angular.module('product', ['ngResource'])
                 });
             }
 
-            $scope.initializeModels = function() {
+            $scope.initializeModels = function () {
                 $scope.models = [];
                 configurationService.get("entities", function (entities) {
                     if (typeof entities.product !== 'undefined') {
@@ -172,14 +171,14 @@ angular.module('product', ['ngResource'])
                 $scope.initializeModels();
             }
 
-            $scope.confirmDeletion = function() {
+            $scope.confirmDeletion = function () {
                 $rootScope.$broadcast('product:confirmDelete');
             }
 
-            $scope.deleteProduct = function() {
+            $scope.deleteProduct = function () {
                 $scope.ProductResource.delete({
-                    "slug" : $scope.slug
-                }, function(){
+                    "slug": $scope.slug
+                }, function () {
                     $rootScope.$broadcast('product:dismissConfirmDelete');
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");

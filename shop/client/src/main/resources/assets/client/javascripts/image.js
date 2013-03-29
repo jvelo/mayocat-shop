@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict'
 
     angular.module('image', [])
@@ -6,7 +6,7 @@
 
             return {
 
-                selectFeatured: function(entity, image) {
+                selectFeatured: function (entity, image) {
                     for (var img in entity.images) {
                         if (entity.images.hasOwnProperty(img)) {
                             if (entity.images[img].href === image.href) {

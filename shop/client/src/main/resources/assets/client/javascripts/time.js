@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict'
 
     angular.module('time', [])
@@ -7,7 +7,7 @@
 
             return {
 
-                convertTimestamp: function(timestamp, format) {
+                convertTimestamp: function (timestamp, format) {
                     if (typeof timestamp === "undefined") {
                         return undefined;
                     }
@@ -23,7 +23,7 @@
                     return moment.unix(timestamp).format(format);
                 },
 
-                convert: function(input, format, outputFormat) {
+                convert: function (input, format, outputFormat) {
                     return moment(input, format).format(outputFormat);
                 }
 
@@ -32,7 +32,7 @@
         })
 
 
-        .filter('timestampAsDate', ['timeService',  function (timeService) {
+        .filter('timestampAsDate', ['timeService', function (timeService) {
             return function (timestamp, format) {
                 return timeService.convertTimestamp(timestamp, format);
             }

@@ -13,8 +13,7 @@ angular.module('page', ['ngResource'])
         'imageService',
         'configurationService',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService,
-                  configurationService) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService, configurationService) {
 
             $scope.slug = $routeParams.page;
 
@@ -40,7 +39,7 @@ angular.module('page', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function(){
+                    $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function () {
                         $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');
                     });
@@ -85,7 +84,7 @@ angular.module('page', ['ngResource'])
                 });
             }
 
-            $scope.initializeModels = function() {
+            $scope.initializeModels = function () {
                 $scope.models = [];
                 configurationService.get("entities", function (entities) {
                     if (typeof entities.page !== 'undefined') {
@@ -127,14 +126,14 @@ angular.module('page', ['ngResource'])
                 $scope.initializeModels();
             }
 
-            $scope.confirmDeletion = function() {
+            $scope.confirmDeletion = function () {
                 $rootScope.$broadcast('page:confirmDelete');
             }
 
-            $scope.deletePage = function() {
+            $scope.deletePage = function () {
                 $scope.PageResource.delete({
-                    "slug" : $scope.slug
-                }, function(){
+                    "slug": $scope.slug
+                }, function () {
                     $rootScope.$broadcast('page:dismissConfirmDelete');
                     $rootScope.$broadcast('pages:refreshList');
                     $location.url("/contents");

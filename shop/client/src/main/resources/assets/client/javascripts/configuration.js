@@ -7,7 +7,7 @@ angular.module('configuration', ['ngResource'])
             configurationResource = $resource("/api/1.0/configuration/gestalt"),
             settings,
             settingsResource = $resource("/api/1.0/configuration/settings", {}, {
-                update:{method:"PUT"}
+                update: {method: "PUT"}
             });
 
         var getSettings = function () {
@@ -106,7 +106,7 @@ angular.module('configuration', ['ngResource'])
             return walk(settings, {});
         };
 
-        $rootScope.$on("configuration:updated", function(){
+        $rootScope.$on("configuration:updated", function () {
             configuration = undefined;
         });
 
@@ -126,7 +126,7 @@ angular.module('configuration', ['ngResource'])
              *   // Something with value
              * });
              */
-            get:function () {
+            get: function () {
                 var path = arguments.length === 2 ? arguments[0] : undefined,
                     callback = arguments.length === 2 ? arguments[1] : arguments[0];
                 getConfiguration().then(function (configuration) {
@@ -165,7 +165,7 @@ angular.module('configuration', ['ngResource'])
              *   // Something with value
              * });
              */
-            getSettings:function () {
+            getSettings: function () {
                 var path = arguments.length === 2 ? arguments[0] : undefined,
                     callback = arguments.length === 2 ? arguments[1] : arguments[0];
                 getSettings().then(function (settings) {
@@ -195,7 +195,7 @@ angular.module('configuration', ['ngResource'])
              * @param {Object} config the settings object to put
              * @param {Function} callback the callback function
              */
-            put:function (config, callback) {
+            put: function (config, callback) {
                 settingsResource.update(prepareSettings(settings), callback);
             },
 
@@ -207,7 +207,7 @@ angular.module('configuration', ['ngResource'])
              * @return {*} undefined if the settings does not exists at this path for this settings object,
              * false if the settings is not visible (i.e. it should not be exposed to the users), true if it is.
              */
-            isVisible:function (settings, path) {
+            isVisible: function (settings, path) {
                 if (typeof settings === "undefined") {
                     return;
                 }
@@ -230,7 +230,7 @@ angular.module('configuration', ['ngResource'])
              * @return {Boolean|undefined} undefined if the settings does not exists at this path for this
              * settings object, false if the settings is not configurable, true if it is.
              */
-            isConfigurable:function (settings, path) {
+            isConfigurable: function (settings, path) {
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
@@ -251,7 +251,7 @@ angular.module('configuration', ['ngResource'])
              * @return {Boolean|undefined} undefined if the settings does not exists at this path for this
              * settings object, true if the value for this settings path is the default one, false otherwise
              */
-            isDefaultValue:function (settings, path) {
+            isDefaultValue: function (settings, path) {
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
@@ -268,32 +268,32 @@ angular.module('configuration', ['ngResource'])
     })
     .controller('ConfigurationController', ['$scope', '$rootScope', 'configurationService',
 
-    function ($scope, $rootScope, configurationService) {
+        function ($scope, $rootScope, configurationService) {
 
-        $scope.updateSettings = function () {
-            $scope.isSaving = true;
-            configurationService.put($scope.settings, function() {
-                $scope.isSaving = false;
-                $rootScope.$broadcast("configuration:updated");
-                $rootScope.$broadcast("catalog:refreshCatalog");
+            $scope.updateSettings = function () {
+                $scope.isSaving = true;
+                configurationService.put($scope.settings, function () {
+                    $scope.isSaving = false;
+                    $rootScope.$broadcast("configuration:updated");
+                    $rootScope.$broadcast("catalog:refreshCatalog");
+                });
+            };
+
+            $scope.isVisible = function (path) {
+                return configurationService.isVisible($scope.settings, path);
+            }
+
+            $scope.isConfigurable = function (path) {
+                return configurationService.isConfigurable($scope.settings, path);
+            }
+
+            $scope.isDefaultValue = function (path) {
+                return configurationService.isDefaultValue($scope.confsettingsiguration, path);
+            };
+
+            configurationService.getSettings(function (settings) {
+                $scope.settings = settings;
             });
-        };
-
-        $scope.isVisible = function (path) {
-            return configurationService.isVisible($scope.settings, path);
         }
 
-        $scope.isConfigurable = function (path) {
-            return configurationService.isConfigurable($scope.settings, path);
-        }
-
-        $scope.isDefaultValue = function (path) {
-            return configurationService.isDefaultValue($scope.confsettingsiguration, path);
-        };
-
-        configurationService.getSettings(function (settings) {
-            $scope.settings = settings;
-        });
-    }
-
-]);
+    ]);

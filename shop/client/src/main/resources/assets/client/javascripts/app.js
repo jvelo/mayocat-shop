@@ -19,34 +19,34 @@ var mayocat = angular.module('mayocat', [
     '$strap.directives'
 ]);
 
-mayocat.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.
-      when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
-      when('/contents', {templateUrl: 'partials/contents.html'}).
-      when('/orders', {templateUrl: 'partials/orders.html'}).
-      when('/customers', {templateUrl: 'partials/customers.html'}).
-      when('/news', {templateUrl: 'partials/news.html'}).
-      when('/page/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
-      when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController'}).
-      when('/catalog', {templateUrl: 'partials/products.html'}).
-      when('/collection/', {templateUrl: 'partials/collections.html', controller: 'CatalogController'}).
-      when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
-      when('/collection/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController'}).
-      when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
-      otherwise({redirectTo: '/'});
+mayocat.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.
+        when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
+        when('/contents', {templateUrl: 'partials/contents.html'}).
+        when('/orders', {templateUrl: 'partials/orders.html'}).
+        when('/customers', {templateUrl: 'partials/customers.html'}).
+        when('/news', {templateUrl: 'partials/news.html'}).
+        when('/page/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
+        when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController'}).
+        when('/catalog', {templateUrl: 'partials/products.html'}).
+        when('/collection/', {templateUrl: 'partials/collections.html', controller: 'CatalogController'}).
+        when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
+        when('/collection/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController'}).
+        when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
+        otherwise({redirectTo: '/'});
 }]);
 
 
 /**
  * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
  */
-mayocat.directive('modalTrigger',['$rootScope', function($rootScope) {
+mayocat.directive('modalTrigger', ['$rootScope', function ($rootScope) {
     return {
         restrict: "A",
-        link: function($scope, element, attrs) {
+        link: function ($scope, element, attrs) {
             var event = attrs.modalTrigger;
-            $rootScope.$on(event, function(){
-               $(element).modal("show");
+            $rootScope.$on(event, function () {
+                $(element).modal("show");
             });
         }
     }
@@ -55,12 +55,12 @@ mayocat.directive('modalTrigger',['$rootScope', function($rootScope) {
 /**
  * A directive for bootstrap modals that will trigger the modal to be dismissed when a particular event is broadcast.
  */
-mayocat.directive('modalDismiss',['$rootScope', function($rootScope) {
+mayocat.directive('modalDismiss', ['$rootScope', function ($rootScope) {
     return {
         restrict: "A",
-        link: function($scope, element, attrs) {
+        link: function ($scope, element, attrs) {
             var event = attrs.modalDismiss;
-            $rootScope.$on(event, function(){
+            $rootScope.$on(event, function () {
                 $(element).modal("hide");
             });
         }
@@ -70,7 +70,7 @@ mayocat.directive('modalDismiss',['$rootScope', function($rootScope) {
 /**
  * A switch button similar to the ios toggle switch
  */
-mayocat.directive('switchButton', function() {
+mayocat.directive('switchButton', function () {
     return {
         require: 'ngModel',
         restrict: 'E',
@@ -78,18 +78,18 @@ mayocat.directive('switchButton', function() {
             '<button class="btn on" ng-click="on()"></button>' +
             '<button class="btn off" ng-click="off()"></button>' +
             '</div>',
-        link: function($scope, element, attrs, controller) {
-            $scope.on = function() {
+        link: function ($scope, element, attrs, controller) {
+            $scope.on = function () {
                 $(element).find(".btn.on").addClass("btn-primary");
                 $(element).find(".btn.off").removeClass("btn-primary");
                 controller.$setViewValue(true);
             }
-            $scope.off = function() {
+            $scope.off = function () {
                 $(element).find(".btn.off").addClass("btn-primary");
                 $(element).find(".btn.on").removeClass("btn-primary");
                 controller.$setViewValue(false);
             }
-            controller.$render = function() {
+            controller.$render = function () {
                 if (typeof controller.$viewValue !== 'undefined') {
                     $scope[controller.$viewValue ? "on" : "off"]();
                 }
@@ -107,37 +107,37 @@ mayocat.directive('switchButton', function() {
  *
  * Inspired by http://stackoverflow.com/a/12631074/1281372
  */
-mayocat.directive('activeClass', ['$location', function(location) {
-  return {
-    restrict: ['A', 'LI'],
-    link: function(scope, element, attrs, controller) {
-      var clazz = attrs.activeClass,
-          path = attrs.href || $(element).find("a[href]").attr('href'),
-          otherHrefs = attrs.otherActiveHref || $(element).find("a[other-active-href]").attr('other-active-href'),
-          allHrefs = [ path ];
+mayocat.directive('activeClass', ['$location', function (location) {
+    return {
+        restrict: ['A', 'LI'],
+        link: function (scope, element, attrs, controller) {
+            var clazz = attrs.activeClass,
+                path = attrs.href || $(element).find("a[href]").attr('href'),
+                otherHrefs = attrs.otherActiveHref || $(element).find("a[other-active-href]").attr('other-active-href'),
+                allHrefs = [ path ];
 
-      if (typeof otherHrefs != "undefined") {
-        otherHrefs = otherHrefs.split(",");
-        for (var i=0; i<otherHrefs.length; i++) {
-          allHrefs.push(otherHrefs[i].trim());
+            if (typeof otherHrefs != "undefined") {
+                otherHrefs = otherHrefs.split(",");
+                for (var i = 0; i < otherHrefs.length; i++) {
+                    allHrefs.push(otherHrefs[i].trim());
+                }
+            }
+
+            if (allHrefs.length > 0) {
+                scope.location = location;
+                scope.$watch('location.path()', function (newPath) {
+                    for (var i = 0; i < allHrefs.length; i++) {
+                        var path = allHrefs[i].substring(1); //hack because path does bot return including hashbang
+                        if (newPath.indexOf(path) === 0) {
+                            element.addClass(clazz);
+                            return;
+                        }
+                    }
+                    element.removeClass(clazz);
+                });
+            }
         }
-      }
-
-      if (allHrefs.length > 0) {
-        scope.location = location;
-        scope.$watch('location.path()', function(newPath) {
-         for (var i=0; i<allHrefs.length; i++) {
-           var path = allHrefs[i].substring(1); //hack because path does bot return including hashbang
-           if (newPath.indexOf(path) === 0) {
-             element.addClass(clazz);
-             return;
-           }
-         }
-         element.removeClass(clazz);
-        });
-      }
-    }
-  };
+    };
 }]);
 
 
@@ -153,17 +153,17 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             'requestedUploadUri': '&uploadUri',
             'onUpload': '&onUpload'
         },
-        link:  function postLink($scope, element, attrs) {
+        link: function postLink($scope, element, attrs) {
 
             // Get the upload URI the directive customer requested. It is either provided as a function,
             // which we need to evaluate, or as a raw string.
             $scope.uploadUri = typeof $scope.requestedUploadUri === "function"
-                             ? $scope.requestedUploadUri()
-                             : $scope.requestedUploadUri;
+                ? $scope.requestedUploadUri()
+                : $scope.requestedUploadUri;
 
             $scope.dropzone = typeof $scope.requestedDropZone === "string"
-                            ? $($scope.requestedDropZone)
-                            : $(element).find('.dropzone');
+                ? $($scope.requestedDropZone)
+                : $(element).find('.dropzone');
 
 
             $scope.files = [];
@@ -172,37 +172,37 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                 var deferred = $q.defer();
                 loadImage(file, function (preview) {
                     deferred.resolve({
-                        index:index,
-                        preview:preview
+                        index: index,
+                        preview: preview
                     });
                     $scope.$apply();
                 }, {
-                    maxWidth:100,
-                    maxHeight:100,
-                    canvas:false,
-                    noRevoke:true
+                    maxWidth: 100,
+                    maxHeight: 100,
+                    canvas: false,
+                    noRevoke: true
                 });
                 return deferred.promise;
             }
 
-            $scope.remove = function(index) {
+            $scope.remove = function (index) {
                 $scope.files[index] = null;
             }
 
-            $scope.fileUploadFailed = function(index) {
-                $scope.$apply(function($scope){
+            $scope.fileUploadFailed = function (index) {
+                $scope.$apply(function ($scope) {
                     $scope.files[index].failed = true;
                 });
             }
 
-            $scope.fileUploading = function(index, loaded, total) {
-                $scope.$apply(function($scope){
+            $scope.fileUploading = function (index, loaded, total) {
+                $scope.$apply(function ($scope) {
                     $scope.files[index].progress = Math.round(loaded * 100 / total);
                 });
             }
 
-            $scope.fileUploaded = function(index) {
-                $scope.$apply(function($scope){
+            $scope.fileUploaded = function (index) {
+                $scope.$apply(function ($scope) {
                     if (typeof $scope.onUpload === "function") {
                         $scope.onUpload();
                     }
@@ -211,23 +211,23 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                 });
             }
 
-            $scope.submit = function() {
-                for (var i=0; i<$scope.files.length; i++) {
+            $scope.submit = function () {
+                for (var i = 0; i < $scope.files.length; i++) {
                     if ($scope.files[i] !== null) {
                         $scope.files[i].progress = 0;
                         $(element).fileupload('send', {
                             files: $scope.files[i],
                             formData: {
-                                "title" :  $scope.files[i].title,
-                                "description" :  $scope.files[i].description
+                                "title": $scope.files[i].title,
+                                "description": $scope.files[i].description
                             }
                         });
                     }
                 }
             }
 
-            $scope.hasFiles = function() {
-                for (var i=0; i<$scope.files.length; i++) {
+            $scope.hasFiles = function () {
+                for (var i = 0; i < $scope.files.length; i++) {
                     if ($scope.files[i] !== null) {
                         return true;
                     }
@@ -239,13 +239,13 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             $(element).fileupload({
                 dropZone: $scope.dropzone,
                 url: $scope.uploadUri,
-                add: function(e, data) {
-                    $scope.$apply(function($scope) {
+                add: function (e, data) {
+                    $scope.$apply(function ($scope) {
                         for (var i = 0; i < data.files.length; i++) {
                             // Usually there is just one
                             var index = $scope.files.push(data.files[i]) - 1;
                             $scope.files[index].index = index;
-                            $scope.getPreviewUri($scope.files[index], index).then(function(result) {
+                            $scope.getPreviewUri($scope.files[index], index).then(function (result) {
                                 $scope.files[result.index].previewUri = result.preview.src;
                                 $scope.files[result.index].previewWidth = result.preview.width;
                                 $scope.files[result.index].previewHeight = result.preview.height;
@@ -253,17 +253,17 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                         }
                     });
                 },
-                done: function(e, data) {
+                done: function (e, data) {
                     if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
                         $scope.fileUploaded(data.files[0].index);
                     }
                 },
-                fail: function(e, data) {
+                fail: function (e, data) {
                     if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
                         $scope.fileUploadFailed(data.files[0].index);
                     }
                 },
-                progress: function(e, data) {
+                progress: function (e, data) {
                     if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
                         $scope.fileUploading(data.files[0].index, data.loaded, data.total);
                     }
@@ -275,10 +275,10 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
 
 mayocat.directive("addonFieldString", [function ($compile) {
     return {
-        restrict:"E",
+        restrict: "E",
         scope: {
-            name:'@',
-            placeholder:'@',
+            name: '@',
+            placeholder: '@',
             value: '@'
         },
         template: "<input type='text' name='whatever' placeholder={{placeholder}} value={{value}} />"
@@ -288,14 +288,14 @@ mayocat.directive("addonFieldString", [function ($compile) {
 mayocat.directive("addon", ['$compile', function ($compile) {
     return {
         scope: {
-            addon:'=definition',
-            value:'=value'
+            addon: '=definition',
+            value: '=value'
         },
         restrict: "E",
         link: function (scope, element, attrs) {
             scope.$watch(
                 'addon',
-                function(definition) {
+                function (definition) {
                     var displayer;
                     switch (definition.type) {
                         case 'string':
@@ -313,7 +313,7 @@ mayocat.directive("addon", ['$compile', function ($compile) {
 
                     var updated = $compile(element.contents())(scope);
 
-                    $(element).on("change", function() {
+                    $(element).on("change", function () {
                         var serialized = $("<form/>").html($(element).clone()).serializeArray();
                         if (serialized.length === 1) {
                             var value = serialized[0].value;
@@ -322,7 +322,7 @@ mayocat.directive("addon", ['$compile', function ($compile) {
                             var value = serialized;
                         }
 
-                        scope.$apply(function($scope){
+                        scope.$apply(function ($scope) {
                             $scope.value = value;
                         });
 
@@ -339,12 +339,12 @@ mayocat.directive("addon", ['$compile', function ($compile) {
  */
 mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
     return {
-        restrict:"E",
-        scope:{
-            'image':'&',
-            'width':'&',
-            'height':'&',
-            'selection' : '&'
+        restrict: "E",
+        scope: {
+            'image': '&',
+            'width': '&',
+            'height': '&',
+            'selection': '&'
         },
         link: function postLink($scope, element, attrs) {
             var imageElement = $("<img />").load(
@@ -407,42 +407,42 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
  *
  * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
  */
-mayocat.config(function($httpProvider) {
-  var interceptor = ['$rootScope','$q', function(scope, $q) {
+mayocat.config(function ($httpProvider) {
+    var interceptor = ['$rootScope', '$q', function (scope, $q) {
 
-    function success(response) {
-      return response;
-    }
-
-    function error(response) {
-      var status = response.status;
-      if (status == 401 && response.config.url != '/api/1.0/login/') {
-        var deferred = $q.defer();
-        var req = {
-          config: response.config,
-          deferred: deferred
+        function success(response) {
+            return response;
         }
-        scope.requests401.push(req);
-        scope.$broadcast('event:authenticationRequired');
-        return deferred.promise;
-      }
-      // otherwise
-      return $q.reject(response);
-    }
 
-    return function(promise) {
-      return promise.then(success, error);
-    }
-  }];
-  $httpProvider.responseInterceptors.push(interceptor);
+        function error(response) {
+            var status = response.status;
+            if (status == 401 && response.config.url != '/api/1.0/login/') {
+                var deferred = $q.defer();
+                var req = {
+                    config: response.config,
+                    deferred: deferred
+                }
+                scope.requests401.push(req);
+                scope.$broadcast('event:authenticationRequired');
+                return deferred.promise;
+            }
+            // otherwise
+            return $q.reject(response);
+        }
+
+        return function (promise) {
+            return promise.then(success, error);
+        }
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
 });
 
 
 /**
  * Internal Server Error / 500 interception
  */
-mayocat.config(function($httpProvider) {
-    var interceptor = ['$rootScope','$q', function(scope, $q) {
+mayocat.config(function ($httpProvider) {
+    var interceptor = ['$rootScope', '$q', function (scope, $q) {
 
         function success(response) {
             return response;
@@ -456,7 +456,7 @@ mayocat.config(function($httpProvider) {
             return response;
         }
 
-        return function(promise) {
+        return function (promise) {
             return promise.then(success, error);
         }
     }];
@@ -466,84 +466,84 @@ mayocat.config(function($httpProvider) {
 /**
  * TODO: move this in the AppController
  */
-mayocat.run(['$rootScope', '$http', 'configurationService', function(scope, $http, configurationService) {
+mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $http, configurationService) {
 
-  /**
-   * Holds all the requests which failed due to 401 response.
-   */
-  scope.requests401 = [];
-
- /**
-  * On 'event:authenticationSuccessful', resend all the 401 requests.
-  */
-  scope.$on('event:authenticationSuccessful', function() {
-      configurationService.get(function(configuration) {
-          scope.configuration = configuration;
-      });
-  });
-
-  /**
-   * On 'event:authenticationSuccessful', resend all the 401 requests.
-   */
-  scope.$on('event:authenticationSuccessful', function() {
-    var i, requests = scope.requests401;
-    for (i = 0; i < requests.length; i++) {
-      retry(requests[i]);
-    }
+    /**
+     * Holds all the requests which failed due to 401 response.
+     */
     scope.requests401 = [];
-    function retry(req) {
-      $http(req.config).then(function(response) {
-        req.deferred.resolve(response);
-      });
+
+    /**
+     * On 'event:authenticationSuccessful', resend all the 401 requests.
+     */
+    scope.$on('event:authenticationSuccessful', function () {
+        configurationService.get(function (configuration) {
+            scope.configuration = configuration;
+        });
+    });
+
+    /**
+     * On 'event:authenticationSuccessful', resend all the 401 requests.
+     */
+    scope.$on('event:authenticationSuccessful', function () {
+        var i, requests = scope.requests401;
+        for (i = 0; i < requests.length; i++) {
+            retry(requests[i]);
+        }
+        scope.requests401 = [];
+        function retry(req) {
+            $http(req.config).then(function (response) {
+                req.deferred.resolve(response);
+            });
+        }
+    });
+
+    /**
+     * On 'event:loginRequest' send credentials to the server.
+     */
+    scope.$on('event:authenticationRequest', function (event, username, password, remember) {
+        var config = {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        };
+        var data = {
+            username: username,
+            password: password,
+            remember: remember
+        };
+        $http.post('/api/1.0/login/', $.param(data), config)
+            .success(function (data, status) {
+                if (status == 200) {
+                    scope.ping();
+                }
+                else {
+                    scope.$broadcast('event:authenticationFailure');
+                }
+            })
+            .error(function (data, status) {
+                scope.$broadcast('event:authenticationFailure');
+            });
+    });
+
+    /**
+     * On 'logoutRequest' invoke logout on the server and broadcast 'event:authenticationRequired'.
+     */
+    scope.$on('event:forgetAuthenticationRequest', function () {
+        var config = {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        };
+        $http.post('/api/1.0/logout/', "", config).success(function () {
+            scope.ping();
+            scope.$broadcast('event:authenticationRequired');
+        });
+    });
+
+    /**
+     * Ping server to figure out if user is already logged in.
+     */
+    scope.ping = function () {
+        $http.get('/api/1.0/tenant/').success(function (data) {
+            scope.$broadcast('event:authenticationSuccessful', data);
+        });
     }
-  });
-
-  /**
-   * On 'event:loginRequest' send credentials to the server.
-   */
-  scope.$on('event:authenticationRequest', function(event, username, password, remember) {
-    var config = {
-      headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-    };
-    var data = {
-      username: username,
-      password: password,
-      remember: remember
-    };
-    $http.post('/api/1.0/login/', $.param(data), config)
-      .success(function(data, status) {
-        if (status == 200) {
-          scope.ping();
-        }
-        else {
-          scope.$broadcast('event:authenticationFailure');
-        }
-      })
-      .error(function(data, status){
-        scope.$broadcast('event:authenticationFailure');
-      });
-  });
-
-  /**
-   * On 'logoutRequest' invoke logout on the server and broadcast 'event:authenticationRequired'.
-   */
-  scope.$on('event:forgetAuthenticationRequest', function() {
-    var config = {
-      headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-    };
-    $http.post('/api/1.0/logout/', "", config).success(function() {
-      scope.ping();
-      scope.$broadcast('event:authenticationRequired');
-    });
-  });
-
-  /**
-   * Ping server to figure out if user is already logged in.
-   */
-  scope.ping = function() {
-    $http.get('/api/1.0/tenant/').success(function(data) {
-      scope.$broadcast('event:authenticationSuccessful', data);
-    });
-  }
 
 }]);
