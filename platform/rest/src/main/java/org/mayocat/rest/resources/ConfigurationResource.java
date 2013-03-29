@@ -66,7 +66,7 @@ public class ConfigurationResource implements Resource
     @PUT
     @Timed
     @Path("settings/{module}")
-    @Authorized(roles = Role.ADMIN)
+    @Authorized //(roles = Role.ADMIN)
     public Response updateModuleConfiguration(@PathParam("module") String module, Map<String, Object> configuration)
     {
         try {
@@ -89,7 +89,7 @@ public class ConfigurationResource implements Resource
 
     @PUT
     @Timed
-    @Authorized(roles = Role.ADMIN)
+    @Authorized //(roles = Role.ADMIN)
     @Path("settings")
     public Response updateModuleConfiguration(Map<String, Object> configuration)
     {
