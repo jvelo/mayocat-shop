@@ -135,7 +135,7 @@
             </select>
         </div>
 
-        <div class="block" ng-show="!isNew() && collections.length > 0">
+        <div class="block" ng-show="!isNew() && hasCollections && collections.length > 0">
             <h3>Collections</h3>
             <ul class="list unstyled">
                 <li ng-repeat="collection in collections">

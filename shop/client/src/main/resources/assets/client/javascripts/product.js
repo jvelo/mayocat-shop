@@ -101,6 +101,10 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.initializeCollections = function () {
+                catalogService.hasCollections(function (hasCollections) {
+                    $scope.hasCollections = hasCollections;
+                });
+
                 catalogService.listCollections(function (collections) {
                     $scope.collections = collections;
                     angular.forEach($scope.collections, function (collection) {
