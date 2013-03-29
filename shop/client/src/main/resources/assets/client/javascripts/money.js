@@ -234,7 +234,9 @@
                     $scope.currencyCode = attrs.currency;
                     $scope.currency = moneyService.getCurrency($scope.currencyCode);
                     $scope.$watch('amount', function (value) {
-                        controller.$setViewValue(parseFloat(value));
+                        if (!isNaN(parseFloat(value))) {
+                            controller.$setViewValue(parseFloat(value));
+                        }
                     });
                 }
             }
