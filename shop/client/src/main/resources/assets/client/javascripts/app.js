@@ -68,6 +68,50 @@ mayocat.directive('modalDismiss', ['$rootScope', function ($rootScope) {
 }]);
 
 /**
+ * WYSIWYG-augmented textarea directive with CKEditor.
+ *
+ * See http://stackoverflow.com/questions/11997246/bind-ckeditor-value-to-model-text-in-angularjs-and-rails
+ * and http://stackoverflow.com/questions/15483579/angularjs-ckeditor-directive-sometimes-fails-to-load-data-from-a-service
+ */
+mayocat.directive('ckEditor', function () {
+    return {
+        require: '?ngModel',
+        link: function (scope, elm, attr, ngModel) {
+            var ck = CKEDITOR.replace(elm[0],
+                {
+                    toolbarGroups: [
+                        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                        { name: 'styles' }
+                    ],
+                    height: '290px',
+                    width: '99%'
+                }
+            );
+
+            if (!ngModel) return;
+
+            //loaded didn't seem to work, but instanceReady did
+            //I added this because sometimes $render would call setData before the ckeditor was ready
+            ck.on('instanceReady', function () {
+                ck.setData(ngModel.$viewValue);
+            });
+
+            ck.on('pasteState', function () {
+                scope.$apply(function () {
+                    ngModel.$setViewValue(ck.getData());
+                });
+            });
+
+            ngModel.$render = function (value) {
+                ck.setData(ngModel.$viewValue);
+            };
+
+        }
+    };
+});
+
+/**
  * A switch button similar to the ios toggle switch
  */
 mayocat.directive('switchButton', function () {

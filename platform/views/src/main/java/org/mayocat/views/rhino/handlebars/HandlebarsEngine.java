@@ -78,7 +78,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
 
             try {
                 context.evaluateString(compileScope,
-                        "templates[name] = Handlebars.compile(content);",
+                        "templates[name] = Handlebars.compile(content, {noEscape: true});",
                         "JHBSCompiler",
                         0,
                         null);

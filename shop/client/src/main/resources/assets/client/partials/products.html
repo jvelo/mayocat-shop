@@ -1,20 +1,26 @@
-<h1 class="big">Catalog</h1>
+<div ng-controller="CatalogController">
+    <h1 class="big">Catalog</h1>
 
-<div class="intro">
-    <h2>Products</h2>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br/>
-    <a ng-click="setRoute('product/_new')" class="btn btn-primary btn-large">Add a new product</a>
-</div>
+    <div class="intro">
+        <h2>Products</h2>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna
+        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+        sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br/>
+        <a ng-click="setRoute('product/_new')" class="btn btn-primary btn-large">Add a new product</a>
+    </div>
 
-<div class="intro">
-    <h2>Collections</h2>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br/>
-    <a href="#/collection/">Manage collection</a><br/>
-    <a href="" class="btn btn-primary btn-large">Add a collection</a>
+    <div class="intro" ng-show="hasCollections">
+        <h2>Collections</h2>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna
+        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+        sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br/>
+        <a href="#/collection/">Manage collections</a><br/>
+        <a href="" class="btn btn-primary btn-large">Add a collection</a>
+    </div>
 </div>
