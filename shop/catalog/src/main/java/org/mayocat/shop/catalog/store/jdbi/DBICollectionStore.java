@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
+import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
 import org.mayocat.store.rdbms.dbi.dao.CollectionDAO;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.store.*;
@@ -66,7 +67,9 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteEntityEntityById(COLLECTION_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityById(entity.getId());
+        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
+                entity.getId());
+        updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 
         if (updatedRows <= 0) {

@@ -33,7 +33,7 @@ import net.sf.jmimemagic.MagicMatch;
 @Component(hints = { "jdbi", "default" })
 public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStore, Initializable
 {
-    private static final String ATTACHMENT_TABLE_NAME = "attachment";
+    public static final String ATTACHMENT_TABLE_NAME = "attachment";
 
     private AttachmentDAO dao;
 
@@ -93,7 +93,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteEntityEntityById(ATTACHMENT_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityById(entity.getId());
+        updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 
         if (updatedRows <= 0) {

@@ -8,6 +8,7 @@ import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
+import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
 import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -78,8 +79,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
+        updatedRows += this.dao.deleteProductFromCollections(entity.getId());
         updatedRows += this.dao.deleteEntityEntityById(PRODUCT_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityById(entity.getId());
+        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
+                entity.getId());
+        updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 
         if (updatedRows <= 0) {

@@ -37,9 +37,15 @@ public interface EntityDAO< E extends Entity >
 
     @SqlUpdate
     (
-        "DELETE FROM entity WHERE entity.id = :id"
+        "DELETE FROM entity WHERE entity.id = :id or entity.parent_id = :id"
     )
-    Integer deleteEntityById(@Bind("id") Long id);
+    Integer deleteEntityAndChildrenById(@Bind("id") Long id);
+
+    @SqlUpdate
+    (
+        "DELETE FROM <type> WHERE <type>.entity_id IN (SELECT entity.id FROM entity WHERE entity.parent_id = :id)"
+    )
+    Integer deleteEntityEntityByParentId(@Define("type") String type, @Bind("id") Long id);
 
     @SqlUpdate
     (

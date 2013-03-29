@@ -31,6 +31,9 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
     @SqlUpdate
     public abstract Integer updateProduct(@BindBean("product") Product product);
 
+    @SqlUpdate
+    public abstract Integer deleteProductFromCollections(@Bind("id") Long id);
+
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 

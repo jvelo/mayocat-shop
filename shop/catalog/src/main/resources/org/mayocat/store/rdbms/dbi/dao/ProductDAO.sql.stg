@@ -56,3 +56,9 @@ findAllForCollection() ::= <<
     WHERE  collection_product.collection_id = :collection.id
     ORDER  BY collection_product.position
 >>
+
+deleteProductFromCollections() ::= <<
+    DELETE
+    FROM   collection_product
+    WHERE  collection_product.product_id = :id
+>>

@@ -11,6 +11,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
+import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.ArticleDAO;
 import org.xwiki.component.annotation.Component;
@@ -74,7 +75,9 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteEntityEntityById(ARTICLE_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityById(entity.getId());
+        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
+                entity.getId());
+        updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 
         if (updatedRows <= 0) {
