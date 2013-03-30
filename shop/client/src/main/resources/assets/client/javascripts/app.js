@@ -84,6 +84,7 @@ mayocat.directive('ckEditor', function () {
                         { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
                         { name: 'styles' }
                     ],
+                    removePlugins : 'elementspath',
                     height: '290px',
                     width: '99%'
                 }
