@@ -87,4 +87,12 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "WHERE  attachment_id = :attachment"
     )
     List<Thumbnail> findThumbnails(@Bind("attachment") Long id);
+
+
+    @SqlUpdate
+    (
+        "DELETE FROM thumbnail " +
+        "WHERE       attachment_id = :attachment"
+    )
+    Integer deleteThumbnails(@Bind("attachment") Long id);
 }

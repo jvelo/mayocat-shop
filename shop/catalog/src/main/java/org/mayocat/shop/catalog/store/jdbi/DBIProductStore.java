@@ -2,14 +2,14 @@ package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
-import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
+import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.HasOrderedCollections;
@@ -18,6 +18,7 @@ import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
+import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -30,6 +31,9 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     private static final String PRODUCT_TABLE_NAME = "product";
 
     private ProductDAO dao;
+
+    @Inject
+    private AttachmentStore attachmentStore;
 
     public void create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
@@ -81,8 +85,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteProductFromCollections(entity.getId());
         updatedRows += this.dao.deleteEntityEntityById(PRODUCT_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
-                entity.getId());
+        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

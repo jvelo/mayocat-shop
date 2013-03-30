@@ -4,15 +4,18 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
-import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
-import org.mayocat.store.rdbms.dbi.dao.CollectionDAO;
-import org.mayocat.model.EntityAndCount;
-import org.mayocat.store.*;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.InvalidMoveOperation;
+import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
+import org.mayocat.store.rdbms.dbi.dao.CollectionDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -67,8 +70,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteEntityEntityById(COLLECTION_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
-                entity.getId());
+        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

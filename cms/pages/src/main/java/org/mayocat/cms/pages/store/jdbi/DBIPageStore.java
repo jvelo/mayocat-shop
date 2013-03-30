@@ -11,7 +11,6 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
-import org.mayocat.store.rdbms.dbi.DBIAttachmentStore;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.PageDAO;
 import org.xwiki.component.annotation.Component;
@@ -80,8 +79,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteEntityEntityById(PAGE_TABLE_NAME, entity. getId());
-        updatedRows += this.dao.deleteEntityEntityByParentId(DBIAttachmentStore.ATTACHMENT_TABLE_NAME,
-                entity.getId());
+        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 
