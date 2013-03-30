@@ -68,7 +68,7 @@ public class ProductRepresentation
         this.title = product.getTitle();
         this.description = product.getDescription();
         this.onShelf = product.getOnShelf();
-        this.price = product.getPrice();
+        this.price = product.getUnitPrice();
         this.stock = product.getStock();
 
         this.href = "/api/1.0/product/" + this.slug;
