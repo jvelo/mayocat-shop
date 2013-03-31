@@ -26,12 +26,12 @@ mayocat.config(['$routeProvider', function ($routeProvider) {
         when('/orders', {templateUrl: 'partials/orders.html'}).
         when('/customers', {templateUrl: 'partials/customers.html'}).
         when('/news', {templateUrl: 'partials/news.html'}).
-        when('/page/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
+        when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
         when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController'}).
         when('/catalog', {templateUrl: 'partials/products.html'}).
-        when('/collection/', {templateUrl: 'partials/collections.html', controller: 'CatalogController'}).
-        when('/product/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
-        when('/collection/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController'}).
+        when('/collections/', {templateUrl: 'partials/collections.html', controller: 'CatalogController'}).
+        when('/products/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
+        when('/collections/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController'}).
         when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
         otherwise({redirectTo: '/'});
 }]);
@@ -461,7 +461,7 @@ mayocat.config(function ($httpProvider) {
 
         function error(response) {
             var status = response.status;
-            if (status == 401 && response.config.url != '/api/1.0/login/') {
+            if (status == 401 && response.config.url != '/api/login/') {
                 var deferred = $q.defer();
                 var req = {
                     config: response.config,
@@ -555,7 +555,7 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $ht
             password: password,
             remember: remember
         };
-        $http.post('/api/1.0/login/', $.param(data), config)
+        $http.post('/api/login/', $.param(data), config)
             .success(function (data, status) {
                 if (status == 200) {
                     scope.ping();
@@ -576,7 +576,7 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $ht
         var config = {
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         };
-        $http.post('/api/1.0/logout/', "", config).success(function () {
+        $http.post('/api/logout/', "", config).success(function () {
             scope.ping();
             scope.$broadcast('event:authenticationRequired');
         });
@@ -586,7 +586,7 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $ht
      * Ping server to figure out if user is already logged in.
      */
     scope.ping = function () {
-        $http.get('/api/1.0/tenant/').success(function (data) {
+        $http.get('/api/tenants/').success(function (data) {
             scope.$broadcast('event:authenticationSuccessful', data);
         });
     }

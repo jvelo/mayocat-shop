@@ -25,13 +25,13 @@ angular.module('page', ['ngResource'])
             $scope.updatePage = function () {
                 $scope.isSaving = true;
                 if ($scope.isNew()) {
-                    $http.post("/api/1.0/page/", $scope.page)
+                    $http.post("/api/pages/", $scope.page)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
                             $rootScope.$broadcast('pages:refreshList');
-                            $location.url("/page/" + slug);
+                            $location.url("/pages/" + slug);
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
@@ -50,7 +50,7 @@ angular.module('page', ['ngResource'])
                 $rootScope.$broadcast('thumbnails:edit', image);
             }
 
-            $scope.PageResource = $resource("/api/1.0/page/:slug");
+            $scope.PageResource = $resource("/api/pages/:slug");
 
             $scope.isNew = function () {
                 return $scope.slug == "_new";
@@ -65,7 +65,7 @@ angular.module('page', ['ngResource'])
             }
 
             $scope.reloadImages = function () {
-                $scope.page.images = $http.get("/api/1.0/page/" + $scope.slug + "/image").success(function (data) {
+                $scope.page.images = $http.get("/api/pages/" + $scope.slug + "/images").success(function (data) {
                     $scope.page.images = data;
                 });
             }
@@ -75,7 +75,7 @@ angular.module('page', ['ngResource'])
             }
 
             $scope.getImageUploadUri = function () {
-                return "/api/1.0/page/" + $scope.slug + "/attachment";
+                return "/api/pages/" + $scope.slug + "/attachments";
             }
 
             $scope.initializeAddons = function () {

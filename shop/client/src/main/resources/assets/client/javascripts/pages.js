@@ -6,7 +6,7 @@ angular.module('pages', [])
         function ($scope, $resource) {
 
             $scope.refreshPages = function () {
-                $resource("/api/1.0/page").get({}, function (pages) {
+                $resource("/api/pages").get({}, function (pages) {
                     $scope.pages = pages.items;
                 });
             }

@@ -26,7 +26,7 @@ describe('Addons', function () {
 
         beforeEach(inject(function ($injector) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/api/1.0/configuration/gestalt').respond(mockConfiguration);
+            httpBackend.when('GET', '/api/configuration/gestalt').respond(mockConfiguration);
 
             addonsService = $injector.get('addonsService');
         }));

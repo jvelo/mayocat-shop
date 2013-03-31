@@ -8,12 +8,14 @@ import javax.inject.Inject;
 
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.context.Execution;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.Bindings;
 import org.mayocat.shop.front.annotation.FrontBinding;
 import org.mayocat.shop.front.bindings.BindingsContants;
+import org.mayocat.shop.front.resources.ResourceResource;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;
@@ -30,6 +32,8 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
 
     public final static String SITE_TAGLINE = "tagline";
 
+    public static final String THEME_PATH = "THEME_PATH";
+
     @Inject
     private Execution execution;
 
@@ -41,6 +45,8 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
     {
         final GeneralSettings config =  execution.getContext().getSettings(GeneralSettings.class);
 
+        data.put(THEME_PATH, ResourceResource.PATH);
+
         data.put(SITE, new HashMap() {{
             put(SITE_TITLE, config.getName().getValue());
             put(SITE_TAGLINE, config.getTagline().getValue());
@@ -51,7 +57,7 @@ public class RootBindings implements FrontBindingSupplier, BindingsContants
 
         for (final Collection collection : collections) {
             collectionsBinding.add(new HashMap<String, Object>(){{
-                put("url", "/collection/" + collection.getSlug());
+                put("url", "/" + CollectionEntity.PATH + "/" + collection.getSlug());
                 put("title", collection.getTitle());
                 put("description", collection.getDescription());
             }});

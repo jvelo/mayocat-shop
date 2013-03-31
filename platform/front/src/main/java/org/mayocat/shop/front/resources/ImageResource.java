@@ -28,8 +28,8 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-@Component("/image/")
-@Path("/image/")
+@Component("/images/")
+@Path("/images/")
 public class ImageResource extends AbstractAttachmentResource implements Resource
 {
     @Inject

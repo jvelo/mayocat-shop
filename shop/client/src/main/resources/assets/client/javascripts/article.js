@@ -43,7 +43,7 @@ angular.module('article', ['ngResource'])
             $scope.updateArticle = function (callback) {
                 $scope.isSaving = true;
                 if ($scope.isNew()) {
-                    $http.post("/api/1.0/news/", $scope.article)
+                    $http.post("/api/news/", $scope.article)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             var fragments = headers("location").split('/'),
@@ -92,7 +92,7 @@ angular.module('article', ['ngResource'])
                 $rootScope.$broadcast('thumbnails:edit', image);
             }
 
-            $scope.ArticleResource = $resource("/api/1.0/news/:slug");
+            $scope.ArticleResource = $resource("/api/news/:slug");
 
             $scope.isNew = function () {
                 return $scope.slug == "_new";
@@ -107,7 +107,7 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.reloadImages = function () {
-                $scope.article.images = $http.get("/api/1.0/news/" + $scope.slug + "/image").success(function (data) {
+                $scope.article.images = $http.get("/api/news/" + $scope.slug + "/image").success(function (data) {
                     $scope.article.images = data;
                 });
             }
@@ -117,7 +117,7 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.getImageUploadUri = function () {
-                return "/api/1.0/news/" + $scope.slug + "/attachment";
+                return "/api/news/" + $scope.slug + "/attachment";
             }
 
             $scope.initializeAddons = function () {

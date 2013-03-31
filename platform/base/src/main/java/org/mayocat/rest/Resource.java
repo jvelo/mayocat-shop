@@ -9,5 +9,5 @@ public interface Resource
 
     static String ROOT_PATH = SLASH;
 
-    static String API_ROOT_PATH = "/api/1.0/";
+    static String API_ROOT_PATH = "/api/";
 }

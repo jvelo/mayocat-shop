@@ -10,7 +10,7 @@ public class TenantEntity  implements EntityMeta
 {
     public static final String ID = "tenant";
 
-    public static final String PATH = "tenant";
+    public static final String PATH = "tenants";
 
     @Override
     public String getEntityName()

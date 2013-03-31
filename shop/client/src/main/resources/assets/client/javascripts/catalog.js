@@ -12,12 +12,12 @@ angular.module('catalog', [])
             listProducts: function (callback) {
                 this.hasCollections(function (hasCollections) {
                     if (!hasCollections) {
-                        $http.get('/api/1.0/product/').success(function (data) {
+                        $http.get('/api/products/').success(function (data) {
                             callback && callback.call(this, data);
                         });
                     }
                     else {
-                        $http.get('/api/1.0/product/?filter=uncategorized').success(function (data) {
+                        $http.get('/api/products/?filter=uncategorized').success(function (data) {
                             callback && callback.call(this, data);
                         });
                     }
@@ -25,7 +25,7 @@ angular.module('catalog', [])
             },
 
             listProductsForCollection: function (collection, callback) {
-                $http.get('/api/1.0/collection/' + collection + "?expand=products").success(function (data) {
+                $http.get('/api/collections/' + collection + "?expand=products").success(function (data) {
                     callback && callback.call(this, data.products);
                 });
             },
@@ -35,7 +35,7 @@ angular.module('catalog', [])
                     if (!hasCollections) {
                         callback && callback.call(this, []);
                     }
-                    $http.get('/api/1.0/collection/?expand=productCount').success(function (data) {
+                    $http.get('/api/collections/?expand=productCount').success(function (data) {
                         callback && callback.call(this, data);
                     });
                 });
@@ -43,14 +43,14 @@ angular.module('catalog', [])
             moveCollection: function (slug, target, position) {
             },
             moveProduct: function (slug, target, position) {
-                $http.post('/api/1.0/collection/_all/move',
+                $http.post('/api/collections/_all/move',
                     "product=" + slug + "&" + position + "=" + target,
                     { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
                     .success(function (data) {
                     });
             },
             move: function (path, slug, target, position) {
-                $http.post("/api/1.0" + path + slug + "/move",
+                $http.post("/api/" + path + slug + "/move",
                     position + "=" + target,
                     { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
                     .success(function (data) {

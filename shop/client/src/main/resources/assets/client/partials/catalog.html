@@ -13,14 +13,14 @@
                 <div class="droptarget">
                     <div class="listItem">
                         <span class="collection" ng-click="toggleExpand(collection)">
-                            <a ng-click="setRoute('/collection/' + collection.slug)">{{collection.title}}</a>
+                            <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
                         </span>
                     </div>
                     <div ng-show="collection.isExpanded && collection.products.length > 0">
                         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
                             <li ng-repeat="product in collection.products" data-handle="{{product.slug}}">
                                 <div class="row droptarget">
-                                    <div><a ng-click="setRoute('/product/' + product.slug)">{{product.title}}</a></div>
+                                    <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
                                     <div><span class="dragme move-handle"></span></div>
                                 </div>
                             </li>
@@ -42,7 +42,7 @@
                 <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
                     <li ng-repeat="product in products" data-handle="{{product.slug}}">
                         <div class="droptarget">
-                            <div><a ng-click="setRoute('/product/' + product.slug)">{{product.title}}</a></div>
+                            <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
                             <div><span class="dragme move-handle"></span></div>
                         </div>
                     </li>

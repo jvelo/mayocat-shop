@@ -10,7 +10,7 @@ public class UserEntity implements EntityMeta
 {
     public static final String ID = "user";
 
-    public static final String PATH = "user";
+    public static final String PATH = "users";
 
     @Override
     public String getEntityName()

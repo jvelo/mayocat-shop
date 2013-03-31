@@ -28,7 +28,7 @@ import com.sun.jersey.multipart.FormDataParam;
 public class AttachmentResource extends AbstractAttachmentResource implements Resource
 {
     // TODO: Create a module with an attachment entity
-    public static final String PATH = API_ROOT_PATH + "attachment";
+    public static final String PATH = API_ROOT_PATH + "attachments";
 
     @Inject
     private ImageService imageService;

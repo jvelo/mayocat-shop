@@ -11,6 +11,7 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
@@ -49,7 +50,7 @@ public class ProductBindingBuilder
 
         productContext.put("title", product.getTitle());
         productContext.put("description", product.getDescription());
-        productContext.put("href", "/product/" + product.getSlug());
+        productContext.put("href", "/" + ProductEntity.PATH +"/" + product.getSlug());
         productContext.put("slug", product.getSlug());
 
         // Prices

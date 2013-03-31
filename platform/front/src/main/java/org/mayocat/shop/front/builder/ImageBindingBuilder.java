@@ -28,7 +28,7 @@ public class ImageBindingBuilder
     {
         Map<String, String> context = Maps.newHashMap();
 
-        context.put("url", "/attachment/" + image.getAttachment().getSlug() +
+        context.put("url", "/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
@@ -38,7 +38,7 @@ public class ImageBindingBuilder
 
             if (bestFit.isPresent()) {
                 String url =
-                        MessageFormat.format("/image/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
+                        MessageFormat.format("/images/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
                                 image.getAttachment().getSlug(),
                                 bestFit.get().getX(),
                                 bestFit.get().getY(),
@@ -50,7 +50,7 @@ public class ImageBindingBuilder
                 context.put("theme_" + dimensionName + "_url", url);
             } else {
                 String url =
-                        MessageFormat.format("/image/{0}.{1}?width={2}&height={3}",
+                        MessageFormat.format("/images/{0}.{1}?width={2}&height={3}",
                                 image.getAttachment().getSlug(),
                                 image.getAttachment().getExtension(),
                                 definition.getWidth(),

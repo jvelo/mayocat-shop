@@ -10,7 +10,7 @@ public class PageEntity implements EntityMeta
 {
     public static final String ID = "page";
 
-    public static final String PATH = "page";
+    public static final String PATH = "pages";
 
     @Override
     public String getEntityName()

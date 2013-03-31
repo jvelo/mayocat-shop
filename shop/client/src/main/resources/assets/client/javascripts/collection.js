@@ -14,7 +14,7 @@ angular.module('collection', ['ngResource'])
                 });
             }
 
-            $scope.CollectionResource = $resource("/api/1.0/collection/:slug");
+            $scope.CollectionResource = $resource("/api/collections/:slug");
 
             $scope.collection = $scope.CollectionResource.get({ "slug": $scope.slug });
 

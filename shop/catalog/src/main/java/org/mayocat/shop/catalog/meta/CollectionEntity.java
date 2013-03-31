@@ -10,7 +10,7 @@ public class CollectionEntity implements EntityMeta
 {
     public static final String ID = "collection";
 
-    public static final String PATH = "collection";
+    public static final String PATH = "collections";
 
     @Override
     public String getEntityName()

@@ -53,17 +53,17 @@ function AppController($rootScope, $scope, $location) {
         $scope.isCatalog = false;
         $scope.isPages = false;
         $scope.isNews = false;
-        angular.forEach(["/catalog", "/product/", "/collection/"], function (catalogPath) {
+        angular.forEach(["/catalog", "/products/", "/collections/"], function (catalogPath) {
             if (path.indexOf(catalogPath) == 0) {
                 $scope.isCatalog = true;
             }
         });
-        angular.forEach(["/contents", "/page/"], function (pagePage) {
+        angular.forEach(["/contents", "/pages/"], function (pagePage) {
             if (path.indexOf([pagePage]) == 0) {
                 $scope.isPages = true;
             }
         });
-        angular.forEach(["/news", "/article/"], function (newsPage) {
+        angular.forEach(["/news", "/articles/"], function (newsPage) {
             if (path.indexOf([newsPage]) == 0) {
                 $scope.isNews = true;
             }

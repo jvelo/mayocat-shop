@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
+import org.mayocat.rest.resources.ImageResource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -60,12 +61,12 @@ public class ImageRepresentation extends AttachmentRepresentation
 
     private static String buildImageApiHref(Image image)
     {
-        return "/api/1.0/image/" + image.getAttachment().getSlug();
+        return ImageResource.PATH + ImageResource.SLASH + image.getAttachment().getSlug();
     }
 
     private static String buildImageFileHref(Image image)
     {
-        return "/image/" + image.getAttachment().getSlug() + "." + image.getAttachment().getExtension();
+        return "/images/" + image.getAttachment().getSlug() + "." + image.getAttachment().getExtension();
     }
 
     private static FileRepresentation buildFileRepresentation(Image image)

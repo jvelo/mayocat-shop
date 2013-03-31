@@ -241,7 +241,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         }
     }
 
-    @Path("{slug}/image")
+    @Path("{slug}/images")
     @GET
     public List<ImageRepresentation> getImages(@PathParam("slug") String slug)
     {
@@ -270,7 +270,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         return result;
     }
 
-    @Path("{slug}/attachment")
+    @Path("{slug}/attachments")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response addAttachment(@PathParam("slug") String slug,

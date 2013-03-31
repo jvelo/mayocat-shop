@@ -23,11 +23,13 @@ import com.google.common.base.Strings;
 /**
  * @version $Id$
  */
-@Component("/api/1.0/image")
-@Path("/api/1.0/image")
+@Component(ImageResource.PATH)
+@Path(ImageResource.PATH)
 @ExistingTenant
 public class ImageResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + "images";
+
     @Inject
     private Provider<AttachmentStore> attachmentStore;
 
@@ -35,7 +37,7 @@ public class ImageResource implements Resource
     private Provider<ThumbnailStore> thumbnailStore;
 
     @PUT
-    @Path("/{slug}/thumbnail/")
+    @Path("/{slug}/thumbnails/")
     public Response createThumbnail(@PathParam("slug") String slug, @Valid
     ThumbnailRepresentation thumbnailRepresentation)
     {

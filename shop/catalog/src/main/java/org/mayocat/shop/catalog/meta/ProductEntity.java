@@ -10,7 +10,7 @@ public class ProductEntity implements EntityMeta
 {
     public static final String ID = "product";
 
-    public static final String PATH = "product";
+    public static final String PATH = "products";
 
     @Override
     public String getEntityName()

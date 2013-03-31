@@ -6,7 +6,7 @@ angular.module('articles', [])
         function ($scope, $resource) {
 
             $scope.refreshArticles = function () {
-                $resource("/api/1.0/news").get({}, function (articles) {
+                $resource("/api/news").get({}, function (articles) {
                     $scope.articles = articles.items;
                 });
             }

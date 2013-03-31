@@ -20,14 +20,17 @@ import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.io.Resources;
+import com.sun.org.apache.xpath.internal.res.XPATHErrorResources;
 
 /**
  * @version $Id$
  */
-@Component("/resource/")
-@Path("/resource/")
+@Component(ResourceResource.PATH)
+@Path(ResourceResource.PATH)
 public class ResourceResource implements Resource
 {
+    public static final String PATH = "/resources/";
+
     @Inject
     private ThemeManager themeManager;
 

@@ -26,13 +26,13 @@ angular.module('product', ['ngResource'])
             $scope.updateProduct = function () {
                 if ($scope.isNew()) {
                     $scope.isSaving = true;
-                    $http.post("/api/1.0/product/", $scope.product)
+                    $http.post("/api/products/", $scope.product)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             var fragments = headers("location").split('/'),
                                 slug = fragments[fragments.length - 1];
                             $rootScope.$broadcast('catalog:refreshCatalog');
-                            $location.url("/product/" + slug);
+                            $location.url("/products/" + slug);
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
@@ -61,7 +61,7 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.collectionOperation = function (collection, operation) {
-                $resource("/api/1.0/collection/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
+                $resource("/api/collections/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
                     "save": {
                         method: 'POST',
                         headers: {
@@ -72,7 +72,7 @@ angular.module('product', ['ngResource'])
                     });
             };
 
-            $scope.ProductResource = $resource("/api/1.0/product/:slug");
+            $scope.ProductResource = $resource("/api/products/:slug");
 
             $scope.isNew = function () {
                 return $scope.slug == "_new";
@@ -87,7 +87,7 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.reloadImages = function () {
-                $scope.product.images = $http.get("/api/1.0/product/" + $scope.slug + "/image").success(function (data) {
+                $scope.product.images = $http.get("/api/products/" + $scope.slug + "/images").success(function (data) {
                     $scope.product.images = data;
                 });
             }
@@ -97,7 +97,7 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.getImageUploadUri = function () {
-                return "/api/1.0/product/" + $scope.slug + "/attachment";
+                return "/api/products/" + $scope.slug + "/attachments";
             }
 
             $scope.initializeCollections = function () {

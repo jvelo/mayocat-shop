@@ -150,7 +150,7 @@ angular.module('thumbnail', ['ngResource'])
                         "height": $scope.currentCoordinates.height,
                         "ratio": reduce($scope.currentSize.width, $scope.currentSize.height)
                     };
-                    $resource($scope.image.href + "/thumbnail/", {}, {
+                    $resource($scope.image.href + "/thumbnails/", {}, {
                         "save": {
                             "method": "PUT"
                         }
