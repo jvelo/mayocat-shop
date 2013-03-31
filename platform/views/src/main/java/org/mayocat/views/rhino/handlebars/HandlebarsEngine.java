@@ -6,6 +6,7 @@ import java.io.StringWriter;
 
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
+import org.mayocat.views.TemplateEngineException;
 import org.mayocat.views.rhino.AbstractRhinoEngine;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaScriptException;
@@ -66,7 +67,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public void register(Template template)
+    public void register(Template template) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
@@ -91,8 +92,8 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                             null);
                 }
             } catch (JavaScriptException e) {
-                // Fail hard on any compile time error for dust templates
-                throw new RuntimeException(e);
+                // Fail hard on any compile time error for templates
+                throw new TemplateEngineException(e);
             }
         } finally {
             Context.exit();
@@ -100,7 +101,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public String render(String templateName, String json)
+    public String render(String templateName, String json) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
@@ -119,8 +120,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                         null);
                 return stringWriter.toString();
             } catch (JavaScriptException e) {
-                this.logger.warn("JavaScript error when rendering template {}", templateName) ;
-                throw (e);
+                throw new TemplateEngineException(e);
             }
         } finally {
             Context.exit();

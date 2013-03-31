@@ -8,7 +8,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface TemplateEngine
 {
-    void register(Template template);
+    void register(Template template) throws TemplateEngineException;
 
-    String render(String templateName, String json);
+    String render(String templateName, String json) throws TemplateEngineException;
 }

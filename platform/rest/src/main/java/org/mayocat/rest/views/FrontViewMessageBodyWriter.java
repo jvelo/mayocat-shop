@@ -1,12 +1,18 @@
 package org.mayocat.rest.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
+import org.antlr.stringtemplate.StringTemplateGroup;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
+import org.mayocat.views.TemplateEngineException;
 import org.xwiki.component.annotation.Component;
 
 import javax.inject.Inject;
@@ -20,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * @version $Id$
@@ -60,9 +67,8 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 Optional<String> path = themeManager.resolveModelPath(frontView.getModel().get());
                 if (path.isPresent()) {
                     try {
-                    layout = themeManager.resolveTemplate(path.get(), frontView.getBreakpoint());
-                    }
-                    catch (TemplateNotFoundException e) {
+                        layout = themeManager.resolveTemplate(path.get(), frontView.getBreakpoint());
+                    } catch (TemplateNotFoundException e) {
                         // Keep going
                     }
                 }
@@ -78,14 +84,34 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             ObjectMapper mapper = new ObjectMapper();
             String jsonContext = mapper.writeValueAsString(frontView.getBindings());
 
-            engine.get().register(layout);
-            engine.get().register(template);
+            try {
+                engine.get().register(layout);
+                engine.get().register(template);
+                String rendered = engine.get().render(template.getId(), jsonContext);
+                entityStream.write(rendered.getBytes());
+            } catch (TemplateEngineException e) {
+                // Re-serialize the bindings as json with indentation for better debugging
+                mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+                Map<String, Object> context = frontView.getBindings();
+                jsonContext = mapper.writeValueAsString(context);
 
-            String rendered = engine.get().render(template.getId(), jsonContext);
+                Template error = themeManager.resolveTemplate("error.html", frontView.getBreakpoint());
+                Map<String, Object> errorContext = Maps.newHashMap();
+                errorContext.put("error", e.getMessage());
+                errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
+                errorContext.put("context", StringEscapeUtils.escapeXml(jsonContext).trim());
 
-            entityStream.write(rendered.getBytes());
+                try {
+                    engine.get().register(error);
+                    String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+                    entityStream.write(rendered.getBytes());
+                } catch (TemplateEngineException e1) {
+                    throw new RuntimeException(e);
+                }
+            }
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(e);
         }
     }
+
 }
