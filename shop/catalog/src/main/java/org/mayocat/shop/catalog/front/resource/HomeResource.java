@@ -39,12 +39,14 @@ import com.google.common.collect.Lists;
 /**
  * @version $Id$
  */
-@Component("/")
-@Path("/")
+@Component(HomeResource.PATH)
+@Path(HomeResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public class HomeResource extends AbstractFrontResource implements Resource
 {
+    public static final String PATH = ROOT_PATH;
+
     @Inject
     private ConfigurationService configurationService;
 

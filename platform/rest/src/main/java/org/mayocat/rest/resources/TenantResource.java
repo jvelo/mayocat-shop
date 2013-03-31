@@ -10,23 +10,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.accounts.AccountsService;
+import org.mayocat.accounts.meta.TenantEntity;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.model.User;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
-import org.mayocat.accounts.model.Tenant;
-import org.mayocat.accounts.model.User;
 import org.mayocat.rest.Resource;
-import org.mayocat.accounts.AccountsService;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
-@Component("/api/1.0/tenant/")
-@Path("/api/1.0/tenant/")
+@Component(TenantResource.PATH)
+@Path(TenantResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TenantResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + TenantEntity.PATH;
 
     @Inject
     private Execution execution;
@@ -59,7 +61,6 @@ public class TenantResource implements Resource
             }
 
             return Response.ok().build();
-
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityDoesNotExistException e) {
@@ -101,5 +102,4 @@ public class TenantResource implements Resource
             this.user = user;
         }
     }
-
 }

@@ -1,16 +1,16 @@
 package org.mayocat.accounts.meta;
 
-import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.meta.EntityMeta;
 
 /**
  * @version $Id$
  */
-public class UserEntity implements EntityMeta
+public class TenantEntity  implements EntityMeta
 {
-    public static final String ID = "user";
+    public static final String ID = "tenant";
 
-    public static final String PATH = "user";
+    public static final String PATH = "tenant";
 
     @Override
     public String getEntityName()
@@ -21,6 +21,6 @@ public class UserEntity implements EntityMeta
     @Override
     public Class getEntityClass()
     {
-        return User.class;
+        return Tenant.class;
     }
 }

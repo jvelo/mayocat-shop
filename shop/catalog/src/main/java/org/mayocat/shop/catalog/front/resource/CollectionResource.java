@@ -24,6 +24,7 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
@@ -44,13 +45,15 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-@Component("/collection/")
-@Path("/collection/")
+@Component(CollectionResource.PATH)
+@Path(CollectionResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class CollectionResource extends AbstractFrontResource implements Resource, BindingsContants
 {
+    public static final String PATH = ROOT_PATH + CollectionEntity.PATH;
+
     @Inject
     private CatalogService catalogService;
 
@@ -90,7 +93,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         try {
             List<Map<String, Object>> collections = (List<Map<String, Object>>) bindings.get(COLLECTIONS);
             for (Map<String, Object> c : collections) {
-                if (c.containsKey("url") && c.get("url").equals("/collection/" + collection.getSlug())) {
+                if (c.containsKey("url") && c.get("url").equals(PATH + SLASH + collection.getSlug())) {
                     c.put("current", true);
                 }
             }

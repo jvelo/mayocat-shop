@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.cms.pages.meta.PageEntity;
 import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.front.builder.PageBindingBuilder;
 import org.mayocat.cms.pages.model.Page;
@@ -37,13 +38,15 @@ import org.xwiki.component.annotation.Component;
 /**
  * @version $Id$
  */
-@Component("/page/")
-@Path("/page/")
+@Component(PageResource.PATH)
+@Path(PageResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class PageResource extends AbstractFrontResource implements Resource
 {
+    public static final String PATH = ROOT_PATH + PageEntity.PATH;
+
     @Inject
     private Provider<PageStore> pageStore;
 
@@ -89,9 +92,9 @@ public class PageResource extends AbstractFrontResource implements Resource
         }
 
         PageBindingBuilder builder = new PageBindingBuilder(theme);
-        Map<String, Object> productContext = builder.build(page, images);
+        Map<String, Object> pageContext = builder.build(page, images);
 
-        bindings.put("page", productContext);
+        bindings.put("page", pageContext);
         result.putBindings(bindings);
 
         return result;

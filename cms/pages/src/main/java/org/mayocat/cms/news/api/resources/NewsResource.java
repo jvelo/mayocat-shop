@@ -28,11 +28,8 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.cms.pages.model.Page;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
-import org.mayocat.rest.Resource;
 import org.mayocat.cms.news.api.representations.ArticleRepresentation;
+import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
 import org.mayocat.configuration.ConfigurationService;
@@ -41,7 +38,10 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
@@ -62,13 +62,15 @@ import com.yammer.metrics.annotation.Timed;
 /**
  * @version $Id$
  */
-@Component("/api/1.0/news/")
-@Path("/api/1.0/news/")
+@Component(NewsResource.PATH)
+@Path(NewsResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class NewsResource extends AbstractAttachmentResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + ArticleEntity.PATH;
+
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
 
@@ -87,12 +89,12 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
         for (Article article : articles) {
             articleReferences.add(new EntityReferenceRepresentation(article.getTitle(), article.getSlug(),
-                    "/api/1.0/news/" + article.getSlug()));
+                    PATH + "/" + article.getSlug()));
         }
 
         ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
                 new ResultSetRepresentation<EntityReferenceRepresentation>(
-                        "/api/1.0/news/",
+                        PATH,
                         number,
                         offset,
                         articleReferences

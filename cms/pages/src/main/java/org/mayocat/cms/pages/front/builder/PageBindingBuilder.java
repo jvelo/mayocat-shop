@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
 import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
@@ -38,7 +39,7 @@ public class PageBindingBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
-        pageContext.put("href", "/page/" + page.getSlug());
+        pageContext.put("href", PageResource.PATH + PageResource.SLASH + page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();

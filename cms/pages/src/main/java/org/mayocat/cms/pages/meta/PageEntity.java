@@ -8,10 +8,14 @@ import org.mayocat.cms.pages.model.Page;
  */
 public class PageEntity implements EntityMeta
 {
+    public static final String ID = "page";
+
+    public static final String PATH = "page";
+
     @Override
     public String getEntityName()
     {
-        return "page";
+        return ID;
     }
 
     @Override

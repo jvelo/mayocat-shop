@@ -8,10 +8,14 @@ import org.mayocat.shop.catalog.model.Collection;
  */
 public class CollectionEntity implements EntityMeta
 {
+    public static final String ID = "collection";
+
+    public static final String PATH = "collection";
+
     @Override
     public String getEntityName()
     {
-        return "collection";
+        return ID;
     }
 
     @Override

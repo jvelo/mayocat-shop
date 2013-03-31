@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.rest.Resource;
+import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
 import org.mayocat.configuration.ConfigurationService;
@@ -29,6 +29,7 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
@@ -44,13 +45,15 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-@Component("/news/")
-@Path("/news/")
+@Component(NewsResource.PATH)
+@Path(NewsResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class NewsResource extends AbstractFrontResource implements Resource
 {
+    public static final String PATH = ROOT_PATH + ArticleEntity.PATH;
+
     private static final Integer DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE = 20;
 
     @Inject
@@ -110,16 +113,17 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Map<String, Object> context = Maps.newHashMap();
         context.put("title", article.getTitle());
         context.put("content", article.getContent());
-        context.put("href", "/news/" + article.getSlug());
+        context.put("href", PATH + SLASH + article.getSlug());
         context.put("slug", article.getSlug());
 
-
         Map<String, Object> dateContext = Maps.newHashMap();
-        DateFormat shortFormat = DateFormat.getDateInstance(DateFormat.SHORT, settings.getLocales().getMainLocale().getValue());
-        DateFormat longFormat = DateFormat.getDateInstance(DateFormat.LONG, settings.getLocales().getMainLocale().getValue());
+        DateFormat shortFormat =
+                DateFormat.getDateInstance(DateFormat.SHORT, settings.getLocales().getMainLocale().getValue());
+        DateFormat longFormat =
+                DateFormat.getDateInstance(DateFormat.LONG, settings.getLocales().getMainLocale().getValue());
         dateContext.put("short", shortFormat.format(article.getPublicationDate()));
         dateContext.put("long", shortFormat.format(article.getPublicationDate()));
-        context.put("publication_date",dateContext);
+        context.put("publication_date", dateContext);
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
 
@@ -131,8 +135,6 @@ public class NewsResource extends AbstractFrontResource implements Resource
                 images.add(image);
             }
         }
-
-
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();

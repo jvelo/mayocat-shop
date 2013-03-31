@@ -22,11 +22,14 @@ import com.sun.jersey.multipart.FormDataParam;
 /**
  * @version $Id$
  */
-@Component("/api/1.0/attachment")
-@Path("/api/1.0/attachment")
+@Component(AttachmentResource.PATH)
+@Path(AttachmentResource.PATH)
 @ExistingTenant
 public class AttachmentResource extends AbstractAttachmentResource implements Resource
 {
+    // TODO: Create a module with an attachment entity
+    public static final String PATH = API_ROOT_PATH + "attachment";
+
     @Inject
     private ImageService imageService;
 

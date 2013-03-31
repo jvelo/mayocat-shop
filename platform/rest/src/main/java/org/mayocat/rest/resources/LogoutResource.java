@@ -11,11 +11,12 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
 import org.xwiki.component.annotation.Component;
 
-@Component("/api/1.0/logout/")
-@Path("/api/1.0/logout/")
+@Component(LogoutResource.PATH)
+@Path(LogoutResource.PATH)
 @ExistingTenant
 public class LogoutResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + "logout";
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

@@ -12,6 +12,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.accounts.meta.UserEntity;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
@@ -26,14 +27,16 @@ import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
 
-@Component("/api/1.0/user/")
-@Path("/api/1.0/user/")
+@Component(UserResource.PATH)
+@Path(UserResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @Authorized
 public class UserResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + UserEntity.PATH;
+
     @Inject
     private AccountsService accountsService;
 

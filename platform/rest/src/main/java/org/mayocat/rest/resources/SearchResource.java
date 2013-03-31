@@ -15,18 +15,19 @@ import javax.ws.rs.core.MediaType;
 
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.model.Entity;
-import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.SearchEngineException;
 import org.xwiki.component.annotation.Component;
 
-@Component("/api/1.0/search/")
-@Path("/api/1.0/search/")
+@Component(SearchResource.PATH)
+@Path(SearchResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class SearchResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + "search";
 
     @Inject
     private Provider<SearchEngine> searchEngine;
@@ -35,7 +36,7 @@ public class SearchResource implements Resource
     @Authorized
     public List<Map<String, Object>> search(@QueryParam("term") String term)
     {
-        List<Class< ? extends Entity>> classes = new ArrayList<Class< ? extends Entity>>();
+        List<Class<? extends Entity>> classes = new ArrayList<Class<? extends Entity>>();
 
         try {
             return this.searchEngine.get().search(term, classes);
@@ -43,5 +44,4 @@ public class SearchResource implements Resource
             throw new WebApplicationException();
         }
     }
-
 }

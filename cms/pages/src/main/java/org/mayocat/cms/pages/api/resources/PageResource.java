@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.cms.pages.meta.PageEntity;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
@@ -57,13 +58,15 @@ import com.yammer.metrics.annotation.Timed;
 /**
  * @version $Id$
  */
-@Component("/api/1.0/page/")
-@Path("/api/1.0/page/")
+@Component(PageResource.PATH)
+@Path(PageResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class PageResource extends AbstractAttachmentResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + PageEntity.PATH;
+
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
 
@@ -79,12 +82,12 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
         for (Page page : pages) {
             pageReferences.add(new EntityReferenceRepresentation(page.getTitle(), page.getSlug(),
-                    "/api/1.0/page/" + page.getSlug()));
+                    PATH + "/" + page.getSlug()));
         }
 
         ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
                 new ResultSetRepresentation<EntityReferenceRepresentation>(
-                        "/api/1.0/page/",
+                        PATH + "/",
                         number,
                         offset,
                         pageReferences

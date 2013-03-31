@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.api.representations.CollectionRepresentation;
+import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
@@ -43,13 +44,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.yammer.metrics.annotation.Timed;
 
-@Component("/api/1.0/collection/")
-@Path("/api/1.0/collection/")
+@Component(CollectionResource.PATH)
+@Path(CollectionResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class CollectionResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + CollectionEntity.PATH;
+
     @Inject
     private CatalogService catalogService;
 

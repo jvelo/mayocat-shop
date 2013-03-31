@@ -25,14 +25,16 @@ import org.xwiki.component.annotation.Component;
 
 import com.yammer.metrics.annotation.Timed;
 
-@Component("/api/1.0/configuration/")
-@Path("/api/1.0/configuration/")
+@Component(ConfigurationResource.PATH)
+@Path(ConfigurationResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @Authorized
 public class ConfigurationResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + "configuration";
+
     @Inject
     private Logger logger;
 

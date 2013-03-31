@@ -22,15 +22,16 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
+import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.bindings.BindingsContants;
-import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.Resource;
-import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
@@ -40,13 +41,15 @@ import org.xwiki.component.annotation.Component;
 /**
  * @version $Id$
  */
-@Component("/product/")
-@Path("/product/")
+@Component(ProductResource.PATH)
+@Path(ProductResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class ProductResource extends AbstractFrontResource implements Resource, BindingsContants
 {
+    public static final String PATH = ROOT_PATH + ProductEntity.PATH;
+
     @Inject
     private ConfigurationService configurationService;
 

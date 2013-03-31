@@ -6,12 +6,16 @@ import org.mayocat.cms.news.model.Article;
 /**
  * @version $Id$
  */
-public class ArticleMeta implements EntityMeta
+public class ArticleEntity implements EntityMeta
 {
+    public static final String ID = "article";
+
+    public static final String PATH = "news";
+
     @Override
     public String getEntityName()
     {
-        return "article";
+        return ID;
     }
 
     @Override

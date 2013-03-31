@@ -38,6 +38,7 @@ import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
+import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.rest.resources.AbstractAttachmentResource;
@@ -58,13 +59,15 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
-@Component("/api/1.0/product/")
-@Path("/api/1.0/product/")
+@Component(ProductResource.PATH)
+@Path(ProductResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class ProductResource extends AbstractAttachmentResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + ProductEntity.PATH;
+
     @Inject
     private CatalogService catalogService;
 

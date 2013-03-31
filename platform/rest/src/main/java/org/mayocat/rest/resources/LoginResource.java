@@ -20,11 +20,12 @@ import org.mayocat.rest.Resource;
 import org.mayocat.accounts.AccountsService;
 import org.xwiki.component.annotation.Component;
 
-@Component("/api/1.0/login/")
-@Path("/api/1.0/login/")
+@Component(LoginResource.PATH)
+@Path(LoginResource.PATH)
 @ExistingTenant
 public class LoginResource implements Resource
 {
+    public static final String PATH = API_ROOT_PATH + "login";
 
     @Inject
     private AccountsService accountsService;
