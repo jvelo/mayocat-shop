@@ -8,7 +8,7 @@ import javax.inject.Provider;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 import org.mayocat.authorization.Authenticator;
-import org.mayocat.authorization.PasswordManager;
+import org.mayocat.security.PasswordManager;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.store.UserStore;

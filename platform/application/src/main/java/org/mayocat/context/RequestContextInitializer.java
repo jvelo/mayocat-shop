@@ -104,6 +104,10 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         } catch (IOException e) {
             logger.warn("Failed to load theme");
         }
+
+        // 5. Session
+
+
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)
@@ -121,7 +125,6 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     {
         return ((HttpServletRequest) event.getServletRequest()).getRequestURI();
     }
-
 
     private boolean isStaticPath(String path) {
         for (String staticPath : AbstractService.STATIC_PATHS) {

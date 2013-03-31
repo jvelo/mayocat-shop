@@ -2,21 +2,33 @@ package org.mayocat.configuration;
 
 import javax.validation.Valid;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthenticationSettings
+public class SecuritySettings
 {
     @Valid
+    @NotBlank
     @JsonProperty
-    String cookieEncryptionKey;
+    String encryptionKey;
+
+    @Valid
+    @NotBlank
+    String signingKey;
 
     @Valid
     @JsonProperty
     Integer passwordSaltLogRounds = 10;
 
-    public String getCookieEncryptionKey()
+    public String getEncryptionKey()
     {
-        return cookieEncryptionKey;
+        return encryptionKey;
+    }
+
+    public String getSigningKey()
+    {
+        return signingKey;
     }
 
     public Integer getPasswordSaltLogRounds()

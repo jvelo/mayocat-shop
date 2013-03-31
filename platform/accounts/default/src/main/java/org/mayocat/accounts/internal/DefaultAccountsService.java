@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.Valid;
 
-import org.mayocat.authorization.PasswordManager;
+import org.mayocat.security.PasswordManager;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;

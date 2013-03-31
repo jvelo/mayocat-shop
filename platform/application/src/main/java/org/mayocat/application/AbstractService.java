@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.mayocat.context.CookieSessionContainerFilter;
 import org.mayocat.event.EventListener;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.health.HealthCheck;
@@ -23,6 +24,7 @@ import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.rest.Resource;
+import org.mayocat.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -32,6 +34,7 @@ import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
 import com.google.common.collect.Maps;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -90,6 +93,12 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         registerTasks(environment);
         registerManagedServices(environment);
 
+        environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
+                CookieSessionContainerFilter.class.getCanonicalName());
+        environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
+                CookieSessionContainerFilter.class.getCanonicalName());
+
+
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
     }
@@ -109,6 +118,8 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.registerComponents(configuration, environment);
 
         componentManager.initialize(this.getClass().getClassLoader());
+
+        Utils.setComponentManager(componentManager);
     }
 
     private void registerManagedServices(Environment environment) throws ComponentLookupException

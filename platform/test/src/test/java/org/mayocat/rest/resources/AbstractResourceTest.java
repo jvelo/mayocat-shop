@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.jdo.JDOHelper;
 
+import org.mayocat.configuration.SecuritySettings;
 import org.mayocat.rest.Provider;
-import org.mayocat.configuration.AuthenticationSettings;
 import org.mayocat.configuration.DataSourceConfiguration;
 import org.mayocat.configuration.MayocatShopConfiguration;
 import org.mayocat.configuration.MultitenancySettings;
@@ -53,7 +53,7 @@ public abstract class AbstractResourceTest extends ResourceTest
             MayocatShopConfiguration.class,
             DataSourceConfiguration.class,
             MultitenancySettings.class,
-            AuthenticationSettings.class
+            SecuritySettings.class
         )) {
             DefaultComponentDescriptor cd =
                 new DefaultComponentDescriptor();

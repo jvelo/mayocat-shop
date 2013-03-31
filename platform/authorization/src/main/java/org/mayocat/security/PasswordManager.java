@@ -1,4 +1,4 @@
-package org.mayocat.authorization;
+package org.mayocat.security;
 
 import org.xwiki.component.annotation.Role;
 

@@ -1,14 +1,14 @@
-package org.mayocat.authorization.cookies;
+package org.mayocat.security;
 
 import org.xwiki.component.annotation.Role;
 
 /**
- * A cookie performs reversible encryption and decryption of cookie values.
+ * A cookie crypter performs reversible encryption and decryption of cookie values.
  * 
  * @version $Id$
  */
 @Role
-public interface CookieCrypter
+public interface Cipher
 {
     /**
      * @param clearText the clear-text value of the cookie to encrypt

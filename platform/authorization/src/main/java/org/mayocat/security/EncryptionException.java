@@ -1,4 +1,4 @@
-package org.mayocat.authorization.cookies;
+package org.mayocat.security;
 
 public class EncryptionException extends Exception
 {

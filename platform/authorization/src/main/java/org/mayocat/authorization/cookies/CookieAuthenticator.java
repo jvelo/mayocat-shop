@@ -5,10 +5,11 @@ import javax.inject.Provider;
 
 import org.mayocat.accounts.store.UserStore;
 import org.mayocat.authorization.Authenticator;
-import org.mayocat.authorization.PasswordManager;
+import org.mayocat.security.Cipher;
+import org.mayocat.security.EncryptionException;
+import org.mayocat.security.PasswordManager;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
-import org.mayocat.accounts.store.UserStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -25,7 +26,7 @@ public class CookieAuthenticator implements Authenticator
     private PasswordManager passwordManager;
 
     @Inject
-    private CookieCrypter crypter;
+    private Cipher cipher;
 
     @Inject
     private Logger logger;
@@ -59,9 +60,9 @@ public class CookieAuthenticator implements Authenticator
                     String name = cookie.split("=")[0];
                     String val = cookie.split("=")[1];
                     if (name.trim().equals("username")) {
-                        username = this.crypter.decrypt(val);
+                        username = this.cipher.decrypt(val);
                     } else if (name.trim().equals("password")) {
-                        password = this.crypter.decrypt(val);
+                        password = this.cipher.decrypt(val);
                     }
                 }
             }

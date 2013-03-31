@@ -11,9 +11,9 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.mayocat.authorization.PasswordManager;
-import org.mayocat.authorization.cookies.CookieCrypter;
-import org.mayocat.authorization.cookies.EncryptionException;
+import org.mayocat.security.PasswordManager;
+import org.mayocat.security.Cipher;
+import org.mayocat.security.EncryptionException;
 import org.mayocat.accounts.model.User;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
@@ -33,7 +33,7 @@ public class LoginResource implements Resource
     private PasswordManager passwordManager;
 
     @Inject
-    private CookieCrypter crypter;
+    private Cipher crypter;
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

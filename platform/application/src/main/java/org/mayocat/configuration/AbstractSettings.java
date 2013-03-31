@@ -26,7 +26,7 @@ public class AbstractSettings extends Configuration
     @Valid
     @NotNull
     @JsonProperty
-    private AuthenticationSettings authentication = new AuthenticationSettings();
+    private SecuritySettings security = new SecuritySettings();
 
     @Valid
     @NotNull
@@ -43,9 +43,9 @@ public class AbstractSettings extends Configuration
         return multitenancy;
     }
 
-    public AuthenticationSettings getAuthenticationSettings()
+    public SecuritySettings getAuthenticationSettings()
     {
-        return authentication;
+        return security;
     }
 
     public SearchEngineSettings getSearchEngineSettings()

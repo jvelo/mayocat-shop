@@ -10,6 +10,7 @@ public enum AddonFieldType
 {
 
     STRING,
+    HTML,
     JSON;
 
     @JsonValue

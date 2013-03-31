@@ -5,10 +5,14 @@ import java.util.Map;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.session.Session;
+import org.mayocat.session.cookies.CookieSession;
 import org.mayocat.theme.Theme;
 
 public class Context
 {
+    private Session session;
+
     private Tenant tenant;
 
     private User user;
@@ -79,5 +83,18 @@ public class Context
             return (T) this.settings.get(c);
         }
         return null;
+    }
+
+    public Session getSession()
+    {
+        if (session == null) {
+            session = new CookieSession();
+        }
+        return session;
+    }
+
+    public void setSession(Session session)
+    {
+        this.session = session;
     }
 }

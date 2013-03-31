@@ -1,8 +1,8 @@
-package org.mayocat.authorization;
+package org.mayocat.security;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.AuthenticationSettings;
+import org.mayocat.configuration.SecuritySettings;
 import org.mindrot.jbcrypt.BCrypt;
 import org.xwiki.component.annotation.Component;
 
@@ -11,7 +11,7 @@ public class BCryptPasswordManager implements PasswordManager
 {
 
     @Inject
-    private AuthenticationSettings configuration;
+    private SecuritySettings configuration;
     
     public String hashPassword(String password)
     {

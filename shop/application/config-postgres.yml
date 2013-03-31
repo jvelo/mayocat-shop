@@ -31,8 +31,10 @@ multitenancy:
   activated: false
   defaultTenant: shop
 
-authentication:
-  cookieEncryptionKey: Change me here!
+security:
+  encryptionKey: Please change me!
+  signingKey: Me too, me too :)
+  passwordSaltLogRounds: 10
 
 # Application settings
 # --------------------
