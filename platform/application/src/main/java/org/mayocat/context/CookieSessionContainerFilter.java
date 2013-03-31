@@ -15,7 +15,6 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.configuration.SecuritySettings;
-import org.mayocat.rest.Resource;
 import org.mayocat.security.Cipher;
 import org.mayocat.security.EncryptionException;
 import org.mayocat.session.Session;
@@ -34,7 +33,7 @@ import com.sun.jersey.spi.container.ContainerResponseFilter;
 /**
  * @version $Id$
  */
-public class CookieSessionContainerFilter implements Resource, ContainerResponseFilter, ContainerRequestFilter
+public class CookieSessionContainerFilter implements ContainerResponseFilter, ContainerRequestFilter
 {
     private final static String HMAC_SHA256_ALGORITHM = "HmacSHA256";
 
