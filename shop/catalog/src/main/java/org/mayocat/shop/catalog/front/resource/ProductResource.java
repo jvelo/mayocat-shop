@@ -85,10 +85,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         bindings.put(BindingsContants.PAGE_TITLE, product.getTitle());
         bindings.put(BindingsContants.PAGE_DESCRIPTION, product.getDescription());
 
-        final CatalogSettings configuration = (CatalogSettings)
-                configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = (GeneralSettings)
-                configurationService.getSettings(GeneralSettings.class);
+        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
+        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
 
         Theme theme = this.execution.getContext().getTheme();
 
