@@ -318,67 +318,6 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
     }
 }]);
 
-mayocat.directive("addonFieldString", [function ($compile) {
-    return {
-        restrict: "E",
-        scope: {
-            name: '@',
-            placeholder: '@',
-            value: '@'
-        },
-        template: "<input type='text' name='whatever' placeholder={{placeholder}} value={{value}} />"
-    };
-}]);
-
-mayocat.directive("addon", ['$compile', function ($compile) {
-    return {
-        scope: {
-            addon: '=definition',
-            value: '=value'
-        },
-        restrict: "E",
-        link: function (scope, element, attrs) {
-            scope.$watch(
-                'addon',
-                function (definition) {
-                    var displayer;
-                    switch (definition.type) {
-                        case 'string':
-                        default:
-                            displayer = "<addon-field-string placeholder={{addon.placeholder}} value={{value}}>";
-                            break;
-                    }
-
-                    // The "template" option allow to override default behavior
-                    if (typeof definition.template !== 'undefined') {
-                        displayer = definition.template;
-                    }
-
-                    element.html(displayer);
-
-                    var updated = $compile(element.contents())(scope);
-
-                    $(element).on("change", function () {
-                        var serialized = $("<form/>").html($(element).clone()).serializeArray();
-                        if (serialized.length === 1) {
-                            var value = serialized[0].value;
-                        }
-                        else {
-                            var value = serialized;
-                        }
-
-                        scope.$apply(function ($scope) {
-                            $scope.value = value;
-                        });
-
-                    });
-                    // TODO maybe do this with mutation observers instead?
-                }
-            );
-        }
-    }
-}]);
-
 /**
  * Thumbnail editor directive
  */

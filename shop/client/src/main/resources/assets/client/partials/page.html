@@ -54,13 +54,6 @@
         </div>
 
         <div ng-show="addons.length > 0 && !isNew()">
-            <div class="block" ng-repeat="addon in addons">
-                <h3>{{addon.definition.name}}</h3>
-                <addon definition=addon.definition value="page.addons[addon.index].value"></addon>
-            </div>
-        </div>
-
-        <div ng-show="addons.length > 0 && !isNew()">
             <div class="block" ng-repeat="group in addons">
                 <h3>{{group.name}}</h3>
                 <p ng-show="group.text && group.text != ''">
@@ -70,7 +63,9 @@
                     <li ng-repeat="addon in group.fields">
                         {{addon.definition.name}}
 
-                        <addon definition="addon.definition" value="page.addons[addon.index].value"></addon>
+                        <addon definition="addon.definition"
+                               value="page.addons[addon.index].value"
+                               type="page.addons[addon.index].type"></addon>
                     </li>
                 </ul>
             </div>

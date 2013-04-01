@@ -62,7 +62,9 @@
                 <ul>
                     <li ng-repeat="addon in group.fields">
                         {{addon.definition.name}}
-                        <addon definition="addon.definition" value="product.addons[addon.index].value"></addon>
+                        <addon definition="addon.definition"
+                               value="product.addons[addon.index].value"
+                               type="product.addons[addon.index].type"></addon>
                     </li>
                 </ul>
             </div>

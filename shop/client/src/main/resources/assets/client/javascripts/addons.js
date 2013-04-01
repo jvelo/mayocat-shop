@@ -1,6 +1,95 @@
 'use strict'
 
 angular.module('addons', ['ngResource'])
+
+    .directive("addonFieldString", [function ($compile) {
+        return {
+            restrict: "E",
+            scope: {
+                name: '@',
+                placeholder: '@',
+                value: '='
+            },
+            template: "<input type='text' name='whatever' placeholder={{placeholder}} ng-model='value' />"
+        };
+    }])
+
+    .directive("addonFieldTextarea", [function ($compile) {
+        return {
+            restrict: "E",
+            scope: {
+                name: '@',
+                placeholder: '@',
+                value: '='
+            },
+            template: "<input type='text' name='whatever' placeholder={{placeholder}} ng-model='value' />"
+        };
+    }])
+
+    .directive("addonFieldWysiwyg", [function ($compile) {
+        return {
+            restrict: "E",
+            scope: {
+                name: '@',
+                placeholder: '@',
+                value: '='
+            },
+            template: "<textarea name='whatever' placeholder={{placeholder}} ng-model='value' ck-editor></textarea>",
+            link: function (scope, element, attrs) {
+
+            }
+        };
+    }])
+
+    .directive("addon", ['$compile', function ($compile) {
+        return {
+            scope: {
+                addon: '=definition',
+                value: '=value',
+                type: '=type'
+            },
+            restrict: "E",
+            link: function (scope, element, attrs) {
+                scope.$watch(
+                    'addon',
+                    function (definition) {
+                        var displayer,
+                            storageType;
+
+                        switch (definition.type) {
+                            case 'textarea':
+                                storageType = "string";
+                                displayer = "<addon-field-textarea placeholder={{addon.placeholder}} value=value>";
+                                break;
+
+                            case 'wysiwyg':
+                                storageType = "html";
+                                displayer = "<addon-field-wysiwyg placeholder={{addon.placeholder}} value=value>";
+                                break;
+
+                            case 'string':
+                            default:
+                                storageType = "string";
+                                displayer = "<addon-field-string placeholder={{addon.placeholder}} value=value>";
+                                break;
+                        }
+
+                        scope.type = storageType;
+
+                        // The "template" option allow to override default behavior
+                        if (typeof definition.template !== 'undefined') {
+                            displayer = definition.template;
+                        }
+
+                        element.html(displayer);
+
+                        var updated = $compile(element.contents())(scope);
+                    }
+                );
+            }
+        }
+    }])
+
     .factory('addonsService', function ($resource, $q, configurationService) {
 
         var getAddonIndex = function (addons, group, field, source) {
