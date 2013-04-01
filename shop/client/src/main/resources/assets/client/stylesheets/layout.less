@@ -121,8 +121,9 @@ header a {
   border-bottom: none;
 }
 
-#list li.hasChildren {
-  border-bottom: solid 1px  @borderList;
+#list ul li.hasChildren:last-child > .droptarget {
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 #list .droptarget {
@@ -140,7 +141,8 @@ header a {
 }
 
 #list .droptarget .listItem {
-  padding: 0px 0px 0px 15px;
+
+  padding: 0px 0px 11px 15px
 }
 
 #list .listItem {
@@ -148,6 +150,10 @@ header a {
 }
 
 #list ul ul li .droptarget {
+  padding-left: 10px !important;
+}
+
+#list ul li.hasChildren ul li .droptarget {
   padding-left: 25px !important;
 }
 

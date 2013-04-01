@@ -35,7 +35,7 @@
     <!-- list remaining products (orphan products, or all products if the shop is configured to not have collections -->
     <div>
         <ul >
-            <li>
+            <li ng-class="{hasChildren: hasCollections}">
                 <div class="listItem" ng-show="hasCollections">
                     <span class="collection">Uncategorized</span>
                 </div>
