@@ -22,7 +22,7 @@ The high level philosophy behind Mayocat Shop architecture is described in [this
 
 - Its foundation support library is the fantastic [Dropwizard framework](http://dropwizard.codahale.com/), so this mean Jetty + JAX-RS/Jersey + Jackson
 - Dependency injection is realized using the [XWiki Component Manager](http://extensions.xwiki.org/xwiki/bin/view/Extension/Component+Module).
-- The default persistency layer implementation targets RDBMS, using [JDBI](http://jdbi.org/). Right now only MySQL is tested, although their is a plan to switch to Postgres as the officialy supported DB.
+- The default persistency layer implementation targets RDBMS, using [JDBI](http://jdbi.org/). The officially supported RDBMS is PostgreSQL.
 
 One corollary of building on this stack is the fact the back-end service can be viewed as just a RESTful HTTP API. The user-facing back-office consumes this API and is built with [AngularJS](http://angularjs.org).
 
@@ -36,14 +36,11 @@ Mayocat API RESTful URL design follows the principle of "pragmatic" REST.
 
 Namely:
 - By default JSON only. Exceptions on a per case basis
-- Singular resource pathes (/product/abc rather than /products/abc). This is a design choice for matching with public URI (http://host/product/abc -> http://host/api/v1/product/abc).
 - POST for partial updates (not idempotent operations)
 - Return 201 Created with location header on resource creation
 - "href" property in resources for linking (canonical URL)
-- versioning in URL
 - "Resource expansion"
 - ...
-
 
 
 ---
