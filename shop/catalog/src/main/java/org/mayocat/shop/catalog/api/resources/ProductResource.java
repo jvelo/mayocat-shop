@@ -82,9 +82,6 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
-    private Slugifier slugifier;
-
-    @Inject
     private Logger logger;
 
     @GET
@@ -300,7 +297,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     {
         try {
             if (Strings.isNullOrEmpty(product.getSlug())) {
-                product.setSlug(this.slugifier.slugify(product.getTitle()));
+                product.setSlug(this.getSlugifier().slugify(product.getTitle()));
             }
 
             productStore.get().create(product);

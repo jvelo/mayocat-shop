@@ -100,7 +100,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
             productsBinding.add(productContext);
         }
 
-        bindings.put("products", productsBinding);
+        bindings.put("__unsupported__products", productsBinding);
 
         result.putBindings(bindings);
 

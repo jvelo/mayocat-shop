@@ -82,6 +82,7 @@ mayocat.directive('ckEditor', function () {
                     toolbarGroups: [
                         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
                         { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                        { name: 'links' },
                         { name: 'styles' }
                     ],
                     removePlugins : 'elementspath',

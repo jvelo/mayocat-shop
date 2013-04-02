@@ -89,7 +89,7 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', image);
+                $rootScope.$broadcast('thumbnails:edit', "article", image);
             }
 
             $scope.ArticleResource = $resource("/api/news/:slug");
@@ -107,7 +107,7 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.reloadImages = function () {
-                $scope.article.images = $http.get("/api/news/" + $scope.slug + "/image").success(function (data) {
+                $scope.article.images = $http.get("/api/news/" + $scope.slug + "/images").success(function (data) {
                     $scope.article.images = data;
                 });
             }
@@ -117,7 +117,7 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.getImageUploadUri = function () {
-                return "/api/news/" + $scope.slug + "/attachment";
+                return "/api/news/" + $scope.slug + "/attachments";
             }
 
             $scope.initializeAddons = function () {

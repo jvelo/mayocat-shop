@@ -47,7 +47,7 @@ angular.module('page', ['ngResource'])
             };
 
             $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', image);
+                $rootScope.$broadcast('thumbnails:edit', "page", image);
             }
 
             $scope.PageResource = $resource("/api/pages/:slug");
