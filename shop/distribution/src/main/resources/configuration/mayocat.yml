@@ -3,10 +3,25 @@
 # --------------------
 
 logging:
+  level: INFO
   loggers:
-      "org.mayocat": DEBUG
+      # Example:
+      # "org.mayocat": DEBUG
   file:
-    archive: false
+    # If true, write log statements to a file.
+    enabled: true
+    # Do not write log statements below this threshold to the file.
+    threshold: ALL
+    # The file to which current statements will be logged.
+    currentLogFilename: ./logs/example.log
+    # When the log file rotates, the archived log will be renamed to this and gzipped. The
+    # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+    # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+    archivedLogFilenamePattern: ./logs/example-%d.log.gz
+    # The number of archived files to keep.
+    archivedFileCount: 15
+    # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+    timeZone: UTC
 
 database:
   driverClass: org.postgresql.Driver
@@ -31,8 +46,10 @@ multitenancy:
   activated: true
   defaultTenant: shop
 
-authentication:
-  cookieEncryptionKey: Change me here !
+security:
+  encryptionKey: Please change me!
+  signingKey: Me too, me too :)
+  passwordSaltLogRounds: 10
 
 # Application settings
 # --------------------
@@ -56,14 +73,14 @@ theme:
 
 catalog:
   currencies:
-      main:
-        default: EUR
-        visible: true
-        configurable: false
-      others:
-        default: []
-        configurable: false
-        visible: false
+    main:
+      default: EUR
+      visible: true
+      configurable: false
+    others:
+      default: []
+      configurable: false
+      visible: false
   products:
     stock:
       default: true
