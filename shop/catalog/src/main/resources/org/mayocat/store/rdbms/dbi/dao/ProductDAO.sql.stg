@@ -57,6 +57,19 @@ findAllForCollection() ::= <<
     ORDER  BY collection_product.position
 >>
 
+findAllOnShelf() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.tenant_id = :tenant.id
+           AND product.on_shelf = true
+    ORDER  BY product.position ASC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
 deleteProductFromCollections() ::= <<
     DELETE
     FROM   collection_product

@@ -67,6 +67,12 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         return this.dao.findAll(getTenant(), number, offset);
     }
 
+    @Override
+    public List<User> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(USER_TABLE_NAME, ids);
+    }
+
     public User findUserByEmailOrUserName(String userNameOrEmail)
     {
         return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());

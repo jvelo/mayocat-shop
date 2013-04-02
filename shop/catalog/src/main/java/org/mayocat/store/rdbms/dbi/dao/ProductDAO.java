@@ -43,6 +43,10 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
     @SqlQuery
     public abstract List<Product> findAllForCollection(@BindBean("collection") Collection collection);
 
+    @SqlQuery
+    public abstract List<Product> findAllOnShelf(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
+
     public Product findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlugWithTranslations("product", slug, tenant);

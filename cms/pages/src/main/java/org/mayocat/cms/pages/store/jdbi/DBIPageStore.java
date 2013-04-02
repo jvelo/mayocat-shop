@@ -95,6 +95,12 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
+    public List<Page> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(PAGE_TABLE_NAME, ids);
+    }
+
+    @Override
     public Integer countAll()
     {
         return this.dao.countAll(PAGE_TABLE_NAME, getTenant());

@@ -20,4 +20,8 @@ public interface AttachmentStore extends Store<Attachment, Long>, EntityStore
     List<Attachment> findAllChildrenOf(Entity parent);
 
     List<Attachment> findAllChildrenOf(Entity parent, List<String> extensions);
+
+    List<Attachment> findAllChildrenOfParentIds(List<Long> parents);
+
+    List<Attachment> findAllChildrenOfParentIds(List<Long> parents, List<String> extensions);
 }

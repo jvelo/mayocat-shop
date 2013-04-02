@@ -128,6 +128,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
+    public List<Product> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(PRODUCT_TABLE_NAME, ids);
+    }
+
+    @Override
     public Integer countAll()
     {
         return this.dao.countAll(PRODUCT_TABLE_NAME, getTenant());
@@ -147,6 +153,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     public List<Product> findAllForCollection(Collection collection)
     {
         return this.dao.findAllForCollection(collection);
+    }
+
+    @Override
+    public List<Product> findAllOnShelf(Integer number, Integer offset)
+    {
+        return this.dao.findAllOnShelf(getTenant(), number, offset);
     }
 
     @Override

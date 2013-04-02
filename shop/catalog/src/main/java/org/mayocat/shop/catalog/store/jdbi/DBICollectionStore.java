@@ -137,6 +137,12 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     }
 
     @Override
+    public List<Collection> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(COLLECTION_TABLE_NAME, ids);
+    }
+
+    @Override
     public Integer countAll()
     {
         return this.dao.countAll(COLLECTION_TABLE_NAME, getTenant());

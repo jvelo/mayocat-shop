@@ -50,6 +50,12 @@ public class DBIThumbnailStore implements ThumbnailStore, Initializable
     }
 
     @Override
+    public List<Thumbnail> findAllForIds(List<Long> ids)
+    {
+        return this.dao.findAllThumbnails(ids);
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = dbi.get().onDemand(ThumbnailDAO.class);

@@ -21,4 +21,6 @@ public interface ProductStore extends Store<Product, Long>, HasOrderedCollection
     List<Product> findOrphanProducts();
 
     List<Product> findAllForCollection(Collection collection);
+
+    List<Product> findAllOnShelf(Integer number, Integer offset);
 }

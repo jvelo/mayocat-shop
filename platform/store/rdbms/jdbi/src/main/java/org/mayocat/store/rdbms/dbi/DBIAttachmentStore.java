@@ -114,6 +114,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public List<Attachment> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(ATTACHMENT_TABLE_NAME, ids);
+    }
+
+    @Override
     public Attachment findById(Long id)
     {
         return this.dao.findById(ATTACHMENT_TABLE_NAME, id);
@@ -141,6 +147,18 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     public List<Attachment> findAllChildrenOf(Entity parent, List<String> extensions)
     {
         return this.dao.findAttachmentsOfEntity(parent);
+    }
+
+    @Override
+    public List<Attachment> findAllChildrenOfParentIds(List<Long> parents)
+    {
+        return this.dao.findAttachmentsOfEntities(parents);
+    }
+
+    @Override
+    public List<Attachment> findAllChildrenOfParentIds(List<Long> parents, List<String> extensions)
+    {
+        return this.dao.findAttachmentsOfEntities(parents, extensions);
     }
 
     @Override

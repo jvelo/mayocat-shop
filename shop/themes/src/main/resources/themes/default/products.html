@@ -1,0 +1,27 @@
+<ul class="products">
+    {{#products}}
+    <li>
+        <a href="{{href}}">
+            <img class="photo" src="{{images.featured.theme_small_url}}" title="{{title}}"/>
+        </a>
+    </li>
+    {{/products}}
+</ul>
+
+{{#if pagination}}
+{{#pagination}}
+<div id="pagination">
+    {{#first}}
+    <a href="{{ur}}">First</a>
+    {{/first}}
+    <ul>
+        {{#all}}
+        <li><a href="{{url}}">{{page}}</a></li>
+        {{/all}}
+    </ul>
+    {{#last}}
+    <a href="{{ur}}">Last</a>
+    {{/last}}
+</div>
+{{/pagination}}
+{{/if}}

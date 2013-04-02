@@ -12,6 +12,7 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 /**
  * Inheriting classes MUST be annotated with {@link UseStringTemplate3StatementLocator}
@@ -117,6 +118,16 @@ public interface EntityDAO< E extends Entity >
         "       AND entity.tenant_id = :tenant.id "
     )
     Integer countAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN <type>" +
+        "               ON entity.id = <type>.entity_id " +
+        "WHERE  entity.id in ( <ids> ) "
+    )
+    List<E> findByIds(@Define("type") String type, @BindIn("ids") List<Long> ids);
 
     @SqlQuery
     (

@@ -15,4 +15,6 @@ public interface ThumbnailStore
     void createOrUpdateThumbnail(Thumbnail thumbnail);
 
     List<Thumbnail> findAll(Attachment attachment);
+
+    List<Thumbnail> findAllForIds(List<Long> ids);
 }

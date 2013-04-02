@@ -1,5 +1,6 @@
 package org.mayocat.accounts.store.jdbi;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -84,6 +85,12 @@ public class DBITenantStore implements TenantStore, Initializable
     public List<Tenant> findAll(Integer number, Integer offset)
     {
         return this.dao.findAll(number, offset);
+    }
+
+    @Override
+    public List<Tenant> findByIds(List<Long> ids)
+    {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

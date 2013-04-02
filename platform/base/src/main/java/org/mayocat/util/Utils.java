@@ -74,4 +74,31 @@ public class Utils
     {
         return getComponent(roleType, "default");
     }
+
+    /**
+     * Lookup a XWiki component by role and hint.
+     *
+     * @param role the class (aka role) that the component implements
+     * @param hint a value to differentiate different component implementations for the same role
+     * @return the component's instance
+     * @throws RuntimeException if the component cannot be found/initialized, or if the component manager is not
+     * initialized
+     */
+    public static <T> T getComponent(Class<T> role, String hint)
+    {
+        return getComponent((Type) role, hint);
+    }
+
+    /**
+     * Lookup a XWiki component by role (uses the default hint).
+     *
+     * @param role the class (aka role) that the component implements
+     * @return the component's instance
+     * @throws RuntimeException if the component cannot be found/initialized, or if the component manager is not
+     * initialized
+     */
+    public static <T> T getComponent(Class<T> role)
+    {
+        return getComponent((Type) role);
+    }
 }

@@ -19,5 +19,7 @@ public interface Store<T extends Identifiable, K extends Serializable>
 
     List<T> findAll(Integer number, Integer offset);
 
+    List<T> findByIds(List<Long> ids);
+
     T findById(K id);
 }

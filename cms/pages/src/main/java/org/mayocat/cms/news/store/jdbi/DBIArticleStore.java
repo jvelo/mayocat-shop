@@ -96,6 +96,12 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
+    public List<Article> findByIds(List<Long> ids)
+    {
+        return this.dao.findByIds(ARTICLE_TABLE_NAME, ids);
+    }
+
+    @Override
     public Article findBySlug(String slug)
     {
         Article article = this.dao.findBySlugWithTranslations(ARTICLE_TABLE_NAME, slug, getTenant());

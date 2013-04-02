@@ -25,6 +25,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.Slugifier;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.model.AddonFieldType;
@@ -45,8 +46,11 @@ import org.mayocat.rest.resources.AbstractAttachmentResource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
+import org.mayocat.shop.catalog.store.CollectionStore;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.HasOrderedCollections;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.InvalidMoveOperation;
 import org.slf4j.Logger;
@@ -69,10 +73,16 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     public static final String PATH = API_ROOT_PATH + ProductEntity.PATH;
 
     @Inject
-    private CatalogService catalogService;
+    private Provider<ProductStore> productStore;
+
+    @Inject
+    private Provider<CollectionStore> collectionStore;
 
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private Slugifier slugifier;
 
     @Inject
     private Logger logger;
@@ -86,9 +96,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             @QueryParam("filter") @DefaultValue("") String filter)
     {
         if (filter.equals("uncategorized")) {
-            return this.wrapInRepresentations(this.catalogService.findOrphanProducts());
+            return this.wrapInRepresentations(this.productStore.get().findOrphanProducts());
         } else {
-            return this.wrapInRepresentations(this.catalogService.findAllProducts(number, offset));
+            return this.wrapInRepresentations(this.productStore.get().findAll(number, offset));
         }
     }
 
@@ -98,7 +108,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Authorized
     public Object getProduct(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
-        Product product = this.catalogService.findProductBySlug(slug);
+        Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
             return Response.status(404).build();
         }
@@ -107,7 +117,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 : Arrays.asList(expand.split(","));
 
         if (expansions.contains("collections")) {
-            List<Collection> collections = this.catalogService.findCollectionsForProduct(product);
+            List<Collection> collections = this.collectionStore.get().findAllForProduct(product);
             if (expansions.contains("images")) {
                 return this.wrapInRepresentation(product, collections, this.getImages(slug));
             } else {
@@ -125,7 +135,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     public List<ImageRepresentation> getImages(@PathParam("slug") String slug)
     {
         List<ImageRepresentation> result = new ArrayList();
-        Product product = this.catalogService.findProductBySlug(slug);
+        Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
             throw new WebApplicationException(Response.status(404).build());
         }
@@ -156,7 +166,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
-        Product product = this.catalogService.findProductBySlug(slug);
+        Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
             return Response.status(404).build();
         }
@@ -177,10 +187,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     {
         try {
             if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterTo)) {
-                this.catalogService.moveProduct(slug,
-                        slugOfProductToMoveAfterTo, CatalogService.InsertPosition.AFTER);
+                this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
+                        HasOrderedCollections.RelativePosition.AFTER);
             } else {
-                this.catalogService.moveProduct(slug, slugOfProductToMoveBeforeOf);
+                this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
+                        HasOrderedCollections.RelativePosition.BEFORE);
             }
 
             return Response.noContent().build();
@@ -199,7 +210,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             ProductRepresentation updatedProductRepresentation)
     {
         try {
-            Product product = this.catalogService.findProductBySlug(slug);
+            Product product = this.productStore.get().findBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             } else {
@@ -237,7 +248,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                     }
                 }
 
-                this.catalogService.updateProduct(product);
+                this.productStore.get().update(product);
             }
 
             return Response.ok().build();
@@ -256,11 +267,17 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     public Response deleteProduct(@PathParam("slug") String slug)
     {
         try {
-            this.catalogService.deleteProduct(slug);
+            Product product = this.productStore.get().findBySlug(slug);
+
+            if (product == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+            }
+
+            this.productStore.get().delete(product);
 
             return Response.noContent().build();
-        }
-        catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
@@ -282,12 +299,16 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     public Response createProduct(Product product)
     {
         try {
-            Product created = this.catalogService.createProduct(product);
+            if (Strings.isNullOrEmpty(product.getSlug())) {
+                product.setSlug(this.slugifier.slugify(product.getTitle()));
+            }
+
+            productStore.get().create(product);
+            Product created = productStore.get().findBySlug(product.getSlug());
 
             // Respond with a created URI relative to this API URL.
             // This will add a location header like http://host/api/<version>/product/my-created-product
             return Response.created(new URI(created.getSlug())).build();
-
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
@@ -328,7 +349,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         ProductRepresentation result = new ProductRepresentation(product);
         if (images != null) {
             result.setImages(images);
-            for (ImageRepresentation image: images) {
+            for (ImageRepresentation image : images) {
                 if (image.isFeaturedImage()) {
                     result.setFeaturedImage(image);
                 }
@@ -351,12 +372,12 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         for (Collection collection : collections) {
             collectionsReferences
                     .add(new EntityReferenceRepresentation(collection.getTitle(), collection.getSlug(),
-                            "/api/1.0/collection/" + collection.getSlug()));
+                            CollectionResource.PATH + collection.getSlug()));
         }
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {
             result.setImages(images);
-            for (ImageRepresentation image: images) {
+            for (ImageRepresentation image : images) {
                 if (image.isFeaturedImage()) {
                     result.setFeaturedImage(image);
                 }

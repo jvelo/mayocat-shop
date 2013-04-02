@@ -11,11 +11,14 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 /**
  * @version $Id$
  */
 @RegisterMapper(ThumbnailMapper.class)
+@UseStringTemplate3StatementLocator
 public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
 {
     @GetGeneratedKeys
@@ -88,6 +91,20 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
     )
     List<Thumbnail> findThumbnails(@Bind("attachment") Long id);
 
+    @SqlQuery
+    (
+        "SELECT attachment_id, " +
+        "       source, " +
+        "       hint, " +
+        "       ratio, " +
+        "       x, " +
+        "       y, " +
+        "       width, " +
+        "       height " +
+        "FROM   thumbnail " +
+        "WHERE  attachment_id in ( <ids> )"
+    )
+    List<Thumbnail> findAllThumbnails(@BindIn("ids") List<Long> ids);
 
     @SqlUpdate
     (

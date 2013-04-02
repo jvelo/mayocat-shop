@@ -57,10 +57,34 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
         "WHERE  entity.type = 'attachment' " +
+        "       AND entity.parent_id (<ids>)"
+    )
+    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<Long> ids);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN attachment" +
+        "               ON entity.id = attachment.entity_id " +
+        "WHERE  entity.type = 'attachment' " +
         "       AND attachment.extension in (<extensions>)" +
         "       AND entity.parent_id = :entity.id"
     )
     List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity,
+            @BindIn("extensions") List<String> extensions);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   entity " +
+        "       INNER JOIN attachment" +
+        "               ON entity.id = attachment.entity_id " +
+        "WHERE  entity.type = 'attachment' " +
+        "       AND attachment.extension in (<extensions>)" +
+        "       AND entity.parent_id in (<ids>)"
+    )
+    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<Long> ids,
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
