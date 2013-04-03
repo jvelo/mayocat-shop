@@ -102,6 +102,7 @@ public class ResourceResource implements Resource
     {
         try {
             MimetypesFileTypeMap mtftp = new MimetypesFileTypeMap();
+            mtftp.addMimeTypes("application/javascript js");
             mtftp.addMimeTypes("text/css css");
 
             String contentType = mtftp.getContentType(file);
