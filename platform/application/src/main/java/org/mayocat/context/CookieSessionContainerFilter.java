@@ -48,7 +48,7 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse)
     {
         Execution execution = Utils.getComponent(Execution.class);
-        if (execution.getContext() != null) {
+        if (execution.getContext() != null && sessionExistsAndIsNotEmpty(execution)) {
             storeSessionInCookie(execution, containerResponse);
         }
         return containerResponse;
@@ -61,7 +61,6 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
         Execution execution = Utils.getComponent(Execution.class);
         if (execution.getContext() != null) {
             try {
-
                 session = getSessionFromCookie(containerRequest);
                 if (session != null) {
                     execution.getContext().setSession(session);
@@ -103,13 +102,14 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
         return null;
     }
 
+    private boolean sessionExistsAndIsNotEmpty(Execution execution)
+    {
+        return execution.getContext() != null && execution.getContext().getSession() != null &&
+                !execution.getContext().getSession().isEmpty();
+    }
+
     private void storeSessionInCookie(Execution execution, ContainerResponse containerResponse)
     {
-        if (execution.getContext() == null || execution.getContext().getSession() == null) {
-            // Nothing to do, yeah!
-            return;
-        }
-
         Cipher cipher = Utils.getComponent(Cipher.class);
         Session cookieSession = execution.getContext().getSession();
 

@@ -21,6 +21,12 @@ public class CookieSession implements Session
     private Map<String, Object> attributes = Maps.newHashMap();
 
     @Override
+    public boolean isEmpty()
+    {
+        return attributes.keySet().isEmpty();
+    }
+
+    @Override
     public Set<String> getAttributeNames()
     {
         return attributes.keySet();

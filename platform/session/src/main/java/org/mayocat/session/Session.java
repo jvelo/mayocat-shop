@@ -9,6 +9,8 @@ import java.util.Set;
  */
 public interface Session extends Serializable
 {
+    boolean isEmpty();
+
     Set<String> getAttributeNames();
 
     Object getAttribute(String string);
