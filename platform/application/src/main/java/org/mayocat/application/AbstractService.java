@@ -58,9 +58,11 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     protected abstract void registerComponents(C configuration, Environment environment);
 
     public static final Set<String> STATIC_PATHS = new HashSet<String>()
-    {{
+    {
+        {
             add(ADMIN_UI_PATH);
-        }};
+        }
+    };
 
     protected void addModule(Module module)
     {
@@ -97,7 +99,6 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
                 CookieSessionContainerFilter.class.getCanonicalName());
         environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
                 CookieSessionContainerFilter.class.getCanonicalName());
-
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);

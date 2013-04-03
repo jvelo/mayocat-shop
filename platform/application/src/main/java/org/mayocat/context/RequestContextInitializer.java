@@ -105,9 +105,6 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
             logger.warn("Failed to load theme");
         }
 
-        // 5. Session
-
-
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)

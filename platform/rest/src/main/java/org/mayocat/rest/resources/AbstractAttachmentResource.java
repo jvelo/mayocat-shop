@@ -1,16 +1,13 @@
 package org.mayocat.rest.resources;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mayocat.Slugifier;
@@ -21,13 +18,6 @@ import org.mayocat.store.InvalidEntityException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicException;
-import net.sf.jmimemagic.MagicMatch;
-import net.sf.jmimemagic.MagicMatchNotFoundException;
-import net.sf.jmimemagic.MagicParseException;
 
 /**
  * @version $Id$

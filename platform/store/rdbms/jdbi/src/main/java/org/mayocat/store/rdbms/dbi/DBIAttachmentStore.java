@@ -172,8 +172,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     {
         try {
             // No extension : try to guess it
-            Magic parser = new Magic();
-            MagicMatch match = parser.getMagicMatch(bytes);
+            MagicMatch match = Magic.getMagicMatch(bytes);
             String guessedExtension = match.getExtension();
             if (!Strings.isNullOrEmpty(guessedExtension)) {
                 return Optional.of(guessedExtension);
@@ -185,6 +184,5 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
             return Optional.absent();
         }
     }
-
 
 }
