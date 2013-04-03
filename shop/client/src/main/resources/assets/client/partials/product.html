@@ -30,14 +30,15 @@
                                       ng-click="selectFeatureImage(image)" />
                                 <div class="btn-group pull-right">
                                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                        Edit
+                                        Actions
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li ng-click="editThumbnails(image)"
                                             data-toggle="modal"
-                                            href="#editThumbnails">Thumbnails
+                                            href="#editThumbnails">Edit thumbnails
                                         </li>
+                                        <li ng-click="removeImage(image)">Remove</li>
                                     </ul>
                                 </div>
                                 <div class="clearfix"></div>

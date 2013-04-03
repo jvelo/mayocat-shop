@@ -74,7 +74,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteEntityEntityById(ARTICLE_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
+        updatedRows += this.dao.detachChildren(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

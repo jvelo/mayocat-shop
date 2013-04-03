@@ -162,6 +162,15 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public void detach(Attachment attachment) throws EntityDoesNotExistException
+    {
+        Integer updated = this.dao.detach(attachment.getId());
+        if (updated < 1) {
+            throw new EntityDoesNotExistException();
+        }
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(AttachmentDAO.class);

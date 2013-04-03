@@ -1,5 +1,6 @@
 package org.mayocat.shop.catalog.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import com.google.common.base.Optional;
 
 public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage, Purchasable
 {
+    private static final long serialVersionUID = 6981826946713552336L;
+
     private Long id;
 
     @SearchIndex
@@ -47,7 +50,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     private Long featuredImageId;
 
-    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
+    private transient PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     private Optional<String> model = Optional.absent();
 

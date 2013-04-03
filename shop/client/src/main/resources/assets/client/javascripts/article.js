@@ -116,6 +116,12 @@ angular.module('article', ['ngResource'])
                 imageService.selectFeatured($scope.article, image);
             }
 
+            $scope.removeImage = function(image) {
+                $http.delete("/api/news/" + $scope.slug + "/images/" + image.slug).success(function () {
+                    $scope.reloadImages();
+                });
+            }
+
             $scope.getImageUploadUri = function () {
                 return "/api/news/" + $scope.slug + "/attachments";
             }

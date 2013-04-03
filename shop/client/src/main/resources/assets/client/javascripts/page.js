@@ -74,6 +74,12 @@ angular.module('page', ['ngResource'])
                 imageService.selectFeatured($scope.page, image);
             }
 
+            $scope.removeImage = function(image) {
+                $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
+                    $scope.reloadImages();
+                });
+            }
+
             $scope.getImageUploadUri = function () {
                 return "/api/pages/" + $scope.slug + "/attachments";
             }

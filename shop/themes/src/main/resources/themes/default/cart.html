@@ -1,0 +1,71 @@
+{{#cart}}
+
+{{#if items}}
+<form method="post" action="/cart/">
+<table class="cart">
+    <thead>
+    <tr>
+        <td>Product</td>
+        <td>Price</td>
+        <td>Quantity</td>
+        <td>Sub-total</td>
+        <td></td>
+    </tr>
+    </thead>
+
+    {{#items}}
+    <tr class="item">
+        <td class="description">
+            <img src='pochette_small.jpg' alt='#' />
+            <div>
+                <h3>{{title}}</h3>
+                <span>{{description}}</span>
+            </div>
+        </td>
+        <td class="price"><div>14€</div></td>
+        <td class="quantity">
+
+        </td>
+        <td class="cart-sub-total"><div>28€</div></td>
+        <td class="cart-delete">
+            <img src='img/close.png' alt='Delete this product' />
+        </td>
+    </tr>
+    {{/items}}
+
+
+    {{!
+    <tr class="cart-shipping">
+        <td colspan="2">
+            <span class="continue"><a href="category.html">continue shopping</a></span>
+        </td>
+        <td class="shipping-line-title">
+            <div>shipping</div>
+        </td>
+        <td colspan="2">
+            <div class="shipping-price">6,50€</div>
+        </td>
+    </tr>
+    }}
+
+    <tr class="cart-total">
+        <td colspan="2"></td>
+        <td  class="total-line-title">
+            <div>total</div>
+        </td>
+        <td colspan="2">
+            <div class="total-price">{{total}}€</div>
+        </td>
+    </tr>
+
+</table>
+</form>
+
+<div class="cart-checkout">
+    <a href="#" class="cart-checkout-button">secure payement</a>
+</div>
+{{else}}
+Nothing to see in there.
+{{/if}}
+
+{{/cart}}

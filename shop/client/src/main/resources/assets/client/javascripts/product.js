@@ -86,6 +86,12 @@ angular.module('product', ['ngResource'])
                 };
             }
 
+            $scope.removeImage = function(image) {
+                $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
+                    $scope.reloadImages();
+                });
+            }
+
             $scope.reloadImages = function () {
                 $scope.product.images = $http.get("/api/products/" + $scope.slug + "/images").success(function (data) {
                     $scope.product.images = data;

@@ -24,4 +24,6 @@ public interface AttachmentStore extends Store<Attachment, Long>, EntityStore
     List<Attachment> findAllChildrenOfParentIds(List<Long> parents);
 
     List<Attachment> findAllChildrenOfParentIds(List<Long> parents, List<String> extensions);
+
+    void detach(Attachment attachment) throws EntityDoesNotExistException;
 }

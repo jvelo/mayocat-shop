@@ -79,7 +79,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteEntityEntityById(PAGE_TABLE_NAME, entity. getId());
-        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
+        updatedRows += this.dao.detachChildren(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

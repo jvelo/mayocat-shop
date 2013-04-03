@@ -14,6 +14,7 @@ import org.mayocat.Slugifier;
 import org.mayocat.model.Attachment;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 
 import com.google.common.base.Optional;

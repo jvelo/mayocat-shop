@@ -15,5 +15,5 @@ public interface Session extends Serializable
 
     Object getAttribute(String string);
 
-    void setAttribute(String key, Object value);
+    void setAttribute(String key, Serializable value);
 }

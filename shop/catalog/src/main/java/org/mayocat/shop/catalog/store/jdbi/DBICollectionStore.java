@@ -70,7 +70,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteEntityEntityById(COLLECTION_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
+        updatedRows += this.dao.detachChildren(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

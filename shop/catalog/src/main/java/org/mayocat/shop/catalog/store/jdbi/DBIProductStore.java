@@ -85,7 +85,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         updatedRows += this.dao.deleteAddons(entity);
         updatedRows += this.dao.deleteProductFromCollections(entity.getId());
         updatedRows += this.dao.deleteEntityEntityById(PRODUCT_TABLE_NAME, entity.getId());
-        updatedRows += this.dao.makeEntityChildrenOrphans(entity.getId());
+        updatedRows += this.dao.detachChildren(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
 

@@ -46,7 +46,13 @@ public interface EntityDAO< E extends Entity >
     (
         "UPDATE entity SET parent_id = null WHERE parent_id = :id"
     )
-    Integer makeEntityChildrenOrphans(@Bind("id") Long id);
+    Integer detachChildren(@Bind("id") Long id);
+
+    @SqlUpdate
+    (
+        "UPDATE entity SET parent_id = null WHERE id = :id"
+    )
+    Integer detach(@Bind("id") Long id);
 
     @SqlUpdate
     (

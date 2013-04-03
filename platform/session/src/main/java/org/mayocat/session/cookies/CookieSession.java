@@ -16,9 +16,9 @@ import com.google.common.collect.UnmodifiableIterator;
  */
 public class CookieSession implements Session
 {
-    private static final long serialVersionUID = -6683869045957617693L;
+    private static final long serialVersionUID = 2197579816031332610L;
 
-    private Map<String, Object> attributes = Maps.newHashMap();
+    private Map<String, Serializable> attributes = Maps.newHashMap();
 
     @Override
     public boolean isEmpty()
@@ -39,7 +39,7 @@ public class CookieSession implements Session
     }
 
     @Override
-    public void setAttribute(String key, Object value)
+    public void setAttribute(String key, Serializable value)
     {
         this.attributes.put(key, value);
     }

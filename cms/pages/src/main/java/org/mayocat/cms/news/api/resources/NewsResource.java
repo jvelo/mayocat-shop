@@ -287,6 +287,24 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
         return result;
     }
 
+    @Path("{slug}/images/{imageSlug}")
+    @DELETE
+    @Consumes(MediaType.WILDCARD)
+    public Response detachImage(@PathParam("slug") String slug, @PathParam("imageSlug") String imageSlug)
+    {
+        Attachment attachment = getAttachmentStore().findBySlug(imageSlug);
+        if (attachment == null) {
+            return Response.status(404).build();
+        }
+        try {
+            getAttachmentStore().detach(attachment);
+            return Response.noContent().build();
+
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(404).build();
+        }
+    }
+
     @Path("{slug}/attachments")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
