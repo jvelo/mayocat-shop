@@ -28,7 +28,7 @@ import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.bindings.BindingsContants;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
@@ -50,7 +50,7 @@ import com.google.common.collect.Maps;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CollectionResource extends AbstractFrontResource implements Resource, BindingsContants
+public class CollectionResource extends AbstractFrontResource implements Resource, BindingsConstants
 {
     public static final String PATH = ROOT_PATH + CollectionEntity.PATH;
 
@@ -93,12 +93,13 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         try {
             List<Map<String, Object>> collections = (List<Map<String, Object>>) bindings.get(COLLECTIONS);
             for (Map<String, Object> c : collections) {
-                if (c.containsKey("url") && c.get("url").equals(PATH + SLASH + collection.getSlug())) {
+                if (c.containsKey(BindingsConstants.URL) &&
+                        c.get(BindingsConstants.URL).equals(PATH + SLASH + collection.getSlug()))
+                {
                     c.put("current", true);
                 }
             }
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             // Ignore
         }
 
@@ -106,18 +107,15 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         Map<String, Object> collectionContext = Maps.newHashMap();
         collectionContext.put("title", collection.getTitle());
         collectionContext.put("description", collection.getDescription());
+        collectionContext.put(SLUG, collection.getSlug());
 
         List<Product> products = catalogService.findProductsForCollection(collection);
         List<Map<String, Object>> productsBinding = Lists.newArrayList();
 
-        final CatalogSettings configuration = (CatalogSettings)
-                configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = (GeneralSettings)
-                configurationService.getSettings(GeneralSettings.class);
+        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
+        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
         Theme theme = this.execution.getContext().getTheme();
-
-        ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration,
-                generalSettings, theme);
+        ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration, generalSettings, theme);
 
         for (final Product product : products) {
             List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);

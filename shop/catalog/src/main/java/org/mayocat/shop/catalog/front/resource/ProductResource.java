@@ -29,19 +29,17 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.bindings.BindingsContants;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
-import org.skife.jdbi.cglib.core.CollectionUtils;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
@@ -59,7 +57,7 @@ import com.google.common.collect.Lists;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class ProductResource extends AbstractFrontResource implements Resource, BindingsContants
+public class ProductResource extends AbstractFrontResource implements Resource, BindingsConstants
 {
     public static final String PATH = ROOT_PATH + ProductEntity.PATH;
 
@@ -109,7 +107,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
         FrontView result = new FrontView("products", Optional.<String>absent(), breakpoint);
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
-        bindings.put(BindingsContants.PAGE_TITLE, "All products");
+        bindings.put(BindingsConstants.PAGE_TITLE, "All products");
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
         Theme theme = this.execution.getContext().getTheme();
@@ -163,8 +161,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 
-        bindings.put(BindingsContants.PAGE_TITLE, product.getTitle());
-        bindings.put(BindingsContants.PAGE_DESCRIPTION, product.getDescription());
+        bindings.put(BindingsConstants.PAGE_TITLE, product.getTitle());
+        bindings.put(BindingsConstants.PAGE_DESCRIPTION, product.getDescription());
 
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);

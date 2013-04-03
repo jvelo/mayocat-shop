@@ -28,7 +28,7 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.bindings.BindingsContants;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
@@ -76,8 +76,8 @@ public class PageResource extends AbstractFrontResource implements Resource
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 
-        bindings.put(BindingsContants.PAGE_TITLE, page.getTitle());
-        bindings.put(BindingsContants.PAGE_DESCRIPTION, page.getContent());
+        bindings.put(BindingsConstants.PAGE_TITLE, page.getTitle());
+        bindings.put(BindingsConstants.PAGE_DESCRIPTION, page.getContent());
 
         Theme theme = this.execution.getContext().getTheme();
 

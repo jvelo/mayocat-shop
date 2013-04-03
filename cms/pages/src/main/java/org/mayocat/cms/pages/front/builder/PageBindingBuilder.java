@@ -8,6 +8,7 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
 import org.mayocat.theme.Theme;
@@ -39,7 +40,8 @@ public class PageBindingBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
-        pageContext.put("href", PageResource.PATH + PageResource.SLASH + page.getSlug());
+        pageContext.put(BindingsConstants.URL, PageResource.PATH + PageResource.SLASH + page.getSlug());
+        pageContext.put(BindingsConstants.SLUG, page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();

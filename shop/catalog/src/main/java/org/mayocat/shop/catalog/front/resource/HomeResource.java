@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.front.resource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -72,35 +74,12 @@ public class HomeResource extends AbstractFrontResource implements Resource
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
 
-        List<Product> productList = catalogService.findAllProducts(20, 0);
-        List<Map<String, Object>> productsBinding = Lists.newArrayList();
-
-        final CatalogSettings configuration = (CatalogSettings)
-                configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = (GeneralSettings)
-                configurationService.getSettings(GeneralSettings.class);
-
-        Theme theme = this.execution.getContext().getTheme();
-
-        ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration,
-                generalSettings, theme);
-
-        for (final Product product : productList) {
-            List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
-            List<Image> images = new ArrayList<Image>();
-            for (Attachment attachment : attachments) {
-                if (AbstractFrontResource.isImage(attachment)) {
-                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                    Image image = new Image(attachment, thumbnails);
-                    images.add(image);
-                }
+        bindings.put("template", new HashMap<String, Object>()
+        {
+            {
+                put("home", true);
             }
-
-            Map<String, Object> productContext = productBindingBuilder.build(product, images);
-            productsBinding.add(productContext);
-        }
-
-        bindings.put("__unsupported__products", productsBinding);
+        });
 
         result.putBindings(bindings);
 

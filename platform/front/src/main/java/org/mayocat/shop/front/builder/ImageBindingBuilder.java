@@ -7,6 +7,7 @@ import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -28,7 +29,7 @@ public class ImageBindingBuilder
     {
         Map<String, String> context = Maps.newHashMap();
 
-        context.put("url", "/attachments/" + image.getAttachment().getSlug() +
+        context.put(BindingsConstants.URL, "/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
@@ -64,13 +65,13 @@ public class ImageBindingBuilder
     public Map<String, String> createPlaceholderImageContext()
     {
         Map<String, String> context = Maps.newHashMap();
-        context.put("url", "http://placehold.it/800x800");
+        context.put(BindingsConstants.URL, "http://placehold.it/800x800");
         for (String dimensionName : theme.getThumbnails().keySet()) {
 
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
             String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
                     definition.getHeight());
-            context.put("theme_" + dimensionName + "_url", url);
+            context.put("theme_" + dimensionName + "_" + BindingsConstants.URL, url);
         }
         return context;
     }

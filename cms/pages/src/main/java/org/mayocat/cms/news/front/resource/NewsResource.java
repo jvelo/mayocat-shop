@@ -32,6 +32,7 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
@@ -113,8 +114,8 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Map<String, Object> context = Maps.newHashMap();
         context.put("title", article.getTitle());
         context.put("content", article.getContent());
-        context.put("href", PATH + SLASH + article.getSlug());
-        context.put("slug", article.getSlug());
+        context.put(BindingsConstants.URL, PATH + SLASH + article.getSlug());
+        context.put(BindingsConstants.SLUG, article.getSlug());
 
         Map<String, Object> dateContext = Maps.newHashMap();
         DateFormat shortFormat =
