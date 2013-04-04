@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-store</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.7</version>
     </parent>
     <artifactId>mayocat-platform-store-api</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.7</version>
 
     <name>Mayocat Platform - Store - API</name>
     <description>Persistence layer API</description>

@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-search</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.7</version>
     </parent>
     <artifactId>mayocat-platform-search-api</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.7</version>
 
     <name>Mayocat Platform - Search - API</name>
     <description>Search API</description>
