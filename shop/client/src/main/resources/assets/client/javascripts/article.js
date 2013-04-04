@@ -127,10 +127,11 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.initializeAddons = function () {
-                addonsService.initialize("article", $scope.page).then(function (addons) {
+                addonsService.initialize("article", $scope.article).then(function (addons) {
                     $scope.addons = addons;
                 });
             }
+
 
             $scope.initializeModels = function () {
                 $scope.models = [];
