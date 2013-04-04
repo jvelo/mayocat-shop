@@ -113,14 +113,6 @@
         <name>mayocat-cloudbees-snapshot</name>
         <url>dav:https://repository-mayocat.forge.cloudbees.com/snapshot/</url>
       </snapshotRepository>
-      <!-- To be able to deploy the site into a "sites" directory under the cloudbees-forge release repo
-           Note: the mayocat-cloudbees-site <server> tag has to be setup in your settings.xml
-           Maven command line: mvn site-deploy -->
-      <site>
-        <id>mayocat-cloudbees-site</id>
-        <name>mayocat-cloudbees-site</name>
-        <url>dav:https://repository-mayocat.forge.cloudbees.com/release/sites/${project.artifactId}</url>
-     </site>
     </distributionManagement>
 
      <reporting>
