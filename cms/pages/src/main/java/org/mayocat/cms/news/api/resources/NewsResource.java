@@ -143,7 +143,7 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
     @POST
     @Timed
-    @Authorized(roles = { Role.ADMIN })
+    // @Authorized(roles = { Role.ADMIN })
     public Object createArticle(Article article)
     {
         try {
