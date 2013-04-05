@@ -137,7 +137,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
     @POST
     @Timed
-    //@Authorized(roles = { Role.ADMIN })
+    @Authorized //(roles = { Role.ADMIN })
     public Object createPage(Page page)
     {
         try {

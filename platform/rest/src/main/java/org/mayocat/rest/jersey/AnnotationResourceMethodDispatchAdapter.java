@@ -143,7 +143,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
         {
             return UserResource.class.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
                     && this.method.getHttpMethod().equals(HttpMethod.POST)
-                    && this.method.getResource().getPath().getValue().equals("/api/1.0/user/");
+                    && this.method.getResource().getPath().getValue().equals(UserResource.PATH);
         }
     }
 

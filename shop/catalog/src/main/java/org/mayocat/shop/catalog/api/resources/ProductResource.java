@@ -310,7 +310,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     @POST
     @Timed
-    //@Authorized(roles = { Role.ADMIN })
+    @Authorized //(roles = { Role.ADMIN })
     public Response createProduct(Product product)
     {
         try {

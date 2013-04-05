@@ -240,7 +240,7 @@ public class CollectionResource implements Resource
 
     @POST
     @Timed
-    @Authorized(roles = { Role.ADMIN })
+    @Authorized //(roles = { Role.ADMIN })
     public Response createCollection(Collection collection)
     {
         try {
