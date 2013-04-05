@@ -17,3 +17,6 @@ stacktrace.log
 .DS_Store
 .groovy
 web-app/WEB-INF/classes/
+
+# conf
+shop/application/config-postgres.yml
