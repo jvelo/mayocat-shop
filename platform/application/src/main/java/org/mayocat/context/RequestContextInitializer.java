@@ -77,8 +77,10 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 2. Configurations
 
-        Map<Class, Object> configurations = configurationService.getSettings();
-        context.setSettings(configurations);
+        if (tenant != null) {
+            Map<Class, Object> configurations = configurationService.getSettings();
+            context.setSettings(configurations);
+        }
 
         // 3. User
 
@@ -87,7 +89,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
             // Right now we only support tenant-linked user accounts.
             // In the future we will introduce "global" (or "marketplace") accounts
             for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
-                final String headerValue = Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
+                final String headerValue =
+                        Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
                 for (Authenticator authenticator : this.authenticators.values()) {
                     if (authenticator.respondTo(headerName, headerValue)) {
                         user = authenticator.verify(headerValue, tenant);
@@ -98,13 +101,13 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         context.setUser(user.orNull());
 
         // 4. Theme
-
-        try {
-            context.setTheme(themeLoader.load());
-        } catch (IOException e) {
-            logger.warn("Failed to load theme");
+        if (tenant != null) {
+            try {
+                context.setTheme(themeLoader.load());
+            } catch (IOException e) {
+                logger.warn("Failed to load theme");
+            }
         }
-
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)

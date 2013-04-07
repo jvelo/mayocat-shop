@@ -1,0 +1,1 @@
+org.mayocat.shop.payment.paypal.adaptivepayments.PaypalAdaptivePaymentsGatewayFactory
