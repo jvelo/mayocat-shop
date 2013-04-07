@@ -18,6 +18,8 @@ public interface AccountsService
 
     Tenant findTenant(String slug);
 
+    Tenant findTenantByDefaultHost(String slug);
+
     Tenant createDefaultTenant() throws EntityAlreadyExistsException;
 
     void createTenant(@Valid Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException;

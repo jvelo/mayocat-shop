@@ -18,14 +18,13 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 
-@Component("subdomain")
+@Component("defaultHostAndSubdomain")
 @Singleton
-public class SubdomainSlugTenantResolver implements TenantResolver, ServletRequestListener
+public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver, ServletRequestListener
 {
-
     /**
-     * Request-scoped cache so that we don't call the store multiple times per request for the same host.
-     * FIXME: maybe setup a global cache instead.
+     * Request-scoped cache so that we don't call the store multiple times per request for the same host. FIXME: maybe
+     * setup a global cache instead.
      */
     private ThreadLocal<Map<String, Tenant>> resolved = new ThreadLocal<Map<String, Tenant>>();
 
@@ -43,7 +42,7 @@ public class SubdomainSlugTenantResolver implements TenantResolver, ServletReque
         this.resolved.set(null);
         this.resolved.remove();
     }
-    
+
     @Override
     public Tenant resolve(String host)
     {
@@ -64,9 +63,12 @@ public class SubdomainSlugTenantResolver implements TenantResolver, ServletReque
                 } else {
                     // Multi-tenant
 
-                    tenant = this.accountsService.findTenant(this.extractSlugFromHost(host));
+                    tenant = this.accountsService.findTenantByDefaultHost(host);
                     if (tenant == null) {
-                        return null;
+                        tenant = this.accountsService.findTenant(this.extractSlugFromHost(host));
+                        if (tenant == null) {
+                            return null;
+                        }
                     }
                     this.resolved.get().put(host, tenant);
                 }
@@ -86,12 +88,10 @@ public class SubdomainSlugTenantResolver implements TenantResolver, ServletReque
             if (domainName.hasPublicSuffix()) {
                 // Domain is under a valid TLD, extract the TLD + first child
                 rootDomain = domainName.topPrivateDomain().name();
-            }
-            else if (host.indexOf(".") > 0 && host.indexOf(".") < host.length()){
+            } else if (host.indexOf(".") > 0 && host.indexOf(".") < host.length()) {
                 // Otherwise, best guess : strip everything before the first dot.
                 rootDomain = host.substring(host.indexOf(".") + 1);
-            }
-            else {
+            } else {
                 rootDomain = host;
             }
         } else {
@@ -114,5 +114,4 @@ public class SubdomainSlugTenantResolver implements TenantResolver, ServletReque
     public void requestInitialized(ServletRequestEvent sre)
     {
     }
-
 }

@@ -57,6 +57,12 @@ public class DefaultAccountsService implements AccountsService
     }
 
     @Override
+    public Tenant findTenantByDefaultHost(String host)
+    {
+        return this.tenantStore.get().findByDefaultHost(host);
+    }
+
+    @Override
     public Tenant createDefaultTenant() throws EntityAlreadyExistsException
     {
         if (this.tenantStore.get().findAll(1, 0).size() != 0) {

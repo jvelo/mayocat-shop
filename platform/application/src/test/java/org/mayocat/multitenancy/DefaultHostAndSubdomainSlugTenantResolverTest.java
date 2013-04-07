@@ -14,8 +14,8 @@ import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.test.jmock.AbstractMockingComponentTestCase;
 import org.xwiki.test.jmock.annotation.MockingRequirement;
 
-@MockingRequirement(value = SubdomainSlugTenantResolver.class)
-public class SubdomainSlugTenantResolverTest extends AbstractMockingComponentTestCase<TenantResolver>
+@MockingRequirement(value = DefaultHostAndSubdomainSlugTenantResolver.class)
+public class DefaultHostAndSubdomainSlugTenantResolverTest extends AbstractMockingComponentTestCase<TenantResolver>
 {
     private TenantResolver tenantResolver;
 

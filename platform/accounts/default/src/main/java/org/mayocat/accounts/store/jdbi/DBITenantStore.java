@@ -106,6 +106,12 @@ public class DBITenantStore implements TenantStore, Initializable
     }
 
     @Override
+    public Tenant findByDefaultHost(String host)
+    {
+        return this.dao.findByDefaultHost(host);
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.dbi.get().onDemand(TenantDAO.class);

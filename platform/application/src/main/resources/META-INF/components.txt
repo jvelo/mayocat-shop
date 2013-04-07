@@ -1,4 +1,4 @@
-org.mayocat.multitenancy.SubdomainSlugTenantResolver
+org.mayocat.multitenancy.DefaultHostAndSubdomainSlugTenantResolver
 org.mayocat.multitenancy.TenantResolverProvider
-org.mayocat.multitenancy.SubdomainSlugTenantResolverServletEventListener
+org.mayocat.multitenancy.DefaultHostAndSubdomainSlugTenantResolverServletEventListener
 org.mayocat.context.RequestContextInitializer

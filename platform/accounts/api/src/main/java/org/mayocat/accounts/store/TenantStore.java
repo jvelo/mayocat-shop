@@ -10,5 +10,7 @@ public interface TenantStore extends Store<Tenant, Long>
 {
     Tenant findBySlug(String slug);
 
+    Tenant findByDefaultHost(String host);
+
     void updateConfiguration(TenantConfiguration configuration);
 }

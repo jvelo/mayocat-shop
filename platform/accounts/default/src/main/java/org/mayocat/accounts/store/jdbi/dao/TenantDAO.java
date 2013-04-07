@@ -62,6 +62,16 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
     (
         "SELECT * " +
         "FROM   tenant " +
+        "       INNER JOIN configuration " +
+        "               ON tenant.configuration_id = configuration.id " +
+        "WHERE  default_host = :host "
+    )
+    public abstract Tenant findByDefaultHost(@Bind("host") String host);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM   tenant " +
         "LIMIT  :number " +
         "OFFSET :offset "
     )

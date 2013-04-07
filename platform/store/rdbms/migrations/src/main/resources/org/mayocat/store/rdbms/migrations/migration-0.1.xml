@@ -26,11 +26,17 @@
             <column name="slug" type="varchar(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
+            <column name="default_host" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
             <column name="configuration_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint constraintName="TENANT_CONFIGURATION_FK"
                 baseTableName="tenant" baseColumnNames="configuration_id"
                 referencedTableName="configuration" referencedColumnNames="id"/>
+        <createIndex tableName="tenant" indexName="TENANT_DEFAULT_HOST_INDEX">
+            <column name="default_host"/>
+        </createIndex>
         <createIndex tableName="tenant" indexName="TENANT_SLUG_INDEX">
             <column name="slug"/>
         </createIndex>

@@ -9,18 +9,20 @@ import org.mayocat.event.EventListener;
 import org.xwiki.component.annotation.Component;
 
 @Component
-@Named("subdomainSlugTenantResolverEventListener")
-public class SubdomainSlugTenantResolverServletEventListener implements ServletRequestListener, EventListener
+@Named("defaultHostAndSubdomainSlugTenantResolverEventListener")
+public class DefaultHostAndSubdomainSlugTenantResolverServletEventListener
+        implements ServletRequestListener, EventListener
 {
     @Inject
-    @Named("subdomain")
+    @Named("defaultHostAndSubdomain")
     private TenantResolver defaultTenantResolver;
 
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
     {
         try {
-            SubdomainSlugTenantResolver dtr = (SubdomainSlugTenantResolver) this.defaultTenantResolver;
+            DefaultHostAndSubdomainSlugTenantResolver dtr =
+                    (DefaultHostAndSubdomainSlugTenantResolver) this.defaultTenantResolver;
             if (dtr != null) {
                 dtr.requestDestroyed();
             }

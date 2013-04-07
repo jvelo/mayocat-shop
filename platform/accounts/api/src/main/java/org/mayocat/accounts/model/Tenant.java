@@ -12,11 +12,15 @@ import com.google.common.base.Objects;
 public class Tenant implements Identifiable, Slug
 {
     @JsonIgnore
-    Long id;
+    private Long id;
 
     @NotNull
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
-    String slug;
+    private String slug;
+
+    // FIXME
+    // Implement a @Hostname constraint that verifies a hostname is valid
+    private String defaultHost;
 
     @JsonIgnore
     private TenantConfiguration configuration;
@@ -61,6 +65,11 @@ public class Tenant implements Identifiable, Slug
     public void setSlug(String slug)
     {
         this.slug = slug;
+    }
+
+    public String getDefaultHost()
+    {
+        return defaultHost;
     }
 
     // ///////////////////////////////////////////////////////////
