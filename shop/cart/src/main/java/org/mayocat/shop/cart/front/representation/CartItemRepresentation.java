@@ -13,7 +13,7 @@ public class CartItemRepresentation
 
     private PriceRepresentation unitPrice;
 
-    private PriceRepresentation total;
+    private PriceRepresentation itemTotal;
 
     public String getTitle()
     {
@@ -55,13 +55,13 @@ public class CartItemRepresentation
         this.unitPrice = unitPrice;
     }
 
-    public PriceRepresentation getTotal()
+    public PriceRepresentation getItemTotal()
     {
-        return total;
+        return itemTotal;
     }
 
-    public void setTotal(PriceRepresentation total)
+    public void setItemTotal(PriceRepresentation itemTotal)
     {
-        this.total = total;
+        this.itemTotal = itemTotal;
     }
 }

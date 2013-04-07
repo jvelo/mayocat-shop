@@ -2,12 +2,17 @@
     {{#product}}
     <h2 class="fn">{{title}}</h2>
 
-        <form action="/cart/add" method="post">
-            <div>
-                <input type="hidden" name="product" value="{{slug}}" />
-                <input type="submit" value="Add to cart" />
-            </div>
-        </form>
+    {{#price}}
+    <form action="/cart/add" method="post">
+        <div>
+            <input type="hidden" name="product" value="{{../slug}}"/>
+            <input type="submit" value="Add to cart"/>
+        </div>
+    </form>
+    {{/price}}
+    {{^price}}
+        This product is currently not for sale.
+    {{/price}}
 
     {{#description}}
     <p class="description">

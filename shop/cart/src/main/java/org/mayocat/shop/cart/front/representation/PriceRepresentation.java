@@ -1,5 +1,8 @@
 package org.mayocat.shop.cart.front.representation;
 
+import java.math.BigDecimal;
+import java.util.Currency;
+
 /**
  * @version $Id$
  */
@@ -7,25 +10,21 @@ public class PriceRepresentation
 {
     private String amount;
 
-    private String currency;
+    private CurrencyRepresentation currency;
+
+    public PriceRepresentation(String amount, CurrencyRepresentation currency)
+    {
+        this.amount = amount;
+        this.currency = currency;
+    }
 
     public String getAmount()
     {
         return amount;
     }
 
-    public void setAmount(String amount)
-    {
-        this.amount = amount;
-    }
-
-    public String getCurrency()
+    public CurrencyRepresentation getCurrency()
     {
         return currency;
-    }
-
-    public void setCurrency(String currency)
-    {
-        this.currency = currency;
     }
 }

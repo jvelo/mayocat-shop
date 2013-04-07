@@ -1,8 +1,7 @@
 package org.mayocat.shop.cart.front.representation;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -24,29 +23,51 @@ public class CartRepresentation
 {
     private List<CartItemRepresentation> items = Lists.newArrayList();
 
-    public CartRepresentation(Cart cart)
+    private PriceRepresentation total;
+
+    public CartRepresentation(Cart cart, Locale locale)
     {
         Map<Purchasable, Long> items = cart.getItems();
+        CurrencyUnit currency = CurrencyUnit.of(cart.getCurrency());
+        MoneyFormatter amountFormatter = new MoneyFormatterBuilder().
+                appendAmount(MoneyAmountStyle.ASCII_DECIMAL_COMMA_GROUP3_DOT).
+                toFormatter();
+
+        MoneyFormatter currencyFormatter = new MoneyFormatterBuilder().
+                appendCurrencySymbolLocalized().
+                toFormatter();
+        String cartCurrency =
+                currencyFormatter.withLocale(locale).print(
+                        Money.of(currency, BigDecimal.TEN, RoundingMode.HALF_EVEN));
+
+        String total =
+                amountFormatter.withLocale(locale).print(Money.of(currency, cart.getTotal(), RoundingMode.HALF_EVEN));
+
+        CurrencyRepresentation currencyRepresentation = new CurrencyRepresentation(cartCurrency, cartCurrency);
+        this.total = new PriceRepresentation(total, currencyRepresentation);
+
         for (Purchasable purchasable : items.keySet()) {
+            Long quantity = items.get(purchasable);
             CartItemRepresentation cir = new CartItemRepresentation();
             cir.setTitle(purchasable.getTitle());
             cir.setDescription(purchasable.getDescription());
-            cir.setQuantity(items.get(purchasable));
+            cir.setQuantity(quantity);
 
             purchasable.getUnitPrice();
 
-            CurrencyUnit currency = CurrencyUnit.of(cart.getCurrency());
-            MoneyFormatter amountFormatter = new MoneyFormatterBuilder().
-                    appendAmount(MoneyAmountStyle.ASCII_DECIMAL_COMMA_GROUP3_DOT).
-                    appendCurrencySymbolLocalized().
-                    toFormatter();
-            String amount = amountFormatter.print(Money.of(currency, purchasable.getUnitPrice(), RoundingMode.HALF_EVEN));
+            String unitAmount =
+                    amountFormatter.withLocale(locale).print(
+                            Money.of(currency, purchasable.getUnitPrice(), RoundingMode.HALF_EVEN));
 
-            PriceRepresentation unitPrice = new PriceRepresentation();
-            unitPrice.setAmount(amount);
-            unitPrice.setCurrency(currency.getSymbol());
+            String itemAmount = amountFormatter.withLocale(locale).print(Money
+                    .of(currency, purchasable.getUnitPrice().multiply(BigDecimal.valueOf(quantity)),
+                            RoundingMode.HALF_EVEN));
+
+            PriceRepresentation unitPrice = new PriceRepresentation(unitAmount, currencyRepresentation);
+            PriceRepresentation itemTotal = new PriceRepresentation(itemAmount, currencyRepresentation);
 
             cir.setUnitPrice(unitPrice);
+            cir.setItemTotal(itemTotal);
 
             this.items.add(cir);
         }
@@ -55,5 +76,10 @@ public class CartRepresentation
     public List<CartItemRepresentation> getItems()
     {
         return items;
+    }
+
+    public PriceRepresentation getTotal()
+    {
+        return total;
     }
 }

@@ -2,6 +2,7 @@ package org.mayocat.shop.cart.front;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -29,6 +31,7 @@ import org.mayocat.shop.cart.front.representation.CartRepresentation;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.theme.Breakpoint;
@@ -81,15 +84,74 @@ public class CartResource implements Resource
         return Response.seeOther(new URI("/cart")).build();
     }
 
+    @POST
+    @Path("update")
+    public Response updateCart(MultivaluedMap<String, String> queryParams) throws URISyntaxException
+    {
+        boolean isRemoveItemRequest = false;
+        Cart cart = getCart();
+
+        for (String key : queryParams.keySet()) {
+            if (key.startsWith("remove_")) {
+                // Handle "remove product" request
+                isRemoveItemRequest = true;
+                try {
+                    Integer index = Integer.valueOf(key.substring("remove_".length()));
+                    Map<Purchasable, Long> items = cart.getItems();
+                    Integer loopIndex = 0;
+                    Purchasable itemToRemove = null;
+                    for (Purchasable purchasable : items.keySet()) {
+                        if (loopIndex.equals(index)) {
+                            itemToRemove = purchasable;
+                        }
+                        loopIndex++;
+                    }
+                    if (itemToRemove != null) {
+                        cart.removeItem(itemToRemove);
+                    } else {
+                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }
+                } catch (NumberFormatException e) {
+                    return Response.status(Response.Status.BAD_REQUEST).build();
+                }
+            }
+        }
+
+        if (!isRemoveItemRequest) {
+            // Handle update request
+            for (String key : queryParams.keySet()) {
+                if (key.startsWith("quantity_")) {
+                    Long quantity = Long.valueOf(queryParams.getFirst(key));
+                    try {
+                        Integer index = Integer.valueOf(key.substring("quantity_".length()));
+
+                        Map<Purchasable, Long> items = cart.getItems();
+                        Integer loopIndex = 0;
+                        for (Purchasable purchasable : items.keySet()) {
+                            if (loopIndex.equals(index)) {
+                                cart.setItem(purchasable, quantity);
+                            }
+                            loopIndex++;
+                        }
+                    } catch (NumberFormatException e) {
+                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }
+                }
+            }
+        }
+
+        return Response.seeOther(new URI("/cart")).build();
+    }
+
     @GET
-    public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
+    public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
     {
         Cart cart = getCart();
 
         FrontView result = new FrontView("cart", breakpoint);
 
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
-        bindings.put("cart", new CartRepresentation(cart));
+        bindings.put("cart", new CartRepresentation(cart, locale));
 
         result.putBindings(bindings);
 

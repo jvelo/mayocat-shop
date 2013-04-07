@@ -186,11 +186,8 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
         return Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
-                && Objects.equal(this.description, other.description)
                 && Objects.equal(this.onShelf, other.onShelf)
                 && Objects.equal(this.price, other.price)
-                && Objects.equal(this.addons, other.addons)
-                && Objects.equal(this.model, other.model)
                 && Objects.equal(this.stock, other.stock)
                 && Objects.equal(this.featuredImageId, other.featuredImageId);
     }
@@ -201,13 +198,10 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
         return Objects.hashCode(
                 this.slug,
                 this.title,
-                this.description,
                 this.onShelf,
                 this.price,
-                this.addons,
                 this.stock,
-                this.featuredImageId,
-                this.model
+                this.featuredImageId
         );
     }
 

@@ -5,6 +5,8 @@
 logging:
   loggers:
       "org.mayocat": DEBUG
+      # Silence MagicParser verbose INFO logs
+      "net.sf.jmimemagic.MagicParser": WARN
   file:
     archive: false
 
@@ -41,7 +43,7 @@ security:
 
 platform:
   thumbnails:
-    small:  
+    small:
       name: Small
       width: 100
       height: 100
