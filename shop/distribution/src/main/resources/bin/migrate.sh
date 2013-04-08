@@ -25,7 +25,6 @@ fi
 
 export JAVA_OPTS="-server -Xms128m -Xmx512m -XX:MaxPermSize=192m -Dfile.encoding=utf-8 -Djava.awt.headless=true -XX:+UseParallelGC -XX:MaxGCPauseMillis=100"
 
-#  -jar "../lib/mayocat-shop-application-0.7.jar" \
 java $JAVA_OPTS \
   $DEBUG \
   -classpath "../lib/*" \

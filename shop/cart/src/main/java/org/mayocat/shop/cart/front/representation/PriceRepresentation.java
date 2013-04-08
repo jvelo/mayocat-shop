@@ -29,7 +29,6 @@ public class PriceRepresentation
         MoneyFormatter formatter = new MoneyFormatterBuilder().appendAmount(MoneyAmountStyle.of(locale)).toFormatter();
 
         CurrencyUnit currencyUnit = CurrencyUnit.of(currency);
-        currencyUnit.getSymbol()
         this.amount = formatter.withLocale(locale)
                 .print(Money.of(currencyUnit, amount, RoundingMode.HALF_EVEN));
 
