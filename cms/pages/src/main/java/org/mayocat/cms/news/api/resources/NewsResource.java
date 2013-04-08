@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -23,7 +24,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
@@ -116,10 +116,12 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 ? Collections.<String>emptyList()
                 : Arrays.asList(expand.split(","));
 
+        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
+        DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
         ArticleRepresentation representation;
         if (expansions.contains("images")) {
             List<ImageRepresentation> images = getImages(slug);
-            representation = new ArticleRepresentation(article, images);
+            representation = new ArticleRepresentation(tenantTz, article, images);
             if (images != null) {
                 for (ImageRepresentation image : images) {
                     if (image.isFeaturedImage()) {
@@ -128,7 +130,7 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 }
             }
         } else {
-            representation = new ArticleRepresentation(article);
+            representation = new ArticleRepresentation(tenantTz, article);
         }
 
         if (article.getAddons().isLoaded()) {
@@ -188,12 +190,9 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                         updatedArticleRepresentation.getPublicationDate() == null)
                 {
                     // If the article is being published and has no publication date, set it to right now
-                    GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
-                    DateTime now = new DateTime()
-                            .withZone(DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue()));
-                    article.setPublicationDate(now.toLocalDateTime().toDate());
+                    article.setPublicationDate(new Date());
                 } else {
-                    article.setPublicationDate(updatedArticleRepresentation.getPublicationDate());
+                    article.setPublicationDate(updatedArticleRepresentation.getPublicationDate().toDate());
                 }
 
                 article.setPublished(updatedArticleRepresentation.getPublished());

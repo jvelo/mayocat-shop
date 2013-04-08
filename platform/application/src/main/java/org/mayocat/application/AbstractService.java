@@ -39,6 +39,7 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 /**
  * @version $Id$
@@ -76,9 +77,11 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     @Override
     public void initialize(Bootstrap<C> bootstrap)
     {
-        bootstrap.getObjectMapperFactory().registerModule(new TimeZoneModule());
-
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
+
+        this.objectMapperFactory.registerModule(new TimeZoneModule());
+        this.objectMapperFactory.registerModule(new JodaModule());
+
 
         this.addModule(new AccountsModule());
     }

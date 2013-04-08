@@ -1,13 +1,18 @@
 package org.mayocat.cms.news.api.representations;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.List;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.rest.representations.ImageRepresentation;
+import org.mayocat.jackson.DateTimeISO8601Serializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+ 
 
 /**
  * @version $Id$
@@ -27,7 +32,8 @@ public class ArticleRepresentation
 
     private String content;
 
-    private Date publicationDate;
+    @JsonSerialize(using=DateTimeISO8601Serializer.class)
+    private DateTime publicationDate;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ImageRepresentation featuredImage = null;
@@ -45,7 +51,7 @@ public class ArticleRepresentation
         // No-arg constructor required for Jackson de-serialization
     }
 
-    public ArticleRepresentation(Article article)
+    public ArticleRepresentation(DateTimeZone tenantZone, Article article)
     {
         this.slug = article.getSlug();
         this.model = article.getModel().orNull();
@@ -53,12 +59,14 @@ public class ArticleRepresentation
         this.href = "/api/1.0/news/" + article.getSlug();
         this.title = article.getTitle();
         this.content = article.getContent();
-        this.publicationDate = article.getPublicationDate();
+        if (article.getPublicationDate() != null) {
+            this.publicationDate = new DateTime(article.getPublicationDate().getTime(), tenantZone);
+        }
     }
 
-    public ArticleRepresentation(Article article, List<ImageRepresentation> images)
+    public ArticleRepresentation(DateTimeZone tenantZone, Article article, List<ImageRepresentation> images)
     {
-        this(article);
+        this(tenantZone, article);
         this.images = images;
     }
 
@@ -112,12 +120,12 @@ public class ArticleRepresentation
         this.model = model;
     }
 
-    public Date getPublicationDate()
+    public DateTime getPublicationDate()
     {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate)
+    public void setPublicationDate(DateTime publicationDate)
     {
         this.publicationDate = publicationDate;
     }
