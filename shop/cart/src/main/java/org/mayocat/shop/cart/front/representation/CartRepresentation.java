@@ -28,23 +28,7 @@ public class CartRepresentation
     public CartRepresentation(Cart cart, Locale locale)
     {
         Map<Purchasable, Long> items = cart.getItems();
-        CurrencyUnit currency = CurrencyUnit.of(cart.getCurrency());
-        MoneyFormatter amountFormatter = new MoneyFormatterBuilder().
-                appendAmount(MoneyAmountStyle.ASCII_DECIMAL_COMMA_GROUP3_DOT).
-                toFormatter();
-
-        MoneyFormatter currencyFormatter = new MoneyFormatterBuilder().
-                appendCurrencySymbolLocalized().
-                toFormatter();
-        String cartCurrency =
-                currencyFormatter.withLocale(locale).print(
-                        Money.of(currency, BigDecimal.TEN, RoundingMode.HALF_EVEN));
-
-        String total =
-                amountFormatter.withLocale(locale).print(Money.of(currency, cart.getTotal(), RoundingMode.HALF_EVEN));
-
-        CurrencyRepresentation currencyRepresentation = new CurrencyRepresentation(cartCurrency, cartCurrency);
-        this.total = new PriceRepresentation(total, currencyRepresentation);
+        this.total = new PriceRepresentation(cart.getTotal(), cart.getCurrency(), locale);
 
         for (Purchasable purchasable : items.keySet()) {
             Long quantity = items.get(purchasable);
@@ -55,16 +39,10 @@ public class CartRepresentation
 
             purchasable.getUnitPrice();
 
-            String unitAmount =
-                    amountFormatter.withLocale(locale).print(
-                            Money.of(currency, purchasable.getUnitPrice(), RoundingMode.HALF_EVEN));
-
-            String itemAmount = amountFormatter.withLocale(locale).print(Money
-                    .of(currency, purchasable.getUnitPrice().multiply(BigDecimal.valueOf(quantity)),
-                            RoundingMode.HALF_EVEN));
-
-            PriceRepresentation unitPrice = new PriceRepresentation(unitAmount, currencyRepresentation);
-            PriceRepresentation itemTotal = new PriceRepresentation(itemAmount, currencyRepresentation);
+            PriceRepresentation unitPrice =
+                    new PriceRepresentation(purchasable.getUnitPrice(), cart.getCurrency(), locale);
+            PriceRepresentation itemTotal =
+                    new PriceRepresentation(cart.getItemTotal(purchasable), cart.getCurrency(), locale);
 
             cir.setUnitPrice(unitPrice);
             cir.setItemTotal(itemTotal);
