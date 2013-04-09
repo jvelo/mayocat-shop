@@ -15,6 +15,8 @@ import com.google.common.collect.Lists;
  */
 public class CartRepresentation
 {
+    private Long numberOfItems = 0l;
+
     private List<CartItemRepresentation> items = Lists.newArrayList();
 
     private PriceRepresentation total;
@@ -26,12 +28,11 @@ public class CartRepresentation
 
         for (Purchasable purchasable : items.keySet()) {
             Long quantity = items.get(purchasable);
+
             CartItemRepresentation cir = new CartItemRepresentation();
             cir.setTitle(purchasable.getTitle());
             cir.setDescription(purchasable.getDescription());
             cir.setQuantity(quantity);
-
-            purchasable.getUnitPrice();
 
             PriceRepresentation unitPrice =
                     new PriceRepresentation(purchasable.getUnitPrice(), cart.getCurrency(), locale);
@@ -41,6 +42,7 @@ public class CartRepresentation
             cir.setUnitPrice(unitPrice);
             cir.setItemTotal(itemTotal);
 
+            numberOfItems += quantity;
             this.items.add(cir);
         }
     }
@@ -53,5 +55,10 @@ public class CartRepresentation
     public PriceRepresentation getTotal()
     {
         return total;
+    }
+
+    public Long getNumberOfItems()
+    {
+        return numberOfItems;
     }
 }

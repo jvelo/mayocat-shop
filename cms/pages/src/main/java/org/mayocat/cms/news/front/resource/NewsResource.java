@@ -35,6 +35,7 @@ import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
+import org.mayocat.shop.front.util.BindingUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
@@ -112,8 +113,8 @@ public class NewsResource extends AbstractFrontResource implements Resource
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
 
         Map<String, Object> context = Maps.newHashMap();
-        context.put("title", article.getTitle());
-        context.put("content", article.getContent());
+        context.put("title", BindingUtils.safeString(article.getTitle()));
+        context.put("content", BindingUtils.safeHtml(article.getContent()));
         context.put(BindingsConstants.URL, PATH + SLASH + article.getSlug());
         context.put(BindingsConstants.SLUG, article.getSlug());
 
@@ -122,9 +123,9 @@ public class NewsResource extends AbstractFrontResource implements Resource
                 DateFormat.getDateInstance(DateFormat.SHORT, settings.getLocales().getMainLocale().getValue());
         DateFormat longFormat =
                 DateFormat.getDateInstance(DateFormat.LONG, settings.getLocales().getMainLocale().getValue());
-        dateContext.put("short", shortFormat.format(article.getPublicationDate()));
-        dateContext.put("long", shortFormat.format(article.getPublicationDate()));
-        context.put("publication_date", dateContext);
+        dateContext.put("shortFormat", shortFormat.format(article.getPublicationDate()));
+        dateContext.put("longFormat", longFormat.format(article.getPublicationDate()));
+        context.put("publicationDate", dateContext);
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
 
@@ -140,13 +141,22 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
         ImageBindingBuilder imageBindingBuilder = new ImageBindingBuilder(theme);
+        Image featuredImage = null;
 
         if (images.size() > 0) {
-            imagesContext.put("featured", imageBindingBuilder.createImageContext(images.get(0)));
             for (Image image : images) {
+                if (featuredImage == null && image.getAttachment().getId().equals(article.getFeaturedImageId())) {
+                    featuredImage = image;
+                }
                 allImages.add(imageBindingBuilder.createImageContext(image));
             }
+            if (featuredImage == null) {
+                // If no featured image has been set, we use the first image in the array.
+                featuredImage = images.get(0);
+            }
+            imagesContext.put("featured", imageBindingBuilder.createImageContext(featuredImage));
         } else {
+            // Create placeholder image
             Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
