@@ -80,9 +80,9 @@ angular.module('article', ['ngResource'])
                 }
                 var newDate = $scope.newPublicationDate + "T" + newTime;
                 // add the tenant timezone
-                // TODO: better to have this from api instead of parsing the date
-                // if we need to know the offset without having a date
-                var tz = timeService.convertISO($scope.article.publicationDate, "Z");
+                // TODO: this is a quick hack
+                // have this from api instead of parsing the date
+                var tz = $scope.article.publicationDate.substr(-6, 6);
 
                 $scope.article.publicationDate = newDate + tz;
                 $scope.cancelChangePublicationDate();
