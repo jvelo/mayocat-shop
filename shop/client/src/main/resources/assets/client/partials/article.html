@@ -138,7 +138,7 @@
             </div>
             <div ng-show="article.published">
                 <p>
-                    Published on {{article.publicationDate | timestampAsDate:'LLL' }}
+                    Published on {{article.publicationDate | iso8601toLocalDate:'LLL' }}
                     <br/>
                     <small ng-click="changePublicationDate()">
                         Change publication date
