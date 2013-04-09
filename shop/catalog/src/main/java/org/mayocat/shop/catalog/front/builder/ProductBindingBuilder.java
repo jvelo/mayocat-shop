@@ -2,7 +2,6 @@ package org.mayocat.shop.catalog.front.builder;
 
 import java.util.Arrays;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -11,11 +10,13 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
+import org.mayocat.shop.front.util.BindingUtils;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -49,45 +50,37 @@ public class ProductBindingBuilder implements BindingsConstants
     {
         Map<String, Object> productContext = Maps.newHashMap();
 
-        productContext.put("title", product.getTitle());
-        productContext.put("description", product.getDescription());
-        productContext.put(URL, "/" + ProductEntity.PATH +"/" + product.getSlug());
+        productContext.put("title", BindingUtils.safeString(product.getTitle()));
+        productContext.put("description", BindingUtils.safeHtml(product.getDescription()));
+        productContext.put(URL, "/" + ProductEntity.PATH + "/" + product.getSlug());
         productContext.put(SLUG, product.getSlug());
 
         // Prices
         if (product.getUnitPrice() != null) {
             final Locale locale = generalSettings.getLocales().getMainLocale().getValue();
             final Currency currency = catalogSettings.getCurrencies().getMainCurrency().getValue();
-            productContext.put("price", new HashMap<String, Object>()
-            {
-                {
-                    put("amount", product.getUnitPrice());
-                    put("currency", new HashMap<String, Object>()
-                    {
-                        {
-                            put("code", currency.getCurrencyCode());
-                            put("symbol", currency.getSymbol(locale));
-                        }
-                    });
-                }
-            });
-
-            // TODO
-            // - distinguish between two symbols : "absolute" and "internationalized" (i.e. "$" vs. "US$")
-            // - look into amount formatting.
-            // Check http://joda-money.sourceforge.net/apidocs/org/joda/money/format/MoneyFormatter.html
-            // - handle multiple prices (unit, discounts, etc.)
+            productContext.put("unitPrice", new PriceRepresentation(product.getUnitPrice(), currency, locale));
         }
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
 
+        Image featuredImage = null;
+
         if (images.size() > 0) {
-            imagesContext.put("featured", imageBindingBuilder.createImageContext(images.get(0)));
             for (Image image : images) {
+                if (featuredImage == null && image.getAttachment().getId().equals(product.getFeaturedImageId())) {
+                    featuredImage = image;
+                }
                 allImages.add(imageBindingBuilder.createImageContext(image));
             }
+            if (featuredImage == null) {
+                // If no featured image has been set, we use the first image in the array.
+                featuredImage = images.get(0);
+            }
+            imagesContext.put("featured", imageBindingBuilder.createImageContext(featuredImage));
         } else {
+            // Create placeholder image
             Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
@@ -123,5 +116,4 @@ public class ProductBindingBuilder implements BindingsConstants
 
         return productContext;
     }
-
 }

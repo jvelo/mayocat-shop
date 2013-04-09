@@ -1,4 +1,4 @@
-package org.mayocat.shop.cart.front.representation;
+package org.mayocat.shop.catalog.front.representation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

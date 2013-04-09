@@ -1,4 +1,4 @@
-package org.mayocat.shop.cart.front.representation;
+package org.mayocat.shop.catalog.front.representation;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 
 /**
  * @version $Id$

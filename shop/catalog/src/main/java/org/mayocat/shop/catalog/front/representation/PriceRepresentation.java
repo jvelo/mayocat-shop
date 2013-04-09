@@ -1,4 +1,4 @@
-package org.mayocat.shop.cart.front.representation;
+package org.mayocat.shop.catalog.front.representation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,8 +10,6 @@ import org.joda.money.Money;
 import org.joda.money.format.MoneyAmountStyle;
 import org.joda.money.format.MoneyFormatter;
 import org.joda.money.format.MoneyFormatterBuilder;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @version $Id$

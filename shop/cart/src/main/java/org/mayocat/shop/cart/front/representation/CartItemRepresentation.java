@@ -1,5 +1,7 @@
 package org.mayocat.shop.cart.front.representation;
 
+import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
+
 /**
  * @version $Id$
  */

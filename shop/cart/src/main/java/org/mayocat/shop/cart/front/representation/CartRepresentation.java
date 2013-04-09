@@ -1,17 +1,11 @@
 package org.mayocat.shop.cart.front.representation;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.joda.money.CurrencyUnit;
-import org.joda.money.Money;
-import org.joda.money.format.MoneyAmountStyle;
-import org.joda.money.format.MoneyFormatter;
-import org.joda.money.format.MoneyFormatterBuilder;
 import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.model.Purchasable;
 
 import com.google.common.collect.Lists;

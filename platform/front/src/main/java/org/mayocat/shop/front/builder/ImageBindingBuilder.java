@@ -8,9 +8,11 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
 import org.mayocat.shop.front.bindings.BindingsConstants;
+import org.mayocat.shop.front.util.BindingUtils;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -31,6 +33,8 @@ public class ImageBindingBuilder
 
         context.put(BindingsConstants.URL, "/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
+        context.put("title", BindingUtils.safeString(image.getAttachment().getTitle()));
+        context.put("description", BindingUtils.safeString(image.getAttachment().getDescription()));
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
