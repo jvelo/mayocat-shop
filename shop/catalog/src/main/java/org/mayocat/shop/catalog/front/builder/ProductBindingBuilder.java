@@ -103,7 +103,7 @@ public class ProductBindingBuilder implements BindingsConstants
                     Optional<org.mayocat.model.Addon> addon =
                             AddonBindingBuilderHelper.findAddon(groupKey, field, product.getAddons().get());
                     if (addon.isPresent()) {
-                        groupContext.put(field, addon.get().getValue());
+                        groupContext.put(field, BindingUtils.addonValue(addon.get().getValue()));
                     } else {
                         groupContext.put(field, null);
                     }

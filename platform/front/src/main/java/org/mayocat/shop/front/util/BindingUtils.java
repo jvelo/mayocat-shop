@@ -11,11 +11,22 @@ public class BindingUtils
 {
     public static String safeString(String string)
     {
-        return StringEscapeUtils.escapeHtml4(Strings.nullToEmpty(string));
+        return string == null ? null : StringEscapeUtils.escapeHtml4(string);
     }
 
     public static String safeHtml(String string)
     {
-        return Strings.nullToEmpty(string);
+        return string;
+    }
+
+    public static Object addonValue(Object value)
+    {
+        if (value == null) {
+            return null;
+        }
+        if (String.class.isAssignableFrom(value.getClass())) {
+            return Strings.emptyToNull((String) value);
+        }
+        return value;
     }
 }
