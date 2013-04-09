@@ -51,9 +51,6 @@ public class PageResource extends AbstractFrontResource implements Resource
     private Provider<PageStore> pageStore;
 
     @Inject
-    private FrontBindingManager bindingManager;
-
-    @Inject
     private Provider<AttachmentStore> attachmentStore;
 
     @Inject
@@ -74,7 +71,7 @@ public class PageResource extends AbstractFrontResource implements Resource
 
         FrontView result = new FrontView("page", page.getModel(), breakpoint);
 
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
 
         bindings.put(BindingsConstants.PAGE_TITLE, page.getTitle());
         bindings.put(BindingsConstants.PAGE_DESCRIPTION, page.getContent());

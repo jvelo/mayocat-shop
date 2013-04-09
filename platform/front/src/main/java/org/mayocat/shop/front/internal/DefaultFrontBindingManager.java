@@ -4,15 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.FrontBindingSupplier;
 import org.mayocat.shop.front.annotation.FrontBinding;
+import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -55,16 +58,22 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
     }
 
     @Override
-    public Map<String, Object> getBindings(List<PathSegment> pathSegments)
+    public Map<String, Object> getBindings(final UriInfo uriInfo)
     {
         Map result = Maps.newHashMap();
+        result.put(BindingsConstants.LOCATION, new HashMap()
+        {
+            {
+                put("path", "/" + uriInfo.getPath());
+            }
+        });
 
         // Root path ('/')
         invokeNodeMethods(result, bindings);
 
         // Children path
-        if (!isRoot(pathSegments)) {
-            walkNode(bindings, pathSegments, result);
+        if (!isRoot(uriInfo.getPathSegments())) {
+            walkNode(bindings, uriInfo.getPathSegments(), result);
         }
         return result;
     }
@@ -111,7 +120,8 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
         }
     }
 
-    private boolean isRoot(List<PathSegment> segments) {
+    private boolean isRoot(List<PathSegment> segments)
+    {
         if (segments.size() == 1 && segments.get(0).getPath().equals("")) {
             return true;
         }

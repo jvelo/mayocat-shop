@@ -20,4 +20,6 @@ public interface BindingsConstants
     final String PAGE_DESCRIPTION = "page_description";
 
     final String COLLECTIONS = "collections";
+
+    final String LOCATION = "location";
 }

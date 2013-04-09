@@ -58,9 +58,6 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
     private CatalogService catalogService;
 
     @Inject
-    private FrontBindingManager bindingManager;
-
-    @Inject
     private ConfigurationService configurationService;
 
     @Inject
@@ -84,7 +81,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
 
         FrontView result = new FrontView("collection", breakpoint);
 
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
 
         bindings.put(PAGE_TITLE, collection.getTitle());
         bindings.put(PAGE_DESCRIPTION, collection.getDescription());

@@ -3,6 +3,7 @@ package org.mayocat.shop.catalog.front.resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,9 +69,6 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
     private Provider<ProductStore> productStore;
 
     @Inject
-    private FrontBindingManager bindingManager;
-
-    @Inject
     private Provider<AttachmentStore> attachmentStore;
 
     @Inject
@@ -106,7 +104,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         }
 
         FrontView result = new FrontView("products", Optional.<String>absent(), breakpoint);
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
         bindings.put(BindingsConstants.PAGE_TITLE, "All products");
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
@@ -149,7 +147,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
     @Path("{slug}")
     @GET
-    public FrontView getProduct(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
+    public FrontView getProduct(final @PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
         final Product product = this.productStore.get().findBySlug(slug);
@@ -159,7 +157,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
         FrontView result = new FrontView("product", product.getModel(), breakpoint);
 
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
 
         bindings.put(BindingsConstants.PAGE_TITLE, product.getTitle());
         bindings.put(BindingsConstants.PAGE_DESCRIPTION, product.getDescription());

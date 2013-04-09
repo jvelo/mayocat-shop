@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
 import org.xwiki.component.annotation.Role;
 
@@ -15,5 +16,5 @@ import org.xwiki.component.annotation.Role;
 public interface FrontBindingManager
 {
 
-    Map<String, Object> getBindings(List<PathSegment> segments);
+    Map<String, Object> getBindings(UriInfo uriInfo);
 }

@@ -82,7 +82,7 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Integer offset = page * DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE;
         List<Article> articles = articleStore.get().findAllPublished(offset, DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE);
 
-        Map<String, Object> bindings = Maps.newHashMap();
+        Map<String, Object> bindings = getBindings(uriInfo);
         List<Map<String, Object>> articlesContext = Lists.newArrayList();
         for (Article article : articles) {
             articlesContext.add(buildArticleContext(article));

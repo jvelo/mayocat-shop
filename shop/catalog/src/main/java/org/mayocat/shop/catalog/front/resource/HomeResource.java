@@ -53,9 +53,6 @@ public class HomeResource extends AbstractFrontResource implements Resource
     private ConfigurationService configurationService;
 
     @Inject
-    private FrontBindingManager bindingManager;
-
-    @Inject
     private CatalogService catalogService;
 
     @Inject
@@ -71,8 +68,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
     {
         FrontView result = new FrontView("home", breakpoint);
-
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
 
         bindings.put("template", new HashMap<String, Object>()
         {

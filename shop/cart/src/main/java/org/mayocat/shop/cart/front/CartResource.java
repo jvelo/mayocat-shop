@@ -32,6 +32,7 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.FrontBindingManager;
+import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
@@ -45,13 +46,10 @@ import com.google.common.base.Strings;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CartResource implements Resource
+public class CartResource extends AbstractFrontResource implements Resource
 {
     @Inject
     private Provider<ProductStore> productStore;
-
-    @Inject
-    private FrontBindingManager bindingManager;
 
     @Inject
     private CartAccessor cartAccessor;
@@ -140,7 +138,7 @@ public class CartResource implements Resource
     public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
     {
         FrontView result = new FrontView("cart", breakpoint);
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = getBindings(uriInfo);
         result.putBindings(bindings);
         return result;
     }
