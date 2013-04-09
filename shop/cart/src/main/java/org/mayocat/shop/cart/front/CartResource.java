@@ -22,14 +22,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.session.Session;
+import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.front.representation.CartRepresentation;
 import org.mayocat.shop.cart.model.Cart;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -49,11 +47,6 @@ import com.google.common.base.Strings;
 @ExistingTenant
 public class CartResource implements Resource
 {
-    public static final String SESSION_CART_KEY = "org.mayocat.shop.cart.front.Cart";
-
-    @Inject
-    private ConfigurationService configurationService;
-
     @Inject
     private Provider<ProductStore> productStore;
 
@@ -61,7 +54,7 @@ public class CartResource implements Resource
     private FrontBindingManager bindingManager;
 
     @Inject
-    private Execution execution;
+    private CartAccessor cartAccessor;
 
     @POST
     @Path("add")
@@ -78,7 +71,7 @@ public class CartResource implements Resource
             return Response.status(Response.Status.BAD_REQUEST).entity("Product not found").build();
         }
 
-        Cart cart = getCart();
+        Cart cart = cartAccessor.getCart();
         cart.addItem(product, quantity);
 
         return Response.seeOther(new URI("/cart")).build();
@@ -89,7 +82,7 @@ public class CartResource implements Resource
     public Response updateCart(MultivaluedMap<String, String> queryParams) throws URISyntaxException
     {
         boolean isRemoveItemRequest = false;
-        Cart cart = getCart();
+        Cart cart = cartAccessor.getCart();
 
         for (String key : queryParams.keySet()) {
             if (key.startsWith("remove_")) {
@@ -146,28 +139,9 @@ public class CartResource implements Resource
     @GET
     public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
     {
-        Cart cart = getCart();
-
         FrontView result = new FrontView("cart", breakpoint);
-
         Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
-        bindings.put("cart", new CartRepresentation(cart, locale));
-
         result.putBindings(bindings);
-
         return result;
-    }
-
-    private Cart getCart()
-    {
-        Session session = this.execution.getContext().getSession();
-        if (session.getAttribute(SESSION_CART_KEY) != null) {
-            return (Cart) session.getAttribute(SESSION_CART_KEY);
-        }
-
-        CatalogSettings catalogSettings = configurationService.getSettings(CatalogSettings.class);
-        Cart cart = new Cart(catalogSettings.getCurrencies().getMainCurrency().getValue());
-        session.setAttribute(SESSION_CART_KEY, cart);
-        return cart;
     }
 }

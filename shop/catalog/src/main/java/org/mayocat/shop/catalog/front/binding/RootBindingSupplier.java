@@ -1,4 +1,4 @@
-package org.mayocat.shop.catalog.binding;
+package org.mayocat.shop.catalog.front.binding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +42,8 @@ import com.google.common.collect.Lists;
 /**
  * @version $Id$
  */
-@Component("home")
-public class RootBindings implements FrontBindingSupplier, BindingsConstants
+@Component("root")
+public class RootBindingSupplier implements FrontBindingSupplier, BindingsConstants
 {
     public final static String SITE = "site";
 

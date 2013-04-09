@@ -31,8 +31,10 @@
     </nav>
 
     <div class="cart">
-        <span class="itemTotal">27,30&euro;</span>
-        <img src="{{resource 'images/cart.png'}}"/>
+        <span class="itemTotal">{{cart.total.amountCompact}} &euro;</span>
+        <a href="/cart/">
+            <img src="{{resource 'images/cart.png'}}"/>
+        </a>
     </div>
 
     <div class="clearfix"></div>

@@ -8,4 +8,4 @@ org.mayocat.shop.catalog.configuration.jackson.MoneyModule
 org.mayocat.shop.catalog.front.resource.CollectionResource
 org.mayocat.shop.catalog.front.resource.HomeResource
 org.mayocat.shop.catalog.front.resource.ProductResource
-org.mayocat.shop.catalog.binding.RootBindings
+org.mayocat.shop.catalog.front.binding.RootBindingSupplier
