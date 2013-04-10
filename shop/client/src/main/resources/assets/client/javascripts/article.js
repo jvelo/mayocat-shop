@@ -78,13 +78,10 @@ angular.module('article', ['ngResource'])
                     // old is the new new
                     newTime = timeService.convertISO8601toLocalDate($scope.article.publicationDate, "HH:mm");
                 }
+                // construct a floating iso8601 date (without tz)
                 var newDate = $scope.newPublicationDate + "T" + newTime;
-                // add the tenant timezone
-                // TODO: this is a quick hack
-                // have this from api instead of parsing the date
-                var tz = $scope.article.publicationDate.substr(-6, 6);
 
-                $scope.article.publicationDate = newDate + tz;
+                $scope.article.publicationDate = newDate;
                 $scope.cancelChangePublicationDate();
             };
 
