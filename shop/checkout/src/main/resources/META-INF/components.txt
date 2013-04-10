@@ -1,0 +1,2 @@
+org.mayocat.shop.checkout.front.CheckoutResource
+org.mayocat.shop.checkout.internal.DefaultCheckoutRegister

@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-cart</artifactId>
+            <artifactId>mayocat-shop-checkout</artifactId>
             <version>${project.version}</version>
         </dependency>
 

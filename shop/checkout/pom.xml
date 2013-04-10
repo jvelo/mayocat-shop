@@ -12,4 +12,16 @@
 
     <name>Mayocat Shop - Checkout</name>
     <description>Checkout register</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-cart</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+    </dependencies>
 </project>

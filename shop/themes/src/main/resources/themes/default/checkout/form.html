@@ -1,0 +1,20 @@
+<form method="post" action="/checkout">
+
+    <fieldset>
+
+        <h2>Checkout</h2>
+
+        <div class="controls">
+            {{#errors.email}}
+            Error ! {{this.errorType}}
+                <div class="error">{{this.userMessage}}</div>
+            {{/errors.email}}
+            <input type="text" name="email" value="{{request.email}}" placeholder="email" />
+        </div>
+
+        <div class="controls">
+            <input type="submit" value="Checkout" />
+        </div>
+
+    </fieldset>
+</form>
