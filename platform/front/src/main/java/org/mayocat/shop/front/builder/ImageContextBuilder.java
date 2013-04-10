@@ -8,6 +8,7 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
 import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.Theme;
 
@@ -26,14 +27,13 @@ public class ImageContextBuilder
         this.theme = theme;
     }
 
-    public Map<String, String> createImageContext(Image image)
+    public ImageContext createImageContext(Image image)
     {
-        Map<String, String> context = Maps.newHashMap();
-
-        context.put(ContextConstants.URL, "/attachments/" + image.getAttachment().getSlug() +
+        ImageContext context = new ImageContext("/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
-        context.put("title", ContextUtils.safeString(image.getAttachment().getTitle()));
-        context.put("description", ContextUtils.safeString(image.getAttachment().getDescription()));
+
+        context.setTitle(ContextUtils.safeString(image.getAttachment().getTitle()));
+        context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
@@ -65,10 +65,9 @@ public class ImageContextBuilder
         return context;
     }
 
-    public Map<String, String> createPlaceholderImageContext()
+    public ImageContext createPlaceholderImageContext()
     {
-        Map<String, String> context = Maps.newHashMap();
-        context.put(ContextConstants.URL, "http://placehold.it/800x800");
+        ImageContext context = new ImageContext("http://placehold.it/800x800");
         for (String dimensionName : theme.getThumbnails().keySet()) {
 
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);

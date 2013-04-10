@@ -1,5 +1,6 @@
 package org.mayocat.shop.cart.front.context;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -21,30 +22,11 @@ public class CartContext
 
     private PriceRepresentation total;
 
-    public CartContext(Cart cart, Locale locale)
+    public CartContext(List<CartItemContext> items, Long numberOfItems, PriceRepresentation total)
     {
-        Map<Purchasable, Long> items = cart.getItems();
-        this.total = new PriceRepresentation(cart.getTotal(), cart.getCurrency(), locale);
-
-        for (Purchasable purchasable : items.keySet()) {
-            Long quantity = items.get(purchasable);
-
-            CartItemContext cir = new CartItemContext();
-            cir.setTitle(purchasable.getTitle());
-            cir.setDescription(purchasable.getDescription());
-            cir.setQuantity(quantity);
-
-            PriceRepresentation unitPrice =
-                    new PriceRepresentation(purchasable.getUnitPrice(), cart.getCurrency(), locale);
-            PriceRepresentation itemTotal =
-                    new PriceRepresentation(cart.getItemTotal(purchasable), cart.getCurrency(), locale);
-
-            cir.setUnitPrice(unitPrice);
-            cir.setItemTotal(itemTotal);
-
-            numberOfItems += quantity;
-            this.items.add(cir);
-        }
+        this.items = items;
+        this.total = total;
+        this.numberOfItems = numberOfItems;
     }
 
     public List<CartItemContext> getItems()

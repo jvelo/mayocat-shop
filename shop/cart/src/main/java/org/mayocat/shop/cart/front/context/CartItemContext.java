@@ -1,6 +1,7 @@
 package org.mayocat.shop.cart.front.context;
 
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
+import org.mayocat.shop.front.context.ImageContext;
 
 /**
  * @version $Id$
@@ -16,6 +17,8 @@ public class CartItemContext
     private PriceRepresentation unitPrice;
 
     private PriceRepresentation itemTotal;
+
+    private ImageContext featuredImage;
 
     public String getTitle()
     {
@@ -65,5 +68,15 @@ public class CartItemContext
     public void setItemTotal(PriceRepresentation itemTotal)
     {
         this.itemTotal = itemTotal;
+    }
+
+    public ImageContext getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageContext featuredImage)
+    {
+        this.featuredImage = featuredImage;
     }
 }
