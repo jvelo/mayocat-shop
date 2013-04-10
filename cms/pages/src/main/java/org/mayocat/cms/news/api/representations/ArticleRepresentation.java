@@ -8,8 +8,8 @@ import java.util.List;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.rest.representations.ImageRepresentation;
-import org.mayocat.jackson.DateTimeISO8601Serializer;
-import org.mayocat.jackson.DateTimeISO8601Deserializer;
+import org.mayocat.cms.jackson.DateTimeISO8601Serializer;
+import org.mayocat.cms.jackson.DateTimeISO8601Deserializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

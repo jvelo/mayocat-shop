@@ -8,7 +8,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import org.mayocat.jackson.DateTimeISO8601Serializer;
+import org.mayocat.cms.jackson.DateTimeISO8601Serializer;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
