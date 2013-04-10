@@ -19,7 +19,8 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CustomerDetails;
-import org.mayocat.shop.front.FrontBindingManager;
+import org.mayocat.shop.front.FrontContextManager;
+import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
@@ -39,7 +40,7 @@ public class CheckoutResource implements Resource
     public static final String PATH = "checkout";
 
     @Inject
-    private FrontBindingManager bindingManager;
+    private FrontContextManager contextManager;
 
     @Inject
     private CheckoutRegister checkoutRegister;
@@ -99,12 +100,12 @@ public class CheckoutResource implements Resource
 
         if (errors.keySet().size() > 0) {
             FrontView result = new FrontView("checkout/form", breakpoint);
-            Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+            Map<String, Object> bindings = contextManager.getContext(uriInfo);
 
             bindings.put("request", data);
             bindings.put("errors", errors);
 
-            result.putBindings(bindings);
+            result.putContext(bindings);
             return result;
         }
 
@@ -113,10 +114,10 @@ public class CheckoutResource implements Resource
         //checkoutRegister.checkout();
 
         FrontView result = new FrontView("checkout/success", breakpoint);
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = contextManager.getContext(uriInfo);
         bindings.put("errors", errors);
 
-        result.putBindings(bindings);
+        result.putContext(bindings);
         return result;
     }
 
@@ -124,9 +125,9 @@ public class CheckoutResource implements Resource
     public FrontView getCheckoutForm(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
         FrontView result = new FrontView("checkout/form", breakpoint);
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
+        Map<String, Object> bindings = contextManager.getContext(uriInfo);
 
-        result.putBindings(bindings);
+        result.putContext(bindings);
         return result;
     }
 }

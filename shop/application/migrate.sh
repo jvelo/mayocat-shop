@@ -1,1 +1,1 @@
-java -jar target/mayocat-shop-application-1.0-SNAPSHOT.jar db migrate config-postgres.yml
+java -jar target/mayocat-shop-application-0.8-SNAPSHOT.jar db migrate config-postgres.yml
