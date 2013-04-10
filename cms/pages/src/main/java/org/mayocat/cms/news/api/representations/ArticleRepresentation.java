@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
+import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ImageRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -54,6 +56,14 @@ public class ArticleRepresentation
         this.title = article.getTitle();
         this.content = article.getContent();
         this.publicationDate = article.getPublicationDate();
+
+        if (article.getAddons().isLoaded()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : article.getAddons().get()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            this.addons = addons;
+        }
     }
 
     public ArticleRepresentation(Article article, List<ImageRepresentation> images)

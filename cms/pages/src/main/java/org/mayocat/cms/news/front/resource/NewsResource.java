@@ -1,6 +1,5 @@
 package org.mayocat.cms.news.front.resource;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
@@ -28,11 +28,13 @@ import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.bindings.BindingsConstants;
+import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
 import org.mayocat.shop.front.representation.DateRepresentation;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
@@ -42,6 +44,7 @@ import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -159,6 +162,29 @@ public class NewsResource extends AbstractFrontResource implements Resource
             Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
+        }
+
+        if (article.getAddons().isLoaded()) {
+            Map<String, Object> themeAddonsContext = Maps.newHashMap();
+            Map<String, AddonGroup> themeAddons = theme.getAddons();
+            for (String groupKey : themeAddons.keySet()) {
+
+                AddonGroup group = themeAddons.get(groupKey);
+                Map<String, Object> groupContext = Maps.newHashMap();
+
+                for (String field : group.getFields().keySet()) {
+                    Optional<Addon> addon =
+                            AddonBindingBuilderHelper.findAddon(groupKey, field, article.getAddons().get());
+                    if (addon.isPresent()) {
+                        groupContext.put(field, BindingUtils.addonValue(addon.get().getValue()));
+                    } else {
+                        groupContext.put(field, null);
+                    }
+                }
+
+                themeAddonsContext.put(groupKey, groupContext);
+            }
+            context.put("theme_addons", themeAddonsContext);
         }
 
         imagesContext.put("all", allImages);

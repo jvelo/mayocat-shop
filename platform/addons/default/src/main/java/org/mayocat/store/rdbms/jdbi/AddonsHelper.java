@@ -31,6 +31,9 @@ public class AddonsHelper
                     }
                 }
         );
+        if (ids.size() <= 0) {
+            return entities;
+        }
         List<Addon> addons = dao.findAllAddonsForIds(new ArrayList(ids));
         Map<Long, List<Addon>> addonsForEntity = Maps.newHashMap();
         for (Addon addon : addons) {
