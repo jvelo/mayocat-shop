@@ -4,6 +4,12 @@
         <a href="{{url}}">
             <img class="photo" src="{{images.featured.theme_small_url}}" title="{{title}}"/>
         </a>
+        {{#theme_addons}}
+        <dl>
+            <dt>BRAND</dt><dd>{{characteristics.brand}}</dd>
+            <dt>MANUFACTURER</dt><dd>{{characteristics.manufacturer}}</dd>
+        </dl>
+        {{/theme_addons}}
     </li>
     {{/products}}
 </ul>

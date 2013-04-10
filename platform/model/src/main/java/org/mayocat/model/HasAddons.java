@@ -8,4 +8,6 @@ import java.util.List;
 public interface HasAddons
 {
     PerhapsLoaded<List<Addon>> getAddons();
+
+    void setAddons(List<Addon> addons);
 }
