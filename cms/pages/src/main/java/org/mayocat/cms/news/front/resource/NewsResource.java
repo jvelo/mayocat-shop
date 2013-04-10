@@ -34,6 +34,7 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.bindings.BindingsConstants;
 import org.mayocat.shop.front.builder.ImageBindingBuilder;
+import org.mayocat.shop.front.representation.DateRepresentation;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.util.BindingUtils;
 import org.mayocat.store.AttachmentStore;
@@ -118,14 +119,12 @@ public class NewsResource extends AbstractFrontResource implements Resource
         context.put(BindingsConstants.URL, PATH + SLASH + article.getSlug());
         context.put(BindingsConstants.SLUG, article.getSlug());
 
-        Map<String, Object> dateContext = Maps.newHashMap();
-        DateFormat shortFormat =
-                DateFormat.getDateInstance(DateFormat.SHORT, settings.getLocales().getMainLocale().getValue());
-        DateFormat longFormat =
-                DateFormat.getDateInstance(DateFormat.LONG, settings.getLocales().getMainLocale().getValue());
-        dateContext.put("shortFormat", shortFormat.format(article.getPublicationDate()));
-        dateContext.put("longFormat", longFormat.format(article.getPublicationDate()));
-        context.put("publicationDate", dateContext);
+        if (article.getPublicationDate() != null) {
+            DateRepresentation date =
+                    new DateRepresentation(article.getPublicationDate(),
+                            settings.getLocales().getMainLocale().getValue());
+            context.put("publicationDate", date);
+        }
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
 
