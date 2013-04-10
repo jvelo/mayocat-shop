@@ -9,8 +9,8 @@ logging:
   file:
     enabled: true
     threshold: ALL
-    currentLogFilename: ./logs/example.log
-    archivedLogFilenamePattern: ./logs/example-%d.log.gz
+    currentLogFilename: ../logs/example.log
+    archivedLogFilenamePattern: ../logs/example-%d.log.gz
     archivedFileCount: 5
 
 database:
@@ -29,8 +29,8 @@ database:
   closeConnectionIfIdleFor: 1 minute
 
 files:
-  permanentDirectory: /usr/local/data/
-  temporaryDirectory: /var/tmp
+  permanentDirectory: ../data/
+  temporaryDirectory: /tmp
 
 multitenancy:
   activated: true

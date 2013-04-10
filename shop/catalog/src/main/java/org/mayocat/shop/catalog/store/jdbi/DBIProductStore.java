@@ -1,11 +1,15 @@
 package org.mayocat.shop.catalog.store.jdbi;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.mayocat.model.Addon;
+import org.mayocat.model.HasAddons;
+import org.mayocat.model.Identifiable;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -19,9 +23,16 @@ import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
 import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIProductStore extends DBIEntityStore implements ProductStore, Initializable
@@ -114,23 +125,24 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Override
     public List<Product> findOrphanProducts()
     {
-        return this.dao.findOrphanProducts(getTenant());
+        return AddonsHelper.withAddons(this.dao.findOrphanProducts(getTenant()), this.dao);
     }
 
     public List<Product> findAll()
     {
-        return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant());
+        return AddonsHelper.withAddons(this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant()), this.dao);
     }
 
     public List<Product> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset);
+        return AddonsHelper.withAddons(
+                this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset), this.dao);
     }
 
     @Override
     public List<Product> findByIds(List<Long> ids)
     {
-        return this.dao.findByIds(PRODUCT_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(PRODUCT_TABLE_NAME, ids), this.dao);
     }
 
     @Override
@@ -152,13 +164,13 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Override
     public List<Product> findAllForCollection(Collection collection)
     {
-        return this.dao.findAllForCollection(collection);
+        return AddonsHelper.withAddons(this.dao.findAllForCollection(collection), this.dao);
     }
 
     @Override
     public List<Product> findAllOnShelf(Integer number, Integer offset)
     {
-        return this.dao.findAllOnShelf(getTenant(), number, offset);
+        return AddonsHelper.withAddons(this.dao.findAllOnShelf(getTenant(), number, offset), this.dao);
     }
 
     @Override

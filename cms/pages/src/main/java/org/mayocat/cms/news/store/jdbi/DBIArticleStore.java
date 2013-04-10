@@ -13,6 +13,7 @@ import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.ArticleDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -92,13 +93,13 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     @Override
     public List<Article> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(ARTICLE_TABLE_NAME, getTenant(), number, offset);
+        return AddonsHelper.withAddons(this.dao.findAll(ARTICLE_TABLE_NAME, getTenant(), number, offset), this.dao);
     }
 
     @Override
     public List<Article> findByIds(List<Long> ids)
     {
-        return this.dao.findByIds(ARTICLE_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(ARTICLE_TABLE_NAME, ids), this.dao);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     @Override
     public List<Article> findAllPublished(Integer offset, Integer number)
     {
-        return this.dao.findAllPublished(getTenant(), number, offset);
+        return AddonsHelper.withAddons(this.dao.findAllPublished(getTenant(), number, offset), this.dao);
     }
 
     @Override

@@ -2,17 +2,17 @@
     {{#product}}
     <h2 class="fn">{{title}}</h2>
 
-    {{#price}}
+    {{#unitPrice}}
     <form action="/cart/add" method="post">
         <div>
             <input type="hidden" name="product" value="{{../slug}}"/>
             <input type="submit" value="Add to cart"/>
         </div>
     </form>
-    {{/price}}
-    {{^price}}
+    {{/unitPrice}}
+    {{^unitPrice}}
         This product is currently not for sale.
-    {{/price}}
+    {{/unitPrice}}
 
     {{#description}}
     <p class="description">
@@ -27,16 +27,16 @@
     </dl>
     {{/theme_addons}}
 
-    {{#price}}
+    {{#unitPrice}}
     <div class="product-price">
         <span class="price">{{amount}}</span>
         <span class="currency">{{currency.symbol}}</span>
     </div>
-    {{/price}}
+    {{/unitPrice}}
 
     {{#images}}
     {{#featured}}
-    <img class="photo" src="{{theme_large_url}}" />
+    <img class="photo" src="{{theme_large_url}}" title="{{title}}" alt="{{title}}" />
     {{/featured}}
     <ul class="images">
         {{#all}}

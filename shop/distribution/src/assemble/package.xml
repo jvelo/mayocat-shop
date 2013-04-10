@@ -43,15 +43,20 @@
   <fileSets>
     <fileSet>
       <directory>src/main/resources</directory>
+        <filtered>true</filtered>
+        <includes>
+          <include>**/*.sh</include>
+        </includes>
       <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/resources</directory>
+        <filtered>true</filtered>
+        <excludes>
+          <exclude>**/*.sh</exclude>
+        </excludes>
+      <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
-  <files>
-    <file>
-      <source>src/main/resources/bin/migrate.sh</source>
-      <outputDirectory>/</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-  </files>
 </assembly>

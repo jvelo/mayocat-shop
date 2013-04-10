@@ -12,7 +12,7 @@ export JAVA_OPTS="-server -Xms128m -Xmx512m -XX:MaxPermSize=192m -Dfile.encoding
 
 java $JAVA_OPTS \
   $DEBUG \
-  -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/mayocat-shop-application-1.0-SNAPSHOT.jar" \
+  -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/mayocat-shop-application-0.8-SNAPSHOT.jar" \
   org.mayocat.shop.application.MayocatShopService \
   server \
   config-postgres.yml

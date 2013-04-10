@@ -33,6 +33,8 @@ public class AddonMapper implements ResultSetMapper<Addon>
         addon.setKey(result.getString("addon_key"));
         addon.setSource(AddonSource.fromJson(result.getString("source")));
         addon.setGroup(result.getString("addon_group"));
+        addon.setEntityId(result.getLong("entity_id"));
+
         return addon;
     }
 }

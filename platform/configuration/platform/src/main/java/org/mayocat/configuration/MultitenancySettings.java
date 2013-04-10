@@ -20,7 +20,7 @@ public class MultitenancySettings
 
     @Valid
     @JsonProperty
-    private String resolver = "subdomain";
+    private String resolver = "defaultHostAndSubdomain";
     
     public boolean isActivated()
     {

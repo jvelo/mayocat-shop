@@ -1,1 +1,3 @@
 org.mayocat.shop.cart.front.CartResource
+org.mayocat.shop.cart.internal.DefaultCartAccessor
+org.mayocat.shop.cart.front.context.CartContextSupplier

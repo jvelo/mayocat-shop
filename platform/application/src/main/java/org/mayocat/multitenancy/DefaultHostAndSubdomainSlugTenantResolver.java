@@ -18,7 +18,7 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 
-@Component("defaultHostAndSubdomain")
+@Component(hints= {"defaultHostAndSubdomain", "default"})
 @Singleton
 public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver, ServletRequestListener
 {

@@ -1,11 +1,11 @@
 package org.mayocat.rest.views;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mayocat.theme.ThemeManager;
@@ -13,6 +13,7 @@ import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.mayocat.views.TemplateEngineException;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import javax.inject.Inject;
@@ -39,6 +40,9 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
 
     @Inject
     private ThemeManager themeManager;
+
+    @Inject
+    private Logger logger;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
@@ -79,39 +83,47 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 layout = themeManager.resolveTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
             }
 
-            frontView.getBindings().put("layout", layout.getId());
-
+            frontView.getContext().put("layout", layout.getId());
             ObjectMapper mapper = new ObjectMapper();
-            String jsonContext = mapper.writeValueAsString(frontView.getBindings());
+            String jsonContext = null;
 
             try {
+                jsonContext = mapper.writeValueAsString(frontView.getContext());
                 engine.get().register(layout);
                 engine.get().register(template);
                 String rendered = engine.get().render(template.getId(), jsonContext);
                 entityStream.write(rendered.getBytes());
+            } catch (JsonMappingException e) {
+                this.logger.warn("Failed to serialize JSON context", e);
+                writeException(frontView, mapper, e, entityStream);
             } catch (TemplateEngineException e) {
-                // Re-serialize the bindings as json with indentation for better debugging
-                mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-                Map<String, Object> context = frontView.getBindings();
-                jsonContext = mapper.writeValueAsString(context);
-
-                Template error = themeManager.resolveTemplate("error.html", frontView.getBreakpoint());
-                Map<String, Object> errorContext = Maps.newHashMap();
-                errorContext.put("error", e.getMessage());
-                errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
-                errorContext.put("context", StringEscapeUtils.escapeXml(jsonContext).trim());
-
-                try {
-                    engine.get().register(error);
-                    String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
-                    entityStream.write(rendered.getBytes());
-                } catch (TemplateEngineException e1) {
-                    throw new RuntimeException(e);
-                }
+                this.logger.warn("Template exception", e);
+                writeException(frontView, mapper, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(e);
         }
     }
 
+    private void writeException(FrontView frontView, ObjectMapper mapper, Exception e, OutputStream entityStream)
+    {
+        try {
+            // Re-serialize the context as json with indentation for better debugging
+            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            Map<String, Object> context = frontView.getContext();
+            String jsonContext = mapper.writeValueAsString(context);
+
+            Template error = themeManager.resolveTemplate("error.html", frontView.getBreakpoint());
+            Map<String, Object> errorContext = Maps.newHashMap();
+            errorContext.put("error", e.getMessage());
+            errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
+            errorContext.put("context", StringEscapeUtils.escapeXml(jsonContext).trim());
+
+            engine.get().register(error);
+            String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+            entityStream.write(rendered.getBytes());
+        } catch (Exception e1) {
+            throw new RuntimeException(e1);
+        }
+    }
 }

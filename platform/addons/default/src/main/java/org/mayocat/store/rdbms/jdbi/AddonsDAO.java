@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.jdbi;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mayocat.addons.binder.BindAddon;
 import org.mayocat.addons.mapper.AddonMapper;
@@ -10,8 +11,7 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-
-import com.google.common.base.Optional;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 /**
  * @version $Id$
@@ -24,6 +24,14 @@ public interface AddonsDAO<T extends HasAddons>
         "SELECT * FROM addon WHERE entity_id = :entity.id"
     )
     List<Addon> findAddons(@BindBean("entity") T entity);
+
+    @RegisterMapper(AddonMapper.class)
+    @SqlQuery
+    (
+        "SELECT * FROM addon " +
+        "WHERE    entity_id in ( <ids> )"
+    )
+    List<Addon> findAllAddonsForIds(@BindIn("ids") List<Long> ids);
 
     @SqlUpdate
     (

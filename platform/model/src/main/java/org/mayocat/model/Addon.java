@@ -5,6 +5,8 @@ package org.mayocat.model;
  */
 public class Addon<T>
 {
+    private Long entityId;
+
     private T value;
 
     private AddonSource source;
@@ -14,6 +16,16 @@ public class Addon<T>
     private String key;
 
     private AddonFieldType type;
+
+    public Long getEntityId()
+    {
+        return entityId;
+    }
+
+    public void setEntityId(Long entityId)
+    {
+        this.entityId = entityId;
+    }
 
     public T getValue()
     {

@@ -1,9 +1,9 @@
-package org.mayocat.shop.front.bindings;
+package org.mayocat.shop.front.context;
 
 /**
  * @version $Id$
  */
-public interface BindingsConstants
+public interface ContextConstants
 {
     /**
      * Name of URL properties. Usually they will actually represent absolute URL paths rather than script absolute
@@ -20,4 +20,6 @@ public interface BindingsConstants
     final String PAGE_DESCRIPTION = "page_description";
 
     final String COLLECTIONS = "collections";
+
+    final String LOCATION = "location";
 }
