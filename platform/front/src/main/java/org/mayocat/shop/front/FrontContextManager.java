@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
 import org.xwiki.component.annotation.Role;
 
@@ -12,8 +13,8 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface FrontBindingManager
+public interface FrontContextManager
 {
 
-    Map<String, Object> getBindings(List<PathSegment> segments);
+    Map<String, Object> getContext(UriInfo uriInfo);
 }

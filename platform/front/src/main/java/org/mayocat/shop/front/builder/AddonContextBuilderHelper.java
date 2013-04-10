@@ -9,7 +9,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class AddonBindingBuilderHelper
+public class AddonContextBuilderHelper
 {
     public static Optional<Addon> findAddon(String group, String key, List<Addon> addons)
     {

@@ -7,7 +7,9 @@ import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
-import org.mayocat.shop.front.bindings.BindingsConstants;
+import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.context.ImageContext;
+import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -16,21 +18,22 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class ImageBindingBuilder
+public class ImageContextBuilder
 {
     private Theme theme;
 
-    public ImageBindingBuilder(Theme theme)
+    public ImageContextBuilder(Theme theme)
     {
         this.theme = theme;
     }
 
-    public Map<String, String> createImageContext(Image image)
+    public ImageContext createImageContext(Image image)
     {
-        Map<String, String> context = Maps.newHashMap();
-
-        context.put(BindingsConstants.URL, "/attachments/" + image.getAttachment().getSlug() +
+        ImageContext context = new ImageContext("/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
+
+        context.setTitle(ContextUtils.safeString(image.getAttachment().getTitle()));
+        context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
@@ -62,16 +65,15 @@ public class ImageBindingBuilder
         return context;
     }
 
-    public Map<String, String> createPlaceholderImageContext()
+    public ImageContext createPlaceholderImageContext()
     {
-        Map<String, String> context = Maps.newHashMap();
-        context.put(BindingsConstants.URL, "http://placehold.it/800x800");
+        ImageContext context = new ImageContext("http://placehold.it/800x800");
         for (String dimensionName : theme.getThumbnails().keySet()) {
 
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
             String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
                     definition.getHeight());
-            context.put("theme_" + dimensionName + "_" + BindingsConstants.URL, url);
+            context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);
         }
         return context;
     }

@@ -4,15 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.FrontBindingSupplier;
-import org.mayocat.shop.front.annotation.FrontBinding;
+import org.mayocat.shop.front.FrontContextManager;
+import org.mayocat.shop.front.FrontContextSupplier;
+import org.mayocat.shop.front.annotation.FrontContextContributor;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -25,10 +28,10 @@ import com.google.common.collect.Maps;
  * @version $Id$
  */
 @Component
-public class DefaultFrontBindingManager implements FrontBindingManager, Initializable
+public class DefaultFrontContextManager implements FrontContextManager, Initializable
 {
     @Inject
-    private Map<String, FrontBindingSupplier> bindingSuppliers;
+    private Map<String, FrontContextSupplier> contextSuppliers;
 
     @Inject
     private Logger logger;
@@ -55,16 +58,22 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
     }
 
     @Override
-    public Map<String, Object> getBindings(List<PathSegment> pathSegments)
+    public Map<String, Object> getContext(final UriInfo uriInfo)
     {
         Map result = Maps.newHashMap();
+        result.put(ContextConstants.LOCATION, new HashMap()
+        {
+            {
+                put("path", "/" + uriInfo.getPath());
+            }
+        });
 
         // Root path ('/')
         invokeNodeMethods(result, bindings);
 
         // Children path
-        if (!isRoot(pathSegments)) {
-            walkNode(bindings, pathSegments, result);
+        if (!isRoot(uriInfo.getPathSegments())) {
+            walkNode(bindings, uriInfo.getPathSegments(), result);
         }
         return result;
     }
@@ -72,9 +81,9 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
     @Override
     public void initialize() throws InitializationException
     {
-        for (FrontBindingSupplier supplier : bindingSuppliers.values()) {
+        for (FrontContextSupplier supplier : contextSuppliers.values()) {
             for (Method method : supplier.getClass().getMethods()) {
-                if (method.isAnnotationPresent(FrontBinding.class)) {
+                if (method.isAnnotationPresent(FrontContextContributor.class)) {
                     addMethod(method, supplier);
                 }
             }
@@ -111,7 +120,8 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
         }
     }
 
-    private boolean isRoot(List<PathSegment> segments) {
+    private boolean isRoot(List<PathSegment> segments)
+    {
         if (segments.size() == 1 && segments.get(0).getPath().equals("")) {
             return true;
         }
@@ -126,7 +136,7 @@ public class DefaultFrontBindingManager implements FrontBindingManager, Initiali
             bindings.children = Lists.newArrayList();
         }
 
-        FrontBinding annotation = method.getAnnotation(FrontBinding.class);
+        FrontContextContributor annotation = method.getAnnotation(FrontContextContributor.class);
         String path = annotation.path();
         Node<Binding> methodBindings = bindings;
         String[] pathSegments = path.split("/");

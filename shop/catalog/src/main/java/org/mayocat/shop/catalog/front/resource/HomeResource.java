@@ -1,8 +1,6 @@
 package org.mayocat.shop.catalog.front.resource;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -16,27 +14,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Execution;
-import org.mayocat.image.model.Image;
-import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
-import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.rest.Resource;
-import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -51,9 +37,6 @@ public class HomeResource extends AbstractFrontResource implements Resource
 
     @Inject
     private ConfigurationService configurationService;
-
-    @Inject
-    private FrontBindingManager bindingManager;
 
     @Inject
     private CatalogService catalogService;
@@ -71,17 +54,16 @@ public class HomeResource extends AbstractFrontResource implements Resource
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
     {
         FrontView result = new FrontView("home", breakpoint);
+        Map<String, Object> context = getContext(uriInfo);
 
-        Map<String, Object> bindings = bindingManager.getBindings(uriInfo.getPathSegments());
-
-        bindings.put("template", new HashMap<String, Object>()
+        context.put("template", new HashMap<String, Object>()
         {
             {
                 put("home", true);
             }
         });
 
-        result.putBindings(bindings);
+        result.putContext(context);
 
         return result;
     }

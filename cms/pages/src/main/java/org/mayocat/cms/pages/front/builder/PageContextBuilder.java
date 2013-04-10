@@ -8,9 +8,9 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
-import org.mayocat.shop.front.bindings.BindingsConstants;
-import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
-import org.mayocat.shop.front.builder.ImageBindingBuilder;
+import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
+import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -20,17 +20,17 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class PageBindingBuilder
+public class PageContextBuilder
 {
     private Theme theme;
 
-    private ImageBindingBuilder imageBindingBuilder;
+    private ImageContextBuilder imageContextBuilder;
 
-    public PageBindingBuilder(Theme theme)
+    public PageContextBuilder(Theme theme)
     {
         this.theme = theme;
 
-        imageBindingBuilder = new ImageBindingBuilder(theme);
+        imageContextBuilder = new ImageContextBuilder(theme);
     }
 
     public Map<String, Object> build(final Page page, List<Image> images)
@@ -40,19 +40,19 @@ public class PageBindingBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
-        pageContext.put(BindingsConstants.URL, PageResource.PATH + PageResource.SLASH + page.getSlug());
-        pageContext.put(BindingsConstants.SLUG, page.getSlug());
+        pageContext.put(ContextConstants.URL, PageResource.PATH + PageResource.SLASH + page.getSlug());
+        pageContext.put(ContextConstants.SLUG, page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
 
         if (images.size() > 0) {
-            imagesContext.put("featured", imageBindingBuilder.createImageContext(images.get(0)));
+            imagesContext.put("featured", imageContextBuilder.createImageContext(images.get(0)));
             for (Image image : images) {
-                allImages.add(imageBindingBuilder.createImageContext(image));
+                allImages.add(imageContextBuilder.createImageContext(image));
             }
         } else {
-            Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
+            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
         }
@@ -72,7 +72,7 @@ public class PageBindingBuilder
 
                 for (String field : group.getFields().keySet()) {
                     Optional<org.mayocat.model.Addon> addon =
-                            AddonBindingBuilderHelper.findAddon(groupKey, field, page.getAddons().get());
+                            AddonContextBuilderHelper.findAddon(groupKey, field, page.getAddons().get());
                     if (addon.isPresent()) {
                         groupContext.put(field, addon.get().getValue());
                     } else {

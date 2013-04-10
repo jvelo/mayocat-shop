@@ -13,6 +13,7 @@ import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.PageDAO;
+import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -91,13 +92,13 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     @Override
     public List<Page> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(PAGE_TABLE_NAME, getTenant(), number, offset);
+        return AddonsHelper.withAddons(this.dao.findAll(PAGE_TABLE_NAME, getTenant(), number, offset), this.dao);
     }
 
     @Override
     public List<Page> findByIds(List<Long> ids)
     {
-        return this.dao.findByIds(PAGE_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(PAGE_TABLE_NAME, ids), this.dao);
     }
 
     @Override

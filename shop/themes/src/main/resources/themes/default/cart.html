@@ -16,12 +16,10 @@
         {{#items}}
         <tr class="item">
             <td class="description">
-                <!--
                 Featured image
-                {{image}}
+                {{#featuredImage}}
                     <img src="{{theme_small_url}}" />
-                {{image}}
-                -->
+                {{/featuredImage}}
                 <div>
                     <h3>{{title}}</h3>
                     <span>{{description}}</span>

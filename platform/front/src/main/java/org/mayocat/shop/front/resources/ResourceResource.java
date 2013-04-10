@@ -34,6 +34,7 @@ import com.yammer.dropwizard.assets.ResourceURL;
 
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
 
 /**
  * @version $Id$
@@ -110,11 +111,15 @@ public class ResourceResource implements Resource
                 return Optional.of(contentType);
             }
 
-            MagicMatch match = Magic.getMagicMatch(file, true);
-            String guessedExtension = match.getMimeType();
-            if (!Strings.isNullOrEmpty(guessedExtension)) {
-                return Optional.of(guessedExtension);
-            } else {
+            try {
+                MagicMatch match = Magic.getMagicMatch(file, true);
+                String guessedExtension = match.getMimeType();
+                if (!Strings.isNullOrEmpty(guessedExtension)) {
+                    return Optional.of(guessedExtension);
+                } else {
+                    return Optional.absent();
+                }
+            } catch (MagicMatchNotFoundException e) {
                 return Optional.absent();
             }
         } catch (Exception e) {

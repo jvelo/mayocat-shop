@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
+import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.cms.jackson.DateTimeISO8601Serializer;
 import org.mayocat.cms.jackson.DateTimeISO8601Deserializer;
@@ -14,7 +15,7 @@ import org.mayocat.cms.jackson.DateTimeISO8601Deserializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -64,6 +65,14 @@ public class ArticleRepresentation
         this.content = article.getContent();
         if (article.getPublicationDate() != null) {
             this.publicationDate = new DateTime(article.getPublicationDate().getTime(), tenantZone);
+        }
+
+        if (article.getAddons().isLoaded()) {
+            List<AddonRepresentation> addons = Lists.newArrayList();
+            for (Addon a : article.getAddons().get()) {
+                addons.add(new AddonRepresentation(a));
+            }
+            this.addons = addons;
         }
     }
 

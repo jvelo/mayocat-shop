@@ -1,6 +1,7 @@
 var global = this;
 
-(function (){
+(function ()
+{
 
     var ThemeManager = org.mayocat.theme.ThemeManager,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint;
@@ -58,6 +59,16 @@ var global = this;
     Handlebars.registerHelper('resource', function (path, options)
     {
         return "/resources/" + path;
+    });
+
+    Handlebars.registerHelper('isPath', function (path, options)
+    {
+        if (typeof this.location !== "undefined") {
+            if (path === this.location.path) {
+                return options.fn(this);
+            }
+        }
+        return options.inverse(this);
     });
 
 })();
