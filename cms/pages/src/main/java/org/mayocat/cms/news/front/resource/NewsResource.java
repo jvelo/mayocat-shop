@@ -33,12 +33,12 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.front.bindings.BindingsConstants;
-import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
-import org.mayocat.shop.front.builder.ImageBindingBuilder;
-import org.mayocat.shop.front.representation.DateRepresentation;
+import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
+import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.shop.front.util.BindingUtils;
+import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
@@ -87,15 +87,15 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Integer offset = page * DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE;
         List<Article> articles = articleStore.get().findAllPublished(offset, DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE);
 
-        Map<String, Object> bindings = getBindings(uriInfo);
+        Map<String, Object> context = getContext(uriInfo);
         List<Map<String, Object>> articlesContext = Lists.newArrayList();
         for (Article article : articles) {
             articlesContext.add(buildArticleContext(article));
         }
-        bindings.put("articles", articlesContext);
+        context.put("articles", articlesContext);
 
         FrontView result = new FrontView("news", breakpoint);
-        result.putBindings(bindings);
+        result.putContext(context);
 
         // TODO
         // add "pagination" context
@@ -117,14 +117,14 @@ public class NewsResource extends AbstractFrontResource implements Resource
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
 
         Map<String, Object> context = Maps.newHashMap();
-        context.put("title", BindingUtils.safeString(article.getTitle()));
-        context.put("content", BindingUtils.safeHtml(article.getContent()));
-        context.put(BindingsConstants.URL, PATH + SLASH + article.getSlug());
-        context.put(BindingsConstants.SLUG, article.getSlug());
+        context.put("title", ContextUtils.safeString(article.getTitle()));
+        context.put("content", ContextUtils.safeHtml(article.getContent()));
+        context.put(ContextConstants.URL, PATH + SLASH + article.getSlug());
+        context.put(ContextConstants.SLUG, article.getSlug());
 
         if (article.getPublicationDate() != null) {
-            DateRepresentation date =
-                    new DateRepresentation(article.getPublicationDate(),
+            DateContext date =
+                    new DateContext(article.getPublicationDate(),
                             settings.getLocales().getMainLocale().getValue());
             context.put("publicationDate", date);
         }
@@ -142,7 +142,7 @@ public class NewsResource extends AbstractFrontResource implements Resource
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
-        ImageBindingBuilder imageBindingBuilder = new ImageBindingBuilder(theme);
+        ImageContextBuilder imageContextBuilder = new ImageContextBuilder(theme);
         Image featuredImage = null;
 
         if (images.size() > 0) {
@@ -150,16 +150,16 @@ public class NewsResource extends AbstractFrontResource implements Resource
                 if (featuredImage == null && image.getAttachment().getId().equals(article.getFeaturedImageId())) {
                     featuredImage = image;
                 }
-                allImages.add(imageBindingBuilder.createImageContext(image));
+                allImages.add(imageContextBuilder.createImageContext(image));
             }
             if (featuredImage == null) {
                 // If no featured image has been set, we use the first image in the array.
                 featuredImage = images.get(0);
             }
-            imagesContext.put("featured", imageBindingBuilder.createImageContext(featuredImage));
+            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage));
         } else {
             // Create placeholder image
-            Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
+            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
         }
@@ -174,9 +174,9 @@ public class NewsResource extends AbstractFrontResource implements Resource
 
                 for (String field : group.getFields().keySet()) {
                     Optional<Addon> addon =
-                            AddonBindingBuilderHelper.findAddon(groupKey, field, article.getAddons().get());
+                            AddonContextBuilderHelper.findAddon(groupKey, field, article.getAddons().get());
                     if (addon.isPresent()) {
-                        groupContext.put(field, BindingUtils.addonValue(addon.get().getValue()));
+                        groupContext.put(field, ContextUtils.addonValue(addon.get().getValue()));
                     } else {
                         groupContext.put(field, null);
                     }

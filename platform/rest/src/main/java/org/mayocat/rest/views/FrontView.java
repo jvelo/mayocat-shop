@@ -18,21 +18,21 @@ public class FrontView
 
     private Breakpoint breakpoint;
 
-    private Map<String, Object> bindings;
+    private Map<String, Object> context;
 
     public FrontView(String layout, Optional<String> model, Breakpoint breakpoint)
     {
         this.layout = layout;
         this.model = model;
         this.breakpoint = breakpoint;
-        this.bindings = Maps.newHashMap();
+        this.context = Maps.newHashMap();
     }
 
     public FrontView(String layout, Breakpoint breakpoint)
     {
         this.layout = layout;
         this.breakpoint = breakpoint;
-        this.bindings = Maps.newHashMap();
+        this.context = Maps.newHashMap();
     }
 
     public String getLayout()
@@ -45,14 +45,14 @@ public class FrontView
         return breakpoint;
     }
 
-    public Map<String, Object> getBindings()
+    public Map<String, Object> getContext()
     {
-        return this.bindings;
+        return this.context;
     }
 
-    public void putBindings(Map<String, Object> bindings)
+    public void putContext(Map<String, Object> context)
     {
-        this.bindings.putAll(bindings);
+        this.context.putAll(context);
     }
 
     public Optional<String> getModel()

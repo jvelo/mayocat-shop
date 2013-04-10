@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.front.FrontBindingManager;
+import org.mayocat.shop.front.FrontContextManager;
 
 /**
  * @version $Id$
@@ -18,7 +18,7 @@ public class AbstractFrontResource
     protected final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();
 
     @Inject
-    private FrontBindingManager bindingManager;
+    private FrontContextManager contextManager;
 
     static {
         IMAGE_EXTENSIONS.add("jpg");
@@ -32,13 +32,13 @@ public class AbstractFrontResource
         return IMAGE_EXTENSIONS.contains(attachment.getExtension().toLowerCase());
     }
 
-    protected FrontBindingManager getBindingManager()
+    protected FrontContextManager getContextManager()
     {
-        return bindingManager;
+        return contextManager;
     }
 
-    protected Map<String, Object> getBindings(UriInfo uriInfo)
+    protected Map<String, Object> getContext(UriInfo uriInfo)
     {
-        return bindingManager.getBindings(uriInfo);
+        return contextManager.getContext(uriInfo);
     }
 }

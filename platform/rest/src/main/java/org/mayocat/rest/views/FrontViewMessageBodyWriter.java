@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mayocat.theme.ThemeManager;
@@ -84,12 +83,12 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 layout = themeManager.resolveTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
             }
 
-            frontView.getBindings().put("layout", layout.getId());
+            frontView.getContext().put("layout", layout.getId());
             ObjectMapper mapper = new ObjectMapper();
             String jsonContext = null;
 
             try {
-                jsonContext = mapper.writeValueAsString(frontView.getBindings());
+                jsonContext = mapper.writeValueAsString(frontView.getContext());
                 engine.get().register(layout);
                 engine.get().register(template);
                 String rendered = engine.get().render(template.getId(), jsonContext);
@@ -109,9 +108,9 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     private void writeException(FrontView frontView, ObjectMapper mapper, Exception e, OutputStream entityStream)
     {
         try {
-            // Re-serialize the bindings as json with indentation for better debugging
+            // Re-serialize the context as json with indentation for better debugging
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            Map<String, Object> context = frontView.getBindings();
+            Map<String, Object> context = frontView.getContext();
             String jsonContext = mapper.writeValueAsString(context);
 
             Template error = themeManager.resolveTemplate("error.html", frontView.getBreakpoint());

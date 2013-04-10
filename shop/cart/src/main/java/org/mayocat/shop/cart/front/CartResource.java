@@ -21,17 +21,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.cart.CartAccessor;
-import org.mayocat.shop.cart.front.representation.CartRepresentation;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.shop.front.FrontBindingManager;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
@@ -138,8 +135,8 @@ public class CartResource extends AbstractFrontResource implements Resource
     public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
     {
         FrontView result = new FrontView("cart", breakpoint);
-        Map<String, Object> bindings = getBindings(uriInfo);
-        result.putBindings(bindings);
+        Map<String, Object> context = getContext(uriInfo);
+        result.putContext(context);
         return result;
     }
 }

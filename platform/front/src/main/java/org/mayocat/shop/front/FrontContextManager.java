@@ -13,8 +13,8 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface FrontBindingManager
+public interface FrontContextManager
 {
 
-    Map<String, Object> getBindings(UriInfo uriInfo);
+    Map<String, Object> getContext(UriInfo uriInfo);
 }

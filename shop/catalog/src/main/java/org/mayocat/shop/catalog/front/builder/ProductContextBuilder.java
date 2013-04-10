@@ -13,10 +13,10 @@ import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.front.bindings.BindingsConstants;
-import org.mayocat.shop.front.builder.AddonBindingBuilderHelper;
-import org.mayocat.shop.front.builder.ImageBindingBuilder;
-import org.mayocat.shop.front.util.BindingUtils;
+import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
+import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class ProductBindingBuilder implements BindingsConstants
+public class ProductContextBuilder implements ContextConstants
 {
     private CatalogSettings catalogSettings;
 
@@ -34,24 +34,24 @@ public class ProductBindingBuilder implements BindingsConstants
 
     private Theme theme;
 
-    private ImageBindingBuilder imageBindingBuilder;
+    private ImageContextBuilder imageContextBuilder;
 
-    public ProductBindingBuilder(CatalogSettings catalogSettings, GeneralSettings generalSettings,
+    public ProductContextBuilder(CatalogSettings catalogSettings, GeneralSettings generalSettings,
             Theme theme)
     {
         this.catalogSettings = catalogSettings;
         this.generalSettings = generalSettings;
         this.theme = theme;
 
-        imageBindingBuilder = new ImageBindingBuilder(theme);
+        imageContextBuilder = new ImageContextBuilder(theme);
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)
     {
         Map<String, Object> productContext = Maps.newHashMap();
 
-        productContext.put("title", BindingUtils.safeString(product.getTitle()));
-        productContext.put("description", BindingUtils.safeHtml(product.getDescription()));
+        productContext.put("title", ContextUtils.safeString(product.getTitle()));
+        productContext.put("description", ContextUtils.safeHtml(product.getDescription()));
         productContext.put(URL, "/" + ProductEntity.PATH + "/" + product.getSlug());
         productContext.put(SLUG, product.getSlug());
 
@@ -72,16 +72,16 @@ public class ProductBindingBuilder implements BindingsConstants
                 if (featuredImage == null && image.getAttachment().getId().equals(product.getFeaturedImageId())) {
                     featuredImage = image;
                 }
-                allImages.add(imageBindingBuilder.createImageContext(image));
+                allImages.add(imageContextBuilder.createImageContext(image));
             }
             if (featuredImage == null) {
                 // If no featured image has been set, we use the first image in the array.
                 featuredImage = images.get(0);
             }
-            imagesContext.put("featured", imageBindingBuilder.createImageContext(featuredImage));
+            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage));
         } else {
             // Create placeholder image
-            Map<String, String> placeholder = imageBindingBuilder.createPlaceholderImageContext();
+            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
         }
@@ -101,9 +101,9 @@ public class ProductBindingBuilder implements BindingsConstants
 
                 for (String field : group.getFields().keySet()) {
                     Optional<org.mayocat.model.Addon> addon =
-                            AddonBindingBuilderHelper.findAddon(groupKey, field, product.getAddons().get());
+                            AddonContextBuilderHelper.findAddon(groupKey, field, product.getAddons().get());
                     if (addon.isPresent()) {
-                        groupContext.put(field, BindingUtils.addonValue(addon.get().getValue()));
+                        groupContext.put(field, ContextUtils.addonValue(addon.get().getValue()));
                     } else {
                         groupContext.put(field, null);
                     }

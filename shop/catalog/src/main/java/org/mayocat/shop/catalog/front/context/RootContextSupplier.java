@@ -1,4 +1,4 @@
-package org.mayocat.shop.catalog.front.binding;
+package org.mayocat.shop.catalog.front.context;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,17 +17,17 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
-import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
+import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.context.Execution;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.shop.front.FrontBindingSupplier;
-import org.mayocat.shop.front.annotation.Bindings;
-import org.mayocat.shop.front.annotation.FrontBinding;
-import org.mayocat.shop.front.bindings.BindingsConstants;
+import org.mayocat.shop.front.FrontContextSupplier;
+import org.mayocat.shop.front.annotation.FrontContext;
+import org.mayocat.shop.front.annotation.FrontContextContributor;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.ResourceResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
@@ -43,7 +43,7 @@ import com.google.common.collect.Lists;
  * @version $Id$
  */
 @Component("root")
-public class RootBindingSupplier implements FrontBindingSupplier, BindingsConstants
+public class RootContextSupplier implements FrontContextSupplier, ContextConstants
 {
     public final static String SITE = "site";
 
@@ -71,8 +71,8 @@ public class RootBindingSupplier implements FrontBindingSupplier, BindingsConsta
     @Inject
     private Provider<CollectionStore> collectionStore;
 
-    @FrontBinding(path = "/")
-    public void contributeRootBindings(@Bindings Map data)
+    @FrontContextContributor(path = "/")
+    public void contributeRootContext(@FrontContext Map data)
     {
         final GeneralSettings config = execution.getContext().getSettings(GeneralSettings.class);
 
@@ -87,23 +87,23 @@ public class RootBindingSupplier implements FrontBindingSupplier, BindingsConsta
         });
 
         // FIXME
-        // Do we always want to support the collections binding ?
+        // Do we always want to support the collections context ?
         // Or should it be supported via the menu builder like the products.
         List<Collection> collections = this.collectionStore.get().findAll(24, 0);
-        List<Map<String, Object>> collectionsBinding = Lists.newArrayList();
+        List<Map<String, Object>> collectionsContext = Lists.newArrayList();
 
         for (final Collection collection : collections) {
-            collectionsBinding.add(new HashMap<String, Object>()
+            collectionsContext.add(new HashMap<String, Object>()
             {
                 {
-                    put(BindingsConstants.URL, "/" + CollectionEntity.PATH + "/" + collection.getSlug());
+                    put(ContextConstants.URL, "/" + CollectionEntity.PATH + "/" + collection.getSlug());
                     put("title", collection.getTitle());
                     put("description", collection.getDescription());
                 }
             });
         }
 
-        data.put(COLLECTIONS, collectionsBinding);
+        data.put(COLLECTIONS, collectionsContext);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
         data.put(PAGE_TITLE, config.getName().getValue());
@@ -113,7 +113,7 @@ public class RootBindingSupplier implements FrontBindingSupplier, BindingsConsta
         // Temporarly put a product list in the context.
         // It is prefixed with __unsupported__ since the goal is to replace this with a "menu builder" feature
 
-        List<Map<String, Object>> productsBinding = Lists.newArrayList();
+        List<Map<String, Object>> productsContext = Lists.newArrayList();
         List<Product> products = this.productStore.get().findAllOnShelf(24, 0);
         java.util.Collection<Long> featuredImageIds = Collections2.transform(products,
                 new Function<Product, Long>()
@@ -139,7 +139,7 @@ public class RootBindingSupplier implements FrontBindingSupplier, BindingsConsta
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
         Theme theme = this.execution.getContext().getTheme();
-        ProductBindingBuilder builder = new ProductBindingBuilder(configuration, generalSettings, theme);
+        ProductContextBuilder builder = new ProductContextBuilder(configuration, generalSettings, theme);
 
         for (final Product product : products) {
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
@@ -165,9 +165,9 @@ public class RootBindingSupplier implements FrontBindingSupplier, BindingsConsta
                 images.add(image);
             }
             Map<String, Object> productContext = builder.build(product, images);
-            productsBinding.add(productContext);
+            productsContext.add(productContext);
         }
 
-        data.put("__unsupported__products", productsBinding);
+        data.put("__unsupported__products", productsContext);
     }
 }

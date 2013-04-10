@@ -1,4 +1,4 @@
-package org.mayocat.shop.cart.front.representation;
+package org.mayocat.shop.cart.front.context;
 
 import java.util.List;
 import java.util.Locale;
@@ -13,15 +13,15 @@ import com.google.common.collect.Lists;
 /**
  * @version $Id$
  */
-public class CartRepresentation
+public class CartContext
 {
     private Long numberOfItems = 0l;
 
-    private List<CartItemRepresentation> items = Lists.newArrayList();
+    private List<CartItemContext> items = Lists.newArrayList();
 
     private PriceRepresentation total;
 
-    public CartRepresentation(Cart cart, Locale locale)
+    public CartContext(Cart cart, Locale locale)
     {
         Map<Purchasable, Long> items = cart.getItems();
         this.total = new PriceRepresentation(cart.getTotal(), cart.getCurrency(), locale);
@@ -29,7 +29,7 @@ public class CartRepresentation
         for (Purchasable purchasable : items.keySet()) {
             Long quantity = items.get(purchasable);
 
-            CartItemRepresentation cir = new CartItemRepresentation();
+            CartItemContext cir = new CartItemContext();
             cir.setTitle(purchasable.getTitle());
             cir.setDescription(purchasable.getDescription());
             cir.setQuantity(quantity);
@@ -47,7 +47,7 @@ public class CartRepresentation
         }
     }
 
-    public List<CartItemRepresentation> getItems()
+    public List<CartItemContext> getItems()
     {
         return items;
     }

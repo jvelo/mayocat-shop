@@ -15,9 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.meta.PageEntity;
 import org.mayocat.rest.Resource;
-import org.mayocat.cms.pages.front.builder.PageBindingBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.context.Execution;
@@ -27,8 +27,7 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.bindings.BindingsConstants;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
@@ -71,10 +70,10 @@ public class PageResource extends AbstractFrontResource implements Resource
 
         FrontView result = new FrontView("page", page.getModel(), breakpoint);
 
-        Map<String, Object> bindings = getBindings(uriInfo);
+        Map<String, Object> context = getContext(uriInfo);
 
-        bindings.put(BindingsConstants.PAGE_TITLE, page.getTitle());
-        bindings.put(BindingsConstants.PAGE_DESCRIPTION, page.getContent());
+        context.put(ContextConstants.PAGE_TITLE, page.getTitle());
+        context.put(ContextConstants.PAGE_DESCRIPTION, page.getContent());
 
         Theme theme = this.execution.getContext().getTheme();
 
@@ -88,11 +87,11 @@ public class PageResource extends AbstractFrontResource implements Resource
             }
         }
 
-        PageBindingBuilder builder = new PageBindingBuilder(theme);
+        PageContextBuilder builder = new PageContextBuilder(theme);
         Map<String, Object> pageContext = builder.build(page, images);
 
-        bindings.put("page", pageContext);
-        result.putBindings(bindings);
+        context.put("page", pageContext);
+        result.putContext(context);
 
         return result;
     }

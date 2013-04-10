@@ -1,11 +1,11 @@
-package org.mayocat.shop.cart.front.representation;
+package org.mayocat.shop.cart.front.context;
 
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 
 /**
  * @version $Id$
  */
-public class CartItemRepresentation
+public class CartItemContext
 {
     private String title;
 

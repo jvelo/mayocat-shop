@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 /**
  * @version $Id$
  */
-public class BindingUtils
+public class ContextUtils
 {
     public static String safeString(String string)
     {

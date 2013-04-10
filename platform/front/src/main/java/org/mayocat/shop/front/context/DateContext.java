@@ -1,4 +1,4 @@
-package org.mayocat.shop.front.representation;
+package org.mayocat.shop.front.context;
 
 import java.util.Date;
 import java.util.Locale;
@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 /**
  * @version $Id$
  */
-public class DateRepresentation
+public class DateContext
 {
     private String shortDate;
 
@@ -21,7 +21,7 @@ public class DateRepresentation
 
     private Integer year;
 
-    public DateRepresentation(Date date, Locale locale)
+    public DateContext(Date date, Locale locale)
     {
         DateTime dateTime = new DateTime(date);
 

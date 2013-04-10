@@ -24,12 +24,11 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.front.FrontBindingManager;
-import org.mayocat.shop.front.bindings.BindingsConstants;
-import org.mayocat.shop.catalog.front.builder.ProductBindingBuilder;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.views.FrontView;
@@ -50,7 +49,7 @@ import com.google.common.collect.Maps;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CollectionResource extends AbstractFrontResource implements Resource, BindingsConstants
+public class CollectionResource extends AbstractFrontResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + CollectionEntity.PATH;
 
@@ -81,17 +80,17 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
 
         FrontView result = new FrontView("collection", breakpoint);
 
-        Map<String, Object> bindings = getBindings(uriInfo);
+        Map<String, Object> context = getContext(uriInfo);
 
-        bindings.put(PAGE_TITLE, collection.getTitle());
-        bindings.put(PAGE_DESCRIPTION, collection.getDescription());
+        context.put(PAGE_TITLE, collection.getTitle());
+        context.put(PAGE_DESCRIPTION, collection.getDescription());
 
         // Sets the "current" flag on the current collection
         try {
-            List<Map<String, Object>> collections = (List<Map<String, Object>>) bindings.get(COLLECTIONS);
+            List<Map<String, Object>> collections = (List<Map<String, Object>>) context.get(COLLECTIONS);
             for (Map<String, Object> c : collections) {
-                if (c.containsKey(BindingsConstants.URL) &&
-                        c.get(BindingsConstants.URL).equals(PATH + SLASH + collection.getSlug()))
+                if (c.containsKey(ContextConstants.URL) &&
+                        c.get(ContextConstants.URL).equals(PATH + SLASH + collection.getSlug()))
                 {
                     c.put("current", true);
                 }
@@ -107,12 +106,12 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         collectionContext.put(SLUG, collection.getSlug());
 
         List<Product> products = catalogService.findProductsForCollection(collection);
-        List<Map<String, Object>> productsBinding = Lists.newArrayList();
+        List<Map<String, Object>> productsContext = Lists.newArrayList();
 
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
         Theme theme = this.execution.getContext().getTheme();
-        ProductBindingBuilder productBindingBuilder = new ProductBindingBuilder(configuration, generalSettings, theme);
+        ProductContextBuilder productContextBuilder = new ProductContextBuilder(configuration, generalSettings, theme);
 
         for (final Product product : products) {
             List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
@@ -125,15 +124,15 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
                 }
             }
 
-            Map<String, Object> productContext = productBindingBuilder.build(product, images);
-            productsBinding.add(productContext);
+            Map<String, Object> productContext = productContextBuilder.build(product, images);
+            productsContext.add(productContext);
         }
 
-        collectionContext.put("products", productsBinding);
+        collectionContext.put("products", productsContext);
 
-        bindings.put("collection", collectionContext);
+        context.put("collection", collectionContext);
 
-        result.putBindings(bindings);
+        result.putContext(context);
 
         return result;
     }
