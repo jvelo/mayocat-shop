@@ -1,5 +1,8 @@
 package org.mayocat.shop.checkout.front;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -11,15 +14,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.cart.CartAccessor;
+import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
+import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CustomerDetails;
-import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
@@ -44,6 +51,9 @@ public class CheckoutResource implements Resource
 
     @Inject
     private CheckoutRegister checkoutRegister;
+
+    @Inject
+    private CartAccessor cartAccessor;
 
     private enum ErrorType
     {
@@ -111,23 +121,89 @@ public class CheckoutResource implements Resource
 
         CustomerDetails customer = new CustomerDetails(email);
 
-        //checkoutRegister.checkout();
+        try {
+            Cart cart = cartAccessor.getCart();
+            checkoutRegister.checkout(cart, uriInfo, customer);
+
+            FrontView result = new FrontView("checkout/success", breakpoint);
+            Map<String, Object> bindings = contextManager.getContext(uriInfo);
+            bindings.put("errors", errors);
+
+            result.putContext(bindings);
+            return result;
+        } catch (final CheckoutException e) {
+            FrontView result = new FrontView("checkout/exception", breakpoint);
+            Map<String, Object> bindings = contextManager.getContext(uriInfo);
+            bindings.put("exception", new HashMap<String, Object>()
+            {
+                {
+                    put("message", e.getMessage());
+                }
+            });
+            result.putContext(bindings);
+            return result;
+        }
+    }
+
+    @GET
+    public Object checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    {
+        if (checkoutRegister.requiresForm()) {
+            FrontView result = new FrontView("checkout/form", breakpoint);
+            Map<String, Object> bindings = contextManager.getContext(uriInfo);
+
+            result.putContext(bindings);
+            return result;
+        } else {
+            try {
+                Cart cart = cartAccessor.getCart();
+                CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, null);
+
+                if (response.getRedirectURL().isPresent()) {
+                    return Response.seeOther(new URI(response.getRedirectURL().get())).build();
+                }
+            } catch (final CheckoutException e) {
+                FrontView result = new FrontView("checkout/exception", breakpoint);
+                Map<String, Object> bindings = contextManager.getContext(uriInfo);
+                bindings.put("exception", new HashMap<String, Object>()
+                {
+                    {
+                        put("message", e.getMessage());
+                    }
+                });
+                result.putContext(bindings);
+                return result;
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("payment/return")
+    public FrontView returnFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    {
+        for (String key : uriInfo.getQueryParameters().keySet()) {
+            System.out.println(key + " : " + uriInfo.getQueryParameters().getFirst(key));
+        }
 
         FrontView result = new FrontView("checkout/success", breakpoint);
         Map<String, Object> bindings = contextManager.getContext(uriInfo);
-        bindings.put("errors", errors);
 
         result.putContext(bindings);
         return result;
     }
 
     @GET
-    public FrontView getCheckoutForm(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    @Path("payment/cancel")
+    public FrontView cancelFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
-        FrontView result = new FrontView("checkout/form", breakpoint);
+        FrontView result = new FrontView("checkout/cancelled", breakpoint);
         Map<String, Object> bindings = contextManager.getContext(uriInfo);
 
         result.putContext(bindings);
         return result;
     }
+
 }

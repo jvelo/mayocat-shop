@@ -9,14 +9,15 @@ import javax.inject.Inject;
 
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.shop.payment.GatewayFactory;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 /**
  * @version $Id$
  */
-@Component
-public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory<PaypalAdaptivePaymentsPaymentGateway>
+@Component("paypaladaptivepayments")
+public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
 {
     private static final String PAYMENTS_DIRECTORY = "payments";
 
@@ -33,11 +34,11 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory<Payp
     private Logger logger;
 
     @Override
-    public PaypalAdaptivePaymentsPaymentGateway createGateway()
+    public PaymentGateway createGateway()
     {
         File configurationFile =
                 new File(filesSettings.getPermanentDirectory() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
-                        CONFIG_FILE_NAME);
+                        SLASH + CONFIG_FILE_NAME);
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(configurationFile);

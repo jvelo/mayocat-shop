@@ -1,5 +1,7 @@
 package org.mayocat.shop.checkout;
 
+import javax.ws.rs.core.UriInfo;
+
 import org.mayocat.shop.cart.model.Cart;
 import org.xwiki.component.annotation.Role;
 
@@ -9,5 +11,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface CheckoutRegister
 {
-    void checkout(Cart cart, CustomerDetails customerDetails) throws CheckoutException;
+    boolean requiresForm();
+
+    CheckoutResponse checkout(Cart cart, UriInfo uriInfo, CustomerDetails customerDetails) throws CheckoutException;
 }

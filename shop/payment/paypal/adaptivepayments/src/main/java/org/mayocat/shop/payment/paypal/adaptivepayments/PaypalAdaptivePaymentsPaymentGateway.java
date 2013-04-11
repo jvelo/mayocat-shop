@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.Option;
 import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.PaymentResponse;
@@ -40,20 +42,31 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
     }
 
     @Override
-    public PaymentResponse purchase(BigDecimal amount, Map<String, Object> options) throws PaymentException
+    public boolean isExternal()
+    {
+        return true;
+    }
+
+    @Override
+    public PaymentResponse purchase(BigDecimal amount, Map<Option, Object> options) throws PaymentException
     {
         PayRequest request = new PayRequest();
 
         RequestEnvelope requestEnvelope = new RequestEnvelope("en_US"); // locale -> errorLanguage
         List<Receiver> receivers = new ArrayList<Receiver>();
-        Receiver rec = new Receiver();
-        rec.setAmount(amount.doubleValue());
-        rec.setEmail("jerome@velociter.fr");
+        Receiver receiver = new Receiver();
+        receiver.setAmount(amount.doubleValue());
+        receiver.setEmail("jerome@velociter.fr");
+        receivers.add(receiver);
         ReceiverList receiverList = new ReceiverList(receivers);
         request.setReceiverList(receiverList);
         request.setRequestEnvelope(requestEnvelope);
         ClientDetailsType clientDetails = new ClientDetailsType();
         request.setClientDetails(clientDetails);
+        request.setReturnUrl((String) options.get(BaseOption.RETURN_URL));
+        request.setCancelUrl((String) options.get(BaseOption.CANCEL_URL));
+        request.setActionType("PAY");
+        request.setCurrencyCode("EUR");
 
         try {
             AdaptivePaymentsService service = new AdaptivePaymentsService(this.configInputStream);
@@ -61,7 +74,8 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
             PayResponse response = service.pay(request);
             Map<String, Object> map = new LinkedHashMap<String, Object>();
             if (response.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS")) {
-                // success
+                // call success
+
                 map.put("ack", response.getResponseEnvelope().getAck());
                 map.put("correlationId", response.getResponseEnvelope().getCorrelationId());
                 map.put("timestamp", response.getResponseEnvelope().getTimestamp());
@@ -70,9 +84,20 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                 if (response.getDefaultFundingPlan() != null) {
                     map.put("defaultFundingPlan", response.getDefaultFundingPlan().getFundingPlanId());
                 }
-                map.put("redirectUrl", "href=https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=" +
-                        response.getPayKey());
-                return new PaymentResponse(true, map);
+
+                PaymentResponse res = new PaymentResponse(true, map);
+
+                if (response.getPaymentExecStatus().equals("CREATED")) {
+                    // This means the payment needs approval on paypal site
+                    res.setRedirectURL("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=" +
+                            response.getPayKey());
+                    res.setRedirect(true);
+                } else if (response.getPaymentExecStatus().equals("COMPLETED")) {
+                    // This means the payment has been approved and the funds transferred
+
+                }
+
+                return res;
             } else {
                 // failure
                 map.put("error", response.getError());

@@ -6,7 +6,7 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface GatewayFactory<PG extends PaymentGateway>
+public interface GatewayFactory
 {
-    PG createGateway();
+    PaymentGateway createGateway();
 }
