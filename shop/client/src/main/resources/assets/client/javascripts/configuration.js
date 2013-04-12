@@ -266,9 +266,9 @@ angular.module('configuration', ['ngResource'])
             }
         };
     })
-    .controller('ConfigurationController', ['$scope', '$rootScope', 'configurationService',
+    .controller('ConfigurationController', ['$scope', '$rootScope', 'configurationService', 'timeService',
 
-        function ($scope, $rootScope, configurationService) {
+        function ($scope, $rootScope, configurationService, timeService) {
 
             $scope.updateSettings = function () {
                 $scope.isSaving = true;
@@ -278,6 +278,8 @@ angular.module('configuration', ['ngResource'])
                     $rootScope.$broadcast("catalog:refreshCatalog");
                 });
             };
+
+            $scope.tzRegions = timeService.getTzData();
 
             $scope.isVisible = function (path) {
                 return configurationService.isVisible($scope.settings, path);

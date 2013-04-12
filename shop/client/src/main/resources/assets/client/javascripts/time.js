@@ -8,7 +8,7 @@
         var defaultPrintFormat = "YYYY-MM-DD HH:mm";
 
         // List of time zones and standard offset generated from joda DateTimeZone list
-        var tzChoices = {
+        var tzData = {
             Africa: {
                 "Africa/Abidjan":                  { stdOffset: "+00:00", city: "Abidjan" },
                 "Africa/Accra":                    { stdOffset: "+00:00", city: "Accra" },
@@ -410,8 +410,8 @@
 
         return {
 
-            getTzlist: function () {
-                return tzlist;
+            getTzData: function () {
+                return tzData;
             },
 
             convertTimestamp: function (timestamp, format) {
