@@ -16,6 +16,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
+import com.google.common.base.Strings;
+
 public class DateTimeISO8601Deserializer extends JsonDeserializer<DateTime>
 {
     @Override
@@ -23,7 +25,7 @@ public class DateTimeISO8601Deserializer extends JsonDeserializer<DateTime>
             JsonProcessingException
     {
         String str = parser.getText().trim();
-        if (str.length() == 0) {
+        if (Strings.isNullOrEmpty(str)) {
             return null;
         }
 
