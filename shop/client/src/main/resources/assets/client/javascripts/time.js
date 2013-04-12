@@ -405,6 +405,9 @@
                 "Pacific/Enderbury":               { stdOffset: "+13:00", city: "Enderbury" },
                 "Pacific/Tongatapu":               { stdOffset: "+13:00", city: "Tongatapu" },
                 "Pacific/Kiritimati":              { stdOffset: "+14:00", city: "Kiritimati" }
+            },
+            Other: {
+                "UTC":                             { stdOffset: "+00:00", city: "UTC" }
             }
         };
 

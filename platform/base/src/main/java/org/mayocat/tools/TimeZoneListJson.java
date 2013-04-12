@@ -1,8 +1,7 @@
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.SortedMap;
+import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +27,7 @@ public class TimeZoneListJson {
 
     public static void main(String[] args) throws Exception {
         Set idSet = DateTimeZone.getAvailableIDs();
-        SortedMap<String, ArrayList<ZoneData>> zones = new TreeMap<String, ArrayList<ZoneData>>();
+        LinkedHashMap<String, ArrayList<ZoneData>> zones = new LinkedHashMap<String, ArrayList<ZoneData>>();
 
         {
             Iterator it = idSet.iterator();
@@ -48,6 +47,10 @@ public class TimeZoneListJson {
                     }
                 }
             }
+            // add UTC
+            ArrayList<ZoneData> otherZones = new ArrayList<ZoneData>();
+            otherZones.add(new ZoneData("UTC", DateTimeZone.forID("UTC")));
+            zones.put("Other", otherZones);
         }
 
         PrintStream out = System.out;
@@ -122,8 +125,10 @@ public class TimeZoneListJson {
             String[] parts = getID().split("/");
             if (parts.length > 2) {
                 name = parts[1] + " - " + parts[2];
-            } else {
+            } else if (parts.length > 1) {
                 name = parts[1];
+            } else {
+                name = parts[0];
             }
             return name.replace("_", " ");
         }
