@@ -1,5 +1,3 @@
-package org.mayocat.tools;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,7 +36,8 @@ public class TimeZoneListJson {
             while (it.hasNext()) {
                 String id = (String) it.next();
                 // get only standard format (not stuff like Etc/GMT-xx, PST, etc.)
-                if (id.matches("[A-Za-z_-]+?/[A-Za-z_-]+?") && !id.matches("^Etc/[A-Za-z0-9_-]+?")) {
+                if (id.matches("^[A-Za-z_-]+?/[A-Za-z_-]+?(/[A-Za-z_-]+?)?")
+                        && !id.matches("^Etc/[A-Za-z0-9_-]+?")) {
                     String k = id.split("/")[0];
                     if (zones.containsKey(k)) {
                         zones.get(k).add(new ZoneData(id, DateTimeZone.forID(id)));
