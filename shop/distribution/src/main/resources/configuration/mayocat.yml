@@ -55,6 +55,12 @@ general:
     others:
       default: []
       configurable: false
+  time:
+    timeZone:
+      default: Europe/Paris
+      configurable: true
+      visible: true
+
 
 theme:
   active:
