@@ -236,7 +236,7 @@
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="content" type="mediumtext"/>
-            <column name="featured_image_id" type="bigint" />
+            <column name="featured_image_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint constraintName="PAGE_ENTITY_FK"
                 baseTableName="page" baseColumnNames="entity_id"
@@ -261,7 +261,7 @@
             <column name="publication_date" type="timestamp"/>
             <column name="title" type="varchar(255)"/>
             <column name="content" type="mediumtext"/>
-            <column name="featured_image_id" type="bigint" />
+            <column name="featured_image_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint constraintName="ARTICLE_ENTITY_FK"
                 baseTableName="article" baseColumnNames="entity_id"
@@ -287,8 +287,8 @@
             <column name="title" type="varchar(255)"/>
             <column name="description" type="mediumtext"/>
             <column name="price" type="numeric(18,4)"/>
-            <column name="stock" type="smallint" />
-            <column name="featured_image_id" type="bigint" />
+            <column name="stock" type="smallint"/>
+            <column name="featured_image_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint constraintName="PRODUCT_ENTITY_FK"
                 baseTableName="product" baseColumnNames="entity_id"
@@ -311,14 +311,14 @@
             <column name="position" type="smallint"/>
             <column name="title" type="varchar(255)"/>
             <column name="description" type="mediumtext"/>
-            <column name="featured_image_id" type="bigint" />
+            <column name="featured_image_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint constraintName="COLLECTION_ENTITY_FK"
                 baseTableName="collection" baseColumnNames="entity_id"
-                referencedTableName="entity" referencedColumnNames="id" />
+                referencedTableName="entity" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="COLLECTION_FEATURED_IMAGE_FK"
                 baseTableName="collection" baseColumnNames="featured_image_id"
-                referencedTableName="entity" referencedColumnNames="id" />
+                referencedTableName="entity" referencedColumnNames="id"/>
         <createIndex tableName="collection" indexName="COLLECTION_POSITION_INDEX">
             <column name="position"/>
         </createIndex>
@@ -340,6 +340,70 @@
         <createIndex tableName="collection_product" indexName="COLLECTION_PRODUCT_POSITION_INDEX">
             <column name="position"/>
         </createIndex>
+
+        <!-- Customer table -->
+        <createTable tableName="customer">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)"/>
+            <column name="first_name" type="varchar(255)"/>
+            <column name="last_name" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="CUSTOMER_ENTITY_FK"
+                baseTableName="customer" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <createIndex tableName="customer" indexName="CUSTOMER_EMAIL_INDEX">
+            <column name="email"/>
+        </createIndex>
+
+        <!-- Address table -->
+        <createTable tableName="address">
+            <column name="address_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="customer_id" type="bigint"/>
+            <column name="company" type="varchar(255)"/>
+            <column name="full_name" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="street_complement" type="varchar(255)"/>
+            <column name="zip" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="ADDRESS_CUSTOMER_FK"
+                baseTableName="address" baseColumnNames="customer_id"
+                referencedTableName="customer" referencedColumnNames="entity_id"/>
+
+        <!-- Orders table -->
+        <createTable tableName="purchase_order">
+            <column name="entity_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="customer_id" type="bigint"/>
+            <column name="delivery_address_id" type="bigint"/>
+            <column name="billing_address_id" type="bigint"/>
+            <column name="creation_date" type="timestamp"/>
+            <column name="update_date" type="timestamp"/>
+            <column name="currency" type="varchar(3)"/>
+            <column name="number_of_items" type="smallint"/>
+            <column name="items_total" type="numeric(18,4)"/>
+            <column name="grand_total" type="numeric(18,4)"/>
+            <column name="status" type="varchar(32)"/>
+            <column name="order_data" type="json"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="ORDER_ENTITY_FK"
+                baseTableName="purchase_order" baseColumnNames="entity_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="ORDER_CUSTOMER_ENTITY_FK"
+                baseTableName="purchase_order" baseColumnNames="customer_id"
+                referencedTableName="entity" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="ORDER_DELIVERY_ADDRESS_ENTITY_FK"
+                baseTableName="purchase_order" baseColumnNames="delivery_address_id"
+                referencedTableName="address" referencedColumnNames="address_id"/>
+        <addForeignKeyConstraint constraintName="ORDER_BILLING_ADDRESS_ENTITY_FK"
+                baseTableName="purchase_order" baseColumnNames="billing_address_id"
+                referencedTableName="address" referencedColumnNames="address_id"/>
 
     </changeSet>
 

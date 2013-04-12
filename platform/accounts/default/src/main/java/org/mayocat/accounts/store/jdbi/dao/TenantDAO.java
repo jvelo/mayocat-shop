@@ -38,6 +38,7 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
     public abstract void updateConfiguration(@BindBean("tenant") Tenant id, @Bind("version") Integer version,
             @Bind("data") String configuration);
 
+    @GetGeneratedKeys
     @SqlUpdate
     (
         "INSERT INTO tenant " +
@@ -46,7 +47,7 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
         "VALUES      (:tenant.slug, " +
         "             :configuration) "
     )
-    public abstract void create(@BindBean("tenant") Tenant tenant, @Bind("configuration") Integer configuration);
+    public abstract Long create(@BindBean("tenant") Tenant tenant, @Bind("configuration") Integer configuration);
 
     @SqlQuery
     (

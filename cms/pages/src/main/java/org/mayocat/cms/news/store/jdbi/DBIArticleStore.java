@@ -29,7 +29,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     private static final String ARTICLE_TABLE_NAME = "article";
 
     @Override
-    public void create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
+    public Long create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(ARTICLE_TABLE_NAME, article.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -45,6 +45,8 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
         this.dao.createOrUpdateAddons(article);
 
         this.dao.commit();
+
+        return entityId;
     }
 
     @Override

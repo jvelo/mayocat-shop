@@ -1,0 +1,3 @@
+org.mayocat.shop.billing.store.jdbi.DBIAddressStore
+org.mayocat.shop.billing.store.jdbi.DBICustomerStore
+org.mayocat.shop.billing.store.jdbi.DBIOrderStore

@@ -9,7 +9,7 @@ import org.mayocat.model.Identifiable;
 
 public interface Store<T extends Identifiable, K extends Serializable>
 {
-    void create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
+    Long create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
     
     void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException;
 

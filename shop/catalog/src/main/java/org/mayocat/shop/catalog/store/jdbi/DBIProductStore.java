@@ -46,7 +46,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Inject
     private AttachmentStore attachmentStore;
 
-    public void create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
+    public Long create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -65,6 +65,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
+
+        return entityId;
     }
 
     @Override

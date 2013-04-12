@@ -31,7 +31,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     private PageDAO dao;
 
     @Override
-    public void create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
+    public Long create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(PAGE_TABLE_NAME, page.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -50,6 +50,8 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();
+
+        return entityId;
     }
 
     @Override

@@ -1,26 +1,38 @@
 package org.mayocat.shop.checkout.internal;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.mayocat.shop.billing.model.Address;
+import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.store.AddressStore;
+import org.mayocat.shop.billing.store.CustomerStore;
+import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
-import org.mayocat.shop.checkout.CustomerDetails;
 import org.mayocat.shop.payment.BaseOption;
 import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.Option;
 import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.PaymentResponse;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -36,11 +48,74 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private CheckoutSettings checkoutSettings;
 
     @Inject
+    private Provider<OrderStore> orderStore;
+
+    @Inject
+    private Provider<CustomerStore> customerStore;
+
+    @Inject
+    private Provider<AddressStore> addressStore;
+
+    @Inject
     private Map<String, GatewayFactory> gatewayFactories;
 
     @Override
-    public CheckoutResponse checkout(Cart cart, UriInfo uriInfo, CustomerDetails customerDetails) throws CheckoutException
+    public CheckoutResponse checkout(Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
+            Address billingAddress) throws CheckoutException
     {
+
+        Preconditions.checkNotNull(customer);
+
+        try {
+            Long customerId;
+            Long deliveryAddressId = null;
+            Long billingAddressId = null;
+
+            customer.setSlug(customer.getEmail());
+            if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
+                customerId = this.customerStore.get().create(customer);
+            }
+            else {
+                customer = this.customerStore.get().findBySlug(customer.getEmail());
+                customerId = customer.getId();
+            }
+
+            if (deliveryAddress != null) {
+                deliveryAddressId = this.addressStore.get().create(deliveryAddress);
+            }
+            if (billingAddress != null) {
+                billingAddressId = this.addressStore.get().create(billingAddress);
+            }
+
+            Order order = new Order();
+            order.setBillingAddressId(billingAddressId);
+            order.setDeliveryAddressId(deliveryAddressId);
+            order.setCustomerId(customerId);
+
+            order.setGrandTotal(cart.getTotal());
+            order.setItemsTotal(cart.getTotal());
+
+            Long numberOfItems = 0l;
+            Map<Purchasable, Long> items = cart.getItems();
+            for (Purchasable purchasable : items.keySet()) {
+                numberOfItems += items.get(purchasable);
+            }
+
+            order.setNumberOfItems(numberOfItems);
+            order.setCreationDate(new Date());
+            order.setUpdateDate(order.getCreationDate());
+            order.setCurrency(cart.getCurrency());
+            order.setStatus(Order.Status.NONE);
+            order.setSlug(RandomStringUtils.randomAlphanumeric(12));
+
+            orderStore.get().create(order);
+
+        } catch (EntityAlreadyExistsException e1) {
+            throw new CheckoutException(e1);
+        } catch (InvalidEntityException e2) {
+            throw new CheckoutException(e2);
+        }
+
         String defaultGatewayFactory = checkoutSettings.getDefaultPaymentGateway();
 
         // Right now only the default gateway factory is supported.
@@ -71,22 +146,18 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 }
 
                 return response;
-            }
-            else {
+            } else {
                 throw new CheckoutException("Payment was not successful");
             }
-
         } catch (PaymentException e) {
             this.logger.error("Payment error while checking out cart", e);
             throw new CheckoutException(e);
         }
-
     }
 
     @Override
     public boolean requiresForm()
     {
-        return false;
+        return true;
     }
-
 }

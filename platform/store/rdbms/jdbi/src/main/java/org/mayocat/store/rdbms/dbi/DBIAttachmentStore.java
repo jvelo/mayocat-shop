@@ -41,7 +41,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     private Logger logger;
 
     @Override
-    public void create(Attachment attachment) throws EntityAlreadyExistsException, InvalidEntityException
+    public Long create(Attachment attachment) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(ATTACHMENT_TABLE_NAME, attachment.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -79,6 +79,8 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
         }
 
         this.dao.commit();
+
+        return entityId;
     }
 
     @Override

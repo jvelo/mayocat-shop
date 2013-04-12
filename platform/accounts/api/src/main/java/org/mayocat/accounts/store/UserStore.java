@@ -14,7 +14,7 @@ import org.mayocat.store.Store;
 @org.xwiki.component.annotation.Role
 public interface UserStore extends Store<User, Long>, EntityStore
 {
-    void create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
+    Long create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
 
     User findUserByEmailOrUserName(String userNameOrEmail);
 

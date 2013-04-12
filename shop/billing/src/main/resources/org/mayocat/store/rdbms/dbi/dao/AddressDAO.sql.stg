@@ -1,0 +1,14 @@
+group AddressDAO;
+
+createAddress() ::= <<
+    INSERT INTO address (company, fullName, street, streetComplement, zip, city, country)
+    VALUES (:id,
+            :address.customerId,
+            :address.company,
+            :address.fullName,
+            :address.street,
+            :address.streetComplement,
+            :address.zip,
+            :address.city,
+            :address.country)
+>>

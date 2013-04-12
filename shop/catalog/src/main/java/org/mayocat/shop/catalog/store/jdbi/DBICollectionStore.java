@@ -29,7 +29,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     private CollectionDAO dao;
 
-    public void create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
+    public Long create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(collection.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -43,6 +43,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         this.dao.insertTranslations(entityId, collection.getTranslations());
 
         this.dao.commit();
+
+        return entityId;
     }
 
     public void update(Collection collection) throws EntityDoesNotExistException, InvalidEntityException

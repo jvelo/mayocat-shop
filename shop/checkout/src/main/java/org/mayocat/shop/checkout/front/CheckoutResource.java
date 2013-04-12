@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,6 +22,10 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.shop.billing.store.AddressStore;
+import org.mayocat.shop.billing.store.CustomerStore;
+import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
@@ -28,7 +33,10 @@ import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CustomerDetails;
 import org.mayocat.shop.front.FrontContextManager;
+import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.InvalidEntityException;
 import org.mayocat.theme.Breakpoint;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -54,6 +62,9 @@ public class CheckoutResource implements Resource
 
     @Inject
     private CartAccessor cartAccessor;
+
+    @Inject
+    private Logger logger;
 
     private enum ErrorType
     {
@@ -119,11 +130,12 @@ public class CheckoutResource implements Resource
             return result;
         }
 
-        CustomerDetails customer = new CustomerDetails(email);
+        Customer customer = new Customer();
+        customer.setEmail(email);
 
         try {
             Cart cart = cartAccessor.getCart();
-            checkoutRegister.checkout(cart, uriInfo, customer);
+            checkoutRegister.checkout(cart, uriInfo, customer, null, null);
 
             FrontView result = new FrontView("checkout/success", breakpoint);
             Map<String, Object> bindings = contextManager.getContext(uriInfo);
@@ -131,7 +143,8 @@ public class CheckoutResource implements Resource
 
             result.putContext(bindings);
             return result;
-        } catch (final CheckoutException e) {
+        } catch (final Exception e) {
+            this.logger.error("Exception checking out", e);
             FrontView result = new FrontView("checkout/exception", breakpoint);
             Map<String, Object> bindings = contextManager.getContext(uriInfo);
             bindings.put("exception", new HashMap<String, Object>()
@@ -157,7 +170,7 @@ public class CheckoutResource implements Resource
         } else {
             try {
                 Cart cart = cartAccessor.getCart();
-                CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, null);
+                CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, null, null, null);
 
                 if (response.getRedirectURL().isPresent()) {
                     return Response.seeOther(new URI(response.getRedirectURL().get())).build();
@@ -205,5 +218,4 @@ public class CheckoutResource implements Resource
         result.putContext(bindings);
         return result;
     }
-
 }
