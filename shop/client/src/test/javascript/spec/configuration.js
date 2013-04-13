@@ -85,6 +85,22 @@ describe('Configuration', function () {
                             "default":"Bonjour",
                             "configurable":false,
                             "visible":true
+                        },
+                        "blukbluk":{
+                            "value": "bluk",
+                            "default":"bluk",
+                            "configurable":true,
+                            "visible":true
+                        }
+                    },
+                    "otherPropSet": {
+                        "deeper": {
+                            "zogotounga":{
+                                "value": "zorg",
+                                "default":"zorg",
+                                "configurable":true,
+                                "visible":true
+                            }
                         }
                     }
                 }
@@ -104,7 +120,7 @@ describe('Configuration', function () {
             expect(configurationController.settings.module.propertySet.property.__originalValue).toBe("Hello");
         });
 
-        it("Should prepare settings object for submit", function () {
+        it("Should prepare settings object for submit and not leave empty path", function () {
             httpBackend.flush();
             configurationController.settings.module.propertySet.property.value = "Salut";
             httpBackend.expectPUT("/api/configuration/settings", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
@@ -117,6 +133,7 @@ describe('Configuration', function () {
             httpBackend.expectPUT("/api/configuration/settings", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
             configurationController.updateSettings();
         });
+
     });
 
 

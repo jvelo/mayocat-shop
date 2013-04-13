@@ -90,7 +90,9 @@ angular.module('configuration', ['ngResource'])
                         }
                         else if (typeof node[property] === "object") {
                             // We need to go deeper...
-                            container[property] = walk(node[property], {});
+                            var deeper = walk(node[property], {});
+                            // if not empty add it
+                            if (!_.isEmpty(deeper)) container[property] = deeper;
                         }
                         else {
                             // What do we do with properties that are not configurable ?
@@ -99,9 +101,7 @@ angular.module('configuration', ['ngResource'])
                     }
                 }
                 return container;
-            }
-
-            // TODO: clean object graph of empty paths like this : "catalog":{"currencies":{},"products":{}}
+            };
 
             return walk(settings, {});
         };
