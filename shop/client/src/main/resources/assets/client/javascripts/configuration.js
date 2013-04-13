@@ -25,6 +25,26 @@ angular.module('configuration', ['ngResource'])
             return deferred.promise;
         };
 
+
+        /**
+         * Get a property from a conf object or undefined if it does not exist
+         * The 'path' argument must be a string representing the access of
+         * 'confObj' inner properties
+         *
+         * Ex:
+         *
+         * >>> getSettingEl({a: {b: "b"}}, "a.b")
+         * "b"
+         * >>> getSettingEl({a: {b: "b"}}, "a.b.c")
+         * undefined
+         */
+        var getSettingEl = function (confObj, path) {
+            var props = path.split(".");
+            return _.reduce(props, function(memo, prop) {
+                return memo[prop];
+            }, confObj);
+        };
+
         var getConfiguration = function () {
             var deferred = $q.defer();
             if (configuration) {
@@ -135,7 +155,7 @@ angular.module('configuration', ['ngResource'])
                         return;
                     }
                     try {
-                        var configurationElement = eval("configuration." + path);
+                        var configurationElement = getSettingEl(configuration, path);
                         if (typeof configurationElement === "undefined") {
                             // The configuration does not exist
                             callback && callback(undefined);
@@ -174,7 +194,7 @@ angular.module('configuration', ['ngResource'])
                         return;
                     }
                     try {
-                        var setting = eval("settings." + path);
+                        var setting = getSettingEl(settings, path);
                         if (typeof setting === "undefined") {
                             // The configuration does not exist
                             callback && callback(undefined);
@@ -211,7 +231,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getSettingEl(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return;
@@ -234,7 +254,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getSettingEl(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return undefined;
@@ -255,7 +275,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getSettingEl(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return undefined;
