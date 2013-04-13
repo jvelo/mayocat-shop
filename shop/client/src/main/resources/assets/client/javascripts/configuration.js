@@ -40,7 +40,7 @@ angular.module('configuration', ['ngResource'])
          */
         var getSettingEl = function (confObj, path) {
             var props = path.split(".");
-            return _.reduce(props, function(memo, prop) {
+            return props.reduce(function(memo, prop) {
                 return memo[prop];
             }, confObj);
         };
@@ -112,7 +112,7 @@ angular.module('configuration', ['ngResource'])
                             // We need to go deeper...
                             var deeper = walk(node[property], {});
                             // if not empty add it
-                            if (!_.isEmpty(deeper)) container[property] = deeper;
+                            if (!jQuery.isEmptyObject(deeper)) container[property] = deeper;
                         }
                         else {
                             // What do we do with properties that are not configurable ?
