@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 angular.module('configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q, $rootScope) {
@@ -12,7 +12,7 @@ angular.module('configuration', ['ngResource'])
 
         var getSettings = function () {
             var deferred = $q.defer();
-            if (settings != null) {
+            if (settings) {
                 deferred.resolve(settings);
             }
             else {
@@ -27,7 +27,7 @@ angular.module('configuration', ['ngResource'])
 
         var getConfiguration = function () {
             var deferred = $q.defer();
-            if (configuration != null) {
+            if (configuration) {
                 deferred.resolve(configuration);
             }
             else {
@@ -46,7 +46,7 @@ angular.module('configuration', ['ngResource'])
                 && typeof node.value !== "undefined"
                 && typeof node.default !== "undefined"
                 && typeof node.visible !== "undefined";
-        }
+        };
 
         var saveOriginalValues = function (settings) {
             var walk = function (node) {
@@ -65,10 +65,10 @@ angular.module('configuration', ['ngResource'])
                         }
                     }
                 }
-            }
+            };
 
             walk(settings);
-        }
+        };
 
         var prepareSettings = function (settings) {
 
@@ -78,7 +78,7 @@ angular.module('configuration', ['ngResource'])
                     return true;
                 }
                 return false;
-            }
+            };
 
             var walk = function (node, container) {
                 for (var property in node) {
