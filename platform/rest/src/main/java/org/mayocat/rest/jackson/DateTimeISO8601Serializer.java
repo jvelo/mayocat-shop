@@ -1,4 +1,4 @@
-package org.mayocat.cms.jackson;
+package org.mayocat.rest.jackson;
 
 import java.io.IOException;
 

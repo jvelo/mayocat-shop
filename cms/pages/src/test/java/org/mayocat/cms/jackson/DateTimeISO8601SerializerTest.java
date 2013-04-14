@@ -5,10 +5,7 @@ import org.junit.Test;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import org.mayocat.cms.jackson.DateTimeISO8601Serializer;
+import org.mayocat.rest.jackson.DateTimeISO8601Serializer;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;

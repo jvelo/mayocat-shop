@@ -15,7 +15,7 @@
         <tbody>
             <tr ng-repeat="order in orders">
                 <td>
-                    <div>{{order.creationDate}}</div>
+                    <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
                     <div>
                         <small>
                             {{order.slug}}

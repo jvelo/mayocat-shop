@@ -1,4 +1,4 @@
-package org.mayocat.cms.jackson;
+package org.mayocat.rest.jackson;
 
 import java.io.IOException;
 
@@ -29,8 +29,8 @@ public class DateTimeISO8601Deserializer extends JsonDeserializer<DateTime>
             return null;
         }
 
-        ConfigurationService cs = Utils.getComponent(ConfigurationService.class);
-        GeneralSettings settings = cs.getSettings(GeneralSettings.class);
+        ConfigurationService configurationService = Utils.getComponent(ConfigurationService.class);
+        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
         return new DateTime(str, DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue()));
     }
 }
