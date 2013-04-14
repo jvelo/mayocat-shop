@@ -30,7 +30,6 @@ public class TimeZoneModuleTest
     @Test
     public void testTimeZoneDeserialization() throws Exception
     {
-        Assert.assertEquals(TimeZone.getTimeZone("GMT-08"), mapper.readValue("\"GMT-08\"", TimeZone.class));
+        Assert.assertEquals(TimeZone.getTimeZone("Europe/Paris"), mapper.readValue("\"Europe/Paris\"", TimeZone.class));
     }
-
 }

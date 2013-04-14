@@ -4,7 +4,7 @@ describe('Time', function () {
 
         var timeService;
 
-        beforeEach(module('mayocat'))
+        beforeEach(module('mayocat'));
 
         beforeEach(inject(function ($injector) {
             timeService = $injector.get('timeService');
@@ -19,7 +19,7 @@ describe('Time', function () {
 
         var timestampAsDateFilter;
 
-        beforeEach(module('mayocat'))
+        beforeEach(module('mayocat'));
 
         beforeEach(inject(function ($filter) {
             timestampAsDateFilter = $filter('timestampAsDate');
@@ -33,24 +33,34 @@ describe('Time', function () {
             expect(timestampAsDateFilter(undefined)).toBe(undefined);
         });
 
-        it("Sould convert timestamps to dates", function() {
-            // FIXME
-            // Ignore until it accounts for timezone
-            // expect(timestampAsDateFilter("1364488887772")).toBe("2013-03-28 17:41");
+    });
+
+    describe('Full ISO 8691 date string to local date filter', function () {
+        var filter;
+
+        beforeEach(module('mayocat'));
+
+        beforeEach(inject(function ($filter) {
+            filter = $filter('iso8601toLocalDate');
+        }));
+
+        it('Should return undefined when the string is null or undefined', function () {
+            expect(filter("")).toBe(undefined);
+            expect(filter(null)).toBe(undefined);
+            expect(filter(undefined)).toBe(undefined);
         });
 
-        it("Sould accept timestamps as numbers", function() {
-            // FIXME
-            // Ignore until it accounts for timezone
-            //expect(timestampAsDateFilter(1364488887772)).toBe("2013-03-28 17:41");
+        it('Should always resolve to a local date, even when the string contains TZ info', function () {
+            expect(filter("2013-04-09T12:16:31+02:00")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31-06:00")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31-0600")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31+0600")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31+06")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31Z")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31Z")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09T12:16:31")).toBe("2013-04-09 12:16");
+            expect(filter("2013-04-09")).toBe("2013-04-09 00:00");
         });
-
-        it("Sould support date formats as arugment", function() {
-            // FIXME
-            // Ignore until it accounts for timezone
-            //expect(timestampAsDateFilter("1364488887772", "LLL")).toBe("March 28 2013 5:41 PM");
-        });
-
 
     });
 

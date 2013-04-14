@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 angular.module('article', ['ngResource'])
 
@@ -29,7 +29,7 @@ angular.module('article', ['ngResource'])
                     result = (matches[1].length == 2 ? "" : "0") + matches[1] + ":" + matches[2];
                 }
                 return result;
-            }
+            };
 
             $scope.slug = $routeParams.article;
 
@@ -38,7 +38,7 @@ angular.module('article', ['ngResource'])
                 $scope.updateArticle(function(){
                     $scope.getArticle();
                 });
-            }
+            };
 
             $scope.updateArticle = function (callback) {
                 $scope.isSaving = true;
@@ -68,29 +68,31 @@ angular.module('article', ['ngResource'])
             };
 
             $scope.changePublicationDate = function () {
-                $scope.newPublicationDate = timeService.convertTimestamp($scope.article.publicationDate, "YYYY-MM-DD");
-                $scope.newPublicationTime = timeService.convertTimestamp($scope.article.publicationDate, "HH:mm");
-            }
+                $scope.newPublicationDate = timeService.convertISO8601toLocalDate($scope.article.publicationDate, "YYYY-MM-DD");
+                $scope.newPublicationTime = timeService.convertISO8601toLocalDate($scope.article.publicationDate, "HH:mm");
+            };
 
             $scope.validateNewPublicationDate = function () {
                 var newTime = parseUserEnteredTime($scope.newPublicationTime);
                 if (!newTime) {
                     // old is the new new
-                    newTime = timeService.convertTimestamp($scope.article.publicationDate, "HH:mm");
+                    newTime = timeService.convertISO8601toLocalDate($scope.article.publicationDate, "HH:mm");
                 }
-                var newDate = $scope.newPublicationDate + " " + newTime;
-                $scope.article.publicationDate = timeService.convert(newDate, "YYYY-MM-DD HH:mm", "X");
+                // construct a floating iso8601 date (without tz)
+                var newDate = $scope.newPublicationDate + "T" + newTime;
+
+                $scope.article.publicationDate = newDate;
                 $scope.cancelChangePublicationDate();
-            }
+            };
 
             $scope.cancelChangePublicationDate = function () {
                 $scope.newPublicationDate = null;
                 $scope.newPublicationTime = null;
-            }
+            };
 
             $scope.editThumbnails = function (image) {
                 $rootScope.$broadcast('thumbnails:edit', "article", image);
-            }
+            };
 
             $scope.ArticleResource = $resource("/api/news/:slug");
 
@@ -104,33 +106,33 @@ angular.module('article', ['ngResource'])
                     title: "",
                     addons: []
                 };
-            }
+            };
 
             $scope.reloadImages = function () {
                 $scope.article.images = $http.get("/api/news/" + $scope.slug + "/images").success(function (data) {
                     $scope.article.images = data;
                 });
-            }
+            };
 
             $scope.selectFeatureImage = function (image) {
                 imageService.selectFeatured($scope.article, image);
-            }
+            };
 
             $scope.removeImage = function(image) {
                 $http.delete("/api/news/" + $scope.slug + "/images/" + image.slug).success(function () {
                     $scope.reloadImages();
                 });
-            }
+            };
 
             $scope.getImageUploadUri = function () {
                 return "/api/news/" + $scope.slug + "/attachments";
-            }
+            };
 
             $scope.initializeAddons = function () {
                 addonsService.initialize("article", $scope.article).then(function (addons) {
                     $scope.addons = addons;
                 });
-            }
+            };
 
 
             $scope.initializeModels = function () {
@@ -148,7 +150,7 @@ angular.module('article', ['ngResource'])
                         }
                     }
                 });
-            }
+            };
 
             // Initialize existing page or new page
 
@@ -160,7 +162,7 @@ angular.module('article', ['ngResource'])
                     $scope.initializeAddons();
                     $scope.initializeModels();
 
-                    if ($scope.article.published == null) {
+                    if ($scope.article.published === null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
                         // Thus, we convert "null" published flag to undefined to be able to have that "high impedance"
@@ -168,7 +170,7 @@ angular.module('article', ['ngResource'])
                         $scope.article.published = undefined;
                     }
                 });
-            }
+            };
 
             if (!$scope.isNew()) {
                 $scope.getArticle();
@@ -181,7 +183,7 @@ angular.module('article', ['ngResource'])
 
             $scope.confirmDeletion = function () {
                 $rootScope.$broadcast('article:confirmDelete');
-            }
+            };
 
             $scope.deleteArticle = function () {
                 $scope.ArticleResource.delete({
@@ -191,6 +193,6 @@ angular.module('article', ['ngResource'])
                     $rootScope.$broadcast("news:articles:refreshList");
                     $location.url("/contents");
                 });
-            }
+            };
 
         }]);
