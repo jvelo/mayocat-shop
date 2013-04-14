@@ -30,5 +30,10 @@
             <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -52,6 +52,7 @@
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/money.js</include>
+                        <include>assets/client/javascripts/orders.js</include>
                         <include>assets/client/javascripts/time.js</include>
                         <include>assets/client/javascripts/addons.js</include>
                         <include>assets/client/javascripts/app.js</include>

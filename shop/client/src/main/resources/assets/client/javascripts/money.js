@@ -195,6 +195,15 @@
             }
 
         })
+
+        .filter('money', ['moneyService', function (moneyService) {
+            return function (amount, currencyCode) {
+                var currency = moneyService.getCurrency(currencyCode),
+                    decimals = currency ? currency.decimals : 2;
+                return amount.toFixed(decimals);
+            }
+        }])
+
         .directive('moneyAmount', ['moneyService', function (moneyService) {
             return {
                 require: 'ngModel',

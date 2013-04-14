@@ -12,6 +12,7 @@ var mayocat = angular.module('mayocat', [
     'page',
     'articles',
     'article',
+    'orders',
     'configuration',
     'money',
     'time',
@@ -23,7 +24,7 @@ mayocat.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
         when('/contents', {templateUrl: 'partials/contents.html'}).
-        when('/orders', {templateUrl: 'partials/orders.html'}).
+        when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController'}).
         when('/customers', {templateUrl: 'partials/customers.html'}).
         when('/news', {templateUrl: 'partials/news.html'}).
         when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).

@@ -21,6 +21,7 @@ public class
         Order order = new Order();
 
         order.setId(resultSet.getLong("id"));
+        order.setSlug(resultSet.getString("slug"));
 
         order.setBillingAddressId(resultSet.getLong("billing_address_id"));
         order.setDeliveryAddressId(resultSet.getLong("delivery_address_id"));

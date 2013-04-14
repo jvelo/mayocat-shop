@@ -1,3 +1,39 @@
 <h1 class="big">Orders</h1>
 
-<div class="alert alert-info">There are no orders yet.</div>
+<div>
+
+    <div class="alert alert-info" ng-show="orders <= 0">There are no orders yet.</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Date</td>
+                <td>Amount</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="order in orders">
+                <td>
+                    <div>{{order.creationDate}}</div>
+                    <div>
+                        <small>
+                            {{order.slug}}
+                        </small>
+                    </div>
+                </td>
+                <td>
+                    <div>{{order.grandTotal | money:'EUR'}} {{order.currency}}</div>
+                    <div>
+                        <small>
+                            {{order.numberOfItems}} items
+                        </small>
+                    </div>
+                </td>
+                <td ng-bind="getStatus(order.status)"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</div>
