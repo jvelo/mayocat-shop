@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 angular.module('configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q, $rootScope) {
@@ -12,7 +12,7 @@ angular.module('configuration', ['ngResource'])
 
         var getSettings = function () {
             var deferred = $q.defer();
-            if (settings != null) {
+            if (settings) {
                 deferred.resolve(settings);
             }
             else {
@@ -25,9 +25,31 @@ angular.module('configuration', ['ngResource'])
             return deferred.promise;
         };
 
+
+        /**
+         * Get a property from a conf object or undefined if it does not exist
+         * The 'path' argument must be a string representing the access of
+         * 'obj' inner property
+         *
+         * Ex:
+         *
+         * >>> getObjectPropertyFromPath({a: {b: "b"}}, "a.b")
+         * "b"
+         * >>> getObjectPropertyFromPath({a: {b: "b"}}, "a.b.c")
+         * undefined
+         * >>> getObjectPropertyFromPath({a: {b: "b"}}, "bluk")
+         * undefined
+         */
+        var getObjectPropertyFromPath = function (obj, path) {
+            var props = path.split(".");
+            return props.reduce(function(memo, prop) {
+                return memo && memo[prop];
+            }, obj);
+        };
+
         var getConfiguration = function () {
             var deferred = $q.defer();
-            if (configuration != null) {
+            if (configuration) {
                 deferred.resolve(configuration);
             }
             else {
@@ -46,7 +68,7 @@ angular.module('configuration', ['ngResource'])
                 && typeof node.value !== "undefined"
                 && typeof node.default !== "undefined"
                 && typeof node.visible !== "undefined";
-        }
+        };
 
         var saveOriginalValues = function (settings) {
             var walk = function (node) {
@@ -65,10 +87,10 @@ angular.module('configuration', ['ngResource'])
                         }
                     }
                 }
-            }
+            };
 
             walk(settings);
-        }
+        };
 
         var prepareSettings = function (settings) {
 
@@ -78,7 +100,7 @@ angular.module('configuration', ['ngResource'])
                     return true;
                 }
                 return false;
-            }
+            };
 
             var walk = function (node, container) {
                 for (var property in node) {
@@ -90,7 +112,9 @@ angular.module('configuration', ['ngResource'])
                         }
                         else if (typeof node[property] === "object") {
                             // We need to go deeper...
-                            container[property] = walk(node[property], {});
+                            var deeper = walk(node[property], {});
+                            // if not empty add it
+                            if (Object.keys(deeper).length !== 0) container[property] = deeper;
                         }
                         else {
                             // What do we do with properties that are not configurable ?
@@ -99,9 +123,7 @@ angular.module('configuration', ['ngResource'])
                     }
                 }
                 return container;
-            }
-
-            // TODO: clean object graph of empty paths like this : "catalog":{"currencies":{},"products":{}}
+            };
 
             return walk(settings, {});
         };
@@ -135,7 +157,7 @@ angular.module('configuration', ['ngResource'])
                         return;
                     }
                     try {
-                        var configurationElement = eval("configuration." + path);
+                        var configurationElement = getObjectPropertyFromPath(configuration, path);
                         if (typeof configurationElement === "undefined") {
                             // The configuration does not exist
                             callback && callback(undefined);
@@ -174,7 +196,7 @@ angular.module('configuration', ['ngResource'])
                         return;
                     }
                     try {
-                        var setting = eval("settings." + path);
+                        var setting = getObjectPropertyFromPath(settings, path);
                         if (typeof setting === "undefined") {
                             // The configuration does not exist
                             callback && callback(undefined);
@@ -211,7 +233,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getObjectPropertyFromPath(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return;
@@ -234,7 +256,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getObjectPropertyFromPath(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return undefined;
@@ -255,7 +277,7 @@ angular.module('configuration', ['ngResource'])
                 if (typeof settings === "undefined") {
                     return undefined;
                 }
-                var settingsElement = eval("settings." + path);
+                var settingsElement = getObjectPropertyFromPath(settings, path);
                 if (typeof settingsElement === "undefined") {
                     // The settings does not exist
                     return undefined;
