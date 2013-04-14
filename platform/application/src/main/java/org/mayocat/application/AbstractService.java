@@ -76,9 +76,9 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     @Override
     public void initialize(Bootstrap<C> bootstrap)
     {
-        bootstrap.getObjectMapperFactory().registerModule(new TimeZoneModule());
-
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
+
+        this.objectMapperFactory.registerModule(new TimeZoneModule());
 
         this.addModule(new AccountsModule());
     }
