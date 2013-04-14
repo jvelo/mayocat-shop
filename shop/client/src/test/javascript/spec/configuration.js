@@ -62,6 +62,19 @@ describe('Configuration', function () {
             });
         });
 
+        it("Should return undefined when a property does not exist", function () {
+            var property;
+            configurationService.getSettings("module.doesNotExist.property", function(p){
+                property = p;
+            });
+            httpBackend.flush();
+
+            runs(function(){
+                expect(property).toBe(undefined);
+            });
+        });
+
+
         it("Should verify a configuration configurability and visibility", function () {
             expect(configurationService.isConfigurable(sampleSettings, "module.propertySet.property")).toBe(false);
             expect(configurationService.isVisible(sampleSettings, "module.propertySet.property")).toBe(true);

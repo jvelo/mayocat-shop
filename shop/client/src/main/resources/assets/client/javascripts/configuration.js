@@ -29,7 +29,7 @@ angular.module('configuration', ['ngResource'])
         /**
          * Get a property from a conf object or undefined if it does not exist
          * The 'path' argument must be a string representing the access of
-         * 'confObj' inner property
+         * 'obj' inner property
          *
          * Ex:
          *
@@ -37,12 +37,14 @@ angular.module('configuration', ['ngResource'])
          * "b"
          * >>> getObjectPropertyFromPath({a: {b: "b"}}, "a.b.c")
          * undefined
+         * >>> getObjectPropertyFromPath({a: {b: "b"}}, "bluk")
+         * undefined
          */
-        var getObjectPropertyFromPath = function (confObj, path) {
+        var getObjectPropertyFromPath = function (obj, path) {
             var props = path.split(".");
             return props.reduce(function(memo, prop) {
-                return memo[prop];
-            }, confObj);
+                return memo && memo[prop];
+            }, obj);
         };
 
         var getConfiguration = function () {
