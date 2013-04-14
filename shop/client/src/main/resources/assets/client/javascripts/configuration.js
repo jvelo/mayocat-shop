@@ -112,7 +112,7 @@ angular.module('configuration', ['ngResource'])
                             // We need to go deeper...
                             var deeper = walk(node[property], {});
                             // if not empty add it
-                            if (!jQuery.isEmptyObject(deeper)) container[property] = deeper;
+                            if (Object.keys(deeper).length !== 0) container[property] = deeper;
                         }
                         else {
                             // What do we do with properties that are not configurable ?
