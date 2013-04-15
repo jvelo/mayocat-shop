@@ -100,8 +100,6 @@ public class Cart implements Serializable
 
     public void empty()
     {
-        for (Purchasable purchasable : items.keySet()) {
-            this.removeItem(purchasable);
-        }
+        items.clear();
     }
 }
