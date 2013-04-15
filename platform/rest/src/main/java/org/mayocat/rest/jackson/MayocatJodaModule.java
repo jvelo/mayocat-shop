@@ -7,9 +7,9 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-public class CustomJodaDateTimeModule extends SimpleModule
+public class MayocatJodaModule extends SimpleModule
 {
-    public CustomJodaDateTimeModule()
+    public MayocatJodaModule()
     {
         super(Version.unknownVersion());
 
