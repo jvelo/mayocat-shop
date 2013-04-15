@@ -12,7 +12,7 @@ angular.module('orders', [])
             }
 
             $scope.getStatus = function (status) {
-                return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+                return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().replace(/_/g, ' ');
             }
 
             $scope.fetchOrders();

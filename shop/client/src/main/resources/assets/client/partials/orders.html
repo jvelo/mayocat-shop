@@ -2,18 +2,18 @@
 
 <div>
 
-    <div class="alert alert-info" ng-show="orders <= 0">There are no orders yet.</div>
+    <div class="alert alert-info" ng-show="orders.length <= 0">There are no orders yet.</div>
 
-    <table class="table">
+    <table class="table table-hover" ng-show="orders.length > 0">
         <thead>
             <tr>
-                <td>Date</td>
-                <td>Amount</td>
-                <td>Status</td>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="order in orders">
+            <tr ng-repeat="order in orders" ng-click="setRoute('/orders/' + order.slug)">
                 <td>
                     <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
                     <div>

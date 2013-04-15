@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,28 +17,25 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
-import org.mayocat.shop.billing.store.AddressStore;
-import org.mayocat.shop.billing.store.CustomerStore;
-import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
-import org.mayocat.shop.checkout.CustomerDetails;
 import org.mayocat.shop.front.FrontContextManager;
-import org.mayocat.store.EntityAlreadyExistsException;
-import org.mayocat.store.InvalidEntityException;
 import org.mayocat.theme.Breakpoint;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -119,6 +115,13 @@ public class CheckoutResource implements Resource
             errors.put("email", error);
         }
 
+        String firstName = getNonEmptyFieldValueOrAddToErrorMap("firstName", data, errors);
+        String lastName = getNonEmptyFieldValueOrAddToErrorMap("lastName", data, errors);
+        String street = getNonEmptyFieldValueOrAddToErrorMap("street", data, errors);
+        String zip = getNonEmptyFieldValueOrAddToErrorMap("zip", data, errors);
+        String city = getNonEmptyFieldValueOrAddToErrorMap("city", data, errors);
+        String country = getNonEmptyFieldValueOrAddToErrorMap("country", data, errors);
+
         if (errors.keySet().size() > 0) {
             FrontView result = new FrontView("checkout/form", breakpoint);
             Map<String, Object> bindings = contextManager.getContext(uriInfo);
@@ -132,10 +135,29 @@ public class CheckoutResource implements Resource
 
         Customer customer = new Customer();
         customer.setEmail(email);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+
+        Address deliveryAddress = new Address();
+        deliveryAddress.setFullName(firstName + " " + lastName);
+        deliveryAddress.setStreet(street);
+        deliveryAddress.setZip(zip);
+        deliveryAddress.setCity(city);
+        deliveryAddress.setCountry(country);
+        if (data.containsKey("company")) {
+            String company = (String) data.getFirst("company");
+            if (!Strings.isNullOrEmpty(company)) {
+                deliveryAddress.setCompany(company);
+            }
+            String streetComplement = (String) data.getFirst("streetComplement");
+            if (!Strings.isNullOrEmpty(streetComplement)) {
+                deliveryAddress.setStreetComplement(streetComplement);
+            }
+        }
 
         try {
             Cart cart = cartAccessor.getCart();
-            checkoutRegister.checkout(cart, uriInfo, customer, null, null);
+            checkoutRegister.checkout(cart, uriInfo, customer, deliveryAddress, null);
 
             FrontView result = new FrontView("checkout/success", breakpoint);
             Map<String, Object> bindings = contextManager.getContext(uriInfo);
@@ -155,6 +177,17 @@ public class CheckoutResource implements Resource
             });
             result.putContext(bindings);
             return result;
+        }
+    }
+
+    private String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, Map<String, Error> errors)
+    {
+        if (!data.containsKey(field) || Strings.isNullOrEmpty((String) data.getFirst(field))) {
+            Error error = new Error(ErrorType.REQUIRED, StringUtils.capitalize(field) + " is mandatory");
+            errors.put(field, error);
+            return null;
+        } else {
+            return (String) data.getFirst(field);
         }
     }
 

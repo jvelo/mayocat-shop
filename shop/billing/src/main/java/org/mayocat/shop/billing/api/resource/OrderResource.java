@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTimeZone;
 import org.mayocat.authorization.annotation.Authorized;
@@ -25,6 +28,8 @@ import org.mayocat.shop.billing.api.representation.OrderRepresentation;
 import org.mayocat.shop.billing.meta.OrderEntity;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
+import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
@@ -44,7 +49,7 @@ public class OrderResource implements Resource
     public static final String PATH = API_ROOT_PATH + OrderEntity.PATH;
 
     @Inject
-    private OrderStore orderStore;
+    private Provider<OrderStore> orderStore;
 
     @Inject
     private ConfigurationService configurationService;
@@ -59,7 +64,7 @@ public class OrderResource implements Resource
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
         final DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
-        List<Order> orders = orderStore.findAll(number, offset);
+        List<Order> orders = orderStore.get().findAllWithStatus(number, offset);
 
         Collection<OrderRepresentation> representations =
                 Collections2.transform(orders, new Function<Order, OrderRepresentation>()
@@ -78,5 +83,44 @@ public class OrderResource implements Resource
         );
 
         return resultSet;
+    }
+
+    @GET
+    @Path("{slug}")
+    @Authorized
+    public Response getOrder(@PathParam("slug") String slug)
+    {
+        Order order = orderStore.get().findBySlug(slug);
+        if (order == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Order not found").build();
+        }
+        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
+        final DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
+        return Response.ok(new OrderRepresentation(tenantTz, order)).build();
+    }
+
+    @Path("{slug}")
+    @POST
+    @Timed
+    @Authorized
+    // Partial update : NOT idempotent
+    public Response updateOrder(@PathParam("slug") String slug,
+            OrderRepresentation updatedOrderRepresentation)
+    {
+        try {
+            Order order = this.orderStore.get().findBySlug(slug);
+            if (order == null) {
+                return Response.status(404).build();
+            } else {
+                order.setStatus(updatedOrderRepresentation.getStatus());
+                this.orderStore.get().update(order);
+                return Response.ok().build();
+            }
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
     }
 }

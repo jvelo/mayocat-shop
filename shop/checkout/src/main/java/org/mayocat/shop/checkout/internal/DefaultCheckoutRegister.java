@@ -1,13 +1,15 @@
 package org.mayocat.shop.checkout.internal;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
@@ -33,6 +35,7 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -74,8 +77,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
                 customerId = this.customerStore.get().create(customer);
-            }
-            else {
+            } else {
                 customer = this.customerStore.get().findBySlug(customer.getEmail());
                 customerId = customer.getId();
             }
@@ -96,7 +98,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setItemsTotal(cart.getTotal());
 
             Long numberOfItems = 0l;
-            Map<Purchasable, Long> items = cart.getItems();
+            final Map<Purchasable, Long> items = cart.getItems();
             for (Purchasable purchasable : items.keySet()) {
                 numberOfItems += items.get(purchasable);
             }
@@ -106,10 +108,26 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setUpdateDate(order.getCreationDate());
             order.setCurrency(cart.getCurrency());
             order.setStatus(Order.Status.NONE);
-            order.setSlug(RandomStringUtils.randomAlphanumeric(12));
+
+            Map<String, Object> data = Maps.newHashMap();
+            List<Map<String, Object>> orderItems = Lists.newArrayList();
+            for (final Purchasable p : items.keySet()) {
+                orderItems.add(new HashMap<String, Object>()
+                {
+                    {
+                        put("type", "product");
+                        put("id", p.getId());
+                        put("title", p.getTitle());
+                        put("quantity", items.get(p));
+                        put("unitPrice", p.getUnitPrice());
+                        put("itemTotal", p.getUnitPrice().multiply(BigDecimal.valueOf(items.get(p))));
+                    }
+                });
+            }
+            data.put("items", orderItems);
+            order.setOrderData(data);
 
             orderStore.get().create(order);
-
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);
         } catch (InvalidEntityException e2) {

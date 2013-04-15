@@ -9,6 +9,7 @@ import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.dao.OrderDAO;
 import org.xwiki.component.annotation.Component;
@@ -28,11 +29,10 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     @Override
     public Long create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(ORDER_TABLE_NAME, order.getSlug(), getTenant()) != null) {
-            throw new EntityAlreadyExistsException();
-        }
-
         this.dao.begin();
+
+        String slug = String.format("%08d", lastOrderNumber() + 1);
+        order.setSlug(slug);
 
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
         Long entityId = this.dao.getId(order, ORDER_TABLE_NAME, getTenant());
@@ -43,10 +43,30 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
         return entityId;
     }
 
-    @Override
-    public void update(@Valid Order entity) throws EntityDoesNotExistException, InvalidEntityException
+    private Integer lastOrderNumber()
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return this.dao.lastOrderNumber(getTenant());
+    }
+
+
+    @Override
+    public void update(@Valid Order order) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        this.dao.begin();
+
+        Order originalOrder = this.findBySlug(order.getSlug());
+        if (originalOrder == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+        order.setId(originalOrder.getId());
+        Integer updatedRows = this.dao.updateOrder(order);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating order");
+        }
     }
 
     @Override
@@ -86,6 +106,18 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     public Order findById(Long id)
     {
         return this.dao.findById(ORDER_TABLE_NAME, id);
+    }
+
+    @Override
+    public List<Order> findAllWithStatus(Integer number, Integer offset)
+    {
+        return this.dao.findAllWithStatus(number, offset, getTenant());
+    }
+
+    @Override
+    public Order findBySlug(String slug)
+    {
+        return this.dao.findBySlugWithCustomer(slug, getTenant());
     }
 
     @Override

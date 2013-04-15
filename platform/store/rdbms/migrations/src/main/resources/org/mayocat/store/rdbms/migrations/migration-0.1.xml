@@ -359,7 +359,7 @@
 
         <!-- Address table -->
         <createTable tableName="address">
-            <column name="address_id" type="bigint">
+            <column name="address_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_id" type="bigint"/>
@@ -390,7 +390,7 @@
             <column name="items_total" type="numeric(18,4)"/>
             <column name="grand_total" type="numeric(18,4)"/>
             <column name="status" type="varchar(32)"/>
-            <column name="order_data" type="json"/>
+            <column name="order_data" type="mediumtext"/>
         </createTable>
         <addForeignKeyConstraint constraintName="ORDER_ENTITY_FK"
                 baseTableName="purchase_order" baseColumnNames="entity_id"

@@ -7,13 +7,61 @@
         <div class="controls">
             {{#errors.email}}
             Error ! {{this.errorType}}
-                <div class="error">{{this.userMessage}}</div>
+            <div class="error">{{this.userMessage}}</div>
             {{/errors.email}}
-            <input type="text" name="email" value="{{request.email}}" placeholder="email" />
+            <input type="text" name="email" value="{{request.email}}" placeholder="email"/>
         </div>
 
         <div class="controls">
-            <input type="submit" value="Checkout" />
+            {{#errors.firstName}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.firstName}}
+            <input type="text" name="firstName" value="{{request.firstName}}" placeholder="First name"/>
+        </div>
+
+        <div class="controls">
+            {{#errors.lastName}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.lastName}}
+            <input type="text" name="lastName" value="{{request.lastName}}" placeholder="Last name"/>
+        </div>
+
+        <div class="controls">
+            {{#errors.street}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.street}}
+            <input type="text" name="street" value="{{request.street}}" placeholder="Street"/>
+        </div>
+
+        <div class="controls">
+            {{#errors.zip}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.zip}}
+            <input type="text" name="zip" value="{{request.street}}" placeholder="Zip"/>
+        </div>
+
+        <div class="controls">
+            {{#errors.city}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.city}}
+            <input type="text" name="city" value="{{request.city}}" placeholder="City"/>
+        </div>
+
+        <div class="controls">
+            {{#errors.country}}
+            Error ! {{this.errorType}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.country}}
+            <input type="text" name="country" value="{{request.country}}" placeholder="Country"/>
+        </div>
+
+        <div class="controls">
+            <input type="submit" value="Checkout"/>
         </div>
 
     </fieldset>

@@ -10,6 +10,7 @@ import org.mayocat.rest.jackson.DateTimeISO8601Deserializer;
 import org.mayocat.rest.jackson.DateTimeISO8601Serializer;
 import org.mayocat.shop.billing.model.Order;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -38,7 +39,16 @@ public class OrderRepresentation
 
     private Order.Status status;
 
-    private Map<String, Object> orderData;
+    private Map<String, Object> data;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private CustomerRepresentation customer;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AddressRepresentation deliveryAddress;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AddressRepresentation billingAddress;
 
     public OrderRepresentation()
     {
@@ -60,7 +70,17 @@ public class OrderRepresentation
         this.itemsTotal = order.getItemsTotal();
         this.grandTotal = order.getGrandTotal();
         this.status = order.getStatus();
-        this.orderData = order.getOrderData();
+        this.data = order.getOrderData();
+
+        if (order.getBillingAddress().isLoaded()) {
+            this.setBillingAddress(new AddressRepresentation(order.getBillingAddress().get()));
+        }
+        if (order.getDeliveryAddress().isLoaded()) {
+            this.setDeliveryAddress(new AddressRepresentation(order.getDeliveryAddress().get()));
+        }
+        if (order.getCustomer().isLoaded()) {
+            this.setCustomer(new CustomerRepresentation(order.getCustomer().get()));
+        }
     }
 
     public String getSlug()
@@ -143,13 +163,43 @@ public class OrderRepresentation
         this.status = status;
     }
 
-    public Map<String, Object> getOrderData()
+    public Map<String, Object> getData()
     {
-        return orderData;
+        return data;
     }
 
-    public void setOrderData(Map<String, Object> orderData)
+    public void setData(Map<String, Object> data)
     {
-        this.orderData = orderData;
+        this.data = data;
+    }
+
+    public CustomerRepresentation getCustomer()
+    {
+        return customer;
+    }
+
+    public void setCustomer(CustomerRepresentation customer)
+    {
+        this.customer = customer;
+    }
+
+    public AddressRepresentation getDeliveryAddress()
+    {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(AddressRepresentation deliveryAddress)
+    {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+    public AddressRepresentation getBillingAddress()
+    {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(AddressRepresentation billingAddress)
+    {
+        this.billingAddress = billingAddress;
     }
 }
