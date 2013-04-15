@@ -98,7 +98,7 @@ public class CheckoutResource implements Resource
     }
 
     @POST
-    public FrontView checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint, MultivaluedMap data)
+    public Object checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint, MultivaluedMap data)
     {
         Map<String, Error> errors = Maps.newHashMap();
         String email = null;
@@ -157,14 +157,17 @@ public class CheckoutResource implements Resource
 
         try {
             Cart cart = cartAccessor.getCart();
-            checkoutRegister.checkout(cart, uriInfo, customer, deliveryAddress, null);
+            CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, customer, deliveryAddress, null);
+            if (response.getRedirectURL().isPresent()) {
+                return Response.seeOther(new URI(response.getRedirectURL().get())).build();
+            } else {
+                FrontView result = new FrontView("checkout/success", breakpoint);
+                Map<String, Object> bindings = contextManager.getContext(uriInfo);
+                bindings.put("errors", errors);
 
-            FrontView result = new FrontView("checkout/success", breakpoint);
-            Map<String, Object> bindings = contextManager.getContext(uriInfo);
-            bindings.put("errors", errors);
-
-            result.putContext(bindings);
-            return result;
+                result.putContext(bindings);
+                return result;
+            }
         } catch (final Exception e) {
             this.logger.error("Exception checking out", e);
             FrontView result = new FrontView("checkout/exception", breakpoint);

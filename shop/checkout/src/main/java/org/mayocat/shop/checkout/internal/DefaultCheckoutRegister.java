@@ -163,6 +163,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     response.setRedirectURL(Optional.fromNullable(paymentResponse.getRedirectURL()));
                 }
 
+                cart.empty();
+
                 return response;
             } else {
                 throw new CheckoutException("Payment was not successful");

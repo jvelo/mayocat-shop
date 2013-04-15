@@ -97,4 +97,11 @@ public class Cart implements Serializable
         }
         return total;
     }
+
+    public void empty()
+    {
+        for (Purchasable purchasable : items.keySet()) {
+            this.removeItem(purchasable);
+        }
+    }
 }
