@@ -86,3 +86,7 @@ catalog:
       default: true
       configurable: false
       visible: true
+
+checkout:
+  defaultPaymentGateway: paypaladaptivepayments
+
