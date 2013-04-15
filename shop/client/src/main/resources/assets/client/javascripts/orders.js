@@ -15,6 +15,10 @@ angular.module('orders', [])
                 return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().replace(/_/g, ' ');
             }
 
+            $scope.getClass = function(status) {
+                return status.toLowerCase();
+            }
+
             $scope.fetchOrders();
 
         }]);

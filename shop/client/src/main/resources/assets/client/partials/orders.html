@@ -13,7 +13,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="order in orders" ng-click="setRoute('/orders/' + order.slug)">
+            <tr ng-repeat="order in orders"
+                ng-click="setRoute('/orders/' + order.slug)"
+                ng-class="getClass(order.status)">
                 <td>
                     <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
                     <div>

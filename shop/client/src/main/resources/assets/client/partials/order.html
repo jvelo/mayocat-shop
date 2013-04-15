@@ -1,5 +1,7 @@
 <h1 class="small" ng-show="!isNew()">Manage order</h1>
-
+<span class="pull-right" ng-click="setRoute('/orders/')">
+    Back
+</span>
 
 <div class="entity order" ng-class="{'loading': order.status == undefined}">
 

@@ -167,7 +167,7 @@
         <div ng-include class="sub-list" src="'partials/pages.html'" ng-show="isPages"></div>
         <div ng-include class="sub-list" src="'partials/articles.html'" ng-show="isNews"></div>
 
-        <div role="main" id="main" ng-view></div>
+        <div role="main" id="main" ng-class="{'hasSubList' : isCatalog || isPages || isNews}" ng-view></div>
 	</div>
     <div class="clearfix"></div>
 
