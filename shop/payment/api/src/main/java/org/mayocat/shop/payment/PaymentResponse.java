@@ -11,11 +11,13 @@ public final class PaymentResponse
 
     private boolean isSuccessful;
 
+    private boolean isPaid;
+
     private String redirectURL;
 
     private boolean isRedirect = false;
 
-    public PaymentResponse(boolean isSuccessful, Map<String, Object> data)
+    public PaymentResponse(boolean isSuccessful, boolean isPaid, Map<String, Object> data)
     {
         this.isSuccessful = isSuccessful;
         this.data = data;
@@ -49,5 +51,15 @@ public final class PaymentResponse
     public void setRedirect(boolean redirect)
     {
         isRedirect = redirect;
+    }
+
+    public boolean isPaid()
+    {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid)
+    {
+        isPaid = paid;
     }
 }

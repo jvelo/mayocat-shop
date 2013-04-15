@@ -85,23 +85,27 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     map.put("defaultFundingPlan", response.getDefaultFundingPlan().getFundingPlanId());
                 }
 
-                PaymentResponse res = new PaymentResponse(true, map);
+                PaymentResponse res;
 
                 if (response.getPaymentExecStatus().equals("CREATED")) {
+                    res = new PaymentResponse(true, false, map);
                     // This means the payment needs approval on paypal site
                     res.setRedirectURL("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=" +
                             response.getPayKey());
                     res.setRedirect(true);
                 } else if (response.getPaymentExecStatus().equals("COMPLETED")) {
+                    res = new PaymentResponse(true, true, map);
                     // This means the payment has been approved and the funds transferred
-
+                }
+                else {
+                    throw new PaymentException("Unknown payment execution status");
                 }
 
                 return res;
             } else {
                 // failure
                 map.put("error", response.getError());
-                return new PaymentResponse(false, map);
+                return new PaymentResponse(false, false, map);
             }
         } catch (IOException e) {
             throw new PaymentException(e);

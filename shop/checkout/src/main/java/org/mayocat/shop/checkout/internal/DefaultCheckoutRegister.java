@@ -29,6 +29,7 @@ import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.PaymentResponse;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -68,6 +69,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     {
 
         Preconditions.checkNotNull(customer);
+        Order order;
 
         try {
             Long customerId;
@@ -89,7 +91,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 billingAddressId = this.addressStore.get().create(billingAddress);
             }
 
-            Order order = new Order();
+            order = new Order();
             order.setBillingAddressId(billingAddressId);
             order.setDeliveryAddressId(deliveryAddressId);
             order.setCustomerId(customerId);
@@ -164,6 +166,23 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 }
 
                 cart.empty();
+
+                if (paymentResponse.isPaid()) {
+                    order.setStatus(Order.Status.PAID);
+                }
+                else {
+                    order.setStatus(Order.Status.WAITING_FOR_PAYMENT);
+                }
+
+                try {
+                    orderStore.get().update(order);
+                } catch (EntityDoesNotExistException e) {
+                    this.logger.error("Order error while checking out cart", e);
+                    throw new CheckoutException(e);
+                } catch (InvalidEntityException e) {
+                    this.logger.error("Order error while checking out cart", e);
+                    throw new CheckoutException(e);
+                }
 
                 return response;
             } else {
