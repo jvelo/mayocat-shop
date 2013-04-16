@@ -8,5 +8,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface GatewayFactory
 {
+    String getId();
+
     PaymentGateway createGateway();
 }

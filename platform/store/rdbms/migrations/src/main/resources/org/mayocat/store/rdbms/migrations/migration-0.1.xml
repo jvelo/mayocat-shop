@@ -405,6 +405,21 @@
                 baseTableName="purchase_order" baseColumnNames="billing_address_id"
                 referencedTableName="address" referencedColumnNames="address_id"/>
 
+        <!-- Payment table -->
+        <createTable tableName="payment_operation">
+            <column name="operation_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="bigint"/>
+            <column name="gateway_id" type="varchar(255)"/>
+            <column name="external_id" type="varchar(255)"/>
+            <column name="result" type="varchar(255)"/>
+            <column name="memo" type="mediumtext"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="PAYMENT_OPERATION_ORDER_FK"
+                baseTableName="payment_operation" baseColumnNames="order_id"
+                referencedTableName="purchase_order" referencedColumnNames="entity_id"/>
+
     </changeSet>
 
 </databaseChangeLog>

@@ -2,30 +2,26 @@ package org.mayocat.shop.payment;
 
 import java.util.Map;
 
+import org.mayocat.shop.payment.model.PaymentOperation;
+
 /**
  * @version $Id$
  */
 public final class PaymentResponse
 {
-    private Map<String, Object> data;
 
     private boolean isSuccessful;
-
-    private boolean isPaid;
 
     private String redirectURL;
 
     private boolean isRedirect = false;
 
-    public PaymentResponse(boolean isSuccessful, boolean isPaid, Map<String, Object> data)
+    private PaymentOperation operation;
+
+    public PaymentResponse(boolean isSuccessful, PaymentOperation operation)
     {
         this.isSuccessful = isSuccessful;
-        this.data = data;
-    }
-
-    public Map<String, Object> getData()
-    {
-        return data;
+        this.operation = operation;
     }
 
     public boolean isSuccessful()
@@ -53,13 +49,13 @@ public final class PaymentResponse
         isRedirect = redirect;
     }
 
-    public boolean isPaid()
+    public PaymentOperation getOperation()
     {
-        return isPaid;
+        return operation;
     }
 
-    public void setPaid(boolean paid)
+    public void setOperation(PaymentOperation operation)
     {
-        isPaid = paid;
+        this.operation = operation;
     }
 }

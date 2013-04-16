@@ -22,12 +22,15 @@ import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
+import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.payment.BaseOption;
 import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.Option;
 import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.PaymentResponse;
+import org.mayocat.shop.payment.model.PaymentOperation;
+import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -62,6 +65,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private Map<String, GatewayFactory> gatewayFactories;
+
+    @Inject
+    private Provider<PaymentOperationStore> paymentOperationStore;
 
     @Override
     public CheckoutResponse checkout(Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
@@ -129,7 +135,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             data.put("items", orderItems);
             order.setOrderData(data);
 
-            orderStore.get().create(order);
+            Long id = orderStore.get().create(order);
+            order.setId(id);
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);
         } catch (InvalidEntityException e2) {
@@ -146,13 +153,16 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         }
 
         GatewayFactory factory = gatewayFactories.get(defaultGatewayFactory);
-
         PaymentGateway gateway = factory.createGateway();
 
         Map<Option, Object> options = Maps.newHashMap();
-        options.put(BaseOption.CANCEL_URL, uriInfo.getBaseUri() + "checkout/payment/cancel");
-        options.put(BaseOption.RETURN_URL, uriInfo.getBaseUri() + "checkout/payment/return");
+        options.put(BaseOption.BASE_URL, uriInfo.getBaseUri().toString());
+        options.put(BaseOption.CANCEL_URL,
+                uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH);
+        options.put(BaseOption.RETURN_URL,
+                uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
         options.put(BaseOption.CURRENCY, cart.getCurrency());
+        options.put(BaseOption.ORDER_ID, order.getId());
 
         try {
 
@@ -160,26 +170,33 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             PaymentResponse paymentResponse = gateway.purchase(cart.getTotal(), options);
 
             if (paymentResponse.isSuccessful()) {
-                // OK
+
                 if (paymentResponse.isRedirect()) {
                     response.setRedirectURL(Optional.fromNullable(paymentResponse.getRedirectURL()));
                 }
 
                 cart.empty();
 
-                if (paymentResponse.isPaid()) {
+                if (paymentResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);
-                }
-                else {
+                } else {
                     order.setStatus(Order.Status.WAITING_FOR_PAYMENT);
                 }
 
                 try {
+
                     orderStore.get().update(order);
+                    PaymentOperation operation = paymentResponse.getOperation();
+                    operation.setOrderId(order.getId());
+                    paymentOperationStore.get().create(operation);
+
                 } catch (EntityDoesNotExistException e) {
                     this.logger.error("Order error while checking out cart", e);
                     throw new CheckoutException(e);
                 } catch (InvalidEntityException e) {
+                    this.logger.error("Order error while checking out cart", e);
+                    throw new CheckoutException(e);
+                } catch (EntityAlreadyExistsException e) {
                     this.logger.error("Order error while checking out cart", e);
                     throw new CheckoutException(e);
                 }

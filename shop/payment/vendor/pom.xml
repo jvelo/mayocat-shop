@@ -2,18 +2,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat.shop</groupId>
-        <artifactId>mayocat-shop-parent</artifactId>
+        <artifactId>mayocat-shop-payment</artifactId>
         <version>0.8-SNAPSHOT</version>
     </parent>
-    <artifactId>mayocat-shop-payment</artifactId>
+    <artifactId>mayocat-shop-payment-vendor</artifactId>
     <packaging>pom</packaging>
 
-    <name>Mayocat Shop - Payments</name>
-    <description>Payments module</description>
+    <name>Mayocat Shop - Payments - Vendor - Parent POM</name>
+    <description>Parent POM for all payment vendor modules</description>
 
     <modules>
-        <module>api</module>
-        <module>internal</module>
-        <module>vendor</module>
+        <module>paypal</module>
     </modules>
 </project>

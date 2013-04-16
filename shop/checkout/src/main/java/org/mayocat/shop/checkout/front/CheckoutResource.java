@@ -50,6 +50,10 @@ public class CheckoutResource implements Resource
 {
     public static final String PATH = "checkout";
 
+    public static final String PAYMENT_RETURN_PATH = "returned";
+
+    public static final String PAYMENT_CANCEL_PATH = "cancelled";
+
     @Inject
     private FrontContextManager contextManager;
 
@@ -183,17 +187,6 @@ public class CheckoutResource implements Resource
         }
     }
 
-    private String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, Map<String, Error> errors)
-    {
-        if (!data.containsKey(field) || Strings.isNullOrEmpty((String) data.getFirst(field))) {
-            Error error = new Error(ErrorType.REQUIRED, StringUtils.capitalize(field) + " is mandatory");
-            errors.put(field, error);
-            return null;
-        } else {
-            return (String) data.getFirst(field);
-        }
-    }
-
     @GET
     public Object checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
@@ -230,7 +223,7 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    @Path("payment/return")
+    @Path(PAYMENT_RETURN_PATH)
     public FrontView returnFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
         for (String key : uriInfo.getQueryParameters().keySet()) {
@@ -245,7 +238,7 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    @Path("payment/cancel")
+    @Path(PAYMENT_CANCEL_PATH)
     public FrontView cancelFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
         FrontView result = new FrontView("checkout/cancelled", breakpoint);
@@ -253,5 +246,16 @@ public class CheckoutResource implements Resource
 
         result.putContext(bindings);
         return result;
+    }
+
+    private String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, Map<String, Error> errors)
+    {
+        if (!data.containsKey(field) || Strings.isNullOrEmpty((String) data.getFirst(field))) {
+            Error error = new Error(ErrorType.REQUIRED, StringUtils.capitalize(field) + " is mandatory");
+            errors.put(field, error);
+            return null;
+        } else {
+            return (String) data.getFirst(field);
+        }
     }
 }

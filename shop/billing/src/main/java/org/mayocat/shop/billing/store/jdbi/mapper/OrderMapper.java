@@ -95,7 +95,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             order.setOrderData(data);
         } catch (IOException e) {
             final Logger logger = LoggerFactory.getLogger(OrderMapper.class);
-            logger.error("Failed to load configuration for tenant with slug [{}]", e);
+            logger.error("Failed to deserialize order data", e);
         }
 
         return order;

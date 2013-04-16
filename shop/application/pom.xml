@@ -34,7 +34,13 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-payment-paypal-adaptivepayments</artifactId>
+            <artifactId>mayocat-shop-payment-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-payment-vendor-paypal-adaptivepayments</artifactId>
             <version>${project.version}</version>
         </dependency>
 

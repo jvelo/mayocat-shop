@@ -1,0 +1,2 @@
+org.mayocat.shop.payment.store.jdbi.DBIPaymentOperationStore
+org.mayocat.shop.payment.api.resources.PaymentResource

@@ -2,14 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat.shop</groupId>
-        <artifactId>mayocat-shop-payment</artifactId>
+        <artifactId>mayocat-shop-payment-vendor</artifactId>
         <version>0.8-SNAPSHOT</version>
     </parent>
-    <artifactId>mayocat-shop-payment-paypal</artifactId>
+    <artifactId>mayocat-shop-payment-vendor-paypal</artifactId>
     <packaging>pom</packaging>
 
-    <name>Mayocat Shop - Payments - Paypal</name>
-    <description>Payment module - Paypal</description>
+    <name>Mayocat Shop - Payments - Vendor - Paypal</name>
+    <description>Payment module - Paypal vendor</description>
 
     <modules>
         <module>adaptivepayments</module>

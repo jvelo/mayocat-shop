@@ -2,29 +2,33 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat.shop</groupId>
-        <artifactId>mayocat-shop-payment-paypal</artifactId>
+        <artifactId>mayocat-shop-payment-vendor-paypal</artifactId>
         <version>0.8-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
-    <artifactId>mayocat-shop-payment-paypal-adaptivepayments</artifactId>
+    <artifactId>mayocat-shop-payment-vendor-paypal-adaptivepayments</artifactId>
     <packaging>jar</packaging>
 
-    <name>Mayocat Shop - Payments - Paypal - Adaptive Payments</name>
+    <name>Mayocat Shop - Payments - Vendor - Paypal - Adaptive Payments</name>
     <description>Adaptive Payments Paypal implementation</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-payment-internal</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-configuration-platform</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-payment-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.paypal.sdk</groupId>
             <artifactId>adaptivepaymentssdk</artifactId>

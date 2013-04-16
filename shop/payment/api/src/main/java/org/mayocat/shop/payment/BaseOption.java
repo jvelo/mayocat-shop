@@ -6,10 +6,8 @@ package org.mayocat.shop.payment;
 public enum BaseOption implements Option
 {
     CURRENCY,
-
     CANCEL_URL,
-
     RETURN_URL,
-
-    ACKNOWLEDGEMENT_URL
+    BASE_URL,
+    ORDER_ID
 }
