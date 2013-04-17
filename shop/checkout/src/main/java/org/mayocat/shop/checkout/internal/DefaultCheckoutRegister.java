@@ -24,11 +24,11 @@ import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.Option;
-import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
-import org.mayocat.shop.payment.PaymentResponse;
+import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -167,17 +167,17 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         try {
 
             CheckoutResponse response = new CheckoutResponse();
-            PaymentResponse paymentResponse = gateway.purchase(cart.getTotal(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
 
-            if (paymentResponse.isSuccessful()) {
+            if (gatewayResponse.isSuccessful()) {
 
-                if (paymentResponse.isRedirect()) {
-                    response.setRedirectURL(Optional.fromNullable(paymentResponse.getRedirectURL()));
+                if (gatewayResponse.isRedirection()) {
+                    response.setRedirectURL(Optional.fromNullable(gatewayResponse.getRedirectURL()));
                 }
 
                 cart.empty();
 
-                if (paymentResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
+                if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);
                 } else {
                     order.setStatus(Order.Status.WAITING_FOR_PAYMENT);
@@ -186,7 +186,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 try {
 
                     orderStore.get().update(order);
-                    PaymentOperation operation = paymentResponse.getOperation();
+                    PaymentOperation operation = gatewayResponse.getOperation();
                     operation.setOrderId(order.getId());
                     paymentOperationStore.get().create(operation);
 
@@ -205,7 +205,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             } else {
                 throw new CheckoutException("Payment was not successful");
             }
-        } catch (PaymentException e) {
+        } catch (GatewayException e) {
             this.logger.error("Payment error while checking out cart", e);
             throw new CheckoutException(e);
         }

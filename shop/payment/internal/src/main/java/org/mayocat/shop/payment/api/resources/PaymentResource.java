@@ -15,10 +15,10 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
-import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
-import org.mayocat.shop.payment.PaymentResponse;
+import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.event.PaymentOperationEvent;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
@@ -63,13 +63,13 @@ public class PaymentResource implements Resource
         PaymentGateway gateway = factory.createGateway();
 
         try {
-            PaymentResponse response = gateway.acknowledge(data);
+            GatewayResponse response = gateway.acknowledge(data);
             PaymentOperation op = response.getOperation();
             op.setOrderId(orderId);
             paymentOperationStore.get().create(op);
 
             observationManager.notify(new PaymentOperationEvent(), op);
-        } catch (PaymentException e) {
+        } catch (GatewayException e) {
             this.logger.error("Failed to acknowledge payment", e);
         } catch (InvalidEntityException e) {
             this.logger.error("Failed to acknowledge payment", e);

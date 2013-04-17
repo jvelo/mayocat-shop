@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.Option;
-import org.mayocat.shop.payment.PaymentException;
 import org.mayocat.shop.payment.PaymentGateway;
-import org.mayocat.shop.payment.PaymentResponse;
+import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.api.resources.PaymentResource;
 import org.mayocat.shop.payment.model.PaymentOperation;
 
@@ -61,13 +61,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
     }
 
     @Override
-    public boolean isExternal()
-    {
-        return true;
-    }
-
-    @Override
-    public PaymentResponse purchase(BigDecimal amount, Map<Option, Object> options) throws PaymentException
+    public GatewayResponse purchase(BigDecimal amount, Map<Option, Object> options) throws GatewayException
     {
         PayRequest request = new PayRequest();
 
@@ -117,55 +111,54 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     map.put("defaultFundingPlan", response.getDefaultFundingPlan().getFundingPlanId());
                 }
 
-                PaymentResponse paymentResponse;
+                GatewayResponse gatewayResponse;
                 operation.setMemo(map);
 
                 if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_CREATED)) {
-                    paymentResponse = new PaymentResponse(true, operation);
+                    gatewayResponse = new GatewayResponse(true, operation);
                     operation.setResult(PaymentOperation.Result.INITIALIZED);
                     // This means the payment needs approval on paypal site
                     String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
                             "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
-                    paymentResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
-                    paymentResponse.setRedirect(true);
+                    gatewayResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
                 } else if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_COMPLETED)) {
                     operation.setResult(PaymentOperation.Result.CAPTURED);
-                    paymentResponse = new PaymentResponse(true, operation);
+                    gatewayResponse = new GatewayResponse(true, operation);
                     // This means the payment has been approved and the funds transferred
                 } else {
-                    throw new PaymentException("Unknown payment execution status");
+                    throw new GatewayException("Unknown payment execution status");
                 }
 
-                return paymentResponse;
+                return gatewayResponse;
             } else {
                 // failure
+                map.put("error", response.getError());
                 operation.setResult(PaymentOperation.Result.FAILED);
                 operation.setMemo(map);
-                map.put("error", response.getError());
-                return new PaymentResponse(false, operation);
+                return new GatewayResponse(false, operation);
             }
         } catch (IOException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (MissingCredentialException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (InterruptedException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (ClientActionRequiredException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (SSLConfigurationException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (OAuthException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (HttpErrorException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (InvalidCredentialException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         } catch (InvalidResponseDataException e) {
-            throw new PaymentException(e);
+            throw new GatewayException(e);
         }
     }
 
-    public PaymentResponse acknowledge(Map<String, List<String>> data) throws PaymentException
+    public GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException
     {
 
         IPNMessage ipnListener = new IPNMessage(convertDataMap(data));
@@ -179,14 +172,14 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         operation.setMemo(map);
 
         String status = (String) map.get("status");
-        PaymentResponse response;
+        GatewayResponse response;
 
         if (isIpnVerified && status.equalsIgnoreCase("Completed")) {
             operation.setResult(PaymentOperation.Result.CAPTURED);
-            response = new PaymentResponse(true, operation);
+            response = new GatewayResponse(true, operation);
         } else {
             operation.setResult(PaymentOperation.Result.FAILED);
-            response = new PaymentResponse(false, operation);
+            response = new GatewayResponse(false, operation);
         }
 
         return response;

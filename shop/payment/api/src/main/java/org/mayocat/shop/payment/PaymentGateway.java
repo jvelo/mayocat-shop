@@ -9,10 +9,7 @@ import java.util.Map;
  */
 public interface PaymentGateway
 {
-    boolean isExternal();
+    GatewayResponse purchase(BigDecimal amount, Map<Option, Object> options) throws GatewayException;
 
-    PaymentResponse purchase(BigDecimal amount, Map<Option, Object> options) throws PaymentException;
-
-    PaymentResponse acknowledge(Map<String, List<String>> data) throws PaymentException;
-
+    GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException;
 }
