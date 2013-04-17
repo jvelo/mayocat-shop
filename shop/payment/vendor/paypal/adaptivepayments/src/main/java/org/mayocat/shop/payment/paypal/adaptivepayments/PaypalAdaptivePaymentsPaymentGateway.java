@@ -19,6 +19,7 @@ import org.mayocat.shop.payment.model.PaymentOperation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.paypal.core.ConfigManager;
 import com.paypal.exception.ClientActionRequiredException;
 import com.paypal.exception.HttpErrorException;
 import com.paypal.exception.InvalidCredentialException;
@@ -41,6 +42,10 @@ import com.paypal.svcs.types.common.RequestEnvelope;
 public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 {
     public static final String ACTION_TYPE_PAY = "PAY";
+
+    public static final String EXECUTION_STATUS_CREATED = "CREATED";
+
+    public static final String EXECUTION_STATUS_COMPLETED = "COMPLETED";
 
     private InputStream configInputStream;
 
@@ -94,7 +99,6 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 
         try {
             AdaptivePaymentsService service = new AdaptivePaymentsService(this.configInputStream);
-
             PayResponse response = service.pay(request);
             PaymentOperation operation = new PaymentOperation();
             operation.setGatewayId(PaypalAdaptivePaymentsGatewayFactory.ID);
@@ -113,25 +117,26 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     map.put("defaultFundingPlan", response.getDefaultFundingPlan().getFundingPlanId());
                 }
 
-                PaymentResponse res;
+                PaymentResponse paymentResponse;
                 operation.setMemo(map);
 
-                if (response.getPaymentExecStatus().equals("CREATED")) {
-                    res = new PaymentResponse(true, operation);
+                if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_CREATED)) {
+                    paymentResponse = new PaymentResponse(true, operation);
                     operation.setResult(PaymentOperation.Result.INITIALIZED);
                     // This means the payment needs approval on paypal site
-                    res.setRedirectURL("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=" +
-                            response.getPayKey());
-                    res.setRedirect(true);
-                } else if (response.getPaymentExecStatus().equals("COMPLETED")) {
+                    String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
+                            "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
+                    paymentResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
+                    paymentResponse.setRedirect(true);
+                } else if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_COMPLETED)) {
                     operation.setResult(PaymentOperation.Result.CAPTURED);
-                    res = new PaymentResponse(true, operation);
+                    paymentResponse = new PaymentResponse(true, operation);
                     // This means the payment has been approved and the funds transferred
                 } else {
                     throw new PaymentException("Unknown payment execution status");
                 }
 
-                return res;
+                return paymentResponse;
             } else {
                 // failure
                 operation.setResult(PaymentOperation.Result.FAILED);
@@ -142,23 +147,22 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         } catch (IOException e) {
             throw new PaymentException(e);
         } catch (MissingCredentialException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (ClientActionRequiredException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (SSLConfigurationException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (OAuthException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (HttpErrorException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (InvalidCredentialException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         } catch (InvalidResponseDataException e) {
-            e.printStackTrace();
+            throw new PaymentException(e);
         }
-        throw new PaymentException();
     }
 
     public PaymentResponse acknowledge(Map<String, List<String>> data) throws PaymentException
