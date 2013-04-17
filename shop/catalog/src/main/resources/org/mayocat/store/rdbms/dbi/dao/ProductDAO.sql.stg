@@ -1,10 +1,12 @@
 group ProductDAO;
 
 createProduct() ::= <<
-    INSERT INTO product (entity_id, position, title, description, price, stock, featured_image_id)
+    INSERT INTO product (entity_id, position, title, model, on_shelf, description, price, stock, featured_image_id)
     VALUES (:id,
             :position,
             :product.title,
+            :product.model,
+            :product.onShelf,
             :product.description,
             :product.price,
             :product.stock,

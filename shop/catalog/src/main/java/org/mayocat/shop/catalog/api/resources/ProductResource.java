@@ -167,7 +167,6 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         try {
             getAttachmentStore().detach(attachment);
             return Response.noContent().build();
-
         } catch (EntityDoesNotExistException e) {
             return Response.status(404).build();
         }
@@ -311,12 +310,22 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @POST
     @Timed
     @Authorized //(roles = { Role.ADMIN })
-    public Response createProduct(Product product)
+    public Response createProduct(ProductRepresentation productRepresentation)
     {
         try {
+            Product product = new Product();
+            product.setSlug(productRepresentation.getSlug());
+            product.setTitle(productRepresentation.getTitle());
+
             if (Strings.isNullOrEmpty(product.getSlug())) {
                 product.setSlug(this.getSlugifier().slugify(product.getTitle()));
             }
+
+            product.setModel(productRepresentation.getModel());
+            product.setDescription(productRepresentation.getDescription());
+            product.setOnShelf(productRepresentation.getOnShelf());
+            product.setPrice(productRepresentation.getPrice());
+            product.setStock(productRepresentation.getStock());
 
             productStore.get().create(product);
             Product created = productStore.get().findBySlug(product.getSlug());

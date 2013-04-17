@@ -35,7 +35,9 @@ curl -i -H "Content-Type: application/json"                            \
         -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
         -X POST -d "                                                   \
   {                                                                    \
-    \"title\"    : \"Peugeot 403 Convertible\"                         \
+    \"title\"    : \"Peugeot 403 Convertible\",                        \
+    \"onShelf\"  : true,                                               \
+    \"price\"    : 7000
   }                                                                    \
   "                                                                    \
   http://localhost:8080/api/products/
@@ -43,7 +45,9 @@ curl -i -H "Content-Type: application/json"                            \
         -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
         -X POST -d "                                                   \
   {                                                                    \
-    \"title\"    : \"Cortefiel Raincoat\"                              \
+    \"title\"    : \"Cortefiel Raincoat\",                             \
+    \"onShelf\"  : true,                                               \
+    \"price\"    : 200
   }                                                                    \
   "                                                                    \
   http://localhost:8080/api/products/
@@ -51,15 +55,9 @@ curl -i -H "Content-Type: application/json"                            \
         -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
         -X POST -d "                                                   \
   {                                                                    \
-    \"title\"    : \"Basset Hound\"                                    \
-  }                                                                    \
-  "                                                                    \
-  http://localhost:8080/api/products/
-curl -i -H "Content-Type: application/json"                            \
-        -H "Authorization:Basic amVyb21lQHZlbG9jaXRlci5mcjp0cm9sb2xv"  \
-        -X POST -d "                                                   \
-  {                                                                    \
-    \"title\"    : \"Basset Hound 3\"                                    \
+    \"title\"    : \"Basset Hound\",                                    \
+    \"onShelf\"  : true,                                               \
+    \"price\"    : 700
   }                                                                    \
   "                                                                    \
   http://localhost:8080/api/products/
