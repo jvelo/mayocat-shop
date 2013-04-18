@@ -198,6 +198,10 @@
 
         .filter('money', ['moneyService', function (moneyService) {
             return function (amount, currencyCode) {
+                if (typeof amount === 'undefined') {
+                    // Garbage in, garbage out
+                    return;
+                }
                 var currency = moneyService.getCurrency(currencyCode),
                     decimals = currency ? currency.decimals : 2;
                 return amount.toFixed(decimals);
