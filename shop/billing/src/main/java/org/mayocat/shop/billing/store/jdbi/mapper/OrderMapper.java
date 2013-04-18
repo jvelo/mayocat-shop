@@ -36,8 +36,8 @@ public class OrderMapper implements ResultSetMapper<Order>
         order.setDeliveryAddressId(resultSet.getLong("delivery_address_id"));
         order.setCustomerId(resultSet.getLong("customer_id"));
 
-        order.setCreationDate(resultSet.getDate("creation_date"));
-        order.setUpdateDate(resultSet.getDate("update_date"));
+        order.setCreationDate(resultSet.getTimestamp("creation_date"));
+        order.setUpdateDate(resultSet.getTimestamp("update_date"));
 
         order.setNumberOfItems(resultSet.getLong("number_of_items"));
         order.setCurrency(Currency.getInstance(resultSet.getString("currency")));

@@ -16,7 +16,7 @@ public class ArticleMapper implements ResultSetMapper<Article>
     public Article map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         Article article = new Article(resultSet.getLong("id"));
-        article.setPublicationDate(resultSet.getDate("publication_date"));
+        article.setPublicationDate(resultSet.getTimestamp("publication_date"));
         article.setTitle(resultSet.getString("title"));
         article.setContent(resultSet.getString("content"));
         article.setSlug(resultSet.getString("slug"));
