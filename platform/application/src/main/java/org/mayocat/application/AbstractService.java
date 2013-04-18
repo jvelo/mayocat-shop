@@ -24,6 +24,7 @@ import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.jackson.MayocatJodaModule;
 import org.mayocat.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
 
         this.objectMapperFactory.registerModule(new TimeZoneModule());
+        this.objectMapperFactory.registerModule(new MayocatJodaModule());
 
         this.addModule(new AccountsModule());
     }

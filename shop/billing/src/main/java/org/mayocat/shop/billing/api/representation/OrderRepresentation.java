@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.mayocat.rest.jackson.DateTimeISO8601Deserializer;
-import org.mayocat.rest.jackson.DateTimeISO8601Serializer;
 import org.mayocat.shop.billing.model.Order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,12 +19,8 @@ public class OrderRepresentation
 {
     private String slug;
 
-    @JsonSerialize(using = DateTimeISO8601Serializer.class)
-    @JsonDeserialize(using = DateTimeISO8601Deserializer.class)
     private DateTime creationDate;
 
-    @JsonSerialize(using = DateTimeISO8601Serializer.class)
-    @JsonDeserialize(using = DateTimeISO8601Deserializer.class)
     private DateTime updateDate;
 
     private Currency currency;
