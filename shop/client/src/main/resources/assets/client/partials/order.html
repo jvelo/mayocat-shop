@@ -1,57 +1,60 @@
 <h1 class="small" ng-show="!isNew()">Manage order</h1>
-<span class="pull-right" ng-click="setRoute('/orders/')">
-    Back
+<span class="pull-right">
+    <a ng-click="setRoute('/orders/')">Back</a>
 </span>
 
 <div class="entity order" ng-class="{'loading': order.status == undefined}">
 
-    <div class="header">
-        <h1>Order #{{order.slug}} <span ng-class="{'loading': isSaving}"></span></h1>
+    <div ng-show="order.status">
+        <div class="header">
+            <h1>Order #{{order.slug}} <span ng-class="{'loading': isSaving}"></span></h1>
 
-        <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
-    </div>
+            <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
+        </div>
 
-    <div class="block">
-        <h3>
-            Order status
-        </h3>
+        <div class="block">
+            <h3>
+                Order status
+            </h3>
 
-        <div class="wizard">
-            <ul class="steps">
-                <li ng-class="{'active': order.status == 'WAITING_FOR_PAYMENT'}">
-                    <span class="badge badge-info">1</span>Waiting for payment<span class="chevron"></span>
-                </li>
-                <li ng-class="{'active': order.status == 'PAID'}">
-                    <span class="badge">2</span>Paid<span class="chevron"></span>
-                </li>
-                <li ng-class="{'active': order.status == 'PREPARED'}">
-                    <span class="badge">3</span>Prepared<span class="chevron"></span>
-                </li>
-                <li ng-class="{'active': order.status == 'SHIPPED'}">
-                    <span class="badge">4</span>Shipped<span class="chevron"></span>
-                </li>
-            </ul>
-            <div class="actions">
-                <button class="btn" ng-click="paymentReceived()" ng-show="order.status == 'WAITING_FOR_PAYMENT'">Payment
-                    received
-                </button>
-                <button class="btn" ng-click="prepared()" ng-show="order.status == 'PAID'">Command prepared</button>
-                <button class="btn" ng-click="shipped()" ng-show="order.status == 'PREPARED'">Command shipped</button>
+            <div class="wizard">
+                <ul class="steps">
+                    <li ng-class="{'active': order.status == 'WAITING_FOR_PAYMENT'}">
+                        <span class="badge badge-info">1</span>Waiting for payment<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'PAID'}">
+                        <span class="badge">2</span>Paid<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'PREPARED'}">
+                        <span class="badge">3</span>Prepared<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'SHIPPED'}">
+                        <span class="badge">4</span>Shipped<span class="chevron"></span>
+                    </li>
+                </ul>
+                <div class="actions">
+                    <button class="btn" ng-click="paymentReceived()" ng-show="order.status == 'WAITING_FOR_PAYMENT'">
+                        Payment
+                        received
+                    </button>
+                    <button class="btn" ng-click="prepared()" ng-show="order.status == 'PAID'">Command prepared</button>
+                    <button class="btn" ng-click="shipped()" ng-show="order.status == 'PREPARED'">Command shipped
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="block">
-        <h3>Items</h3>
+        <div class="block">
+            <h3>Items</h3>
 
-        <table class="table">
-            <thead>
+            <table class="table">
+                <thead>
                 <th>Item</th>
                 <th>Unit price</th>
                 <th>Quantity</th>
                 <th>Total</th>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr ng-repeat="item in order.data.items">
                     <td>
                         {{item.title}}
@@ -63,43 +66,44 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.itemTotal | money:'EUR'}} {{order.currency}}</td>
                 </tr>
-            </tbody>
-            <tfoot>
+                </tbody>
+                <tfoot>
                 <td colspan="3">Total</td>
                 <td>{{order.grandTotal | money:'EUR'}} {{order.currency}}</td>
-            </tfoot>
-        </table>
-    </div>
+                </tfoot>
+            </table>
+        </div>
 
-    <div class="block">
-        <h3>Customer</h3>
+        <div class="block">
+            <h3>Customer</h3>
 
-        <div class="vcard">
-            <div>
-                <span class="fn">{{order.customer.firstName}} {{order.customer.lastName}}</span>
-            </div>
-            <div>
-                <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
-            </div>
+            <div class="vcard">
+                <div>
+                    <span class="fn">{{order.customer.firstName}} {{order.customer.lastName}}</span>
+                </div>
+                <div>
+                    <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
+                </div>
 
-            <div ng-show="order.deliveryAddress">
-                <strong>Delivery address</strong>
+                <div ng-show="order.deliveryAddress">
+                    <strong>Delivery address</strong>
 
-                <div class="adr">
-                    <div class="fn">{{order.deliveryAddress.fullName}}</div>
-                    <div class="street-address">{{order.deliveryAddress.street}}</div>
-                    <span class="postal-code">{{order.deliveryAddress.zip}}</span>
-                    <span class="locality">{{order.deliveryAddress.city}}</span>
+                    <div class="adr">
+                        <div class="fn">{{order.deliveryAddress.fullName}}</div>
+                        <div class="street-address">{{order.deliveryAddress.street}}</div>
+                        <span class="postal-code">{{order.deliveryAddress.zip}}</span>
+                        <span class="locality">{{order.deliveryAddress.city}}</span>
 
-                    <div class="country-name">{{order.deliveryAddress.country}}</div>
+                        <div class="country-name">{{order.deliveryAddress.country}}</div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <aside>
+
+
+        </aside>
     </div>
-
-    <aside>
-
-
-    </aside>
 </div>
 
