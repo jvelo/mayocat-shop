@@ -56,7 +56,7 @@ public class ArticleRepresentation
         this.slug = article.getSlug();
         this.model = article.getModel().orNull();
         this.published = article.getPublished();
-        this.href = "/api/1.0/news/" + article.getSlug();
+        this.href = "/api/news/" + article.getSlug();
         this.title = article.getTitle();
         this.content = article.getContent();
         if (article.getPublicationDate() != null) {
