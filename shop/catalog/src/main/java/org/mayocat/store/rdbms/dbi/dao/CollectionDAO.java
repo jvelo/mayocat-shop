@@ -121,7 +121,8 @@ public abstract class CollectionDAO extends AbstractLocalizedEntityDAO<Collectio
         "                         COUNT(collection_product.product_id) AS count " +
         "                  FROM   collection_product " +
         "                  GROUP  BY collection_product.collection_id) _count_collections " +
-        "              ON _count_collections.collection_id = collection.entity_id "
+        "              ON _count_collections.collection_id = collection.entity_id " +
+        "WHERE  entity.tenant_id = :tenant.id"
     )
     abstract List<EntityAndCountsJoinRow> findWithProductCountRows(@BindBean("tenant") Tenant tenant);
 

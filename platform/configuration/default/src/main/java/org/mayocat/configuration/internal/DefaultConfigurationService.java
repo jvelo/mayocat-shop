@@ -85,6 +85,9 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getSettingsAsJson()
     {
+        if (execution.getContext().getTenant() == null) {
+            return Collections.emptyMap();
+        }
         Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
         Map<String, Object> platformConfiguration = this.getExposedPlatformSettingsAsJson();
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);

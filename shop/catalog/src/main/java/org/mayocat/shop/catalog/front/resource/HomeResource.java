@@ -16,6 +16,7 @@ import javax.ws.rs.core.UriInfo;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.context.Execution;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.views.FrontView;
@@ -31,6 +32,7 @@ import org.xwiki.component.annotation.Component;
 @Path(HomeResource.PATH)
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@ExistingTenant
 public class HomeResource extends AbstractFrontResource implements Resource
 {
     public static final String PATH = ROOT_PATH;

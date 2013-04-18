@@ -33,9 +33,9 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
         "       version = :version " +
         "WHERE  id = (SELECT configuration_id " +
         "             FROM   tenant " +
-        "             WHERE  id = tenant.id) "
+        "             WHERE  id = :tenant.id)"
     )
-    public abstract void updateConfiguration(@BindBean("tenant") Tenant id, @Bind("version") Integer version,
+    public abstract void updateConfiguration(@BindBean("tenant") Tenant tenant, @Bind("version") Integer version,
             @Bind("data") String configuration);
 
     @GetGeneratedKeys
