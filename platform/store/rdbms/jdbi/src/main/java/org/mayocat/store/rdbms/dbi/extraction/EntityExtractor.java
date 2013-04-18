@@ -16,8 +16,6 @@ public class EntityExtractor<E>
         E entity;
         try {
             entity = (E) type.newInstance();
-            String entityType = type.getSimpleName().toLowerCase();
-            // TODO we will likely need to support custom table name mapping via annotation in the future
 
             for (Method method : entity.getClass().getMethods()) {
                 if (method.getName().startsWith("set") && !method.getName().equals("setTranslations")
