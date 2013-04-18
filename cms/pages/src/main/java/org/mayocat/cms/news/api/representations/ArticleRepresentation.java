@@ -9,8 +9,6 @@ import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ImageRepresentation;
-import org.mayocat.rest.jackson.DateTimeISO8601Serializer;
-import org.mayocat.rest.jackson.DateTimeISO8601Deserializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -35,8 +33,6 @@ public class ArticleRepresentation
 
     private String content;
 
-    @JsonSerialize(using=DateTimeISO8601Serializer.class)
-    @JsonDeserialize(using=DateTimeISO8601Deserializer.class)
     private DateTime publicationDate;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
