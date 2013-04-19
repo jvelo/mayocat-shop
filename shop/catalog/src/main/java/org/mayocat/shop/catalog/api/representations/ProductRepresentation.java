@@ -6,7 +6,9 @@ import java.util.List;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -71,7 +73,7 @@ public class ProductRepresentation
         this.price = product.getUnitPrice();
         this.stock = product.getStock();
 
-        this.href = "/api/1.0/product/" + this.slug;
+        this.href = Resource.API_ROOT_PATH + ProductEntity.PATH + "/" + this.slug;
 
         this.collections = collections;
         this.images = images;
