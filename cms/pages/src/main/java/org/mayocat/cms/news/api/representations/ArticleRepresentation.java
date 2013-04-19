@@ -7,8 +7,10 @@ import java.util.List;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.news.model.Article;
+import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.rest.representations.ImageRepresentation;
+import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -56,7 +58,7 @@ public class ArticleRepresentation
         this.slug = article.getSlug();
         this.model = article.getModel().orNull();
         this.published = article.getPublished();
-        this.href = "/api/news/" + article.getSlug();
+        this.href = Resource.API_ROOT_PATH + ArticleEntity.PATH + "/" + article.getSlug();
         this.title = article.getTitle();
         this.content = article.getContent();
         if (article.getPublicationDate() != null) {

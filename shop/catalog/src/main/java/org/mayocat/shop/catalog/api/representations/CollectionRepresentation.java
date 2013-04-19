@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
+import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -52,7 +54,7 @@ public class CollectionRepresentation
         this.description = collection.getDescription();
         this.slug = collection.getSlug();
 
-        this.href = "/api/1.0/collection/" + this.slug;
+        this.href = Resource.API_ROOT_PATH + CollectionEntity.PATH + "/" + this.slug;
 
         this.products = products;
         if (products != null) {
