@@ -12,6 +12,9 @@ import org.mayocat.shop.checkout.CheckoutSettings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 
+/**
+ * @version $Id$
+ */
 public class MayocatShopSettings extends AbstractSettings
 {
     @Valid
