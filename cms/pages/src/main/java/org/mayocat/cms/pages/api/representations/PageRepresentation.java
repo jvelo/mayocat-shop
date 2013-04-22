@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.pages.model.Page;
+import org.mayocat.cms.pages.meta.PageEntity;
 import org.mayocat.rest.representations.ImageRepresentation;
+import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -47,7 +49,7 @@ public class PageRepresentation
         this.slug = page.getSlug();
         this.model = page.getModel().orNull();
         this.published = page.getPublished();
-        this.href = "/api/1.0/page/" + page.getSlug();
+        this.href = Resource.API_ROOT_PATH + PageEntity.PATH + "/" + page.getSlug();
         this.title = page.getTitle();
         this.content = page.getContent();
     }
