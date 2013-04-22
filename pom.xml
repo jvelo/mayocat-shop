@@ -131,7 +131,6 @@
       </reporting>
 
     <modules>
-        <module>tools</module>
         <module>platform</module>
         <module>cms</module>
         <module>shop</module>
