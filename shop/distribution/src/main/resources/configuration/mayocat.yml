@@ -33,7 +33,7 @@ files:
   temporaryDirectory: /tmp
 
 multitenancy:
-  activated: true
+  activated: false
   defaultTenant: shop
 
 security:
