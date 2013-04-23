@@ -9,8 +9,8 @@ logging:
   file:
     enabled: true
     threshold: ALL
-    currentLogFilename: ../logs/example.log
-    archivedLogFilenamePattern: ../logs/example-%d.log.gz
+    currentLogFilename: ../logs/mayocat.log
+    archivedLogFilenamePattern: ../logs/mayocat-%d.log.gz
     archivedFileCount: 5
 
 database:
