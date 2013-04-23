@@ -11,7 +11,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width"/>
 
-    <title>Mayocat Shop - Administration</title>
+    <title ng-bind="$root.page_title"></title>
 
     <!-- Included CSS Files -->
     <link rel="stylesheet/less" href="vendor/bootstrap/2.3.1/less/bootstrap.less">
@@ -46,6 +46,7 @@
 
     <!-- Application scripts -->
     <script src="javascripts/polyfill.js"></script>
+    <script src="javascripts/appsettings.js"></script>
     <script src="javascripts/app.js"></script>
     <script src="javascripts/addons.js"></script>
     <script src="javascripts/image.js"></script>
