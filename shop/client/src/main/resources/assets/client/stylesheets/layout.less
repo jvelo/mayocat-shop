@@ -6,11 +6,11 @@ header {
   border-right: solid 1px @borderHeaderStrong;
   padding: 15px 0px;
   background-color: @backgroundHeader;
-  color: #FFF;
+  color: @headerFontColor;
 }
 
 header .logo {
-  background-image: url("../images/logo-header.png");
+  background-image: url("@{logoImageUrl}");
   background-repeat: no-repeat;
   background-size: 67px auto;
   height: 80px;
@@ -100,7 +100,7 @@ header a {
   padding: 60px 0px 0px 15px;
   border-left: solid 1px;
   background-color: @backgroundHeader;
-  color: #FFF;
+  color: @headerFontColor;
   border-color: @borderHeaderLight;
 }
 

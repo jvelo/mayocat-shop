@@ -23,19 +23,19 @@ var mayocat = angular.module('mayocat', [
 
 mayocat.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
-        when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl}).
-        when('/contents', {templateUrl: 'partials/contents.html'}).
-        when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController'}).
-        when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController'}).
-        when('/customers', {templateUrl: 'partials/customers.html'}).
-        when('/news', {templateUrl: 'partials/news.html'}).
-        when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController'}).
-        when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController'}).
-        when('/catalog', {templateUrl: 'partials/products.html'}).
-        when('/collections/', {templateUrl: 'partials/collections.html', controller: 'CatalogController'}).
-        when('/products/:product', {templateUrl: 'partials/product.html', controller: 'ProductController'}).
-        when('/collections/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController'}).
-        when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController'}).
+        when('/', {templateUrl: 'partials/home.html', controller: 'HomeCtrl', title: 'Home'}).
+        when('/contents', {templateUrl: 'partials/contents.html', title: 'Contents'}).
+        when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController', title: 'Orders'}).
+        when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController', title: 'Orders'}).
+        when('/customers', {templateUrl: 'partials/customers.html', title: 'Customers'}).
+        when('/news', {templateUrl: 'partials/news.html', title: 'News'}).
+        when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController', title: 'Pages'}).
+        when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController', title: 'News'}).
+        when('/catalog', {templateUrl: 'partials/products.html', title: 'Catalog'}).
+        when('/collections/', {templateUrl: 'partials/collections.html', controller: 'CatalogController', title: 'Catalog'}).
+        when('/products/:product', {templateUrl: 'partials/product.html', controller: 'ProductController', title: 'Products'}).
+        when('/collections/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController', title: 'Catalog'}).
+        when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController', title: 'Settings'}).
         otherwise({redirectTo: '/'});
 }]);
 
@@ -460,6 +460,15 @@ mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $ht
      * Holds all the requests which failed due to 401 response.
      */
     scope.requests401 = [];
+
+    /**
+     * Set up a default page title and update it when changing route.
+     * Update title when changing root
+     */
+    scope.page_title = Mayocat.applicationName + ' | Home';
+    scope.$on('$routeChangeSuccess', function(event, current) {
+        scope.page_title = Mayocat.applicationName + ' | ' + current.$route.title;
+    });
 
     /**
      * On 'event:authenticationSuccessful', resend all the 401 requests.
