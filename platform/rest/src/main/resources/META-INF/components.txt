@@ -8,6 +8,5 @@ org.mayocat.rest.resources.AttachmentResource
 org.mayocat.rest.resources.ImageResource
 org.mayocat.rest.resources.LoginResource
 org.mayocat.rest.resources.LogoutResource
-org.mayocat.rest.resources.SearchResource
 org.mayocat.rest.resources.TenantResource
 org.mayocat.rest.resources.UserResource
