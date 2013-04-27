@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-search</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.7.3</version>
     </parent>
     <artifactId>mayocat-platform-search-elasticsearch</artifactId>
     <packaging>jar</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.3</version>
 
     <name>Mayocat Platform - Search - Elastic Search</name>
     <description>Elastic Search implementation</description>
