@@ -3,6 +3,7 @@ package org.mayocat.shop.application;
 import org.mayocat.application.AbstractService;
 import org.mayocat.cms.news.NewsModule;
 import org.mayocat.cms.pages.PagesModule;
+import org.mayocat.flyway.FlywayBundle;
 import org.mayocat.shop.catalog.CatalogModule;
 import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopSettings;
@@ -17,7 +18,6 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
-import com.yammer.dropwizard.migrations.MigrationsBundle;
 
 public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
@@ -37,7 +37,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
-        bootstrap.addBundle(new MigrationsBundle<MayocatShopSettings>()
+        bootstrap.addBundle(new FlywayBundle<MayocatShopSettings>()
         {
             @Override
             public DatabaseConfiguration getDatabaseConfiguration(MayocatShopSettings configuration)
