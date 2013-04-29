@@ -37,7 +37,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Inject
     private AttachmentStore attachmentStore;
 
-    public UUID create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
+    public Product create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -54,13 +54,13 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         if (lastIndex == null) {
             lastIndex = 0;
         }
-        this.dao.createProduct(entityId, lastIndex + 1, product);
+        this.dao.createProduct(lastIndex + 1, product);
         this.dao.insertTranslations(entityId, product.getTranslations());
         this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
 
-        return entityId;
+        return product;
     }
 
     @Override

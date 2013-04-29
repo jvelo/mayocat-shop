@@ -7,7 +7,6 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.jdbi.mapper.ThumbnailMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -22,7 +21,6 @@ import org.skife.jdbi.v2.unstable.BindIn;
 @UseStringTemplate3StatementLocator
 public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
 {
-    @GetGeneratedKeys
     @SqlUpdate
     (
         "INSERT INTO thumbnail " +
@@ -43,7 +41,7 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "             :thumbnail.width, " +
         "             :thumbnail.height) "
     )
-    Integer createThumbnail(@BindBean("thumbnail") Thumbnail thumbnail);
+    void createThumbnail(@BindBean("thumbnail") Thumbnail thumbnail);
 
     @SqlUpdate
     (

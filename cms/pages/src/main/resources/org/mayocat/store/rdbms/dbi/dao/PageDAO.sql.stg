@@ -11,7 +11,7 @@ lastPosition() ::= <<
 
 createPage() ::= <<
     INSERT INTO page (entity_id, model, position, title, content, featured_image_id)
-    VALUES (:id,
+    VALUES (:page.id,
             :page.model,
             :position,
             :page.title,

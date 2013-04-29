@@ -10,9 +10,9 @@ import org.mayocat.store.rdbms.dbi.argument.CurrencyAsCurrencyCodeArgumentFactor
 import org.mayocat.store.rdbms.dbi.argument.DateAsTimestampArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.OrderStatusArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
@@ -29,9 +29,8 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @UseStringTemplate3StatementLocator
 public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderDAO>
 {
-    @GetGeneratedKeys
     @SqlUpdate
-    public abstract Long createOrder(@Bind("id") UUID entityId, @BindBean("order") Order order);
+    public abstract void createOrder(@BindBean("order") Order order);
 
     @SqlUpdate
     public abstract Integer updateOrder(@BindBean("order") Order order);

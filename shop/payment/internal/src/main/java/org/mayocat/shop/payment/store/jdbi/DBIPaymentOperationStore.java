@@ -29,10 +29,12 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     private PaymentOperationDAO dao;
 
     @Override
-    public UUID create(@Valid PaymentOperation operation)
+    public PaymentOperation create(@Valid PaymentOperation operation)
             throws EntityAlreadyExistsException, InvalidEntityException
     {
-        return this.dao.createPaymentOperation(operation);
+        operation.setId(UUID.randomUUID());
+        this.dao.createPaymentOperation(operation);
+        return operation;
     }
 
     @Override

@@ -85,17 +85,19 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
-                customerId = this.customerStore.get().create(customer);
+                customer = this.customerStore.get().create(customer);
             } else {
                 customer = this.customerStore.get().findBySlug(customer.getEmail());
-                customerId = customer.getId();
             }
+            customerId = customer.getId();
 
             if (deliveryAddress != null) {
-                deliveryAddressId = this.addressStore.get().create(deliveryAddress);
+                deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                deliveryAddressId = deliveryAddress.getId();
             }
             if (billingAddress != null) {
-                billingAddressId = this.addressStore.get().create(billingAddress);
+                billingAddress = this.addressStore.get().create(billingAddress);
+                billingAddressId = billingAddress.getId();
             }
 
             order = new Order();
@@ -136,8 +138,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             data.put("items", orderItems);
             order.setOrderData(data);
 
-            UUID id = orderStore.get().create(order);
-            order.setId(id);
+            order = orderStore.get().create(order);
+
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);
         } catch (InvalidEntityException e2) {

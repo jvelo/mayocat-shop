@@ -29,9 +29,12 @@ public class DBIAddressStore implements AddressStore, Initializable
     private AddressDAO dao;
 
     @Override
-    public UUID create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
+    public Address create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        return  this.dao.createAddress(address);
+        UUID id = UUID.randomUUID();
+        address.setId(id);
+        this.dao.createAddress(address);
+        return address;
     }
 
     @Override

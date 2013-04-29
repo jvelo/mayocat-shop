@@ -26,7 +26,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
     private UserDAO dao;
 
-    public UUID create(User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException
+    public User create(User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(user.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -43,10 +43,10 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
         this.dao.commit();
 
-        return entityId;
+        return user;
     }
 
-    public UUID create(User user) throws EntityAlreadyExistsException, InvalidEntityException
+    public User create(User user) throws EntityAlreadyExistsException, InvalidEntityException
     {
         return this.create(user, Role.ADMIN);
     }
