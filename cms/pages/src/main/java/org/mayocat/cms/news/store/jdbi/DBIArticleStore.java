@@ -30,7 +30,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     private static final String ARTICLE_TABLE_NAME = "article";
 
     @Override
-    public UUID create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
+    public Article create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(ARTICLE_TABLE_NAME, article.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -42,13 +42,12 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
         article.setId(entityId);
 
         this.dao.createEntity(article, ARTICLE_TABLE_NAME, getTenant());
-        this.dao.createArticle(entityId, article);
+        this.dao.createArticle(article);
         this.dao.insertTranslations(entityId, article.getTranslations());
         this.dao.createOrUpdateAddons(article);
 
         this.dao.commit();
-
-        return entityId;
+        return article;
     }
 
     @Override

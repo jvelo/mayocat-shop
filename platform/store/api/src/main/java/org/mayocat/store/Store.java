@@ -10,7 +10,7 @@ import org.mayocat.model.Identifiable;
 
 public interface Store<T extends Identifiable, K extends Serializable>
 {
-    UUID create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
+    T create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
     
     void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException;
 

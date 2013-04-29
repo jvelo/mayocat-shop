@@ -7,7 +7,6 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.jdbi.mapper.TenantMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -16,16 +15,18 @@ import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 @RegisterMapper(TenantMapper.class)
 public abstract class TenantDAO implements Transactional<TenantDAO>
 {
-    @GetGeneratedKeys
     @SqlUpdate
     (
         "INSERT INTO configuration " +
-        "            (version, " +
+        "            (id," +
+        "             version, " +
         "             data) " +
-        "VALUES      (:version, " +
+        "VALUES      (:id," +
+        "             :version, " +
         "             :data) "
     )
-    public abstract Integer createConfiguration(@Bind("version") Integer version, @Bind("data") String configuration);
+    public abstract Integer createConfiguration(@Bind("id") UUID id, @Bind("version") Integer version,
+            @Bind("data") String configuration);
 
     @SqlUpdate
     (
@@ -39,16 +40,17 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
     public abstract void updateConfiguration(@BindBean("tenant") Tenant tenant, @Bind("version") Integer version,
             @Bind("data") String configuration);
 
-    @GetGeneratedKeys
     @SqlUpdate
     (
         "INSERT INTO tenant " +
-        "            (slug, " +
+        "            (id," +
+        "             slug, " +
         "             configuration_id) " +
-        "VALUES      (:tenant.slug, " +
+        "VALUES      (:tenant.id, " +
+        "             :tenant.slug, " +
         "             :configuration) "
     )
-    public abstract UUID create(@BindBean("tenant") Tenant tenant, @Bind("configuration") Integer configuration);
+    public abstract void create(@BindBean("tenant") Tenant tenant, @Bind("configuration") UUID configuration);
 
     @SqlQuery
     (

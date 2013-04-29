@@ -34,7 +34,7 @@ public class DBITenantStore implements TenantStore, Initializable
     private TenantDAO dao;
 
     @Override
-    public UUID create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
+    public Tenant create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
@@ -42,8 +42,14 @@ public class DBITenantStore implements TenantStore, Initializable
 
         try {
             String configurationAsJson = convertConfigurationToJSON(configuration);
-            Integer configurationId = this.dao.createConfiguration(configuration.getVersion(), configurationAsJson);
-            return this.dao.create(tenant, configurationId);
+            UUID configurationId = UUID.randomUUID();
+            this.dao.createConfiguration(configurationId, configuration.getVersion(), configurationAsJson);
+
+            UUID id = UUID.randomUUID();
+            tenant.setId(id);
+            this.dao.create(tenant, configurationId);
+
+            return tenant;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to create tenant", e);
         } finally {

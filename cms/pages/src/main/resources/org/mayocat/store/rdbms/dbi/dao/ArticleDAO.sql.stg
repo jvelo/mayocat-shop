@@ -2,7 +2,7 @@ group ArticleDAO;
 
 createArticle() ::= <<
     INSERT INTO article (entity_id, model, title, content, featured_image_id)
-    VALUES (:id,
+    VALUES (:article.id,
             :article.model,
             :article.title,
             :article.content,

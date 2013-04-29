@@ -32,7 +32,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     private PageDAO dao;
 
     @Override
-    public UUID create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
+    public Page create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(PAGE_TABLE_NAME, page.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -48,13 +48,13 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         if (lastIndex == null) {
             lastIndex = 0;
         }
-        this.dao.createPage(entityId, lastIndex + 1, page);
+        this.dao.createPage(lastIndex + 1, page);
         this.dao.insertTranslations(entityId, page.getTranslations());
         this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();
 
-        return entityId;
+        return page;
     }
 
     @Override

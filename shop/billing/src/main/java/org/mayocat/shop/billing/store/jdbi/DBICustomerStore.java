@@ -27,7 +27,7 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     private CustomerDAO dao;
 
     @Override
-    public UUID create(@Valid Customer customer) throws EntityAlreadyExistsException, InvalidEntityException
+    public Customer create(@Valid Customer customer) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -39,10 +39,10 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
         customer.setId(entityId);
 
         this.dao.createEntity(customer, CUSTOMER_TABLE_NAME, getTenant());
-        this.dao.create(entityId, customer);
+        this.dao.create(customer);
         this.dao.commit();
 
-        return entityId;
+        return customer;
     }
 
     @Override

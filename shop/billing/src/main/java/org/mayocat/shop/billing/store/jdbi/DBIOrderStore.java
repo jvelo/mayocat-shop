@@ -28,20 +28,21 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     private OrderDAO dao;
 
     @Override
-    public UUID create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
+    public Order create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
         String slug = String.format("%08d", lastOrderNumber() + 1);
         order.setSlug(slug);
 
+        order.setId(UUID.randomUUID());
+
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
-        UUID entityId = this.dao.getId(order, ORDER_TABLE_NAME, getTenant());
-        this.dao.createOrder(entityId, order);
+        this.dao.createOrder(order);
 
         this.dao.commit();
 
-        return entityId;
+        return order;
     }
 
     private Integer lastOrderNumber()

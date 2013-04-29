@@ -27,8 +27,7 @@ public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implement
          public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
     @SqlUpdate
-    public abstract void createPage(@Bind("id") UUID entityId, @Bind("position") Integer position,
-            @BindBean("page") Page page);
+    public abstract void createPage(@Bind("position") Integer position, @BindBean("page") Page page);
 
     @SqlUpdate
     public abstract Integer updatePage(@BindBean("page") Page page);

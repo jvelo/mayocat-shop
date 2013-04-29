@@ -34,13 +34,12 @@ public abstract class CollectionDAO extends AbstractLocalizedEntityDAO<Collectio
         "             position, " +
         "             title, " +
         "             description) " +
-        "VALUES      (:id, " +
+        "VALUES      (:collection.id, " +
         "             :position, " +
         "             :collection.title, " +
         "             :collection.description) "
     )
-    public abstract void create(@Bind("id") UUID entityId, @Bind("position") Integer position,
-            @BindBean("collection") Collection collection);
+    public abstract void create(@Bind("position") Integer position, @BindBean("collection") Collection collection);
 
     @SqlUpdate
     (

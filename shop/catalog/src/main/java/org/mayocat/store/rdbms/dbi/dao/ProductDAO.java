@@ -23,8 +23,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
         PositionedDAO<Product>, AddonsDAO<Product>
 {
     @SqlUpdate
-    public abstract void createProduct(@Bind("id") UUID entityId, @Bind("position") Integer position,
-            @BindBean("product") Product product);
+    public abstract void createProduct(@Bind("position") Integer position, @BindBean("product") Product product);
 
     @SqlUpdate
     public abstract Integer updateProduct(@BindBean("product") Product product);
