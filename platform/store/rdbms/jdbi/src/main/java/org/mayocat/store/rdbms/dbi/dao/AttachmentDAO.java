@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.model.Attachment;
 import org.mayocat.accounts.model.Tenant;
@@ -36,7 +37,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
         "             :attachment.description, " +
         "             :data) "
     )
-   void createAttachment(@Bind("entity") Long entityId, @BindBean("attachment") Attachment attachment,
+   void createAttachment(@Bind("entity") UUID entityId, @BindBean("attachment") Attachment attachment,
             @Bind("data") byte[] data);
 
     @SqlQuery
@@ -59,7 +60,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
         "WHERE  entity.type = 'attachment' " +
         "       AND entity.parent_id (<ids>)"
     )
-    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<Long> ids);
+    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<UUID> ids);
 
     @SqlQuery
     (
@@ -84,7 +85,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
         "       AND attachment.extension in (<extensions>)" +
         "       AND entity.parent_id in (<ids>)"
     )
-    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<Long> ids,
+    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<UUID> ids,
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery

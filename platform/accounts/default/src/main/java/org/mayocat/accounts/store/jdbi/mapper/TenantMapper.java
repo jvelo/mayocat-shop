@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.common.base.Strings;
 import org.mayocat.accounts.model.Tenant;
@@ -42,7 +43,7 @@ public class TenantMapper implements ResultSetMapper<Tenant>
             }
         }
 
-        Tenant tenant = new Tenant(result.getLong("id"), slug, configuration);
+        Tenant tenant = new Tenant((UUID) result.getObject("id"), slug, configuration);
         tenant.setSlug(slug);
 
         return tenant;

@@ -2,6 +2,7 @@ package org.mayocat.shop.billing.store.jdbi.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.mayocat.shop.billing.model.Customer;
 import org.skife.jdbi.v2.StatementContext;
@@ -21,7 +22,7 @@ public class CustomerMapper implements ResultSetMapper<Customer>
         customer.setEmail(resultSet.getString("email"));
         customer.setFirstName(resultSet.getString("first_name"));
         customer.setLastName(resultSet.getString("last_name"));
-        customer.setId(resultSet.getLong("id"));
+        customer.setId((UUID) resultSet.getObject("id"));
 
         return customer;
     }

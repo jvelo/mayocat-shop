@@ -1,15 +1,14 @@
 package org.mayocat.model;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.UUID;
 
 /**
  * @version $Id$
  */
 public class Attachment implements Entity, Child
 {
-    private Long id;
+    private UUID id;
 
     private String slug;
 
@@ -21,7 +20,7 @@ public class Attachment implements Entity, Child
 
     private InputStream data;
 
-    private Long parentId;
+    private UUID parentId;
 
     public Attachment()
     {
@@ -40,13 +39,13 @@ public class Attachment implements Entity, Child
     }
 
     @Override
-    public Long getId()
+    public UUID getId()
     {
         return this.id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -92,12 +91,12 @@ public class Attachment implements Entity, Child
     }
 
     @Override
-    public Long getParentId()
+    public UUID getParentId()
     {
         return this.parentId;
     }
 
-    public void setParentId(Long parentId)
+    public void setParentId(UUID parentId)
     {
         this.parentId = parentId;
     }

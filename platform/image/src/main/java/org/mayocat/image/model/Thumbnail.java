@@ -1,5 +1,7 @@
 package org.mayocat.image.model;
 
+import java.util.UUID;
+
 /**
  * @version $Id$
  */
@@ -19,7 +21,7 @@ public class Thumbnail
 
     private Integer height;
 
-    private Long attachmentId;
+    private UUID attachmentId;
 
     public String getSource()
     {
@@ -91,12 +93,12 @@ public class Thumbnail
         this.height = height;
     }
 
-    public Long getAttachmentId()
+    public UUID getAttachmentId()
     {
         return attachmentId;
     }
 
-    public void setAttachmentId(Long attachmentId)
+    public void setAttachmentId(UUID attachmentId)
     {
         this.attachmentId = attachmentId;
     }

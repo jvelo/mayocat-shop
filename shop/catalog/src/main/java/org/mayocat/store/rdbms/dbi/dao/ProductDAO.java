@@ -1,8 +1,8 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.mayocat.model.Addon;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
@@ -17,22 +17,20 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
-import com.google.common.base.Optional;
-
 @RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
 public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>,
         PositionedDAO<Product>, AddonsDAO<Product>
 {
     @SqlUpdate
-    public abstract void createProduct(@Bind("id") Long entityId, @Bind("position") Integer position,
+    public abstract void createProduct(@Bind("id") UUID entityId, @Bind("position") Integer position,
             @BindBean("product") Product product);
 
     @SqlUpdate
     public abstract Integer updateProduct(@BindBean("product") Product product);
 
     @SqlUpdate
-    public abstract Integer deleteProductFromCollections(@Bind("id") Long id);
+    public abstract Integer deleteProductFromCollections(@Bind("id") UUID id);
 
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);

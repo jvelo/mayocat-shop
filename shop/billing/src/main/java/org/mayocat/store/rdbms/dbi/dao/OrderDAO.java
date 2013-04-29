@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.billing.model.Order;
@@ -30,7 +31,7 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
 {
     @GetGeneratedKeys
     @SqlUpdate
-    public abstract Long createOrder(@Bind("id") Long entityId, @BindBean("order") Order order);
+    public abstract Long createOrder(@Bind("id") UUID entityId, @BindBean("order") Order order);
 
     @SqlUpdate
     public abstract Integer updateOrder(@BindBean("order") Order order);

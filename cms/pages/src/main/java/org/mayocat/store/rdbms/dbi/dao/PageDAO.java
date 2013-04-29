@@ -1,5 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
+import java.util.UUID;
+
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.jdbi.mapper.PageMapper;
@@ -25,7 +27,7 @@ public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implement
          public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
 
     @SqlUpdate
-    public abstract void createPage(@Bind("id") Long entityId, @Bind("position") Integer position,
+    public abstract void createPage(@Bind("id") UUID entityId, @Bind("position") Integer position,
             @BindBean("page") Page page);
 
     @SqlUpdate

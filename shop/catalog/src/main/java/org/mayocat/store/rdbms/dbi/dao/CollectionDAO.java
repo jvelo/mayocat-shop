@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -38,7 +39,7 @@ public abstract class CollectionDAO extends AbstractLocalizedEntityDAO<Collectio
         "             :collection.title, " +
         "             :collection.description) "
     )
-    public abstract void create(@Bind("id") Long entityId, @Bind("position") Integer position,
+    public abstract void create(@Bind("id") UUID entityId, @Bind("position") Integer position,
             @BindBean("collection") Collection collection);
 
     @SqlUpdate

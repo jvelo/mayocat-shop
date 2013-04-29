@@ -8,6 +8,7 @@ import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.shop.payment.BaseOption;
 import org.mayocat.shop.payment.GatewayException;
@@ -82,10 +83,11 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setCurrencyCode(((Currency) options.get(BaseOption.CURRENCY)).getCurrencyCode());
 
         String baseURI = (String) options.get(BaseOption.BASE_URL);
-        String orderId = ((Long) options.get(BaseOption.ORDER_ID)).toString();
+        String orderId = options.get(BaseOption.ORDER_ID).toString();
 
-        // -> Set the tracking ID when we have moved entities ID to UUID
-        // request.setTrackingId(orderId);
+        // -> FIXME determine if we want to set the order ID as tracking ID.
+        // We need to know for sure it can only be used once
+        //request.setTrackingId(orderId);
 
         request.setIpnNotificationUrl(
                 baseURI + PaymentResource.PATH + "/" + orderId + "/" + PaymentResource.ACKNOWLEDGEMENT_PATH + "/" +
@@ -96,7 +98,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
             PayResponse response = service.pay(request);
             PaymentOperation operation = new PaymentOperation();
             operation.setGatewayId(PaypalAdaptivePaymentsGatewayFactory.ID);
-            operation.setExternalId((String) response.getPayKey());
+            operation.setExternalId(response.getPayKey());
 
             Map<String, Object> map = new LinkedHashMap<String, Object>();
             if (response.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS")) {

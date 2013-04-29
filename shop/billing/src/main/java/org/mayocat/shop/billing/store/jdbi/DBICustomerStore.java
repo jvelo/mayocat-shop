@@ -1,6 +1,7 @@
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -26,7 +27,7 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     private CustomerDAO dao;
 
     @Override
-    public Long create(@Valid Customer customer) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(@Valid Customer customer) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -34,10 +35,11 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
 
         this.dao.begin();
 
-        this.dao.createEntity(customer, CUSTOMER_TABLE_NAME, getTenant());
-        Long entityId = this.dao.getId(customer, CUSTOMER_TABLE_NAME, getTenant());
-        this.dao.create(entityId, customer);
+        UUID entityId = UUID.randomUUID();
+        customer.setId(entityId);
 
+        this.dao.createEntity(customer, CUSTOMER_TABLE_NAME, getTenant());
+        this.dao.create(entityId, customer);
         this.dao.commit();
 
         return entityId;
@@ -77,13 +79,13 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     }
 
     @Override
-    public List<Customer> findByIds(List<Long> ids)
+    public List<Customer> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(CUSTOMER_TABLE_NAME, ids);
     }
 
     @Override
-    public Customer findById(Long id)
+    public Customer findById(UUID id)
     {
         return this.dao.findById(CUSTOMER_TABLE_NAME, id);
     }

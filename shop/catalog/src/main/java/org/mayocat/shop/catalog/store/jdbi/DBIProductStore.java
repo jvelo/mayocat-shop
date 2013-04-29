@@ -1,15 +1,12 @@
 package org.mayocat.shop.catalog.store.jdbi;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.mayocat.model.Addon;
-import org.mayocat.model.HasAddons;
-import org.mayocat.model.Identifiable;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -23,16 +20,10 @@ import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
 import org.mayocat.store.rdbms.dbi.dao.ProductDAO;
-import org.mayocat.store.rdbms.jdbi.AddonsDAO;
 import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIProductStore extends DBIEntityStore implements ProductStore, Initializable
@@ -46,7 +37,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Inject
     private AttachmentStore attachmentStore;
 
-    public Long create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -54,7 +45,10 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
         this.dao.begin();
 
-        Long entityId = this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        UUID entityId = UUID.randomUUID();
+        product.setId(entityId);
+
+        this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
         product.setId(entityId);
         Integer lastIndex = this.dao.lastPosition(getTenant());
         if (lastIndex == null) {
@@ -142,7 +136,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
-    public List<Product> findByIds(List<Long> ids)
+    public List<Product> findByIds(List<UUID> ids)
     {
         return AddonsHelper.withAddons(this.dao.findByIds(PRODUCT_TABLE_NAME, ids), this.dao);
     }
@@ -176,7 +170,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
-    public Product findById(Long id)
+    public Product findById(UUID id)
     {
         Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
         List<Addon> addons = this.dao.findAddons(product);

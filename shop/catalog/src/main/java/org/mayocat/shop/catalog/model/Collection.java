@@ -1,5 +1,7 @@
 package org.mayocat.shop.catalog.model;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,7 +16,7 @@ import com.google.common.base.Objects;
 
 public class Collection extends AbstractLocalizedEntity implements HasFeaturedImage
 {
-    private Long id;
+    private UUID id;
 
     @SearchIndex
     @NotNull
@@ -30,7 +32,7 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
     @SearchIndex
     private String description;
 
-    private Long featuredImageId;
+    private UUID featuredImageId;
 
     public Collection()
     {
@@ -42,19 +44,19 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
         super(translations);
     }
 
-    public Collection(Long id)
+    public Collection(UUID id)
     {
         super();
         this.id = id;
     }
 
-    public Collection(Long id, Translations translations)
+    public Collection(UUID id, Translations translations)
     {
         super(translations);
         this.id = id;
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
@@ -69,7 +71,7 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
         this.slug = slug;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -95,12 +97,12 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
     }
 
     @Override
-    public Long getFeaturedImageId()
+    public UUID getFeaturedImageId()
     {
         return featuredImageId;
     }
 
-    public void setFeaturedImageId(Long featuredImageId)
+    public void setFeaturedImageId(UUID featuredImageId)
     {
         this.featuredImageId = featuredImageId;
     }

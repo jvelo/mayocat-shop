@@ -1,11 +1,13 @@
 package org.mayocat.model;
 
+import java.util.UUID;
+
 /**
  * @version $Id$
  */
 public interface Child
 {
-    Long getParentId();
+    UUID getParentId();
 
-    void setParentId(Long id);
+    void setParentId(UUID id);
 }

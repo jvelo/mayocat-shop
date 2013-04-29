@@ -25,7 +25,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTimeZone;
-import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.cms.news.api.representations.ArticleRepresentation;

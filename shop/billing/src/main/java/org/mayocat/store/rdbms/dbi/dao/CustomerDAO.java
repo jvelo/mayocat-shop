@@ -1,5 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
+import java.util.UUID;
+
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.store.jdbi.mapper.CustomerMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -19,5 +21,5 @@ public abstract class CustomerDAO implements EntityDAO<Customer>, Transactional<
 {
     @GetGeneratedKeys
     @SqlUpdate
-    public abstract Long create(@Bind("id") Long entityId, @BindBean("customer") Customer customer);
+    public abstract Long create(@Bind("id") UUID entityId, @BindBean("customer") Customer customer);
 }

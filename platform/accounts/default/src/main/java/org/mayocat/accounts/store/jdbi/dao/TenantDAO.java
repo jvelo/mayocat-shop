@@ -1,6 +1,7 @@
 package org.mayocat.accounts.store.jdbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.jdbi.mapper.TenantMapper;
@@ -47,7 +48,7 @@ public abstract class TenantDAO implements Transactional<TenantDAO>
         "VALUES      (:tenant.slug, " +
         "             :configuration) "
     )
-    public abstract Long create(@BindBean("tenant") Tenant tenant, @Bind("configuration") Integer configuration);
+    public abstract UUID create(@BindBean("tenant") Tenant tenant, @Bind("configuration") Integer configuration);
 
     @SqlQuery
     (

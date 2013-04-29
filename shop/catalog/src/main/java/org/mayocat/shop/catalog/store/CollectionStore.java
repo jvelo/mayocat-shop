@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.store;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.model.EntityAndCount;
@@ -12,7 +13,7 @@ import org.mayocat.store.Store;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface CollectionStore extends Store<Collection, Long>, EntityStore, HasOrderedCollections
+public interface CollectionStore extends Store<Collection, UUID>, EntityStore, HasOrderedCollections
 {
     Collection findBySlug(String slug);
 

@@ -1,6 +1,7 @@
 package org.mayocat.shop.payment.api.resources;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -56,7 +57,7 @@ public class PaymentResource implements Resource
 
     @POST
     @Path("{orderId}/" + ACKNOWLEDGEMENT_PATH + "/{gatewayId}")
-    public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId, @PathParam("orderId") Long orderId,
+    public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId, @PathParam("orderId") UUID orderId,
             MultivaluedMap<String, String> data)
     {
         GatewayFactory factory = gatewayFactories.get(gatewayId);

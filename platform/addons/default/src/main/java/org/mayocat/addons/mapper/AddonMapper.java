@@ -2,6 +2,7 @@ package org.mayocat.addons.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.mayocat.model.Addon;
 import org.mayocat.model.AddonFieldType;
@@ -33,7 +34,7 @@ public class AddonMapper implements ResultSetMapper<Addon>
         addon.setKey(result.getString("addon_key"));
         addon.setSource(AddonSource.fromJson(result.getString("source")));
         addon.setGroup(result.getString("addon_group"));
-        addon.setEntityId(result.getLong("entity_id"));
+        addon.setEntityId((UUID)result.getObject("entity_id"));
 
         return addon;
     }

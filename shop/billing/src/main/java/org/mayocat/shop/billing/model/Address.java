@@ -1,5 +1,7 @@
 package org.mayocat.shop.billing.model;
 
+import java.util.UUID;
+
 import org.mayocat.model.Identifiable;
 
 /**
@@ -7,9 +9,9 @@ import org.mayocat.model.Identifiable;
  */
 public class Address implements Identifiable
 {
-    private Long id;
+    private UUID id;
 
-    private Long customerId;
+    private UUID customerId;
 
     private String company;
 
@@ -25,22 +27,22 @@ public class Address implements Identifiable
 
     private String country;
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
 
-    public Long getCustomerId()
+    public UUID getCustomerId()
     {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId)
+    public void setCustomerId(UUID customerId)
     {
         this.customerId = customerId;
     }
