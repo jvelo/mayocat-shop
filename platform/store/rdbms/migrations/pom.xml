@@ -22,6 +22,12 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
         </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.driver.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>
