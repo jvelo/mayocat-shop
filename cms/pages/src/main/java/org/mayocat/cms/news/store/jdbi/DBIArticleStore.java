@@ -1,6 +1,7 @@
 package org.mayocat.cms.news.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -29,7 +30,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     private static final String ARTICLE_TABLE_NAME = "article";
 
     @Override
-    public Long create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(@Valid Article article) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(ARTICLE_TABLE_NAME, article.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -37,9 +38,10 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
 
         this.dao.begin();
 
-        Long entityId = this.dao.createEntity(article, ARTICLE_TABLE_NAME, getTenant());
+        UUID entityId = UUID.randomUUID();
         article.setId(entityId);
 
+        this.dao.createEntity(article, ARTICLE_TABLE_NAME, getTenant());
         this.dao.createArticle(entityId, article);
         this.dao.insertTranslations(entityId, article.getTranslations());
         this.dao.createOrUpdateAddons(article);
@@ -99,7 +101,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
-    public List<Article> findByIds(List<Long> ids)
+    public List<Article> findByIds(List<UUID> ids)
     {
         return AddonsHelper.withAddons(this.dao.findByIds(ARTICLE_TABLE_NAME, ids), this.dao);
     }
@@ -122,7 +124,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
-    public Article findById(Long id)
+    public Article findById(UUID id)
     {
         Article article = this.dao.findById(ARTICLE_TABLE_NAME, id);
         List<Addon> addons = this.dao.findAddons(article);

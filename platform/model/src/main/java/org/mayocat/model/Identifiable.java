@@ -1,11 +1,13 @@
 package org.mayocat.model;
 
+import java.util.UUID;
+
 /**
  * @version $Id$
  */
 public interface Identifiable
 {
-    Long getId();
+    UUID getId();
 
-    void setId(Long id);
+    void setId(UUID id);
 }

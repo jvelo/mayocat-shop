@@ -2,6 +2,7 @@ package org.mayocat.store.rdbms.jdbi;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.addons.binder.BindAddon;
 import org.mayocat.addons.mapper.AddonMapper;
@@ -31,7 +32,7 @@ public interface AddonsDAO<T extends HasAddons>
         "SELECT * FROM addon " +
         "WHERE    entity_id in ( <ids> )"
     )
-    List<Addon> findAllAddonsForIds(@BindIn("ids") List<Long> ids);
+    List<Addon> findAllAddonsForIds(@BindIn("ids") List<UUID> ids);
 
     @SqlUpdate
     (

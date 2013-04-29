@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -115,17 +116,17 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
         List<Product> products = this.productStore.get().findAllOnShelf(24, 0);
-        java.util.Collection<Long> featuredImageIds = Collections2.transform(products,
-                new Function<Product, Long>()
+        java.util.Collection<UUID> featuredImageIds = Collections2.transform(products,
+                new Function<Product, UUID>()
                 {
                     @Override
-                    public Long apply(final Product product)
+                    public UUID apply(final Product product)
                     {
                         return product.getFeaturedImageId();
                     }
                 }
         );
-        List<Long> ids = new ArrayList<Long>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        List<UUID> ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
         if (ids.isEmpty()) {

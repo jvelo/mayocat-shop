@@ -2,6 +2,7 @@ package org.mayocat.cms.news.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,7 +25,7 @@ import com.google.common.base.Optional;
  */
 public class Article extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage
 {
-    private Long id;
+    private UUID id;
 
     @SearchIndex
     @NotNull
@@ -47,12 +48,12 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     private Optional<String> model = Optional.absent();
 
-    private Long featuredImageId;
+    private UUID featuredImageId;
 
     public Article()
     {
     }
-    public Article(Long id)
+    public Article(UUID id)
     {
         this.setId(id);
     }
@@ -70,13 +71,13 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     }
 
     @Override
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -139,12 +140,12 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     }
 
     @Override
-    public Long getFeaturedImageId()
+    public UUID getFeaturedImageId()
     {
         return featuredImageId;
     }
 
-    public void setFeaturedImageId(Long featuredImageId)
+    public void setFeaturedImageId(UUID featuredImageId)
     {
         this.featuredImageId = featuredImageId;
     }

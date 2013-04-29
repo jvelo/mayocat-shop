@@ -1,9 +1,11 @@
 package org.mayocat.model;
 
+import java.util.UUID;
+
 /**
  * @version $Id$
  */
 public interface HasFeaturedImage
 {
-    public Long getFeaturedImageId();
+    public UUID getFeaturedImageId();
 }

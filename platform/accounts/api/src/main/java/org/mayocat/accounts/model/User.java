@@ -1,5 +1,7 @@
 package org.mayocat.accounts.model;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -15,7 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class User implements Entity
 {
     @JsonIgnore
-    Long id;
+    UUID id;
 
     @SearchIndex
     @NotNull
@@ -40,7 +42,7 @@ public class User implements Entity
     {
     }
 
-    public User(Long id)
+    public User(UUID id)
     {
         this.id = id;
     }
@@ -67,12 +69,12 @@ public class User implements Entity
         this.password = password;
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }

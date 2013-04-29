@@ -1,11 +1,13 @@
 package org.mayocat.model;
 
+import java.util.UUID;
+
 /**
  * @version $Id$
  */
 public class Addon<T>
 {
-    private Long entityId;
+    private UUID entityId;
 
     private T value;
 
@@ -17,12 +19,12 @@ public class Addon<T>
 
     private AddonFieldType type;
 
-    public Long getEntityId()
+    public UUID getEntityId()
     {
         return entityId;
     }
 
-    public void setEntityId(Long entityId)
+    public void setEntityId(UUID entityId)
     {
         this.entityId = entityId;
     }

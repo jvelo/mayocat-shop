@@ -2,6 +2,7 @@ package org.mayocat.image.store.jdbi.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.mayocat.image.model.Thumbnail;
 import org.skife.jdbi.v2.StatementContext;
@@ -16,7 +17,7 @@ public class ThumbnailMapper implements ResultSetMapper<Thumbnail>
     public Thumbnail map(int index, ResultSet result, StatementContext ctx) throws SQLException
     {
         Thumbnail thumbnail = new Thumbnail();
-        thumbnail.setAttachmentId(result.getLong("attachment_id"));
+        thumbnail.setAttachmentId((UUID) result.getObject("attachment_id"));
         thumbnail.setHint(result.getString("hint"));
         thumbnail.setSource(result.getString("source"));
         thumbnail.setRatio(result.getString("ratio"));

@@ -1,6 +1,7 @@
 package org.mayocat.cms.pages.model;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,9 +25,9 @@ import com.google.common.base.Optional;
  */
 public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel, HasFeaturedImage
 {
-    private Long id;
+    private UUID id;
 
-    private Long parentId = null;
+    private UUID parentId = null;
 
     @SearchIndex
     @NotNull
@@ -49,23 +50,23 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
 
     private Optional<String> model = Optional.absent();
 
-    private Long featuredImageId;
+    private UUID featuredImageId;
 
     public Page()
     {
     }
 
-    public Page(Long id)
+    public Page(UUID id)
     {
         setId(id);
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -113,13 +114,13 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     // //////////////////////////////////////////////
 
     @Override
-    public Long getParentId()
+    public UUID getParentId()
     {
         return this.parentId;
     }
 
     @Override
-    public void setParentId(Long id)
+    public void setParentId(UUID id)
     {
         this.parentId = id;
     }
@@ -147,12 +148,12 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     }
 
     @Override
-    public Long getFeaturedImageId()
+    public UUID getFeaturedImageId()
     {
         return featuredImageId;
     }
 
-    public void setFeaturedImageId(Long featuredImageId)
+    public void setFeaturedImageId(UUID featuredImageId)
     {
         this.featuredImageId = featuredImageId;
     }

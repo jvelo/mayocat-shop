@@ -1,5 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
+import java.util.UUID;
+
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.jdbi.mapper.PaymentOperationMapper;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
@@ -22,5 +24,5 @@ public abstract class PaymentOperationDAO implements Transactional<PaymentOperat
 {
     @GetGeneratedKeys
     @SqlUpdate
-    public abstract Long createPaymentOperation(@BindBean("operation") PaymentOperation operation);
+    public abstract UUID createPaymentOperation(@BindBean("operation") PaymentOperation operation);
 }

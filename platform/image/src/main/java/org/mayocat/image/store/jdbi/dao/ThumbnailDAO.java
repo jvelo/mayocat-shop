@@ -1,6 +1,7 @@
 package org.mayocat.image.store.jdbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.jdbi.mapper.ThumbnailMapper;
@@ -73,7 +74,7 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "       AND hint = :hint " +
         "       AND ratio = :ratio"
     )
-    Thumbnail findThumbnail(@Bind("id") Long id, @Bind("source") String source, @Bind("hint") String hint,
+    Thumbnail findThumbnail(@Bind("id") UUID id, @Bind("source") String source, @Bind("hint") String hint,
             @Bind("ratio") String ratio);
 
     @SqlQuery
@@ -89,7 +90,7 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "FROM   thumbnail " +
         "WHERE  attachment_id = :attachment"
     )
-    List<Thumbnail> findThumbnails(@Bind("attachment") Long id);
+    List<Thumbnail> findThumbnails(@Bind("attachment") UUID id);
 
     @SqlQuery
     (
@@ -104,12 +105,12 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "FROM   thumbnail " +
         "WHERE  attachment_id in ( <ids> )"
     )
-    List<Thumbnail> findAllThumbnails(@BindIn("ids") List<Long> ids);
+    List<Thumbnail> findAllThumbnails(@BindIn("ids") List<UUID> ids);
 
     @SqlUpdate
     (
         "DELETE FROM thumbnail " +
         "WHERE       attachment_id = :attachment"
     )
-    Integer deleteThumbnails(@Bind("attachment") Long id);
+    Integer deleteThumbnails(@Bind("attachment") UUID id);
 }

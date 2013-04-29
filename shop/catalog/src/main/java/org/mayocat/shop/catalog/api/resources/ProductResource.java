@@ -25,8 +25,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.Slugifier;
-import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
@@ -36,7 +34,6 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;

@@ -1,6 +1,7 @@
 package org.mayocat.shop.payment.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -28,7 +29,7 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     private PaymentOperationDAO dao;
 
     @Override
-    public Long create(@Valid PaymentOperation operation)
+    public UUID create(@Valid PaymentOperation operation)
             throws EntityAlreadyExistsException, InvalidEntityException
     {
         return this.dao.createPaymentOperation(operation);
@@ -59,13 +60,13 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     }
 
     @Override
-    public List<PaymentOperation> findByIds(List<Long> ids)
+    public List<PaymentOperation> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public PaymentOperation findById(Long id)
+    public PaymentOperation findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }

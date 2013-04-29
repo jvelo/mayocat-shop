@@ -2,6 +2,7 @@ package org.mayocat.shop.billing.store.jdbi.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.mayocat.shop.billing.model.Address;
 import org.skife.jdbi.v2.StatementContext;
@@ -16,8 +17,8 @@ public class AddressMapper implements ResultSetMapper<Address>
     public Address map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         Address address = new Address();
-        address.setId(resultSet.getLong("id"));
-        address.setCustomerId(resultSet.getLong("customer_id"));
+        address.setId((UUID)resultSet.getObject("id"));
+        address.setCustomerId((UUID) resultSet.getObject("customer_id"));
 
         address.setCompany(resultSet.getString("company"));
         address.setFullName(resultSet.getString("full_name"));

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,13 +29,13 @@ public class Order implements Entity
         CANCELLED
     }
 
-    private Long id;
+    private UUID id;
 
-    private Long customerId;
+    private UUID customerId;
 
-    private Long deliveryAddressId;
+    private UUID deliveryAddressId;
 
-    private Long billingAddressId;
+    private UUID billingAddressId;
 
     @SearchIndex
     @NotNull
@@ -64,13 +65,13 @@ public class Order implements Entity
     private PerhapsLoaded<Address> deliveryAddress = PerhapsLoaded.notLoaded();
 
     @Override
-    public Long getId()
+    public UUID getId()
     {
         return this.id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -167,32 +168,32 @@ public class Order implements Entity
         this.orderData = orderData;
     }
 
-    public Long getCustomerId()
+    public UUID getCustomerId()
     {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId)
+    public void setCustomerId(UUID customerId)
     {
         this.customerId = customerId;
     }
 
-    public Long getDeliveryAddressId()
+    public UUID getDeliveryAddressId()
     {
         return deliveryAddressId;
     }
 
-    public void setDeliveryAddressId(Long deliveryAddressId)
+    public void setDeliveryAddressId(UUID deliveryAddressId)
     {
         this.deliveryAddressId = deliveryAddressId;
     }
 
-    public Long getBillingAddressId()
+    public UUID getBillingAddressId()
     {
         return billingAddressId;
     }
 
-    public void setBillingAddressId(Long billingAddressId)
+    public void setBillingAddressId(UUID billingAddressId)
     {
         this.billingAddressId = billingAddressId;
     }

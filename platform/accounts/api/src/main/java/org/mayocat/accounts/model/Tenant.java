@@ -1,5 +1,7 @@
 package org.mayocat.accounts.model;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -12,7 +14,7 @@ import com.google.common.base.Objects;
 public class Tenant implements Identifiable, Slug
 {
     @JsonIgnore
-    private Long id;
+    private UUID id;
 
     @NotNull
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
@@ -33,7 +35,7 @@ public class Tenant implements Identifiable, Slug
         this.configuration = configuration;
     }
 
-    public Tenant(Long id, String slug, TenantConfiguration configuration)
+    public Tenant(UUID id, String slug, TenantConfiguration configuration)
     {
         setId(id);
         setSlug(slug);
@@ -47,12 +49,12 @@ public class Tenant implements Identifiable, Slug
         return configuration;
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }

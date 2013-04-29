@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Currency;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.shop.billing.model.Address;
@@ -29,12 +30,12 @@ public class OrderMapper implements ResultSetMapper<Order>
     {
         Order order = new Order();
 
-        order.setId(resultSet.getLong("id"));
+        order.setId((UUID) resultSet.getObject("id"));
         order.setSlug(resultSet.getString("slug"));
 
-        order.setBillingAddressId(resultSet.getLong("billing_address_id"));
-        order.setDeliveryAddressId(resultSet.getLong("delivery_address_id"));
-        order.setCustomerId(resultSet.getLong("customer_id"));
+        order.setBillingAddressId((UUID) resultSet.getObject("billing_address_id"));
+        order.setDeliveryAddressId((UUID) resultSet.getObject("delivery_address_id"));
+        order.setCustomerId((UUID) resultSet.getObject("customer_id"));
 
         order.setCreationDate(resultSet.getTimestamp("creation_date"));
         order.setUpdateDate(resultSet.getTimestamp("update_date"));

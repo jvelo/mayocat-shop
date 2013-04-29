@@ -1,13 +1,13 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
@@ -22,56 +22,55 @@ import org.skife.jdbi.v2.unstable.BindIn;
 public interface EntityDAO< E extends Entity >
 {
 
-    @GetGeneratedKeys
     @SqlUpdate
     (
-        "INSERT INTO entity (slug, type, tenant_id) VALUES (:entity.slug, :type, :tenant.id)"
+        "INSERT INTO entity (id, slug, type, tenant_id) VALUES (:entity.id, :entity.slug, :type, :tenant.id)"
     )
-    Long createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+    void createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
 
-    @GetGeneratedKeys
     @SqlUpdate
     (
-        "INSERT INTO entity (slug, type, tenant_id, parent_id) VALUES (:entity.slug, :type, :tenant.id, :entity.parentId)"
+        "INSERT INTO entity (id, slug, type, tenant_id, parent_id) VALUES (:entity.id, :entity.slug, :type, :tenant.id, :entity.parentId)"
     )
-    Long createChildEntity(@BindBean("entity") Child entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+    void createChildEntity(@BindBean("entity") Child entity, @Bind("type") String type,
+            @BindBean("tenant") Tenant tenant);
 
     @SqlUpdate
     (
         "DELETE FROM entity WHERE entity.id = :id or entity.parent_id = :id"
     )
-    Integer deleteEntityAndChildrenById(@Bind("id") Long id);
+    Integer deleteEntityAndChildrenById(@Bind("id") UUID id);
 
     @SqlUpdate
     (
         "UPDATE entity SET parent_id = null WHERE parent_id = :id"
     )
-    Integer detachChildren(@Bind("id") Long id);
+    Integer detachChildren(@Bind("id") UUID id);
 
     @SqlUpdate
     (
         "UPDATE entity SET parent_id = null WHERE id = :id"
     )
-    Integer detach(@Bind("id") Long id);
+    Integer detach(@Bind("id") UUID id);
 
     @SqlUpdate
     (
         "DELETE FROM <type> WHERE <type>.entity_id = :id"
     )
-    Integer deleteEntityEntityById(@Define("type") String type, @Bind("id") Long id);
+    Integer deleteEntityEntityById(@Define("type") String type, @Bind("id") UUID id);
 
     @SqlQuery
     (
         "SELECT id FROM entity WHERE slug = :entity.slug AND type = :type AND tenant_id = :tenant.id"
     )
-    Long getId(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+    UUID getId(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     (
         "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.id = :id"
     )
-    E findById(@Define("type") String type, @Bind("id") Long id);
+    E findById(@Define("type") String type, @Bind("id") UUID id);
     
     @SqlQuery
     (
@@ -133,7 +132,7 @@ public interface EntityDAO< E extends Entity >
         "               ON entity.id = <type>.entity_id " +
         "WHERE  entity.id in ( <ids> ) "
     )
-    List<E> findByIds(@Define("type") String type, @BindIn("ids") List<Long> ids);
+    List<E> findByIds(@Define("type") String type, @BindIn("ids") List<UUID> ids);
 
     @SqlQuery
     (

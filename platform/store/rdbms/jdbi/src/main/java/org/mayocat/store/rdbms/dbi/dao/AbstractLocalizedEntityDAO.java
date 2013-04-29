@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.model.Localized;
 import org.mayocat.accounts.model.Tenant;
@@ -24,20 +25,21 @@ public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements
     EntityDAO<E>
 {
 
-    public void insertTranslations(Long entityId, Translations translations)
+    public void insertTranslations(UUID entityId, Translations translations)
     {
         if (translations == null) {
             return;
         }
-        List<Long> ids = new ArrayList<Long>();
+        List<UUID> ids = new ArrayList<UUID>();
         List<String> languages = new ArrayList<String>();
         List<String> texts = new ArrayList<String>();
 
         for (String field : translations.keySet()) {
             Map<Locale, String> fieldTranslations = translations.get(field);
-            Long id = createTranslation(entityId, field);
+            UUID translationId = UUID.randomUUID();
+            createTranslation(translationId, entityId, field);
             for (Locale locale : fieldTranslations.keySet()) {
-                ids.add(id);
+                ids.add(translationId);
                 languages.add(locale.toString());
                 texts.add(fieldTranslations.get(locale));
             }

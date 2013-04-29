@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -78,9 +79,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         Order order;
 
         try {
-            Long customerId;
-            Long deliveryAddressId = null;
-            Long billingAddressId = null;
+            UUID customerId;
+            UUID deliveryAddressId = null;
+            UUID billingAddressId = null;
 
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
@@ -135,7 +136,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             data.put("items", orderItems);
             order.setOrderData(data);
 
-            Long id = orderStore.get().create(order);
+            UUID id = orderStore.get().create(order);
             order.setId(id);
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);

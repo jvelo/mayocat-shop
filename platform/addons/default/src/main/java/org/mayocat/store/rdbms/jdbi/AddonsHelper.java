@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.model.Addon;
 import org.mayocat.model.HasAddons;
@@ -21,11 +22,11 @@ public class AddonsHelper
 {
     public static <T extends Identifiable & HasAddons> List<T> withAddons(List<T> entities, AddonsDAO dao)
     {
-        Collection<Long> ids = Collections2.transform(entities,
-                new Function<T, Long>()
+        Collection<UUID> ids = Collections2.transform(entities,
+                new Function<T, UUID>()
                 {
                     @Override
-                    public Long apply(final T entity)
+                    public UUID apply(final T entity)
                     {
                         return entity.getId();
                     }
@@ -35,7 +36,7 @@ public class AddonsHelper
             return entities;
         }
         List<Addon> addons = dao.findAllAddonsForIds(new ArrayList(ids));
-        Map<Long, List<Addon>> addonsForEntity = Maps.newHashMap();
+        Map<UUID, ArrayList<Addon>> addonsForEntity = Maps.newHashMap();
         for (Addon addon : addons) {
             if (!addonsForEntity.containsKey(addon.getEntityId())) {
                 addonsForEntity.put(addon.getEntityId(), new ArrayList<Addon>());

@@ -1,6 +1,7 @@
 package org.mayocat.accounts.store.jdbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
@@ -26,13 +27,13 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     (
         "INSERT INTO agent (entity_id, email, password) VALUES (:id, :user.email, :user.password)"
     )
-    public abstract void create(@Bind("id") Long entityId, @BindBean("user") User user);
+    public abstract void create(@Bind("id") UUID entityId, @BindBean("user") User user);
 
     @SqlUpdate
     (
         "INSERT INTO agent_role (agent_id, role) VALUES (:userId, :role)"
     )
-    public abstract void addRoleToUser(@Bind("userId") Long userId, @Bind("role") String role);
+    public abstract void addRoleToUser(@Bind("userId") UUID userId, @Bind("role") String role);
     
     @SqlUpdate
     (
@@ -55,7 +56,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract List<Role> findRolesForUser(@BindBean("user") User user);
 
     
-    public User findById(Long id)
+    public User findById(UUID id)
     {
         return this.findById(USER_TABLE_NAME, id);
     }

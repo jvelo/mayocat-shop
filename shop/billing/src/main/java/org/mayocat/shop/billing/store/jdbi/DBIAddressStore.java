@@ -1,6 +1,7 @@
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -28,7 +29,7 @@ public class DBIAddressStore implements AddressStore, Initializable
     private AddressDAO dao;
 
     @Override
-    public Long create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
     {
         return  this.dao.createAddress(address);
     }
@@ -58,13 +59,13 @@ public class DBIAddressStore implements AddressStore, Initializable
     }
 
     @Override
-    public List<Address> findByIds(List<Long> ids)
+    public List<Address> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public Address findById(Long id)
+    public Address findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }

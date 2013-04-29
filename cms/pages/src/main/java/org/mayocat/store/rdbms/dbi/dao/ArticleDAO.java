@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.cms.news.model.Article;
@@ -27,7 +28,7 @@ public abstract class ArticleDAO extends AbstractLocalizedEntityDAO<Article>
         implements Transactional<ArticleDAO>, AddonsDAO<Article>
 {
     @SqlUpdate
-    public abstract void createArticle(@Bind("id") Long entityId, @BindBean("article") Article article);
+    public abstract void createArticle(@Bind("id") UUID entityId, @BindBean("article") Article article);
 
     @SqlUpdate
     public abstract Integer updateArticle(@BindBean("article") Article article);

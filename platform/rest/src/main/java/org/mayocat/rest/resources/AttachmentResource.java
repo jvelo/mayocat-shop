@@ -1,6 +1,7 @@
 package org.mayocat.rest.resources;
 
 import java.io.InputStream;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -43,7 +44,7 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
             @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
         return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
-                Optional.<Long>absent());
+                Optional.<UUID>absent());
     }
 
 }

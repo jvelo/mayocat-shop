@@ -1,6 +1,7 @@
 package org.mayocat.accounts.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -22,12 +23,10 @@ import org.xwiki.component.phase.InitializationException;
 public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
 {
     public static final String USER_TABLE_NAME = "user";
-    //@Inject
-    //private DBIProvider dbi;
 
     private UserDAO dao;
 
-    public Long create(User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(user.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -35,8 +34,10 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
         this.dao.begin();
 
+        UUID entityId = UUID.randomUUID();
+        user.setId(entityId);
+
         this.dao.createEntity(user, USER_TABLE_NAME, getTenant());
-        Long entityId = this.dao.getId(user, "user", getTenant());
         this.dao.create(entityId, user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
 
@@ -45,7 +46,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         return entityId;
     }
 
-    public Long create(User user) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(User user) throws EntityAlreadyExistsException, InvalidEntityException
     {
         return this.create(user, Role.ADMIN);
     }
@@ -59,7 +60,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         this.dao.update(user, tenant);
     }
 
-    public User findById(Long id)
+    public User findById(UUID id)
     {
         return this.dao.findById(id);
     }
@@ -70,7 +71,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     }
 
     @Override
-    public List<User> findByIds(List<Long> ids)
+    public List<User> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(USER_TABLE_NAME, ids);
     }

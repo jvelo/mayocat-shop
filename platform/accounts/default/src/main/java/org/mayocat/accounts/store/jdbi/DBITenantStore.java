@@ -1,7 +1,7 @@
 package org.mayocat.accounts.store.jdbi;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -34,7 +34,7 @@ public class DBITenantStore implements TenantStore, Initializable
     private TenantDAO dao;
 
     @Override
-    public Long create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
@@ -88,13 +88,13 @@ public class DBITenantStore implements TenantStore, Initializable
     }
 
     @Override
-    public List<Tenant> findByIds(List<Long> ids)
+    public List<Tenant> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public Tenant findById(Long id)
+    public Tenant findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }

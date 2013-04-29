@@ -1,6 +1,7 @@
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -27,7 +28,7 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     private OrderDAO dao;
 
     @Override
-    public Long create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
+    public UUID create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
@@ -35,7 +36,7 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
         order.setSlug(slug);
 
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
-        Long entityId = this.dao.getId(order, ORDER_TABLE_NAME, getTenant());
+        UUID entityId = this.dao.getId(order, ORDER_TABLE_NAME, getTenant());
         this.dao.createOrder(entityId, order);
 
         this.dao.commit();
@@ -97,13 +98,13 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     }
 
     @Override
-    public List<Order> findByIds(List<Long> ids)
+    public List<Order> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(ORDER_TABLE_NAME, ids);
     }
 
     @Override
-    public Order findById(Long id)
+    public Order findById(UUID id)
     {
         return this.dao.findById(ORDER_TABLE_NAME, id);
     }
