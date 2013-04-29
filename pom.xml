@@ -51,6 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependencies versions -->
+        <postgresql.driver.version>9.1-901.jdbc4</postgresql.driver.version>
         <dropwizard.version>0.6.2</dropwizard.version>
         <flyway.version>2.1.1</flyway.version>
         <xwiki.version>4.5.2</xwiki.version>

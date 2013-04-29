@@ -41,7 +41,7 @@ NO MINVALUE
 NO MAXVALUE
 CACHE 1;
 
-ALTER SEQUENCE tenant_id_seq OWNED BY tenant.id;--
+ALTER SEQUENCE tenant_id_seq OWNED BY tenant.id;
 
 ALTER TABLE ONLY tenant ALTER COLUMN id SET DEFAULT nextval('tenant_id_seq'::regclass);
 
