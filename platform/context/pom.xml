@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.7.4</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-context</artifactId>
     <packaging>jar</packaging>
-    <version>0.7.4</version>
+    <version>0.8-SNAPSHOT</version>
 
     <name>Mayocat Platform - Context</name>
     <description>Context related classed</description>
