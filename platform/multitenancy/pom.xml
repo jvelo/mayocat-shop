@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.7.4</version>
     </parent>
     <artifactId>mayocat-platform-multitenancy</artifactId>
     <packaging>jar</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.4</version>
 
     <name>Mayocat Platform - Multitenancy</name>
     <description>Multitenancy related interfaces</description>
