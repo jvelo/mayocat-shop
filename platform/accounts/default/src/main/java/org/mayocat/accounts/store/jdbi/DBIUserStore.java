@@ -38,7 +38,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         user.setId(entityId);
 
         this.dao.createEntity(user, USER_TABLE_NAME, getTenant());
-        this.dao.create(entityId, user);
+        this.dao.create(user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
 
         this.dao.commit();

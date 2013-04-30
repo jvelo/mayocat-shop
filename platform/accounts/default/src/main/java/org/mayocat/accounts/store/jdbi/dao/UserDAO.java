@@ -25,9 +25,9 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     @SqlUpdate
     (
-        "INSERT INTO agent (entity_id, email, password) VALUES (:id, :user.email, :user.password)"
+        "INSERT INTO agent (entity_id, email, password) VALUES (:user.id, :user.email, :user.password)"
     )
-    public abstract void create(@Bind("id") UUID entityId, @BindBean("user") User user);
+    public abstract void create(@BindBean("user") User user);
 
     @SqlUpdate
     (
