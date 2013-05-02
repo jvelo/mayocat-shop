@@ -36,6 +36,9 @@ public class User implements Entity
     @JsonSerialize(using = PasswordSerializer.class)
     String password;
 
+    @JsonIgnore
+    private boolean global = false;
+
     // /////////////////////////////////////////////////
 
     public User()
@@ -87,5 +90,15 @@ public class User implements Entity
     public void setSlug(String slug)
     {
         this.slug = slug;
+    }
+
+    public boolean isGlobal()
+    {
+        return global;
+    }
+
+    public void setGlobal(boolean global)
+    {
+        this.global = global;
     }
 }

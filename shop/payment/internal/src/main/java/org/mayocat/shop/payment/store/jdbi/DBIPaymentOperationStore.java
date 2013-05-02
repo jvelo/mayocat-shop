@@ -12,7 +12,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
-import org.mayocat.store.rdbms.dbi.dao.PaymentOperationDAO;
+import mayoapp.dao.PaymentOperationDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

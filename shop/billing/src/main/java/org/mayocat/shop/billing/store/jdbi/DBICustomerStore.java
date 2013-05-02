@@ -11,7 +11,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
-import org.mayocat.store.rdbms.dbi.dao.CustomerDAO;
+import mayoapp.dao.CustomerDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

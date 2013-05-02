@@ -13,7 +13,7 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
-import org.mayocat.store.rdbms.dbi.dao.ArticleDAO;
+import mayoapp.dao.ArticleDAO;
 import org.mayocat.store.rdbms.jdbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;

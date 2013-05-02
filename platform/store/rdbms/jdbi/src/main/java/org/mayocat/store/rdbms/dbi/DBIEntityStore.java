@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.Execution;
 import org.mayocat.store.EntityStore;
-import org.mayocat.store.rdbms.dbi.dao.EntityDAO;
+import mayoapp.dao.EntityDAO;
 import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;

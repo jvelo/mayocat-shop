@@ -16,7 +16,7 @@ import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
-import org.mayocat.store.rdbms.dbi.dao.CollectionDAO;
+import mayoapp.dao.CollectionDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

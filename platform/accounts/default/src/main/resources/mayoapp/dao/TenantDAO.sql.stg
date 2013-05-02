@@ -1,0 +1,35 @@
+group TenantDAO;
+
+updateConfiguration() ::= <<
+    UPDATE tenant
+    SET    configuration = :data,
+           configuration_version = :version
+    WHERE  entity_id = :tenant.id
+>>
+
+create() ::= <<
+    INSERT INTO tenant
+                (entity_id,
+                 default_host,
+                 configuration,
+                 configuration_version)
+    VALUES      (:tenant.id,
+                 :tenant.defaultHost,
+                 :data,
+                 :version)
+>>
+
+findByDefaultHost() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
+    WHERE  default_host = :host
+>>
+
+findAll() ::= <<
+    SELECT *
+    FROM   tenant
+    LIMIT  :number
+    OFFSET :offset
+>>

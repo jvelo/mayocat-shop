@@ -13,7 +13,7 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.accounts.store.UserStore;
-import org.mayocat.accounts.store.jdbi.dao.UserDAO;
+import mayoapp.dao.UserDAO;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -22,7 +22,7 @@ import org.xwiki.component.phase.InitializationException;
 @Component(hints = {"jdbi", "default"})
 public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
 {
-    public static final String USER_TABLE_NAME = "user";
+    public static final String USER_ENTITY_TYPE = "user";
 
     private UserDAO dao;
 
@@ -37,7 +37,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         UUID entityId = UUID.randomUUID();
         user.setId(entityId);
 
-        this.dao.createEntity(user, USER_TABLE_NAME, getTenant());
+        this.dao.createEntity(user, USER_ENTITY_TYPE, getTenant());
         this.dao.create(user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
 
@@ -73,12 +73,19 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     @Override
     public List<User> findByIds(List<UUID> ids)
     {
-        return this.dao.findByIds(USER_TABLE_NAME, ids);
+        return this.dao.findByIds(USER_ENTITY_TYPE, ids);
     }
 
     public User findUserByEmailOrUserName(String userNameOrEmail)
     {
-        return this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
+        User user = this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
+
+        if (user == null) {
+            // Try to find a global user
+            user =  this.dao.findGlobalUserByEmailOrUserName(userNameOrEmail);
+        }
+
+        return user;
     }
 
     public void update(User entity) throws InvalidEntityException
@@ -95,7 +102,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     @Override
     public Integer countAll()
     {
-        return this.dao.countAll(USER_TABLE_NAME, getTenant());
+        return this.dao.countAll(USER_ENTITY_TYPE, getTenant());
     }
 
     public List<Role> findRolesForUser(User user)

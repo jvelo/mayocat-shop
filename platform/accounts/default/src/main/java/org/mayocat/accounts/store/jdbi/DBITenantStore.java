@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
-import org.mayocat.accounts.store.jdbi.dao.TenantDAO;
+import mayoapp.dao.TenantDAO;
 import org.mayocat.context.Execution;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;

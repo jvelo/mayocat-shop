@@ -16,7 +16,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
-import org.mayocat.store.rdbms.dbi.dao.AttachmentDAO;
+import mayoapp.dao.AttachmentDAO;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
