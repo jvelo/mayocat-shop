@@ -14,7 +14,7 @@ import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import mayoapp.dao.ArticleDAO;
-import org.mayocat.store.rdbms.jdbi.AddonsHelper;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

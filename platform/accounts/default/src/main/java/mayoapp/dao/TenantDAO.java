@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.jdbi.mapper.TenantMapper;
-import org.mayocat.store.rdbms.jdbi.AddonsDAO;
-import org.mayocat.store.rdbms.jdbi.AddonsHelper;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;

@@ -20,7 +20,7 @@ import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
 import mayoapp.dao.ProductDAO;
-import org.mayocat.store.rdbms.jdbi.AddonsHelper;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;

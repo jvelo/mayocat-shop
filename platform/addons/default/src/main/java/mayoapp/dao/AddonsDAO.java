@@ -1,4 +1,4 @@
-package org.mayocat.store.rdbms.jdbi;
+package mayoapp.dao;
 
 import java.util.List;
 import java.util.Map;

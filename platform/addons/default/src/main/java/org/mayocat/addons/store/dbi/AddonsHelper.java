@@ -1,4 +1,4 @@
-package org.mayocat.store.rdbms.jdbi;
+package org.mayocat.addons.store.dbi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +14,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
+
+import mayoapp.dao.AddonsDAO;
 
 /**
  * @version $Id$
