@@ -33,7 +33,7 @@ public class DefaultAccountsService implements AccountsService
     private PasswordManager passwordManager;
 
     @Inject
-    private MultitenancySettings multitenancyConfiguration;
+    private MultitenancySettings multitenancySettings;
 
     @Override
     public void createInitialUser(User user) throws EntityAlreadyExistsException, InvalidEntityException
@@ -68,7 +68,7 @@ public class DefaultAccountsService implements AccountsService
         if (this.tenantStore.get().findAll(1, 0).size() != 0) {
             throw new EntityAlreadyExistsException("Cannot create default tenant : a tenant already exists");
         }
-        String slug = multitenancyConfiguration.getDefaultTenantSlug();
+        String slug = multitenancySettings.getDefaultTenantSlug();
         TenantConfiguration configuration = new TenantConfiguration();
         Tenant tenant = new Tenant(slug, configuration);
         try {

@@ -47,6 +47,9 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract List<User> findAllUsers(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
+    @SqlQuery
+    protected abstract User findUserBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+
     public User findById(UUID id)
     {
         return this.findById(USER_TABLE_NAME, id);
@@ -54,7 +57,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     public User findBySlug(String slug, Tenant tenant)
     {
-        return this.findBySlug(USER_TABLE_NAME, slug, tenant);
+        return this.findUserBySlug(slug, tenant);
     }
 
     public List<User> findAll(Tenant tenant, Integer number, Integer offset)
@@ -92,14 +95,6 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     @Override
     public List<User> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant)
-    {
-        // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
-        // where the table name (agent) is different than the entity type name (user)
-        throw new RuntimeException("Not implemented.");
-    }
-
-    @Override
-    public User findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
         // where the table name (agent) is different than the entity type name (user)

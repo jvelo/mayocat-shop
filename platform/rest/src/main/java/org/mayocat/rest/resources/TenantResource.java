@@ -1,6 +1,8 @@
 package org.mayocat.rest.resources;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,12 +14,16 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.meta.TenantEntity;
+import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
 import org.mayocat.rest.Resource;
+import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
@@ -36,13 +42,19 @@ public class TenantResource implements Resource
     @Inject
     private AccountsService accountsService;
 
+    @Inject
+    private Gatekeeper gatekeeper;
+
+    @Inject
+    private MultitenancySettings multitenancySettings;
+
     @GET
     @Authorized
     public UserAndTenant currentTenant()
     {
         UserAndTenant userAndTenant = new UserAndTenant();
         userAndTenant.setTenant(execution.getContext().getTenant());
-        userAndTenant.setUser(execution.getContext().getUser());
+        userAndTenant.setAdminUser(execution.getContext().getUser());
         return userAndTenant;
     }
 
@@ -72,15 +84,58 @@ public class TenantResource implements Resource
     @POST
     public Response createTenant(UserAndTenant userAndTenant)
     {
-        // TODO
-        return Response.ok().build();
+        if (!multitenancySettings.isActivated()) {
+            return Response.status(Response.Status.FORBIDDEN).entity("Tenant creation is not allowed on this server\n")
+                    .build();
+        }
+
+        if (!isTenantCreationAllowed()) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        try {
+            Tenant tenant = userAndTenant.getTenant();
+            accountsService.createTenant(tenant);
+            execution.getContext().setTenant(tenant);
+            accountsService.createInitialUser(userAndTenant.getAdminUser());
+            return Response.ok().build();
+
+        } catch (EntityAlreadyExistsException e) {
+            return Response.status(Response.Status.CONFLICT).entity("A tenant with this slug already exists").build();
+        } catch (InvalidEntityException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
-    private class UserAndTenant
+    private boolean isTenantCreationAllowed()
     {
-        private User user;
+        if (multitenancySettings.getRequiredRoleForTenantCreation() != Role.NONE) {
 
+            User contextUser = execution.getContext().getUser();
+            if (contextUser == null || !contextUser.isGlobal()) {
+                return false;
+            }
+
+            return gatekeeper.userHasRole(execution.getContext().getUser(),
+                    multitenancySettings.getRequiredRoleForTenantCreation());
+        } else {
+            return true;
+        }
+    }
+
+    static class UserAndTenant
+    {
+        @NotNull
+        @Valid
+        private User adminUser;
+
+        @NotNull
+        @Valid
         private Tenant tenant;
+
+        public UserAndTenant()
+        {
+        }
 
         public Tenant getTenant()
         {
@@ -92,14 +147,14 @@ public class TenantResource implements Resource
             this.tenant = tenant;
         }
 
-        public User getUser()
+        public User getAdminUser()
         {
-            return user;
+            return adminUser;
         }
 
-        public void setUser(User user)
+        public void setAdminUser(User user)
         {
-            this.user = user;
+            this.adminUser = user;
         }
     }
 }

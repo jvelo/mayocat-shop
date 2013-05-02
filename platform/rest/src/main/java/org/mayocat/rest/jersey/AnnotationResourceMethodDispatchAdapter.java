@@ -1,22 +1,19 @@
 package org.mayocat.rest.jersey;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.authorization.Gatekeeper;
-import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.rest.Provider;
-import org.mayocat.context.Execution;
+import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
+import org.mayocat.authorization.Gatekeeper;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.context.Execution;
+import org.mayocat.rest.Provider;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.accounts.AccountsService;
 import org.mayocat.rest.resources.UserResource;
 import org.xwiki.component.annotation.Component;
 
@@ -27,8 +24,8 @@ import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 
 /**
- * Processes resources and check for the presence of Mayocat-specific annotation on the resource method and/or class
- * and instrument the resource accordingly if necessary.
+ * Processes resources and check for the presence of Mayocat-specific annotation on the resource method and/or class and
+ * instrument the resource accordingly if necessary.
  *
  * @version $Id$
  */
@@ -45,19 +42,18 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
     private AccountsService accountsService;
 
     /**
-     * Request dispatcher that checks if a valid tenant has been set in the execution context,
-     * throws a NOT FOUND (404) if none is found.
-     * <p />
-     * Used when {@link ExistingTenant} annotation is present on a resource.
+     * Request dispatcher that checks if a valid tenant has been set in the execution context, throws a NOT FOUND (404)
+     * if none is found. <p /> Used when {@link ExistingTenant} annotation is present on a resource.
      */
-    private class CheckValidTenantRequestDispatcher implements RequestDispatcher {
-
+    private class CheckValidTenantRequestDispatcher implements RequestDispatcher
+    {
         private final RequestDispatcher underlying;
 
         public CheckValidTenantRequestDispatcher(RequestDispatcher underlying)
         {
             this.underlying = underlying;
         }
+
         @Override
         public void dispatch(Object resource, HttpContext httpContext)
         {
@@ -70,16 +66,19 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
     }
 
     /**
-     * Request dispatcher that checks the authorization level of the user set in the context relatively to
-     * the declared clearance required by the {@link Authorized} annotation on a resource.
+     * Request dispatcher that checks the authorization level of the user set in the context relatively to the declared
+     * clearance required by the {@link Authorized} annotation on a resource.
      */
-    private class CheckAuthorizationMethodDispatcher implements RequestDispatcher {
-
+    private class CheckAuthorizationMethodDispatcher implements RequestDispatcher
+    {
         private final AbstractResourceMethod method;
+
         private final RequestDispatcher underlying;
+
         private final Authorized annotation;
 
-        public CheckAuthorizationMethodDispatcher(AbstractResourceMethod method, Authorized authorizedAnnotation, RequestDispatcher underlying)
+        public CheckAuthorizationMethodDispatcher(AbstractResourceMethod method, Authorized authorizedAnnotation,
+                RequestDispatcher underlying)
         {
             this.underlying = underlying;
             this.method = method;
@@ -96,8 +95,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
                     throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
                             .entity("Insufficient privileges").type(MediaType.TEXT_PLAIN_TYPE).build());
                 }
-            }
-            else {
+            } else {
                 if (this.isTenantEmptyOfUser() && this.isCreateUserResource()) {
                     // This means there is no user for that tenant yet, and this is the request to create the
                     // initial user.
@@ -116,17 +114,16 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
             underlying.dispatch(resource, httpContext);
         }
 
-        // TODO Probably extract this to the authorization/gatekeeper module
         private boolean checkAuthorization(User user)
         {
+
             if (this.annotation.roles().length == 0 && user != null) {
                 // No specific role is required, just an authenticated user
                 return true;
             }
 
-            List<Role> roles = accountsService.findRolesForUser(user);
-            for (Role role : roles) {
-                if (Arrays.asList(this.annotation.roles()).contains(role)) {
+            for (Role role : this.annotation.roles()) {
+                if (gatekeeper.userHasRole(user, role)) {
                     return true;
                 }
             }
@@ -146,8 +143,6 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
                     && this.method.getResource().getPath().getValue().equals(UserResource.PATH);
         }
     }
-
-
 
     /**
      * Request dispatcher provider that inspects Mayocat annotation on resources and declares the proper dispatchers
@@ -194,7 +189,8 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
             // Checks for methods or classes that requires a valid tenant.
             if (method.getMethod().isAnnotationPresent(ExistingTenant.class)
-                    || method.getDeclaringResource().isAnnotationPresent(ExistingTenant.class)) {
+                    || method.getDeclaringResource().isAnnotationPresent(ExistingTenant.class))
+            {
                 dispatcher = new CheckValidTenantRequestDispatcher(dispatcher);
             }
 

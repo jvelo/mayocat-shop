@@ -36,6 +36,11 @@ public class Tenant implements Entity, HasAddons
 
     ///////////////////////////////////////////////////
 
+    public Tenant()
+    {
+        this.configuration = new TenantConfiguration();
+    }
+
     public Tenant(String slug, TenantConfiguration configuration)
     {
         setSlug(slug);

@@ -63,3 +63,13 @@ findAllUsers() ::= <<
     LIMIT  :number
     OFFSET :offset
 >>
+
+findUserBySlug() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE entity.slug = :slug
+           AND entity.type = 'user'
+           AND entity.tenant_id = :tenant.id
+>>
