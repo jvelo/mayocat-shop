@@ -1,17 +1,22 @@
 package org.mayocat.accounts.model;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.mayocat.model.Addon;
+import org.mayocat.model.Entity;
+import org.mayocat.model.HasAddons;
 import org.mayocat.model.Identifiable;
+import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.Slug;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 
-public class Tenant implements Identifiable, Slug
+public class Tenant implements Entity, HasAddons
 {
     @JsonIgnore
     private UUID id;
@@ -26,6 +31,8 @@ public class Tenant implements Identifiable, Slug
 
     @JsonIgnore
     private TenantConfiguration configuration;
+
+    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     ///////////////////////////////////////////////////
 
@@ -69,9 +76,26 @@ public class Tenant implements Identifiable, Slug
         this.slug = slug;
     }
 
+    public void setDefaultHost(String defaultHost)
+    {
+        this.defaultHost = defaultHost;
+    }
+
     public String getDefaultHost()
     {
         return defaultHost;
+    }
+
+    @Override
+    public PerhapsLoaded<List<Addon>> getAddons()
+    {
+        return this.addons;
+    }
+
+    @Override
+    public void setAddons(List<Addon> addons)
+    {
+        this.addons = new PerhapsLoaded<List<Addon>>(addons);
     }
 
     // ///////////////////////////////////////////////////////////

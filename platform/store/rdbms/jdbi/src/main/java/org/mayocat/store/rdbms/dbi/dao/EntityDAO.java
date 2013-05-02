@@ -24,6 +24,12 @@ public interface EntityDAO< E extends Entity >
 
     @SqlUpdate
     (
+        "INSERT INTO entity (id, slug, type) VALUES (:entity.id, :entity.slug, :type)"
+    )
+    void createEntity(@BindBean("entity") Entity entity, @Bind("type") String type);
+
+    @SqlUpdate
+    (
         "INSERT INTO entity (id, slug, type, tenant_id) VALUES (:entity.id, :entity.slug, :type, :tenant.id)"
     )
     void createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
@@ -71,7 +77,14 @@ public interface EntityDAO< E extends Entity >
         "WHERE entity.id = :id"
     )
     E findById(@Define("type") String type, @Bind("id") UUID id);
-    
+
+    @SqlQuery
+    (
+        "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "WHERE entity.slug = :slug AND entity.type = '<type>' AND tenant_id is null"
+    )
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug);
+
     @SqlQuery
     (
         "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +

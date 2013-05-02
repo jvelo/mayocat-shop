@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
 {
+    private static final String TENANT_TABLE_NAME = "tenant";
+
     @Inject
     private Execution execution;
 
@@ -36,18 +38,22 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public Tenant create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
+        if (this.dao.findBySlug(TENANT_TABLE_NAME, tenant.getSlug()) != null) {
+            throw new EntityAlreadyExistsException();
+        }
+
         this.dao.begin();
 
         TenantConfiguration configuration = tenant.getConfiguration();
 
         try {
             String configurationAsJson = convertConfigurationToJSON(configuration);
-            UUID configurationId = UUID.randomUUID();
-            this.dao.createConfiguration(configurationId, configuration.getVersion(), configurationAsJson);
 
             UUID id = UUID.randomUUID();
             tenant.setId(id);
-            this.dao.create(tenant, configurationId);
+            this.dao.createEntity(tenant, TENANT_TABLE_NAME);
+            this.dao.create(tenant, configuration.getVersion(), configurationAsJson);
+            this.dao.createOrUpdateAddons(tenant);
 
             return tenant;
         } catch (JsonProcessingException e) {
@@ -108,7 +114,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public Tenant findBySlug(String slug)
     {
-        return this.dao.findBySlug(slug);
+        return this.dao.findBySlug("tenant", slug);
     }
 
     @Override
