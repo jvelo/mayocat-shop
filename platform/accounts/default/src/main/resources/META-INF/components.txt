@@ -1,3 +1,9 @@
+org.mayocat.accounts.jersey.CheckTenantAndUserMethodDispatch
 org.mayocat.accounts.internal.DefaultAccountsService
 org.mayocat.accounts.store.jdbi.DBIUserStore
 org.mayocat.accounts.store.jdbi.DBITenantStore
+org.mayocat.accounts.resources.ConfigurationResource
+org.mayocat.accounts.resources.LoginResource
+org.mayocat.accounts.resources.LogoutResource
+org.mayocat.accounts.resources.TenantResource
+org.mayocat.accounts.resources.UserResource

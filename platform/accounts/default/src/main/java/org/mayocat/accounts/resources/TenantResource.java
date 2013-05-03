@@ -1,14 +1,21 @@
-package org.mayocat.rest.resources;
+package org.mayocat.accounts.resources;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -17,12 +24,14 @@ import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -49,6 +58,45 @@ public class TenantResource implements Resource
     private MultitenancySettings multitenancySettings;
 
     @GET
+    @Path("{slug}")
+    @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
+    public TenantRepresentation getTenant(@PathParam("slug") String slug)
+    {
+        Tenant tenant = accountsService.findTenant(slug);
+        if (tenant == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        return new TenantRepresentation(tenant);
+    }
+
+    @GET
+    @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
+    public ResultSetRepresentation<TenantRepresentation> getAllTenants(@QueryParam("number") @DefaultValue("50") Integer number,
+            @DefaultValue("0") @QueryParam("offset") Integer offset)
+    {
+        List<Tenant> tenants = accountsService.findAllTenants(number, offset);
+        if (tenants == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        List<TenantRepresentation> representations = new ArrayList<TenantRepresentation>();
+        for (Tenant tenant : tenants) {
+            representations.add(new TenantRepresentation(tenant));
+        }
+
+        ResultSetRepresentation<TenantRepresentation> result = new ResultSetRepresentation<TenantRepresentation>(
+                PATH + "/",
+                number,
+                offset,
+                representations
+        );
+
+        return result;
+    }
+
+    @GET
+    @Path("_current")
     @Authorized
     public UserAndTenant currentTenant()
     {
@@ -99,7 +147,6 @@ public class TenantResource implements Resource
             execution.getContext().setTenant(tenant);
             accountsService.createInitialUser(userAndTenant.getAdminUser());
             return Response.ok().build();
-
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT).entity("A tenant with this slug already exists").build();
         } catch (InvalidEntityException e) {

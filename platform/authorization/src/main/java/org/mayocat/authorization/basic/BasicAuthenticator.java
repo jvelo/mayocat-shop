@@ -58,7 +58,6 @@ public class BasicAuthenticator implements Authenticator
                 if (i > 0) {
                     final String username = decoded.substring(0, i);
                     final String password = decoded.substring(i + 1);
-                    // FIXME check how we authenticate "global users"
                     User user = userStore.get().findUserByEmailOrUserName(username);
                     if (user != null) {
                         if (this.passwordManager.verifyPassword(password, user.getPassword())) {

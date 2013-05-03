@@ -29,7 +29,9 @@ findByDefaultHost() ::= <<
 
 findAll() ::= <<
     SELECT *
-    FROM   tenant
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
     LIMIT  :number
     OFFSET :offset
 >>

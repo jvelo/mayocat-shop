@@ -13,13 +13,15 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.accounts.store.UserStore;
+
 import mayoapp.dao.UserDAO;
+
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
-@Component(hints = {"jdbi", "default"})
+@Component(hints = { "jdbi", "default" })
 public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
 {
     public static final String USER_ENTITY_TYPE = "user";
@@ -52,7 +54,7 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     }
 
     public void update(User user, Tenant tenant) throws EntityDoesNotExistException, InvalidEntityException,
-        StoreException
+            StoreException
     {
         if (this.dao.findBySlug(user.getSlug(), tenant) != null) {
             throw new EntityDoesNotExistException();
@@ -67,6 +69,9 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
     public List<User> findAll(Integer number, Integer offset)
     {
+        if (getTenant() == null) {
+            return this.dao.findAllGlobalUsers(number, offset);
+        }
         return this.dao.findAll(getTenant(), number, offset);
     }
 
@@ -78,11 +83,16 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
     public User findUserByEmailOrUserName(String userNameOrEmail)
     {
-        User user = this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
+        User user = null;
+        if (getTenant() != null) {
+            // If there is a tenant associated with this request, we try to find a user for this tenant
+            user = this.dao.findByEmailOrUserNameAndTenant(userNameOrEmail, getTenant());
+        }
 
         if (user == null) {
-            // Try to find a global user
-            user =  this.dao.findGlobalUserByEmailOrUserName(userNameOrEmail);
+            // If no user was found (either there is no tenant associated with this request or we could not find a user
+            // with this username or email for the request tenant), we try to find a global user with this email/username
+            user = this.dao.findGlobalUserByEmailOrUserName(userNameOrEmail);
         }
 
         return user;
@@ -109,12 +119,10 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     {
         return this.dao.findRolesForUser(user);
     }
-    
+
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(UserDAO.class);
         super.initialize();
     }
-
-
 }

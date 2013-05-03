@@ -64,6 +64,18 @@ findAllUsers() ::= <<
     OFFSET :offset
 >>
 
+findAllGlobalUsers() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE  entity.type = 'user'
+           AND entity.tenant_id is null
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+
 findUserBySlug() ::= <<
     SELECT *
     FROM   entity

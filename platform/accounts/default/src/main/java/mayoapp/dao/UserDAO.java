@@ -48,6 +48,9 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
             @Bind("offset") Integer offset);
 
     @SqlQuery
+    public abstract List<User> findAllGlobalUsers(@Bind("number") Integer number, @Bind("offset") Integer offset);
+
+    @SqlQuery
     protected abstract User findUserBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
 
     public User findById(UUID id)

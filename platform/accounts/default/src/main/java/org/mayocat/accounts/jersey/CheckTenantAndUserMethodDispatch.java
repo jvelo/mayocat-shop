@@ -1,4 +1,4 @@
-package org.mayocat.rest.jersey;
+package org.mayocat.accounts.jersey;
 
 import javax.inject.Inject;
 import javax.ws.rs.HttpMethod;
@@ -9,12 +9,12 @@ import javax.ws.rs.core.Response;
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.resources.UserResource;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Execution;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.resources.UserResource;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.core.HttpContext;
@@ -29,8 +29,8 @@ import com.sun.jersey.spi.dispatch.RequestDispatcher;
  *
  * @version $Id$
  */
-@Component("annotationResourceMethodDispatchAdapter")
-public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDispatchAdapter, Provider
+@Component("checkTenantAndUserMethodDispatch")
+public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchAdapter, Provider
 {
     @Inject
     private Execution execution;
@@ -43,7 +43,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
     /**
      * Request dispatcher that checks if a valid tenant has been set in the execution context, throws a NOT FOUND (404)
-     * if none is found. <p /> Used when {@link ExistingTenant} annotation is present on a resource.
+     * if none is found. <p /> Used when {@link org.mayocat.rest.annotation.ExistingTenant} annotation is present on a resource.
      */
     private class CheckValidTenantRequestDispatcher implements RequestDispatcher
     {
@@ -67,7 +67,7 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
     /**
      * Request dispatcher that checks the authorization level of the user set in the context relatively to the declared
-     * clearance required by the {@link Authorized} annotation on a resource.
+     * clearance required by the {@link org.mayocat.authorization.annotation.Authorized} annotation on a resource.
      */
     private class CheckAuthorizationMethodDispatcher implements RequestDispatcher
     {
@@ -116,6 +116,9 @@ public class AnnotationResourceMethodDispatchAdapter implements ResourceMethodDi
 
         private boolean checkAuthorization(User user)
         {
+            if (annotation.requiresGlobalUser() && !user.isGlobal()) {
+                return false;
+            }
 
             if (this.annotation.roles().length == 0 && user != null) {
                 // No specific role is required, just an authenticated user

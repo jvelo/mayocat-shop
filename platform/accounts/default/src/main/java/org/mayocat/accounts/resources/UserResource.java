@@ -1,4 +1,4 @@
-package org.mayocat.rest.resources;
+package org.mayocat.accounts.resources;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

@@ -1,4 +1,4 @@
-package org.mayocat.rest.resources;
+package org.mayocat.accounts.resources;
 
 import java.util.Map;
 
@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Execution;
-import org.mayocat.accounts.model.Role;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
 import org.mayocat.configuration.ConfigurationService;
