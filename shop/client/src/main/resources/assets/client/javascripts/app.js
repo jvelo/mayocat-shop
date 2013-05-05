@@ -1,10 +1,7 @@
-'use strict';
-
-var mayocat = angular.module('mayocat', [
-    'addons',
+var MayocatShop = angular.module('MayocatShop', [
+    'mayocat',
     'search',
-    'image',
-    'thumbnail',
+    'money',
     'product',
     'collection',
     'catalog',
@@ -14,14 +11,11 @@ var mayocat = angular.module('mayocat', [
     'article',
     'orders',
     'order',
-    'configuration',
-    'money',
-    'time',
     'jqui',
     '$strap.directives'
 ]);
 
-mayocat.config(['$routeProvider', function ($routeProvider) {
+MayocatShop.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/', {templateUrl: 'partials/home.html', controller: 'HomeCtrl', title: 'Home'}).
         when('/contents', {templateUrl: 'partials/contents.html', title: 'Contents'}).
@@ -39,44 +33,13 @@ mayocat.config(['$routeProvider', function ($routeProvider) {
         otherwise({redirectTo: '/'});
 }]);
 
-
-/**
- * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
- */
-mayocat.directive('modalTrigger', ['$rootScope', function ($rootScope) {
-    return {
-        restrict: "A",
-        link: function ($scope, element, attrs) {
-            var event = attrs.modalTrigger;
-            $rootScope.$on(event, function () {
-                $(element).modal("show");
-            });
-        }
-    }
-}]);
-
-/**
- * A directive for bootstrap modals that will trigger the modal to be dismissed when a particular event is broadcast.
- */
-mayocat.directive('modalDismiss', ['$rootScope', function ($rootScope) {
-    return {
-        restrict: "A",
-        link: function ($scope, element, attrs) {
-            var event = attrs.modalDismiss;
-            $rootScope.$on(event, function () {
-                $(element).modal("hide");
-            });
-        }
-    }
-}]);
-
 /**
  * WYSIWYG-augmented textarea directive with CKEditor.
  *
  * See http://stackoverflow.com/questions/11997246/bind-ckeditor-value-to-model-text-in-angularjs-and-rails
  * and http://stackoverflow.com/questions/15483579/angularjs-ckeditor-directive-sometimes-fails-to-load-data-from-a-service
  */
-mayocat.directive('ckEditor', function () {
+MayocatShop.directive('ckEditor', function () {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
@@ -84,11 +47,11 @@ mayocat.directive('ckEditor', function () {
                 {
                     toolbarGroups: [
                         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                        { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                        { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
                         { name: 'links' },
                         { name: 'styles' }
                     ],
-                    removePlugins : 'elementspath',
+                    removePlugins: 'elementspath',
                     height: '290px',
                     width: '99%'
                 }
@@ -119,7 +82,7 @@ mayocat.directive('ckEditor', function () {
 /**
  * A switch button similar to the ios toggle switch
  */
-mayocat.directive('switchButton', function () {
+MayocatShop.directive('switchButton', function () {
     return {
         require: 'ngModel',
         restrict: 'E',
@@ -156,7 +119,7 @@ mayocat.directive('switchButton', function () {
  *
  * Inspired by http://stackoverflow.com/a/12631074/1281372
  */
-mayocat.directive('activeClass', ['$location', function (location) {
+MayocatShop.directive('activeClass', ['$location', function (location) {
     return {
         restrict: ['A', 'LI'],
         link: function (scope, element, attrs, controller) {
@@ -189,358 +152,50 @@ mayocat.directive('activeClass', ['$location', function (location) {
     };
 }]);
 
+mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
+    function ($rootScope, scope, location) {
 
-/**
- * Image upload directive.
- */
-mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
-    return {
-        restrict: "E",
-        templateUrl: "partials/imageUpload.html",
-        scope: {
-            'requestedDropZone': '&dropZone',
-            'requestedUploadUri': '&uploadUri',
-            'onUpload': '&onUpload'
-        },
-        link: function postLink($scope, element, attrs) {
+        scope.isCatalog = false;
+        scope.isPages = false;
+        scope.isNews = false;
 
-            // Get the upload URI the directive customer requested. It is either provided as a function,
-            // which we need to evaluate, or as a raw string.
-            $scope.uploadUri = typeof $scope.requestedUploadUri === "function"
-                ? $scope.requestedUploadUri()
-                : $scope.requestedUploadUri;
+        scope.$watch('location.path()', function (path) {
 
-            $scope.dropzone = typeof $scope.requestedDropZone === "string"
-                ? $($scope.requestedDropZone)
-                : $(element).find('.dropzone');
+            scope.isCatalog = false;
+            scope.isPages = false;
+            scope.isNews = false;
 
-
-            $scope.files = [];
-
-            $scope.getPreviewUri = function (file, index) {
-                var deferred = $q.defer();
-                loadImage(file, function (preview) {
-                    deferred.resolve({
-                        index: index,
-                        preview: preview
-                    });
-                    $scope.$apply();
-                }, {
-                    maxWidth: 100,
-                    maxHeight: 100,
-                    canvas: false,
-                    noRevoke: true
-                });
-                return deferred.promise;
-            }
-
-            $scope.remove = function (index) {
-                $scope.files[index] = null;
-            }
-
-            $scope.fileUploadFailed = function (index) {
-                $scope.$apply(function ($scope) {
-                    $scope.files[index].failed = true;
-                });
-            }
-
-            $scope.fileUploading = function (index, loaded, total) {
-                $scope.$apply(function ($scope) {
-                    $scope.files[index].progress = Math.round(loaded * 100 / total);
-                });
-            }
-
-            $scope.fileUploaded = function (index) {
-                $scope.$apply(function ($scope) {
-                    if (typeof $scope.onUpload === "function") {
-                        $scope.onUpload();
-                    }
-                    // Remove the file from list
-                    $scope.files[index] = null;
-                });
-            }
-
-            $scope.submit = function () {
-                for (var i = 0; i < $scope.files.length; i++) {
-                    if ($scope.files[i] !== null) {
-                        $scope.files[i].progress = 0;
-                        $(element).fileupload('send', {
-                            files: $scope.files[i],
-                            formData: {
-                                "title": $scope.files[i].title,
-                                "description": $scope.files[i].description
-                            }
-                        });
-                    }
-                }
-            }
-
-            $scope.hasFiles = function () {
-                for (var i = 0; i < $scope.files.length; i++) {
-                    if ($scope.files[i] !== null) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            // Extend the directive element with the jQuery file upload plugin
-            $(element).fileupload({
-                dropZone: $scope.dropzone,
-                url: $scope.uploadUri,
-                add: function (e, data) {
-                    $scope.$apply(function ($scope) {
-                        for (var i = 0; i < data.files.length; i++) {
-                            // Usually there is just one
-                            var index = $scope.files.push(data.files[i]) - 1;
-                            $scope.files[index].index = index;
-                            $scope.getPreviewUri($scope.files[index], index).then(function (result) {
-                                $scope.files[result.index].previewUri = result.preview.src;
-                                $scope.files[result.index].previewWidth = result.preview.width;
-                                $scope.files[result.index].previewHeight = result.preview.height;
-                            });
-                        }
-                    });
-                },
-                done: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploaded(data.files[0].index);
-                    }
-                },
-                fail: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploadFailed(data.files[0].index);
-                    }
-                },
-                progress: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploading(data.files[0].index, data.loaded, data.total);
-                    }
+            angular.forEach(["/catalog", "/products/", "/collections/"], function (catalogPath) {
+                if (path.indexOf(catalogPath) == 0) {
+                    scope.isCatalog = true;
                 }
             });
-        }
-    }
-}]);
-
-/**
- * Thumbnail editor directive
- */
-mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
-    return {
-        restrict: "E",
-        scope: {
-            'image': '&',
-            'width': '&',
-            'height': '&',
-            'selection': '&'
-        },
-        link: function postLink($scope, element, attrs) {
-            var imageElement = $("<img />").load(
-                function () {
-                    if ($scope.selection() === undefined) {
-
-                        // If no initial selection was passed to the widget, we compute the largest box
-                        // that can fit the desired thumbnail in.
-
-                        var sizeRatio = $scope.width() / $scope.height(),
-                            imageRatio = $(this).width() / $(this).height(),
-                            width,
-                            height;
-
-                        // FIXME sometimes the image width and height are still 0, even though we are in the
-                        // load callback.
-
-                        width = sizeRatio > imageRatio ? $(this).height() * sizeRatio : $(this).width();
-                        height = sizeRatio > imageRatio ? $(this).height() : $(this).width() * sizeRatio;
-
-                        var i = 0;
-                        var setSelection = function () {
-                            if (typeof $scope.api !== "undefined") {
-                                $scope.api.setSelect([ 0, 0, width, height ]);
-                            }
-                            else {
-                                // The image is loaded before the Jcrop API has been initialized fully.
-                                // Wait 0.1 s
-                                i++;
-                                if (i < 10) {
-                                    setTimeout(setSelection, 100);
-                                }
-                                // Give up after 10 tries
-                            }
-                        }
-                        setSelection();
-                    }
+            angular.forEach(["/contents", "/pages/"], function (pagePage) {
+                if (path.indexOf([pagePage]) == 0) {
+                    scope.isPages = true;
                 }
-            ).attr("src", $scope.image());
-            $(element).html($("<div/>").html(imageElement));
-
-            $(imageElement).Jcrop({
-                boxWidth: 500,
-                boxHeight: 500,
-                setSelect: $scope.selection(),
-                aspectRatio: $scope.width() / $scope.height(),
-                onSelect: function (coordinates) {
-                    $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
-                }
-            }, function () {
-                $scope.api = this;
             });
-
-        }
-    }
-}]);
-
-/**
- * Authentication/401 interception
- *
- * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
- */
-mayocat.config(function ($httpProvider) {
-    var interceptor = ['$rootScope', '$q', function (scope, $q) {
-
-        function success(response) {
-            return response;
-        }
-
-        function error(response) {
-            var status = response.status;
-            if (status == 401 && response.config.url != '/api/login/') {
-                var deferred = $q.defer();
-                var req = {
-                    config: response.config,
-                    deferred: deferred
+            angular.forEach(["/news", "/articles/"], function (newsPage) {
+                if (path.indexOf([newsPage]) == 0) {
+                    scope.isNews = true;
                 }
-                scope.requests401.push(req);
-                scope.$broadcast('event:authenticationRequired');
-                return deferred.promise;
-            }
-            // otherwise
-            return $q.reject(response);
-        }
-
-        return function (promise) {
-            return promise.then(success, error);
-        }
-    }];
-    $httpProvider.responseInterceptors.push(interceptor);
-});
-
-
-/**
- * Internal Server Error / 500 interception
- */
-mayocat.config(function ($httpProvider) {
-    var interceptor = ['$rootScope', '$q', function (scope, $q) {
-
-        function success(response) {
-            return response;
-        }
-
-        function error(response) {
-            var status = response.status;
-            if (status == 500) {
-                scope.$broadcast('event:serverError');
-            }
-            return response;
-        }
-
-        return function (promise) {
-            return promise.then(success, error);
-        }
-    }];
-    $httpProvider.responseInterceptors.push(interceptor);
-});
+            });
+        });
+    }]);
 
 /**
  * TODO: move this in the AppController
  */
-mayocat.run(['$rootScope', '$http', 'configurationService', function (scope, $http, configurationService) {
-
-    /**
-     * Holds all the requests which failed due to 401 response.
-     */
-    scope.requests401 = [];
+MayocatShop.run(['$rootScope', '$http', '$location', 'configurationService',
+    function (scope, $http, location, configurationService) {
 
     /**
      * Set up a default page title and update it when changing route.
      * Update title when changing root
      */
     scope.page_title = Mayocat.applicationName + ' | Home';
-    scope.$on('$routeChangeSuccess', function(event, current) {
+    scope.$on('$routeChangeSuccess', function (event, current) {
         scope.page_title = Mayocat.applicationName + ' | ' + current.$route.title;
     });
-
-    /**
-     * On 'event:authenticationSuccessful', resend all the 401 requests.
-     */
-    scope.$on('event:authenticationSuccessful', function () {
-        configurationService.get(function (configuration) {
-            scope.configuration = configuration;
-        });
-    });
-
-    /**
-     * On 'event:authenticationSuccessful', resend all the 401 requests.
-     */
-    scope.$on('event:authenticationSuccessful', function () {
-        var i, requests = scope.requests401;
-        for (i = 0; i < requests.length; i++) {
-            retry(requests[i]);
-        }
-        scope.requests401 = [];
-        function retry(req) {
-            $http(req.config).then(function (response) {
-                req.deferred.resolve(response);
-            });
-        }
-    });
-
-    /**
-     * On 'event:loginRequest' send credentials to the server.
-     */
-    scope.$on('event:authenticationRequest', function (event, username, password, remember) {
-        var config = {
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        };
-        var data = {
-            username: username,
-            password: password,
-            remember: remember
-        };
-        $http.post('/api/login/', $.param(data), config)
-            .success(function (data, status) {
-                if (status == 200) {
-                    scope.ping();
-                }
-                else {
-                    scope.$broadcast('event:authenticationFailure');
-                }
-            })
-            .error(function (data, status) {
-                scope.$broadcast('event:authenticationFailure');
-            });
-    });
-
-    /**
-     * On 'logoutRequest' invoke logout on the server and broadcast 'event:authenticationRequired'.
-     */
-    scope.$on('event:forgetAuthenticationRequest', function () {
-        var config = {
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        };
-        $http.post('/api/logout/', "", config).success(function () {
-            scope.ping();
-            scope.$broadcast('event:authenticationRequired');
-        });
-    });
-
-    /**
-     * Ping server to figure out if user is already logged in.
-     */
-    scope.ping = function () {
-        $http.get('/api/tenants/').success(function (data) {
-            scope.$broadcast('event:authenticationSuccessful', data);
-        });
-    }
 
 }]);

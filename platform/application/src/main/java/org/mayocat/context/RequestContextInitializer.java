@@ -124,7 +124,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     }
 
     private boolean isStaticPath(String path) {
-        for (String staticPath : AbstractService.STATIC_PATHS) {
+        for (String staticPath : AbstractService.getStaticPaths()) {
             if (path.startsWith(staticPath)) {
                 return true;
             }

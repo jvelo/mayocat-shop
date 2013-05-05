@@ -1,0 +1,18 @@
+<div ng-controller="TenantListController">
+    <table class="table table-hover" ng-show="tenants.length > 0">
+        <thead>
+        <tr>
+            <th>Tenant</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="tenant in tenants"
+            ng-click="setRoute('/tenants/' + tenant.slug)">
+            <td>
+                <div>{{tenant.slug}}</div>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>

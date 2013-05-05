@@ -1,7 +1,7 @@
 (function () {
     'use strict'
 
-    angular.module('image', [])
+    angular.module('mayocat.image', [])
         .factory('imageService', function () {
 
             return {

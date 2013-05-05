@@ -29,35 +29,37 @@
                 </executions>
                 <configuration>
                     <preloadSources>
-                        <include>assets/client/vendor/jquery.js</include>
-                        <include>assets/client/vendor/jquery-ui-1.9.0.custom.min.js</include>
-                        <include>assets/client/vendor/angular/1.1.1/angular.min.js</include>
-                        <include>assets/client/vendor/angular/1.1.1/angular-resource.min.js</include>
-                        <include>assets/client/vendor/angular/1.1.1/angular-mocks.js</include>
+                        <include>assets/common/vendor/jquery.js</include>
+                        <include>assets/common/vendor/jquery-ui-1.9.0.custom.min.js</include>
+                        <include>assets/common/vendor/angular/1.1.1/angular.min.js</include>
+                        <include>assets/common/vendor/angular/1.1.1/angular-resource.min.js</include>
+                        <include>assets/common/vendor/angular/1.1.1/angular-mocks.js</include>
+                        <include>assets/common/vendor/moment.min.js</include>
                         <include>assets/client/vendor/sortable-ng.js</include>
-                        <include>assets/client/vendor/moment.min.js</include>
                         <include>assets/client/vendor/angular-strap.min.js</include>
                     </preloadSources>
                     <sourceIncludes>
+                        <include>assets/common/javascripts/addons.js</include>
+                        <include>assets/common/javascripts/authentication.js</include>
+                        <include>assets/common/javascripts/mayocat.js</include>
+                        <include>assets/common/javascripts/image.js</include>
+                        <include>assets/common/javascripts/thumbnail.js</include>
+                        <include>assets/common/javascripts/time.js</include>
+                        <include>assets/common/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/polyfill.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
                         <include>assets/client/javascripts/controllers.js</include>
                         <include>assets/client/javascripts/search.js</include>
-                        <include>assets/client/javascripts/image.js</include>
                         <include>assets/client/javascripts/product.js</include>
-                        <include>assets/client/javascripts/thumbnail.js</include>
                         <include>assets/client/javascripts/collection.js</include>
                         <include>assets/client/javascripts/articles.js</include>
                         <include>assets/client/javascripts/article.js</include>
                         <include>assets/client/javascripts/pages.js</include>
                         <include>assets/client/javascripts/page.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
-                        <include>assets/client/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/money.js</include>
                         <include>assets/client/javascripts/orders.js</include>
                         <include>assets/client/javascripts/order.js</include>
-                        <include>assets/client/javascripts/time.js</include>
-                        <include>assets/client/javascripts/addons.js</include>
                         <include>assets/client/javascripts/app.js</include>
                     </sourceIncludes>
                     <specIncludes>

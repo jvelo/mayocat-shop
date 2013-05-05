@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('time', [])
+    angular.module('mayocat.time', [])
 
     .factory('timeService', function () {
 

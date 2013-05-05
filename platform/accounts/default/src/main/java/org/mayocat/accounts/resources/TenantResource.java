@@ -102,7 +102,7 @@ public class TenantResource implements Resource
     {
         UserAndTenant userAndTenant = new UserAndTenant();
         userAndTenant.setTenant(execution.getContext().getTenant());
-        userAndTenant.setAdminUser(execution.getContext().getUser());
+        userAndTenant.setUser(execution.getContext().getUser());
         return userAndTenant;
     }
 
@@ -145,7 +145,7 @@ public class TenantResource implements Resource
             Tenant tenant = userAndTenant.getTenant();
             accountsService.createTenant(tenant);
             execution.getContext().setTenant(tenant);
-            accountsService.createInitialUser(userAndTenant.getAdminUser());
+            accountsService.createInitialUser(userAndTenant.getUser());
             return Response.ok().build();
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT).entity("A tenant with this slug already exists").build();
@@ -174,7 +174,7 @@ public class TenantResource implements Resource
     {
         @NotNull
         @Valid
-        private User adminUser;
+        private User user;
 
         @NotNull
         @Valid
@@ -194,14 +194,14 @@ public class TenantResource implements Resource
             this.tenant = tenant;
         }
 
-        public User getAdminUser()
+        public User getUser()
         {
-            return adminUser;
+            return user;
         }
 
-        public void setAdminUser(User user)
+        public void setUser(User user)
         {
-            this.adminUser = user;
+            this.user = user;
         }
     }
 }

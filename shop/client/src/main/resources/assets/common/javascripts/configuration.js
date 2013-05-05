@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('configuration', ['ngResource'])
+angular.module('mayocat.configuration', ['ngResource'])
     .factory('configurationService', function ($resource, $q, $rootScope) {
 
         var configuration,
@@ -312,7 +312,7 @@ angular.module('configuration', ['ngResource'])
             }
 
             $scope.isDefaultValue = function (path) {
-                return configurationService.isDefaultValue($scope.confsettingsiguration, path);
+                return configurationService.isDefaultValue($scope.settings, path);
             };
 
             configurationService.getSettings(function (settings) {

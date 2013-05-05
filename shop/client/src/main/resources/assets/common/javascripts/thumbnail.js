@@ -1,4 +1,4 @@
-angular.module('thumbnail', ['ngResource'])
+angular.module('mayocat.thumbnail', ['ngResource'])
 
     .controller('ThumbnailsEditorController', ['$scope', '$resource', 'configurationService',
         function ($scope, $resource, configurationService) {

@@ -22,6 +22,11 @@ import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 
 public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
+    public static final String COMMON_PATH = "/common/";
+    public static final String MANAGER_PATH = "/manager/";
+
+    public static final String ADMIN_UI_PATH = "/admin/";
+
     public static final String CLIENT_RESOURCE_PATH = "/client/";
 
     public static void main(String[] args) throws Exception
@@ -32,11 +37,17 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
     @Override
     public void initialize(Bootstrap<MayocatShopSettings> bootstrap)
     {
+        staticPaths.add(ADMIN_UI_PATH);
+        staticPaths.add(MANAGER_PATH);
+        staticPaths.add(COMMON_PATH);
+
         super.initialize(bootstrap);
 
         bootstrap.getObjectMapperFactory().registerModule(new MoneyModule());
 
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
+        bootstrap.addBundle(new AssetsBundle(COMMON_PATH, COMMON_PATH));
+        bootstrap.addBundle(new AssetsBundle(MANAGER_PATH, MANAGER_PATH));
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new FlywayBundle<MayocatShopSettings>()
         {

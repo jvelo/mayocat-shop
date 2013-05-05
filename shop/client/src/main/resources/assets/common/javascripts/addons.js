@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('addons', ['ngResource'])
+angular.module('mayocat.addons', ['ngResource'])
 
     .directive("addonFieldString", [function ($compile) {
         return {
