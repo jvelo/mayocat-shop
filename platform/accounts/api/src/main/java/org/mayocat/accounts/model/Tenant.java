@@ -1,11 +1,13 @@
 package org.mayocat.accounts.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
@@ -24,6 +26,11 @@ public class Tenant implements Entity, HasAddons
     @NotNull
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
     private String slug;
+
+    @NotBlank
+    private String name;
+
+    private Date creationDate;
 
     // FIXME
     // Implement a @Hostname constraint that verifies a hostname is valid
@@ -89,6 +96,26 @@ public class Tenant implements Entity, HasAddons
     public String getDefaultHost()
     {
         return defaultHost;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
     }
 
     @Override

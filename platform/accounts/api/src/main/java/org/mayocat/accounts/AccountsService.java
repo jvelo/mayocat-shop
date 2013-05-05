@@ -26,7 +26,9 @@ public interface AccountsService
 
     void updateTenant(@Valid Tenant tenant) throws EntityDoesNotExistException, InvalidEntityException;
 
-    List<Tenant> findAllTenants(Integer number, Integer offset);
+    List<Tenant> findAllTenants(Integer limit, Integer offset);
+
+    Integer countAllTenants();
 
     // User operations
 

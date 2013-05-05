@@ -2,6 +2,8 @@ package org.mayocat.accounts.representations;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.api.representation.AddonRepresentation;
@@ -17,7 +19,11 @@ public class TenantRepresentation
 {
     private String slug;
 
-    private String title;
+    private String name;
+
+    private DateTime creationDate;
+
+    private String defaultHost;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
@@ -28,11 +34,17 @@ public class TenantRepresentation
     {
     }
 
-    public TenantRepresentation(Tenant tenant)
+    public TenantRepresentation(DateTimeZone globalTimeZone, Tenant tenant)
     {
         Preconditions.checkNotNull(tenant);
 
         this.slug = tenant.getSlug();
+        this.name = tenant.getName();
+        this.defaultHost = tenant.getDefaultHost();
+
+        if (tenant.getCreationDate() != null) {
+            this.creationDate = new DateTime(tenant.getCreationDate().getTime(), globalTimeZone);
+        }
 
         this.href = Resource.API_ROOT_PATH + TenantEntity.PATH + "/" + this.slug;
     }
@@ -42,9 +54,19 @@ public class TenantRepresentation
         return slug;
     }
 
-    public String getTitle()
+    public String getName()
     {
-        return title;
+        return name;
+    }
+
+    public DateTime getCreationDate()
+    {
+        return creationDate;
+    }
+
+    public String getDefaultHost()
+    {
+        return defaultHost;
     }
 
     public List<AddonRepresentation> getAddons()

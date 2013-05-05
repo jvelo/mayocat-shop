@@ -13,20 +13,8 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 /**
  * @version $Id$
  */
-public abstract class AbstractUUIDGenerationMigration implements JdbcMigration
+public abstract class AbstractUUIDGenerationMigration extends AbstractJdbcMigration implements JdbcMigration
 {
-    public class PG_UUID extends org.postgresql.util.PGobject
-    {
-        private static final long serialVersionUID = -3049777497876782935L;
-
-        public PG_UUID(String s) throws java.sql.SQLException
-        {
-            super();
-            this.setType("uuid");
-            this.setValue(s);
-        }
-    }
-
     public void migrate(Connection connection) throws Exception
     {
         for (String tableName : getTableNames()) {

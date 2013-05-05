@@ -393,7 +393,6 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         });
 
         $scope.$on("event:authenticationSuccessful", function (event, data) {
-            console.log("Authentication successful !", data.user);
             $scope.authenticated = true;
             $scope.user = data.user;
             $scope.tenant = data.tenant;

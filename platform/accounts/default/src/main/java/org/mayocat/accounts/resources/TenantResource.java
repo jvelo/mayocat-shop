@@ -1,6 +1,7 @@
 package org.mayocat.accounts.resources;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.accounts.model.Role;
@@ -28,6 +30,7 @@ import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.MultitenancySettings;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
 import org.mayocat.rest.Resource;
@@ -55,6 +58,9 @@ public class TenantResource implements Resource
     private Gatekeeper gatekeeper;
 
     @Inject
+    private GeneralSettings generalSettings;
+
+    @Inject
     private MultitenancySettings multitenancySettings;
 
     @GET
@@ -67,29 +73,33 @@ public class TenantResource implements Resource
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        return new TenantRepresentation(tenant);
+        return new TenantRepresentation(getGlobalTimeZone(), tenant);
     }
 
     @GET
     @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
-    public ResultSetRepresentation<TenantRepresentation> getAllTenants(@QueryParam("number") @DefaultValue("50") Integer number,
+    public ResultSetRepresentation<TenantRepresentation> getAllTenants(
+            @QueryParam("limit") @DefaultValue("50") Integer limit,
             @DefaultValue("0") @QueryParam("offset") Integer offset)
     {
-        List<Tenant> tenants = accountsService.findAllTenants(number, offset);
+        List<Tenant> tenants = accountsService.findAllTenants(limit, offset);
         if (tenants == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
         List<TenantRepresentation> representations = new ArrayList<TenantRepresentation>();
         for (Tenant tenant : tenants) {
-            representations.add(new TenantRepresentation(tenant));
+
+            representations.add(new TenantRepresentation(getGlobalTimeZone(), tenant));
         }
 
+        Integer total = this.accountsService.countAllTenants();
         ResultSetRepresentation<TenantRepresentation> result = new ResultSetRepresentation<TenantRepresentation>(
                 PATH + "/",
-                number,
+                limit,
                 offset,
-                representations
+                representations,
+                total
         );
 
         return result;
@@ -143,6 +153,7 @@ public class TenantResource implements Resource
 
         try {
             Tenant tenant = userAndTenant.getTenant();
+            tenant.setCreationDate(new Date());
             accountsService.createTenant(tenant);
             execution.getContext().setTenant(tenant);
             accountsService.createInitialUser(userAndTenant.getUser());
@@ -152,6 +163,11 @@ public class TenantResource implements Resource
         } catch (InvalidEntityException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+    private DateTimeZone getGlobalTimeZone()
+    {
+        return DateTimeZone.forTimeZone(generalSettings.getTime().getTimeZone().getDefaultValue());
     }
 
     private boolean isTenantCreationAllowed()

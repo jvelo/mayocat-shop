@@ -16,6 +16,8 @@
 
     <!-- Included CSS Files -->
     <link rel="stylesheet/less" href="/common/vendor/bootstrap/2.3.1/less/bootstrap.less">
+    <link rel="stylesheet/less" href="/common/stylesheets/common.less"/>
+    <link rel="stylesheet/less" href="stylesheets/manager.less"/>
 
     <!-- Vendor scripts -->
     <script src="/common/vendor/jquery.js"></script>
@@ -56,60 +58,60 @@
 </head>
 <body ng-cloak ng-controller="AppController">
 
-<div ng-include="'partials/navbar.html'"></div>
+<div ng-controller="ManagerController">
+    <div ng-include="'partials/navbar.html'"></div>
 
-<div class="container-fluid" ng-show="authenticated">
-    <div class="row-fluid">
-        <div class="span2">
-            <!--
-            <p>
-                <button class="btn btn-large" type="button">New tenant</button>
-            </p>
-            -->
-        </div>
-        <div class="span10">
-            <div role="main" id="main" ng-view></div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Initial AJAX loader -->
-<div class="loader" ng-show="authenticated == undefined"></div>
-
-<!-- Login modal -->
-<div class="modal" ng-show="authenticated != undefined && !authenticated" id="loginModal">
-    <form class="" ng-controller="LoginController">
-        <div class="modal-header">
-            <h3>Authentication required</h3>
-        </div>
-        <div class="modal-body">
-            <p>
-            <fieldset>
-                <label>User name or email</label>
-                <input type="text" class="span3" ng-model="username"/>
-                <label>Password</label>
-                <input type="password" class="span3" ng-model="password"/>
-                <label>Remember me</label>
-                <input type="checkbox" ng-model="remember"/>
-            </fieldset>
-            </p>
-            <div class="alert" ng-show="authenticationFailed">
-                We could not authenticate you with these credentials.
+    <div class="container-fluid" ng-show="authenticated">
+        <div class="row-fluid">
+            <div class="span2">
+                <p id="newTenant">
+                    <button class="btn btn-large" type="button" ng-click="toggleNewTenantForm()">New tenant</button>
+                </p>
+            </div>
+            <div class="span10">
+                <div role="main" id="main" ng-view></div>
             </div>
         </div>
-        <div class="modal-footer">
-            <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
-        </div>
-    </form>
+
+    </div>
+
+    <!-- Initial AJAX loader -->
+    <div class="loader" ng-show="authenticated == undefined"></div>
+
+    <!-- Login modal -->
+    <div class="modal" ng-show="authenticated != undefined && !authenticated" id="loginModal">
+        <form class="" ng-controller="LoginController">
+            <div class="modal-header">
+                <h3>Authentication required</h3>
+            </div>
+            <div class="modal-body">
+                <p>
+                <fieldset>
+                    <label>User name or email</label>
+                    <input type="text" class="span3" ng-model="username"/>
+                    <label>Password</label>
+                    <input type="password" class="span3" ng-model="password"/>
+                    <label>Remember me</label>
+                    <input type="checkbox" ng-model="remember"/>
+                </fieldset>
+                </p>
+                <div class="alert" ng-show="authenticationFailed">
+                    We could not authenticate you with these credentials.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
+            </div>
+        </form>
+    </div>
+    <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
+
+    <!-- Error modal -->
+    <div class="modal hide fade"
+         ng-include="'/common/partials/serverError.html'"
+         modal-trigger="event:serverError"
+         id="errorModal"></div>
+
 </div>
-<div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
-
-<!-- Error modal -->
-<div class="modal hide fade"
-     ng-include="'/common/partials/serverError.html'"
-     modal-trigger="event:serverError"
-     id="errorModal"></div>
-
 </body>
 </html>

@@ -87,16 +87,18 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
         List<Article> articles = articleStore.get().findAll(number, offset);
 
         for (Article article : articles) {
-            articleReferences.add(new EntityReferenceRepresentation(article.getTitle(), article.getSlug(),
-                    PATH + "/" + article.getSlug()));
+            articleReferences.add(new EntityReferenceRepresentation(PATH + "/" + article.getSlug(), article.getSlug(),
+                    article.getTitle()
+            ));
         }
 
+        Integer total = this.articleStore.get().countAll();
         ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
                 new ResultSetRepresentation<EntityReferenceRepresentation>(
                         PATH,
-                        number,
-                        offset,
-                        articleReferences
+                        offset, number,
+                        articleReferences,
+                        total
                 );
 
         return resultSet;

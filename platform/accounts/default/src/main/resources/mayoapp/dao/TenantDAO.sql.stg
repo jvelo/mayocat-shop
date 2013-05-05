@@ -12,11 +12,22 @@ create() ::= <<
                 (entity_id,
                  default_host,
                  configuration,
-                 configuration_version)
+                 configuration_version,
+                 name,
+                 creation_date)
     VALUES      (:tenant.id,
                  :tenant.defaultHost,
                  :data,
-                 :version)
+                 :version,
+                 :tenant.name,
+                 :tenant.creationDate)
+>>
+
+update() ::= <<
+    UPDATE  tenant
+    SET     name = :tenant.name,
+            defaultHost = :tenant.defaultHost
+    WHERE   entity_id = :tenant.id
 >>
 
 findByDefaultHost() ::= <<
@@ -32,6 +43,15 @@ findAll() ::= <<
     FROM   entity
            INNER JOIN tenant
                    ON entity.id = tenant.entity_id
+    ORDER BY creation_date DESC NULLS LAST
     LIMIT  :number
     OFFSET :offset
+>>
+
+countAllTenants() ::= <<
+    SELECT count(id)
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
+    WHERE  entity.type = 'tenant'
 >>

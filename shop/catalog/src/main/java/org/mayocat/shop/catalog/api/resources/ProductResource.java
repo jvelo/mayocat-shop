@@ -392,8 +392,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Collection collection : collections) {
             collectionsReferences
-                    .add(new EntityReferenceRepresentation(collection.getTitle(), collection.getSlug(),
-                            CollectionResource.PATH + collection.getSlug()));
+                    .add(new EntityReferenceRepresentation(CollectionResource.PATH + collection.getSlug(),
+                            collection.getSlug(), collection.getTitle()
+                    ));
         }
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {

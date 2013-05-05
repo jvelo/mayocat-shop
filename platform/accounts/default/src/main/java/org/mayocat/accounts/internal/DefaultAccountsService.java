@@ -91,9 +91,15 @@ public class DefaultAccountsService implements AccountsService
     }
 
     @Override
-    public List<Tenant> findAllTenants(Integer number, Integer offset)
+    public List<Tenant> findAllTenants(Integer limit, Integer offset)
     {
-        return this.tenantStore.get().findAll(number, offset);
+        return this.tenantStore.get().findAll(limit, offset);
+    }
+
+    @Override
+    public Integer countAllTenants()
+    {
+        return this.tenantStore.get().countAll();
     }
 
     @Override

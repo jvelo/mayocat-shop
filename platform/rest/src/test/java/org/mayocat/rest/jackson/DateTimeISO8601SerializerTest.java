@@ -1,4 +1,4 @@
-package org.mayocat.jackson;
+package org.mayocat.rest.jackson;
 
 import org.junit.Assert;
 import org.junit.Test;

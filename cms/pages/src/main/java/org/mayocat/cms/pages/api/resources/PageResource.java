@@ -80,16 +80,17 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         List<Page> pages = pageStore.get().findAll(number, offset);
 
         for (Page page : pages) {
-            pageReferences.add(new EntityReferenceRepresentation(page.getTitle(), page.getSlug(),
-                    PATH + "/" + page.getSlug()));
+            pageReferences.add(new EntityReferenceRepresentation(PATH + "/" + page.getSlug(), page.getSlug(), page.getTitle()
+            ));
         }
 
+        Integer total = this.pageStore.get().countAll();
         ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
                 new ResultSetRepresentation<EntityReferenceRepresentation>(
                         PATH + "/",
-                        number,
-                        offset,
-                        pageReferences
+                        offset, number,
+                        pageReferences,
+                        total
                 );
 
         return resultSet;
