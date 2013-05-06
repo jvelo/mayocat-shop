@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mayocat.cms</groupId>
         <artifactId>mayocat-cms-parent</artifactId>
-        <version>0.7.5</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.cms</groupId>
     <artifactId>mayocat-cms-pages</artifactId>
