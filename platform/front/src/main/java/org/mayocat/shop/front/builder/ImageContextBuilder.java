@@ -39,7 +39,7 @@ public class ImageContextBuilder
 
         context.setTitle(ContextUtils.safeString(image.getAttachment().getTitle()));
         context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
-        context.setFeatured(featured);
+        context.put("featured", featured);
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
