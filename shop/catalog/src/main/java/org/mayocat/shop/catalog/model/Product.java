@@ -41,7 +41,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     @Localized
     @SearchIndex
-    private String description;
+    private transient String description;
 
     @SearchIndex
     private BigDecimal price;

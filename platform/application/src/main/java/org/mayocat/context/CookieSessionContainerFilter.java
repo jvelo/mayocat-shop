@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Mac;
@@ -77,7 +80,7 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
     private Session getSessionFromCookie(ContainerRequest containerRequest) throws IOException, EncryptionException
     {
         Cipher cipher = Utils.getComponent(Cipher.class);
-        String cookieData = getSessionCookie(containerRequest);
+        String cookieData = decode(getSessionCookie(containerRequest));
 
         if (null != cookieData) {
             try {
@@ -118,8 +121,13 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
             String encryptedData = cipher.encrypt(serialized);
             String signature = computeSignature(encryptedData);
 
+            Session originalSession = getSessionFromCookie(containerResponse.getContainerRequest());
+            if (originalSession != null && originalSession.equals(cookieSession)) {
+                return;
+            }
+
             NewCookie session =
-                    new NewCookie("session", encryptedData + signature, "/", null, 1, "", SESSION_DURATION, false);
+                    new NewCookie("session", encode(encryptedData + signature), "/", null, 1, "", SESSION_DURATION, false);
             Response cookieResponse =
                     Response.fromResponse(containerResponse.getResponse()).cookie(session).build();
 
@@ -132,6 +140,25 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
             LOGGER.error("Failed to store cookies in session", e);
         }
     }
+
+    private String encode(String s)
+    {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String decode(String s)
+    {
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private String computeSignature(String message) throws GeneralSecurityException
     {

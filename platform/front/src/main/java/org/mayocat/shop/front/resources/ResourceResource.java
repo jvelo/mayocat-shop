@@ -57,7 +57,7 @@ public class ResourceResource implements Resource
     Request request) throws Exception
     {
         ThemeResource themeResource = themeManager.resolveResource(resource, breakpoint);
-        if (resource == null) {
+        if (themeResource == null) {
             logger.debug("Resource [{}] with breakpoint [{}] not found", resource, breakpoint);
             throw new WebApplicationException(404);
         }
