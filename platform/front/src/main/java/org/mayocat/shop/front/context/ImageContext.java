@@ -14,8 +14,6 @@ public class ImageContext extends HashMap
 
     private String description;
 
-    private boolean isFeatured;
-
     public ImageContext(String url)
     {
         this.url = url;
@@ -49,15 +47,5 @@ public class ImageContext extends HashMap
     public void setDescription(String description)
     {
         this.description = description;
-    }
-
-    public boolean isFeatured()
-    {
-        return isFeatured;
-    }
-
-    public void setFeatured(boolean featured)
-    {
-        isFeatured = featured;
     }
 }
