@@ -180,18 +180,19 @@ public class PageResource extends AbstractAttachmentResource implements Resource
                 page.setPublished(updatedPageRepresentation.getPublished());
 
                 // Addons
-                List<Addon> addons = Lists.newArrayList();
-                for (AddonRepresentation addonRepresentation : updatedPageRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
+                if (updatedPageRepresentation.getAddons() != null) {
+                    List<Addon> addons = Lists.newArrayList();
+                    for (AddonRepresentation addonRepresentation : updatedPageRepresentation.getAddons()) {
+                        Addon addon = new Addon();
+                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                        addon.setValue(addonRepresentation.getValue());
+                        addon.setKey(addonRepresentation.getKey());
+                        addon.setGroup(addonRepresentation.getGroup());
+                        addons.add(addon);
+                    }
+                    page.setAddons(addons);
                 }
-
-                page.setAddons(addons);
 
                 // Featured image
                 if (updatedPageRepresentation.getFeaturedImage() != null) {

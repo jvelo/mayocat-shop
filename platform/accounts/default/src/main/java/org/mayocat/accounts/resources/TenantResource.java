@@ -194,17 +194,20 @@ public class TenantResource implements Resource
             Tenant tenant = new Tenant();
             TenantRepresentation tenantRepresentation = userAndTenant.getTenant();
 
+            tenant.setSlug(tenantRepresentation.getSlug());
             tenant.setName(tenantRepresentation.getName());
             // Addons
             List<Addon> addons = Lists.newArrayList();
-            for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
-                Addon addon = new Addon();
-                addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                addon.setValue(addonRepresentation.getValue());
-                addon.setKey(addonRepresentation.getKey());
-                addon.setGroup(addonRepresentation.getGroup());
-                addons.add(addon);
+            if (tenantRepresentation.getAddons() != null) {
+                for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
+                    Addon addon = new Addon();
+                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                    addon.setValue(addonRepresentation.getValue());
+                    addon.setKey(addonRepresentation.getKey());
+                    addon.setGroup(addonRepresentation.getGroup());
+                    addons.add(addon);
+                }
             }
 
             tenant.setCreationDate(new Date());

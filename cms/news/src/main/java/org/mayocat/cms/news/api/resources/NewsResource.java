@@ -199,18 +199,19 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 article.setPublished(updatedArticleRepresentation.getPublished());
 
                 // Addons
-                List<Addon> addons = Lists.newArrayList();
-                for (AddonRepresentation addonRepresentation : updatedArticleRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
+                if (updatedArticleRepresentation.getAddons() != null) {
+                    List<Addon> addons = Lists.newArrayList();
+                    for (AddonRepresentation addonRepresentation : updatedArticleRepresentation.getAddons()) {
+                        Addon addon = new Addon();
+                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                        addon.setValue(addonRepresentation.getValue());
+                        addon.setKey(addonRepresentation.getKey());
+                        addon.setGroup(addonRepresentation.getGroup());
+                        addons.add(addon);
+                    }
+                    article.setAddons(addons);
                 }
-
-                article.setAddons(addons);
 
                 // Featured image
                 if (updatedArticleRepresentation.getFeaturedImage() != null) {

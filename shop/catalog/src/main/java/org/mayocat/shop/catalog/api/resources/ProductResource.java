@@ -234,18 +234,19 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setStock(updatedProductRepresentation.getStock());
 
                 // Addons
-                List<Addon> addons = Lists.newArrayList();
-                for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
+                if (updatedProductRepresentation.getAddons() != null) {
+                    List<Addon> addons = Lists.newArrayList();
+                    for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
+                        Addon addon = new Addon();
+                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                        addon.setValue(addonRepresentation.getValue());
+                        addon.setKey(addonRepresentation.getKey());
+                        addon.setGroup(addonRepresentation.getGroup());
+                        addons.add(addon);
+                    }
+                    product.setAddons(addons);
                 }
-
-                product.setAddons(addons);
 
                 // Featured image
                 if (updatedProductRepresentation.getFeaturedImage() != null) {
