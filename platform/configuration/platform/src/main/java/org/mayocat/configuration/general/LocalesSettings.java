@@ -7,8 +7,10 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.mayocat.configuration.Configurable;
+import org.mayocat.jackson.OptionalStringListDeserializer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @version $Id$

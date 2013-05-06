@@ -3,6 +3,7 @@ package org.mayocat.accounts;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.Module;
 import org.mayocat.accounts.meta.UserEntity;
@@ -16,6 +17,7 @@ public class AccountsModule implements Module
 
     static {
         entities.add(new UserEntity());
+        entities.add(new TenantEntity());
     }
 
     @Override
@@ -27,6 +29,6 @@ public class AccountsModule implements Module
     @Override
     public List<EntityMeta> getEntities()
     {
-       return entities;
+        return entities;
     }
 }

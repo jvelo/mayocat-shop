@@ -1,0 +1,46 @@
+<form>
+    <div class="page-header">
+        <h1 class="">Shop information</h1>
+    </div>
+
+    <article class="entity" ng-class="{'loading': tenant.name == undefined}">
+        <div id="settings">
+            <div class="span8">
+                <!-- header -->
+
+                <div ng-show="tenant.name != undefined">
+
+                    <div class="block">
+                        Shop name
+                        <input type="text" ng-model="tenant.name" placeholder="Enter the shop name"/>
+                    </div>
+
+                    <div ng-show="addons.length > 0 && !isNew()">
+                        <div class="block" ng-repeat="group in addons">
+                            <h3>{{group.name}}</h3>
+                            <p ng-show="group.text && group.text != ''">
+                                {{group.text}}
+                            </p>
+                            <ul>
+                                <li ng-repeat="addon in group.fields">
+                                    {{addon.definition.name}}
+
+                                    <addon definition="addon.definition"
+                                           value="tenant.addons[addon.index].value"
+                                           type="tenant.addons[addon.index].type"></addon>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Save button -->
+                <div class="hasLoading">
+                    <button ng-click="updateTenant()" class="btn btn-large btn-primary">Save</button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
+            </div>
+        </div>
+    </article>
+</form>

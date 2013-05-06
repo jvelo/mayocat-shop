@@ -57,6 +57,7 @@
 
     <script src="javascripts/polyfill.js"></script>
     <script src="javascripts/appsettings.js"></script>
+    <script src="javascripts/settings.js"></script>
     <script src="javascripts/app.js"></script>
     <script src="javascripts/money.js"></script>
     <script src="javascripts/search.js"></script>
@@ -84,7 +85,7 @@
 
         <header>
             <div class="logo" ng-click="setRoute('/')"></div>
-            <h2 class="brand" ng-bind="configuration.general.name"></h2>
+            <h2 class="brand" ng-bind="tenant.name"></h2>
             <!-- <small>www.hostname.com</small> -->
             <p>
                 <small ng-click="logout()" class="clickable">Logout</small>
@@ -98,13 +99,6 @@
                     <h2>Orders</h2>
                 </a>
             </li>
-            <!--
-            <li active-class="active">
-                <a href="#/customers">
-                    <h2>Customers</h2>
-                </a>
-            </li>
-            -->
         </ul>
 
         <!-- Products, Contents, Theme, Statistics -->
@@ -131,34 +125,15 @@
                     </li>
                 </ul>
             </li>
-            <!--
-            <li active-class="active">
-                <a href="#/theme/">
-                    <h2>Theme</h2>
-                </a>
-            </li>
-            <li active-class="active">
-                <a href="#/statistics/">
-                    <h2>Statistics</h2>
-                </a>
-            </li>
-            -->
         </ul>
 
         <!-- Parameters + My account -->
         <ul class="">
             <li active-class="active">
-                <a href="#/configuration/">
-                    <h2>Parameters</h2>
+                <a href="#/settings/">
+                    <h2>Settings</h2>
                 </a>
             </li>
-            <!--
-            <li active-class="active">
-                <a href="#/account/">
-                    <h2>My Account</h2>
-                </a>
-            </li>
-            -->
         </ul>
 
     </div>
@@ -175,8 +150,9 @@
         <div ng-include class="sub-list" src="'partials/catalog.html'" ng-show="isCatalog"></div>
         <div ng-include class="sub-list" src="'partials/pages.html'" ng-show="isPages"></div>
         <div ng-include class="sub-list" src="'partials/articles.html'" ng-show="isNews"></div>
+        <div ng-include class="sub-list" src="'partials/settingsMenu.html'" ng-show="isSettings"></div>
 
-        <div role="main" id="main" ng-class="{'hasSubList' : isCatalog || isPages || isNews}" ng-view></div>
+        <div role="main" id="main" ng-class="{'hasSubList' : isCatalog || isPages || isNews || isSettings}" ng-view></div>
     </div>
     <div class="clearfix"></div>
 

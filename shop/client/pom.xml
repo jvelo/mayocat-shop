@@ -48,6 +48,7 @@
                         <include>assets/common/javascripts/configuration.js</include>
                         <include>assets/client/javascripts/polyfill.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
+                        <include>assets/client/javascripts/settings.js</include>
                         <include>assets/client/javascripts/controllers.js</include>
                         <include>assets/client/javascripts/search.js</include>
                         <include>assets/client/javascripts/product.js</include>

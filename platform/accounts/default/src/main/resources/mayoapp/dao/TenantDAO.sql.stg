@@ -26,7 +26,7 @@ create() ::= <<
 update() ::= <<
     UPDATE  tenant
     SET     name = :tenant.name,
-            defaultHost = :tenant.defaultHost
+            default_host = :tenant.defaultHost
     WHERE   entity_id = :tenant.id
 >>
 

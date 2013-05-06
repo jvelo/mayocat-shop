@@ -30,7 +30,7 @@ public abstract class TenantDAO implements EntityDAO<Tenant>, Transactional<Tena
             @Bind("data") String configuration);
 
     @SqlUpdate
-    public abstract void update(@BindBean("tenant") Tenant tenant);
+    public abstract Integer update(@BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     public abstract Tenant findByDefaultHost(@Bind("host") String host);

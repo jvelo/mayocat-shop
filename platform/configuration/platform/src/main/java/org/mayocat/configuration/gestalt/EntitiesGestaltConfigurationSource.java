@@ -6,10 +6,13 @@ import javax.inject.Inject;
 
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.GestaltConfigurationSource;
+import org.mayocat.configuration.PlatformSettings;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.context.Execution;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
+import org.mayocat.model.AddonSource;
 import org.mayocat.theme.Model;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
@@ -25,6 +28,9 @@ import com.google.common.collect.Maps;
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class EntitiesGestaltConfigurationSource implements GestaltConfigurationSource
 {
+    @Inject
+    private PlatformSettings platformSettings;
+
     @Inject
     private EntityMetaRegistry entityMetaRegistry;
 
@@ -42,7 +48,8 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
 
         Theme theme = execution.getContext().getTheme();
 
-        addAddons(entities, theme.getAddons());
+        addAddons(entities, theme.getAddons(), AddonSource.THEME);
+        addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
         addModels(entities, theme.getModels());
         addThumbnails(entities, theme.getThumbnails());
 
@@ -94,14 +101,15 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         }
     }
 
-    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroup> addons)
+    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroup> addons,
+            AddonSource source)
     {
         // Step 1 : add addon groups defined explicitly for some entities
         for (String groupKey : addons.keySet()) {
             AddonGroup group = addons.get(groupKey);
             if (group.getEntities().isPresent()) {
                 for (String entity : group.getEntities().get()) {
-                    addAddonGroupToEntity(entities, entity, groupKey, group);
+                    addAddonGroupToEntity(entities, entity, groupKey, group, source);
                 }
             }
         }
@@ -110,7 +118,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             AddonGroup group = addons.get(groupKey);
             if (!group.getEntities().isPresent()) {
                 for (String entity : entities.keySet()) {
-                    addAddonGroupToEntity(entities, entity, groupKey, group);
+                    addAddonGroupToEntity(entities, entity, groupKey, group, source);
                 }
             }
         }
@@ -164,22 +172,29 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     }
 
     private void addAddonGroupToEntity(Map<String, Map<String, Object>> entities, String entity, String groupKey,
-            AddonGroup group)
+            AddonGroup group, AddonSource source)
     {
         this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
         {
             @Override
             public void apply(Map<String, Object> entity, Object... arguments)
             {
-                if (entity.containsKey("addons")) {
-                    ((Map) entity.get("addons")).put(arguments[0], arguments[1]);
-                } else {
-                    Map map = Maps.newHashMap();
-                    map.put(arguments[0], arguments[1]);
-                    entity.put("addons", map);
+                if (!entity.containsKey("addons")) {
+                    entity.put("addons", Maps.newHashMap());
                 }
+                Map sources = (Map) entity.get("addons");
+                addAddonGroupToSource(sources, arguments);
             }
-        }, groupKey, group);
+
+            private void addAddonGroupToSource(Map sources, Object... arguments)
+            {
+                if (!sources.containsKey(arguments[0])) {
+                    sources.put(arguments[0].toString().toLowerCase(), Maps.newHashMap());
+                }
+                Map source = (Map) sources.get(arguments[0].toString().toLowerCase());
+                source.put(arguments[1], arguments[2]);
+            }
+        }, source, groupKey, group);
     }
 
     private void transformEntitiesMap(Map<String, Map<String, Object>> entities, String entity,

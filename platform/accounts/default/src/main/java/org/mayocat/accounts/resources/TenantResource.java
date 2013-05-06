@@ -27,18 +27,24 @@ import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.representations.TenantRepresentation;
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
+import org.mayocat.model.Addon;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.collect.Lists;
 
 @Component(TenantResource.PATH)
 @Path(TenantResource.PATH)
@@ -111,9 +117,42 @@ public class TenantResource implements Resource
     public UserAndTenant currentTenant()
     {
         UserAndTenant userAndTenant = new UserAndTenant();
-        userAndTenant.setTenant(execution.getContext().getTenant());
+        userAndTenant.setTenant(new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant()));
         userAndTenant.setUser(execution.getContext().getUser());
         return userAndTenant;
+    }
+
+    @POST
+    @Path("_current")
+    @Authorized
+    public Response updateTenant(TenantRepresentation tenantRepresentation)
+    {
+        Tenant tenant = this.execution.getContext().getTenant();
+
+        tenant.setName(tenantRepresentation.getName());
+        // Addons
+        List<Addon> addons = Lists.newArrayList();
+        for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
+            Addon addon = new Addon();
+            addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+            addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+            addon.setValue(addonRepresentation.getValue());
+            addon.setKey(addonRepresentation.getKey());
+            addon.setGroup(addonRepresentation.getGroup());
+            addons.add(addon);
+        }
+
+        tenant.setAddons(addons);
+
+        try {
+            this.accountsService.updateTenant(tenant);
+            return Response.ok().build();
+
+        } catch (InvalidEntityException e) {
+            return Response.status(422).entity("Invalid entity").build();
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @PUT
@@ -152,7 +191,22 @@ public class TenantResource implements Resource
         }
 
         try {
-            Tenant tenant = userAndTenant.getTenant();
+            Tenant tenant = new Tenant();
+            TenantRepresentation tenantRepresentation = userAndTenant.getTenant();
+
+            tenant.setName(tenantRepresentation.getName());
+            // Addons
+            List<Addon> addons = Lists.newArrayList();
+            for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
+                Addon addon = new Addon();
+                addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                addon.setValue(addonRepresentation.getValue());
+                addon.setKey(addonRepresentation.getKey());
+                addon.setGroup(addonRepresentation.getGroup());
+                addons.add(addon);
+            }
+
             tenant.setCreationDate(new Date());
             accountsService.createTenant(tenant);
             execution.getContext().setTenant(tenant);
@@ -194,18 +248,18 @@ public class TenantResource implements Resource
 
         @NotNull
         @Valid
-        private Tenant tenant;
+        private TenantRepresentation tenant;
 
         public UserAndTenant()
         {
         }
 
-        public Tenant getTenant()
+        public TenantRepresentation getTenant()
         {
             return tenant;
         }
 
-        public void setTenant(Tenant tenant)
+        public void setTenant(TenantRepresentation tenant)
         {
             this.tenant = tenant;
         }

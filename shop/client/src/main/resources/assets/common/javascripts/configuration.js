@@ -219,6 +219,7 @@ angular.module('mayocat.configuration', ['ngResource'])
              */
             put: function (config, callback) {
                 settingsResource.update(prepareSettings(settings), callback);
+                $rootScope.$broadcast("configuration:updated");
             },
 
             /**
@@ -287,37 +288,4 @@ angular.module('mayocat.configuration', ['ngResource'])
 
             }
         };
-    })
-    .controller('ConfigurationController', ['$scope', '$rootScope', 'configurationService', 'timeService',
-
-        function ($scope, $rootScope, configurationService, timeService) {
-
-            $scope.updateSettings = function () {
-                $scope.isSaving = true;
-                configurationService.put($scope.settings, function () {
-                    $scope.isSaving = false;
-                    $rootScope.$broadcast("configuration:updated");
-                    $rootScope.$broadcast("catalog:refreshCatalog");
-                });
-            };
-
-            $scope.tzRegions = timeService.getTzData();
-
-            $scope.isVisible = function (path) {
-                return configurationService.isVisible($scope.settings, path);
-            }
-
-            $scope.isConfigurable = function (path) {
-                return configurationService.isConfigurable($scope.settings, path);
-            }
-
-            $scope.isDefaultValue = function (path) {
-                return configurationService.isDefaultValue($scope.settings, path);
-            };
-
-            configurationService.getSettings(function (settings) {
-                $scope.settings = settings;
-            });
-        }
-
-    ]);
+    });

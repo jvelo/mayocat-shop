@@ -413,7 +413,7 @@
 
         return {
 
-            getTzData: function () {
+            getTimeZoneData: function () {
                 return tzData;
             },
 

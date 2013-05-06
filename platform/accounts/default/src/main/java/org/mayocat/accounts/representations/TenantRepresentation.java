@@ -7,10 +7,12 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.api.representation.AddonRepresentation;
+import org.mayocat.model.Addon;
 import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -41,6 +43,13 @@ public class TenantRepresentation
         this.slug = tenant.getSlug();
         this.name = tenant.getName();
         this.defaultHost = tenant.getDefaultHost();
+
+        if (tenant.getAddons().isLoaded()) {
+            this.addons = Lists.newArrayList();
+            for (Addon a : tenant.getAddons().get()) {
+                addons.add(new AddonRepresentation(a));
+            }
+        }
 
         if (tenant.getCreationDate() != null) {
             this.creationDate = new DateTime(tenant.getCreationDate().getTime(), globalTimeZone);

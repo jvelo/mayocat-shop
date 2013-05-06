@@ -1,5 +1,6 @@
 var MayocatShop = angular.module('MayocatShop', [
     'mayocat',
+    'settings',
     'search',
     'money',
     'product',
@@ -29,7 +30,9 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         when('/collections/', {templateUrl: 'partials/collections.html', controller: 'CatalogController', title: 'Catalog'}).
         when('/products/:product', {templateUrl: 'partials/product.html', controller: 'ProductController', title: 'Products'}).
         when('/collections/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController', title: 'Catalog'}).
-        when('/configuration/', {templateUrl: 'partials/configuration.html', controller: 'ConfigurationController', title: 'Settings'}).
+        when('/settings/', {templateUrl: 'partials/settingsGeneral.html', controller: 'SettingsController', title: 'Settings'}).
+        when('/settings/tenant', {templateUrl: 'partials/settingsTenant.html', controller: 'SettingsTenantController', title: 'Settings'}).
+        when('/settings/catalog', {templateUrl: 'partials/settingsCatalog.html', controller: 'SettingsController', title: 'Settings'}).
         otherwise({redirectTo: '/'});
 }]);
 
@@ -158,26 +161,37 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
         scope.isCatalog = false;
         scope.isPages = false;
         scope.isNews = false;
+        scope.isSettings = false;
 
         scope.$watch('location.path()', function (path) {
 
             scope.isCatalog = false;
             scope.isPages = false;
             scope.isNews = false;
+            scope.isSettings = false;
 
             angular.forEach(["/catalog", "/products/", "/collections/"], function (catalogPath) {
                 if (path.indexOf(catalogPath) == 0) {
                     scope.isCatalog = true;
+                    return;
                 }
             });
             angular.forEach(["/contents", "/pages/"], function (pagePage) {
                 if (path.indexOf([pagePage]) == 0) {
                     scope.isPages = true;
+                    return;
                 }
             });
             angular.forEach(["/news", "/articles/"], function (newsPage) {
                 if (path.indexOf([newsPage]) == 0) {
                     scope.isNews = true;
+                    return;
+                }
+            });
+            angular.forEach(["/settings/"], function (configurationPath) {
+                if (path.indexOf(configurationPath) == 0) {
+                    scope.isSettings = true;
+                    return;
                 }
             });
         });
