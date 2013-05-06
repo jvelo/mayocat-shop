@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.mayocat.session.Session;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -42,5 +43,27 @@ public class CookieSession implements Session
     public void setAttribute(String key, Serializable value)
     {
         this.attributes.put(key, value);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CookieSession other = (CookieSession) obj;
+
+        return Objects.equal(this.attributes, other.attributes);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(
+                this.attributes
+        );
     }
 }

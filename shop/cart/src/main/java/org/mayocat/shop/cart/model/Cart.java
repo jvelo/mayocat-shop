@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mayocat.shop.catalog.model.Purchasable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -19,6 +22,8 @@ import com.google.common.collect.Sets;
 public class Cart implements Serializable
 {
     private static final long serialVersionUID = 4776955705209536037L;
+
+    private static final transient Logger LOGGER = (Logger) LoggerFactory.getLogger(Cart.class);
 
     private Map<Purchasable, Long> items = Maps.newLinkedHashMap();
 
@@ -54,6 +59,8 @@ public class Cart implements Serializable
 
     public void addItem(Purchasable item, Long quantity)
     {
+        LOGGER.debug("Adding item {} ({}) to cart", item, quantity);
+
         Preconditions.checkNotNull(item);
         Preconditions.checkNotNull(quantity);
         Preconditions.checkNotNull(item.getId());
@@ -68,6 +75,8 @@ public class Cart implements Serializable
         } else {
             items.put(item, quantity);
         }
+
+        LOGGER.debug("Cart now contains {} items", this.items.size());
     }
 
     public Map<Purchasable, Long> getItems()
@@ -101,5 +110,20 @@ public class Cart implements Serializable
     public void empty()
     {
         items.clear();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cart other = (Cart) obj;
+
+        return Objects.equal(this.items, other.items)
+                && Objects.equal(this.currency, other.currency);
     }
 }

@@ -22,6 +22,8 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -40,6 +42,8 @@ public class CartContextBuilder
 
     private ImageContextBuilder imageContextBuilder;
 
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(CartContextBuilder.class);
+
     public CartContextBuilder(AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
     {
         this.attachmentStore = attachmentStore;
@@ -49,6 +53,8 @@ public class CartContextBuilder
 
     public CartContext build(Cart cart, Locale locale)
     {
+        LOGGER.debug("Building cart context...");
+
         Long numberOfItems = 0l;
         List<CartItemContext> itemsContext = Lists.newArrayList();
 
@@ -77,6 +83,8 @@ public class CartContextBuilder
         }
 
         for (final Purchasable purchasable : items.keySet()) {
+
+            LOGGER.debug("Adding purchasable {} to cart context", purchasable.getTitle());
 
             Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
             {
