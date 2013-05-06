@@ -29,11 +29,17 @@ public class ImageContextBuilder
 
     public ImageContext createImageContext(Image image)
     {
+        return this.createImageContext(image, false);
+    }
+
+    public ImageContext createImageContext(Image image, boolean featured)
+    {
         ImageContext context = new ImageContext("/attachments/" + image.getAttachment().getSlug() +
                 "." + image.getAttachment().getExtension());
 
         context.setTitle(ContextUtils.safeString(image.getAttachment().getTitle()));
         context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
+        context.setFeatured(featured);
 
         for (String dimensionName : theme.getThumbnails().keySet()) {
             ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
@@ -66,6 +72,11 @@ public class ImageContextBuilder
     }
 
     public ImageContext createPlaceholderImageContext()
+    {
+        return createPlaceholderImageContext(false);
+    }
+
+    public ImageContext createPlaceholderImageContext(boolean featured)
     {
         ImageContext context = new ImageContext("http://placehold.it/800x800");
         for (String dimensionName : theme.getThumbnails().keySet()) {
