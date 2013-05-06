@@ -72,16 +72,16 @@ public class ProductContextBuilder implements ContextConstants
                 if (featuredImage == null && image.getAttachment().getId().equals(product.getFeaturedImageId())) {
                     featuredImage = image;
                 }
-                allImages.add(imageContextBuilder.createImageContext(image));
+                allImages.add(imageContextBuilder.createImageContext(image, image == featuredImage));
             }
             if (featuredImage == null) {
                 // If no featured image has been set, we use the first image in the array.
                 featuredImage = images.get(0);
             }
-            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage));
+            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage, true));
         } else {
             // Create placeholder image
-            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
+            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext(true);
             imagesContext.put("featured", placeholder);
             allImages = Arrays.asList(placeholder);
         }
