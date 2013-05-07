@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.7.5.1</version>
     </parent>
     <artifactId>mayocat-platform-session</artifactId>
     <packaging>jar</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.5.1</version>
 
     <name>Mayocat Platform - Session</name>
     <description>Cookies session support</description>
