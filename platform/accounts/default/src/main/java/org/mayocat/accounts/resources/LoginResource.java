@@ -22,7 +22,6 @@ import org.xwiki.component.annotation.Component;
 
 @Component(LoginResource.PATH)
 @Path(LoginResource.PATH)
-@ExistingTenant
 public class LoginResource implements Resource
 {
     public static final String PATH = API_ROOT_PATH + "login";

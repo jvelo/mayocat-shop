@@ -117,7 +117,9 @@ public class TenantResource implements Resource
     public UserAndTenant currentTenant()
     {
         UserAndTenant userAndTenant = new UserAndTenant();
-        userAndTenant.setTenant(new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant()));
+        if (execution.getContext().getTenant() != null) {
+            userAndTenant.setTenant(new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant()));
+        }
         userAndTenant.setUser(execution.getContext().getUser());
         return userAndTenant;
     }

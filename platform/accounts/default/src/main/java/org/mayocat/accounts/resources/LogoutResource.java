@@ -13,7 +13,6 @@ import org.xwiki.component.annotation.Component;
 
 @Component(LogoutResource.PATH)
 @Path(LogoutResource.PATH)
-@ExistingTenant
 public class LogoutResource implements Resource
 {
     public static final String PATH = API_ROOT_PATH + "logout";
