@@ -47,7 +47,6 @@ public class ValidConfigurationEnforcerTest extends AbstractConfigurationTest
 
         Map<String, Object> enforced = result.getResult();
         Assert.assertEquals(false, result.isHasErrors());
-        Assert.assertEquals("My shop name", (String) enforced.get("name"));
         Assert.assertEquals(Locale.FRANCE.toString(),
                 (String) ((Map<String, Object>) enforced.get("locales")).get("main")
         );
@@ -64,7 +63,6 @@ public class ValidConfigurationEnforcerTest extends AbstractConfigurationTest
 
         Map<String, Object> enforced = result.getResult();
         Assert.assertEquals(true, result.isHasErrors());
-        Assert.assertEquals("My shop name", (String) enforced.get("name"));
         Assert.assertTrue(((Map<String, Object>) enforced.get("locales")).isEmpty());
     }
 }

@@ -15,14 +15,6 @@ public class GeneralSettings implements ExposedSettings
 {
     @Valid
     @JsonProperty
-    private Configurable<String> name = new Configurable<String>("", true);
-
-    @Valid
-    @JsonProperty
-    private Configurable<String> tagline = new Configurable<String>("", true);
-
-    @Valid
-    @JsonProperty
     private LocalesSettings locales = new LocalesSettings();
 
     @Valid
@@ -34,20 +26,12 @@ public class GeneralSettings implements ExposedSettings
         return locales;
     }
 
-    public Configurable<String> getName()
-    {
-        return name;
-    }
-
-    public Configurable<String> getTagline()
-    {
-        return tagline;
-    }
-
     public TimeSettings getTime()
     {
         return time;
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     @JsonIgnore
@@ -55,4 +39,5 @@ public class GeneralSettings implements ExposedSettings
     {
         return "general";
     }
+
 }

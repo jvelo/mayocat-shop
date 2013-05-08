@@ -18,6 +18,7 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeManager;
@@ -71,6 +72,12 @@ public class ResourceResource implements Resource
                 break;
             case CLASSPATH_RESOURCE:
                 URI uri = Resources.getResource(themeResource.getPath()).toURI();
+
+                if (uri.getScheme().equals("jar")) {
+                    // Not supported for now
+                   return Response.status(Response.Status.NOT_FOUND).build();
+                }
+
                 file = new File(uri);
                 break;
         }

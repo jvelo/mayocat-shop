@@ -50,8 +50,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
     public final static String SITE_TITLE = "title";
 
-    public final static String SITE_TAGLINE = "tagline";
-
     public static final String THEME_PATH = "THEME_PATH";
 
     @Inject
@@ -82,8 +80,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         data.put(SITE, new HashMap()
         {
             {
-                put(SITE_TITLE, config.getName().getValue());
-                put(SITE_TAGLINE, config.getTagline().getValue());
+                put(SITE_TITLE, execution.getContext().getTenant().getName());
             }
         });
 
@@ -107,8 +104,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         data.put(COLLECTIONS, collectionsContext);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
-        data.put(PAGE_TITLE, config.getName().getValue());
-        data.put(PAGE_DESCRIPTION, config.getTagline().getValue());
+        data.put(PAGE_TITLE, execution.getContext().getTenant().getName());
 
         // FIXME
         // Temporarly put a product list in the context.

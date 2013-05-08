@@ -44,7 +44,6 @@ public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
         Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(generalConfiguration, tenantConfiguration);
         Map<String, Object> merged = merger.merge();
-        Assert.assertEquals("My shop name", ((Map<String, Object>) merged.get("name")).get("value"));
         Assert.assertEquals(Locale.FRANCE.toString(),
                 ((Map<String, Object>) ((Map<String, Object>) merged.get("locales")).get("main")).get("value")
         );
