@@ -1,104 +1,100 @@
-<ng-form name="settingsForm">
-    <div id="settings">
-        <div class="span8">
-            <!-- header -->
-            <div class="page-header">
-                <h1 class="">Catalog settings</h1>
-            </div>
-
-            <form class="form-horizontal" name="shopForm">
-                <fieldset>
-                    <legend>Currencies</legend>
-
-                    <!-- Default currency -->
-                    <div class="control-group" ng-show="isVisible('catalog.currencies.main')"
-                         ng-class="{default: isDefaultValue('catalog.currencies.main')}">
-                        <label class="control-label" for="defaultCurrency">Default currency</label>
-
-                        <div class="controls">
-                            <input type="text" name="name" class="input-xlarge"
-                                   ng-model="settings.catalog.currencies.main.value"
-                                   id="defaultCurrency"
-                                   ng-disabled="!isConfigurable('catalog.currencies.main')"/>
-                        </div>
-                    </div>
-
-                    <!-- Other currencies -->
-                    <div class="control-group" ng-show="isVisible('catalog.currencies.others')"
-                         ng-class="{default: isDefaultValue('catalog.currencies.others')}">
-                        <label class="control-label" for="otherCurrencies">Other currencies</label>
-
-                        <div class="controls">
-                            <input type="text" name="name" class="input-xlarge"
-                                   ng-model="settings.catalog.currencies.others.value"
-                                   id="otherCurrencies"
-                                   ng-disabled="!isConfigurable('catalog.currencies.others')"/>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Products</legend>
-
-                    <!-- Collections -->
-                    <div class="control-group" ng-show="isVisible('catalog.products.collections')"
-                         ng-class="{default: isDefaultValue('catalog.products.collections')}">
-                        <label class="control-label" for="collectionsEnabled">have collections</label>
-
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox"
-                                       class="input"
-                                       id="collectionsEnabled"
-                                       ng-model="settings.catalog.products.collections.value"/>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Stock -->
-                    <div class="control-group" ng-show="isVisible('catalog.products.stock')"
-                         ng-class="{default: isDefaultValue('catalog.products.stock')}">
-                        <label class="control-label" for="stockEnabled">have stock</label>
-
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox"
-                                       class="input"
-                                       id="stockEnabled"
-                                       ng-model="settings.catalog.products.stock.value"/>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Variants -->
-                    <div class="control-group" ng-show="isVisible('catalog.products.variants')"
-                         ng-class="{default: isDefaultValue('catalog.products.variants')}">
-                        <label class="control-label" for="variantsEnabled">have variants</label>
-
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox"
-                                       class="input"
-                                       id="variantsEnabled"
-                                       ng-model="settings.catalog.products.variants.value"/>
-                            </label>
-                        </div>
-                    </div>
-
-                </fieldset>
-            </form>
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">Catalog settings</h1>
         </div>
 
-        <div class="span2">
-            <div class="buttons hasLoading">
-                <button ng-click="updateSettings()"
-                        class="btn btn-large btn-primary"
-                        ng-disabled="!settingsForm.shopForm.$dirty
-                    && !settingsForm.generalForm.$dirty">
-                    Update
-                </button>
-                <span ng-class="{'loading': isSaving}"></span>
-            </div>
+        <form class="form-horizontal" name="shopForm">
+            <fieldset>
+                <legend>Currencies</legend>
+
+                <!-- Default currency -->
+                <div class="control-group" ng-show="isVisible('catalog.currencies.main')"
+                     ng-class="{default: isDefaultValue('catalog.currencies.main')}">
+                    <label class="control-label">Default currency</label>
+
+                    <div class="controls">
+                        <currency-picker model="settings.catalog.currencies.main.value"
+                                         disabled="!isConfigurable('catalog.currencies.main')"
+                                         defaultValue="settings.catalog.currencies.main.default"/>
+
+                    </div>
+                </div>
+
+                <!-- Other currencies -->
+                <div class="control-group" ng-show="isVisible('catalog.currencies.others')"
+                     ng-class="{default: isDefaultValue('catalog.currencies.others')}">
+                    <label class="control-label">Other currencies</label>
+
+                    <div class="controls">
+                        <currency-list-picker model="settings.catalog.currencies.others.value"
+                                              disabled="!isConfigurable('catalog.currencies.others')"
+                                              defaultValue="settings.catalog.currencies.other.default"/>
+                    </div>
+                    <input type="hidden" ng-model="settings.catalog.currencies.others.value"/>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Products</legend>
+
+                <!-- Collections -->
+                <div class="control-group" ng-show="isVisible('catalog.products.collections')"
+                     ng-class="{default: isDefaultValue('catalog.products.collections')}">
+                    <label class="control-label" for="collectionsEnabled">have collections</label>
+
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox"
+                                   class="input"
+                                   id="collectionsEnabled"
+                                   ng-model="settings.catalog.products.collections.value"/>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Stock -->
+                <div class="control-group" ng-show="isVisible('catalog.products.stock')"
+                     ng-class="{default: isDefaultValue('catalog.products.stock')}">
+                    <label class="control-label" for="stockEnabled">have stock</label>
+
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox"
+                                   class="input"
+                                   id="stockEnabled"
+                                   ng-model="settings.catalog.products.stock.value"/>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Variants -->
+                <div class="control-group" ng-show="isVisible('catalog.products.variants')"
+                     ng-class="{default: isDefaultValue('catalog.products.variants')}">
+                    <label class="control-label" for="variantsEnabled">have variants</label>
+
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox"
+                                   class="input"
+                                   id="variantsEnabled"
+                                   ng-model="settings.catalog.products.variants.value"/>
+                        </label>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="span2">
+        <div class="buttons hasLoading">
+            <button ng-click="updateSettings()"
+                    class="btn btn-large btn-primary">
+                Update
+            </button>
+            <span ng-class="{'loading': isSaving}"></span>
         </div>
     </div>
-</ng-form>
+</div>

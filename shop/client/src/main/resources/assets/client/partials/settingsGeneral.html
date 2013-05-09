@@ -20,11 +20,7 @@
                             ng-disabled="!isConfigurable('general.time.timeZone')">
                             <option value="">-- Select a time zone --</option>
                             <optgroup ng-repeat="(region, list) in timeZoneRegions" label="{{ region }}">
-                                <option ng-repeat="(value, timeZone) in list"
-                                    value="{{ value }}"
-                                    ng-selected="value == settings.general.time.timeZone.value">
-                                    {{ timeZone.city }} (GMT{{ timeZone.stdOffset }})
-                                </option>
+
                             </optgroup>
                         </select>
                     </div>
@@ -43,7 +39,8 @@
                     </div>
                 </div>
 
-                <!-- Other locales -->
+                <!-- Other locales
+                 FIXME not yet supported
                 <div class="control-group" ng-show="isVisible('general.locales.others')"
                     ng-class="{default: isDefaultValue('general.locales.others')}">
                     <label class="control-label" for="otherLocales">Other languages</label>
@@ -54,7 +51,7 @@
                             id="otherLocales"
                             ng-disabled="!isConfigurable('general.locales.others')"/>
                     </div>
-                </div>
+                </div>-->
 
                 <!-- Theme -->
                 <div class="control-group" ng-show="isVisible('theme.active')"

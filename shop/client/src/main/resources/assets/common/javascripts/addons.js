@@ -35,9 +35,6 @@ angular.module('mayocat.addons', ['ngResource'])
                 value: '='
             },
             template: "<textarea name='whatever' placeholder={{placeholder}} ng-model='value' ck-editor></textarea>",
-            link: function (scope, element, attrs) {
-
-            }
         };
     }])
 

@@ -39,6 +39,7 @@
                         <include>assets/client/vendor/angular-strap.min.js</include>
                     </preloadSources>
                     <sourceIncludes>
+                        <include>assets/common/javascripts/polyfill.js</include>
                         <include>assets/common/javascripts/addons.js</include>
                         <include>assets/common/javascripts/authentication.js</include>
                         <include>assets/common/javascripts/mayocat.js</include>
@@ -46,7 +47,6 @@
                         <include>assets/common/javascripts/thumbnail.js</include>
                         <include>assets/common/javascripts/time.js</include>
                         <include>assets/common/javascripts/configuration.js</include>
-                        <include>assets/client/javascripts/polyfill.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
                         <include>assets/client/javascripts/settings.js</include>
                         <include>assets/client/javascripts/controllers.js</include>
