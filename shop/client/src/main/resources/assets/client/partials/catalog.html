@@ -8,7 +8,7 @@
     <!-- list collections -->
     <div ng-show="hasCollections">
         <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-            <li ng-repeat="collection in collections" data-handle="{{collection.slug}}"
+            <li ng-repeat="collection in collections" data-handle="{{collection.slug}}" data-type="collections"
                 ng-class="{hasChildren: collection.products.length > 0}">
                 <div class="droptarget">
                     <div class="listItem">
@@ -40,7 +40,7 @@
                     <span class="collection">Uncategorized</span>
                 </div>
                 <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                    <li ng-repeat="product in products" data-handle="{{product.slug}}">
+                    <li ng-repeat="product in products" data-handle="{{product.slug}}" data-type="products">
                         <div class="droptarget">
                             <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
                             <div><span class="dragme move-handle"></span></div>

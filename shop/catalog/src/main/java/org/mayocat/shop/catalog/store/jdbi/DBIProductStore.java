@@ -101,15 +101,15 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
     }
 
-    public void moveProduct(String collectionToMove, String collectionToMoveRelativeTo,
+    public void moveProduct(String productToMove, String productToMoveRelativeTo,
             HasOrderedCollections.RelativePosition relativePosition) throws InvalidMoveOperation
     {
         this.dao.begin();
 
         List<Product> allProducts = this.findAll();
         MoveEntityInListOperation<Product> moveOp =
-                new MoveEntityInListOperation<Product>(allProducts, collectionToMove,
-                        collectionToMoveRelativeTo, relativePosition);
+                new MoveEntityInListOperation<Product>(allProducts, productToMove,
+                        productToMoveRelativeTo, relativePosition);
 
         if (moveOp.hasMoved()) {
             this.dao.updatePositions(PRODUCT_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());

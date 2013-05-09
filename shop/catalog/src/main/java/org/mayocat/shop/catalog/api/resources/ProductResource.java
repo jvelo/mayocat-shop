@@ -201,7 +201,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
                         HasOrderedCollections.RelativePosition.AFTER);
             } else {
-                this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
+                this.productStore.get().moveProduct(slug, slugOfProductToMoveBeforeOf,
                         HasOrderedCollections.RelativePosition.BEFORE);
             }
 

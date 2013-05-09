@@ -23,11 +23,13 @@
             handle: handle,
             update: function(event, ui) {
               var moved = ui.item.data('handle'),
-                  target = ui.item.next().data('handle') ? ui.item.next().data('handle') : ui.item.prev().data('handle'),
+                  type = ui.item.data('type') || "",
+                  target = ui.item.next().data('handle') || ui.item.prev().data('handle'),
                   position = ui.item.next().data('handle') ? "before" : "after";
 
               sortableOnChange({
                 handle: moved,
+                type: type,
                 target: target,
                 position: position
               });

@@ -1,22 +1,50 @@
 'use strict'
 
 angular.module('collection', ['ngResource'])
-    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location',
-        function ($scope, $rootScope, $routeParams, $resource, $location) {
+    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http',
+        function ($scope, $rootScope, $routeParams, $resource, $location, $http) {
 
             $scope.slug = $routeParams.collection;
-
-            $scope.updateCollection = function () {
-                $scope.isSaving = true;
-                $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function () {
-                    $scope.isSaving = false;
-                    $rootScope.$broadcast('catalog:refreshCatalog');
-                });
-            }
-
             $scope.CollectionResource = $resource("/api/collections/:slug");
 
-            $scope.collection = $scope.CollectionResource.get({ "slug": $scope.slug });
+            // Functions
+
+            $scope.isNew = function () {
+                return $scope.slug == "_new";
+            };
+
+            $scope.newCollection = function () {
+                return {
+                    slug: "",
+                    title: ""
+                };
+            };
+
+            $scope.updateCollection = function (callback) {
+                $scope.isSaving = true;
+                if ($scope.isNew()) {
+                    $http.post("/api/collections/", $scope.collection)
+                        .success(function (data, status, headers, config) {
+                            $scope.isSaving = false;
+                            var fragments = headers("location").split('/'),
+                                slug = fragments[fragments.length - 1];
+                            $location.url("/collections/" + slug);
+                            $rootScope.$broadcast("catalog:refreshCatalog");
+                            callback && callback.call();
+                        })
+                        .error(function (data, status, headers, config) {
+                            $scope.isSaving = false;
+                            callback && callback.call();
+                            // TODO handle 409 conflict etc.
+                        });
+                }
+                else {
+                    $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function () {
+                        $scope.isSaving = false;
+                        $rootScope.$broadcast('catalog:refreshCatalog');
+                    });
+                }
+            }
 
             $scope.confirmDeletion = function () {
                 $rootScope.$broadcast('collection:confirmDelete');
@@ -30,6 +58,15 @@ angular.module('collection', ['ngResource'])
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });
+            }
+
+            // Initialize
+
+            if (!$scope.isNew()) {
+                $scope.collection = $scope.CollectionResource.get({ "slug": $scope.slug });
+            }
+            else {
+                $scope.collection = $scope.newCollection();
             }
 
         }]);

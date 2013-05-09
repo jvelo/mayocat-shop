@@ -16,7 +16,7 @@ public interface PositionedDAO<E extends Entity>
     @SqlBatch
     (
             "UPDATE <type> " +
-            "SET    <type>.position = :position " +
+            "SET    position = :position " +
             "WHERE  entity_id = :entity.id "
     )
     void updatePositions(@Define("type") String type, @BindBean("entity") List<E> entity,
