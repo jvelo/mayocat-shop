@@ -1,0 +1,81 @@
+group CollectionDAO;
+
+create() ::= <<
+    INSERT INTO collection
+                (entity_id,
+                 position,
+                 title,
+                 description)
+    VALUES      (:collection.id,
+                 :position,
+                 :collection.title,
+                 :collection.description)
+>>
+
+update() ::= <<
+    UPDATE collection
+    SET    title = :collection.title,
+           description = :collection.description
+    WHERE  entity_id = :collection.id
+>>
+
+lastPosition() ::= <<
+    SELECT collection.position
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND entity.tenant_id = :tenant.id
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+findAllForProduct() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                      FROM   collection_product
+                                      WHERE  product_id = :product.id)
+>>
+
+lastProductPosition() ::= <<
+    SELECT position
+    FROM   collection_product
+    WHERE  collection_id = :collection.id
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+addProduct() ::= <<
+    INSERT INTO collection_product
+                (collection_id,
+                 product_id,
+                 position)
+    VALUES      (:collection.id,
+                 :product.id,
+                 :position)
+>>
+
+removeProduct() ::= <<
+    DELETE FROM collection_product
+    WHERE  collection_id = :collection.id
+           AND product_id = :product.id
+>>
+
+findWithProductCountRows() ::= <<
+    SELECT *,
+           COALESCE(_count_collections.count, 0) AS _count
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+           LEFT JOIN (SELECT collection_product.collection_id,
+                             COUNT(collection_product.product_id) AS count
+                      FROM   collection_product
+                      GROUP  BY collection_product.collection_id) _count_collections
+                 ON _count_collections.collection_id = collection.entity_id
+    WHERE  entity.tenant_id = :tenant.id
+    ORDER BY collection.position
+>>
