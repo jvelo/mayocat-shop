@@ -21,7 +21,7 @@ import com.google.common.base.Optional;
 
 public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage, Purchasable
 {
-    private static final long serialVersionUID = 6981826946713552336L;
+    private static final long serialVersionUID = 6998229869430511994L;
 
     private UUID id;
 
