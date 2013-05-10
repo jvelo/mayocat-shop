@@ -21,6 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.jackson.OptionalStringListDeserializer;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
@@ -54,7 +55,7 @@ public class CartResource extends AbstractFrontResource implements Resource
     @POST
     @Path("add")
     public Response addToCart(@FormParam("product") String productSlug,
-            @FormParam("quantity") @DefaultValue("1") Long quantity, @Context HttpServletRequest request)
+            @FormParam("quantity") @DefaultValue("1") Long quantity)
             throws URISyntaxException
     {
         if (Strings.isNullOrEmpty(productSlug)) {
@@ -68,6 +69,26 @@ public class CartResource extends AbstractFrontResource implements Resource
 
         Cart cart = cartAccessor.getCart();
         cart.addItem(product, quantity);
+
+        return Response.seeOther(new URI("/cart")).build();
+    }
+
+    @POST
+    @Path("remove")
+    public Response removeFromCart(@FormParam("product") String productSlug)
+            throws URISyntaxException
+    {
+        if (Strings.isNullOrEmpty(productSlug)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        Product product = productStore.get().findBySlug(productSlug);
+        if (product == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Product not found").build();
+        }
+
+        Cart cart = cartAccessor.getCart();
+        cart.removeItem(product);
 
         return Response.seeOther(new URI("/cart")).build();
     }
@@ -117,7 +138,11 @@ public class CartResource extends AbstractFrontResource implements Resource
                         Integer loopIndex = 0;
                         for (Purchasable purchasable : items.keySet()) {
                             if (loopIndex.equals(index)) {
-                                cart.setItem(purchasable, quantity);
+                                if (quantity <= 0) {
+                                    cart.removeItem(purchasable);
+                                } else {
+                                    cart.setItem(purchasable, quantity);
+                                }
                             }
                             loopIndex++;
                         }
