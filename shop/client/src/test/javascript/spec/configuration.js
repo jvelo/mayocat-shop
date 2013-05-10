@@ -83,10 +83,11 @@ describe('Configuration', function () {
 
 
     describe('Controller', function () {
-        var configurationController,
+        var settingsController,
             httpBackend;
 
         beforeEach(module('mayocat'));
+        beforeEach(module('settings'));
 
         beforeEach(inject(function ($injector, $rootScope, $controller) {
             httpBackend = $injector.get('$httpBackend');
@@ -119,32 +120,32 @@ describe('Configuration', function () {
                 }
             });
 
-            configurationController = $rootScope.$new();
-            configurationController.$apply();
-            $controller('ConfigurationController', { $scope:configurationController });
+            settingsController = $rootScope.$new();
+            settingsController.$apply();
+            $controller('SettingsController', { $scope:settingsController });
         }));
 
         it("Should be defined", function () {
-            expect(configurationController).toBeDefined();
+            expect(settingsController).toBeDefined();
         });
 
         it("Should save original values", function () {
             httpBackend.flush();
-            expect(configurationController.settings.module.propertySet.property.__originalValue).toBe("Hello");
+            expect(settingsController.settings.module.propertySet.property.__originalValue).toBe("Hello");
         });
 
         it("Should prepare settings object for submit and not leave empty path", function () {
             httpBackend.flush();
-            configurationController.settings.module.propertySet.property.value = "Salut";
+            settingsController.settings.module.propertySet.property.value = "Salut";
             httpBackend.expectPUT("/api/configuration/settings", /{"module":{"propertySet":{"property":"Salut"}}}/).respond(200);
-            configurationController.updateSettings();
+            settingsController.updateSettings();
         });
 
         it("Should prepare configuration object for submit when value is overriding but has not been changed",
             function () {
             httpBackend.flush();
             httpBackend.expectPUT("/api/configuration/settings", /{"module":{"propertySet":{"property":"Hello"}}}/).respond(200);
-            configurationController.updateSettings();
+            settingsController.updateSettings();
         });
 
     });

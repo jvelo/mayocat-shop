@@ -1,6 +1,7 @@
 package org.mayocat.cms.pages.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -12,8 +13,8 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
-import org.mayocat.store.rdbms.dbi.dao.PageDAO;
-import org.mayocat.store.rdbms.jdbi.AddonsHelper;
+import mayoapp.dao.PageDAO;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -31,7 +32,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     private PageDAO dao;
 
     @Override
-    public Long create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
+    public Page create(@Valid Page page) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(PAGE_TABLE_NAME, page.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -39,19 +40,21 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
 
         this.dao.begin();
 
-        Long entityId = this.dao.createEntity(page, PAGE_TABLE_NAME, getTenant());
+        UUID entityId = UUID.randomUUID();
         page.setId(entityId);
+
+        this.dao.createEntity(page, PAGE_TABLE_NAME, getTenant());
         Integer lastIndex = this.dao.lastPosition(getTenant());
         if (lastIndex == null) {
             lastIndex = 0;
         }
-        this.dao.createPage(entityId, lastIndex + 1, page);
+        this.dao.createPage(lastIndex + 1, page);
         this.dao.insertTranslations(entityId, page.getTranslations());
         this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();
 
-        return entityId;
+        return page;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
-    public List<Page> findByIds(List<Long> ids)
+    public List<Page> findByIds(List<UUID> ids)
     {
         return AddonsHelper.withAddons(this.dao.findByIds(PAGE_TABLE_NAME, ids), this.dao);
     }
@@ -121,7 +124,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
-    public Page findById(Long id)
+    public Page findById(UUID id)
     {
         Page page = this.dao.findById(PAGE_TABLE_NAME, id);
         List<Addon> addons = this.dao.findAddons(page);

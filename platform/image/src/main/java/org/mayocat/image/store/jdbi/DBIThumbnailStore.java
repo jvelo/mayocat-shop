@@ -1,14 +1,14 @@
 package org.mayocat.image.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.image.model.Thumbnail;
-import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.image.store.jdbi.dao.ThumbnailDAO;
+import mayoapp.dao.ThumbnailDAO;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -50,7 +50,7 @@ public class DBIThumbnailStore implements ThumbnailStore, Initializable
     }
 
     @Override
-    public List<Thumbnail> findAllForIds(List<Long> ids)
+    public List<Thumbnail> findAllForIds(List<UUID> ids)
     {
         return this.dao.findAllThumbnails(ids);
     }

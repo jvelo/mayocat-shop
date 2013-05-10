@@ -1,0 +1,89 @@
+<div class="loading" ng-show="loading"></div>
+
+<div ng-show="!!createNewTenant">
+    <form autocomplete="off">
+        <fieldset>
+            <legend>
+                Create a new tenant
+                <a href="#" ng-click="hideNewTenantForm()">
+                    <i class="icon-remove-sign pull-right"></i>
+                </a>
+            </legend>
+
+            <div>
+                <div>
+                    <h4>Tenant information</h4>
+                    <label>Name *</label>
+                    <input type="text" ng-model="tenant.name" placeholder="Tenant's name"/>
+                </div>
+
+                <div class="input-append">
+                    <label>Id *</label>
+                    <input type="text" ng-model="tenant.slug" ng-disabled="!isEditingSlug" placeholder="id"/>
+                    <span class="add-on" title="Edit the the tenant's id"
+                          ng-click="isEditingSlug=!isEditingSlug"><i class="icon-edit"></i></span>
+                </div>
+            </div>
+
+            <div>
+                <h4>Administrator information</h4>
+                <label>Email *</label>
+                <input type="text" ng-model="user.email" placeholder="Administrator email"/>
+
+                <label>Username *</label>
+                <input type="text" ng-model="user.slug" placeholder="Administrator username"/>
+
+                <label>Password *</label>
+                <input type="password" ng-model="user.password" placeholder="Administrator password"/>
+
+                <label>Confirm password *</label>
+                <input type="password" ng-model="user.password2" placeholder="Confirm password"/>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" ng-click="createTenant()" class="btn btn-primary">Create</button>
+                <button type="submit" ng-click="hideNewTenantForm()" class="btn">Cancel</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<div ng-controller="TenantListController">
+    <table class="table table-hover tenants" ng-show="tenants.length > 0">
+        <thead>
+        <tr>
+            <th>Tenant</th>
+            <th>Created on</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="tenant in tenants">
+            <td>
+                <div>
+                    <h4>{{tenant.name}}</h4>
+                    <small>{{tenant.slug}}</small>
+                </div>
+            </td>
+            <td>
+                {{tenant.creationDate | iso8601toLocalDate:'LLL'}}
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+    <div class="pagination">
+        <ul>
+            <li>
+                <a ng-class="{'not-a-link': currentPage == 1}" ng-click="gotoPage(1)">First</a>
+            </li>
+            <li ng-repeat="page in pages">
+                <a ng-bind="page.number" ng-click="gotoPage(page.number)" ng-class="{'not-a-link': currentPage == page.number}"></a>
+            </li>
+            <li>
+                <a ng-class="{'not-a-link': currentPage == totalPages}" ng-click="gotoPage(totalPages)">Last</a>
+            </li>
+        </ul>
+    </div>
+
+</div>

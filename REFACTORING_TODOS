@@ -1,9 +1,7 @@
 - Change the getAddons() + conveyAddon() API to Optional<List<Addon>> getAddons() in product -> DONE except for translations
   - Same for getTranslations()
   - => maybe create our own option type with an appropriate semantic like MaybeLoaded<Addons>, MaybeLoaded<Translations> etc.
-- Move entity schemas in their own modules (products, collections, etc.)
 - Use ResultSetRepresentation in catalog lists
 - Check usage of plural in package names (i.e. representations vs. representation)
-- Move to UUID for entities
 - Change thumbnails config format to be more in line with addons/models
 - AbstractLocalizedEntity -> IsLocalized interface

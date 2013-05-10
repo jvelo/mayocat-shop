@@ -1,5 +1,7 @@
 package org.mayocat.accounts.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum Role
 {
 
@@ -15,7 +17,13 @@ public enum Role
     {
         this.code = code;
     };
-    
+
+    @JsonCreator
+    public static Role fromJson(String text)
+    {
+        return valueOf(text.toUpperCase());
+    }
+
     @Override
     public String toString() {
         return code;

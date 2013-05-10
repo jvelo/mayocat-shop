@@ -1,10 +1,11 @@
 package org.mayocat.shop.billing.model;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.Entity;
-import org.mayocat.model.Identifiable;
 import org.mayocat.model.annotation.SearchIndex;
 
 /**
@@ -12,7 +13,7 @@ import org.mayocat.model.annotation.SearchIndex;
  */
 public class Customer implements Entity
 {
-    private Long id;
+    private UUID id;
 
     private String email;
 
@@ -35,12 +36,12 @@ public class Customer implements Entity
         this.slug = slug;
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }

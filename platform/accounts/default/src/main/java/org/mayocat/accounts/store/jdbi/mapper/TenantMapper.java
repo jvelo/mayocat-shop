@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.common.base.Strings;
 import org.mayocat.accounts.model.Tenant;
@@ -24,15 +25,16 @@ public class TenantMapper implements ResultSetMapper<Tenant>
     public Tenant map(int index, ResultSet result, StatementContext statementContext) throws SQLException
     {
         String slug = result.getString("slug");
+        String defaultHost = result.getString("default_host");
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
-        Integer configurationVersion = result.getInt("version");
+        Integer configurationVersion = result.getInt("configuration_version");
         TenantConfiguration configuration;
-        if (Strings.isNullOrEmpty(result.getString("data"))) {
+        if (Strings.isNullOrEmpty(result.getString("configuration"))) {
             configuration = new TenantConfiguration(configurationVersion, Collections.<String, Object>emptyMap());
         } else {
             try {
-                Map<String, Object> data = mapper.readValue(result.getString("data"),
+                Map<String, Object> data = mapper.readValue(result.getString("configuration"),
                         new TypeReference<Map<String, Object>>() {});
                 configuration = new TenantConfiguration(configurationVersion, data);
             } catch (IOException e) {
@@ -42,8 +44,11 @@ public class TenantMapper implements ResultSetMapper<Tenant>
             }
         }
 
-        Tenant tenant = new Tenant(result.getLong("id"), slug, configuration);
+        Tenant tenant = new Tenant((UUID) result.getObject("id"), slug, configuration);
         tenant.setSlug(slug);
+        tenant.setDefaultHost(defaultHost);
+        tenant.setCreationDate(result.getTimestamp("creation_date"));
+        tenant.setName(result.getString("name"));
 
         return tenant;
     }

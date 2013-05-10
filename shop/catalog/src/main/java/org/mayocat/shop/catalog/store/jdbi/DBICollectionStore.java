@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -15,7 +16,7 @@ import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
-import org.mayocat.store.rdbms.dbi.dao.CollectionDAO;
+import mayoapp.dao.CollectionDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -29,7 +30,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     private CollectionDAO dao;
 
-    public Long create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
+    public Collection create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(collection.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -37,14 +38,17 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
         this.dao.begin();
 
-        Long entityId = this.dao.createEntity(collection, COLLECTION_TABLE_NAME, getTenant());
+        UUID entityId = UUID.randomUUID();
+        collection.setId(entityId);
+
+        this.dao.createEntity(collection, COLLECTION_TABLE_NAME, getTenant());
         Integer lastIndex = this.dao.lastPosition(getTenant());
-        this.dao.create(entityId, lastIndex == null ? 0 : ++lastIndex, collection);
+        this.dao.create(lastIndex == null ? 0 : ++lastIndex, collection);
         this.dao.insertTranslations(entityId, collection.getTranslations());
 
         this.dao.commit();
 
-        return entityId;
+        return collection;
     }
 
     public void update(Collection collection) throws EntityDoesNotExistException, InvalidEntityException
@@ -139,7 +143,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     }
 
     @Override
-    public List<Collection> findByIds(List<Long> ids)
+    public List<Collection> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(COLLECTION_TABLE_NAME, ids);
     }
@@ -150,7 +154,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         return this.dao.countAll(COLLECTION_TABLE_NAME, getTenant());
     }
 
-    public Collection findById(Long id)
+    public Collection findById(UUID id)
     {
         return this.dao.findById(COLLECTION_TABLE_NAME, id);
     }

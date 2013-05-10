@@ -3,10 +3,8 @@ package org.mayocat.rest.representations;
 /**
  * @version $Id$
  */
-public class EntityReferenceRepresentation
+public class EntityReferenceRepresentation extends LinkRepresentation
 {
-    private String href;
-
     private String title;
 
     private String slug;
@@ -14,23 +12,19 @@ public class EntityReferenceRepresentation
     public EntityReferenceRepresentation()
     {
         // No-arg constructor required for Jackson deserialization
+        super();
     }
 
-    public EntityReferenceRepresentation(String title, String slug, String uri)
+    public EntityReferenceRepresentation(String href, String slug, String title)
     {
+        super(href);
         this.title = title;
-        this.href = uri;
         this.slug = slug;
     }
 
     public String getTitle()
     {
         return title;
-    }
-
-    public String getHref()
-    {
-        return href;
     }
 
     public String getSlug()

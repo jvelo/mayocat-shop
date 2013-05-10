@@ -16,6 +16,7 @@
 
   <modules>
     <module>pages</module>
+    <module>news</module>
   </modules>
 
 </project>

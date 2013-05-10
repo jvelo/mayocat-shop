@@ -5,10 +5,8 @@ import java.util.List;
 /**
  * @version $Id$
  */
-public class ResultSetRepresentation<E>
+public class ResultSetRepresentation<E> extends LinkRepresentation
 {
-
-    private String href;
 
     private Integer offset;
 
@@ -16,17 +14,33 @@ public class ResultSetRepresentation<E>
 
     private List<E> items;
 
-    public ResultSetRepresentation(String href, Integer offset, Integer limit, List<E> items)
+    private Integer total;
+
+    private LinkRepresentation first;
+
+    private LinkRepresentation last;
+
+    private LinkRepresentation previous;
+
+    private LinkRepresentation next;
+
+    public ResultSetRepresentation(String href, Integer limit, Integer offset, List<E> items,
+            Integer total)
     {
-        this.href = href;
+        super(href);
         this.offset = offset;
         this.limit = limit;
         this.items = items;
-    }
+        this.total = total;
 
-    public String getHref()
-    {
-        return href;
+        if (offset - items.size() > 0) {
+            this.previous = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=" + (offset - limit));
+        }
+        if (offset + limit < total) {
+            this.next = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=" + (offset + limit));
+        }
+        this.first = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=0");
+        this.last = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=0");
     }
 
     public Integer getOffset()
@@ -42,5 +56,55 @@ public class ResultSetRepresentation<E>
     public List<E> getItems()
     {
         return items;
+    }
+
+    public Integer getTotal()
+    {
+        return total;
+    }
+
+    public void setTotal(Integer total)
+    {
+        this.total = total;
+    }
+
+    public LinkRepresentation getFirst()
+    {
+        return first;
+    }
+
+    public void setFirst(LinkRepresentation first)
+    {
+        this.first = first;
+    }
+
+    public LinkRepresentation getLast()
+    {
+        return last;
+    }
+
+    public void setLast(LinkRepresentation last)
+    {
+        this.last = last;
+    }
+
+    public LinkRepresentation getPrevious()
+    {
+        return previous;
+    }
+
+    public void setPrevious(LinkRepresentation previous)
+    {
+        this.previous = previous;
+    }
+
+    public LinkRepresentation getNext()
+    {
+        return next;
+    }
+
+    public void setNext(LinkRepresentation next)
+    {
+        this.next = next;
     }
 }

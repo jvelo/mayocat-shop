@@ -2,6 +2,7 @@ package org.mayocat.rest.resources;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -14,7 +15,6 @@ import org.mayocat.Slugifier;
 import org.mayocat.model.Attachment;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
-import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 
 import com.google.common.base.Optional;
@@ -47,7 +47,7 @@ public class AbstractAttachmentResource
     }
 
     protected Response addAttachment(InputStream data, String originalFilename, String title, String description,
-            Optional<Long> parent)
+            Optional<UUID> parent)
     {
         if (data == null) {
             return Response.status(Response.Status.BAD_REQUEST)

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.skife.jdbi.v2.StatementContext;
@@ -24,8 +25,8 @@ public class PaymentOperationMapper implements ResultSetMapper<PaymentOperation>
     public PaymentOperation map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         PaymentOperation operation = new PaymentOperation();
-        operation.setId(resultSet.getLong("id"));
-        operation.setOrderId(resultSet.getLong("order_id"));
+        operation.setId((UUID) resultSet.getObject("id"));
+        operation.setOrderId((UUID) resultSet.getObject("order_id"));
         operation.setExternalId(resultSet.getString("id"));
         operation.setGatewayId(resultSet.getString("gateway_id"));
         operation.setResult(PaymentOperation.Result.valueOf(resultSet.getString("result")));

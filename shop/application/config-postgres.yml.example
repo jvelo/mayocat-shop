@@ -49,8 +49,6 @@ platform:
       height: 100
 
 general:
-  name:
-    default: "Your shop's name"
   locales:
     main:
       default: fr_FR

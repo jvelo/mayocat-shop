@@ -1,0 +1,87 @@
+group UserDAO;
+
+create() ::= <<
+    INSERT INTO agent
+                (entity_id,
+                 email,
+                 password)
+    VALUES      (:user.id,
+                 :user.email,
+                 :user.password)
+>>
+
+update() ::= <<
+    UPDATE agent
+    SET    email = :u.email,
+           password = :u.password
+    WHERE  id = :u.id
+>>
+
+addRoleToUser() ::= <<
+    INSERT INTO agent_role
+                (agent_id,
+                 role)
+    VALUES      (:userId,
+                 :role)
+>>
+
+findGlobalUserByEmailOrUserName() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE  ( agent.email = :userNameOrEmail
+              OR entity.slug = :userNameOrEmail )
+           AND entity.tenant_id is null
+           AND entity.type = 'user'
+>>
+
+findByEmailOrUserNameAndTenant() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE  ( agent.email = :userNameOrEmail
+              OR entity.slug = :userNameOrEmail )
+           AND entity.tenant_id = :t.id
+           AND entity.type = 'user'
+>>
+
+findRolesForUser() ::= <<
+    SELECT *
+    FROM   agent_role
+    WHERE  agent_id = :user.id
+>>
+
+findAllUsers() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE  entity.type = 'user'
+           AND entity.tenant_id = :tenant.id
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+findAllGlobalUsers() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE  entity.type = 'user'
+           AND entity.tenant_id is null
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+
+findUserBySlug() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE entity.slug = :slug
+           AND entity.type = 'user'
+           AND entity.tenant_id = :tenant.id
+>>

@@ -1,6 +1,7 @@
 package org.mayocat.shop.payment.model;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.model.Identifiable;
 
@@ -18,9 +19,9 @@ public class PaymentOperation implements Identifiable
         FAILED;
     }
 
-    private Long id;
+    private UUID id;
 
-    private Long orderId;
+    private UUID orderId;
 
     private String gatewayId;
 
@@ -30,22 +31,22 @@ public class PaymentOperation implements Identifiable
 
     private Map<String, Object> memo;
 
-    public Long getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
 
-    public Long getOrderId()
+    public UUID getOrderId()
     {
         return orderId;
     }
 
-    public void setOrderId(Long orderId)
+    public void setOrderId(UUID orderId)
     {
         this.orderId = orderId;
     }

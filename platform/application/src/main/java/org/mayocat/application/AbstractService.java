@@ -46,7 +46,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
  */
 public abstract class AbstractService<C extends AbstractSettings> extends Service<C>
 {
-    public static final String ADMIN_UI_PATH = "/admin/";
+    protected static Set<String> staticPaths = new HashSet<String>();
 
     private EmbeddableComponentManager componentManager;
 
@@ -58,20 +58,9 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
     protected abstract void registerComponents(C configuration, Environment environment);
 
-    public static final Set<String> STATIC_PATHS = new HashSet<String>()
+    public static Set<String> getStaticPaths()
     {
-        {
-            add(ADMIN_UI_PATH);
-        }
-    };
-
-    protected void addModule(Module module)
-    {
-        if (this.modules.containsKey(module.getName())) {
-            LOGGER.error("Module with name [" + module.getName() + "] already exists. Refusing to start.");
-            System.exit(1);
-        }
-        this.modules.put(module.getName(), module);
+        return staticPaths;
     }
 
     @Override
@@ -104,6 +93,15 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
+    }
+
+    protected void addModule(Module module)
+    {
+        if (this.modules.containsKey(module.getName())) {
+            LOGGER.error("Module with name [" + module.getName() + "] already exists. Refusing to start.");
+            System.exit(1);
+        }
+        this.modules.put(module.getName(), module);
     }
 
     protected ComponentManager getComponentManager()

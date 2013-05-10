@@ -17,7 +17,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
 
     public AttachmentRepresentation(Attachment attachment)
     {
-        super(attachment.getTitle(), attachment.getSlug(), buildAttachmentApiHref(attachment));
+        super(buildAttachmentApiHref(attachment), attachment.getSlug(), attachment.getTitle());
         this.file = buildFileRepresentation(attachment);
     }
 
@@ -32,7 +32,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
      */
     public AttachmentRepresentation(Attachment attachment, String uri, FileRepresentation file)
     {
-        super(attachment.getTitle(), attachment.getSlug(), uri);
+        super(uri, attachment.getSlug(), attachment.getTitle());
         this.file = file;
     }
 

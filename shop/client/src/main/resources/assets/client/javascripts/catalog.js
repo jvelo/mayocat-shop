@@ -50,7 +50,7 @@ angular.module('catalog', [])
                     });
             },
             move: function (path, slug, target, position) {
-                $http.post("/api/" + path + slug + "/move",
+                $http.post("/api/" + path + "/"  + slug + "/move",
                     position + "=" + target,
                     { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
                     .success(function (data) {
@@ -110,7 +110,7 @@ angular.module('catalog', [])
                 }
 
                 catalogService.move(
-                    $location.path(),
+                    $scope.changeOperation.type,
                     $scope.changeOperation.handle,
                     $scope.changeOperation.target,
                     $scope.changeOperation.position

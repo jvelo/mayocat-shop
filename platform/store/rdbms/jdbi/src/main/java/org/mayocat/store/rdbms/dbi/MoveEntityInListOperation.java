@@ -7,6 +7,7 @@ import org.mayocat.store.HasOrderedCollections;
 import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.rdbms.dbi.dao.util.CollectionUtil;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class MoveEntityInListOperation<E extends Entity>
@@ -21,6 +22,10 @@ public class MoveEntityInListOperation<E extends Entity>
             HasOrderedCollections.RelativePosition relativePosition)
             throws InvalidMoveOperation
     {
+        Preconditions.checkNotNull(entities, "entities list may not be null");
+        Preconditions.checkNotNull(fromSlug, "\"from\" slug may not be null");
+        Preconditions.checkNotNull(toSlug, "\"to\" slug may not be null");
+
         Integer from = -1;
         Integer to = -1;
         int i = 0;

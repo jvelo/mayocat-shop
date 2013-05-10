@@ -45,8 +45,6 @@ security:
 # --------------------
 
 general:
-  name:
-    default: "Your shop's name"
   locales:
     main:
       default: en_US

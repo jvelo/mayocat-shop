@@ -150,10 +150,10 @@ public class DefaultCatalogService implements CatalogService
     }
 
     @Override
-    public void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveBeforeOf,
+    public void moveCollection(String slugOfCollectionToMove, String slugOfCollectionToMoveRelativeTo,
             InsertPosition position) throws InvalidMoveOperation
     {
-        this.collectionStore.get().moveCollection(slugOfCollectionToMove, slugOfCollectionToMoveBeforeOf,
+        this.collectionStore.get().moveCollection(slugOfCollectionToMove, slugOfCollectionToMoveRelativeTo,
                 position.equals(InsertPosition.AFTER) ? HasOrderedCollections.RelativePosition.AFTER :
                         HasOrderedCollections.RelativePosition.BEFORE);
     }

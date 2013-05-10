@@ -1,7 +1,7 @@
 package org.mayocat.accounts.store.jdbi;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -9,11 +9,13 @@ import javax.validation.Valid;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
-import org.mayocat.accounts.store.jdbi.dao.TenantDAO;
+import mayoapp.dao.TenantDAO;
 import org.mayocat.context.Execution;
+import org.mayocat.model.Addon;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -25,6 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
 {
+    private static final String TENANT_TABLE_NAME = "tenant";
+
     @Inject
     private Execution execution;
 
@@ -34,16 +38,26 @@ public class DBITenantStore implements TenantStore, Initializable
     private TenantDAO dao;
 
     @Override
-    public Long create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
+    public Tenant create(Tenant tenant) throws EntityAlreadyExistsException, InvalidEntityException
     {
+        if (this.dao.findBySlug(TENANT_TABLE_NAME, tenant.getSlug()) != null) {
+            throw new EntityAlreadyExistsException();
+        }
+
         this.dao.begin();
 
         TenantConfiguration configuration = tenant.getConfiguration();
 
         try {
             String configurationAsJson = convertConfigurationToJSON(configuration);
-            Integer configurationId = this.dao.createConfiguration(configuration.getVersion(), configurationAsJson);
-            return this.dao.create(tenant, configurationId);
+
+            UUID id = UUID.randomUUID();
+            tenant.setId(id);
+            this.dao.createEntity(tenant, TENANT_TABLE_NAME);
+            this.dao.create(tenant, configuration.getVersion(), configurationAsJson);
+            this.dao.createOrUpdateAddons(tenant);
+
+            return tenant;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to create tenant", e);
         } finally {
@@ -52,9 +66,24 @@ public class DBITenantStore implements TenantStore, Initializable
     }
 
     @Override
-    public void update(Tenant entity) throws InvalidEntityException
+    public void update(Tenant tenant) throws InvalidEntityException, EntityDoesNotExistException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        this.dao.begin();
+
+        Tenant originalProduct = this.findBySlug(tenant.getSlug());
+        if (originalProduct == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+        tenant.setId(originalProduct.getId());
+        Integer updatedRows = this.dao.update(tenant);
+        this.dao.createOrUpdateAddons(tenant);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating tenant");
+        }
     }
 
     @Override
@@ -66,8 +95,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public Integer countAll()
     {
-        // TODO
-        return -1;
+        return this.dao.countAllTenants();
     }
 
     @Override
@@ -88,13 +116,13 @@ public class DBITenantStore implements TenantStore, Initializable
     }
 
     @Override
-    public List<Tenant> findByIds(List<Long> ids)
+    public List<Tenant> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public Tenant findById(Long id)
+    public Tenant findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
@@ -102,13 +130,23 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public Tenant findBySlug(String slug)
     {
-        return this.dao.findBySlug(slug);
+        Tenant tenant = this.dao.findBySlug("tenant", slug);
+        if (tenant != null) {
+            List<Addon> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(addons);
+        }
+        return tenant;
     }
 
     @Override
     public Tenant findByDefaultHost(String host)
     {
-        return this.dao.findByDefaultHost(host);
+        Tenant tenant = this.dao.findByDefaultHost(host);
+        if (tenant != null) {
+            List<Addon> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(addons);
+        }
+        return tenant;
     }
 
     @Override

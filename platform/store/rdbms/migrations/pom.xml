@@ -14,8 +14,19 @@
     <dependencies>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
-            <artifactId>dropwizard-migrations</artifactId>
+            <artifactId>dropwizard-db</artifactId>
             <version>${dropwizard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.flyway</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.driver.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

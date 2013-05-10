@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.store;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -11,7 +12,7 @@ import org.mayocat.store.Store;
 import org.xwiki.component.annotation.Role;
 
 @Role
-public interface ProductStore extends Store<Product, Long>, HasOrderedCollections, EntityStore
+public interface ProductStore extends Store<Product, UUID>, HasOrderedCollections, EntityStore
 {    
     Product findBySlug(String slug);
 

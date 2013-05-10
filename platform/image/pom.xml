@@ -13,6 +13,13 @@
 
     <dependencies>
 
+        <!-- Explicit dependency on attachments required by the database migration -->
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-attachments</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>

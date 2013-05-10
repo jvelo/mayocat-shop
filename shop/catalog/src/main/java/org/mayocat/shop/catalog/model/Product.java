@@ -1,8 +1,8 @@
 package org.mayocat.shop.catalog.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,7 +23,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 {
     private static final long serialVersionUID = 6981826946713552336L;
 
-    private Long id;
+    private UUID id;
 
     @SearchIndex
     private Boolean onShelf;
@@ -41,14 +41,14 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     @Localized
     @SearchIndex
-    private String description;
+    private transient String description;
 
     @SearchIndex
     private BigDecimal price;
 
     private Integer stock;
 
-    private Long featuredImageId;
+    private UUID featuredImageId;
 
     private transient PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
@@ -58,7 +58,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     {
     }
 
-    public Product(Long id)
+    public Product(UUID id)
     {
         this.id = id;
     }
@@ -93,12 +93,12 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
         this.description = description;
     }
 
-    public Long getId()
+    public UUID getId()
     {
         return this.id;
     }
 
-    public void setId(Long id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -151,12 +151,12 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     }
 
     @Override
-    public Long getFeaturedImageId()
+    public UUID getFeaturedImageId()
     {
         return this.featuredImageId;
     }
 
-    public void setFeaturedImageId(Long featuredImageId)
+    public void setFeaturedImageId(UUID featuredImageId)
     {
         this.featuredImageId = featuredImageId;
     }

@@ -1,0 +1,86 @@
+<ng-form name="settingsForm">
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">General settings</h1>
+        </div>
+
+        <form class="form-horizontal" name="generalForm">
+            <fieldset>
+
+                <!-- Shop timezone -->
+                <div class="control-group" ng-show="isVisible('general.time.timeZone')"
+                    ng-class="{default: isDefaultValue('general.time.timeZone')}">
+                    <label class="control-label" for="shopTimeZone">Time zone</label>
+
+                    <div class="controls">
+                        <select id="shopTimezone"  name="name" class="input-xlarge"
+                            ng-model="settings.general.time.timeZone.value"
+                            ng-disabled="!isConfigurable('general.time.timeZone')">
+                            <option value="">-- Select a time zone --</option>
+                            <optgroup ng-repeat="(region, list) in timeZoneRegions" label="{{ region }}">
+
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Default locale -->
+                <div class="control-group" ng-show="isVisible('general.locales.main')"
+                    ng-class="{default: isDefaultValue('general.locales.main')}">
+                    <label class="control-label" for="defaultLocale">Default language</label>
+
+                    <div class="controls">
+                        <input type="text" name="name" class="input-xlarge"
+                            ng-model="settings.general.locales.main.value"
+                            id="defaultLocale"
+                            ng-disabled="!isConfigurable('general.locales.main')"/>
+                    </div>
+                </div>
+
+                <!-- Other locales
+                 FIXME not yet supported
+                <div class="control-group" ng-show="isVisible('general.locales.others')"
+                    ng-class="{default: isDefaultValue('general.locales.others')}">
+                    <label class="control-label" for="otherLocales">Other languages</label>
+
+                    <div class="controls">
+                        <input type="text" name="name" class="input-xlarge"
+                            ng-model="settings.general.locales.others.value"
+                            id="otherLocales"
+                            ng-disabled="!isConfigurable('general.locales.others')"/>
+                    </div>
+                </div>-->
+
+                <!-- Theme -->
+                <div class="control-group" ng-show="isVisible('theme.active')"
+                    ng-class="{default: isDefaultValue('theme.active')}">
+                    <label class="control-label" for="theme">Theme</label>
+
+                    <div class="controls">
+                        <input type="text" name="name" class="input-xlarge"
+                            ng-model="settings.theme.active.value"
+                            id="theme"
+                            ng-disabled="!isConfigurable('theme.active')"/>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+
+    </div>
+
+    <div class="span2">
+        <div class="buttons hasLoading">
+            <button ng-click="updateSettings()"
+                    class="btn btn-large btn-primary"
+                    ng-disabled="!settingsForm.shopForm.$dirty
+                    && !settingsForm.generalForm.$dirty">
+                    Update
+            </button>
+            <span ng-class="{'loading': isSaving}"></span>
+        </div>
+    </div>
+</div>
+</ng-form>

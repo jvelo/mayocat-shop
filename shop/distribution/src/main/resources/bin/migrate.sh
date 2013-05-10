@@ -29,6 +29,6 @@ java $JAVA_OPTS \
   $DEBUG \
   -classpath "../lib/*" \
   org.mayocat.shop.application.MayocatShopService \
-  db migrate \
+  flyway-migrate \
   "../configuration/mayocat.yml"
 

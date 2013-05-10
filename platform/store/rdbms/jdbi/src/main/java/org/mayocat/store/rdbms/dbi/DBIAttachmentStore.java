@@ -3,6 +3,7 @@ package org.mayocat.store.rdbms.dbi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -15,7 +16,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
-import org.mayocat.store.rdbms.dbi.dao.AttachmentDAO;
+import mayoapp.dao.AttachmentDAO;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -41,7 +42,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     private Logger logger;
 
     @Override
-    public Long create(Attachment attachment) throws EntityAlreadyExistsException, InvalidEntityException
+    public Attachment create(Attachment attachment) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(ATTACHMENT_TABLE_NAME, attachment.getSlug(), getTenant()) != null) {
             throw new EntityAlreadyExistsException();
@@ -49,7 +50,10 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
 
         this.dao.begin();
 
-        Long entityId = this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
+        UUID entityId = UUID.randomUUID();
+        attachment.setId(entityId);
+
+        this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
 
         InputStream data = attachment.getData();
         try {
@@ -79,8 +83,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
         }
 
         this.dao.commit();
-
-        return entityId;
+        return attachment;
     }
 
     @Override
@@ -116,13 +119,13 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
-    public List<Attachment> findByIds(List<Long> ids)
+    public List<Attachment> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(ATTACHMENT_TABLE_NAME, ids);
     }
 
     @Override
-    public Attachment findById(Long id)
+    public Attachment findById(UUID id)
     {
         return this.dao.findById(ATTACHMENT_TABLE_NAME, id);
     }
@@ -152,13 +155,13 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
-    public List<Attachment> findAllChildrenOfParentIds(List<Long> parents)
+    public List<Attachment> findAllChildrenOfParentIds(List<UUID> parents)
     {
         return this.dao.findAttachmentsOfEntities(parents);
     }
 
     @Override
-    public List<Attachment> findAllChildrenOfParentIds(List<Long> parents, List<String> extensions)
+    public List<Attachment> findAllChildrenOfParentIds(List<UUID> parents, List<String> extensions)
     {
         return this.dao.findAttachmentsOfEntities(parents, extensions);
     }

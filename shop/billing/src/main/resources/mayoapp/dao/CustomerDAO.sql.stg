@@ -1,0 +1,9 @@
+group CustomerDAO;
+
+create() ::= <<
+    INSERT INTO customer (entity_id, email, first_name, last_name)
+    VALUES (:customer.id,
+            :customer.email,
+            :customer.firstName,
+            :customer.lastName)
+>>

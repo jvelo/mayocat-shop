@@ -1,6 +1,7 @@
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -11,7 +12,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
-import org.mayocat.store.rdbms.dbi.dao.AddressDAO;
+import mayoapp.dao.AddressDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -28,9 +29,12 @@ public class DBIAddressStore implements AddressStore, Initializable
     private AddressDAO dao;
 
     @Override
-    public Long create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
+    public Address create(@Valid Address address) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        return  this.dao.createAddress(address);
+        UUID id = UUID.randomUUID();
+        address.setId(id);
+        this.dao.createAddress(address);
+        return address;
     }
 
     @Override
@@ -58,13 +62,13 @@ public class DBIAddressStore implements AddressStore, Initializable
     }
 
     @Override
-    public List<Address> findByIds(List<Long> ids)
+    public List<Address> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public Address findById(Long id)
+    public Address findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }

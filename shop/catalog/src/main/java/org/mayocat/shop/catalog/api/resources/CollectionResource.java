@@ -28,7 +28,6 @@ import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.model.EntityAndCount;
-import org.mayocat.accounts.model.Role;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.Resource;
@@ -289,8 +288,8 @@ public class CollectionResource implements Resource
     {
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Product product : products) {
-            collectionsReferences.add(new EntityReferenceRepresentation(product.getTitle(), product.getSlug(),
-                   ProductResource.PATH + ProductResource.SLASH + product.getSlug()
+            collectionsReferences.add(new EntityReferenceRepresentation(
+                    ProductResource.PATH + ProductResource.SLASH + product.getSlug(), product.getSlug(), product.getTitle()
             ));
         }
         return new CollectionRepresentation(collection, collectionsReferences);

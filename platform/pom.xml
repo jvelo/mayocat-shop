@@ -27,6 +27,7 @@
         <module>addons</module>
         <module>views</module>
         <module>themes</module>
+        <module>attachments</module>
         <module>image</module>
         <module>rest</module>
         <module>front</module>

@@ -80,6 +80,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mayocat.cms</groupId>
+            <artifactId>mayocat-cms-news</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-marketplace</artifactId>
             <version>${project.version}</version>
@@ -198,7 +204,7 @@
                 <dependency>
                     <groupId>postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.1-901.jdbc4</version>
+                    <version>${postgresql.driver.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>commons-dbcp</groupId>

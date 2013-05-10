@@ -1,0 +1,11 @@
+group PaymentOperationDAO;
+
+createPaymentOperation() ::= <<
+    INSERT INTO payment_operation (operation_id, order_id, gateway_id, external_id, result, memo)
+    VALUES (:operation.id,
+            :operation.orderId,
+            :operation.gatewayId,
+            :operation.externalId,
+            :operation.result,
+            :operation.memo)
+>>

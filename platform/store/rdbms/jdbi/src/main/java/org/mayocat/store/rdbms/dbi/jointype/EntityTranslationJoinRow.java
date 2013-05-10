@@ -2,6 +2,7 @@ package org.mayocat.store.rdbms.dbi.jointype;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 public class EntityTranslationJoinRow
 {
@@ -13,7 +14,7 @@ public class EntityTranslationJoinRow
 
     private String field;
 
-    private Long translationId;
+    private UUID translationId;
 
     public String getField()
     {
@@ -45,12 +46,12 @@ public class EntityTranslationJoinRow
         this.text = text;
     }
 
-    public Long getTranslationId()
+    public UUID getTranslationId()
     {
         return translationId;
     }
 
-    public void setTranslationId(Long translationId)
+    public void setTranslationId(UUID translationId)
     {
         this.translationId = translationId;
     }

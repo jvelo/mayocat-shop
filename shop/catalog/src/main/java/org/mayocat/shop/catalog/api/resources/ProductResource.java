@@ -25,8 +25,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.Slugifier;
-import org.mayocat.accounts.model.Role;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
@@ -36,7 +34,6 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
@@ -204,7 +201,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
                         HasOrderedCollections.RelativePosition.AFTER);
             } else {
-                this.productStore.get().moveProduct(slug, slugOfProductToMoveAfterTo,
+                this.productStore.get().moveProduct(slug, slugOfProductToMoveBeforeOf,
                         HasOrderedCollections.RelativePosition.BEFORE);
             }
 
@@ -237,18 +234,19 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setStock(updatedProductRepresentation.getStock());
 
                 // Addons
-                List<Addon> addons = Lists.newArrayList();
-                for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
+                if (updatedProductRepresentation.getAddons() != null) {
+                    List<Addon> addons = Lists.newArrayList();
+                    for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
+                        Addon addon = new Addon();
+                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                        addon.setValue(addonRepresentation.getValue());
+                        addon.setKey(addonRepresentation.getKey());
+                        addon.setGroup(addonRepresentation.getGroup());
+                        addons.add(addon);
+                    }
+                    product.setAddons(addons);
                 }
-
-                product.setAddons(addons);
 
                 // Featured image
                 if (updatedProductRepresentation.getFeaturedImage() != null) {
@@ -395,8 +393,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Collection collection : collections) {
             collectionsReferences
-                    .add(new EntityReferenceRepresentation(collection.getTitle(), collection.getSlug(),
-                            CollectionResource.PATH + collection.getSlug()));
+                    .add(new EntityReferenceRepresentation(CollectionResource.PATH + collection.getSlug(),
+                            collection.getSlug(), collection.getTitle()
+                    ));
         }
         ProductRepresentation result = new ProductRepresentation(product, collectionsReferences);
         if (images != null) {

@@ -4,13 +4,13 @@
 <form>
     <article class="entity" ng-class="{'loading':collection.title == undefined}">
 
-        <div ng-show="collection.title">
+        <div ng-show="collection.title != undefined">
 
             <!-- Title -->
             <input type="text" class="title" ng-model="collection.title"/>
 
             <!-- Description -->
-            <div>
+            <div ng-show="!isNew()">
                 <label>Description</label>
                 <textarea rows="10" ng-model="collection.description"/>
             </div>
@@ -19,10 +19,21 @@
     </article>
     <aside>
         <div class="buttons">
-            <div class="hasLoading">
-                <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
-                <span ng-class="{'loading': isSaving}"></span>
+            <div ng-show="isNew()">
+                <!-- Create new product -->
+                <div class="hasLoading">
+                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Create</button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
             </div>
+            <div ng-show="!isNew()">
+                <!-- Update collection -->
+                <div class="hasLoading">
+                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
+            </div>
+
         </div>
 
         <p/>

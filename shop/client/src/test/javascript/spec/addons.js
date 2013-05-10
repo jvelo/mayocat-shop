@@ -7,13 +7,15 @@ describe('Addons', function () {
                 "entities": {
                     "todo": {
                         "addons": {
-                            "extra": {
-                                "name": "Extra properties",
-                                "for": ["todo"],
-                                "fields": {
-                                    "delegate_to": {
-                                        "name": "Delegate to",
-                                        "type": "string"
+                            "platform": {
+                                "extra": {
+                                    "name": "Extra properties",
+                                    "for": ["todo"],
+                                    "fields": {
+                                        "delegate_to": {
+                                            "name": "Delegate to",
+                                            "type": "string"
+                                        }
                                     }
                                 }
                             }
@@ -35,7 +37,7 @@ describe('Addons', function () {
             expect(addonsService).toBeDefined();
         });
 
-        it("Should create lazily defined addons for entities", function(){
+        it("Should create lazily defined addons for entities", function () {
             var hasReturned = false,
                 returnedAddons,
                 todo = {
@@ -43,16 +45,16 @@ describe('Addons', function () {
                     addons: []
                 };
 
-            addonsService.initialize("todo", todo).then(function(addons) {
+            addonsService.initialize("todo", todo).then(function (addons) {
                 hasReturned = true;
                 returnedAddons = addons;
             });
 
-            waitsFor(function() {
+            waitsFor(function () {
                 return hasReturned;
             }, "Addons did not returned in time ", 100);
 
-            runs(function(){
+            runs(function () {
                 expect(returnedAddons).toBeDefined();
                 expect(returnedAddons.length).toBe(1);
                 expect(returnedAddons[0].key).toBe("extra");
@@ -66,31 +68,33 @@ describe('Addons', function () {
             httpBackend.flush();
         });
 
-        it("Should initialize defined addons for entities", function(){
+        it("Should initialize defined addons for entities", function () {
 
             var hasReturned = false,
                 returnedAddons,
                 todo = {
                     title: "My todo",
-                    addons: [{
-                        'key': "delegate_to",
-                        'group': "extra",
-                        source: "theme",
-                        type: "string",
-                        value: "Somebody better"
-                    }]
+                    addons: [
+                        {
+                            'key': "delegate_to",
+                            'group': "extra",
+                            source: "platform",
+                            type: "string",
+                            value: "Somebody better"
+                        }
+                    ]
                 };
 
-            addonsService.initialize("todo", todo).then(function(addons) {
+            addonsService.initialize("todo", todo).then(function (addons) {
                 hasReturned = true;
                 returnedAddons = addons;
             });
 
-            waitsFor(function() {
+            waitsFor(function () {
                 return hasReturned;
             }, "Addons did not returned in time ", 100);
 
-            runs(function(){
+            runs(function () {
                 expect(returnedAddons).toBeDefined();
                 expect(returnedAddons.length).toBe(1);
                 expect(returnedAddons[0].key).toBe("extra");

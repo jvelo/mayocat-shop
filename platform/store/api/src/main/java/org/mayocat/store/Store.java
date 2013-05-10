@@ -2,6 +2,7 @@ package org.mayocat.store;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -9,7 +10,7 @@ import org.mayocat.model.Identifiable;
 
 public interface Store<T extends Identifiable, K extends Serializable>
 {
-    Long create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
+    T create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException;
     
     void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException;
 
@@ -19,7 +20,7 @@ public interface Store<T extends Identifiable, K extends Serializable>
 
     List<T> findAll(Integer number, Integer offset);
 
-    List<T> findByIds(List<Long> ids);
+    List<T> findByIds(List<UUID> ids);
 
-    T findById(K id);
+    T findById(UUID id);
 }

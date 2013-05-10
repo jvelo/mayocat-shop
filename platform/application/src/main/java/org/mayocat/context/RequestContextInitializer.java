@@ -85,19 +85,16 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         // 3. User
 
         Optional<User> user = Optional.absent();
-        if (tenant != null) {
-            // Right now we only support tenant-linked user accounts.
-            // In the future we will introduce "global" (or "marketplace") accounts
-            for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
-                final String headerValue =
-                        Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
-                for (Authenticator authenticator : this.authenticators.values()) {
-                    if (authenticator.respondTo(headerName, headerValue)) {
-                        user = authenticator.verify(headerValue, tenant);
-                    }
+        for (String headerName : Lists.newArrayList("Authorization", "Cookie")) {
+            final String headerValue =
+                    Strings.nullToEmpty(this.getHeaderValue(servletRequestEvent, headerName));
+            for (Authenticator authenticator : this.authenticators.values()) {
+                if (authenticator.respondTo(headerName, headerValue)) {
+                    user = authenticator.verify(headerValue, tenant);
                 }
             }
         }
+
         context.setUser(user.orNull());
 
         // 4. Theme
@@ -127,7 +124,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     }
 
     private boolean isStaticPath(String path) {
-        for (String staticPath : AbstractService.STATIC_PATHS) {
+        for (String staticPath : AbstractService.getStaticPaths()) {
             if (path.startsWith(staticPath)) {
                 return true;
             }

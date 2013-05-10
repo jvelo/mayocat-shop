@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -22,6 +23,8 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -40,6 +43,8 @@ public class CartContextBuilder
 
     private ImageContextBuilder imageContextBuilder;
 
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(CartContextBuilder.class);
+
     public CartContextBuilder(AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
     {
         this.attachmentStore = attachmentStore;
@@ -49,23 +54,25 @@ public class CartContextBuilder
 
     public CartContext build(Cart cart, Locale locale)
     {
+        LOGGER.debug("Building cart context...");
+
         Long numberOfItems = 0l;
         List<CartItemContext> itemsContext = Lists.newArrayList();
 
         Map<Purchasable, Long> items = cart.getItems();
         PriceRepresentation total = new PriceRepresentation(cart.getTotal(), cart.getCurrency(), locale);
 
-        Collection<Long> featuredImageIds = Collections2.transform(cart.getItems().keySet(),
-                new Function<Purchasable, Long>()
+        Collection<UUID> featuredImageIds = Collections2.transform(cart.getItems().keySet(),
+                new Function<Purchasable, UUID>()
                 {
                     @Override
-                    public Long apply(final Purchasable product)
+                    public UUID apply(final Purchasable product)
                     {
                         return product.getFeaturedImageId();
                     }
                 }
         );
-        List<Long> ids = new ArrayList<Long>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        List<UUID> ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
         if (ids.isEmpty()) {
@@ -77,6 +84,8 @@ public class CartContextBuilder
         }
 
         for (final Purchasable purchasable : items.keySet()) {
+
+            LOGGER.debug("Adding purchasable {} to cart context", purchasable.getTitle());
 
             Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
             {

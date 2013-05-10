@@ -21,6 +21,7 @@ import javax.inject.Provider;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 import java.io.IOException;
@@ -101,7 +102,8 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 writeException(frontView, mapper, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Template not found : " + frontView.getLayout()).build());
         }
     }
 

@@ -23,7 +23,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.accounts.model.Role;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.cms.pages.meta.PageEntity;
@@ -81,16 +80,17 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         List<Page> pages = pageStore.get().findAll(number, offset);
 
         for (Page page : pages) {
-            pageReferences.add(new EntityReferenceRepresentation(page.getTitle(), page.getSlug(),
-                    PATH + "/" + page.getSlug()));
+            pageReferences.add(new EntityReferenceRepresentation(PATH + "/" + page.getSlug(), page.getSlug(), page.getTitle()
+            ));
         }
 
+        Integer total = this.pageStore.get().countAll();
         ResultSetRepresentation<EntityReferenceRepresentation> resultSet =
                 new ResultSetRepresentation<EntityReferenceRepresentation>(
                         PATH + "/",
-                        number,
-                        offset,
-                        pageReferences
+                        offset, number,
+                        pageReferences,
+                        total
                 );
 
         return resultSet;
@@ -180,18 +180,19 @@ public class PageResource extends AbstractAttachmentResource implements Resource
                 page.setPublished(updatedPageRepresentation.getPublished());
 
                 // Addons
-                List<Addon> addons = Lists.newArrayList();
-                for (AddonRepresentation addonRepresentation : updatedPageRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
+                if (updatedPageRepresentation.getAddons() != null) {
+                    List<Addon> addons = Lists.newArrayList();
+                    for (AddonRepresentation addonRepresentation : updatedPageRepresentation.getAddons()) {
+                        Addon addon = new Addon();
+                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
+                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
+                        addon.setValue(addonRepresentation.getValue());
+                        addon.setKey(addonRepresentation.getKey());
+                        addon.setGroup(addonRepresentation.getGroup());
+                        addons.add(addon);
+                    }
+                    page.setAddons(addons);
                 }
-
-                page.setAddons(addons);
 
                 // Featured image
                 if (updatedPageRepresentation.getFeaturedImage() != null) {

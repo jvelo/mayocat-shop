@@ -1,6 +1,7 @@
 package org.mayocat.shop.payment.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -11,7 +12,7 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
-import org.mayocat.store.rdbms.dbi.dao.PaymentOperationDAO;
+import mayoapp.dao.PaymentOperationDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -28,10 +29,12 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     private PaymentOperationDAO dao;
 
     @Override
-    public Long create(@Valid PaymentOperation operation)
+    public PaymentOperation create(@Valid PaymentOperation operation)
             throws EntityAlreadyExistsException, InvalidEntityException
     {
-        return this.dao.createPaymentOperation(operation);
+        operation.setId(UUID.randomUUID());
+        this.dao.createPaymentOperation(operation);
+        return operation;
     }
 
     @Override
@@ -59,13 +62,13 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     }
 
     @Override
-    public List<PaymentOperation> findByIds(List<Long> ids)
+    public List<PaymentOperation> findByIds(List<UUID> ids)
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public PaymentOperation findById(Long id)
+    public PaymentOperation findById(UUID id)
     {
         throw new UnsupportedOperationException("Not implemented");
     }

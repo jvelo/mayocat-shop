@@ -1,6 +1,7 @@
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -11,7 +12,7 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
-import org.mayocat.store.rdbms.dbi.dao.OrderDAO;
+import mayoapp.dao.OrderDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -27,20 +28,21 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     private OrderDAO dao;
 
     @Override
-    public Long create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
+    public Order create(@Valid Order order) throws EntityAlreadyExistsException, InvalidEntityException
     {
         this.dao.begin();
 
         String slug = String.format("%08d", lastOrderNumber() + 1);
         order.setSlug(slug);
 
+        order.setId(UUID.randomUUID());
+
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
-        Long entityId = this.dao.getId(order, ORDER_TABLE_NAME, getTenant());
-        this.dao.createOrder(entityId, order);
+        this.dao.createOrder(order);
 
         this.dao.commit();
 
-        return entityId;
+        return order;
     }
 
     private Integer lastOrderNumber()
@@ -97,13 +99,13 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     }
 
     @Override
-    public List<Order> findByIds(List<Long> ids)
+    public List<Order> findByIds(List<UUID> ids)
     {
         return this.dao.findByIds(ORDER_TABLE_NAME, ids);
     }
 
     @Override
-    public Order findById(Long id)
+    public Order findById(UUID id)
     {
         return this.dao.findById(ORDER_TABLE_NAME, id);
     }

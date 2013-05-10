@@ -1,0 +1,71 @@
+group OrderDAO;
+
+createOrder() ::= <<
+    INSERT INTO purchase_order (entity_id, customer_id, delivery_address_id, billing_address_id, creation_date,
+        update_date, currency, number_of_items, items_total, grand_total, status, order_data)
+    VALUES (:order.id,
+            :order.customerId,
+            :order.deliveryAddressId,
+            :order.billingAddressId,
+            :order.creationDate,
+            :order.updateDate,
+            :order.currency,
+            :order.numberOfItems,
+            :order.itemsTotal,
+            :order.grandTotal,
+            :order.status,
+            :order.orderData)
+>>
+
+updateOrder() ::= <<
+    UPDATE purchase_order
+    SET    status = :order.status
+    WHERE  entity_id = :order.id
+>>
+
+findAllWithStatus() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE   entity.type = 'purchase_order'
+        AND entity.tenant_id = :tenant.id
+        AND purchase_order.status != 'NONE'
+    ORDER BY purchase_order.creation_date DESC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+findBySlugWithCustomer() ::= <<
+    SELECT entity.*,
+           purchase_order.*,
+           customer.*,
+           delivery_address.company as delivery_address_company,
+           delivery_address.full_name as delivery_address_full_name,
+           delivery_address.street as delivery_address_street,
+           delivery_address.street_complement as delivery_address_street_complement,
+           delivery_address.zip as delivery_address_zip,
+           delivery_address.city as delivery_address_city,
+           delivery_address.country as delivery_address_country,
+           billing_address.company as billing_address_company,
+           billing_address.full_name as billing_address_full_name,
+           billing_address.street as billing_address_street,
+           billing_address.street_complement as billing_address_street_complement,
+           billing_address.zip as billing_address_zip,
+           billing_address.city as billing_address_city,
+           billing_address.country as billing_address_country
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
+    LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
+    WHERE   entity.type = 'purchase_order'
+        AND entity.slug = :slug
+        AND entity.tenant_id = :tenant.id
+>>
+
+lastOrderNumber() ::= <<
+    SELECT MAX(TO_NUMBER(SUBSTRING(slug from '([0-9].*)'),'99999999999'))
+    FROM entity
+    WHERE   entity.type='purchase_order'
+        AND entity.tenant_id = :tenant.id;
+>>

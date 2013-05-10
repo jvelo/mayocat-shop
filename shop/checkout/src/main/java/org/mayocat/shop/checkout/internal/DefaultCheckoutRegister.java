@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -78,23 +79,25 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         Order order;
 
         try {
-            Long customerId;
-            Long deliveryAddressId = null;
-            Long billingAddressId = null;
+            UUID customerId;
+            UUID deliveryAddressId = null;
+            UUID billingAddressId = null;
 
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
-                customerId = this.customerStore.get().create(customer);
+                customer = this.customerStore.get().create(customer);
             } else {
                 customer = this.customerStore.get().findBySlug(customer.getEmail());
-                customerId = customer.getId();
             }
+            customerId = customer.getId();
 
             if (deliveryAddress != null) {
-                deliveryAddressId = this.addressStore.get().create(deliveryAddress);
+                deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                deliveryAddressId = deliveryAddress.getId();
             }
             if (billingAddress != null) {
-                billingAddressId = this.addressStore.get().create(billingAddress);
+                billingAddress = this.addressStore.get().create(billingAddress);
+                billingAddressId = billingAddress.getId();
             }
 
             order = new Order();
@@ -135,8 +138,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             data.put("items", orderItems);
             order.setOrderData(data);
 
-            Long id = orderStore.get().create(order);
-            order.setId(id);
+            order = orderStore.get().create(order);
+
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);
         } catch (InvalidEntityException e2) {

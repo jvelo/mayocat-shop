@@ -141,12 +141,17 @@ header a {
 }
 
 #list .droptarget .listItem {
-
   padding: 0px 0px 11px 15px
 }
 
 #list .listItem {
   padding: 11px 0px 11px 15px;
+}
+
+.sub-list #list li.listItem.active {
+  background: white;
+  border-right: none;
+  width: 177px;
 }
 
 #list ul ul li .droptarget {
@@ -232,4 +237,7 @@ header a {
   float: left;
   width: 250px;
   margin: 0px 25px 0px 0px;
+  a.btn {
+    margin-top: 10px;
+  }
 }
