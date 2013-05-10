@@ -15,6 +15,8 @@ import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.Execution;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.error.ErrorUtil;
+import org.mayocat.rest.error.StandardError;
 import org.xwiki.component.annotation.Component;
 
 import com.sun.jersey.api.core.HttpContext;
@@ -58,8 +60,9 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
         public void dispatch(Object resource, HttpContext httpContext)
         {
             if (execution.getContext().getTenant() == null) {
-                throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                        .entity("No valid tenant found at this address.").type(MediaType.TEXT_PLAIN_TYPE).build());
+                throw new WebApplicationException(
+                        ErrorUtil.buildError(Response.Status.NOT_FOUND, StandardError.NOT_A_VALID_TENANT,
+                                "No valid tenant at this address"));
             }
             underlying.dispatch(resource, httpContext);
         }

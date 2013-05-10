@@ -372,9 +372,20 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         });
 
         $scope.ping = function () {
-            $http.get('/api/tenants/_current').success(function (data) {
-                authenticationService.loginConfirmed(data);
-            });
+            $http.get('/api/tenants/_current')
+                .success(function(data, status, headers, config) {
+                    if (status === 200) {
+                        authenticationService.loginConfirmed(data);
+                    }
+                    else if (status === 404) {
+                        // TODO
+                        // check how we can pass a message or a template source to the server error dialog
+                        $scope.$parent.$broadcast('event:serverError');
+                    }
+                })
+                .error(function (data, status, headers, config) {
+                    $scope.$parent.$broadcast('event:serverError');
+                });
         }
 
         // Ensure authenticated
