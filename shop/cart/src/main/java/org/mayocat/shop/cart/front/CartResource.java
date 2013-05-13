@@ -2,6 +2,7 @@ package org.mayocat.shop.cart.front;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -136,15 +138,19 @@ public class CartResource extends AbstractFrontResource implements Resource
 
                         Map<Purchasable, Long> items = cart.getItems();
                         Integer loopIndex = 0;
+                        Purchasable toRemove = null;
                         for (Purchasable purchasable : items.keySet()) {
                             if (loopIndex.equals(index)) {
                                 if (quantity <= 0) {
-                                    cart.removeItem(purchasable);
+                                    toRemove = purchasable;
                                 } else {
                                     cart.setItem(purchasable, quantity);
                                 }
                             }
                             loopIndex++;
+                        }
+                        if (toRemove != null) {
+                            cart.removeItem(toRemove);
                         }
                     } catch (NumberFormatException e) {
                         return Response.status(Response.Status.BAD_REQUEST).build();
