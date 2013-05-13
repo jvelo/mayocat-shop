@@ -47,6 +47,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-search-elasticsearch</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-money</artifactId>
             <version>0.8</version>

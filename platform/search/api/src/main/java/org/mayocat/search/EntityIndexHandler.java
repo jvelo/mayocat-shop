@@ -10,11 +10,13 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface EntityIndexSourceMapper
+public interface EntityIndexHandler
 {
     Class forClass();
 
-    Map<String, Object> mapSource(Entity entity);
+    Map<String, Object> getDocument(Entity entity);
 
-    Map<String, Object> mapSource(Entity entity, Tenant tenant);
+    Map<String, Object> getDocument(Entity entity, Tenant tenant);
+
+    void updateMapping();
 }

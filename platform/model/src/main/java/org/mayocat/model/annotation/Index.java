@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
-public @interface SearchIndex
+@Target({ ElementType.FIELD, ElementType.TYPE })
+public @interface Index
 {
     float boost() default -1;
 }

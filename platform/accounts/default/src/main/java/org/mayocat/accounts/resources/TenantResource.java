@@ -115,7 +115,6 @@ public class TenantResource implements Resource
     @GET
     @Path("_current")
     @Authorized
-    @ExistingTenant
     public UserAndTenant currentTenant()
     {
         UserAndTenant userAndTenant = new UserAndTenant();
@@ -129,7 +128,6 @@ public class TenantResource implements Resource
     @POST
     @Path("_current")
     @Authorized
-    @ExistingTenant
     public Response updateTenant(TenantRepresentation tenantRepresentation)
     {
         Tenant tenant = this.execution.getContext().getTenant();

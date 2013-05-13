@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.Entity;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 /**
  * @version $Id$
@@ -21,7 +21,7 @@ public class Customer implements Entity
 
     private String lastName;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     private String slug;

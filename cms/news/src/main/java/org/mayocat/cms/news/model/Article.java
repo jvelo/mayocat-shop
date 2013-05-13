@@ -15,7 +15,7 @@ import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -27,19 +27,19 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
 {
     private UUID id;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     private String slug;
 
     @Localized(type = LocalizationFieldType.SMALL)
-    @SearchIndex
+    @Index
     @NotNull
     public String title;
 
     public String content;
 
-    @SearchIndex
+    @Index
     private Boolean published = null;
 
     private Date publicationDate;

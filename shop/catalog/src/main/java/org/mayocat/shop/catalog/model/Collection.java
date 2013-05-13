@@ -10,7 +10,7 @@ import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Translations;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 
@@ -18,18 +18,18 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
 {
     private UUID id;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     private String slug;
 
     @Localized(type = LocalizationFieldType.SMALL)
-    @SearchIndex
+    @Index
     @NotNull
     private String title;
 
     @Localized(type = LocalizationFieldType.MEDIUM)
-    @SearchIndex
+    @Index
     private String description;
 
     private UUID featuredImageId;

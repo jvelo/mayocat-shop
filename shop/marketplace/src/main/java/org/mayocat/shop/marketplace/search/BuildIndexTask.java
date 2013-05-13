@@ -58,6 +58,11 @@ public class BuildIndexTask extends Task implements org.mayocat.task.Task
         // Design a system where we can re-index all products without loading them all in memory at once.
 
         for (Tenant tenant : tenantDAO.findAll("tenant")) {
+
+            searchEngine.get().index(tenant, tenant);
+            output.println("- indexing " + tenant.getSlug());
+            output.flush();
+
             for (Product product : this.dao.findAll("product", tenant)) {
 
                 // Retrieve again individually to be sure we have addons etc.
