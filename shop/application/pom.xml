@@ -31,6 +31,7 @@
             <artifactId>mayocat-platform-application</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-checkout</artifactId>
@@ -46,6 +47,18 @@
         <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-payment-vendor-paypal-adaptivepayments</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-marketplace</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-search-elasticsearch</artifactId>
             <version>${project.version}</version>
         </dependency>
 

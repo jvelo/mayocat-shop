@@ -15,6 +15,17 @@
     <dependencies>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-accounts-default</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-catalog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>

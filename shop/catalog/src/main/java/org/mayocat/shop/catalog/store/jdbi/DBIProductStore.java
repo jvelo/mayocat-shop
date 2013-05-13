@@ -6,7 +6,10 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.model.Addon;
+import org.mayocat.model.event.EntityCreatedEvent;
+import org.mayocat.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -19,11 +22,11 @@ import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
-import mayoapp.dao.ProductDAO;
-import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import mayoapp.dao.ProductDAO;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIProductStore extends DBIEntityStore implements ProductStore, Initializable
@@ -60,6 +63,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
         this.dao.commit();
 
+        getObservationManager().notify(new EntityCreatedEvent(), product);
+
         return product;
     }
 
@@ -82,6 +87,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         if (updatedRows <= 0) {
             throw new StoreException("No rows was updated when updating product");
         }
+
+        getObservationManager().notify(new EntityUpdatedEvent(), product);
     }
 
     @Override
