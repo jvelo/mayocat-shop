@@ -30,10 +30,13 @@ import com.paypal.exception.SSLConfigurationException;
 import com.paypal.ipn.IPNMessage;
 import com.paypal.sdk.exceptions.OAuthException;
 import com.paypal.svcs.services.AdaptivePaymentsService;
+import com.paypal.svcs.types.ap.DisplayOptions;
 import com.paypal.svcs.types.ap.PayRequest;
 import com.paypal.svcs.types.ap.PayResponse;
 import com.paypal.svcs.types.ap.Receiver;
 import com.paypal.svcs.types.ap.ReceiverList;
+import com.paypal.svcs.types.ap.SetPaymentOptionsRequest;
+import com.paypal.svcs.types.ap.SetPaymentOptionsResponse;
 import com.paypal.svcs.types.common.ClientDetailsType;
 import com.paypal.svcs.types.common.RequestEnvelope;
 
@@ -42,6 +45,8 @@ import com.paypal.svcs.types.common.RequestEnvelope;
  */
 public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 {
+    public static final String ACTION_TYPE_CREATE = "CREATE";
+
     public static final String ACTION_TYPE_PAY = "PAY";
 
     public static final String EXECUTION_STATUS_CREATED = "CREATED";
@@ -79,8 +84,9 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setClientDetails(clientDetails);
         request.setReturnUrl((String) options.get(BaseOption.RETURN_URL));
         request.setCancelUrl((String) options.get(BaseOption.CANCEL_URL));
-        request.setActionType(ACTION_TYPE_PAY);
+        request.setActionType(ACTION_TYPE_CREATE);
         request.setCurrencyCode(((Currency) options.get(BaseOption.CURRENCY)).getCurrencyCode());
+
 
         String baseURI = (String) options.get(BaseOption.BASE_URL);
         String orderId = options.get(BaseOption.ORDER_ID).toString();
@@ -117,12 +123,31 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                 operation.setMemo(map);
 
                 if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_CREATED)) {
+
                     gatewayResponse = new GatewayResponse(true, operation);
                     operation.setResult(PaymentOperation.Result.INITIALIZED);
-                    // This means the payment needs approval on paypal site
-                    String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
-                            "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
-                    gatewayResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
+
+                    SetPaymentOptionsRequest optionsRequest = new SetPaymentOptionsRequest();
+                    optionsRequest.setPayKey(response.getPayKey());
+                    DisplayOptions displayOptions = new DisplayOptions();
+                    displayOptions.setBusinessName(receiverEmail);
+                    optionsRequest.setDisplayOptions(displayOptions);
+                    RequestEnvelope envelope = new RequestEnvelope("en_US");
+                    optionsRequest.setRequestEnvelope(requestEnvelope);
+                    SetPaymentOptionsResponse resp = service.setPaymentOptions(optionsRequest);
+                    if (resp != null) {
+                        if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS"))
+                        {
+                            // This means the payment needs approval on paypal site
+                            String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
+                                    "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
+                            gatewayResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
+                        } else {
+                            throw new GatewayException("Failed to send payment options : " + resp.getError());
+                        }
+                    } else {
+                        throw new GatewayException("Failed to send payment options");
+                    }
                 } else if (response.getPaymentExecStatus().equals(EXECUTION_STATUS_COMPLETED)) {
                     operation.setResult(PaymentOperation.Result.CAPTURED);
                     gatewayResponse = new GatewayResponse(true, operation);
