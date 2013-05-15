@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.Execution;
 import org.mayocat.model.Entity;
 import org.mayocat.search.EntityIndexHandler;
@@ -43,8 +44,8 @@ public abstract class AbstractEntityIndexHandler implements EntityIndexHandler
         // Nothing
     }
 
-    protected Map<String, Object> extractSourceFromEntity(Entity entity)
+    protected Map<String, Object> extractSourceFromEntity(Entity entity, Tenant tenant)
     {
-        return extractor.extract(entity);
+        return extractor.extract(entity, tenant);
     }
 }

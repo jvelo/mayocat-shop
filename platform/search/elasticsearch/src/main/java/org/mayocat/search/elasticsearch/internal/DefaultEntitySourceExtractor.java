@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
@@ -20,6 +21,7 @@ import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.search.elasticsearch.EntitySourceExtractor;
 import org.mayocat.store.AttachmentStore;
+import org.mayocat.url.EntityURLFactory;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -42,10 +44,14 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
     @Inject
     private AttachmentStore attachmentStore;
 
+    @Inject
+    private EntityURLFactory entityURLFactory;
+
     @Override
-    public Map<String, Object> extract(Entity entity)
+    public Map<String, Object> extract(Entity entity, Tenant tenant)
     {
-        Map<String, Object> source = new HashMap<String, Object>();
+        Map<String, Object> source = Maps.newHashMap();
+        Map<String, Object> properties = Maps.newHashMap();
 
         boolean hasClassLevelIndexAnnotation = entity.getClass().isAnnotationPresent(Index.class);
 
@@ -66,22 +72,28 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
                         Class fieldClass = field.get(entity).getClass();
 
                         if (isAddonField(fieldClass, field)) {
+
+                            // Treat addons differently.
+                            // They're not located in the "properties" object like the other entity properties,
+                            // but they're stored in their own "addon" object
+
                             PerhapsLoaded<List<Addon>> addons = (PerhapsLoaded<List<Addon>>) field.get(entity);
                             if (addons.isLoaded()) {
-                                List<Map> addonsSource = Lists.newArrayList();
-                                ObjectMapper mapper = new ObjectMapper();
-                                for (Addon addon : addons.get()) {
-                                    addonsSource.add(mapper.readValue(mapper.writeValueAsString(addon), Map.class));
-                                }
-                                source.put(field.getName(), addonsSource);
+                                source.put("addons", extractAddons(addons.get()));
                             }
                         } else if (BigDecimal.class.isAssignableFrom(fieldClass)) {
-                            source.put(field.getName(), ((BigDecimal) field.get(entity)).doubleValue());
+
+                            // Convert big decimal to double value
+
+                            properties.put(field.getName(), ((BigDecimal) field.get(entity)).doubleValue());
                         } else {
-                            source.put(field.getName(), field.get(entity));
+
+                            // General case o>
+
+                            properties.put(field.getName(), field.get(entity));
                         }
                     } else {
-                        source.put(field.getName(), null);
+                        properties.put(field.getName(), null);
                     }
                 }
             } catch (IllegalAccessException e) {
@@ -99,6 +111,8 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
             }
         }
 
+        source.put("properties", properties);
+
         if (HasFeaturedImage.class.isAssignableFrom(entity.getClass())) {
             HasFeaturedImage hasFeaturedImage = (HasFeaturedImage) entity;
             if (hasFeaturedImage.getFeaturedImageId() != null) {
@@ -113,7 +127,31 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
             }
         }
 
+        source.put("url", entityURLFactory.create(entity, tenant).toString());
+
         return source;
+    }
+
+    private Map<String, Object> extractAddons(List<Addon> addons) throws IOException
+    {
+        Map<String, Object> addonsSource = Maps.newHashMap();
+        ObjectMapper mapper = new ObjectMapper();
+        for (Addon addon : addons) {
+            Map<String, Object> source;
+            Map<String, Object> group;
+            if (!addonsSource.containsKey(addon.getSource().toJson())) {
+                source = Maps.newHashMap();
+                addonsSource.put(addon.getSource().toJson(), source);
+            }
+            source = (Map<String, Object>) addonsSource.get(addon.getSource().toJson());
+            if (!source.containsKey(addon.getGroup())) {
+                group = Maps.newHashMap();
+                source.put(addon.getGroup(), group);
+            }
+            group = (Map<String, Object>) source.get(addon.getGroup());
+            group.put(addon.getKey(), addon.getValue());
+        }
+        return addonsSource;
     }
 
     private boolean isAddonField(Class fieldClass, Field field)

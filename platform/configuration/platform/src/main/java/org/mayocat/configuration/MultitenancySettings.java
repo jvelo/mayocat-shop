@@ -14,10 +14,6 @@ public class MultitenancySettings
 
     @Valid
     @JsonProperty
-    private String rootDomain = null;
-    
-    @Valid
-    @JsonProperty
     private String defaultTenant = "default";
 
     @Valid
@@ -31,11 +27,6 @@ public class MultitenancySettings
     public boolean isActivated()
     {
         return activated;
-    }
-
-    public String getRootDomain()
-    {
-        return rootDomain;
     }
 
     public String getDefaultTenantSlug()

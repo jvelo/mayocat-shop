@@ -1,11 +1,15 @@
 package org.mayocat.search.elasticsearch.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
@@ -13,10 +17,12 @@ import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.search.elasticsearch.EntitySourceExtractor;
 import org.mayocat.store.AttachmentStore;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
@@ -135,6 +141,19 @@ public class DefaultEntitySourceExtractorTest
         }
     }
 
+    private Tenant tenant;
+
+    @Before
+    public void setUp() throws ComponentLookupException, MalformedURLException
+    {
+        this.tenant = new Tenant();
+        tenant.setSlug("tenant");
+
+        final EntityURLFactory urlFactory = this.componentManager.getInstance(EntityURLFactory.class);
+        when(urlFactory.create((Entity) anyObject(), (Tenant) anyObject()))
+                .thenReturn(new URL("http://tenant.localhost:8080/api/entity/my-test-entity"));
+    }
+
     @Rule
     public final MockitoComponentMockingRule<EntitySourceExtractor> componentManager =
             new MockitoComponentMockingRule(DefaultEntitySourceExtractor.class);
@@ -144,9 +163,9 @@ public class DefaultEntitySourceExtractorTest
     {
         EntityWithClassLevelIndexAnnotation
                 entity = new EntityWithClassLevelIndexAnnotation(UUID.randomUUID(), "my-test-entity");
-        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity);
-        Assert.assertEquals("my-test-entity", source.get("slug"));
-        Assert.assertNull(source.get("id"));
+        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity, tenant);
+        Assert.assertEquals("my-test-entity", ((Map<String, Object>)source.get("properties")).get("slug"));
+        Assert.assertNull(((Map<String, Object>)source.get("properties")).get("id"));
     }
 
     @Test
@@ -154,9 +173,9 @@ public class DefaultEntitySourceExtractorTest
     {
         EntityWithFieldLevelIndexAnnotations
                 entity = new EntityWithFieldLevelIndexAnnotations(UUID.randomUUID(), "my-test-entity");
-        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity);
-        Assert.assertEquals("my-test-entity", source.get("slug"));
-        Assert.assertNull(source.get("id"));
+        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity, tenant);
+        Assert.assertEquals("my-test-entity", ((Map<String, Object>)source.get("properties")).get("slug"));
+        Assert.assertNull(((Map<String, Object>)source.get("properties")).get("id"));
     }
 
     @Test
@@ -173,7 +192,7 @@ public class DefaultEntitySourceExtractorTest
 
         EntityWithFeaturedImage entity = new EntityWithFeaturedImage(UUID.randomUUID(), UUID.randomUUID(), "toto");
 
-        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity);
+        Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity, tenant);
 
         Assert.assertNotNull(source.get("featuredImage"));
         Assert.assertEquals("/image/sample-attachment.jpg", ((Map) source.get("featuredImage")).get("url"));

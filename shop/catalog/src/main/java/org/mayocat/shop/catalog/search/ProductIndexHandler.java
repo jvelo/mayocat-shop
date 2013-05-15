@@ -22,9 +22,6 @@ import com.google.common.collect.Maps;
 public class ProductIndexHandler extends AbstractEntityIndexHandler implements EntityIndexHandler
 {
     @Inject
-    private ComponentManager componentManager;
-
-    @Inject
     private Logger logger;
 
     public Class forClass()
@@ -36,8 +33,8 @@ public class ProductIndexHandler extends AbstractEntityIndexHandler implements E
     {
         Map<String, Object> source = Maps.newHashMap();
 
-        source.put("site", extractSourceFromEntity(tenant));
-        source.putAll(extractSourceFromEntity(entity));
+        source.put("site", extractSourceFromEntity(tenant, tenant));
+        source.putAll(extractSourceFromEntity(entity, tenant));
 
         return source;
     }

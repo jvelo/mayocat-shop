@@ -122,7 +122,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
             }
             if (!found) {
                 // Default behavior : just extract the data as specified by the entity annotations.
-                source = extractor.extract(entity);
+                source = extractor.extract(entity, tenant);
             }
 
             if (source.keySet().size() > 0) {

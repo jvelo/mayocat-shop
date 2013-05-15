@@ -20,6 +20,7 @@
         <module>store</module>
         <module>context</module>
         <module>session</module>
+        <module>url</module>
         <module>search</module>
         <module>accounts</module>
         <module>multitenancy</module>

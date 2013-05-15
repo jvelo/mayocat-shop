@@ -2,6 +2,7 @@ package org.mayocat.search.elasticsearch;
 
 import java.util.Map;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Entity;
 import org.xwiki.component.annotation.Role;
 
@@ -11,5 +12,5 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface EntitySourceExtractor
 {
-    Map<String, Object> extract(Entity entity);
+    Map<String, Object> extract(Entity entity, Tenant tenant);
 }

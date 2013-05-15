@@ -1,1 +1,2 @@
 org.mayocat.shop.marketplace.search.BuildIndexTask
+org.mayocat.shop.marketplace.resources.MarketplaceResource
