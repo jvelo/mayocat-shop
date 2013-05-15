@@ -22,13 +22,13 @@ angular.module('TenantManager.tenants', [])
             }
 
             $scope.fetchTenants = function () {
+                var number = itemsPerPage,
+                    offset= ($scope.currentPage - 1) * itemsPerPage;
+
                 $scope.tenants = [];
                 $scope.loading = true;
-                $resource("/api/tenants?number=:number&offset=:offset").get({
-                    "number": itemsPerPage,
-                    "offset": ($scope.currentPage - 1) * itemsPerPage
-                }, function (tenants) {
 
+                $http.get("/api/tenants?number=" + number + "&offset=" + offset).success(function (tenants) {
                     var limit = tenants.limit,
                         numberOfPages = Math.floor(tenants.total / limit);
                     numberOfPages += (tenants.total % limit === 0 ? 0 : 1);
@@ -73,7 +73,7 @@ angular.module('TenantManager.tenants', [])
                     "user": $scope.user,
                     "tenant": $scope.tenant
                 }).success(function (data, status, headers, config) {
-                        $scope.createNewTenant = false;
+                        $scope.$parent.createNewTenant = false;
                         $scope.fetchTenants();
                     });
             }
