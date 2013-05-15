@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.mayocat.platform</groupId>
     <artifactId>mayocat-platform-store</artifactId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.6</version>
   </parent>
   <artifactId>mayocat-platform-store-rdbms</artifactId>
   <packaging>pom</packaging>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.7.6</version>
 
   <name>Mayocat Platform - Store - RDBMs - Parent POM</name>
   <description>Persistence layer - RDBMs implementation</description>

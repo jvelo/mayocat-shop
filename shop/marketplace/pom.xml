@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.7.6</version>
     </parent>
     <artifactId>mayocat-shop-marketplace</artifactId>
     <packaging>jar</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.6</version>
 
     <name>Mayocat Shop - Marketplace</name>
     <description>Elastic Search implementation</description>
