@@ -25,7 +25,7 @@ public class ResultSetRepresentationTest
                 42
         );
 
-        Assert.assertEquals("/test/?limit=10&offset=10", resultSet.getPrevious().getHref());
-        Assert.assertEquals("/test/?limit=10&offset=30", resultSet.getNext().getHref());
+        Assert.assertEquals("/test/?number=10&offset=10", resultSet.getPrevious().getHref());
+        Assert.assertEquals("/test/?number=10&offset=30", resultSet.getNext().getHref());
     }
 }

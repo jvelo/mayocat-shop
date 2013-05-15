@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -15,14 +17,14 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.SearchHit;
+import org.mayocat.configuration.SiteSettings;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.elasticsearch.ElasticSearchSearchEngine;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
-
-import static org.elasticsearch.index.query.QueryBuilders.queryString;
 
 /**
  * @version $Id$
@@ -32,6 +34,9 @@ import static org.elasticsearch.index.query.QueryBuilders.queryString;
 public class MarketplaceResource implements Resource
 {
     @Inject
+    private SiteSettings siteSettings;
+
+    @Inject
     private ComponentManager componentManager;
 
     private ElasticSearchSearchEngine searchEngine;
@@ -39,13 +44,14 @@ public class MarketplaceResource implements Resource
     @GET
     @Path("products")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProducts()
+    public Response getProducts(@QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("number") @DefaultValue("25") Integer number)
     {
         Client client = getSearchEngine().getClient();
         SearchResponse response =
                 client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                        .setFrom(0)
-                        .setSize(10)
+                        .setFrom(offset)
+                        .setSize(number)
                         .setTypes("product")
                         .setExplain(false)
                         .execute()
@@ -55,7 +61,13 @@ public class MarketplaceResource implements Resource
         for (SearchHit hit : response.getHits()) {
             result.add(hit.getSource());
         }
-        return Response.ok(result).build();
+        String thisAPIHref =
+                "http://" + siteSettings.getDomainName() + "/marketplace/api/products?number=" + number + "&offset=" +
+                        offset;
+        ResultSetRepresentation<List<Map<String, Object>>> resultSet =
+                new ResultSetRepresentation(thisAPIHref, number, offset, result,
+                        Long.valueOf(response.getHits().getTotalHits()).intValue());
+        return Response.ok(resultSet).build();
     }
 
     private ElasticSearchSearchEngine getSearchEngine()
