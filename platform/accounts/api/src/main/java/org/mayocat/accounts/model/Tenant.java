@@ -11,9 +11,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
-import org.mayocat.model.Identifiable;
 import org.mayocat.model.PerhapsLoaded;
-import org.mayocat.model.Slug;
+import org.mayocat.model.annotation.Index;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
@@ -27,6 +26,7 @@ public class Tenant implements Entity, HasAddons
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
     private String slug;
 
+    @Index
     @NotBlank
     private String name;
 
@@ -34,6 +34,7 @@ public class Tenant implements Entity, HasAddons
 
     // FIXME
     // Implement a @Hostname constraint that verifies a hostname is valid
+    @Index
     private String defaultHost;
 
     @JsonIgnore

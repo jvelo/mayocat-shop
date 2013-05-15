@@ -3,7 +3,6 @@ package org.mayocat.search.elasticsearch;
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -28,11 +28,13 @@ import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.general.FilesSettings;
+import org.mayocat.context.Execution;
 import org.mayocat.model.Entity;
-import org.mayocat.model.annotation.SearchIndex;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
+import org.mayocat.search.EntityIndexHandler;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.SearchEngineException;
 import org.slf4j.Logger;
@@ -49,7 +51,6 @@ import com.yammer.dropwizard.lifecycle.Managed;
 @Singleton
 public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initializable
 {
-
     @Inject
     private FilesSettings filesSettings;
 
@@ -59,15 +60,24 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     @Inject
     private ObservationManager observationManager;
 
+    @Inject
+    private Map<String, EntityIndexHandler> entityIndexHandlers;
+
+    @Inject
+    private EntitySourceExtractor extractor;
+
+    @Inject
+    private Execution execution;
+
     private Client client;
 
     private class SearchEngineEventListener implements EventListener
     {
         public void onEvent(Event event, Object source, Object data)
         {
-            Entity entity2 = (Entity) data;
+            Entity entity = (Entity) source;
             try {
-                index((Entity) entity2);
+                index(entity);
             } catch (SearchEngineException e) {
                 logger.error("Failed to index entity upon update", e);
             }
@@ -80,7 +90,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
 
         public List<Event> getEvents()
         {
-            return Arrays.<Event> asList(new EntityUpdatedEvent(), new EntityCreatedEvent());
+            return Arrays.<Event>asList(new EntityUpdatedEvent(), new EntityCreatedEvent());
         }
     }
 
@@ -92,43 +102,57 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     @Override
     public void index(Entity entity) throws SearchEngineException
     {
+        if (execution.getContext().getTenant() == null) {
+            throw new SearchEngineException("Cannot index entity : no tenant given and none in execution context");
+        }
+        index(entity, execution.getContext().getTenant());
+    }
+
+    public void index(final Entity entity, final Tenant tenant) throws SearchEngineException
+    {
         try {
             Map<String, Object> source = new HashMap<String, Object>();
-            for (Field field : entity.getClass().getDeclaredFields()) {
-                boolean isAccessible = field.isAccessible();
-                try {
-                    field.setAccessible(true);
-                    SearchIndex searchIndex = field.getAnnotation(SearchIndex.class);
-                    if (searchIndex != null) {
-                        source.put(field.getName(), field.get(entity));
-                    }
-                } finally {
-                    field.setAccessible(isAccessible);
+
+            boolean found = false;
+            for (EntityIndexHandler indexHandler : entityIndexHandlers.values()) {
+                if (entity.getClass().isAssignableFrom(indexHandler.forClass())) {
+                    source = indexHandler.getDocument(entity, tenant);
+                    found = true;
                 }
             }
+            if (!found) {
+                // Default behavior : just extract the data as specified by the entity annotations.
+                source = extractor.extract(entity, tenant);
+            }
+
             if (source.keySet().size() > 0) {
                 String entityName = StringUtils.substringAfterLast(entity.getClass().getName(), ".").toLowerCase();
 
-                this.logger.debug("Indexing entity {} ...", entityName);
+                this.logger.debug("Indexing {} with id {}...", entityName, entity.getId());
 
-                IndexResponse response =
-                    this.client.prepareIndex("entities", entityName, entity.getSlug()).setSource(source).execute()
-                        .actionGet();
-                this.logger.debug("" + response.type());
+                IndexRequestBuilder builder =
+                        this.client.prepareIndex("entities", entityName, entity.getId().toString()).setSource(source);
+
+                if (tenant != null && !Tenant.class.isAssignableFrom(entity.getClass())) {
+                    builder.setParent(tenant.getId().toString());
+                }
+
+                IndexResponse response = builder.execute().actionGet();
+                this.logger.debug("" + response.getType());
             }
-
         } catch (Exception e) {
             throw new SearchEngineException("Failed to index entity", e);
         }
     }
 
     @Override
-    public List<Map<String, Object>> search(String term, List<Class< ? extends Entity>> entityTypes)
-        throws SearchEngineException
+    public List<Map<String, Object>> search(String term, List<Class<? extends Entity>> entityTypes)
+            throws SearchEngineException
     {
         SearchResponse response =
-            client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setQuery(queryString(term))
-                .setFrom(0).setSize(10).setExplain(false).execute().actionGet();
+                client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                        .setQuery(queryString(term))
+                        .setFrom(0).setSize(10).setExplain(false).execute().actionGet();
 
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         for (SearchHit hit : response.getHits()) {
@@ -159,14 +183,14 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
             {
                 public void onResponse(IndicesExistsResponse response)
                 {
-                    if (!response.exists()) {
+                    if (!response.isExists()) {
                         try {
                             logger.debug("Entities indice does not exists. Creating it...");
                             CreateIndexResponse r =
-                                client.admin().indices().create(new CreateIndexRequest("entities")).actionGet();
+                                    client.admin().indices().create(new CreateIndexRequest("entities")).actionGet();
 
-                            logger.debug("Created indice with response {}", r.acknowledged() ? "\u2713 acknowledged"
-                                : "\2718 not acknowledged");
+                            logger.debug("Created indice with response {}", r.isAcknowledged() ? "\u2713 acknowledged"
+                                    : "\2718 not acknowledged");
                         } catch (Exception e) {
                             logger.error("Failed to create entities indice status ...");
                         }
@@ -179,6 +203,9 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
                 }
             });
 
+            for (EntityIndexHandler handler : entityIndexHandlers.values()) {
+                handler.updateMapping();
+            }
         } catch (Exception e) {
             throw new InitializationException("Failed to initialize embedded elastic search", e);
         }
@@ -187,5 +214,10 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     public void stop() throws Exception
     {
         this.client.close();
+    }
+
+    public Client getClient()
+    {
+        return client;
     }
 }

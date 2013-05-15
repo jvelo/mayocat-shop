@@ -33,6 +33,12 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private FilesSettings files = new FilesSettings();
 
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SiteSettings site = new SiteSettings();
+
     @Valid
     @NotNull
     @JsonProperty
@@ -61,5 +67,10 @@ public class AbstractSettings extends Configuration
     public FilesSettings getFilesSettings()
     {
         return files;
+    }
+
+    public SiteSettings getSite()
+    {
+        return site;
     }
 }

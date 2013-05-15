@@ -11,6 +11,7 @@ import javax.servlet.ServletRequestListener;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.AccountsService;
+import org.mayocat.configuration.SiteSettings;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -36,6 +37,9 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
 
     @Inject
     private MultitenancySettings configuration;
+
+    @Inject
+    private SiteSettings siteSettings;
 
     public void requestDestroyed()
     {
@@ -83,7 +87,7 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
     private String extractSlugFromHost(String host)
     {
         String rootDomain;
-        if (Strings.emptyToNull(configuration.getRootDomain()) == null) {
+        if (Strings.emptyToNull(siteSettings.getDomainName()) == null) {
             InternetDomainName domainName = InternetDomainName.from(host);
             if (domainName.hasPublicSuffix()) {
                 // Domain is under a valid TLD, extract the TLD + first child
@@ -95,7 +99,7 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
                 rootDomain = host;
             }
         } else {
-            rootDomain = configuration.getRootDomain();
+            rootDomain = siteSettings.getDomainName();
         }
         if (host.indexOf("." + rootDomain) > 0) {
             return host.substring(0, host.indexOf("." + rootDomain));

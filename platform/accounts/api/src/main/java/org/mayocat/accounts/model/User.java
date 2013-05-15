@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.jackson.PasswordSerializer;
 import org.mayocat.model.Entity;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -19,12 +19,12 @@ public class User implements Entity
     @JsonIgnore
     UUID id;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     String slug;
 
-    @SearchIndex
+    @Index
     @Pattern(regexp = "^(([^@\\s]+)@((?:[-a-zA-Z0-9]+\\.)+[a-zA-Z]{2,}))?$", message = "Not a valid email")
     @NotNull
     String email;

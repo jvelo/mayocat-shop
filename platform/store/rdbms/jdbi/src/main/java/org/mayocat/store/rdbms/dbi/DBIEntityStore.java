@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+import org.xwiki.observation.ObservationManager;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIEntityStore implements EntityStore, Initializable
@@ -19,6 +20,9 @@ public class DBIEntityStore implements EntityStore, Initializable
 
     @Inject
     private DBIProvider dbi;
+
+    @Inject
+    private ObservationManager observationManager;
 
     private EntityDAO dao;
 
@@ -42,7 +46,9 @@ public class DBIEntityStore implements EntityStore, Initializable
         this.dao = dbi.get().onDemand(EntityDAO.class);
     }
 
-
-
+    protected ObservationManager getObservationManager()
+    {
+        return observationManager;
+    }
 
 }

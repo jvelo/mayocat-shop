@@ -9,3 +9,4 @@ org.mayocat.shop.catalog.front.resource.CollectionResource
 org.mayocat.shop.catalog.front.resource.HomeResource
 org.mayocat.shop.catalog.front.resource.ProductResource
 org.mayocat.shop.catalog.front.context.RootContextSupplier
+org.mayocat.shop.catalog.search.ProductIndexHandler

@@ -13,45 +13,45 @@ import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
+import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Localized;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
+@Index
 public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage, Purchasable
 {
-    private static final long serialVersionUID = 6981826946713552336L;
+    private static final long serialVersionUID = 6998229869430511994L;
 
+    @DoNotIndex
     private UUID id;
 
-    @SearchIndex
     private Boolean onShelf;
 
-    @SearchIndex
     @NotNull
     @Size(min = 1)
     private String slug;
 
     @Localized
-    @SearchIndex
     @NotNull
     @Size(min = 1)
     private String title;
 
     @Localized
-    @SearchIndex
     private transient String description;
 
-    @SearchIndex
     private BigDecimal price;
 
     private Integer stock;
 
+    @DoNotIndex
     private UUID featuredImageId;
 
     private transient PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
+    @DoNotIndex
     private Optional<String> model = Optional.absent();
 
     public Product()

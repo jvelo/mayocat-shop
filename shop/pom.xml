@@ -22,6 +22,7 @@
     <module>checkout</module>
     <module>client</module>
     <module>themes</module>
+    <module>marketplace</module>
     <module>application</module>
     <module>distribution</module>
   </modules>

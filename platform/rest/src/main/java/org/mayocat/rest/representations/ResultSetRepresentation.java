@@ -10,7 +10,7 @@ public class ResultSetRepresentation<E> extends LinkRepresentation
 
     private Integer offset;
 
-    private Integer limit;
+    private Integer number;
 
     private List<E> items;
 
@@ -24,23 +24,23 @@ public class ResultSetRepresentation<E> extends LinkRepresentation
 
     private LinkRepresentation next;
 
-    public ResultSetRepresentation(String href, Integer limit, Integer offset, List<E> items,
+    public ResultSetRepresentation(String href, Integer number, Integer offset, List<E> items,
             Integer total)
     {
         super(href);
         this.offset = offset;
-        this.limit = limit;
+        this.number = number;
         this.items = items;
         this.total = total;
 
         if (offset - items.size() > 0) {
-            this.previous = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=" + (offset - limit));
+            this.previous = new LinkRepresentation(this.getHref() + "?number=" + number + "&offset=" + (offset - number));
         }
-        if (offset + limit < total) {
-            this.next = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=" + (offset + limit));
+        if (offset + number < total) {
+            this.next = new LinkRepresentation(this.getHref() + "?number=" + number + "&offset=" + (offset + number));
         }
-        this.first = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=0");
-        this.last = new LinkRepresentation(this.getHref() + "?limit=" + limit + "&offset=0");
+        this.first = new LinkRepresentation(this.getHref() + "?number=" + number + "&offset=0");
+        this.last = new LinkRepresentation(this.getHref() + "?number=" + number + "&offset=0");
     }
 
     public Integer getOffset()
@@ -48,9 +48,9 @@ public class ResultSetRepresentation<E> extends LinkRepresentation
         return offset;
     }
 
-    public Integer getLimit()
+    public Integer getNumber()
     {
-        return limit;
+        return number;
     }
 
     public List<E> getItems()

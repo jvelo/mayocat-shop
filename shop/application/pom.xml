@@ -27,6 +27,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-checkout</artifactId>
             <version>${project.version}</version>
@@ -45,14 +51,20 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-front</artifactId>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-marketplace</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-search-elasticsearch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-front</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -83,6 +95,12 @@
         <dependency>
             <groupId>org.mayocat.cms</groupId>
             <artifactId>mayocat-cms-news</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-marketplace</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -19,6 +19,7 @@ import org.skife.jdbi.v2.unstable.BindIn;
  *
  * @param <E> the entity type this DAO manages.
  */
+@UseStringTemplate3StatementLocator
 public interface EntityDAO< E extends Entity >
 {
 
@@ -94,8 +95,20 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
-        "WHERE entity.type = '<type>' AND entity.tenant_id = :tenant.id"
+        "SELECT * " +
+        "FROM entity " +
+        "INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "WHERE entity.type = '<type>'"
+    )
+    List<E> findAll(@Define("type") String type);
+
+    @SqlQuery
+    (
+        "SELECT * " +
+        "FROM entity " +
+        "INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "WHERE entity.type = '<type>'" +
+        "  AND entity.tenant_id = :tenant.id"
     )
     List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
 

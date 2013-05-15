@@ -7,3 +7,4 @@ org.mayocat.accounts.resources.LoginResource
 org.mayocat.accounts.resources.LogoutResource
 org.mayocat.accounts.resources.TenantResource
 org.mayocat.accounts.resources.UserResource
+org.mayocat.accounts.url.TenantURLFactory

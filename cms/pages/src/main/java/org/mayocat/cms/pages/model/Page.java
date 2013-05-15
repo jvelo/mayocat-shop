@@ -15,7 +15,7 @@ import org.mayocat.model.HasModel;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -29,21 +29,21 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
 
     private UUID parentId = null;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     private String slug;
 
-    @SearchIndex
+    @Index
     private Boolean published;
 
     @Localized(type = LocalizationFieldType.SMALL)
-    @SearchIndex
+    @Index
     @NotNull
     private String title;
 
     @Localized(type = LocalizationFieldType.MEDIUM)
-    @SearchIndex
+    @Index
     private String content;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();

@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.Entity;
 import org.mayocat.model.PerhapsLoaded;
-import org.mayocat.model.annotation.SearchIndex;
+import org.mayocat.model.annotation.Index;
 
 /**
  * @version $Id$
@@ -37,7 +37,7 @@ public class Order implements Entity
 
     private UUID billingAddressId;
 
-    @SearchIndex
+    @Index
     @NotNull
     @Size(min = 1)
     private String slug;

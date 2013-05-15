@@ -24,8 +24,8 @@ angular.module('TenantManager.tenants', [])
             $scope.fetchTenants = function () {
                 $scope.tenants = [];
                 $scope.loading = true;
-                $resource("/api/tenants?limit=:limit&offset=:offset").get({
-                    "limit": itemsPerPage,
+                $resource("/api/tenants?number=:number&offset=:offset").get({
+                    "number": itemsPerPage,
                     "offset": ($scope.currentPage - 1) * itemsPerPage
                 }, function (tenants) {
 
@@ -37,7 +37,7 @@ angular.module('TenantManager.tenants', [])
                     for (var i = 0; i < numberOfPages; i++) {
                         $scope.pages[i] = {
                             number: i + 1,
-                            href: "?limit=" + limit + "&offset=" + (numberOfPages * limit)
+                            href: "?number=" + limit + "&offset=" + (numberOfPages * limit)
                         };
                     }
 

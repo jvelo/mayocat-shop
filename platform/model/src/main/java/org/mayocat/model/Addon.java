@@ -2,11 +2,14 @@ package org.mayocat.model;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @version $Id$
  */
 public class Addon<T>
 {
+    @JsonIgnore
     private UUID entityId;
 
     private T value;

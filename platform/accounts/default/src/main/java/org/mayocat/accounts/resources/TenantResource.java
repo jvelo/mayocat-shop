@@ -38,6 +38,7 @@ import org.mayocat.model.Addon;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
