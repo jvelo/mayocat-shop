@@ -16,7 +16,7 @@ public class SiteSettings
      */
     @Valid
     @NotNull
-    private String domainName = "locahost:8080";
+    private String domainName = "localhost:8080";
 
     public String getDomainName()
     {

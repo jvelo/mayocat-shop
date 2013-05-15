@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.AccountsService;
@@ -99,7 +100,7 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
                 rootDomain = host;
             }
         } else {
-            rootDomain = siteSettings.getDomainName();
+            rootDomain = StringUtils.substringBefore(siteSettings.getDomainName(), ":");
         }
         if (host.indexOf("." + rootDomain) > 0) {
             return host.substring(0, host.indexOf("." + rootDomain));
