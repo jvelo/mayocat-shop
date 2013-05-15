@@ -28,7 +28,6 @@ import com.yammer.metrics.annotation.Timed;
 @Path(ConfigurationResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@ExistingTenant
 @Authorized
 public class ConfigurationResource implements Resource
 {
@@ -46,6 +45,7 @@ public class ConfigurationResource implements Resource
     @GET
     @Timed
     @Path("settings")
+    @ExistingTenant
     public Map<String, Object> getConfiguration()
     {
         return configurationService.getSettingsAsJson();
@@ -54,6 +54,7 @@ public class ConfigurationResource implements Resource
     @GET
     @Timed
     @Path("settings/{module}")
+    @ExistingTenant
     public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
     {
         try {
@@ -68,6 +69,7 @@ public class ConfigurationResource implements Resource
     @Timed
     @Path("settings/{module}")
     @Authorized //(roles = Role.ADMIN)
+    @ExistingTenant
     public Response updateModuleConfiguration(@PathParam("module") String module, Map<String, Object> configuration)
     {
         try {
@@ -80,21 +82,22 @@ public class ConfigurationResource implements Resource
         }
     }
 
+    @PUT
+    @Timed
+    @Authorized //(roles = Role.ADMIN)
+    @Path("settings")
+    @ExistingTenant
+    public Response updateModuleConfiguration(Map<String, Object> configuration)
+    {
+        configurationService.updateSettings(configuration);
+        return Response.noContent().build();
+    }
+
     @GET
     @Timed
     @Path("gestalt")
     public Map<String, Object> getGestaltConfiguration()
     {
         return configurationService.getGestaltConfiguration();
-    }
-
-    @PUT
-    @Timed
-    @Authorized //(roles = Role.ADMIN)
-    @Path("settings")
-    public Response updateModuleConfiguration(Map<String, Object> configuration)
-    {
-        configurationService.updateSettings(configuration);
-        return Response.noContent().build();
     }
 }

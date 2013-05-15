@@ -48,10 +48,13 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
 
         Theme theme = execution.getContext().getTheme();
 
-        addAddons(entities, theme.getAddons(), AddonSource.THEME);
+        if (theme != null) {
+            addAddons(entities, theme.getAddons(), AddonSource.THEME);
+            addModels(entities, theme.getModels());
+            addThumbnails(entities, theme.getThumbnails());
+        }
+
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
-        addModels(entities, theme.getModels());
-        addThumbnails(entities, theme.getThumbnails());
 
         return entities;
     }

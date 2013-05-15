@@ -195,6 +195,5 @@ public class DefaultEntitySourceExtractorTest
         Map<String, Object> source = this.componentManager.getComponentUnderTest().extract(entity, tenant);
 
         Assert.assertNotNull(source.get("featuredImage"));
-        Assert.assertEquals("/image/sample-attachment.jpg", ((Map) source.get("featuredImage")).get("url"));
     }
 }

@@ -10,4 +10,12 @@
 
     <name>Mayocat Platform - Attachments</name>
     <description>Attachments entities in Mayocat</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-url</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

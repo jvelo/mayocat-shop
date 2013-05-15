@@ -54,6 +54,7 @@
         <tr>
             <th>Tenant</th>
             <th>Created on</th>
+            <th>Links</th>
         </tr>
         </thead>
         <tbody>
@@ -66,6 +67,12 @@
             </td>
             <td>
                 {{tenant.creationDate | iso8601toLocalDate:'LLL'}}
+            </td>
+            <td>
+                <a href="http://{{tenant.slug}}.{{domainName}}/admin/" target="_new">Back-office</a> -
+                <a href="http://{{tenant.slug}}.{{domainName}}/" target="_new">Front-office</a>
+            </td>
+
             </td>
         </tr>
         </tbody>

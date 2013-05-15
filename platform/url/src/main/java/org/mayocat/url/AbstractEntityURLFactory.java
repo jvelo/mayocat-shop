@@ -15,6 +15,11 @@ public abstract class AbstractEntityURLFactory<E extends Entity> implements Enti
     @Inject
     private SiteSettings siteSettings;
 
+    protected String getSchemeAndDomain(Tenant tenant)
+    {
+        return "http://" + getDomain(tenant);
+    }
+
     protected String getDomain(Tenant tenant)
     {
         return StringUtils

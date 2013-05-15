@@ -119,7 +119,7 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
                 Attachment attachment = attachmentStore.findById(hasFeaturedImage.getFeaturedImageId());
                 if (attachment != null) {
                     Map<String, Object> imageMap = Maps.newHashMap();
-                    imageMap.put("url", "/image/" + attachment.getSlug() + "." + attachment.getExtension());
+                    imageMap.put("url", entityURLFactory.create(attachment, tenant));
                     imageMap.put("title", attachment.getTitle());
                     imageMap.put("extension", attachment.getExtension());
                     source.put("featuredImage", imageMap);

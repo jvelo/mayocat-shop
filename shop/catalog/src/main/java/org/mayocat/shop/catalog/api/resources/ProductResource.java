@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.net.ssl.SSLEngineResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -25,7 +26,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.image.util.ImageUtils;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
@@ -182,8 +185,30 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             return Response.status(404).build();
         }
 
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+        Response response =  this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.of(product.getId()));
+
+        if (product.getFeaturedImageId() == null && AttachmentUtils.isImage(fileDetail.getFileName())
+                && response.getStatus() >= 200 && response.getStatus() < 400) {
+
+            // If this is an image and the product doesn't have a featured image yet, and the attachment was
+            // successful, the we set this image as featured image.
+            for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product,
+                    Arrays.asList("png", "jpg", "jpeg", "gif")))
+            {
+                product.setFeaturedImageId(attachment.getId());
+                break;
+            }
+            try {
+                this.productStore.get().update(product);
+            } catch (EntityDoesNotExistException e) {
+                // Fail silently. The attachment has been added successfully, that's what matter
+            } catch (InvalidEntityException e) {
+                // Fail silently. The attachment has been added successfully, that's what matter
+            }
+        }
+
+        return response;
     }
 
     @Path("{slug}/move")

@@ -24,7 +24,7 @@ public class TenantURLFactory extends AbstractEntityURLFactory<Tenant> implement
     public URL create(Tenant entity, Tenant tenant, URLType type)
     {
         try {
-            return new URL("http://" + this.getDomain(tenant));
+            return new URL(getSchemeAndDomain(tenant));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

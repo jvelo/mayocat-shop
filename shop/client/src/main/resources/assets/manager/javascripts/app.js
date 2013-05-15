@@ -29,15 +29,15 @@ angular.module('TenantManager.tenants', [])
                 $scope.loading = true;
 
                 $http.get("/api/tenants?number=" + number + "&offset=" + offset).success(function (tenants) {
-                    var limit = tenants.limit,
-                        numberOfPages = Math.floor(tenants.total / limit);
-                    numberOfPages += (tenants.total % limit === 0 ? 0 : 1);
+                    var number = tenants.number,
+                        numberOfPages = Math.floor(tenants.total / number);
+                    numberOfPages += (tenants.total % number === 0 ? 0 : 1);
 
                     $scope.totalPages = numberOfPages;
                     for (var i = 0; i < numberOfPages; i++) {
                         $scope.pages[i] = {
                             number: i + 1,
-                            href: "?number=" + limit + "&offset=" + (numberOfPages * limit)
+                            href: "?number=" + number + "&offset=" + (numberOfPages * number)
                         };
                     }
 
@@ -88,13 +88,19 @@ var TenantManager = angular.module('TenantManager', [
     'TenantManager.tenants'
 ]);
 
-TenantManager.controller("ManagerController", ['$scope', function ($scope) {
+TenantManager.controller("ManagerController", ['$scope', 'configurationService', function ($scope, configurationService) {
+
+    configurationService.get("site.domainName", function(value){
+        $scope.domainName = value;
+    })
+
     $scope.toggleNewTenantForm = function () {
         $scope.createNewTenant = !$scope.createNewTenant;
     }
     $scope.hideNewTenantForm = function () {
         $scope.createNewTenant = false;
     }
+
 }]);
 
 TenantManager.config(['$routeProvider', function ($routeProvider) {
