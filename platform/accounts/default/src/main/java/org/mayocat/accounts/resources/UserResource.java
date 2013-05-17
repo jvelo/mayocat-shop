@@ -12,8 +12,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.meta.UserEntity;
+import org.mayocat.accounts.representations.TenantRepresentation;
+import org.mayocat.accounts.representations.UserAndTenantRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Role;
@@ -31,7 +35,6 @@ import com.yammer.metrics.annotation.Timed;
 @Path(UserResource.PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@ExistingTenant
 @Authorized
 public class UserResource implements Resource
 {
@@ -43,10 +46,14 @@ public class UserResource implements Resource
     @Inject
     private Execution execution;
 
+    @Inject
+    private GeneralSettings generalSettings;
+
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
     @Authorized(roles = { Role.ADMIN })
+    @ExistingTenant
     public Response addUser(@Valid User user)
     {
         Context context = execution.getContext();
@@ -71,17 +78,31 @@ public class UserResource implements Resource
 
     @GET
     @Path("_me")
-    public User getCurrentUser()
+    public UserAndTenantRepresentation getCurrentUser()
     {
+        UserAndTenantRepresentation userAndTenant = new UserAndTenantRepresentation();
+
+        if (this.execution.getContext().getTenant() != null) {
+            userAndTenant
+                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.execution.getContext().getTenant()));
+        }
         Context context = execution.getContext();
-        return context.getUser();
+        userAndTenant.setUser(context.getUser());
+
+        return userAndTenant;
     }
 
     @Path("{slug}")
     @GET
     @Timed
+    @ExistingTenant
     public User getUser(@PathParam("slug") String slug)
     {
         return accountsService.findUserByEmailOrUserName(slug);
+    }
+
+    private DateTimeZone getGlobalTimeZone()
+    {
+        return DateTimeZone.forTimeZone(generalSettings.getTime().getTimeZone().getDefaultValue());
     }
 }

@@ -372,16 +372,28 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         });
 
         $scope.ping = function () {
-            $http.get('/api/tenants/_current')
+            $http.get('/api/tenant')
+                .success(function(data, status, headers, config) {
+                    if (status === 200) {
+                        $scope.tenant = data;
+                    }
+                    else if (status === 404) {
+                        $scope.tenant = undefined;
+                    }
+
+                })
+                .error(function (data, status, headers, config) {
+                    $scope.$parent.$broadcast('event:serverError');
+                });
+            $http.get('/api/users/_me')
                 .success(function(data, status, headers, config) {
                     if (status === 200) {
                         authenticationService.loginConfirmed(data);
                     }
                     else if (status === 404) {
-                        // TODO
-                        // check how we can pass a message or a template source to the server error dialog
-                        $scope.$parent.$broadcast('event:serverError');
+                        $scope.tenant = undefined;
                     }
+
                 })
                 .error(function (data, status, headers, config) {
                     $scope.$parent.$broadcast('event:serverError');
@@ -391,7 +403,10 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         // Ensure authenticated
         $scope.ping();
 
-        $scope.tenant = undefined;
+        // By default pretend there is a tenant.
+        // If there is not, it will be set to  "undefined". See ping() callback.
+        $scope.tenant = {};
+
         $scope.user = undefined;
         $scope.authenticated = undefined;
 

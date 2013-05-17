@@ -30,6 +30,7 @@ public class TenantRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String href;
 
     public TenantRepresentation()
@@ -37,6 +38,11 @@ public class TenantRepresentation
     }
 
     public TenantRepresentation(DateTimeZone globalTimeZone, Tenant tenant)
+    {
+        this(globalTimeZone, tenant, null);
+    }
+
+    public TenantRepresentation(DateTimeZone globalTimeZone, Tenant tenant, String href)
     {
         Preconditions.checkNotNull(tenant);
 
@@ -55,7 +61,7 @@ public class TenantRepresentation
             this.creationDate = new DateTime(tenant.getCreationDate().getTime(), globalTimeZone);
         }
 
-        this.href = Resource.API_ROOT_PATH + TenantEntity.PATH + "/" + this.slug;
+        this.href = href;
     }
 
     public String getSlug()

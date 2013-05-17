@@ -81,7 +81,7 @@
 
 <div ng-controller="MenuController">
 
-    <div class="sidebar-nav" ng-show="authenticated" ng-contro>
+    <div class="sidebar-nav" ng-show="authenticated && tenant != undefined" ng-contro>
 
         <header>
             <div class="logo" ng-click="setRoute('/')"></div>
@@ -138,7 +138,13 @@
 
     </div>
 
-    <div id="content" ng-show="authenticated">
+    <!-- Message show when there is no tenant at this address -->
+    <div class="hero-unit" ng-show="tenant == undefined && authenticated != undefined">
+        <h1>Nothing to see here.</h1>
+    </div>
+
+    <!-- Main container-->
+    <div id="content" ng-show="authenticated && tenant != undefined">
 
         <!--
           Since there is no notion of "sub-view" or "multiple views" per route, we are include *all* sub-menus here
@@ -159,10 +165,10 @@
 </div>
 
 <!-- Initial AJAX loader -->
-<div class="loader" ng-show="authenticated == undefined"></div>
+<div class="loader" ng-show="tenant != undefined && authenticated == undefined"></div>
 
 <!-- Login modal -->
-<div class="modal" ng-show="authenticated != undefined && !authenticated" id="loginModal">
+<div class="modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated" id="loginModal">
     <form class="" ng-controller="LoginController">
         <div class="modal-header">
             <h3>Authentication required</h3>
@@ -187,7 +193,7 @@
         </div>
     </form>
 </div>
-<div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
+<div class="modal-backdrop" ng-show="tenant != undefined && authenticated != undefined && !authenticated"></div>
 
 <!-- Error modal -->
 <div class="modal hide fade"

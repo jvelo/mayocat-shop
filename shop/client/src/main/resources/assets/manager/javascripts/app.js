@@ -28,7 +28,7 @@ angular.module('TenantManager.tenants', [])
                 $scope.tenants = [];
                 $scope.loading = true;
 
-                $http.get("/api/tenants?number=" + number + "&offset=" + offset).success(function (tenants) {
+                $http.get("/management/api/tenants?number=" + number + "&offset=" + offset).success(function (tenants) {
                     var number = tenants.number,
                         numberOfPages = Math.floor(tenants.total / number);
                     numberOfPages += (tenants.total % number === 0 ? 0 : 1);
@@ -69,7 +69,7 @@ angular.module('TenantManager.tenants', [])
 
             $scope.createTenant = function () {
                 $scope.loading = true;
-                $http.post("/api/tenants/", {
+                $http.post("/management/api/tenants/", {
                     "user": $scope.user,
                     "tenant": $scope.tenant
                 }).success(function (data, status, headers, config) {

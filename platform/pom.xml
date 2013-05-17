@@ -32,6 +32,7 @@
         <module>image</module>
         <module>rest</module>
         <module>front</module>
+        <module>manager</module>
         <module>application</module>
     </modules>
 
