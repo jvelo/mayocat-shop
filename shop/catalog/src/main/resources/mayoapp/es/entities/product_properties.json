@@ -1,0 +1,17 @@
+{
+    "description": {
+        "type": "string"
+    },
+    "onShelf": {
+        "type": "boolean"
+    },
+    "price": {
+        "type": "double"
+    },
+    "stock": {
+        "type": "long"
+    },
+    "title": {
+        "type": "string"
+    }
+}

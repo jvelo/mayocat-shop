@@ -5,13 +5,10 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.model.Entity;
-import org.mayocat.search.elasticsearch.AbstractEntityIndexHandler;
-import org.mayocat.search.EntityIndexHandler;
+import org.mayocat.search.elasticsearch.AbstractGenericEntityIndexDocumentPurveyor;
 import org.mayocat.shop.catalog.model.Product;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.component.manager.ComponentManager;
 
 import com.google.common.collect.Maps;
 
@@ -19,7 +16,7 @@ import com.google.common.collect.Maps;
  * @version $Id$
  */
 @Component("product")
-public class ProductIndexHandler extends AbstractEntityIndexHandler implements EntityIndexHandler
+public class ProductIndexDocumentPurveyor extends AbstractGenericEntityIndexDocumentPurveyor<Product>
 {
     @Inject
     private Logger logger;
@@ -29,7 +26,7 @@ public class ProductIndexHandler extends AbstractEntityIndexHandler implements E
         return Product.class;
     }
 
-    public Map<String, Object> getDocument(Entity entity, Tenant tenant)
+    public Map<String, Object> purveyDocument(Product entity, Tenant tenant)
     {
         Map<String, Object> source = Maps.newHashMap();
 
@@ -39,9 +36,4 @@ public class ProductIndexHandler extends AbstractEntityIndexHandler implements E
         return source;
     }
 
-    @Override
-    public void updateMapping()
-    {
-
-    }
 }

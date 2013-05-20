@@ -10,13 +10,9 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface EntityIndexHandler
+public interface EntityIndexDocumentPurveyor<E extends Entity>
 {
-    Class forClass();
+    Map<String, Object> purveyDocument(E entity);
 
-    Map<String, Object> getDocument(Entity entity);
-
-    Map<String, Object> getDocument(Entity entity, Tenant tenant);
-
-    void updateMapping();
+    Map<String, Object> purveyDocument(E entity, Tenant tenant);
 }

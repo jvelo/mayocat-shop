@@ -1,45 +1,51 @@
-package org.mayocat.search.elasticsearch.internal;
+package org.mayocat.search.elasticsearch;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.elasticsearch.common.collect.Maps;
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.context.Execution;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
+import org.mayocat.model.Identifiable;
 import org.mayocat.model.PerhapsLoaded;
+import org.mayocat.model.Slug;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
-import org.mayocat.search.elasticsearch.EntitySourceExtractor;
+import org.mayocat.search.EntityIndexDocumentPurveyor;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.url.EntityURLFactory;
 import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
-@Component("default")
-public class DefaultEntitySourceExtractor implements EntitySourceExtractor
+public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entity> implements
+        EntityIndexDocumentPurveyor<E>
 {
+    public AbstractGenericEntityIndexDocumentPurveyor()
+    {
+    }
+
     @Inject
     private Logger logger;
+
+    @Inject
+    private Execution execution;
 
     @Inject
     private AttachmentStore attachmentStore;
@@ -48,7 +54,18 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
     private EntityURLFactory entityURLFactory;
 
     @Override
-    public Map<String, Object> extract(Entity entity, Tenant tenant)
+    public Map<String, Object> purveyDocument(E entity)
+    {
+        return this.purveyDocument(entity, execution.getContext().getTenant());
+    }
+
+    @Override
+    public Map<String, Object> purveyDocument(E entity, Tenant tenant)
+    {
+        return extractSourceFromEntity(entity, tenant);
+    }
+
+    protected Map<String, Object> extractSourceFromEntity(Entity entity, Tenant tenant)
     {
         Map<String, Object> source = Maps.newHashMap();
         Map<String, Object> properties = Maps.newHashMap();
@@ -60,6 +77,16 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
             try {
                 if (Modifier.isStatic(field.getModifiers())) {
                     // we're not interested in static fields like serialVersionUid (or any other static field)
+                    continue;
+                }
+
+                if (Identifiable.class.isAssignableFrom(entity.getClass()) && field.getName().equals("id")) {
+                    // do not index the id of identifiable under properties
+                    continue;
+                }
+
+                if (Slug.class.isAssignableFrom(entity.getClass()) && field.getName().equals("slug")) {
+                    // do not index the slug of slugs under properties
                     continue;
                 }
 
@@ -135,7 +162,6 @@ public class DefaultEntitySourceExtractor implements EntitySourceExtractor
     private Map<String, Object> extractAddons(List<Addon> addons) throws IOException
     {
         Map<String, Object> addonsSource = Maps.newHashMap();
-        ObjectMapper mapper = new ObjectMapper();
         for (Addon addon : addons) {
             Map<String, Object> source;
             Map<String, Object> group;

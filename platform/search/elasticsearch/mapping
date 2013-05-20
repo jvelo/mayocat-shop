@@ -1,0 +1,83 @@
+{
+    "product": {
+        "properties": {
+            "addons": {
+                "properties": {
+                    "platform": {
+                        "properties": {
+                            "productdata": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "theme": {
+                        "properties": {
+                            "characteristics": {
+                                "properties": {
+                                    "brand": {
+                                        "type": "string"
+                                    },
+                                    "manufacturer": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "featuredImage": {
+                "properties": {
+                    "extension": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "properties": {
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "onShelf": {
+                        "type": "boolean"
+                    },
+                    "price": {
+                        "type": "double"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "stock": {
+                        "type": "long"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                }
+            },
+            "site": {
+                "properties": {
+                    "properties": {
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "url": {
+                "type": "string"
+            }
+        }
+    }
+}

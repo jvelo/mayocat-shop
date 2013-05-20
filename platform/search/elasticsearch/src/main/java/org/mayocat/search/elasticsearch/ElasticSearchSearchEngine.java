@@ -3,9 +3,9 @@ package org.mayocat.search.elasticsearch;
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +14,12 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -34,11 +36,12 @@ import org.mayocat.context.Execution;
 import org.mayocat.model.Entity;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
-import org.mayocat.search.EntityIndexHandler;
+import org.mayocat.search.EntityIndexDocumentPurveyor;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.SearchEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.observation.EventListener;
@@ -61,13 +64,13 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     private ObservationManager observationManager;
 
     @Inject
-    private Map<String, EntityIndexHandler> entityIndexHandlers;
-
-    @Inject
-    private EntitySourceExtractor extractor;
+    private EntityIndexDocumentPurveyor entityIndexDocumentPurveyor;
 
     @Inject
     private Execution execution;
+
+    @Inject
+    private Map<String, EntityMappingGenerator> mappingGenerators;
 
     private Client client;
 
@@ -111,19 +114,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     public void index(final Entity entity, final Tenant tenant) throws SearchEngineException
     {
         try {
-            Map<String, Object> source = new HashMap<String, Object>();
-
-            boolean found = false;
-            for (EntityIndexHandler indexHandler : entityIndexHandlers.values()) {
-                if (entity.getClass().isAssignableFrom(indexHandler.forClass())) {
-                    source = indexHandler.getDocument(entity, tenant);
-                    found = true;
-                }
-            }
-            if (!found) {
-                // Default behavior : just extract the data as specified by the entity annotations.
-                source = extractor.extract(entity, tenant);
-            }
+            Map<String, Object> source = entityIndexDocumentPurveyor.purveyDocument(entity, tenant);
 
             if (source.keySet().size() > 0) {
                 String entityName = StringUtils.substringAfterLast(entity.getClass().getName(), ".").toLowerCase();
@@ -195,19 +186,48 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
                             logger.error("Failed to create entities indice status ...");
                         }
                     }
+
+                    updateMappings();
                 }
 
                 public void onFailure(Throwable e)
                 {
-                    logger.error("Failed to enquiry entities indice status ...");
+                    logger.error("Failed to enquiry entities indice status ...", e);
                 }
             });
-
-            for (EntityIndexHandler handler : entityIndexHandlers.values()) {
-                handler.updateMapping();
-            }
         } catch (Exception e) {
             throw new InitializationException("Failed to initialize embedded elastic search", e);
+        }
+    }
+
+    private void updateMappings()
+    {
+        for (String entity : mappingGenerators.keySet()) {
+            EntityMappingGenerator generator = mappingGenerators.get(entity);
+            Map<String, Object> mapping = generator.generateMapping();
+            if (mapping != null) {
+                final String type = generator.forClass().getSimpleName().toLowerCase();
+                ListenableActionFuture<PutMappingResponse> future = client.admin().indices()
+                        .preparePutMapping("entities")
+                        .setType(type)
+                        .setSource(mapping)
+                        .execute();
+
+                future.addListener(new ActionListener<PutMappingResponse>()
+                {
+                    public void onResponse(PutMappingResponse putMappingResponse)
+                    {
+                        logger.info("Mapping for entity [{}] updated", type);
+                    }
+
+                    public void onFailure(Throwable throwable)
+                    {
+                        logger.info("Error updating mapping for entity {}", type,  throwable);
+                    }
+                });
+
+                future.actionGet();
+            }
         }
     }
 
