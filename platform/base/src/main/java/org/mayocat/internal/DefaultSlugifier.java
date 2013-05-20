@@ -16,6 +16,7 @@ public class DefaultSlugifier implements Slugifier
     {
         return Normalizer.normalize(toSlugify.trim().toLowerCase(), java.text.Normalizer.Form.NFKD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("[^\\w\\ ]", "")
+                .trim()
                 .replaceAll("\\s+", "-");
     }
 }
