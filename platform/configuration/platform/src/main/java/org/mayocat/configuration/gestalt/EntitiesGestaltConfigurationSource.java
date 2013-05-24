@@ -191,7 +191,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
 
             private void addAddonGroupToSource(Map sources, Object... arguments)
             {
-                if (!sources.containsKey(arguments[0])) {
+                if (!sources.containsKey(arguments[0].toString().toLowerCase())) {
                     sources.put(arguments[0].toString().toLowerCase(), Maps.newHashMap());
                 }
                 Map source = (Map) sources.get(arguments[0].toString().toLowerCase());
