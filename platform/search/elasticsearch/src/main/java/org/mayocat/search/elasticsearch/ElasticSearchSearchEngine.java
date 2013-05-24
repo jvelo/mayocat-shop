@@ -222,7 +222,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
 
                     public void onFailure(Throwable throwable)
                     {
-                        logger.info("Error updating mapping for entity {}", type,  throwable);
+                        logger.error("Error updating mapping for entity {}", type,  throwable);
                     }
                 });
 

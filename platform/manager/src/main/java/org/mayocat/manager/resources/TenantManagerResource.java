@@ -37,8 +37,11 @@ import org.mayocat.model.Addon;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.ResultSetRepresentation;
+import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
 
@@ -69,6 +72,9 @@ public class TenantManagerResource implements ManagerResource
 
     @Inject
     private MultitenancySettings multitenancySettings;
+
+    @Inject
+    private AddonsRepresentationUnmarshaller addonsRepresentationUnmarshaller;
 
     @GET
     @Path("{slug}")
@@ -114,6 +120,26 @@ public class TenantManagerResource implements ManagerResource
     }
 
     @POST
+    @Path("{slug}")
+    @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
+    public Response updateTenant(@PathParam("slug") String slug, TenantRepresentation tenantRepresentation)
+    {
+        Tenant tenant = accountsService.findTenant(slug);
+
+        tenant.setName(tenantRepresentation.getName());
+        tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons(), true));
+
+        try {
+            this.accountsService.updateTenant(tenant);
+            return Response.ok().build();
+        } catch (InvalidEntityException e) {
+            return Response.status(422).entity("Invalid entity").build();
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @POST
     public Response createTenant(UserAndTenantRepresentation userAndTenant)
     {
         if (!multitenancySettings.isActivated()) {
@@ -128,23 +154,9 @@ public class TenantManagerResource implements ManagerResource
         try {
             Tenant tenant = new Tenant();
             TenantRepresentation tenantRepresentation = userAndTenant.getTenant();
-
             tenant.setSlug(tenantRepresentation.getSlug());
             tenant.setName(tenantRepresentation.getName());
-            // Addons
-            List<Addon> addons = Lists.newArrayList();
-            if (tenantRepresentation.getAddons() != null) {
-                for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
-                    Addon addon = new Addon();
-                    addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                    addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                    addon.setValue(addonRepresentation.getValue());
-                    addon.setKey(addonRepresentation.getKey());
-                    addon.setGroup(addonRepresentation.getGroup());
-                    addons.add(addon);
-                }
-            }
-
+            tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons()));
             tenant.setCreationDate(new Date());
             accountsService.createTenant(tenant);
             execution.getContext().setTenant(tenant);

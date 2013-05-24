@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.net.ssl.SSLEngineResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -26,26 +25,26 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.image.util.ImageUtils;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
-import org.mayocat.rest.Resource;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
+import org.mayocat.model.AddonFieldType;
+import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
-import org.mayocat.addons.api.representation.AddonRepresentation;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
+import org.mayocat.rest.representations.ImageRepresentation;
+import org.mayocat.rest.resources.AbstractAttachmentResource;
+import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.shop.catalog.api.representations.ProductRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.rest.resources.AbstractAttachmentResource;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -80,6 +79,9 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private AddonsRepresentationUnmarshaller addonsRepresentationUnmarshaller;
 
     @Inject
     private Logger logger;
@@ -257,21 +259,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setOnShelf(updatedProductRepresentation.getOnShelf());
                 product.setPrice(updatedProductRepresentation.getPrice());
                 product.setStock(updatedProductRepresentation.getStock());
-
-                // Addons
-                if (updatedProductRepresentation.getAddons() != null) {
-                    List<Addon> addons = Lists.newArrayList();
-                    for (AddonRepresentation addonRepresentation : updatedProductRepresentation.getAddons()) {
-                        Addon addon = new Addon();
-                        addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-                        addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-                        addon.setValue(addonRepresentation.getValue());
-                        addon.setKey(addonRepresentation.getKey());
-                        addon.setGroup(addonRepresentation.getGroup());
-                        addons.add(addon);
-                    }
-                    product.setAddons(addons);
-                }
+                product.setAddons(addonsRepresentationUnmarshaller.unmarshall(updatedProductRepresentation.getAddons()));
 
                 // Featured image
                 if (updatedProductRepresentation.getFeaturedImage() != null) {

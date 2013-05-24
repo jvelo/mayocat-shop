@@ -165,18 +165,19 @@ public abstract class AbstractGenericEntityMappingGenerator implements EntityMap
 
                 Map<String, Object> addonMapping;
 
-                if (!groupMappingProperties.containsKey(groupKey)) {
-                    addonMapping = Maps.newHashMap();
-                    groupMappingProperties.put(key, addonMapping);
-                } else {
-                    addonMapping = (Map<String, Object>) groupMappingProperties.get(key);
-                }
-
                 if (addon.getProperties().keySet().size() > 0) {
                     for (String propertyKey : addon.getProperties().keySet()) {
                         if (propertyKey.equals(ESAddonProperties.MAPPING)) {
 
                             // We've found a ES mapping for this addon
+
+                            if (!groupMappingProperties.containsKey(groupKey)) {
+                                addonMapping = Maps.newHashMap();
+                                groupMappingProperties.put(key, addonMapping);
+                            } else {
+                                addonMapping = (Map<String, Object>) groupMappingProperties.get(key);
+                            }
+
                             Map<String, Object> addonMappingDefinition =
                                     (Map<String, Object>) addon.getProperties().get(propertyKey);
 

@@ -28,6 +28,7 @@ import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
@@ -56,6 +57,9 @@ public class TenantResource implements Resource
     @Inject
     private GeneralSettings generalSettings;
 
+    @Inject
+    private AddonsRepresentationUnmarshaller addonsRepresentationUnmarshaller;
+
     @GET
     @Authorized
     @ExistingTenant
@@ -73,19 +77,7 @@ public class TenantResource implements Resource
         Tenant tenant = this.execution.getContext().getTenant();
 
         tenant.setName(tenantRepresentation.getName());
-        // Addons
-        List<Addon> addons = Lists.newArrayList();
-        for (AddonRepresentation addonRepresentation : tenantRepresentation.getAddons()) {
-            Addon addon = new Addon();
-            addon.setSource(AddonSource.fromJson(addonRepresentation.getSource()));
-            addon.setType(AddonFieldType.fromJson(addonRepresentation.getType()));
-            addon.setValue(addonRepresentation.getValue());
-            addon.setKey(addonRepresentation.getKey());
-            addon.setGroup(addonRepresentation.getGroup());
-            addons.add(addon);
-        }
-
-        tenant.setAddons(addons);
+        tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons()));
 
         try {
             this.accountsService.updateTenant(tenant);
