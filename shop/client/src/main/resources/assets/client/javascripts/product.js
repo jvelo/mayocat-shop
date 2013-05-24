@@ -131,7 +131,7 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.initializeAddons = function () {
-                addonsService.initialize("product", $scope.product).then(function (addons) {
+                addonsService.initializeEntityAddons("product", $scope.product).then(function (addons) {
                     $scope.addons = addons;
                 });
             }

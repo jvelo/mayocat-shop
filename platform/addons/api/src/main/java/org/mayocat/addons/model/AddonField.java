@@ -28,6 +28,9 @@ public class AddonField
 
     private String type;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String displayer;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> properties = Maps.newHashMap();
 
@@ -49,6 +52,11 @@ public class AddonField
     public String getTemplate()
     {
         return template;
+    }
+
+    public String getDisplayer()
+    {
+        return displayer;
     }
 
     public Map<String, Object> getProperties()

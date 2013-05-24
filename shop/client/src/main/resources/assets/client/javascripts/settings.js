@@ -38,10 +38,10 @@ angular.module('settings', ['ngResource'])
         function ($scope, $resource, addonsService) {
 
             $scope.addons = [];
-            $scope.TenantResource = $resource("/api/tenants/_current");
+            $scope.TenantResource = $resource("/api/tenant/");
 
             $scope.initializeAddons = function () {
-                addonsService.initialize("tenant", $scope.tenant).then(function (addons) {
+                addonsService.initializeEntityAddons("tenant", $scope.tenant).then(function (addons) {
                     $scope.addons = addons;
                 });
             }
@@ -55,7 +55,6 @@ angular.module('settings', ['ngResource'])
 
             $scope.tenant = $scope.TenantResource.get({
             }, function () {
-                $scope.tenant = $scope.tenant.tenant;
                 $scope.initializeAddons();
             });
 

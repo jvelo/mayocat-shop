@@ -85,7 +85,7 @@ angular.module('page', ['ngResource'])
             }
 
             $scope.initializeAddons = function () {
-                addonsService.initialize("page", $scope.page).then(function (addons) {
+                addonsService.initializeEntityAddons("page", $scope.page).then(function (addons) {
                     $scope.addons = addons;
                 });
             }
