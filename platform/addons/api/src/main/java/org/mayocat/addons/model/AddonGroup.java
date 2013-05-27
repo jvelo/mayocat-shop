@@ -22,6 +22,8 @@ public class AddonGroup
 
     private Map<String, AddonField> fields;
 
+    private Map<String, Object> properties;
+
     @JsonDeserialize(using = OptionalStringListDeserializer.class)
     @JsonProperty("for")
     private Optional<List<String>> entities = Optional.absent();
@@ -44,5 +46,10 @@ public class AddonGroup
     public Map<String, AddonField> getFields()
     {
         return fields;
+    }
+
+    public Map<String, Object> getProperties()
+    {
+        return properties;
     }
 }

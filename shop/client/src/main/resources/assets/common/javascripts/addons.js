@@ -93,9 +93,10 @@ angular.module('mayocat.addons', ['ngResource'])
              *
              * @param {string} type the type of addon field (i.e. "string" or "html" or "json", etc.).
              * @param {object} definition the addon field definition object.
+             * @param {object} options an optional option hash
              * @returns {string}
              */
-            displayer: function (type, definition) {
+            displayer: function (type, definition, options) {
 
                 var displayer = definition.displayer,
                     dasherize = function (s) {
@@ -104,13 +105,16 @@ angular.module('mayocat.addons', ['ngResource'])
                     });
                 };
 
+                options = typeof options !== "undefined" ? options : {};
+
                 if (typeof displayer === "undefined") {
                     displayer = defaultDisplayers[type];
                 }
 
                 var output = '<addon-' + dasherize(displayer) + ' placeholder={{addon.placeholder}} value=value ';
 
-                if (typeof definition.properties !== "undefined" && !!definition.properties.readOnly) {
+                if (typeof definition.properties !== "undefined" && !!definition.properties.readOnly
+                    && !options.ignoreReadOnly) {
                     output += "disabled='disabled' "
                 }
 
@@ -149,6 +153,7 @@ angular.module('mayocat.addons', ['ngResource'])
                                             source: sourceName,
                                             name: group.name,
                                             text: group.text,
+                                            properties: group.properties,
                                             fields: []
                                         }) - 1;
                                         for (var key in definitions) {
@@ -244,7 +249,8 @@ angular.module('mayocat.addons', ['ngResource'])
             scope: {
                 addon: '=definition',
                 value: '=value',
-                type: '=type'
+                type: '=type',
+                ignoreReadOnly: '='
             },
             restrict: "E",
             link: function (scope, element, attrs) {
@@ -254,7 +260,9 @@ angular.module('mayocat.addons', ['ngResource'])
                     function (definition) {
                         scope.type = addonsService.type(definition.type, definition.displayer);
 
-                        var displayer = addonsService.displayer(scope.type, definition);
+                        var displayer = addonsService.displayer(scope.type, definition, {
+                            "ignoreReadOnly" : typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
+                        });
 
                         // The "template" option allow to override default behavior
                         if (typeof definition.template !== 'undefined') {

@@ -41,7 +41,7 @@ public class DefaultAddonsRepresentationUnmarshaller implements AddonsRepresenta
     @Override
     public List<Addon> unmarshall(List<AddonRepresentation> addons, boolean includeReadOnlyAddons)
     {
-        return unmarshall(addons, false, false);
+        return unmarshall(addons, includeReadOnlyAddons, false);
     }
 
     @Override

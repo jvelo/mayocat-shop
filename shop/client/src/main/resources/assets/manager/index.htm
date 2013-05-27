@@ -35,6 +35,7 @@
     <script src="/common/vendor/blueimp/load-image.min.js"></script>
     <script src="/common/vendor/blueimp/canvas-to-blob.min.js"></script>
     <script src="/common/vendor/blueimp/jquery.fileupload-fp.js"></script>
+    <script src="/common/vendor/ckeditor/4.1/ckeditor.js"></script>
 
     <script src="/common/vendor/lesscss/less-1.3.3.min.js"></script>
     <!-- Always clear local storage when running with less.js -->
@@ -64,7 +65,7 @@
     <div class="container-fluid" ng-show="authenticated">
         <div class="row-fluid">
             <div class="span2">
-                <p id="newTenant">
+                <p id="newTenant" ng-show="isHome">
                     <button class="btn btn-large" type="button" ng-click="toggleNewTenantForm()">New tenant</button>
                 </p>
             </div>

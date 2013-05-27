@@ -1,0 +1,46 @@
+<div class="page-header">
+    <span class="pull-right">
+        <a ng-click="setRoute('/')">Back</a>
+    </span>
+    <h1 class="">{{tenant.name}}</h1>
+</div>
+
+<form>
+    <article class="entity" ng-class="{'loading': tenant.name == undefined}">
+
+        <div ng-show="tenant.name != undefined">
+
+            <h2></h2>
+
+            <div ng-show="addons.length > 0 && !isNew()">
+                <div class="block" ng-repeat="group in addons" ng-show="!group.properties.management.exclude">
+                    <h3>{{group.properties.management.name || group.name}}</h3>
+
+                    <p ng-show="group.properties.management.text || group.text">
+                        {{group.properties.management.text || group.text}}
+                    </p>
+                    <ul>
+                        <li ng-repeat="addon in group.fields">
+                            {{addon.definition.name}}
+                            <addon definition="addon.definition"
+                                   value="tenant.addons[addon.index].value"
+                                   type="tenant.addons[addon.index].type"
+                                   ignore-read-only="true"></addon>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </article>
+    </div>
+    <aside ng-show="tenant.name != undefined">
+
+        <div class="buttons">
+            <div class="hasLoading">
+                <button ng-click="updateTenant()" class="btn btn-large btn-primary">Update</button>
+                <span ng-class="{'loading': isSaving}"></span>
+            </div>
+        </div>
+    </aside>
+</form>

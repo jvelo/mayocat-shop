@@ -59,7 +59,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="tenant in tenants">
-            <td>
+            <td ng-click="setRoute('/tenants/' + tenant.slug)">
                 <div>
                     <h4>{{tenant.name}}</h4>
                     <small>{{tenant.slug}}</small>

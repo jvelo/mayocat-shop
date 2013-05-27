@@ -10,7 +10,9 @@ import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.model.Addon;
 import org.mayocat.rest.Resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -23,6 +25,8 @@ public class TenantRepresentation
 
     private String name;
 
+    @JsonIgnore
+    // Ignored on de-serialization only. See getter and setter
     private DateTime creationDate;
 
     private String defaultHost;
@@ -74,9 +78,16 @@ public class TenantRepresentation
         return name;
     }
 
+    @JsonProperty("creationDate")
     public DateTime getCreationDate()
     {
         return creationDate;
+    }
+
+    @JsonIgnore
+    public void setCreationDate(DateTime creationDate)
+    {
+        this.creationDate = creationDate;
     }
 
     public String getDefaultHost()
