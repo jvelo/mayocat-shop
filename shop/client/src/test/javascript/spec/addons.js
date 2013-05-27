@@ -45,7 +45,7 @@ describe('Addons', function () {
                     addons: []
                 };
 
-            addonsService.initialize("todo", todo).then(function (addons) {
+            addonsService.initializeEntityAddons("todo", todo).then(function (addons) {
                 hasReturned = true;
                 returnedAddons = addons;
             });
@@ -85,7 +85,7 @@ describe('Addons', function () {
                     ]
                 };
 
-            addonsService.initialize("todo", todo).then(function (addons) {
+            addonsService.initializeEntityAddons("todo", todo).then(function (addons) {
                 hasReturned = true;
                 returnedAddons = addons;
             });
