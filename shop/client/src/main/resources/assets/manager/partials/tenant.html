@@ -2,7 +2,7 @@
     <span class="pull-right">
         <a ng-click="setRoute('/')">Back</a>
     </span>
-    <h1 class="">{{tenant.name}}</h1>
+    <h1 class=""><span ng-style="{'color': stringToHexColor(tenant.slug)}">&#9632;</span> {{tenant.name}}</h1>
 </div>
 
 <form>

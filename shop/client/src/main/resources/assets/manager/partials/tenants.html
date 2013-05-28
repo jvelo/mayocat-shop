@@ -58,7 +58,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="tenant in tenants">
+        <tr ng-repeat="tenant in tenants" ng-style="{'border-left': '3px solid ' + stringToHexColor(tenant.slug)}">
             <td ng-click="setRoute('/tenants/' + tenant.slug)">
                 <div>
                     <h4>{{tenant.name}}</h4>

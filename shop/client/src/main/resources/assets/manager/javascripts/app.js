@@ -117,9 +117,38 @@ TenantManager.controller("ManagerController", ['$scope', 'configurationService',
 
     function ($scope, configurationService, location) {
 
-        configurationService.get("site.domainName", function (value) {
-            $scope.domainName = value;
-        })
+        /**
+         * Djb2 algorithm. Used below in #stringToHexColor
+         *
+         * See http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+         *
+         * @param str
+         * @returns {number}
+         */
+        var djb2 = function(str){
+            var hash = 5381;
+            for (var i = 0; i < str.length; i++) {
+                hash = ((hash << 5) + hash) + str.charCodeAt(i); /* hash * 33 + c */
+            }
+            return hash;
+        }
+
+        /**
+         * Converts a string to a hex color
+         *
+         * @param str the string to convert
+         * @returns {number} the hex color for this string (derived from a hash of it)
+         */
+        $scope.stringToHexColor = function (str) {
+            var hash = djb2(str);
+            var r = ((hash & 0xFF0000) >> 16);
+            var g = ((hash & 0x00FF00) >> 8);
+            var b = (hash & 0x0000FF);
+            return [r, g, b].reduce(function (memo, value) {
+                var hex = value.toString(16);
+                return memo + ((hex.length === 1 ? "0" : "") + hex);
+            }, '#');
+        }
 
         $scope.toggleNewTenantForm = function () {
             $scope.createNewTenant = !$scope.createNewTenant;
@@ -137,6 +166,9 @@ TenantManager.controller("ManagerController", ['$scope', 'configurationService',
             }
         });
 
+        configurationService.get("site.domainName", function (value) {
+            $scope.domainName = value;
+        });
 
     }]);
 
