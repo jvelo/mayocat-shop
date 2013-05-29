@@ -1,7 +1,5 @@
 package org.mayocat.accounts.resources;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,24 +14,16 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.representations.TenantRepresentation;
-import org.mayocat.addons.api.representation.AddonRepresentation;
-import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Context;
 import org.mayocat.context.Execution;
-import org.mayocat.model.Addon;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.collect.Lists;
 
 /**
  * This resource allow access to the current tenant information. For complete tenant management API, see the
@@ -65,8 +55,9 @@ public class TenantResource implements Resource
     @ExistingTenant
     public Response currentTenant()
     {
-        return Response.ok(new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant()))
-                .build();
+        TenantRepresentation representation =
+                new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant());
+        return Response.ok(representation).build();
     }
 
     @POST

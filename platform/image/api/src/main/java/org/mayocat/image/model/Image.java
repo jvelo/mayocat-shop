@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mayocat.model.Attachment;
 
+
 /**
  * @version $Id$
  */
@@ -13,7 +14,7 @@ public class Image
 
     private List<Thumbnail> thumbnails;
 
-    public Image(Attachment attachment, List<Thumbnail> thumbnails)
+    public Image(org.mayocat.model.Attachment attachment, List<Thumbnail> thumbnails)
     {
         this.attachment = attachment;
         this.thumbnails = thumbnails;

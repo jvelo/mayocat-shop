@@ -58,9 +58,6 @@ public class DefaultHostAndSubdomainSlugTenantResolverTest extends AbstractMocki
                 allowing(configuration).getDefaultTenantSlug();
                 will(returnValue("mytenant"));
 
-                allowing(configuration).getRootDomain();
-                will(returnValue(null));
-
                 allowing(accountsService).findTenant(with(Matchers.not(equal("mytenant"))));
                 will(returnValue(null));
 
@@ -141,9 +138,6 @@ public class DefaultHostAndSubdomainSlugTenantResolverTest extends AbstractMocki
             {
                 allowing(configuration).isActivated();
                 will(returnValue(true));
-
-                allowing(configuration).getRootDomain();
-                will(returnValue(null));
             }
         });
     }

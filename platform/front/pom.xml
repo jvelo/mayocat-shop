@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-image-api</artifactId>
+            <artifactId>mayocat-platform-image-default</artifactId>
             <version>${project.version}</version>
         </dependency>
 

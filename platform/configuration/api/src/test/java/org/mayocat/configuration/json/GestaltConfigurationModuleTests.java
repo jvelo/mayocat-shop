@@ -2,14 +2,13 @@ package org.mayocat.configuration.json;
 
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mayocat.configuration.Configurable;
 import org.mayocat.configuration.jackson.GestaltConfigurationModule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
-
-import junit.framework.Assert;
 
 /**
  * @version $Id$

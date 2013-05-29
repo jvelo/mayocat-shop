@@ -10,7 +10,6 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.image.model.Image;
 import org.mayocat.model.Addon;
-import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
