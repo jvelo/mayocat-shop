@@ -8,19 +8,25 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.mayocat.image.model.Image;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.Index;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 
-public class Tenant implements Entity, HasAddons
+public class Tenant implements Entity, HasAddons, HasFeaturedImage
 {
     @JsonIgnore
     private UUID id;
+
+    @JsonIgnore
+    private UUID featuredImageId;
 
     @NotNull
     @Pattern(message = "Only word characters or hyphens", regexp = "\\w[\\w-]*\\w")
@@ -41,6 +47,9 @@ public class Tenant implements Entity, HasAddons
     private TenantConfiguration configuration;
 
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
+
+    @JsonIgnore
+    private PerhapsLoaded<Image> featuredImage = PerhapsLoaded.notLoaded();
 
     ///////////////////////////////////////////////////
 
@@ -129,6 +138,26 @@ public class Tenant implements Entity, HasAddons
     public void setAddons(List<Addon> addons)
     {
         this.addons = new PerhapsLoaded<List<Addon>>(addons);
+    }
+
+    public UUID getFeaturedImageId()
+    {
+        return featuredImageId;
+    }
+
+    public void setFeaturedImageId(UUID featuredImageId)
+    {
+        this.featuredImageId = featuredImageId;
+    }
+
+    public PerhapsLoaded<Image> getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(Image featuredImage)
+    {
+        this.featuredImage = new PerhapsLoaded<Image>(featuredImage);
     }
 
     // ///////////////////////////////////////////////////////////

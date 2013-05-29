@@ -1,2 +1,2 @@
-org.mayocat.image.internal.DefaultImageService
+org.mayocat.image.DefaultImageService
 org.mayocat.image.store.jdbi.DBIThumbnailStore

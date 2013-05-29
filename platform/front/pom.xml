@@ -36,16 +36,8 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-image</artifactId>
+            <artifactId>mayocat-platform-image-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.xwiki.commons</groupId>
-            <artifactId>xwiki-commons-test-component</artifactId>
-            <version>${xwiki.version}</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

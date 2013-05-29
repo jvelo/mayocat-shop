@@ -1,4 +1,4 @@
-package org.mayocat.image.internal;
+package org.mayocat.image;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

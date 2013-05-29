@@ -7,8 +7,10 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.meta.TenantEntity;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.api.representation.AddonRepresentation;
+import org.mayocat.image.model.Image;
 import org.mayocat.model.Addon;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.representations.ImageRepresentation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,6 +35,9 @@ public class TenantRepresentation
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ImageRepresentation featuredImage = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String href;
@@ -63,6 +68,10 @@ public class TenantRepresentation
 
         if (tenant.getCreationDate() != null) {
             this.creationDate = new DateTime(tenant.getCreationDate().getTime(), globalTimeZone);
+        }
+
+        if (tenant.getFeaturedImage().isLoaded()) {
+            this.setFeaturedImage(new ImageRepresentation(tenant.getFeaturedImage().get()));
         }
 
         this.href = href;
@@ -103,5 +112,15 @@ public class TenantRepresentation
     public String getHref()
     {
         return href;
+    }
+
+    public ImageRepresentation getFeaturedImage()
+    {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(ImageRepresentation featuredImage)
+    {
+        this.featuredImage = featuredImage;
     }
 }

@@ -30,6 +30,11 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-image</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
