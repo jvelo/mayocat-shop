@@ -200,9 +200,6 @@
     <profiles>
         <profile>
             <id>hsqldb</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.hsqldb</groupId>
@@ -213,6 +210,9 @@
         </profile>
         <profile>
             <id>postgres</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>postgresql</groupId>
