@@ -53,6 +53,7 @@
         <!-- Dependencies versions -->
         <postgresql.driver.version>9.1-901.jdbc4</postgresql.driver.version>
         <dropwizard.version>0.6.2</dropwizard.version>
+        <jersey.version>1.17.1</jersey.version> <!-- Used for multipart contrib module. Needs to be the same as the dropwizard's jersey version -->
         <flyway.version>2.1.1</flyway.version>
         <xwiki.version>4.5.2</xwiki.version>
         <guava.version>14.0.1</guava.version>
