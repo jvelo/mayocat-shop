@@ -15,6 +15,5 @@ java $JAVA_OPTS \
   -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/mayocat-shop-application-0.8-SNAPSHOT.jar" \
   org.mayocat.shop.application.MayocatShopService \
   server \
-  config-postgres.yml
-#  config-dev.yml
+  mayocat.yml
 
