@@ -2,6 +2,10 @@
 
 Mayocat Shop is a modern e-commerce and marketplace management platform on the JVM.
 
+Documentation is available on the project wiki, at www.mayocat.org.
+
+A "getting started" guide for developers to build and run mayocat is [available here](http://www.mayocat.org/Building_mayocat).
+
 Architecture
 ------------
 
