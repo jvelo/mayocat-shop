@@ -65,14 +65,14 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     {
         try {
 
-            Template template = themeManager.resolveIndexTemplate(frontView.getBreakpoint());
+            Template template = themeManager.getIndexTemplate(frontView.getBreakpoint());
             Template layout = null;
 
             if (frontView.getModel().isPresent()) {
                 Optional<String> path = themeManager.resolveModelPath(frontView.getModel().get());
                 if (path.isPresent()) {
                     try {
-                        layout = themeManager.resolveTemplate(path.get(), frontView.getBreakpoint());
+                        layout = themeManager.getTemplate(path.get(), frontView.getBreakpoint());
                     } catch (TemplateNotFoundException e) {
                         // Keep going
                     }
@@ -81,7 +81,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             }
 
             if (layout == null) {
-                layout = themeManager.resolveTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
+                layout = themeManager.getTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
             }
 
             frontView.getContext().put("layout", layout.getId());
@@ -115,7 +115,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             Map<String, Object> context = frontView.getContext();
             String jsonContext = mapper.writeValueAsString(context);
 
-            Template error = themeManager.resolveTemplate("error.html", frontView.getBreakpoint());
+            Template error = themeManager.getTemplate("error.html", frontView.getBreakpoint());
             Map<String, Object> errorContext = Maps.newHashMap();
             errorContext.put("error", e.getMessage());
             errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));

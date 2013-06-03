@@ -1,7 +1,6 @@
 package org.mayocat.shop.front.resources;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
@@ -18,7 +17,6 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeManager;
@@ -57,7 +55,7 @@ public class ResourceResource implements Resource
     public Response getResource(@PathParam("path") String resource, @Context Breakpoint breakpoint, @Context
     Request request) throws Exception
     {
-        ThemeResource themeResource = themeManager.resolveResource(resource, breakpoint);
+        ThemeResource themeResource = themeManager.getResource(resource, breakpoint);
         if (themeResource == null) {
             logger.debug("Resource [{}] with breakpoint [{}] not found", resource, breakpoint);
             throw new WebApplicationException(404);
