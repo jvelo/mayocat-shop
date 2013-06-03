@@ -2,9 +2,6 @@ package org.mayocat.theme.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 import javax.inject.Inject;
 
@@ -43,7 +40,7 @@ public class DefaultThemeLoader implements ThemeLoader
     public Theme load() throws IOException
     {
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-        ThemeResource themeConfig = themeManager.resolveResource("theme.yml", Breakpoint.DEFAULT);
+        ThemeResource themeConfig = themeManager.getResource("theme.yml", Breakpoint.DEFAULT);
         JsonNode node;
 
         if (themeConfig == null) {

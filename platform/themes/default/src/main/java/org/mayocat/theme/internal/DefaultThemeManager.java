@@ -50,7 +50,7 @@ public class DefaultThemeManager implements ThemeManager
     private Logger logger;
 
     @Override
-    public Template resolveIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(INDEX_HTML, breakpoint);
@@ -62,7 +62,7 @@ public class DefaultThemeManager implements ThemeManager
     }
 
     @Override
-    public Template resolveTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(name, breakpoint);
@@ -74,7 +74,7 @@ public class DefaultThemeManager implements ThemeManager
     }
 
     @Override
-    public ThemeResource resolveResource(String name, Breakpoint breakpoint)
+    public ThemeResource getResource(String name, Breakpoint breakpoint)
     {
         try {
             ThemeResource result = getResource(getActiveThemeId(), name, breakpoint);
