@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
 import org.mayocat.rest.annotation.ExistingTenant;
@@ -43,8 +44,9 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("title") String title, @FormDataParam("description") String description)
     {
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+        Attachment created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.<UUID>absent());
+        return Response.noContent().build();
     }
 
 }

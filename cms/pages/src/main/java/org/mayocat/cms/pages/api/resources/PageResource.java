@@ -302,7 +302,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
             return Response.status(404).build();
         }
 
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
-                Optional.of(page.getId()));
+        this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description, Optional.of(page.getId()));
+        return Response.noContent().build();
     }
 }

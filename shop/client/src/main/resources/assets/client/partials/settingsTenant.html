@@ -10,14 +10,33 @@
 
                 <div ng-show="tenant.name != undefined">
 
+
                     <div class="block">
-                        Shop name
-                        <input type="text" ng-model="tenant.name" placeholder="Enter the shop name"/>
+                        <!-- Shop name -->
+                        <p>
+                            Shop name
+                        </p>
+                        <input type="text" ng-model="tenant.name" placeholder="Enter the shop name" />
+
+                        <!-- Shop logo -->
+                        <p>
+                            Shop logo
+                        </p>
+                        <div ng-show="tenant.featuredImage">
+                                <img ng-src="{{tenant.featuredImage.file.href}}?width=100&height=100"/>
+                        </div>
+                        <image-upload upload-uri="'/api/tenant/attachments?featuredImage=true'"
+                                      on-upload="reloadImages()"
+                                      drag-and-drop="false"
+                                      multiple="false">
+                        </image-upload>
                     </div>
 
+                    <!-- Shop addons (if any) -->
                     <div ng-show="addons.length > 0 && !isNew()">
                         <div class="block" ng-repeat="group in addons">
                             <h3>{{group.name}}</h3>
+
                             <p ng-show="group.text && group.text != ''">
                                 {{group.text}}
                             </p>

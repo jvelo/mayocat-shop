@@ -187,11 +187,11 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             return Response.status(404).build();
         }
 
-        Response response =  this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+        Attachment created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.of(product.getId()));
 
         if (product.getFeaturedImageId() == null && AttachmentUtils.isImage(fileDetail.getFileName())
-                && response.getStatus() >= 200 && response.getStatus() < 400) {
+                && created != null) {
 
             // If this is an image and the product doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
@@ -210,7 +210,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
             }
         }
 
-        return response;
+        return Response.noContent().build();
     }
 
     @Path("{slug}/move")

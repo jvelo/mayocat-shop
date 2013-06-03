@@ -319,8 +319,9 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
             return Response.status(404).build();
         }
 
-        return this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+        this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.of(article.getId()));
+        return Response.noContent().build();
     }
 
     private static boolean isJustBeingPublished(Article originalArticle, ArticleRepresentation updatedArticle)

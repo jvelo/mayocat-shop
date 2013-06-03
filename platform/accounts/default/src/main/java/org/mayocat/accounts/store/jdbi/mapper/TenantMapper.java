@@ -45,6 +45,7 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         }
 
         Tenant tenant = new Tenant((UUID) result.getObject("id"), slug, configuration);
+        tenant.setFeaturedImageId((UUID) result.getObject("featured_image_id"));
         tenant.setSlug(slug);
         tenant.setDefaultHost(defaultHost);
         tenant.setCreationDate(result.getTimestamp("creation_date"));

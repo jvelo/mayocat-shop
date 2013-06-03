@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -46,13 +47,13 @@ public class AbstractAttachmentResource
         return this.attachmentStore.get().findAll(0, 0);
     }
 
-    protected Response addAttachment(InputStream data, String originalFilename, String title, String description,
+    protected Attachment addAttachment(InputStream data, String originalFilename, String title, String description,
             Optional<UUID> parent)
     {
         if (data == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                     .entity("No file were present\n")
-                    .type(MediaType.TEXT_PLAIN_TYPE).build();
+                    .type(MediaType.TEXT_PLAIN_TYPE).build());
         }
 
         Attachment attachment = new Attachment();
@@ -70,9 +71,10 @@ public class AbstractAttachmentResource
 
         String slug = this.slugifier.slugify(fileName);
         if (Strings.isNullOrEmpty(slug)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid file name\n")
-                    .type(MediaType.TEXT_PLAIN_TYPE).build();
+            throw new WebApplicationException(
+                    Response.status(Response.Status.BAD_REQUEST)
+                            .entity("Invalid file name\n")
+                            .type(MediaType.TEXT_PLAIN_TYPE).build());
         }
 
         attachment.setSlug(slug);
@@ -87,20 +89,21 @@ public class AbstractAttachmentResource
         return this.addAttachment(attachment, 0);
     }
 
-    private Response addAttachment(Attachment attachment, int recursionLevel)
+    private Attachment addAttachment(Attachment attachment, int recursionLevel)
     {
         if (recursionLevel > 50) {
             // Defensive stack overflow prevention, even though this should not happen
-            return Response.serverError().entity("Failed to create attachment slug").build();
+            throw new WebApplicationException(
+                    Response.serverError().entity("Failed to create attachment slug").build());
         }
         try {
             try {
                 this.attachmentStore.get().create(attachment);
-                return Response.noContent().build();
+                return attachment;
             } catch (InvalidEntityException e) {
-                return Response.status(Response.Status.BAD_REQUEST)
+                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid attachment\n")
-                        .type(MediaType.TEXT_PLAIN_TYPE).build();
+                        .type(MediaType.TEXT_PLAIN_TYPE).build());
             }
         } catch (EntityAlreadyExistsException e) {
             attachment.setSlug(attachment.getSlug() + RandomStringUtils.randomAlphanumeric(3));

@@ -37,6 +37,9 @@ public class TenantRepresentation
     private List<AddonRepresentation> addons = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ImageRepresentation> images = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ImageRepresentation featuredImage = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -52,6 +55,12 @@ public class TenantRepresentation
     }
 
     public TenantRepresentation(DateTimeZone globalTimeZone, Tenant tenant, String href)
+    {
+        this(globalTimeZone, tenant, null, null);
+    }
+
+    public TenantRepresentation(DateTimeZone globalTimeZone, Tenant tenant, String href,
+            List<ImageRepresentation> images)
     {
         Preconditions.checkNotNull(tenant);
 
@@ -70,11 +79,21 @@ public class TenantRepresentation
             this.creationDate = new DateTime(tenant.getCreationDate().getTime(), globalTimeZone);
         }
 
-        if (tenant.getFeaturedImage().isLoaded()) {
+        this.href = href;
+
+        if (images != null) {
+            this.images = images;
+            if (images.size() > 0) {
+                for (ImageRepresentation image : images) {
+                    if (image.isFeaturedImage()) {
+                        this.setFeaturedImage(image);
+                    }
+                }
+            }
+        } else if (tenant.getFeaturedImage().isLoaded()) {
             this.setFeaturedImage(new ImageRepresentation(tenant.getFeaturedImage().get()));
         }
 
-        this.href = href;
     }
 
     public String getSlug()
@@ -122,5 +141,15 @@ public class TenantRepresentation
     public void setFeaturedImage(ImageRepresentation featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public List<ImageRepresentation> getImages()
+    {
+        return images;
+    }
+
+    public void setImages(List<ImageRepresentation> images)
+    {
+        this.images = images;
     }
 }

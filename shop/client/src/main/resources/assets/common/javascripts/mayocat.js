@@ -72,7 +72,6 @@ mayocat.config(function ($httpProvider) {
 });
 
 
-
 /**
  * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
  */
@@ -109,13 +108,17 @@ mayocat.directive('modalDismiss', ['$rootScope', function ($rootScope) {
 mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
     return {
         restrict: "E",
-        templateUrl: "partials/imageUpload.html",
+        templateUrl: "/common/partials/imageUpload.html",
         scope: {
+            'headerText': "@",
+            'dragAndDrop': '&',
+            'multiple': '&',
             'requestedDropZone': '&dropZone',
             'requestedUploadUri': '&uploadUri',
             'onUpload': '&onUpload'
         },
-        link: function postLink($scope, element, attrs) {
+        controller: function($scope, $element, $attrs) {
+            // Initialize default value for attributes
 
             // Get the upload URI the directive customer requested. It is either provided as a function,
             // which we need to evaluate, or as a raw string.
@@ -123,114 +126,144 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                 ? $scope.requestedUploadUri()
                 : $scope.requestedUploadUri;
 
+            // DND default value
+            if (typeof $scope.dragAndDrop === "function") {
+                $scope.dragAndDrop = $scope.dragAndDrop();
+                if (typeof $scope.dragAndDrop === "undefined") {
+                    $scope.dragAndDrop = true;
+                }
+            }
+
+            // Multiple default value
+            if (typeof $scope.multiple === "function") {
+                $scope.multiple = $scope.multiple();
+                if (typeof $scope.multiple === "undefined") {
+                    $scope.multiple = true;
+                }
+            }
+
+            // Custom dropzone option
             $scope.dropzone = typeof $scope.requestedDropZone === "string"
                 ? $($scope.requestedDropZone)
-                : $(element).find('.dropzone');
+                : $($element).find('.dropzone');
+        },
+        compile: function compile(tElement, tAttrs, transclude) {
+            return {
+                post: function postLink($scope, element, attrs) {
 
+                    $scope.files = [];
 
-            $scope.files = [];
-
-            $scope.getPreviewUri = function (file, index) {
-                var deferred = $q.defer();
-                loadImage(file, function (preview) {
-                    deferred.resolve({
-                        index: index,
-                        preview: preview
-                    });
-                    $scope.$apply();
-                }, {
-                    maxWidth: 100,
-                    maxHeight: 100,
-                    canvas: false,
-                    noRevoke: true
-                });
-                return deferred.promise;
-            }
-
-            $scope.remove = function (index) {
-                $scope.files[index] = null;
-            }
-
-            $scope.fileUploadFailed = function (index) {
-                $scope.$apply(function ($scope) {
-                    $scope.files[index].failed = true;
-                });
-            }
-
-            $scope.fileUploading = function (index, loaded, total) {
-                $scope.$apply(function ($scope) {
-                    $scope.files[index].progress = Math.round(loaded * 100 / total);
-                });
-            }
-
-            $scope.fileUploaded = function (index) {
-                $scope.$apply(function ($scope) {
-                    if (typeof $scope.onUpload === "function") {
-                        $scope.onUpload();
+                    $scope.getPreviewUri = function (file, index) {
+                        var deferred = $q.defer();
+                        loadImage(file, function (preview) {
+                            deferred.resolve({
+                                index: index,
+                                preview: preview
+                            });
+                            $scope.$apply();
+                        }, {
+                            maxWidth: 100,
+                            maxHeight: 100,
+                            canvas: false,
+                            noRevoke: true
+                        });
+                        return deferred.promise;
                     }
-                    // Remove the file from list
-                    $scope.files[index] = null;
-                });
-            }
 
-            $scope.submit = function () {
-                for (var i = 0; i < $scope.files.length; i++) {
-                    if ($scope.files[i] !== null) {
-                        $scope.files[i].progress = 0;
-                        $(element).fileupload('send', {
-                            files: $scope.files[i],
-                            formData: {
-                                "title": $scope.files[i].title,
-                                "description": $scope.files[i].description
-                            }
+                    $scope.remove = function (index) {
+                        $scope.files[index] = null;
+                    }
+
+                    $scope.fileUploadFailed = function (index) {
+                        $scope.$apply(function ($scope) {
+                            $scope.files[index].failed = true;
                         });
                     }
-                }
-            }
 
-            $scope.hasFiles = function () {
-                for (var i = 0; i < $scope.files.length; i++) {
-                    if ($scope.files[i] !== null) {
-                        return true;
+                    $scope.fileUploading = function (index, loaded, total) {
+                        $scope.$apply(function ($scope) {
+                            $scope.files[index].progress = Math.round(loaded * 100 / total);
+                        });
                     }
-                }
-                return false;
-            }
 
-            // Extend the directive element with the jQuery file upload plugin
-            $(element).fileupload({
-                dropZone: $scope.dropzone,
-                url: $scope.uploadUri,
-                add: function (e, data) {
-                    $scope.$apply(function ($scope) {
-                        for (var i = 0; i < data.files.length; i++) {
-                            // Usually there is just one
-                            var index = $scope.files.push(data.files[i]) - 1;
-                            $scope.files[index].index = index;
-                            $scope.getPreviewUri($scope.files[index], index).then(function (result) {
-                                $scope.files[result.index].previewUri = result.preview.src;
-                                $scope.files[result.index].previewWidth = result.preview.width;
-                                $scope.files[result.index].previewHeight = result.preview.height;
+                    $scope.fileUploaded = function (index) {
+                        $scope.$apply(function ($scope) {
+                            if (typeof $scope.onUpload === "function") {
+                                $scope.onUpload($scope.files[index]);
+                            }
+                            // Remove the file from list
+                            $scope.files[index] = null;
+                        });
+                    }
+
+                    $scope.submit = function () {
+                        for (var i = 0; i < $scope.files.length; i++) {
+                            if ($scope.files[i] !== null) {
+                                $scope.files[i].progress = 0;
+                                $(element).fileupload('send', {
+                                    files: $scope.files[i],
+                                    formData: {
+                                        "title": $scope.files[i].title,
+                                        "description": $scope.files[i].description
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    $scope.hasFiles = function () {
+                        for (var i = 0; i < $scope.files.length; i++) {
+                            if ($scope.files[i] !== null) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Extend the directive element with the jQuery file upload plugin
+                    $(element).fileupload({
+                        dropZone: $scope.dropzone || undefined,
+                        url: $scope.uploadUri,
+                        add: function (e, data) {
+                            $scope.$apply(function ($scope) {
+                                for (var i = 0; i < data.files.length; i++) {
+                                    if (!$scope.multiple) {
+                                        // If we are in "mono-upload" mode, we always put the image as first one of
+                                        // the array
+                                        $scope.files[0] = data.files[i];
+                                        index = 0;
+                                    }
+                                    else {
+                                        // In "multi-upload" mode, we addpend the file to the array
+                                        var index = $scope.files.push(data.files[i]) - 1;
+                                    }
+                                    $scope.files[index].index = index;
+                                    $scope.getPreviewUri($scope.files[index], index).then(function (result) {
+                                        $scope.files[result.index].previewUri = result.preview.src;
+                                        $scope.files[result.index].previewWidth = result.preview.width;
+                                        $scope.files[result.index].previewHeight = result.preview.height;
+                                    });
+                                }
                             });
+                        },
+                        done: function (e, data) {
+                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                                $scope.fileUploaded(data.files[0].index);
+                            }
+                        },
+                        fail: function (e, data) {
+                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                                $scope.fileUploadFailed(data.files[0].index);
+                            }
+                        },
+                        progress: function (e, data) {
+                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
+                                $scope.fileUploading(data.files[0].index, data.loaded, data.total);
+                            }
                         }
                     });
-                },
-                done: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploaded(data.files[0].index);
-                    }
-                },
-                fail: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploadFailed(data.files[0].index);
-                    }
-                },
-                progress: function (e, data) {
-                    if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                        $scope.fileUploading(data.files[0].index, data.loaded, data.total);
-                    }
                 }
-            });
+            }
         }
     }
 }]);
@@ -492,7 +525,7 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
 
         $scope.ping = function () {
             $http.get('/api/tenant')
-                .success(function(data, status, headers, config) {
+                .success(function (data, status, headers, config) {
                     if (status === 200) {
                         $scope.tenant = data;
                     }
@@ -505,7 +538,7 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
                     $scope.$parent.$broadcast('event:serverError');
                 });
             $http.get('/api/users/_me')
-                .success(function(data, status, headers, config) {
+                .success(function (data, status, headers, config) {
                     if (status === 200) {
                         authenticationService.loginConfirmed(data);
                     }

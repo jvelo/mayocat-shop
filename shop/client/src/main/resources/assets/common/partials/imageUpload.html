@@ -1,21 +1,24 @@
 <div class="control-group">
     <div class="controls">
         <div class="row-fluid">
-            <div class="well">
-                <div class="dropzone">
-                    <h4>Add images</h4>
-                    <i class="icon-download-alt"/>
-                    Drag images from your computer and drop them in this area
+            <div ng-class="{well:dragAndDrop}">
+                <div ng-class="{dropzone:dragAndDrop}">
+                    <h4 ng-show="headerText && headerText != ''">{{headerText}}</h4>
+                    <p ng-show="dragAndDrop">
+                        <i class="icon-download-alt"/>
+                        Drag images from your computer and drop them in this area
+                    </p>
                     <span class="btn fileinput-button">
                         <span>Browse...</span>
-                        <input type="file" name="file" multiple="">
+                        <input type="file" name="file" ng-multiple="multiple">
                      </span>
+                    <div class="clearfix"></div>
                 </div>
                 <div ng-show="hasFiles()" class="editor">
                     <hr/>
                     <ul class="unstyled">
                         <li ng-repeat="file in files" class="fade in" ng-show="file != null">
-                            <span class="preview span2">
+                            <span class="preview">
                                 <span class="fade in">
                                     <img ng-src="{{file.previewUri}}"
                                          width="{{file.previewWidth}}"
@@ -28,11 +31,16 @@
                                     <div class="size">{{file.size/1024 | number:2}} KB</div>
                                 </div>
                             </span>
-                            <span class="size span8" ng-show="!file.uploaded && !file.progress">
-                                <input type="text" ng-model="file.title" class="span12"
-                                       placeholder="Image's title (alternative text)"/>
-                                <textarea class="span12" rows="5" placeholder="Description (Optional)"></textarea>
-                            </span>
+                            <div class="size" ng-show="!file.uploaded && !file.progress">
+                                <p>
+                                    <input type="text" ng-model="file.title"
+                                           placeholder="Image's title (alternative text)"/>
+                                </p>
+                                <p>
+                                    <textarea rows="5" placeholder="Description (Optional)"></textarea>
+                                </P>
+                            </div>
+                            <div class="clearfix"></div>
                             <span class="cancel span2" ng-show="!file.uploaded && !file.progress">
                                 <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
                                     Remove
@@ -77,12 +85,14 @@
                     <div class="pull-right" ng-show="files.length > 0">
                         <button id="startupload" type="button" class="btn btn-primary" ng-click="submit()">
                             <i class="icon-upload icon-white"></i>
-                            <span>Upload all</span>
+                            <span ng-show="multiple">Upload all</span>
+                            <span ng-show="!multiple">Upload</span>
                         </button>
                     </div>
                     <div class="clearfix"></div>
                 </div>
             </div>
+            <div class="clearfix"></div>
         </div>
     </div>
 </div>

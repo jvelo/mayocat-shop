@@ -34,8 +34,8 @@ angular.module('settings', ['ngResource'])
 
     ])
 
-    .controller('SettingsTenantController', ['$scope', '$resource', 'addonsService',
-        function ($scope, $resource, addonsService) {
+    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'imageService',
+        function ($scope, $resource, $http, addonsService, imageService) {
 
             $scope.addons = [];
             $scope.TenantResource = $resource("/api/tenant/");
@@ -51,6 +51,16 @@ angular.module('settings', ['ngResource'])
                 $scope.TenantResource.save({}, $scope.tenant, function () {
                     $scope.isSaving = false;
                 });
+            }
+
+            $scope.reloadImages = function (file) {
+                $scope.tenant.images = $http.get("/api/tenant/images").success(function (data) {
+                    $scope.tenant.images = data;
+                });
+            }
+
+            $scope.selectFeatureImage = function (image) {
+                imageService.selectFeatured($scope.product, image);
             }
 
             $scope.tenant = $scope.TenantResource.get({

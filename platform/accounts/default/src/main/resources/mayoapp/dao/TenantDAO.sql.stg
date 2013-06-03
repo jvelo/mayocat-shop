@@ -3,7 +3,7 @@ group TenantDAO;
 updateConfiguration() ::= <<
     UPDATE tenant
     SET    configuration = :data,
-           configuration_version = :version
+           configuration_version = :version,
     WHERE  entity_id = :tenant.id
 >>
 
@@ -26,7 +26,8 @@ create() ::= <<
 update() ::= <<
     UPDATE  tenant
     SET     name = :tenant.name,
-            default_host = :tenant.defaultHost
+            default_host = :tenant.defaultHost,
+            featured_image_id = :tenant.featuredImageId
     WHERE   entity_id = :tenant.id
 >>
 
