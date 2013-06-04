@@ -83,7 +83,7 @@ public class DefaultThemeManager implements ThemeManager
             }
             return result;
         } catch (IOException e) {
-            this.logger.warn("I/O Exception while resolving resource []", name, e);
+            this.logger.warn("I/O Exception while resolving resource [{}]", name, e);
             return null;
         }
     }

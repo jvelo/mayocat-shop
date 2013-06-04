@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.search.EntityIndexDocumentPurveyor;
 import org.mayocat.search.elasticsearch.AbstractGenericEntityIndexDocumentPurveyor;
 import org.mayocat.shop.catalog.model.Product;
 import org.slf4j.Logger;
@@ -15,8 +16,9 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-@Component("product")
+@Component
 public class ProductIndexDocumentPurveyor extends AbstractGenericEntityIndexDocumentPurveyor<Product>
+        implements EntityIndexDocumentPurveyor<Product>
 {
     @Inject
     private Logger logger;

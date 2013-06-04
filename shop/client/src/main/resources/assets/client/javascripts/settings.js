@@ -54,8 +54,14 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.reloadImages = function (file) {
+                // Reload list of images
                 $scope.tenant.images = $http.get("/api/tenant/images").success(function (data) {
                     $scope.tenant.images = data;
+                });
+                // Reload featured image
+                var tenant = $scope.TenantResource.get({
+                }, function () {
+                    $scope.tenant.featuredImage = tenant.featuredImage;
                 });
             }
 

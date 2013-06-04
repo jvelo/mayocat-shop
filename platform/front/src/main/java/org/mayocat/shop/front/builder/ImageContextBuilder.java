@@ -13,6 +13,7 @@ import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -24,6 +25,7 @@ public class ImageContextBuilder
 
     public ImageContextBuilder(Theme theme)
     {
+        Preconditions.checkNotNull("Cannot build an image context with a null theme", theme);
         this.theme = theme;
     }
 

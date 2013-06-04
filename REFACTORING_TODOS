@@ -5,3 +5,4 @@
 - Check usage of plural in package names (i.e. representations vs. representation)
 - Change thumbnails config format to be more in line with addons/models
 - AbstractLocalizedEntity -> IsLocalized interface
+- Handle correctly the case where no theme.yml can be found for current tenant (no valid theme set)

@@ -155,6 +155,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
         }
 
         source.put("url", entityURLFactory.create(entity, tenant).toString());
+        source.put("slug", entity.getSlug());
 
         return source;
     }
