@@ -25,6 +25,7 @@ import org.mayocat.model.annotation.Index;
 import org.mayocat.search.EntityIndexDocumentPurveyor;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.url.EntityURLFactory;
+import org.mayocat.url.URLType;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -155,6 +156,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
         }
 
         source.put("url", entityURLFactory.create(entity, tenant).toString());
+        source.put("api_url", entityURLFactory.create(entity, tenant, URLType.API).toString());
         source.put("slug", entity.getSlug());
 
         return source;
