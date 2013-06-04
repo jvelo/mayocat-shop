@@ -12,19 +12,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.joda.time.DateTimeZone;
+import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.meta.UserEntity;
-import org.mayocat.accounts.representations.TenantRepresentation;
-import org.mayocat.accounts.representations.UserAndTenantRepresentation;
-import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Context;
-import org.mayocat.context.Execution;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
-import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.context.Context;
+import org.mayocat.context.Execution;
 import org.mayocat.rest.Resource;
-import org.mayocat.accounts.AccountsService;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
@@ -45,9 +41,6 @@ public class UserResource implements Resource
 
     @Inject
     private Execution execution;
-
-    @Inject
-    private GeneralSettings generalSettings;
 
     @POST
     @Timed
@@ -76,22 +69,6 @@ public class UserResource implements Resource
         }
     }
 
-    @GET
-    @Path("_me")
-    public UserAndTenantRepresentation getCurrentUser()
-    {
-        UserAndTenantRepresentation userAndTenant = new UserAndTenantRepresentation();
-
-        if (this.execution.getContext().getTenant() != null) {
-            userAndTenant
-                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.execution.getContext().getTenant()));
-        }
-        Context context = execution.getContext();
-        userAndTenant.setUser(context.getUser());
-
-        return userAndTenant;
-    }
-
     @Path("{slug}")
     @GET
     @Timed
@@ -99,10 +76,5 @@ public class UserResource implements Resource
     public User getUser(@PathParam("slug") String slug)
     {
         return accountsService.findUserByEmailOrUserName(slug);
-    }
-
-    private DateTimeZone getGlobalTimeZone()
-    {
-        return DateTimeZone.forTimeZone(generalSettings.getTime().getTimeZone().getDefaultValue());
     }
 }

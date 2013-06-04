@@ -537,7 +537,7 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
                 .error(function (data, status, headers, config) {
                     $scope.$parent.$broadcast('event:serverError');
                 });
-            $http.get('/api/users/_me')
+            $http.get('/api/me')
                 .success(function (data, status, headers, config) {
                     if (status === 200) {
                         authenticationService.loginConfirmed(data);
