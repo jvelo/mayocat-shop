@@ -100,9 +100,10 @@ angular.module('mayocat.addons', ['ngResource'])
 
                 var displayer = definition.displayer,
                     dasherize = function (s) {
-                    return s.replace(/([A-Z])/g, function ($1) {
-                        return "-" + $1.toLowerCase();
-                    });
+                        if (typeof s === 'undefined') return;
+                        return s.replace(/([A-Z])/g, function ($1) {
+                            return "-" + $1.toLowerCase();
+                        });
                 };
 
                 options = typeof options !== "undefined" ? options : {};
