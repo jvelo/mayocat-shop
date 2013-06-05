@@ -383,6 +383,71 @@ mayocat.directive('ckEditor', function () {
 });
 
 /**
+ * Scroll directive.
+ *
+ * - On touch devices : we use iScroll4 to handle scroll ; until native scrolling is good enough and mainstream
+ * - On desktop devices : the goal is to have custom scroll bars inspired  by OSX but with our own style
+ */
+mayocat.directive('scroll', ['$timeout', '$compile', function ($timeout, $compile) {
+    return {
+        replace: false,
+        restrict: 'A',
+        link: function (scope, element, attr) {
+
+            var createOrUpdateScroll = function () {
+                if ('ontouchstart' in window || navigator.msMaxTouchPoints) {
+
+                    // On touch devices, scroll is handled by iScroll4
+
+                    if (!element.data("iscroll4")) {
+                        element[0].addEventListener('touchmove', function (e) {
+                            // Prevent default behavior
+                            e.preventDefault();
+                        }, false);
+                        new iScroll(element[0], {vScrollbar: false});
+                        element.data("iscroll4", "true");
+                    }
+                }
+                else {
+
+                    // On non-touch devices, we emulate OSX Lion style scroll bars using the jScrollPane jQuery plugin.
+
+                    var api = $(element).data('jsp');
+                    if (api) {
+                        api.reinitialise();
+                    }
+                    else {
+                        $(element).jScrollPane({
+                            // magic trick to not have horizontal scrollbars
+                            // http://stackoverflow.com/questions/4404944/how-do-i-disable-horizontal-scrollbar-in-jscrollpane-jquery
+                            contentWidth: '0px'
+                        });
+                    }
+                }
+            }
+
+            var observe = function () {
+                var observationTarget = element.find(".content").length ? element.find(".content")[0] : element[0];
+                var observer = new MutationObserver(function (mutations) {
+                    observer.disconnect();
+                    createOrUpdateScroll();
+                    observe();
+                });
+                observer.observe(observationTarget, { attributes: true, childList: true, characterData: true, subtree: true });
+                $(window).resize(function () {
+                    console.log("Resize !");
+                    $timeout(function(){
+                        createOrUpdateScroll();
+                    }, 100);
+                });
+            }
+
+            observe();
+        }
+    };
+}]);
+
+/**
  * A switch button similar to the ios toggle switch
  */
 mayocat.directive('switchButton', function () {

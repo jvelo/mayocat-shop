@@ -104,6 +104,13 @@ header a {
   border-color: @borderHeaderLight;
 }
 
+#list #wrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: -webkit-calc(~"100% - 95px");
+  height: -calc(~"100% - 95px");
+}
+
 #list .collection {
   font-weight: bold;
   text-transform: uppercase;
