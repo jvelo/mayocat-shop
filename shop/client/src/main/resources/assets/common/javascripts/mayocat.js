@@ -388,7 +388,7 @@ mayocat.directive('ckEditor', function () {
  * - On touch devices : we use iScroll4 to handle scroll ; until native scrolling is good enough and mainstream
  * - On desktop devices : the goal is to have custom scroll bars inspired  by OSX but with our own style
  */
-mayocat.directive('scroll', ['$timeout', '$compile', function ($timeout, $compile) {
+mayocat.directive('scroll', [function () {
     return {
         replace: false,
         restrict: 'A',
