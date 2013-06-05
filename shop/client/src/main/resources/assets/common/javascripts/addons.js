@@ -4,29 +4,29 @@ angular.module('mayocat.addons', ['ngResource'])
 
     .factory('addonsService', function ($resource, $q, configurationService) {
 
-        // Map of "addon type" -> "default displayer"
-        var defaultDisplayers = {
+        // Map of "addon type" -> "default editor"
+        var defaultEditors = {
             "html" : "wyswiyg",
             "string" : "string",
             "json" : "textarea"
         };
 
-        // List of registered displayers
-        var displayers = {};
+        // List of registered editors
+        var editors = {};
 
         // See below in the function exports
-        var registerDisplayer = function (key, displayer) {
-            if (typeof displayers[key] === "undefined") {
-                displayers[key] = displayer;
+        var registerEditor = function (key, editor) {
+            if (typeof editors[key] === "undefined") {
+                editors[key] = editor;
             }
             else {
-                console && console.warn("Displayer [" + key + "] is already registered.");
+                console && console.warn("Editor [" + key + "] is already registered.");
             }
         }
 
-        // Register default displayers supported by the platforn
+        // Register default editors supported by the platform
         // - Select box
-        registerDisplayer("selectBox", {
+        registerEditor("selectBox", {
            type: function() {
                return "string";
            },
@@ -62,43 +62,43 @@ angular.module('mayocat.addons', ['ngResource'])
         return {
 
             /**
-             * Adds a displayer in the list of registered displayers.
+             * Adds an editor in the list of registered editor.
              *
-             * @param key the key under which to register this displayer. For example "selectBox".
-             * @param displayer the displayer configuration object.
+             * @param key the key under which to register this editor. For example "selectBox".
+             * @param editor the editor configuration object.
              */
-            registerDisplayer: registerDisplayer,
+            registerEditor: registerEditor,
 
 
             /**
              * Returns the type of data to use for an addon.
              *
              * @param type the type defined in the addon field definition. May be null
-             * @param displayer the displayer to use.
+             * @param editor the editor to use.
              */
-            type: function (type, displayer) {
+            type: function (type, editor) {
                 if (typeof type !== 'undefined' && type !== null) {
                     return type;
                 }
-                if (typeof displayers[displayer] !== "undefined") {
-                    return displayers[displayer].type();
+                if (typeof editors[editor] !== "undefined") {
+                    return editors[editor].type();
                 }
                 return "string";
             },
 
             /**
-             * Obtain the displayer ng-html code to display for the passed type and definition of addon.
-             * If no displayer is passed in the definition, the default displayer for the passed type is looked up
-             * and used (for example, type "string" uses a displayer that creates a standard input type string).
+             * Obtain the editor ng-html code to display for the passed type and definition of addon.
+             * If no editor is passed in the definition, the default editor for the passed type is looked up
+             * and used (for example, type "string" uses a editor that creates a standard input type string).
              *
              * @param {string} type the type of addon field (i.e. "string" or "html" or "json", etc.).
              * @param {object} definition the addon field definition object.
              * @param {object} options an optional option hash
              * @returns {string}
              */
-            displayer: function (type, definition, options) {
+            editor: function (type, definition, options) {
 
-                var displayer = definition.displayer,
+                var editor = definition.editor,
                     dasherize = function (s) {
                         if (typeof s === 'undefined') return;
                         return s.replace(/([A-Z])/g, function ($1) {
@@ -108,19 +108,19 @@ angular.module('mayocat.addons', ['ngResource'])
 
                 options = typeof options !== "undefined" ? options : {};
 
-                if (typeof displayer === "undefined") {
-                    displayer = defaultDisplayers[type];
+                if (typeof editor === "undefined") {
+                    editor = defaultEditors[type];
                 }
 
-                var output = '<addon-' + dasherize(displayer) + ' placeholder={{addon.placeholder}} value=value ';
+                var output = '<addon-' + dasherize(editor) + ' placeholder={{addon.placeholder}} value=value ';
 
                 if (typeof definition.properties !== "undefined" && !!definition.properties.readOnly
                     && !options.ignoreReadOnly) {
                     output += "disabled='disabled' "
                 }
 
-                if (typeof displayers[displayer] !== "undefined" && typeof displayers[displayer].extraAttributes === "function") {
-                    output += displayers[displayer].extraAttributes();
+                if (typeof editors[editor] !== "undefined" && typeof editors[editor].extraAttributes === "function") {
+                    output += editors[editor].extraAttributes();
                 }
 
                 output += '/>';
@@ -259,18 +259,18 @@ angular.module('mayocat.addons', ['ngResource'])
                 scope.$watch(
                     'addon',
                     function (definition) {
-                        scope.type = addonsService.type(definition.type, definition.displayer);
+                        scope.type = addonsService.type(definition.type, definition.editor);
 
-                        var displayer = addonsService.displayer(scope.type, definition, {
+                        var editor = addonsService.editor(scope.type, definition, {
                             "ignoreReadOnly" : typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
                         });
 
                         // The "template" option allow to override default behavior
                         if (typeof definition.template !== 'undefined') {
-                            displayer = definition.template;
+                            editor = definition.template;
                         }
 
-                        element.html(displayer);
+                        element.html(editor);
                         var updated = $compile(element.contents())(scope);
                     }
                 );

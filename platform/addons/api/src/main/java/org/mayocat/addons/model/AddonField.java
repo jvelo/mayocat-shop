@@ -1,16 +1,8 @@
 package org.mayocat.addons.model;
 
-import java.util.List;
 import java.util.Map;
 
-import org.mayocat.jackson.OptionalStringListDeserializer;
-import org.mayocat.model.AddonFieldType;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -29,7 +21,7 @@ public class AddonField
     private String type;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String displayer;
+    private String editor;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> properties = Maps.newHashMap();
@@ -54,9 +46,9 @@ public class AddonField
         return template;
     }
 
-    public String getDisplayer()
+    public String getEditor()
     {
-        return displayer;
+        return editor;
     }
 
     public Map<String, Object> getProperties()
