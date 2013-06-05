@@ -435,9 +435,7 @@ mayocat.directive('scroll', ['$timeout', '$compile', function ($timeout, $compil
                 });
                 observer.observe(observationTarget, { attributes: true, childList: true, characterData: true, subtree: true });
                 $(window).resize(function () {
-                    $timeout(function(){
-                        createOrUpdateScroll();
-                    }, 100);
+                    createOrUpdateScroll();
                 });
             }
 
