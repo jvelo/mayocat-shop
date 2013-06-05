@@ -84,13 +84,13 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
 MayocatShop.run(['$rootScope', '$http', '$location', 'configurationService',
     function (scope, $http, location, configurationService) {
 
-    /**
-     * Set up a default page title and update it when changing route.
-     * Update title when changing root
-     */
-    scope.page_title = Mayocat.applicationName + ' | Home';
-    scope.$on('$routeChangeSuccess', function (event, current) {
-        scope.page_title = Mayocat.applicationName + ' | ' + current.$route.title;
-    });
+        /**
+         * Set up a default page title and update it when changing route.
+         * Update title when changing root
+         */
+        scope.page_title = Mayocat.applicationName + ' | Home';
+        scope.$on('$routeChangeSuccess', function (event, current) {
+            scope.page_title = Mayocat.applicationName + ' | ' + current.$route.title;
+        });
 
-}]);
+    }]);
