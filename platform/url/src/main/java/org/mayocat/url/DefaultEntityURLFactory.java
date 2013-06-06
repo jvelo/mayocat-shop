@@ -11,6 +11,7 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
@@ -26,6 +27,8 @@ public class DefaultEntityURLFactory extends AbstractGenericEntityURLFactory imp
     @Override
     public URL create(Entity entity, Tenant tenant, URLType type)
     {
+        Preconditions.checkNotNull(entity, "Cannot create URL for a null entity");
+
         // Check against CM if there is a entity URL factory registered with the type reference of
         // EntityURLFactory<EntityClass>, if not, use the "generic" (in the sense of default)
         // URL creation provided by super.create()

@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.configuration.SiteSettings;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.search.EntityIndexDocumentPurveyor;
@@ -20,9 +21,12 @@ import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithClassLeve
 import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithFeaturedImage;
 import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithFieldLevelIndexAnnotations;
 import org.mayocat.store.AttachmentStore;
+import org.mayocat.url.DefaultEntityURLFactory;
 import org.mayocat.url.EntityURLFactory;
+import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
+import org.xwiki.component.manager.ComponentRepositoryException;
 import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -32,25 +36,30 @@ import static org.mockito.Mockito.when;
 /**
  * @version $Id$
  */
-@ComponentList({ EntityIndexDocumentPurveyor.class, ComponentManager.class, CustomEntityIndexDocumentPurveyor.class })
+@ComponentList({ EntityIndexDocumentPurveyor.class, ComponentManager.class, CustomEntityIndexDocumentPurveyor.class,
+        DefaultEntityURLFactory.class })
 public class DefaultEntityIndexDocumentPurveyorTest
 {
     private Tenant tenant;
 
     @Before
-    public void setUp() throws ComponentLookupException, MalformedURLException
+    public void setUp() throws Exception
     {
         this.tenant = new Tenant();
         tenant.setSlug("tenant");
 
-        final EntityURLFactory urlFactory = this.componentManager.getInstance(EntityURLFactory.class);
-        when(urlFactory.create((Entity) anyObject(), (Tenant) anyObject()))
-                .thenReturn(new URL("http://tenant.localhost:8080/api/entity/my-test-entity"));
+        // Manually register the "site settings" component as it does not exists as an actual component
+        // (it is registered dynamically when starting up mayocat applications, like all configuration components)
+        DefaultComponentDescriptor cd = new DefaultComponentDescriptor();
+        cd.setRoleType(SiteSettings.class);
+        componentManager.registerComponent(cd, new SiteSettings());
     }
 
     @Rule
     public final MockitoComponentMockingRule<EntityIndexDocumentPurveyor> componentManager =
-            new MockitoComponentMockingRule(DefaultEntityIndexDocumentPurveyor.class, Arrays.asList(ComponentManager.class));
+            new MockitoComponentMockingRule(DefaultEntityIndexDocumentPurveyor.class,
+                    Arrays.asList(ComponentManager.class,
+                            EntityURLFactory.class));
 
     @Test
     public void testGetDocumentFromEntityThatHasAClassLevelIndexAnnotation() throws ComponentLookupException
