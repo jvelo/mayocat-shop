@@ -6,12 +6,14 @@
     </div>
 
     <!-- list pages -->
-    <ul class="list">
-        <li ng-repeat="article in articles" data-handle="{{article.slug}}">
-            <div class="row droptarget listItem">
-                <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>
-            </div>
-        </li>
-    </ul>
+    <scroll>
+        <ul class="list">
+            <li ng-repeat="article in articles" data-handle="{{article.slug}}">
+                <div class="row droptarget listItem">
+                    <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>
+                </div>
+            </li>
+        </ul>
+    </scroll>
 
 </div>
