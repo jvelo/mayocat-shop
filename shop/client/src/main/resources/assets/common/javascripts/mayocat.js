@@ -390,8 +390,10 @@ mayocat.directive('ckEditor', function () {
  */
 mayocat.directive('scroll', [function () {
     return {
-        replace: false,
-        restrict: 'A',
+        restrict: ['A', 'E'],
+        replace: true,
+        transclude: true,
+        template: "<div class='scroll-wrapper'><div class='content' ng-transclude></div></div>",
         link: function (scope, element, attr) {
 
             var createOrUpdateScroll = function () {

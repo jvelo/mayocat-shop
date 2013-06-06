@@ -29,14 +29,26 @@ angular.module('product', ['ngResource'])
                     $http.post("/api/products/", $scope.product)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            var fragments = headers("location").split('/'),
-                                slug = fragments[fragments.length - 1];
-                            $rootScope.$broadcast('catalog:refreshCatalog');
-                            $location.url("/products/" + slug);
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+                                $rootScope.$broadcast('catalog:refreshCatalog');
+                                $location.url("/products/" + slug);
+                            }
+                            else {
+                                if (status === 409) {
+                                    // TODO display a different error than the generic server error
+                                    $rootScope.$broadcast('event:serverError', {});
+                                }
+                                else {
+                                    // Generic error
+                                    $scope.$parent.$broadcast('event:serverError');
+                                }
+                            }
                         })
                         .error(function (data, status, headers, config) {
+                            $scope.$parent.$broadcast('event:serverError');
                             $scope.isSaving = false;
-                            // TODO handle 409 conflict
                         });
                 }
                 else {
@@ -86,7 +98,7 @@ angular.module('product', ['ngResource'])
                 };
             }
 
-            $scope.removeImage = function(image) {
+            $scope.removeImage = function (image) {
                 $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
                     $scope.reloadImages();
                 });
