@@ -88,8 +88,15 @@
         <header>
             <div class="logo" ng-click="setRoute('/')"></div>
             <h2 class="brand" ng-bind="tenant.name"></h2>
-            <!-- <small>www.hostname.com</small> -->
-            <p>
+            <p class="host">
+                <!-- Link to host -->
+                <small>
+                    <a ng-href="{{site.url}}"  class="clickable"
+                       ng-bind="site.domain"
+                       target="_new"></a>
+                </small>
+            </p>
+            <p class="logout">
                 <small ng-click="logout()" class="clickable">Logout</small>
             </p>
         </header>

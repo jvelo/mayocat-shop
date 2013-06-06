@@ -436,12 +436,19 @@ mayocat.directive('scroll', [function () {
                     observe();
                 });
                 observer.observe(observationTarget, { attributes: true, childList: true, characterData: true, subtree: true });
-                $(window).resize(function () {
-                    createOrUpdateScroll();
-                });
             }
 
             observe();
+
+            $(window).resize(function () {
+                // force update the scroll when the window is resized
+                createOrUpdateScroll();
+            });
+
+            scope.$on('$routeChangeSuccess', function (event, current) {
+                // force update the scroll when the route changes
+                createOrUpdateScroll();
+            });
         }
     };
 }]);
@@ -545,7 +552,8 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
 
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', 'authenticationService',
-    function ($rootScope, $scope, $location, $http, authenticationService) {
+    'configurationService',
+    function ($rootScope, $scope, $location, $http, authenticationService, configurationService) {
 
 
         /**
@@ -622,6 +630,10 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         // By default pretend there is a tenant.
         // If there is not, it will be set to  "undefined". See ping() callback.
         $scope.tenant = {};
+
+        configurationService.get('site', function (site) {
+            $scope.site = site;
+        });
 
         $scope.user = undefined;
         $scope.authenticated = undefined;
