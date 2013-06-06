@@ -20,7 +20,11 @@
                             ng-disabled="!isConfigurable('general.time.timeZone')">
                             <option value="">-- Select a time zone --</option>
                             <optgroup ng-repeat="(region, list) in timeZoneRegions" label="{{ region }}">
-
+                                <option ng-repeat="(value, timeZone) in list"
+                                        value="{{ value }}"
+                                        ng-selected="value == settings.general.time.timeZone.value">
+                                    {{ timeZone.city }} (GMT{{ timeZone.stdOffset }})
+                                </option>
                             </optgroup>
                         </select>
                     </div>
