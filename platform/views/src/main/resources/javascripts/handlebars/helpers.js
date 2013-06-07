@@ -6,8 +6,7 @@ var global = this;
     var ThemeManager = org.mayocat.theme.ThemeManager,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint;
 
-    Object.extend = function (destination, source)
-    {
+    Object.extend = function (destination, source) {
         for (var property in source) {
             if (source[property] && source[property].constructor &&
                 source[property].constructor === Object)
@@ -40,7 +39,7 @@ var global = this;
     Handlebars.registerHelper('includeTemplate', function (template, options)
     {
         var themeManager = getComponent(ThemeManager);
-        var resolved = themeManager.resolveTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
 
         var name = resolved.getId(),
             content = String(resolved.getContent());
