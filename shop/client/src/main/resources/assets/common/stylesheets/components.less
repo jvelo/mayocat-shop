@@ -22,8 +22,9 @@ thumbnail-editor > div {
 
 div.thumbnails-list {
   padding-left: 20px;
-  width: calc(~"100% - 500px");
+  width: -moz-calc(~"100% - 500px");
   width: -webkit-calc(~"100% - 500px");
+  width: calc(~"100% - 500px");
 }
 
 div.thumbnails-list h3 {
@@ -93,6 +94,8 @@ image-upload .editor ul li .progress {
 }
 
 image-upload .size input, image-upload .size textarea {
+  width: -webkit-calc(~"100% - 120px") !important;
+  width: -moz-calc(~"100% - 120px") !important;
   width: calc(~"100% - 120px") !important;
   margin-left: 10px;
 }

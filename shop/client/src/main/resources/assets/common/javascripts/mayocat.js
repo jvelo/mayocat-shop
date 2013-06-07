@@ -398,7 +398,6 @@ mayocat.directive('scroll', [function () {
 
             var createOrUpdateScroll = function () {
                 if ('ontouchstart' in window || navigator.msMaxTouchPoints) {
-
                     // On touch devices, scroll is handled by iScroll4
 
                     if (!element.data("iscroll4")) {
@@ -411,7 +410,6 @@ mayocat.directive('scroll', [function () {
                     }
                 }
                 else {
-
                     // On non-touch devices, we emulate OSX Lion style scroll bars using the jScrollPane jQuery plugin.
 
                     var api = $(element).data('jsp');
