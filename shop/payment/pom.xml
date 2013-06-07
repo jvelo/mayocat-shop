@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.7.7.1</version>
+        <version>0.8-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-shop-payment</artifactId>
     <packaging>pom</packaging>
