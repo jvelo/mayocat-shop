@@ -524,6 +524,30 @@ mayocat.directive('activeClass', ['$location', function (location) {
     };
 }]);
 
+/**
+ * Directive that displays validation messages (errors, ok, etc.) only when the user leaves a field (blur)
+ *
+ * Inspired by http://stackoverflow.com/questions/15798594/angularjs-forms-validate-fields-after-user-has-left-field
+ */
+mayocat.directive('validateOnBlur', function () {
+    return {
+        restrict: 'AC',
+        link: function (scope, element, attrs) {
+            var inputs = $(element).find('input, select, textarea');
+
+            inputs.on('blur', function () {
+                $(this).addClass('has-visited');
+                $(this).siblings(".validation").addClass('has-visited');
+            });
+
+            element.on('submit', function () {
+                inputs.addClass('has-visited');
+                inputs.siblings(".validation").addClass('has-visited');
+            });
+        }
+    };
+});
+
 mayocat.controller('HomeCtrl', ['$scope', '$resource',
     function ($scope, $resource) {
 

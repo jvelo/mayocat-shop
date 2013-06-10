@@ -1,51 +1,7 @@
 <div class="loading" ng-show="loading"></div>
 
 <div ng-show="!!createNewTenant">
-    <form autocomplete="off">
-        <fieldset>
-            <legend>
-                Create a new tenant
-                <a href="#" ng-click="hideNewTenantForm()">
-                    <i class="icon-remove-sign pull-right"></i>
-                </a>
-            </legend>
 
-            <div>
-                <div>
-                    <h4>Tenant information</h4>
-                    <label>Name *</label>
-                    <input type="text" ng-model="tenant.name" placeholder="Tenant's name"/>
-                </div>
-
-                <div class="input-append">
-                    <label>Id *</label>
-                    <input type="text" ng-model="tenant.slug" ng-disabled="!isEditingSlug" placeholder="id"/>
-                    <span class="add-on" title="Edit the the tenant's id"
-                          ng-click="isEditingSlug=!isEditingSlug"><i class="icon-edit"></i></span>
-                </div>
-            </div>
-
-            <div>
-                <h4>Administrator information</h4>
-                <label>Email *</label>
-                <input type="text" ng-model="user.email" placeholder="Administrator email"/>
-
-                <label>Username *</label>
-                <input type="text" ng-model="user.slug" placeholder="Administrator username"/>
-
-                <label>Password *</label>
-                <input type="password" ng-model="user.password" placeholder="Administrator password"/>
-
-                <label>Confirm password *</label>
-                <input type="password" ng-model="user.password2" placeholder="Confirm password"/>
-            </div>
-
-            <div class="buttons">
-                <button type="submit" ng-click="createTenant()" class="btn btn-primary">Create</button>
-                <button type="submit" ng-click="hideNewTenantForm()" class="btn">Cancel</button>
-            </div>
-        </fieldset>
-    </form>
 </div>
 
 <div>

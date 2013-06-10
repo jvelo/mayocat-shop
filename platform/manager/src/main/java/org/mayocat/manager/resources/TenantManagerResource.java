@@ -92,7 +92,7 @@ public class TenantManagerResource implements ManagerResource
     @GET
     @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
     public ResultSetRepresentation<TenantRepresentation> getAllTenants(
-            @QueryParam("limit") @DefaultValue("50") Integer limit,
+            @QueryParam("number") @DefaultValue("50") Integer limit,
             @DefaultValue("0") @QueryParam("offset") Integer offset)
     {
         List<Tenant> tenants = accountsService.findAllTenants(limit, offset);
@@ -140,7 +140,7 @@ public class TenantManagerResource implements ManagerResource
     }
 
     @POST
-    public Response createTenant(UserAndTenantRepresentation userAndTenant)
+    public Response createTenant(@Valid UserAndTenantRepresentation userAndTenant)
     {
         if (!multitenancySettings.isActivated()) {
             return Response.status(Response.Status.FORBIDDEN).entity("Tenant creation is not allowed on this server\n")

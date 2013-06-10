@@ -1,0 +1,82 @@
+<form autocomplete="off" name="newTenant" validate-on-blur>
+
+    <fieldset>
+        <legend>
+            Create a new tenant
+            <a href="#" ng-click="setRoute('/')">
+                <i class="icon-remove-sign pull-right"></i>
+            </a>
+        </legend>
+
+        <div class="span5">
+
+            <div>
+                <h4>Tenant information</h4>
+
+                <div ng-class="{error: isInvalid('tenant.name')}">
+                    <label>Name *</label>
+                    <input type="text" name="tenant.name" ng-model="tenant.name" placeholder="Tenant's name" required />
+                    <span ng-show="isInvalid('tenant.name')" class="validation help-inline">Name is required</span>
+                    <span ng-show="isValid('tenant.name')" class="validation ok">&#10004;</span>
+                </div>
+
+                <div class="input-append">
+                    <label>Id *</label>
+                    <input type="text" name="tenant.slug" ng-model="tenant.slug" ng-disabled="!isEditingSlug"
+                           placeholder="id" required require-valid-slug />
+                        <span class="add-on" title="Edit the the tenant's id"
+                              ng-click="isEditingSlug=!isEditingSlug"><i class="icon-edit"></i></span>
+
+                    <span ng-show="isInvalid('tenant.slug')" class="validation help-inline">Valid id is required</span>
+                    <span ng-show="isValid('tenant.slug')" class="validation ok">&#10004;</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="span5">
+            <h4>Administrator information</h4>
+
+            <!-- Email -->
+            <div>
+                <label>Email *</label>
+                <input type="email" name="user.email" ng-model="user.email" placeholder="Administrator email" required />
+                <span ng-show="isInvalid('user.email')" class="validation help-inline">A valid email is required</span>
+                <span ng-show="isValid('user.email')" class="validation ok">&#10004;</span>
+            </div>
+
+            <div>
+                <label>Username *</label>
+                <input type="text" name="user.slug" ng-model="user.slug" placeholder="Administrator username" required />
+                <span ng-show="isInvalid('user.slug')" class="validation help-inline">A username is required</span>
+                <span ng-show="isValid('user.slug')" class="validation ok">&#10004;</span>
+            </div>
+
+            <div>
+                <label>Password *</label>
+                <input type="password" name="user.password" ng-model="user.password" placeholder="Administrator password" required />
+                <span ng-show="isInvalid('user.password')" class="validation help-inline">Password is required</span>
+                <span ng-show="isValid('user.password')" class="validation ok">&#10004;</span>
+            </div>
+
+            <div>
+                <label>Confirm password *</label>
+                <input type="password" name="user.password2" ng-model="user.password2" placeholder="Confirm password" required
+                       confirm-password="user.password"/>
+                <span ng-show="isInvalid('user.password2')" class="validation help-inline">Passwords are different</span>
+                <span ng-show="isValid('user.password2')" class="validation ok">&#10004;</span>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="alert alert-error" ng-show="globalError && globalError != ''">
+            <strong>Failed to create the tenant.</strong><br />
+            <span>Reason: </span>{{globalError}}
+        </div>
+
+        <div class="buttons">
+            <button type="submit" ng-click="createTenant()" class="btn btn-primary" ng-disabled="!newTenant.$valid">Create</button>
+            <button type="submit" ng-click="setRoute('/')" class="btn">Cancel</button>
+        </div>
+    </fieldset>
+</form>

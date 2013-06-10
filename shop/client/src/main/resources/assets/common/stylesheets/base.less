@@ -101,15 +101,15 @@ input[type='text'].title {
   padding-left: 9px;
 }
 
-.entity textarea, .entity input[type='text'] {
+.entity textarea, .entity input:not([type=submit]):not([type=file]) {
   width: 100%;
 }
 
-h1 input[type='text'] {
+h1 input:not([type=submit]):not([type=file]) {
   height: 40px !important;
 }
 
-input[type='text'], input[type='password'] {
+input:not([type=submit]):not([type=file]) {
   height: 30px !important;
 }
 
@@ -286,4 +286,43 @@ body > div.loader {
   a.btn {
     margin-top: 10px;
   }
+}
+
+/* Forms & validation */
+
+/* http://stackoverflow.com/questions/15798594/angularjs-forms-validate-fields-after-user-has-left-field*/
+input.has-visited:not(:focus):required:invalid,
+textarea.has-visited:not(:focus):required:invalid,
+select.has-visited:not(:focus):required:invalid {
+  color: #b94a48;
+  border-color: #ee5f5b;
+}
+
+form span.validation {
+  display: none;
+}
+
+form span.has-visited.validation {
+  display: inline-block;
+}
+
+form span.validation.ok {
+  color: green;
+  font-size: 18px;
+}
+
+form [class*="span"]:first-of-type {
+  margin-left: 0;
+}
+
+form h4 {
+  margin-bottom: 20px;
+}
+
+form legend {
+  margin-bottom: 45px;
+}
+
+form .input-append .validation {
+  font-size: 12px;
 }

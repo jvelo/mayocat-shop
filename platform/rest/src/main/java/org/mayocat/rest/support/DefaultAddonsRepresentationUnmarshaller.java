@@ -48,6 +48,9 @@ public class DefaultAddonsRepresentationUnmarshaller implements AddonsRepresenta
     public List<Addon> unmarshall(List<AddonRepresentation> addonRepresentations, boolean includeReadOnlyAddons,
             boolean includeAddonsWithoutDefinition)
     {
+        if (addonRepresentations == null) {
+            return null;
+        }
         List<Addon> addons = Lists.newArrayList();
         for (AddonRepresentation addonRepresentation : addonRepresentations) {
             Addon addon = new Addon();
