@@ -42,6 +42,8 @@ import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
+import org.mayocat.url.URLType;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -70,6 +72,9 @@ public class NewsResource extends AbstractFrontResource implements Resource
 
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
+    private EntityURLFactory urlFactory;
 
     @Inject
     private ConfigurationService configurationService;
@@ -108,7 +113,19 @@ public class NewsResource extends AbstractFrontResource implements Resource
     public FrontView getArticle(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
-        return null;
+        Article article = this.articleStore.get().findBySlug(slug);
+
+        if (article == null) {
+            return new FrontView("404", breakpoint);
+        }
+
+        Map<String, Object> context = getContext(uriInfo);
+        context.put("article", buildArticleContext(article));
+
+        FrontView result = new FrontView("article", breakpoint);
+        result.putContext(context);
+
+        return result;
     }
 
     private Map<String, Object> buildArticleContext(Article article)
@@ -119,6 +136,7 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Map<String, Object> context = Maps.newHashMap();
         context.put("title", ContextUtils.safeString(article.getTitle()));
         context.put("content", ContextUtils.safeHtml(article.getContent()));
+        context.put("url", urlFactory.create(article, this.execution.getContext().getTenant()));
         context.put(ContextConstants.URL, PATH + SLASH + article.getSlug());
         context.put(ContextConstants.SLUG, article.getSlug());
 
