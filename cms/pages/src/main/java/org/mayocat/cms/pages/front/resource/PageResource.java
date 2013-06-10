@@ -1,6 +1,7 @@
 package org.mayocat.cms.pages.front.resource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,8 @@ public class PageResource extends AbstractFrontResource implements Resource
 
         Theme theme = this.execution.getContext().getTheme();
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page);
+        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
+                .asList("png", "jpg", "jpeg", "gif"));
         List<Image> images = new ArrayList<Image>();
         for (Attachment attachment : attachments) {
             if (AbstractFrontResource.isImage(attachment)) {

@@ -81,12 +81,14 @@ public class ImageContextBuilder
     public ImageContext createPlaceholderImageContext(boolean featured)
     {
         ImageContext context = new ImageContext("http://placehold.it/800x800");
-        for (String dimensionName : theme.getThumbnails().keySet()) {
+        if (theme != null && theme.getThumbnails().size() > 0) {
+            for (String dimensionName : theme.getThumbnails().keySet()) {
 
-            ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
-            String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
-                    definition.getHeight());
-            context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);
+                ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+                String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
+                        definition.getHeight());
+                context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);
+            }
         }
         return context;
     }

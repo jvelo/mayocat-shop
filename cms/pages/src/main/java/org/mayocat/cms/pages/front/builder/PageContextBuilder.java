@@ -59,9 +59,6 @@ public class PageContextBuilder
                 featuredImage = images.get(0);
             }
             imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage, true));
-            for (Image image : images) {
-                allImages.add(imageContextBuilder.createImageContext(image));
-            }
         } else {
             Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
             imagesContext.put("featured", placeholder);
