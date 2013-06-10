@@ -166,8 +166,8 @@ TenantManager.controller("ManagerController", ['$scope', 'configurationService',
             }
         });
 
-        configurationService.get("site.domainName", function (value) {
-            $scope.domainName = value;
+        configurationService.get("site.domain", function (value) {
+            $scope.domain = value;
         });
 
     }]);
