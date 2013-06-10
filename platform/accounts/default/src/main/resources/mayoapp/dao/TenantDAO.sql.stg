@@ -3,7 +3,7 @@ group TenantDAO;
 updateConfiguration() ::= <<
     UPDATE tenant
     SET    configuration = :data,
-           configuration_version = :version,
+           configuration_version = :version
     WHERE  entity_id = :tenant.id
 >>
 
