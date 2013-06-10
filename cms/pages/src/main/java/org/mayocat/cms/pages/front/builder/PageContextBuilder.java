@@ -9,8 +9,8 @@ import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
 import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
-import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.theme.Theme;
 
 import com.google.common.base.Optional;
@@ -47,7 +47,18 @@ public class PageContextBuilder
         List<Map<String, String>> allImages = Lists.newArrayList();
 
         if (images.size() > 0) {
-            imagesContext.put("featured", imageContextBuilder.createImageContext(images.get(0)));
+            Image featuredImage = null;
+            for (Image image : images) {
+                if (featuredImage == null && image.getAttachment().getId().equals(page.getFeaturedImageId())) {
+                    featuredImage = image;
+                }
+                allImages.add(imageContextBuilder.createImageContext(image, image == featuredImage));
+            }
+            if (featuredImage == null) {
+                // If no featured image has been set, we use the first image in the array.
+                featuredImage = images.get(0);
+            }
+            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage, true));
             for (Image image : images) {
                 allImages.add(imageContextBuilder.createImageContext(image));
             }
