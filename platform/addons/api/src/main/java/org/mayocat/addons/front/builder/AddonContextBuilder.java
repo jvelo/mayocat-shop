@@ -17,13 +17,13 @@ import com.google.common.collect.Maps;
  */
 public class AddonContextBuilder
 {
-    class ComplexAddonValue
+    class AddonValue
     {
         private Object raw;
 
         private Object display;
 
-        ComplexAddonValue(Object raw, Object display)
+        AddonValue(Object raw, Object display)
         {
             this.raw = raw;
             this.display = display;
@@ -68,12 +68,15 @@ public class AddonContextBuilder
                                 break;
                             }
                         }
-                        groupContext.put(field, new ComplexAddonValue(
+                        groupContext.put(field, new AddonValue(
                                 addon.get().getValue(),
-                                displayValue == null ? addon.get().getValue() : displayValue
+                                displayValue == null ? addonValue(addon.get().getValue()) : displayValue
                         ));
                     } else {
-                        groupContext.put(field, addonValue(addon.get().getValue()));
+                        groupContext.put(field, new AddonValue(
+                                addonValue(addon.get().getValue()),
+                                addonValue(addon.get().getValue())
+                        ));
                     }
                 } else {
                     groupContext.put(field, null);
