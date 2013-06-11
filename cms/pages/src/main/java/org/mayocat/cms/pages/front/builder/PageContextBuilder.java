@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.mayocat.addons.front.builder.AddonContextBuilder;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
-import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
+import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.theme.Theme;
@@ -26,11 +27,14 @@ public class PageContextBuilder
 
     private ImageContextBuilder imageContextBuilder;
 
+    private AddonContextBuilder addonContextBuilder;
+
     public PageContextBuilder(Theme theme)
     {
         this.theme = theme;
 
         imageContextBuilder = new ImageContextBuilder(theme);
+        addonContextBuilder = new AddonContextBuilder();
     }
 
     public Map<String, Object> build(final Page page, List<Image> images)
@@ -69,28 +73,9 @@ public class PageContextBuilder
         pageContext.put("images", imagesContext);
 
         // Addons
-
         if (page.getAddons().isLoaded()) {
-            Map<String, Object> themeAddonsContext = Maps.newHashMap();
             Map<String, AddonGroup> themeAddons = theme.getAddons();
-            for (String groupKey : themeAddons.keySet()) {
-
-                AddonGroup group = themeAddons.get(groupKey);
-                Map<String, Object> groupContext = Maps.newHashMap();
-
-                for (String field : group.getFields().keySet()) {
-                    Optional<org.mayocat.model.Addon> addon =
-                            AddonContextBuilderHelper.findAddon(groupKey, field, page.getAddons().get());
-                    if (addon.isPresent()) {
-                        groupContext.put(field, addon.get().getValue());
-                    } else {
-                        groupContext.put(field, null);
-                    }
-                }
-
-                themeAddonsContext.put(groupKey, groupContext);
-            }
-            pageContext.put("theme_addons", themeAddonsContext);
+            pageContext.put("theme_addons", addonContextBuilder.build(themeAddons, page.getAddons().get()));
         }
 
         return pageContext;

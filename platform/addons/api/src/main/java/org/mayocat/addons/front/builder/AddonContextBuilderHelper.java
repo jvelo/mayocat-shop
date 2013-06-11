@@ -1,4 +1,4 @@
-package org.mayocat.shop.front.builder;
+package org.mayocat.addons.front.builder;
 
 import java.util.List;
 

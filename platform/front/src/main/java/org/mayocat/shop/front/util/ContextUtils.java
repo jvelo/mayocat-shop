@@ -18,15 +18,4 @@ public class ContextUtils
     {
         return string;
     }
-
-    public static Object addonValue(Object value)
-    {
-        if (value == null) {
-            return null;
-        }
-        if (String.class.isAssignableFrom(value.getClass())) {
-            return Strings.emptyToNull((String) value);
-        }
-        return value;
-    }
 }

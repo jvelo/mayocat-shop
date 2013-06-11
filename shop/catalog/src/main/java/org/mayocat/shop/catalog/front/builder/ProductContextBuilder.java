@@ -6,16 +6,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.mayocat.addons.front.builder.AddonContextBuilder;
+import org.mayocat.addons.model.AddonField;
 import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
-import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.Theme;
 
@@ -36,6 +39,8 @@ public class ProductContextBuilder implements ContextConstants
 
     private ImageContextBuilder imageContextBuilder;
 
+    private AddonContextBuilder addonContextBuilder;
+
     public ProductContextBuilder(CatalogSettings catalogSettings, GeneralSettings generalSettings,
             Theme theme)
     {
@@ -44,6 +49,7 @@ public class ProductContextBuilder implements ContextConstants
         this.theme = theme;
 
         imageContextBuilder = new ImageContextBuilder(theme);
+        addonContextBuilder = new AddonContextBuilder();
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)
@@ -92,26 +98,8 @@ public class ProductContextBuilder implements ContextConstants
         // Addons
 
         if (product.getAddons().isLoaded()) {
-            Map<String, Object> themeAddonsContext = Maps.newHashMap();
             Map<String, AddonGroup> themeAddons = theme.getAddons();
-            for (String groupKey : themeAddons.keySet()) {
-
-                AddonGroup group = themeAddons.get(groupKey);
-                Map<String, Object> groupContext = Maps.newHashMap();
-
-                for (String field : group.getFields().keySet()) {
-                    Optional<org.mayocat.model.Addon> addon =
-                            AddonContextBuilderHelper.findAddon(groupKey, field, product.getAddons().get());
-                    if (addon.isPresent()) {
-                        groupContext.put(field, ContextUtils.addonValue(addon.get().getValue()));
-                    } else {
-                        groupContext.put(field, null);
-                    }
-                }
-
-                themeAddonsContext.put(groupKey, groupContext);
-            }
-            productContext.put("theme_addons", themeAddonsContext);
+            productContext.put("theme_addons", addonContextBuilder.build(themeAddons, product.getAddons().get()));
         }
 
         return productContext;

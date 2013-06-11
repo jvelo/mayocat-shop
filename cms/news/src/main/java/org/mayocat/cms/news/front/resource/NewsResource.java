@@ -18,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.addons.front.builder.AddonContextBuilder;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
@@ -33,7 +34,7 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.front.builder.AddonContextBuilderHelper;
+import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.DateContext;
@@ -43,7 +44,6 @@ import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
 import org.mayocat.url.EntityURLFactory;
-import org.mayocat.url.URLType;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -89,8 +89,13 @@ public class NewsResource extends AbstractFrontResource implements Resource
         if (page < 0) {
             page = 0;
         }
-        Integer offset = page * DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE;
+
+        // TODO In the future we want themes to be able to declare the pagination settings for each entity
+        Integer numberOfArticlesPerPAge = DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE;
+
+        Integer offset = page * numberOfArticlesPerPAge;
         List<Article> articles = articleStore.get().findAllPublished(offset, DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE);
+        Integer totalCount = articleStore.get().countAllPublished();
 
         Map<String, Object> context = getContext(uriInfo);
         List<Map<String, Object>> articlesContext = Lists.newArrayList();
@@ -102,8 +107,38 @@ public class NewsResource extends AbstractFrontResource implements Resource
         FrontView result = new FrontView("news", breakpoint);
         result.putContext(context);
 
-        // TODO
-        // add "pagination" context
+        Map<String, Object> pagination = Maps.newHashMap();
+
+        Integer totalPages = Double.valueOf(Math.floor(totalCount / numberOfArticlesPerPAge)).intValue();
+        if (!(totalCount % numberOfArticlesPerPAge == 0)) {
+            totalPages++;
+        }
+
+        List<Map<String, Object>> pages = Lists.newArrayList();
+        for (int i = 0; i <= totalPages; i++) {
+            Map<String, Object> iPage = Maps.newHashMap();
+            iPage.put("number", i);
+            if (i == page.intValue()) {
+                iPage.put("current", true);
+            }
+            pages.add(iPage);
+        }
+
+        pagination.put("pages", pages);
+        pagination.put("currentPage", page);
+        if (page > 0) {
+            pagination.put("hasMoreRecent", true);
+            pagination.put("moreRecent", page - 1);
+        } else {
+            pagination.put("hasMoreRecent", false);
+        }
+
+        if (page < totalPages) {
+            pagination.put("hasOlder", true);
+            pagination.put("older", page + 1);
+        } else {
+            pagination.put("hasOlder", false);
+        }
 
         return result;
     }
@@ -182,27 +217,11 @@ public class NewsResource extends AbstractFrontResource implements Resource
             allImages = Arrays.asList(placeholder);
         }
 
+        // Addons
         if (article.getAddons().isLoaded()) {
-            Map<String, Object> themeAddonsContext = Maps.newHashMap();
+            AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
             Map<String, AddonGroup> themeAddons = theme.getAddons();
-            for (String groupKey : themeAddons.keySet()) {
-
-                AddonGroup group = themeAddons.get(groupKey);
-                Map<String, Object> groupContext = Maps.newHashMap();
-
-                for (String field : group.getFields().keySet()) {
-                    Optional<Addon> addon =
-                            AddonContextBuilderHelper.findAddon(groupKey, field, article.getAddons().get());
-                    if (addon.isPresent()) {
-                        groupContext.put(field, ContextUtils.addonValue(addon.get().getValue()));
-                    } else {
-                        groupContext.put(field, null);
-                    }
-                }
-
-                themeAddonsContext.put(groupKey, groupContext);
-            }
-            context.put("theme_addons", themeAddonsContext);
+            context.put("theme_addons", addonContextBuilder.build(themeAddons, article.getAddons().get()));
         }
 
         imagesContext.put("all", allImages);

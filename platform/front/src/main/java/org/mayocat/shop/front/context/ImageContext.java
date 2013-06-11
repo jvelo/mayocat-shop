@@ -7,45 +7,23 @@ import java.util.HashMap;
  */
 public class ImageContext extends HashMap
 {
-
-    private String url;
-
-    private String title;
-
-    private String description;
-
     public ImageContext(String url)
     {
-        this.url = url;
-    }
-
-    public String getUrl()
-    {
-        return url;
+        this.setUrl(url);
     }
 
     public void setUrl(String url)
     {
-        this.url = url;
-    }
-
-    public String getTitle()
-    {
-        return title;
+        this.put("url", url);
     }
 
     public void setTitle(String title)
     {
-        this.title = title;
-    }
-
-    public String getDescription()
-    {
-        return description;
+        this.put("title", title);
     }
 
     public void setDescription(String description)
     {
-        this.description = description;
+        this.put("description", description);
     }
 }

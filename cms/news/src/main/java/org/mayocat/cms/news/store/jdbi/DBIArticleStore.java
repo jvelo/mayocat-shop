@@ -123,6 +123,12 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     }
 
     @Override
+    public Integer countAllPublished()
+    {
+        return this.dao.countAllPublished(getTenant());
+    }
+
+    @Override
     public Article findById(UUID id)
     {
         Article article = this.dao.findById(ARTICLE_TABLE_NAME, id);

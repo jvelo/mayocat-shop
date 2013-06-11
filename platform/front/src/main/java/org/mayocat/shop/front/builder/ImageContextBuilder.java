@@ -25,7 +25,6 @@ public class ImageContextBuilder
 
     public ImageContextBuilder(Theme theme)
     {
-        Preconditions.checkNotNull("Cannot build an image context with a null theme", theme);
         this.theme = theme;
     }
 
@@ -43,31 +42,33 @@ public class ImageContextBuilder
         context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
         context.put("featured", featured);
 
-        for (String dimensionName : theme.getThumbnails().keySet()) {
-            ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
-            Optional<Thumbnail> bestFit = findBestFit(image, definition.getWidth(),
-                    definition.getHeight());
+        if (theme != null && theme.getThumbnails().size() > 0) {
+            for (String dimensionName : theme.getThumbnails().keySet()) {
+                ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+                Optional<Thumbnail> bestFit = findBestFit(image, definition.getWidth(),
+                        definition.getHeight());
 
-            if (bestFit.isPresent()) {
-                String url =
-                        MessageFormat.format("/images/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
-                                image.getAttachment().getSlug(),
-                                bestFit.get().getX(),
-                                bestFit.get().getY(),
-                                bestFit.get().getWidth(),
-                                bestFit.get().getHeight(),
-                                image.getAttachment().getExtension(),
-                                definition.getWidth(),
-                                definition.getHeight());
-                context.put("theme_" + dimensionName + "_url", url);
-            } else {
-                String url =
-                        MessageFormat.format("/images/{0}.{1}?width={2}&height={3}",
-                                image.getAttachment().getSlug(),
-                                image.getAttachment().getExtension(),
-                                definition.getWidth(),
-                                definition.getHeight());
-                context.put("theme_" + dimensionName + "_url", url);
+                if (bestFit.isPresent()) {
+                    String url =
+                            MessageFormat.format("/images/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
+                                    image.getAttachment().getSlug(),
+                                    bestFit.get().getX(),
+                                    bestFit.get().getY(),
+                                    bestFit.get().getWidth(),
+                                    bestFit.get().getHeight(),
+                                    image.getAttachment().getExtension(),
+                                    definition.getWidth(),
+                                    definition.getHeight());
+                    context.put("theme_" + dimensionName + "_url", url);
+                } else {
+                    String url =
+                            MessageFormat.format("/images/{0}.{1}?width={2}&height={3}",
+                                    image.getAttachment().getSlug(),
+                                    image.getAttachment().getExtension(),
+                                    definition.getWidth(),
+                                    definition.getHeight());
+                    context.put("theme_" + dimensionName + "_url", url);
+                }
             }
         }
         return context;

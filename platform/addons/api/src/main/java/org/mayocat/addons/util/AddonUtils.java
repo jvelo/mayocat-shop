@@ -1,5 +1,6 @@
 package org.mayocat.addons.util;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mayocat.addons.model.AddonField;
@@ -32,5 +33,31 @@ public class AddonUtils
             }
         }
         return Optional.absent();
+    }
+
+    public static boolean isListWithKeyAndDisplayValues(AddonField field)
+    {
+        return isListWithKeyAndDisplayValues(field.getProperties());
+    }
+
+    public static boolean isListWithKeyAndDisplayValues(Map<String, Object> properties)
+    {
+        if (properties == null) {
+            return false;
+        }
+        Object listValues = properties.get("listValues");
+        if (listValues == null) {
+            return false;
+        }
+        try {
+            List<?> values = (List) listValues;
+            if (((List) listValues).size() <= 0) {
+                return false;
+            }
+            Map<String, Object> casted = (Map<String, Object>) values.get(0);
+        } catch (ClassCastException e) {
+            return false;
+        }
+        return true;
     }
 }

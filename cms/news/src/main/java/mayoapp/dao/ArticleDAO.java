@@ -35,6 +35,9 @@ public abstract class ArticleDAO extends AbstractLocalizedEntityDAO<Article>
     public abstract List<Article> findAllPublished(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
+    @SqlQuery
+    public abstract Integer countAllPublished(@BindBean("tenant") Tenant tenant);
+
     public void createOrUpdateAddons(Article entity)
     {
         AddonsHelper.createOrUpdateAddons(this, entity);

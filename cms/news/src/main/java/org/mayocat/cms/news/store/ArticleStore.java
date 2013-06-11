@@ -17,4 +17,6 @@ public interface ArticleStore extends Store<Article, UUID>, EntityStore
     Article findBySlug(String slug);
 
     List<Article> findAllPublished(Integer offset, Integer number);
+
+    Integer countAllPublished();
 }
