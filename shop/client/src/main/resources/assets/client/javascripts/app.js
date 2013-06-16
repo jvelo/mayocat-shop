@@ -3,6 +3,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'settings',
     'search',
     'money',
+    'shipping',
     'product',
     'collection',
     'catalog',
@@ -13,7 +14,8 @@ var MayocatShop = angular.module('MayocatShop', [
     'orders',
     'order',
     'jqui',
-    '$strap.directives'
+    '$strap.directives',
+    'angularTree'
 ]);
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
@@ -33,6 +35,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         when('/settings/', {templateUrl: 'partials/settingsGeneral.html', controller: 'SettingsController', title: 'Settings'}).
         when('/settings/tenant', {templateUrl: 'partials/settingsTenant.html', controller: 'SettingsTenantController', title: 'Settings'}).
         when('/settings/catalog', {templateUrl: 'partials/settingsCatalog.html', controller: 'SettingsController', title: 'Settings'}).
+        when('/settings/shipping', {templateUrl: 'partials/settingsShipping.html', controller: 'SettingsShippingController', title: 'Settings'}).
         otherwise({redirectTo: '/'});
 }]);
 
@@ -81,8 +84,8 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
 /**
  * TODO: move this in the AppController
  */
-MayocatShop.run(['$rootScope', '$http', '$location', 'configurationService',
-    function (scope, $http, location, configurationService) {
+MayocatShop.run(['$rootScope',
+    function (scope) {
 
         /**
          * Set up a default page title and update it when changing route.

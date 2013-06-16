@@ -86,3 +86,70 @@
 .order tfoot {
   font-weight: bold;
 }
+
+/* location-picker */
+
+location-picker ul {
+  margin-left: 20px;
+}
+
+location-picker input {
+  float: left;
+  margin-top: -6px !important;
+  margin-left: 10px !important;
+}
+
+location-picker p {
+  text-indent: 10px;
+  position:relative;
+}
+
+location-picker span.arrow:after {
+  content: "\00A0";
+  min-width: 10px;
+  display: inline-block;
+  float:left;
+}
+
+location-picker span.arrow.closed,
+location-picker span.arrow.open {
+  float:left;
+  cursor:pointer;
+}
+
+location-picker span.arrow.closed:after {
+  content: "\25B8";
+}
+
+location-picker span.arrow.open:after {
+  right:0;
+}
+
+/* Tri-state checkbox */
+
+span.tristate.checkbox {
+  display:inline;
+  background: url(../images/checkbox-unchecked.png) no-repeat;
+  width: 20px;
+  height: 20px;
+  padding-left: 12px;
+  margin-left: 13px;
+
+  &.checked {
+    background: url(../images/checkbox-checked.png) no-repeat;
+  }
+
+  &.indeterminate {
+    background: url(../images/checkbox-indeterminate.png) no-repeat;
+  }
+}
+
+/* Shipping location-picker */
+
+location-picker .checked .checkbox {
+  background: url(../images/checkbox-checked.png) no-repeat !important;
+}
+
+location-picker p.location {
+  display: inline-block;
+}

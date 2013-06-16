@@ -1,0 +1,28 @@
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">Shipping settings</h1>
+        </div>
+    </div>
+
+    <!--
+    <ul ng-tree="locations" multiple direct>
+        <li select="selected()"><input type="checkbox" ng-checked="selected()"/>{{item.name}} {{selected}}</li>
+    </ul>
+    -->
+
+    Locations : {{selectedLocations}} <br />
+
+    <location-picker location="locations" model="selectedLocations"></location-picker>
+
+    <div class="span2">
+        <div class="buttons hasLoading">
+            <button ng-click="updateSettings()"
+                    class="btn btn-large btn-primary">
+                Update
+            </button>
+            <span ng-class="{'loading': isSaving}"></span>
+        </div>
+    </div>
+</div>

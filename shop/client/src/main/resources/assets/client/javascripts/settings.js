@@ -77,6 +77,10 @@ angular.module('settings', ['ngResource'])
         }
     ])
 
+    .controller('SettingsShippingController', ['$scope', '$http', function($scope, $http) {
+        $scope.selectedLocations = [ "FR-67" ];
+    }])
+
     .controller('SettingsMenuController', ['$scope', '$location',
 
         function ($scope, $location) {
@@ -99,7 +103,9 @@ angular.module('settings', ['ngResource'])
                 if (path === "/settings/catalog") {
                     $scope.isCatalog = true;
                 }
-
+                if (path === "/settings/settings") {
+                    $scope.isSettings = true;
+                }
             });
 
             $scope.setRoute = function (href) {
