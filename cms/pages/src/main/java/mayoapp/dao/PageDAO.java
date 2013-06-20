@@ -1,5 +1,7 @@
 package mayoapp.dao;
 
+import java.util.List;
+
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.jdbi.mapper.PageMapper;
@@ -21,7 +23,10 @@ public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implement
         PositionedDAO<Page>, AddonsDAO<Page>
 {
     @SqlQuery
-         public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    public abstract List<Page> findAllRootPages(@BindBean("tenant") Tenant tenant);
 
     @SqlUpdate
     public abstract void createPage(@Bind("position") Integer position, @BindBean("page") Page page);
