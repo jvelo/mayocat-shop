@@ -69,7 +69,7 @@ public class AddonsHelper
         }
     }
 
-    private static Optional<Addon> findAddon(List<Addon> existing, Addon addon)
+    public static Optional<Addon> findAddon(List<Addon> existing, Addon addon)
     {
         for (Addon a : existing) {
             if (a.getSource().equals(addon.getSource())

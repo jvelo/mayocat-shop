@@ -40,7 +40,11 @@ public class AddonContextBuilder
         }
     }
 
-    public Map<String, Object> build(Map<String, AddonGroup> definitions, List<Addon> addons)
+    public Map<String, Object> build(Map<String, AddonGroup> definitions, List<Addon> addons) {
+        return build(definitions, addons, "theme");
+    }
+
+    public Map<String, Object> build(Map<String, AddonGroup> definitions, List<Addon> addons, String source)
     {
         Map<String, Object> context = Maps.newHashMap();
         for (String groupKey : definitions.keySet()) {
@@ -50,7 +54,7 @@ public class AddonContextBuilder
 
             for (String field : group.getFields().keySet()) {
                 Optional<Addon> addon =
-                        AddonContextBuilderHelper.findAddon(groupKey, field, addons);
+                        AddonContextBuilderHelper.findAddon(groupKey, field, addons, source);
                 if (addon.isPresent()) {
 
                     AddonField addonField = group.getFields().get(field);

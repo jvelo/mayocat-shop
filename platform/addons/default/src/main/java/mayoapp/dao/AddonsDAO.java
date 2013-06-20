@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.mayocat.addons.binder.BindAddon;
 import org.mayocat.addons.mapper.AddonMapper;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.model.Addon;
 import org.mayocat.model.HasAddons;
 import org.skife.jdbi.v2.sqlobject.BindBean;
