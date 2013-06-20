@@ -108,7 +108,7 @@ var global = this;
         for (var i = 0; i < sources.length; i++) {
             var source = sources[i],
                 addon = getObjectPropertyFromPath(this[source + "_addons"], path);
-            if (typeof addon !== "undefined") {
+            if (typeof addon !== "undefined" && addon !== null) {
                 return addon[valueType];
             }
             // else continue looking in next source of addons
