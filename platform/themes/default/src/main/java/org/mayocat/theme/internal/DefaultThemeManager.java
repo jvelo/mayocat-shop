@@ -166,7 +166,7 @@ public class DefaultThemeManager implements ThemeManager
 
         // 3.1 With breakpoint
         try {
-            path = url + breakpoint + "/" + name;
+            path = url + breakpoint.getFolder() + "/" + name;
             Resources.getResource(path);
             return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
         } catch (IllegalArgumentException e) {
@@ -188,7 +188,7 @@ public class DefaultThemeManager implements ThemeManager
     /**
      * Tries to get template content for a certain theme and breakpoint. Tries in order : - tenant theme folder in
      * persistent directory (example : data/tenants/thetenant/themes/thetheme/[breakpoint/]filename - global theme
-     * folder in persistent directory (example : data/themes/thetheme/[/breakpoint]filename) - classpath (example uri :
+     * folder in persistent directory (example : data/themes/thetheme/[breakpoint/]filename) - classpath (example uri :
      * /themes/thetheme/[breakpoint/]filename) For each step, checks the breakpoint (if set) and fallback on the
      * no-breakpoint file
      *

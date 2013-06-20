@@ -1,19 +1,23 @@
 package org.mayocat.shop.cart.front.context;
 
+import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Execution;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.front.builder.CartContextBuilder;
+import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContext;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
 import org.mayocat.store.AttachmentStore;
+import org.mayocat.util.Utils;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -39,10 +43,15 @@ public class CartContextSupplier implements FrontContextSupplier
     {
         CartContextBuilder builder =
                 new CartContextBuilder(attachmentStore.get(), thumbnailStore.get(), execution.getContext().getTheme());
-        data.put("cart", builder.build(cartAccessor.getCart(),
-                // TODO we need to find a way to have Jersey @Context injection in context suppliers...
-                // so that we could here for example get the request locale via @Context Locale locale
-                Locale.getDefault()
-        ));
+
+        // TODO we need to find a way to have Jersey @Context injection in context suppliers...
+        // so that we could here for example get the request locale via @Context Locale locale
+
+        GeneralSettings generalSettings = Utils.getComponent(GeneralSettings.class);
+        CatalogSettings catalogSettings = Utils.getComponent(CatalogSettings.class);
+        final Locale locale = generalSettings.getLocales().getMainLocale().getValue();
+        final Currency currency = catalogSettings.getCurrencies().getMainCurrency().getValue();
+
+        data.put("cart", builder.build(cartAccessor.getCart(), locale));
     }
 }

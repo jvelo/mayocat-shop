@@ -27,7 +27,7 @@ public class AbstractFrontResource
         IMAGE_EXTENSIONS.add("gif");
     }
 
-    protected static boolean isImage(Attachment attachment)
+    public static boolean isImage(Attachment attachment)
     {
         return IMAGE_EXTENSIONS.contains(attachment.getExtension().toLowerCase());
     }
