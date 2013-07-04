@@ -22,15 +22,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.model.EntityAndCount;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.api.representations.CollectionRepresentation;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.model.EntityAndCount;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.representations.EntityReferenceRepresentation;
-import org.mayocat.rest.Resource;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -60,7 +60,6 @@ public class CollectionResource implements Resource
 
     @GET
     @Timed
-    @Authorized
     public List<CollectionRepresentation> getAllCollections(
             @QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
