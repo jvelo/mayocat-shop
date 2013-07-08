@@ -1,25 +1,11 @@
 package org.mayocat.shop.payment.api.resources;
 
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
-import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.event.PaymentOperationEvent;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
@@ -28,6 +14,15 @@ import org.mayocat.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.ObservationManager;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @version $Id$
@@ -62,6 +57,7 @@ public class PaymentResource implements Resource
     {
         GatewayFactory factory = gatewayFactories.get(gatewayId);
         PaymentGateway gateway = factory.createGateway();
+        String redirect = "";
 
         try {
             GatewayResponse response = gateway.acknowledge(data);
@@ -70,6 +66,11 @@ public class PaymentResource implements Resource
             paymentOperationStore.get().create(op);
 
             observationManager.notify(new PaymentOperationEvent(), op);
+
+            if(gatewayId.equalsIgnoreCase("monetawebadaptivepayments"))  {
+                redirect = "redirect=" + response.getRedirectURL();
+            }
+
         } catch (GatewayException e) {
             this.logger.error("Failed to acknowledge payment", e);
         } catch (InvalidEntityException e) {
@@ -78,6 +79,6 @@ public class PaymentResource implements Resource
             this.logger.error("Failed to acknowledge payment", e);
         }
 
-        return Response.ok().build();
+        return Response.ok(redirect).build();
     }
 }
