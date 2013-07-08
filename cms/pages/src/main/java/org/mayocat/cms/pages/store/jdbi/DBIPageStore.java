@@ -101,6 +101,12 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     }
 
     @Override
+    public List<Page> findAllRootPages()
+    {
+        return AddonsHelper.withAddons(this.dao.findAllRootPages(getTenant()), this.dao);
+    }
+
+    @Override
     public List<Page> findByIds(List<UUID> ids)
     {
         return AddonsHelper.withAddons(this.dao.findByIds(PAGE_TABLE_NAME, ids), this.dao);

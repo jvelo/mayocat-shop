@@ -44,7 +44,7 @@ public class PerhapsLoaded<T> implements Serializable
     public T get()
     {
         if (!isLoaded()) {
-            throw new IllegalStateException("Cannot access a value not laden");
+            throw new IllegalStateException("Cannot access a value not loaded");
         }
         return reference;
     }

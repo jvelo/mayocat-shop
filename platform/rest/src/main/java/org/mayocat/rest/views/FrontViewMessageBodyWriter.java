@@ -85,6 +85,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             }
 
             frontView.getContext().put("layout", layout.getId());
+            frontView.getContext().put("template", frontView.getLayout());
             ObjectMapper mapper = new ObjectMapper();
             String jsonContext = null;
 

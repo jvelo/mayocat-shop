@@ -51,7 +51,7 @@ public class AddonUtils
         }
         try {
             List<?> values = (List) listValues;
-            if (((List) listValues).size() <= 0) {
+            if (values.size() <= 0) {
                 return false;
             }
             Map<String, Object> casted = (Map<String, Object>) values.get(0);

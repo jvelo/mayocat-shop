@@ -1,9 +1,5 @@
 package org.mayocat.search.elasticsearch;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString;
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +37,6 @@ import org.mayocat.search.SearchEngine;
 import org.mayocat.search.SearchEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.observation.EventListener;
@@ -49,6 +44,9 @@ import org.xwiki.observation.ObservationManager;
 import org.xwiki.observation.event.Event;
 
 import com.yammer.dropwizard.lifecycle.Managed;
+
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 @Component("elasticsearch")
 @Singleton

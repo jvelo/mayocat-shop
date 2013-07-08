@@ -15,6 +15,9 @@ public class DefaultUserAgentBreakpointDetector implements UserAgentBreakpointDe
     @Override
     public Breakpoint getBreakpoint(String userAgent)
     {
+        if (userAgent == null) {
+            return Breakpoint.DEFAULT;
+        }
         if (userAgent.matches(
                 "(?i).*((android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec|hiptop" +
                         "|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?" +

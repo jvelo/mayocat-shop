@@ -1,5 +1,6 @@
 package org.mayocat.shop.catalog.store.jdbi;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,7 +10,9 @@ import javax.validation.Valid;
 import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.model.Addon;
 import org.mayocat.model.event.EntityCreatedEvent;
+import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
+import org.mayocat.model.event.EntityUpdatingEvent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -46,6 +49,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             throw new EntityAlreadyExistsException();
         }
 
+        if (!product.getAddons().isLoaded()) {
+            product.setAddons(new ArrayList<Addon>());
+        }
+
+        getObservationManager().notify(new EntityCreatingEvent(), product);
+
         this.dao.begin();
 
         UUID entityId = UUID.randomUUID();
@@ -74,10 +83,17 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         this.dao.begin();
 
         Product originalProduct = this.findBySlug(product.getSlug());
+
         if (originalProduct == null) {
             this.dao.commit();
             throw new EntityDoesNotExistException();
         }
+
+        if (!product.getAddons().isLoaded()) {
+            product.setAddons(originalProduct.getAddons().get());
+        }
+        getObservationManager().notify(new EntityUpdatingEvent(), product);
+
         product.setId(originalProduct.getId());
         Integer updatedRows = this.dao.updateProduct(product);
         this.dao.createOrUpdateAddons(product);

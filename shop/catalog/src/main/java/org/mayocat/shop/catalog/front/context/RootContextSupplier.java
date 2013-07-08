@@ -11,7 +11,14 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.addons.front.builder.AddonContextBuilder;
+import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.cms.pages.front.builder.PageContextBuilder;
+import org.mayocat.cms.pages.model.Page;
+import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
@@ -28,7 +35,9 @@ import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContext;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
+import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
+import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.resources.ResourceResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
@@ -39,6 +48,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -56,7 +66,13 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
     private Execution execution;
 
     @Inject
+    private PlatformSettings platformSettings;
+
+    @Inject
     private ConfigurationService configurationService;
+
+    @Inject
+    private Provider<PageStore> pageStore;
 
     @Inject
     private Provider<ProductStore> productStore;
@@ -74,15 +90,39 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
     public void contributeRootContext(@FrontContext Map data)
     {
         final GeneralSettings config = execution.getContext().getSettings(GeneralSettings.class);
+        Tenant tenant = execution.getContext().getTenant();
+        Theme theme = execution.getContext().getTheme();
+
+        Map site = Maps.newHashMap();
+        site.put(SITE_TITLE, tenant.getName());
+        ImageContextBuilder imageContextBuilder = new ImageContextBuilder(theme);
+
+        List<Attachment> siteAttachments = this.attachmentStore.get().findAllChildrenOf(tenant);
+        List<Image> siteImages = new ArrayList<Image>();
+        boolean logoFound = false;
+        for (Attachment attachment : siteAttachments) {
+            if (AbstractFrontResource.isImage(attachment)) {
+                if (attachment.getId().equals(tenant.getFeaturedImageId())) {
+                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
+                    Image image = new Image(attachment, thumbnails);
+                    siteImages.add(image);
+                    site.put("logo", imageContextBuilder.createImageContext(image, true));
+                    logoFound = true;
+                }
+            }
+        }
+        if (!logoFound) {
+            site.put("logo", imageContextBuilder.createPlaceholderImageContext(true));
+        }
+
+        if (tenant.getAddons().isLoaded()) {
+            AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
+            Map<String, AddonGroup> platformAddons = platformSettings.getAddons();
+            site.put("platform_addons", addonContextBuilder.build(platformAddons, tenant.getAddons().get(), "platform"));
+        }
 
         data.put(THEME_PATH, ResourceResource.PATH);
-
-        data.put(SITE, new HashMap()
-        {
-            {
-                put(SITE_TITLE, execution.getContext().getTenant().getName());
-            }
-        });
+        data.put(SITE, site);
 
         // FIXME
         // Do we always want to support the collections context ?
@@ -135,7 +175,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
         final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
         final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
-        Theme theme = this.execution.getContext().getTheme();
         ProductContextBuilder builder = new ProductContextBuilder(configuration, generalSettings, theme);
 
         for (final Product product : products) {
@@ -166,5 +205,59 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         }
 
         data.put("__unsupported__products", productsContext);
+
+        // Pages
+
+        PageContextBuilder pageContextBuilder = new PageContextBuilder(theme);
+        List<Map<String, Object>> pagesContext = Lists.newArrayList();
+        List<Page> rootPages = this.pageStore.get().findAllRootPages();
+
+        featuredImageIds = Collections2.transform(rootPages,
+                new Function<Page, UUID>()
+                {
+                    @Override
+                    public UUID apply(final Page product)
+                    {
+                        return product.getFeaturedImageId();
+                    }
+                }
+        );
+        ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        if (ids.isEmpty()) {
+            allImages = Collections.emptyList();
+            allThumbnails = Collections.emptyList();
+        } else {
+            allImages = this.attachmentStore.get().findByIds(ids);
+            allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
+        }
+
+        for (final Page page : rootPages) {
+            java.util.Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
+            {
+                @Override
+                public boolean apply(@Nullable Attachment attachment)
+                {
+                    return attachment.getId().equals(page.getFeaturedImageId());
+                }
+            });
+            List<Image> images = new ArrayList<Image>();
+            for (final Attachment attachment : attachments) {
+                java.util.Collection<Thumbnail> thumbnails =
+                        Collections2.filter(allThumbnails, new Predicate<Thumbnail>()
+                        {
+                            @Override
+                            public boolean apply(@Nullable Thumbnail thumbnail)
+                            {
+                                return thumbnail.getAttachmentId().equals(attachment.getId());
+                            }
+                        });
+                Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
+                images.add(image);
+            }
+            Map<String, Object> pageContext = pageContextBuilder.build(page, images);
+            pagesContext.add(pageContext);
+        }
+
+        data.put("pages", pagesContext);
     }
 }

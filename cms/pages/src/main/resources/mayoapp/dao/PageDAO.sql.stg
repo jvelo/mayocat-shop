@@ -1,5 +1,16 @@
 group PageDAO;
 
+findAllRootPages() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN page ON entity.id = page.entity_id
+    WHERE entity.type = 'page'
+      AND entity.slug != 'home'
+      AND entity.parent_id IS NULL
+      AND tenant_id = :tenant.id
+    ORDER BY position ASC
+>>
+
 lastPosition() ::= <<
     SELECT page.position
     FROM entity
