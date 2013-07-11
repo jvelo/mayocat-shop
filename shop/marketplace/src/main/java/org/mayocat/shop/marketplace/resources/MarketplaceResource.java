@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.configuration.SiteSettings;
@@ -28,6 +27,8 @@ import org.mayocat.search.elasticsearch.ElasticSearchSearchEngine;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
+
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -74,6 +75,31 @@ public class MarketplaceResource implements Resource
     }
 
     @GET
+    @Path("shops/{shop}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getShop(@PathParam("shop") String shop)
+    {
+        Client client = getSearchEngine().getClient();
+        SearchResponse response =
+                client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                        .setFrom(0)
+                        .setSize(1)
+                        .setTypes("tenant")
+                        .setQuery(QueryBuilders.matchQuery("slug", shop))
+                        .setExplain(false)
+                        .execute()
+                        .actionGet();
+
+        Map<String, Object> result = Maps.newHashMap();
+        for (SearchHit hit : response.getHits()) {
+            result = hit.getSource();
+            break;
+        }
+
+        return Response.ok(result).build();
+    }
+
+    @GET
     @Path("shops/{shop}/products")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getShopProducts(@PathParam("shop") String shop,
@@ -86,10 +112,7 @@ public class MarketplaceResource implements Resource
                         .setFrom(offset)
                         .setSize(number)
                         .setTypes("product")
-                        .setQuery(QueryBuilders.matchQuery("site.slug", shop))
-                        //.setFilter(FilterBuilders.nestedFilter("site",
-                        //        FilterBuilders.boolFilter().must(FilterBuilders.termFilter("slug", shop))))
-                        //.setFilter(FilterBuilders.boolFilter().must(FilterBuilders.termFilter("site.slug", shop)))
+                        .setQuery(QueryBuilders.termQuery("site.slug", shop))
                         .setExplain(false)
                         .execute()
                         .actionGet();
@@ -107,6 +130,61 @@ public class MarketplaceResource implements Resource
         return Response.ok(resultSet).build();
     }
 
+    @GET
+    @Path("shops/{shop}/collections/{collection}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCollection(@PathParam("shop") String shop, @PathParam("collection") String collection)
+    {
+        // Collection
+        Map<String, Object> collectionResult;
+        Client client = getSearchEngine().getClient();
+        SearchResponse response =
+                client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                        .setFrom(0)
+                        .setSize(1)
+                        .setTypes("collection")
+                        .setQuery(
+                                QueryBuilders.boolQuery()
+                                        .must(QueryBuilders.fieldQuery("slug", collection))
+                                        .must(QueryBuilders.termQuery("site.slug", shop))
+                        )
+                        .setExplain(false)
+                        .execute()
+                        .actionGet();
+
+        if (response.getHits().getHits().length > 0) {
+            collectionResult = response.getHits().getAt(0).getSource();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity(
+                    "Collection with slug " + collection + " not found").build();
+        }
+
+        // Products
+
+        client = getSearchEngine().getClient();
+        response =
+                client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                        .setTypes("product")
+                        .setQuery(
+                                QueryBuilders.boolQuery()
+                                        .must(QueryBuilders.fieldQuery("collections", collection))
+                                        .must(QueryBuilders.termQuery("site.slug", shop))
+                        )
+                        .setExplain(false)
+                        .execute()
+                        .actionGet();
+
+        List<Map<String, Object>> products = new ArrayList<Map<String, Object>>();
+        for (SearchHit hit : response.getHits()) {
+            products.add(hit.getSource());
+        }
+
+        Map<String, Object> result = Maps.newHashMap();
+        result.putAll(collectionResult);
+        result.put("products", products);
+
+        return Response.ok(result).build();
+    }
 
     private ElasticSearchSearchEngine getSearchEngine()
     {

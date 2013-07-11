@@ -82,7 +82,6 @@ public class CollectionResource implements Resource
     @Path("{slug}")
     @GET
     @Timed
-    @Authorized
     public Object getCollection(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
         Collection collection = this.catalogService.findCollectionBySlug(slug);

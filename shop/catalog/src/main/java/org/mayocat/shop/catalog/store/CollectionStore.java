@@ -26,5 +26,7 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
 
     List<EntityAndCount<Collection>> findAllWithProductCount();
 
+    List<Collection> findAll();
+
     List<Collection> findAllForProduct(Product product);
 }

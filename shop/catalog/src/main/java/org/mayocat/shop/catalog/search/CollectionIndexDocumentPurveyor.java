@@ -21,8 +21,8 @@ import com.google.common.collect.Maps;
  * @version $Id$
  */
 @Component
-public class ProductIndexDocumentPurveyor extends AbstractGenericEntityIndexDocumentPurveyor<Product>
-        implements EntityIndexDocumentPurveyor<Product>
+public class CollectionIndexDocumentPurveyor extends AbstractGenericEntityIndexDocumentPurveyor<Collection>
+        implements EntityIndexDocumentPurveyor<Collection>
 {
     @Inject
     private Logger logger;
@@ -35,21 +35,12 @@ public class ProductIndexDocumentPurveyor extends AbstractGenericEntityIndexDocu
         return Product.class;
     }
 
-    public Map<String, Object> purveyDocument(Product entity, Tenant tenant)
+    public Map<String, Object> purveyDocument(Collection entity, Tenant tenant)
     {
         Map<String, Object> source = Maps.newHashMap();
 
         source.put("site", extractSourceFromEntity(tenant, tenant));
         source.putAll(extractSourceFromEntity(entity, tenant));
-
-        List<Collection> collections = collectionStore.findAllForProduct(entity);
-        List<String> collectionsSource = Lists.newArrayList();
-
-        for (Collection collection : collections) {
-            collectionsSource.add(collection.getSlug());
-        }
-
-        source.put("collections", collectionsSource);
 
         return source;
     }
