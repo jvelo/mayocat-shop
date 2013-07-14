@@ -65,7 +65,7 @@ public class AddonContextBuilder
                                 (List<Map<String, Object>>) addonField.getProperties().get("listValues");
                         Object displayValue = null;
                         for (Map<String, Object> entry : listValues) {
-                            if (entry.containsKey("key") &&
+                            if (entry.containsKey("key") && addon.get().getValue() != null &&
                                     entry.get("key").equals(addon.get().getValue().toString()))
                             {
                                 displayValue = entry.get("name");

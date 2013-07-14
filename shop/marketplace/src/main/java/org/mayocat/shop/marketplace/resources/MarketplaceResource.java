@@ -85,7 +85,7 @@ public class MarketplaceResource implements Resource
                         .setFrom(0)
                         .setSize(1)
                         .setTypes("tenant")
-                        .setQuery(QueryBuilders.matchQuery("slug", shop))
+                        .setQuery(QueryBuilders.termQuery("slug", shop))
                         .setExplain(false)
                         .execute()
                         .actionGet();

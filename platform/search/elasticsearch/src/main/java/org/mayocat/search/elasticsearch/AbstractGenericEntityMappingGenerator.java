@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.mayocat.addons.model.AddonField;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.PlatformSettings;
+import org.mayocat.model.Slug;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,16 +46,12 @@ public abstract class AbstractGenericEntityMappingGenerator implements EntityMap
 
                 // There is a full mapping JSON file
 
-                Map<String, Object> mapping = mapper.readValue(fullJson, new TypeReference<Map<String, Object>>()
-                {
-                });
+                Map<String, Object> mapping = mapper.readValue(fullJson, new TypeReference<Map<String, Object>>(){});
 
-                // TODO
                 // check if "addons" mapping present, and merge it in if not
                 if (!hasAddonsMapping(mapping)) {
                     insertAddonsMapping(mapping);
                 }
-                ;
 
                 return mapping;
             } catch (IllegalArgumentException e) {
@@ -66,31 +63,38 @@ public abstract class AbstractGenericEntityMappingGenerator implements EntityMap
 
                     // There is a mapping just for properties
                     final Map<String, Object> properties =
-                            mapper.readValue(propertiesJson, new TypeReference<Map<String, Object>>()
-                            {
-                            });
+                            mapper.readValue(propertiesJson, new TypeReference<Map<String, Object>>(){});
 
                     Map<String, Object> mapping = new HashMap<String, Object>();
-                    mapping.put(getEntityName(forClass()), new HashMap<String, Object>()
+
+                    Map<String, Object> entity = new HashMap<String, Object>();
+                    Map<String, Object> entityProperties = new HashMap<String, Object>()
                     {
                         {
-                            // The "properties" of the product object
+                            // the "properties" property of the properties of the product object
                             put("properties", new HashMap<String, Object>()
                             {
                                 {
-                                    // the "properties" property of the properties of the product object
-                                    put("properties", new HashMap<String, Object>()
-                                    {
-                                        {
-                                            // the "properties" of the property "properties"
-                                            // of the properties of the product object
-                                            put("properties", properties);
-                                        }
-                                    });
+                                    // the "properties" of the property "properties"
+                                    // of the properties of the product object
+                                    put("properties", properties);
                                 }
                             });
                         }
-                    });
+                    };
+
+                    if (Slug.class.isAssignableFrom(this.forClass())) {
+                        entityProperties.put("slug", new HashMap<String, Object>()
+                        {
+                            {
+                                put("index", "not_analyzed");
+                                put("type", "string");
+                            }
+                        });
+                    }
+
+                    entity.put("properties", entityProperties);
+                    mapping.put(getEntityName(forClass()), entity);
 
                     insertAddonsMapping(mapping);
 
