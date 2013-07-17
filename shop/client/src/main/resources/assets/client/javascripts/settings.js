@@ -77,8 +77,13 @@ angular.module('settings', ['ngResource'])
         }
     ])
 
-    .controller('SettingsShippingController', ['$scope', '$http', function($scope, $http) {
-        $scope.selectedLocations = [ "FR-67" ];
+    .controller('SettingsShippingController', ['$scope', 'configurationService', function ($scope, configurationService) {
+
+        configurationService.get("shipping", function(shippingConfiguration){
+
+            $scope.configuration = shippingConfiguration;
+        });
+
     }])
 
     .controller('SettingsMenuController', ['$scope', '$location',

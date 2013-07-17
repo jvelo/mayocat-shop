@@ -6,15 +6,34 @@
         </div>
     </div>
 
-    <!--
-    <ul ng-tree="locations" multiple direct>
-        <li select="selected()"><input type="checkbox" ng-checked="selected()"/>{{item.name}} {{selected}}</li>
+    <p>
+        You can chose to charge shipping costs according to order weight or price,
+        or have a flat rate by number of products plus fixed rate by order.
+    </p>
+
+    <ul class="nav nav-tabs">
+        <li><a data-toggle="tab">by weight</a></li>
+        <li><a data-toggle="tab">by price</a></li>
+        <li><a data-toggle="tab">flat rate</a></li>
+        <li ng-class="{'selected': configuration.strategy == 'none', 'active': tab == 'none'}"><a data-toggle="tab">none</a></li>
     </ul>
-    -->
 
-    Locations : {{selectedLocations}} <br />
+    <tabset>
+        <tab heading="Static title">Static content</tab>
+        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+            {{tab.content}}
+        </tab>
+        <tab select="alertMe()">
+            <tab-heading>
+                <i class="icon-bell"></i> Select me for alert!
+            </tab-heading>
+            I've got an HTML heading, and a select callback. Pretty cool!
+        </tab>
+    </tabset>
 
+<!--
     <location-picker location="locations" model="selectedLocations"></location-picker>
+    -->
 
     <div class="span2">
         <div class="buttons hasLoading">
