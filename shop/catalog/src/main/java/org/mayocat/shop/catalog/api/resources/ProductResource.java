@@ -105,15 +105,13 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @GET
     @Timed
     @Authorized
-    public Object getProduct(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
+    public Object getProduct(@PathParam("slug") String slug,
+            @QueryParam("expand") @DefaultValue("") List<String> expansions)
     {
         Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
             return Response.status(404).build();
         }
-        List<String> expansions = Strings.isNullOrEmpty(expand)
-                ? Collections.<String>emptyList()
-                : Arrays.asList(expand.split(","));
 
         if (expansions.contains("collections")) {
             List<Collection> collections = this.collectionStore.get().findAllForProduct(product);

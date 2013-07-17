@@ -94,7 +94,7 @@ MayocatShop.run(['$rootScope',
          */
         scope.page_title = Mayocat.applicationName + ' | Home';
         scope.$on('$routeChangeSuccess', function (event, current) {
-            scope.page_title = Mayocat.applicationName + ' | ' + current.$route.title;
+            scope.page_title = Mayocat.applicationName + ' | ' + current.$$route.title;
         });
 
     }]);
