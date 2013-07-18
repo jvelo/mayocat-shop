@@ -8,6 +8,7 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.checkout.CheckoutSettings;
+import org.mayocat.shop.shipping.configuration.ShippingSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
@@ -42,6 +43,11 @@ public class MayocatShopSettings extends AbstractSettings
     @JsonProperty
     private CatalogSettings catalog = new CatalogSettings();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private ShippingSettings shipping = new ShippingSettings();
+
     public DatabaseConfiguration getDatabaseConfiguration()
     {
         return database;
@@ -65,5 +71,10 @@ public class MayocatShopSettings extends AbstractSettings
     public CheckoutSettings getCheckoutSettings()
     {
         return checkout;
+    }
+
+    public ShippingSettings getShippingSettings()
+    {
+        return shipping;
     }
 }

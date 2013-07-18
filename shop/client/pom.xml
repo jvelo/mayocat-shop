@@ -31,9 +31,9 @@
                     <preloadSources>
                         <include>assets/common/vendor/jquery.js</include>
                         <include>assets/common/vendor/jquery-ui-1.9.0.custom.min.js</include>
-                        <include>assets/common/vendor/angular/1.1.1/angular.min.js</include>
-                        <include>assets/common/vendor/angular/1.1.1/angular-resource.min.js</include>
-                        <include>assets/common/vendor/angular/1.1.1/angular-mocks.js</include>
+                        <include>assets/common/vendor/angular/1.1.5/angular.min.js</include>
+                        <include>assets/common/vendor/angular/1.1.5/angular-resource.min.js</include>
+                        <include>assets/common/vendor/angular/1.1.5/angular-mocks.js</include>
                         <include>assets/common/vendor/moment.min.js</include>
                         <include>assets/client/vendor/sortable-ng.js</include>
                         <include>assets/client/vendor/angular-strap.min.js</include>

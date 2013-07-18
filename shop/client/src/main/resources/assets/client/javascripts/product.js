@@ -171,6 +171,8 @@ angular.module('product', ['ngResource'])
                 $scope.product = $scope.ProductResource.get({
                     "slug": $scope.slug,
                     "expand": ["collections", "images"] }, function () {
+                    $scope.reloadImages();
+
                     // Ensures the collection initialization happens after the AJAX callback
                     $scope.initializeCollections();
 

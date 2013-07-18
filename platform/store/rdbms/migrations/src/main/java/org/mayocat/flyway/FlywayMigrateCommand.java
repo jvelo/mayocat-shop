@@ -44,6 +44,10 @@ public class FlywayMigrateCommand<T extends Configuration> extends ConfiguredCom
         Flyway flyway = new Flyway();
         flyway.setLocations(MAYOAPP_MIGRATIONS);
         flyway.setDataSource(dbConfig.getUrl(), dbConfig.getUser(), dbConfig.getPassword());
+        if (flyway.info().current() == null) {
+            flyway.setInitVersion("0000.0001");
+            flyway.init();
+        }
         flyway.migrate();
     }
 }

@@ -45,7 +45,6 @@ mayocat.config(function ($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 });
 
-
 /**
  * Internal Server Error / 500 interception
  */

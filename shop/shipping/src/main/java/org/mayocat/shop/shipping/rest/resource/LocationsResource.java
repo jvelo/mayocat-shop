@@ -1,4 +1,4 @@
-package org.mayocat.shop.shipping;
+package org.mayocat.shop.shipping.rest.resource;
 
 import java.io.IOException;
 
@@ -35,6 +35,21 @@ public class LocationsResource implements Resource
         try {
             return Response.ok(
                     Resources.toString(Resources.getResource("org/mayocat/shop/shipping/locations/earth.json"),
+                            Charsets.UTF_8))
+                    .build();
+        } catch (IOException e) {
+            this.logger.error("Failed to get location file", e);
+            return Response.serverError().build();
+        }
+    }
+
+    @GET
+    @Path("flat")
+    public Response getFlatLocations()
+    {
+        try {
+            return Response.ok(
+                    Resources.toString(Resources.getResource("org/mayocat/shop/shipping/locations/earth_flat.json"),
                             Charsets.UTF_8))
                     .build();
         } catch (IOException e) {

@@ -27,6 +27,7 @@ a {
 a:hover {
   color: @linkColorHover;
   text-decoration: none;
+  cursor: pointer;
 }
 
 @font-face {
@@ -90,6 +91,29 @@ h3 {
 
 .hidden {
   display: none;
+}
+
+.disabled {
+  background-color: #eee;
+}
+
+/* Tables */
+
+table tr.hasInputs td {
+  line-height: 38px;
+  padding-bottom: 0;
+}
+
+/* Forms */
+
+form legend {
+  border: none;
+  line-height: 22px;
+
+  div.pull-right {
+    font-size: 12px;
+    padding-right: 10px;
+  }
 }
 
 /* Fields */
@@ -266,19 +290,17 @@ body > div.loader {
 
 /* Blocks */
 
-#main .entity .block,
-#main aside .block {
+.block {
   border-left: 2px solid #e3e1df;
   padding-left: 10px;
   margin-bottom: 25px;
 }
 
-#main .entity .block:hover,
-#main aside .block:hover {
+.block:hover {
   border-left: 2px solid #c3bcb6 !important;
 }
 
-#main .entity .block p, {
+.block p, {
   font-size: 11px;
   line-height: 14px;
 }
@@ -321,10 +343,6 @@ form [class*="span"]:first-of-type {
 
 form h4 {
   margin-bottom: 20px;
-}
-
-form legend {
-  margin-bottom: 45px;
 }
 
 form .input-append .validation {

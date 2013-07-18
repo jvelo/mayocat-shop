@@ -1,0 +1,26 @@
+<h4>{{carrier.title}}</h4>
+<div class="locations">
+    Location(s) : {{carrier.displayLocations}}
+</div>
+<div class="duration">
+    Shipping duration : {{carrier.minimumDays}} - {{carrier.maximumDays}} day(s)
+</div>
+<table class="table" ng-show="carrier.strategy == 'weight' || carrier.strategy == 'price'">
+    <thead>
+    <th>
+        <span ng-show="carrier.strategy == 'weight'">Weight</span>
+        <span ng-show="carrier.strategy == 'price'">Order amount</span>
+    </th>
+    <th>Shipping price</th>
+    </thead>
+    <tr ng-repeat="rule in carrier.rules">
+        <td>
+            <span ng-show="carrier.strategy == 'weight'">{{rule.fromValue}} - {{rule.upToValue}} kg</span>
+            <span ng-show="carrier.strategy == 'price'">{{rule.fromValue}} - {{rule.upToValue}} {{mainCurrency}}</span>
+        </td>
+        <td>{{rule.price}} {{mainCurrency}}</td>
+    </tr>
+</table>
+<div ng-show="carrier.strategy == 'flat'">
+        {{carrier.perShipping}} {{mainCurrency}} per order, {{carrier.perItem}} {{mainCurrency}} per item
+</div>

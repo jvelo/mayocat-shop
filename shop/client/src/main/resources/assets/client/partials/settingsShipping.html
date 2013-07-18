@@ -11,37 +11,231 @@
         or have a flat rate by number of products plus fixed rate by order.
     </p>
 
-    <ul class="nav nav-tabs">
-        <li><a data-toggle="tab">by weight</a></li>
-        <li><a data-toggle="tab">by price</a></li>
-        <li><a data-toggle="tab">flat rate</a></li>
-        <li ng-class="{'selected': configuration.strategy == 'none', 'active': tab == 'none'}"><a data-toggle="tab">none</a></li>
-    </ul>
-
     <tabset>
-        <tab heading="Static title">Static content</tab>
-        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
-            {{tab.content}}
-        </tab>
-        <tab select="alertMe()">
+        <tab active="strategy.weight.active" select="stopEditingCarrier()">
             <tab-heading>
-                <i class="icon-bell"></i> Select me for alert!
+                <i class="icon-ok" ng-show="configuration.strategy.value == 'weight'"></i> By weight
             </tab-heading>
-            I've got an HTML heading, and a select callback. Pretty cool!
+
+            <div class="alert alert-block" ng-show="configuration.strategy.value != 'weight'">
+                Shipping pricing strategy by weight is not active. Activate it if you want to charge customers for
+                shipping according to product weight
+
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="setStrategy('weight')">Activate weight strategy</button>
+                </div>
+            </div>
+
+            <div ng-show="!editedCarrier">
+                <ul>
+                    <li ng-repeat="carrier in carriers.weight" class="block">
+                        <div class="pull-right">
+                            <div><a ng-click="editCarrier(carrier);">Edit zone</a></div>
+                            <div><a ng-click="deleteCarrier(carrier);">Delete zone</a></div>
+                        </div>
+                        <carrier-summary carrier="carrier" main-currency="mainCurrency"/>
+                    </li>
+                </ul>
+
+                <button class="btn" ng-click="newCarrierForm('weight')">
+                    Add a new zone
+                </button>
+            </div>
+        </tab>
+        <tab active="strategy.price.active" select="stopEditingCarrier()">
+            <tab-heading>
+                <i class="icon-ok" ng-show="configuration.strategy.value == 'price'"></i> By price
+            </tab-heading>
+
+            <div class="alert alert-block" ng-show="configuration.strategy.value != 'price'">
+                Shipping pricing strategy by order total amount is not active. Activate it if you want to charge customers for
+                shipping according to order total amount
+
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="setStrategy('price')">Activate price strategy</button>
+                </div>
+            </div>
+
+            <div ng-show="!editedCarrier">
+                <ul>
+                    <li ng-repeat="carrier in carriers.price" class="block">
+                        <div class="pull-right">
+                            <div><a ng-click="editCarrier(carrier);">Edit zone</a></div>
+                            <div><a ng-click="deleteCarrier(carrier);">Delete zone</a></div>
+                        </div>
+                        <carrier-summary carrier="carrier" main-currency="mainCurrency"/>
+                    </li>
+                </ul>
+
+                <button class="btn" ng-click="newCarrierForm('price')">
+                    Add a new zone
+                </button>
+            </div>
+        </tab>
+        <tab active="strategy.flat.active" select="stopEditingCarrier()">
+            <tab-heading>
+                <i class="icon-ok" ng-show="configuration.strategy.value == 'flat'"></i> Flat rate
+            </tab-heading>
+            <div class="alert alert-block" ng-show="configuration.strategy.value != 'flat'">
+                Flat rate shipping pricing strategy is not active. Activate it if you want to charge customers for
+                shipping according to number of items purchased plus per-order constant.
+
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="setStrategy('flat')">Activate flat rate strategy</button>
+                </div>
+            </div>
+
+            <div ng-show="!editedCarrier">
+                <ul>
+                    <li ng-repeat="carrier in carriers.flat" class="block">
+                        <div class="pull-right">
+                            <div><a ng-click="editCarrier(carrier);">Edit zone</a></div>
+                            <div><a ng-click="deleteCarrier(carrier);">Delete zone</a></div>
+                        </div>
+                        <carrier-summary carrier="carrier" main-currency="mainCurrency"/>
+                    </li>
+                </ul>
+
+                <button class="btn" ng-click="newCarrierForm('flat')">
+                    Add a new zone
+                </button>
+            </div>
+        </tab>
+        <tab active="strategy.none.active" select="stopEditingCarrier()">
+            <tab-heading>
+                <i class="icon-ok" ng-show="configuration.strategy.value == 'none'"></i> None
+            </tab-heading>
+
+            <div class="alert alert-block" ng-show="configuration.strategy.value != 'none'">
+                Use this if you wish to disable shipping costs altogether.
+
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="setStrategy('none')">Disable shipping costs</button>
+                </div>
+            </div>
+            <div class="alert alert-block" ng-show="configuration.strategy.value == 'none'">
+                Shipping costs are currently disabled. If you wish to charge customers for shipping costs, first pick up
+                a pricing strategy from the strategies available above : per weight, per price, or flat rate.
+            </div>
+
         </tab>
     </tabset>
 
-<!--
-    <location-picker location="locations" model="selectedLocations"></location-picker>
-    -->
+    <div ng-show="editedCarrier">
 
-    <div class="span2">
-        <div class="buttons hasLoading">
-            <button ng-click="updateSettings()"
-                    class="btn btn-large btn-primary">
-                Update
-            </button>
-            <span ng-class="{'loading': isSaving}"></span>
-        </div>
+        <form>
+            <fieldset>
+                <legend>
+                    <span ng-show="editedCarrier.isNew">Add new zone</span>
+                    <span ng-show="!editedCarrier.isNew">Edit zone</span>
+                    <div class="pull-right">
+                        <a ng-click="stopEditingCarrier()">back</a>
+                    </div>
+                </legend>
+
+
+                <h3>Geographic locations</h3>
+                Selected locations : {{editedCarrierDisplayLocations}}
+                <location-picker location="locations" model="editedCarrier.locations"></location-picker>
+
+                <h3>Carrier</h3>
+
+                <label for="carrier-name">Name</label>
+                <input id="carrier-name" type="text" ng-model="editedCarrier.title"/>
+
+
+                <label for="carrier-description">Description (optional)</label>
+                <textarea id="carrier-description" ng-model="editedCarrier.description"></textarea>
+
+                <div class="duration">
+                    Shipping duration :
+                    from <input type="text" ng-model="editedCarrier.minimumDays" class="span1" />
+                    to <input type="text" ng-model="editedCarrier.maximumDays" class="span1" /> day(s)
+                            <span class="alert-error alert"
+                                  ng-show="!validShippingDurationRange(editedCarrier)">
+                                Shipping duration range is not valid
+                            </span>
+                </div>
+
+                <h3>Pricing</h3>
+
+                <table class="table" ng-show="editedCarrier.strategy == 'weight' || editedCarrier.strategy == 'price'">
+                    <thead>
+                    <th>
+                        <span ng-show="editedCarrier.strategy == 'weight'">Weight</span>
+                        <span ng-show="editedCarrier.strategy == 'price'">Order amount</span>
+                    </th>
+                    <th>Shipping price</th>
+                    </thead>
+                    <tr ng-repeat="rule in editedCarrier.rules" class="hasInputs">
+                        <td>
+                            From  <input type="text" class="span1" value="{{fromValue(editedCarrier.rules, $index - 1)}}" disabled />
+                            up to <input type="text" class="span1" ng-model="rule.upToValue" />
+
+                            <span ng-show="editedCarrier.strategy == 'weight'">kg</span>
+                            <span ng-show="editedCarrier.strategy == 'price'"> {{mainCurrency}}</span>
+
+                                    <span class="alert-error alert" ng-show="rule.upToValue < fromValue(editedCarrier.rules, $index - 1)">
+                                        "up to" value is inferior to "from" value
+                                    </span>
+                                    <span class="alert-error alert" ng-show="!isValidFloat(rule.upToValue)">
+                                        Invalid format
+                                    </span>
+                        </td>
+                        <td><money-amount ng-model="rule.price" currency="{{mainCurrency}}"/></td>
+                        <td><a ng-click="editedCarrier.rules.splice($index, 1)">Remove</a></td>
+                    </tr>
+                    <tr class="disabled hasInputs">
+                        <td>
+                            From  <input type="text" class="span1" value="" disabled/>
+                            up to <input type="text" class="span1" disabled/>
+                            <span ng-show="editedCarrier.strategy == 'weight'">kg</span>
+                            <span ng-show="editedCarrier.strategy == 'price'"> {{mainCurrency}}</span>
+                        </td>
+                        <td>
+                            <div class="input-append">
+                                <input class="span2" type="text" disabled>
+                                <span class="add-on">{{mainCurrency}}</span>
+                            </div>
+                        </td>
+                        <td><a ng-click="editedCarrier.rules.push({});">Add</a></td>
+                    </tr>
+                    <tr ng-show="editedCarrier.strategy == 'weight" class="hasInput">
+                        <td>
+                            Additional kg
+                        </td>
+                        <td ng-repeat="carrier in [editedCarrier]">
+                            <!-- trick to have currency being displayed correctly.
+                                 FIXME money-amount directive should work without this.
+                                 -->
+                            <money-amount ng-model="carrier.perAdditionalUnit" currency="{{mainCurrency}}"/>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <div ng-show="editedCarrier.strategy == 'flat'">
+                    <p>
+                        <input type="text" class="span1" ng-model="editedCarrier.perShipping" /> {{mainCurrency}} per order
+                    </p>
+                    <p>
+                        <input type="text" class="span1" ng-model="editedCarrier.perItem" /> {{mainCurrency}} per item
+                    </p>
+                </div>
+
+                <div class="span2">
+                    <div class="buttons hasLoading">
+                        <button ng-click="createOrUpdateCarrier()" class="btn btn-large btn-primary" ng-show="editedCarrier.isNew">
+                            Create
+                        </button>
+                        <button ng-click="createOrUpdateCarrier()" class="btn btn-large btn-primary" ng-show="!editedCarrier.isNew">
+                            Update
+                        </button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
     </div>
+
 </div>

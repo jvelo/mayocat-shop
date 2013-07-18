@@ -1,0 +1,103 @@
+group CollectionDAO;
+
+findById() ::= <<
+    SELECT *
+    FROM carrier
+    LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
+    WHERE carrier.id = :id
+    ORDER BY id, carrier_rule.up_to_value
+>>
+
+findAll() ::= <<
+    SELECT *
+    FROM carrier
+    LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
+    WHERE carrier.tenant_id = :tenant.id
+    ORDER BY id, carrier_rule.up_to_value
+>>
+
+findAllWithStrategy() ::= <<
+    SELECT *
+    FROM carrier
+    LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
+    WHERE carrier.strategy = :strategy
+      AND carrier.tenant_id = :tenant.id
+    ORDER BY id, carrier_rule.up_to_value
+>>
+
+create() ::= <<
+    INSERT INTO carrier (
+        id,
+        tenant_id,
+        locations,
+        title,
+        strategy,
+        description,
+        minimum_days,
+        maximum_days,
+        per_shipping,
+        per_item,
+        per_additional_unit
+    )
+    VALUES (
+        :carrier.id,
+        :carrier.tenantId,
+        :carrier.locations,
+        :carrier.title,
+        :carrier.strategy,
+        :carrier.description,
+        :carrier.minimumDays,
+        :carrier.maximumDays,
+        :carrier.perShipping,
+        :carrier.perItem,
+        :carrier.perAdditionalUnit
+    )
+>>
+
+update() ::= <<
+    UPDATE carrier
+    SET
+        locations = :carrier.locations,
+        title = :carrier.title,
+        strategy = :carrier.strategy,
+        description = :carrier.description,
+        minimum_days = :carrier.minimumDays,
+        maximum_days = :carrier.maximumDays,
+        per_shipping = :carrier.perShipping,
+        per_item = :carrier.perItem,
+        per_additional_unit = :carrier.perAdditionalUnit
+    WHERE carrier.id = :carrier.id
+>>
+
+delete() ::= <<
+    DELETE
+    FROM carrier
+    WHERE carrier.id = :carrier.id
+>>
+
+addRule() ::= <<
+    INSERT INTO carrier_rule(
+        carrier_id,
+        up_to_value,
+        price
+    )
+    VALUES (
+        :carrierId,
+        :rule.upToValue,
+        :rule.price
+    )
+>>
+
+updateRule() ::= <<
+    UPDATE carrier_rule
+       SET price = :rule.price
+    WHERE up_to_value = :rule.upToValue
+      AND carrier_rule.carrier_id = :carrierId
+>>
+
+removeRules(excludedUpToValues) ::= <<
+    DELETE
+    FROM carrier_rule
+    WHERE carrier_id = :carrierId
+      AND up_to_value NOT IN (<excludedUpToValues>)
+>>
