@@ -75,6 +75,35 @@ public class MarketplaceResource implements Resource
     }
 
     @GET
+    @Path("shops")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getShop(@QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("number") @DefaultValue("25") Integer number)
+    {
+        Client client = getSearchEngine().getClient();
+        SearchResponse response =
+                client.prepareSearch("entities").setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                        .setFrom(offset)
+                        .setSize(number)
+                        .setTypes("tenant")
+                        .setExplain(false)
+                        .execute()
+                        .actionGet();
+
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        for (SearchHit hit : response.getHits()) {
+            result.add(hit.getSource());
+        }
+        String thisAPIHref =
+                "http://" + siteSettings.getDomainName() + "/marketplace/api/shops/?number=" + number + "&offset=" +
+                        offset;
+        ResultSetRepresentation<List<Map<String, Object>>> resultSet =
+                new ResultSetRepresentation(thisAPIHref, number, offset, result,
+                        Long.valueOf(response.getHits().getTotalHits()).intValue());
+        return Response.ok(resultSet).build();
+    }
+
+    @GET
     @Path("shops/{shop}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getShop(@PathParam("shop") String shop)
