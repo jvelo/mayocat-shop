@@ -6,6 +6,9 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.mayocat.model.EntityAndCount;
+import org.mayocat.model.event.EntityCreatedEvent;
+import org.mayocat.model.event.EntityCreatingEvent;
+import org.mayocat.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
@@ -36,6 +39,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
             throw new EntityAlreadyExistsException();
         }
 
+        getObservationManager().notify(new EntityCreatingEvent(), collection);
+
         this.dao.begin();
 
         UUID entityId = UUID.randomUUID();
@@ -47,6 +52,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         this.dao.insertTranslations(entityId, collection.getTranslations());
 
         this.dao.commit();
+
+        getObservationManager().notify(new EntityCreatedEvent(), collection);
 
         return collection;
     }
@@ -68,6 +75,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         if (updatedRows <= 0) {
             throw new StoreException("No rows was updated when updating collection");
         }
+
+        getObservationManager().notify(new EntityUpdatedEvent(), collection);
     }
 
     @Override

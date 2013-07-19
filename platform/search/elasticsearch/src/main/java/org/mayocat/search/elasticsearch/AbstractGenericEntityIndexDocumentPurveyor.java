@@ -88,6 +88,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
 
                 if (Slug.class.isAssignableFrom(entity.getClass()) && field.getName().equals("slug")) {
                     // do not index the slug of slugs under properties
+                    // (it is indexed as a top level property)
                     continue;
                 }
 

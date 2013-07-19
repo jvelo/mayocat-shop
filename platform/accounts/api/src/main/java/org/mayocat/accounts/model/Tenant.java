@@ -45,6 +45,7 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     @JsonIgnore
     private TenantConfiguration configuration;
 
+    @Index
     private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
 
     @JsonIgnore

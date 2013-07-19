@@ -15,6 +15,23 @@ import com.google.common.base.Optional;
 public class AddonUtils
 {
     /**
+     * Finds an addon with passed group and key in a list of addons.
+     * @param addons the list of addons to search in
+     * @param group the addon group to search for
+     * @param key the key of the addon to search for
+     * @return an option with the found addon or an absent option if not found
+     */
+    public static Optional<Addon> findAddon(List<Addon> addons, String group, String key)
+    {
+        for (Addon addon : addons) {
+            if (addon.getGroup().equals("tenant") && addon.getKey().equals("type")) {
+                return Optional.of(addon);
+            }
+        }
+        return Optional.absent();
+    }
+
+    /**
      * Finds a addon in an addon group map
      *
      * @param addonToFind the addon to find in the group map
