@@ -25,6 +25,11 @@ public final class GatewayResponse
     private PaymentOperation operation;
 
     /**
+     * @see {@link #getResponseText()}
+     */
+    private String responseText;
+
+    /**
      * Constructor.
      *
      * @param isSuccessful the success status for this response. See {@link #isSuccessful()}
@@ -93,5 +98,25 @@ public final class GatewayResponse
     public void setOperation(PaymentOperation operation)
     {
         this.operation = operation;
+    }
+
+    /**
+     * @return a possible response TEXT that the gateway requests the user to be redirected to in order to continue
+     *         the operation initially executed on the gateway. For example this can be a redirection to a third party
+     *         web-site where the user will authorize a transfer of funds. Returns <code>null</code> when no redirection
+     *         is necessary.
+     */
+    public String getResponseText()
+    {
+        return responseText;
+    }
+
+    /**
+     * @param responseText sets the response TEXT for this response. See {@link
+     * #getResponseText()}.
+     */
+    public void setResponseText(String responseText)
+    {
+        this.responseText = responseText;
     }
 }
