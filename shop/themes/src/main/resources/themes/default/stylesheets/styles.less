@@ -1,3 +1,10 @@
+@strongColor1: #941E1E;
+@strongColor2: #4d4d4d;
+@headingsColor1: #CF2324;
+@lightColor1: #FAFCD3;
+@edgeColor1: #e6e6e6;
+@edgeColor2: #808080;
+
 /* http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
 /* apply a natural box layout model to all elements */
 * {
@@ -41,12 +48,12 @@ h1, h3.title {
   font-size: 58px;
   line-height: 58px;
   font-family: 'Roboto';
-  color: #bcbcbc;
+  color: @headingsColor1;
   margin: -10px 0 15px 0;
 }
 
 h1 a {
-  color: #bcbcbc;
+  color: @headingsColor1;
 }
 
 h1 a:hover {
@@ -56,12 +63,12 @@ h1 a:hover {
 form input[type='submit'], a.button {
   border: none;
   color: white;
-  background-color: #bcbcbc;
+  background-color: @headingsColor1;
   font-weight: 100;
 }
 
 a.button:hover, form input[type='submit']:hover {
-  background-color: #003b5a;
+  background-color: @strongColor1;
   text-decoration: none;
 }
 
@@ -89,7 +96,7 @@ a.button:hover, form input[type='submit']:hover {
 /* Global header */
 
 #top-bar {
-  background-color: #003b5a;
+  background-color: @strongColor1;
   color: white;
   height: 30px;
 }
@@ -110,7 +117,7 @@ a.button:hover, form input[type='submit']:hover {
 
 body > header > nav {
   margin-top: 90px;
-  border-top: 3px solid #eaeaea;
+  border-top: 3px solid @edgeColor1;
 }
 
 nav ul.menu {
@@ -136,7 +143,7 @@ nav ul.menu ul {
   list-style: none;
   margin-top: 0;
   padding-left: 0;
-  background-color: #eaeaea;
+  background-color: @edgeColor1;
 }
 
 nav ul.menu ul li {
@@ -145,11 +152,11 @@ nav ul.menu ul li {
 }
 
 nav ul.menu ul li a {
-  color: #838383 !important;
+  color: @edgeColor2 !important;
 }
 
 nav ul.menu ul li:hover a {
-  color: #003b5a !important;
+  color: @strongColor1 !important;
 }
 
 nav ul.menu li {
@@ -160,7 +167,7 @@ nav ul.menu li {
 nav ul.menu li a {
   display: inline-block;
   padding: 14px;
-  color: #838383;
+  color: @edgeColor2;
   text-transform: uppercase;
   text-decoration: none;
   font-weight: bolder;
@@ -181,11 +188,11 @@ nav ul.menu ul li:last-child a {
 }
 
 nav ul.menu li.active a {
-  color: #003b5a;
+  color: @strongColor1;
 }
 
 nav ul.menu li:hover {
-  background-color: #eaeaea;
+  background-color: @edgeColor1;
 }
 
 body > header > div.brand {
@@ -267,7 +274,7 @@ ul.products li h2.fn {
 }
 
 ul.products li:hover {
-  border-color: mix(#003b5a, white, 60%); /* 5d6d87 ? */
+  border-color: mix(@strongColor1, white, 60%); /* 5d6d87 ? */
 }
 
 ul.products li div.price {
@@ -287,13 +294,13 @@ ul.products li div.price {
 section#content.home footer {
   margin-top: 45px;
   padding-top: 67px;
-  border-top: 3px solid #eaeaea;
+  border-top: 3px solid @edgeColor1;
 }
 
 /* Global footer */
 
 #bottom-bar {
-  background-color: #003b5a;
+  background-color: @strongColor1;
   height: 45px;
 }
 
@@ -302,7 +309,7 @@ body > footer {
 }
 
 body > footer > nav {
-  background-color: #c7c8cb;
+  background-color: @lightColor1;
   min-height: 134px;
 }
 
@@ -347,14 +354,14 @@ body > footer > nav div.block ul {
 }
 
 #content.product div.characteristics h1 {
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid @edgeColor1;
   padding: 0 0 25px 0;
-  color: #bcbcbc;
+  color: @headingsColor1;
 }
 
 #content.product div.description,
 #content.product div.buying-options {
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid @edgeColor1;
 }
 
 #content.product div.buying-options {
@@ -363,7 +370,7 @@ body > footer > nav div.block ul {
 
 #content.product div.buying-options div.price {
   font-size: 58px;
-  color: #bcbcbc;
+  color: @headingsColor1;
   text-align: right;
   line-height: 40px;
   font-family: 'Roboto';
@@ -419,7 +426,7 @@ body > footer > nav div.block ul {
 #content.cart section .item,
 #content.cart section .shipping,
 #content.cart section .total {
-  border-top: 2px solid #eaeaea;
+  border-top: 2px solid @edgeColor1;
   padding: 20px 0;
 }
 
@@ -462,12 +469,12 @@ body > footer > nav div.block ul {
 }
 
 #content.cart section .total {
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid @edgeColor1;
   padding: 10px 0 15px 0;
 }
 
 #content.cart section .total h3.title {
-  color: #003b5a;
+  color: @strongColor1;
   margin-bottom: 0;
 }
 
@@ -506,7 +513,7 @@ div.gallery ul li {
 }
 
 div.gallery ul li.active {
-  border-color: mix(#003b5a, white, 60%); /* 5d6d87 ? */
+  border-color: mix(@strongColor1, white, 60%); /* 5d6d87 ? */
 }
 
 div.gallery.initialized li.thumbnail {
@@ -523,22 +530,22 @@ div.gallery.initialized li.thumbnail {
 .wizard .step {
   float: left;
   width: 228px;
-  border-top: 2px solid #eaeaea;
-  border-bottom: 2px solid #eaeaea;
+  border-top: 2px solid @edgeColor1;
+  border-bottom: 2px solid @edgeColor1;
   text-transform: uppercase;
   text-align: center;
   padding: 15px 0;
   font-weight: bold;
   font-size: 14px;
-  color: #003b5a;
+  color: @strongColor1;
   margin-right: 12px;
 }
 
 .wizard .step.active {
   background-color: #9ea9ba;
   color: white;
-  border-top: 2px solid #eaeaea;
-  border-bottom: 2px solid #eaeaea;
+  border-top: 2px solid @edgeColor1;
+  border-bottom: 2px solid @edgeColor1;
 }
 
 /* Carousel */
@@ -626,7 +633,7 @@ div.gallery.initialized li.thumbnail {
   -webkit-border-radius:6px;
   -khtml-border-radius:6px;
   border-radius:6px;
-  border:1px solid #4d4d4d;
+  border:1px solid @strongColor2;
   display: inline-block;
   margin-right: 10px;
 }
