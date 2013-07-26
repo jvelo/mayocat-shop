@@ -1,49 +1,39 @@
-name: Default theme
-description: >
-            Et harum quidem rerum facilis est et expedita distinctio.
-            Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit.
-            Quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
-            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.
+name: Default
+description: The standard theme
+
+pagination:
+  home:
+    itemsPerPage: 6
+    for: product
 
 thumbnails:
-  small:
-    width: 200
-    height: 200
-    name: Small
-  large:
-    width: 500
-    height: 300
-    name: Large
-
-models:
-  about:
-    name: About
-    file: page/page_about.html
-    for: page
-  hound:
-    name:  Hound
-    file: product_hound.html
+  carousel:
+    width: 960
+    height: 460
+    name: "Carousel"
     for: product
-
-addons:
-  characteristics:
-    name: Characteristics
-    text: Short help text that is displayed under the addon group
+  grid:
+    width: 288
+    height: 323
+    name: "Grid layout"
+    for: [product, page]
+  product_big:
+    width: 471
+    height: 457
+    name: "Product page big image"
     for: product
-    fields:
-      brand:
-        name: Brand
-        type: string
-        placeholder: Enter the product's brand
-      manufacturer:
-        name: Manufacturer
-        type: string
-        placeholder: Enter the product's manufacturer
-  metadata:
-    name: Metadata
-    for: page
-    fields:
-      written_by:
-        name: Written by
-        type: string
-        placeholder: Page's author
+  product_thumbnail:
+    width: 63
+    height: 71
+    name: "Thumbnails on product page"
+    for: product
+  site_logo:
+    width: 150
+    height: 150
+    name: Site logo
+    for: tenant
+  post:
+    width: 624
+    height: 354
+    name: Post
+    for: article

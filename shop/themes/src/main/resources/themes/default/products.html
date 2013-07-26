@@ -1,33 +1,10 @@
-<ul class="products">
-    {{#products}}
-    <li>
-        <a href="{{url}}">
-            <img class="photo" src="{{images.featured.theme_small_url}}" title="{{title}}"/>
-        </a>
-        {{#theme_addons}}
-        <dl>
-            <dt>BRAND</dt><dd>{{characteristics.brand}}</dd>
-            <dt>MANUFACTURER</dt><dd>{{characteristics.manufacturer}}</dd>
-        </dl>
-        {{/theme_addons}}
-    </li>
-    {{/products}}
-</ul>
+<div class="content">
+    <ul class="products">
 
-{{#if pagination.hasSeveralPages}}
-    {{#pagination}}
-    <div id="pagination">
-        {{#first}}
-        <a href="{{url}}">First</a>
-        {{/first}}
-        <ul>
-            {{#all}}
-            <li><a href="{{url}}">{{page}}</a></li>
-            {{/all}}
-        </ul>
-        {{#last}}
-        <a href="{{ur}}">Last</a>
-        {{/last}}
-    </div>
-    {{/pagination}}
-{{/if}}
+        {{#each __unsupported__products}}
+            {{includeTemplate "grid_single_product.html"}}
+        {{/each}}
+
+    </ul>
+    <div class="clearfix"></div>
+</div>

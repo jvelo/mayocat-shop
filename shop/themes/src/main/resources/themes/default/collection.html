@@ -1,6 +1,6 @@
-<div class="collection">
+<div class="collection content">
     {{#collection}}
-    <h2 class="fn">{{title}}</h2>
+    <h1 class="fn">{{title}}</h1>
 
     {{#description}}
     <p class="description">
@@ -8,7 +8,17 @@
     </p>
     {{/description}}
 
-    {{includeTemplate "products.html"}}
+    {{#any products}}
+    <ul class="products">
+        {{#each products}}
+        {{includeTemplate "grid_single_product.html"}}
+        {{/each}}
+    </ul>
+    <div class="clearfix"></div>
+    {{/any}}
+    {{#empty products}}
+    There is no product in this category
+    {{/empty}}
 
     {{/collection}}
 </div>

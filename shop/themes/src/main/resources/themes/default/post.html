@@ -1,0 +1,25 @@
+<div class="content">
+    <article>
+        <aside rel="permalink"><a href="{{url}}">&nbsp;</a></aside>
+
+        <h1><a href="{{url}}">{{title}}</a></h1>
+
+        <div class="post">
+            <aside>
+                {{#images}}
+                {{#featured}}
+                <div class="featured">
+                    <img class="photo" src="{{theme_post_url}}" title="{{title}}" alt="{{title}}"
+                         width="624px" height="354px"/>
+                </div>
+                {{/featured}}
+                {{/images}}
+            </aside>
+
+            <div class="meta">
+                {{publicationDate.longDate}}
+            </div>
+            {{content}}
+        </div>
+    </article>
+</div>

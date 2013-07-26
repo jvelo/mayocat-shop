@@ -1,27 +1,3 @@
 {{#articles}}
-<article>
-    <h2>{{title}}</h2>
-    <blockquote>
-        Published {{publicationDate.longFormat}}
-    </blockquote>
-    <div class="content">
-        {{content}}
-    </div>
-    <div class="images">
-        {{#images}}
-        {{#featured}}
-        <img class="photo" src="{{theme_large_url}}" />
-        {{/featured}}
-        <ul class="images">
-            {{#all}}
-            <li class="thumbnail">
-                <img src="{{theme_small_url}}" />
-            </li>
-            {{/all}}
-        </ul>
-        <div class="clearfix"></div>
-        {{/images}}
-    </div>
-
-</article>
+{{includeTemplate 'post.html'}}
 {{/articles}}

@@ -1,32 +1,24 @@
-<div class="page">
+<div class="content">
     {{#page}}
-    <h2 class="fn">{{title}}</h2>
 
-    {{#content}}
-    <p class="description">
-        {{this}}
-    </p>
-    {{/content}}
+    <article class="contents">
+        <h1>{{title}}</h1>
+        <div>
+            {{content}}
+        </div>
+    </article>
+    <aside>
+        {{#images}}
+        {{#featured}}
+        <div class="featured">
+            <img class="photo" src="{{theme_product_big_url}}" title="{{title}}" alt="{{title}}"
+                 width="471px" height="457px"/>
+        </div>
+        {{/featured}}
+        {{/images}}
+    </aside>
 
-    {{#theme_addons}}
-    <dl>
-        <dt>WRITTEN BY</dt>
-        <dd>{{metadata.written_by}}</dd>
-    </dl>
-    {{/theme_addons}}
-
-    {{#images}}
-    {{#featured}}
-    <img class="photo" src="{{theme_large_url}}"/>
-    {{/featured}}
-    <ul class="images">
-        {{#all}}
-        <li class="thumbnail">
-            <img src="{{theme_small_url}}"/>
-        </li>
-        {{/all}}
-    </ul>
-    <div class="clearfix"></div>
-    {{/images}}
     {{/page}}
+    <div class="clearfix"></div>
+
 </div>

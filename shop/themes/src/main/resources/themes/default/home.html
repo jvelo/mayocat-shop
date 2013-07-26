@@ -1,9 +1,92 @@
-<ul class="products">
-    {{#__unsupported__products}}
-    <li>
-        <a href="{{url}}">
-            <img class="photo" src="{{images.featured.theme_small_url}}" title="{{images.featured.title}}"/>
-        </a>
-    </li>
-    {{/__unsupported__products}}
-</ul>
+<header>
+    <div class="carousel content">
+        <ul class="notransition">
+            {{#each __unsupported__products}}
+            {{#is @index 5}}
+            <li class="product image">
+                <a rel='product' href="{{url}}">
+                    <img class="photo" src="{{images.featured.theme_carousel_url}}" title="{{title}}"
+                         width="960px" height="460px;"/>
+                </a>
+            </li>
+            {{/is}}
+            {{/each}}
+            {{#each __unsupported__products}}
+            {{#lt @index 5}}
+            <li class="product image">
+                <a rel='product' href="{{url}}">
+                    <img class="photo" src="{{images.featured.theme_carousel_url}}" title="{{title}}"
+                         width="960px" height="460px;"/>
+                </a>
+            </li>
+            {{/lt}}
+            {{/each}}
+        </ul>
+        <div class="clearfix"></div>
+
+        <div class="stripe"></div>
+
+        <div class="controls hidden"><!-- Controls are hidden at first, revealed by JavaScript -->
+            <div class="middle">
+                <h2></h2>
+                <ul class="bullets"></ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="left"></div>
+            <div class="right"></div>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+    <ul class="products">
+
+        {{#each __unsupported__products}}
+        {{#lt @index 6}}
+        <li class="product column image">
+            <a rel='product' href="{{url}}">
+                <img class="photo" src="{{images.featured.theme_grid_url}}"/>
+
+                <h2 class="fn">{{title}}</h2>
+
+                <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
+            </a>
+        </li>
+        {{/lt}}
+        {{/each}}
+
+    </ul>
+    <div class="clearfix"></div>
+</div>
+
+<footer>
+    <div class="content">
+
+        {{#home}}
+        <div class="column image">
+            <img class="photo" src="{{images.featured.theme_grid_url}}"/>
+        </div>
+        <div class="column text">
+            {{content}}
+        </div>
+        {{/home}}
+
+        <div class="column text">
+            {{#site}}
+            <h3 class="title">Contact us</h3>
+            <address class="vcard">
+                <strong class="fn">{{title}}</strong>
+
+                <div>{{addon 'address.address' source="platform" type="display"}}</div>
+                <div>
+                    {{addon 'address.zip' source="platform" type="display"}}
+                    {{addon 'address.city' source="platform" type="display"}}
+                    {{addon 'address.country' source="platform" type="display"}}
+                </div>
+            </address>
+            {{/site}}
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+</footer>

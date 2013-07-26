@@ -1,84 +1,83 @@
-{{#cart}}
+<div class="content">
 
-{{#if items}}
-<form method="post" action="/cart/update">
-    <table class="cart">
-        <thead>
-        <tr>
-            <td>Product</td>
-            <td>Price</td>
-            <td>Quantity</td>
-            <td>Sub-total</td>
-            <td></td>
-        </tr>
-        </thead>
+    <div class="checkout-progress">
+        <ul class="wizard">
+            <li class="step active">1. Your order</li>
+            <li class="step">2. Shipping information</li>
+            <li class="step">3. Payment</li>
+            <li class="step">4. Confirmation</li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
 
-        {{#items}}
-        <tr class="item">
-            <td class="description">
-                Featured image
-                {{#featuredImage}}
-                    <img src="{{theme_small_url}}" />
-                {{/featuredImage}}
-                <div>
-                    <h3>{{title}}</h3>
-                    <span>{{description}}</span>
+    {{#cart}}
+    <section class="cart">
+
+        {{#if items}}
+        <form method="post" action="/cart/update">
+
+            {{#items}}
+            <div class="item">
+
+                <div class="thumbnail">
+                    <img src="http://placehold.it/137x137"/>
                 </div>
-            </td>
-            <td class="price">
-                <div>{{unitPrice.amount}} {{unitPrice.currency.localSymbol}}</div>
-            </td>
-            <td class="quantity">
-                <input type="text" size="3" name="quantity_{{@index}}" value="{{quantity}}"/>
-            </td>
-            <td class="cart-sub-itemTotal">
-                <div>{{itemTotal.amount}} {{itemTotal.currency.localSymbol}}</div>
-            </td>
-            <td class="cart-remove">
-                <input type="submit" name="remove_{{@index}}" value="Remove"/>
-            </td>
-        </tr>
-        {{/items}}
 
-        {{!
-        <tr class="cart-shipping">
-            <td colspan="2">
-                <span class="continue"><a href="category.html">continue shopping</a></span>
-            </td>
-            <td class="shipping-line-title">
-                <div>shipping</div>
-            </td>
-            <td colspan="2">
-                <div class="shipping-price">6,50€</div>
-            </td>
-        </tr>
-        }}
+                <div class="inner">
+                    <div class="description">
+                        <h3 class="title">{{title}}</h3>
+                        <span>{{description}}</span>
+                    </div>
 
-        <tfoot>
-        <tr class="cart-total">
-            <td colspan="2"></td>
-            <td class="total-line-title">
-                <div>Total</div>
-            </td>
-            <td>
-                <div class="total-price">{{#../total}} {{amount}} {{currency.localSymbol}} {{/../total}}</div>
-            </td>
-            <td>
-                <input type="submit" name="update" value="Update" />
-            </td>
-        </tr>
+                    <div class="itemDetail">
+                        <div class="unitPrice">{{amountCompact}}{{currency.localSymbol}}</div>
 
-        </tr>
-        </tfoot>
+                        <div class="quantity">
+                            Quantity <input type="text" size="3" name="quantity_{{@index}}" value="{{quantity}}"/>
+                            <input type="submit" class="update" name="update" value="Update" />
+                        </div>
 
-    </table>
-</form>
+                    </div>
 
-<div class="cart-checkout button">
-    <a href="/checkout/" class="cart-checkout-button">Checkout</a>
+                    <div class="removeItem">
+                        <input type="submit" name="remove_{{@index}}" value="Remove"/>
+                    </div>
+
+                    <h3 class="title itemTotal">
+                        {{itemTotal.amountCompact}}{{itemTotal.currency.localSymbol}}
+                    </h3>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            {{/items}}
+
+
+            <div class="total">
+                <div class="thumbnail">&nbsp;</div>
+                <div class="inner">
+                    <h3 class="title">Total</h3>
+
+                    <h3 class="title itemTotal">
+                        {{#../total}} {{amountCompact}} {{currency.localSymbol}} {{/../total}}
+                    </h3>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </form>
+
+        <div class="checkout">
+            <a class="button" disabled="disabled">Continue checkout</a>
+        </div>
+
+        {{else}}
+        Nothing to see in there.
+        {{/if}}
+    </section>
+
+    <aside>
+
+    </aside>
+
+    <div class="clearfix"></div>
+    {{/cart}}
 </div>
-{{else}}
-Nothing to see in there.
-{{/if}}
-
-{{/cart}}

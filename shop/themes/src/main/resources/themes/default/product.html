@@ -1,51 +1,55 @@
-<div class="product">
+<div class="content product">
     {{#product}}
-    <h2 class="fn">{{title}}</h2>
 
-    {{#unitPrice}}
-    <form action="/cart/add" method="post">
-        <div>
-            <input type="hidden" name="product" value="{{../slug}}"/>
-            <input type="submit" value="Add to cart"/>
+    <div class="gallery">
+        {{#images}}
+        {{#featured}}
+        <div class="featured">
+            <img class="photo" src="{{theme_product_big_url}}" title="{{title}}" alt="{{title}}"
+                 width="471px" height="457px"/>
         </div>
-    </form>
-    {{/unitPrice}}
-    {{^unitPrice}}
-        This product is currently not for sale.
-    {{/unitPrice}}
+        {{/featured}}
+        <ul class="images">
+            {{#all}}
+            <li class="thumbnail">
+                <img src="{{theme_product_thumbnail_url}}" data-image-src="{{theme_product_big_url}}"/>
+            </li>
+            {{/all}}
+        </ul>
+        <div class="clearfix"></div>
+        {{/images}}
 
-    {{#description}}
-    <p class="description">
-        {{this}}
-    </p>
-    {{/description}}
-
-    {{#theme_addons}}
-    <dl>
-      <dt>BRAND</dt><dd>{{characteristics.brand}}</dd>
-      <dt>MANUFACTURER</dt><dd>{{characteristics.manufacturer}}</dd>
-    </dl>
-    {{/theme_addons}}
-
-    {{#unitPrice}}
-    <div class="product-price">
-        <span class="price">{{amount}}</span>
-        <span class="currency">{{currency.symbol}}</span>
     </div>
-    {{/unitPrice}}
 
-    {{#images}}
-    {{#featured}}
-    <img class="photo" src="{{theme_large_url}}" title="{{title}}" alt="{{title}}" />
-    {{/featured}}
-    <ul class="images">
-        {{#all}}
-        <li class="thumbnail">
-            <img src="{{theme_small_url}}" />
-        </li>
-        {{/all}}
-    </ul>
-    <div class="clearfix"></div>
-    {{/images}}
+    <div class="characteristics">
+        <h1 class="fn">{{title}}</h1>
+
+        {{#description}}
+        <div class="description">
+            {{this}}
+        </div>
+        {{/description}}
+
+        <div class="buying-options">
+            {{#unitPrice}}
+            <div class="price">{{amountCompact}}{{currency.localSymbol}}</div>
+            {{/unitPrice}}
+            {{^unitPrice}}
+            This product is not available for sale.
+            {{/unitPrice}}
+        </div>
+
+        {{#unitPrice}}
+        <form action="/cart/add" method="post" class="add">
+            <div class="add-to-cart">
+                <input type="hidden" name="product" value="{{../slug}}"/>
+                <input type="submit" value="Add to cart"/>
+            </div>
+        </form>
+        {{/unitPrice}}
+    </div>
+
     {{/product}}
+    <div class="clearfix"></div>
+
 </div>
