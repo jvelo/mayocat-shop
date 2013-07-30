@@ -11,12 +11,14 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.cart.front.context.CartContext;
 import org.mayocat.shop.cart.front.context.CartItemContext;
+import org.mayocat.shop.cart.front.context.DeliveryTimeContext;
 import org.mayocat.shop.cart.front.context.ShippingOptionContext;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
@@ -25,6 +27,7 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.shipping.ShippingService;
+import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
 import org.slf4j.Logger;
@@ -177,6 +180,9 @@ public class CartContextBuilder
                 new PriceRepresentation(option.getPrice(), cart.getCurrency(), locale);
         ShippingOptionContext context =
                 new ShippingOptionContext(option.getCarrierId(), option.getTitle(), optionPrice);
+        Carrier carrier = shippingService.getCarrier(option.getCarrierId());
+        context.setDeliveryTime(new DeliveryTimeContext(carrier.getMinimumDays(), carrier.getMaximumDays()));
+        context.setDestinations(shippingService.getDestinationNames(carrier.getDestinations()));
         context.setSelected(selected);
         return context;
     }

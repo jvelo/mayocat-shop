@@ -15,7 +15,11 @@ public class ShippingOptionContext
 
     private String title;
 
-    private  boolean selected = false;
+    private boolean selected = false;
+
+    private String destinations;
+
+    private DeliveryTimeContext deliveryTime;
 
     public ShippingOptionContext(UUID id, String title, PriceRepresentation price)
     {
@@ -47,5 +51,25 @@ public class ShippingOptionContext
     public void setSelected(boolean selected)
     {
         this.selected = selected;
+    }
+
+    public String getDestinations()
+    {
+        return destinations;
+    }
+
+    public void setDestinations(String destinations)
+    {
+        this.destinations = destinations;
+    }
+
+    public DeliveryTimeContext getDeliveryTime()
+    {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(DeliveryTimeContext deliveryTime)
+    {
+        this.deliveryTime = deliveryTime;
     }
 }

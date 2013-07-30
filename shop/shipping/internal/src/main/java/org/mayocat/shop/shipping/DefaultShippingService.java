@@ -1,7 +1,9 @@
 package org.mayocat.shop.shipping;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +13,24 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.shipping.configuration.ShippingSettings;
 import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.shop.shipping.store.CarrierStore;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.io.Resources;
 
 /**
  * @version $Id$
@@ -34,6 +47,28 @@ public class DefaultShippingService implements ShippingService
     @Inject
     private CarrierStore carrierStore;
 
+    @Inject
+    private Logger logger;
+
+    static class Destination
+    {
+        private String name;
+
+        private String code;
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getCode()
+        {
+            return code;
+        }
+    }
+
+    private Map<String, Destination> destinations;
+
     @Override
     public boolean isShippingEnabled()
     {
@@ -45,6 +80,37 @@ public class DefaultShippingService implements ShippingService
     {
         Carrier carrier = carrierStore.findById(carrierId);
         return getOption(carrier, items);
+    }
+
+    @Override
+    public Carrier getCarrier(UUID id)
+    {
+        return carrierStore.findById(id);
+    }
+
+    @Override
+    public String getDestinationName(String destinationCode)
+    {
+        Destination destination = getDestinations().get(destinationCode);
+        return destination == null ? null : destination.getName();
+    }
+
+    @Override
+    public String getDestinationNames(List<String> destinationCodes)
+    {
+        Collection<String> result = Collections2.transform(destinationCodes,
+                new Function<String, String>()
+                {
+                    @Override
+                    public String apply(final String code)
+                    {
+                        return getDestinationName(code);
+                    }
+                }
+        );
+        result = (Collections2.filter(result, Predicates.notNull()));
+        Joiner joiner = Joiner.on(", ");
+        return joiner.join(result);
     }
 
     @Override
@@ -83,5 +149,22 @@ public class DefaultShippingService implements ShippingService
     {
         ShippingSettings settings = configurationService.getSettings(ShippingSettings.class);
         return settings.getStrategy().getValue();
+    }
+
+    private Map<String, Destination> getDestinations()
+    {
+        if (destinations == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                destinations = mapper.readValue(Resources.toString(
+                        Resources.getResource("org/mayocat/shop/shipping/destinations/earth_flat.json"), Charsets.UTF_8)
+                        , new TypeReference<Map<String, Destination>>()
+                {
+                });
+            } catch (IOException e) {
+                this.logger.error("Failed to load destinations", e);
+            }
+        }
+        return destinations;
     }
 }

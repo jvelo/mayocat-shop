@@ -64,6 +64,12 @@
                         {{/shippingOptions}}
                     </select>
                     <input type="submit" name="shipping_option" value="Update" />
+                    {{#selectedShippingOption}}
+                    <div class="shippingDetails">
+                        Delivery time: {{deliveryTime.minimumDays}} - {{deliveryTime.maximumDays}} day(s) &mdash;
+                        ships to: {{destinations}}
+                    </div>
+                    {{/selectedShippingOption}}
                     <h3 class="title itemTotal">
                         {{shipping.amountCompact}}{{shipping.currency.localSymbol}}
                     </h3>
