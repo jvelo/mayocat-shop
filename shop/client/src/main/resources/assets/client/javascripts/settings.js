@@ -199,8 +199,8 @@ angular.module('settings', ['ngResource'])
                                         carrier.rules[i].fromValue = i == 0 ? 0 : carrier.rules[i - 1].upToValue;
                                     }
                                 }
-                                shippingService.getNames(carrier.locations).then(function (names) {
-                                    carrier.displayLocations = names.join(", ");
+                                shippingService.getNames(carrier.destinations).then(function (names) {
+                                    carrier.displayDestinations = names.join(", ");
                                 });
                             });
                         })
@@ -210,10 +210,10 @@ angular.module('settings', ['ngResource'])
                 });
             }
 
-            $scope.$watch('editedCarrier.locations', function (path) {
+            $scope.$watch('editedCarrier.destinations', function (path) {
                 if (typeof $scope.editedCarrier !== 'undefined') {
-                    shippingService.getNames($scope.editedCarrier.locations).then(function(names){
-                        $scope.editedCarrierDisplayLocations = names.join(", ")
+                    shippingService.getNames($scope.editedCarrier.destinations).then(function(names){
+                        $scope.editedCarrierDisplayDestinations = names.join(", ")
                     });
                 }
             });

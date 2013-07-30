@@ -134,9 +134,9 @@
                 </legend>
 
 
-                <h3>Geographic locations</h3>
-                Selected locations : {{editedCarrierDisplayLocations}}
-                <location-picker location="locations" model="editedCarrier.locations"></location-picker>
+                <h3>Geographic destinations</h3>
+                Selected destinations : {{editedCarrierDisplayDestinations}}
+                <destination-picker destination="destinations" model="editedCarrier.destinations"></destination-picker>
 
                 <h3>Carrier</h3>
 
@@ -200,7 +200,7 @@
                         </td>
                         <td><a ng-click="editedCarrier.rules.push({});">Add</a></td>
                     </tr>
-                    <tr ng-show="editedCarrier.strategy == 'weight" class="hasInput">
+                    <tr ng-show="editedCarrier.strategy == 'weight'" class="hasInput">
                         <td>
                             Additional kg
                         </td>

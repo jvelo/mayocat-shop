@@ -1,7 +1,7 @@
 CREATE TABLE carrier (
     tenant_id uuid,
     id uuid NOT NULL,
-    locations text,
+    destinations text,
     title character varying(255),
     strategy character varying(255),
     description text,

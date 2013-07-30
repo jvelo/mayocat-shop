@@ -20,21 +20,21 @@ import com.google.common.io.Resources;
 /**
  * @version $Id$
  */
-@Component("/api/shipping/locations/")
-@Path("/api/shipping/locations/")
+@Component("/api/shipping/destinations/")
+@Path("/api/shipping/destinations/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class LocationsResource implements Resource
+public class DestinationsResource implements Resource
 {
     @Inject
     private Logger logger;
 
     @GET
-    public Response getLocations()
+    public Response getDestinations()
     {
         try {
             return Response.ok(
-                    Resources.toString(Resources.getResource("org/mayocat/shop/shipping/locations/earth.json"),
+                    Resources.toString(Resources.getResource("org/mayocat/shop/shipping/destinations/earth.json"),
                             Charsets.UTF_8))
                     .build();
         } catch (IOException e) {
@@ -45,11 +45,11 @@ public class LocationsResource implements Resource
 
     @GET
     @Path("flat")
-    public Response getFlatLocations()
+    public Response getDestinationsFlat()
     {
         try {
             return Response.ok(
-                    Resources.toString(Resources.getResource("org/mayocat/shop/shipping/locations/earth_flat.json"),
+                    Resources.toString(Resources.getResource("org/mayocat/shop/shipping/destinations/earth_flat.json"),
                             Charsets.UTF_8))
                     .build();
         } catch (IOException e) {

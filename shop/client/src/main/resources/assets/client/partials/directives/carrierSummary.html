@@ -1,9 +1,9 @@
 <h4>{{carrier.title}}</h4>
-<div class="locations">
-    Location(s) : {{carrier.displayLocations}}
+<div class="destinations">
+    Destination(s) : {{carrier.displayDestinations}}
 </div>
 <div class="duration">
-    Shipping duration : {{carrier.minimumDays}} - {{carrier.maximumDays}} day(s)
+    Delivery time : {{carrier.minimumDays}} - {{carrier.maximumDays}} day(s)
 </div>
 <table class="table" ng-show="carrier.strategy == 'weight' || carrier.strategy == 'price'">
     <thead>

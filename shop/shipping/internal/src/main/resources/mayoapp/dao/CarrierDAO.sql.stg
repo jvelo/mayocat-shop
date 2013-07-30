@@ -29,7 +29,7 @@ create() ::= <<
     INSERT INTO carrier (
         id,
         tenant_id,
-        locations,
+        destinations,
         title,
         strategy,
         description,
@@ -42,7 +42,7 @@ create() ::= <<
     VALUES (
         :carrier.id,
         :carrier.tenantId,
-        :carrier.locations,
+        :carrier.destinations,
         :carrier.title,
         :carrier.strategy,
         :carrier.description,
@@ -57,7 +57,7 @@ create() ::= <<
 update() ::= <<
     UPDATE carrier
     SET
-        locations = :carrier.locations,
+        destinations = :carrier.destinations,
         title = :carrier.title,
         strategy = :carrier.strategy,
         description = :carrier.description,

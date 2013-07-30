@@ -61,8 +61,8 @@ public @interface BindCarrier
                                     q.bind(prefix + prop.getName(), Strategy.NONE.toJson());
                                 }
                             }
-                            // Handle the locations property that must be serialized to JSON prior write
-                            else if (prop.getName().equals("locations")) {
+                            // Handle the destinations property that must be serialized to JSON prior write
+                            else if (prop.getName().equals("destinations")) {
                                 q.bind(prefix + prop.getName(), toJsonArray(prop.getReadMethod().invoke(arg)));
                             } else {
                                 q.bind(prefix + prop.getName(), prop.getReadMethod().invoke(arg));

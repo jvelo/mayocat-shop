@@ -8,9 +8,6 @@ import java.util.UUID;
 import org.mayocat.model.Identifiable;
 import org.mayocat.shop.shipping.Strategy;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.Objects;
-
 /**
  * @version $Id$
  */
@@ -20,7 +17,7 @@ public class Carrier implements Identifiable
 
     private UUID tenantId;
 
-    private List<String> locations;
+    private List<String> destinations;
 
     private Strategy strategy;
 
@@ -60,14 +57,14 @@ public class Carrier implements Identifiable
         this.tenantId = tenantId;
     }
 
-    public List<String> getLocations()
+    public List<String> getDestinations()
     {
-        return locations;
+        return destinations;
     }
 
-    public void setLocations(List<String> locations)
+    public void setDestinations(List<String> destinations)
     {
-        this.locations = locations;
+        this.destinations = destinations;
     }
 
     public Strategy getStrategy()

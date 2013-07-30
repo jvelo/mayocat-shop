@@ -11,9 +11,9 @@
                 flatDataPromise;
 
             /**
-             * Promise of earth data loaded from the server /api/shipping/locations API.
+             * Promise of earth data loaded from the server /api/shipping/destinations API.
              *
-             * This data represents the graph of supported geographical locations for shipping.
+             * This data represents the graph of supported geographical destinations for shipping.
              */
             var loadData = function() {
 
@@ -29,7 +29,7 @@
                     //if we already have data, return that.
                     deferred.resolve(data);
                 } else {
-                    $http.get('/api/shipping/locations')
+                    $http.get('/api/shipping/destinations')
                         .success(function (result) {
                             data = result;
                             deferred.resolve({
@@ -45,9 +45,9 @@
             }
 
             /**
-             * Promise of earth data loaded from the server /api/shipping/locations/flat API.
+             * Promise of earth data loaded from the server /api/shipping/destinations/flat API.
              *
-             * This is the same data as the one offered at /api/shipping/locations/ but flattened in a map for fast
+             * This is the same data as the one offered at /api/shipping/destinations/ but flattened in a map for fast
              * code -> name lookup
              */
             var getFlatData = function() {
@@ -63,7 +63,7 @@
                     //if we already have data, return that.
                     deferred.resolve(flatData);
                 }  else {
-                    $http.get('/api/shipping/locations/flat').success(function (result) {
+                    $http.get('/api/shipping/destinations/flat').success(function (result) {
                         flatData = result;
 
                         deferred.resolve( flatData );
@@ -77,15 +77,15 @@
             }
 
             /**
-             * Convert a location code (for example "FR" or "FR-49") to its matching location name (here "France" and
+             * Convert a destination code (for example "FR" or "FR-49") to its matching destination name (here "France" and
              * "Maine Et Loire").
              *
              * Usage:
              * ------
              * > getName("FR").then(function(name){ console.log(name) }) // logs "France"
              *
-             * @param code the code of the location to get the name of
-             * @return {String} a promise of the "pretty name" of the location corresponding to the passed code.
+             * @param code the code of the destination to get the name of
+             * @return {String} a promise of the "pretty name" of the destination corresponding to the passed code.
              */
             var getName = function(code) {
                 var deferred = $q.defer(),
@@ -132,7 +132,7 @@
              * duration, pricing, etc.
              */
             return {
-                templateUrl: "partials/directives/carrierSummary.html?v=1", // Defeat browser cache http://git.io/6dPuFQ
+                templateUrl: "partials/directives/carrierSummary.html?v=2", // Defeat browser cache http://git.io/6dPuFQ
                 scope: {
                     carrier: '=',
                     mainCurrency: '='
@@ -141,7 +141,7 @@
             }
         }])
 
-        .directive('locationPicker', ["shippingService", function (shippingService) {
+        .directive('destinationPicker', ["shippingService", function (shippingService) {
 
             /**
              * This is the code of a tired soul...
@@ -150,11 +150,11 @@
              * Then I gave birth painfully to this jQuery soup, that does the work awkwardly
              *
              * @param element
-             * @param locations
+             * @param destinations
              * @param selected
              * @constructor
              */
-            var LocationPicker = function (element, locations, selected) {
+            var DestinationPicker = function (element, destinations, selected) {
 
                 this.selected = selected || [];
 
@@ -162,7 +162,7 @@
                   <li> \
                     <span class='arrow'></span> \
                     <span class='checkbox tristate'></span> \
-                    <p class='location' data-code=''><span class='name'></span></p> \
+                    <p class='destination' data-code=''><span class='name'></span></p> \
                     <div class='children hidden'><ul></ul></div> \
                   </li> \
                 ";
@@ -173,7 +173,7 @@
                 this.element.append(this.root);
 
                 this.updateSelection = function () {
-                    this.selection = this.root.find(".checkbox.checked ~ p.location").map(function (i, element) {
+                    this.selection = this.root.find(".checkbox.checked ~ p.destination").map(function (i, element) {
                         return $(element).data("code");
                     }).get();
 
@@ -182,7 +182,7 @@
 
                 this.checkParentBefore = function (node) {
                     var isChecked = node.children(".checkbox").first().hasClass("checked"),
-                        parent = node.parents(":not(location-picker) li").first();
+                        parent = node.parents(":not(destination-picker) li").first();
 
                     if (parent.length == 1) {
 
@@ -199,13 +199,13 @@
 
                 this.checkParentAfter = function (node) {
                     var isChecked = node.children(".checkbox").first().hasClass("checked"),
-                        parent = node.parents(":not(location-picker) li").first();
+                        parent = node.parents(":not(destination-picker) li").first();
 
                     if (parent.length == 1) {
                         var allChildrenChecked = parent.find("> .children > ul > li > .checkbox:not(.checked)").length == 0,
                             atLeastOneChildrenChecked = parent.find("> .children > ul > li .checkbox.checked").length > 0
 
-                        var code = node.find("p.location").data("code");
+                        var code = node.find("p.destination").data("code");
 
                         if (!allChildrenChecked) {
                             parent.removeClass("checked");
@@ -233,7 +233,7 @@
                         picker = this;
 
                     node.find(".name").html(data.name);
-                    node.find("p.location").data("code", data.code);
+                    node.find("p.destination").data("code", data.code);
 
                     node.find(".arrow").click(function (event) {
 
@@ -273,7 +273,7 @@
                         picker.checkParentBefore(node);
                         node.children(".checkbox").toggleClass("checked");
                         node.toggleClass("checked");
-                        node.parents(":not(location-picker) li").children(".children").removeClass("hidden");
+                        node.parents(":not(destination-picker) li").children(".children").removeClass("hidden");
                     }
 
                     if (data.code.length === 3  && hasChildren) {
@@ -291,13 +291,13 @@
                                 picker.addNode(data.children[i], node.find(".children ul").first());
                             }
 
-                            node.parents(":not(location-picker) li").children(".children").removeClass("hidden");
+                            node.parents(":not(destination-picker) li").children(".children").removeClass("hidden");
                         }
                     }
                 }
 
-                for (var i = 0; i < locations.children.length; i++) {
-                    this.addNode(locations.children[i], this.root);
+                for (var i = 0; i < destinations.children.length; i++) {
+                    this.addNode(destinations.children[i], this.root);
                 }
 
                 var picker = this;
@@ -312,7 +312,7 @@
 
             return {
                 scope: {
-                    location: '=',
+                    destination: '=',
                     model: "="
                 },
                 restrict: 'E',
@@ -325,10 +325,10 @@
                             // Re-initialize the directive
                             $element.html("<div />");
                             shippingService.getData().then(function (data) {
-                                var picker = new LocationPicker($element.find("div"), data, $scope.model);
-                                picker.onChange = function (locations) {
+                                var picker = new DestinationPicker($element.find("div"), data, $scope.model);
+                                picker.onChange = function (destinations) {
                                     $scope.$apply(function ($scope) {
-                                        $scope.model = locations;
+                                        $scope.model = destinations;
                                         // Flag to know the model has been modified by ourselves
                                         $scope.myselfUpdatingModel = true;
                                     })

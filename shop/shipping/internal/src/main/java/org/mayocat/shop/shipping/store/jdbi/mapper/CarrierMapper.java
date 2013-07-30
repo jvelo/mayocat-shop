@@ -48,10 +48,10 @@ public class CarrierMapper implements ResultSetMapper<Carrier>
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            carrier.setLocations(objectMapper
-                    .<List<String>>readValue(r.getString("locations"), new TypeReference<List<String>>(){}));
+            carrier.setDestinations(objectMapper
+                    .<List<String>>readValue(r.getString("destinations"), new TypeReference<List<String>>(){}));
         } catch (IOException e) {
-            throw new SQLException("Failed to de-serialize carrier locations", e);
+            throw new SQLException("Failed to de-serialize carrier destinations", e);
         }
 
         if (r.getBigDecimal("price") != null) {
