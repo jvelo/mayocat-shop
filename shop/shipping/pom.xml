@@ -5,22 +5,14 @@
         <artifactId>mayocat-shop-parent</artifactId>
         <version>0.8-SNAPSHOT</version>
     </parent>
-    <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-shipping</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Mayocat Shop - Shipping</name>
-    <description>Shipping management</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-rest</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <description>Shipping module</description>
+
+    <modules>
+        <module>api</module>
+        <module>internal</module>
+    </modules>
 </project>

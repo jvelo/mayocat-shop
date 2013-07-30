@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -32,6 +33,8 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
+import org.mayocat.shop.shipping.ShippingOption;
+import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
@@ -53,6 +56,9 @@ public class CartResource extends AbstractFrontResource implements Resource
 
     @Inject
     private CartAccessor cartAccessor;
+
+    @Inject
+    private ShippingService shippingService;
 
     @POST
     @Path("add")
@@ -159,12 +165,26 @@ public class CartResource extends AbstractFrontResource implements Resource
             }
         }
 
+        if (queryParams.getFirst("shipping_option") != null) {
+            UUID carrierId = UUID.fromString(queryParams.getFirst("shipping_option"));
+            ShippingOption option = shippingService.getOption(carrierId, cart.getItems());
+            cart.setSelectedOption(option);
+        }
+
         return Response.seeOther(new URI("/cart")).build();
     }
 
     @GET
     public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
     {
+        Cart cart = cartAccessor.getCart();
+        if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.getSelectedOption() == null) {
+            List<ShippingOption> options = shippingService.getOptions(cart.getItems());
+            if (!options.isEmpty()) {
+                cart.setSelectedOption(options.get(0));
+            }
+        }
+
         FrontView result = new FrontView("cart", breakpoint);
         Map<String, Object> context = getContext(uriInfo);
         result.putContext(context);

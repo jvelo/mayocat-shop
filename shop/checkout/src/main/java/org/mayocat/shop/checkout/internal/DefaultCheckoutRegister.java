@@ -105,8 +105,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setDeliveryAddressId(deliveryAddressId);
             order.setCustomerId(customerId);
 
-            order.setGrandTotal(cart.getTotal());
-            order.setItemsTotal(cart.getTotal());
+            order.setGrandTotal(cart.getItemsTotal());
+            order.setItemsTotal(cart.getItemsTotal());
 
             Long numberOfItems = 0l;
             final Map<Purchasable, Long> items = cart.getItems();
@@ -170,7 +170,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         try {
 
             CheckoutResponse response = new CheckoutResponse();
-            GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.getItemsTotal(), options);
 
             if (gatewayResponse.isSuccessful()) {
 

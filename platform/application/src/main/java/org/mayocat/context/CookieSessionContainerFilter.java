@@ -3,6 +3,7 @@ package org.mayocat.context;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -121,9 +122,15 @@ public class CookieSessionContainerFilter implements ContainerResponseFilter, Co
             String encryptedData = cipher.encrypt(serialized);
             String signature = computeSignature(encryptedData);
 
-            Session originalSession = getSessionFromCookie(containerResponse.getContainerRequest());
-            if (originalSession != null && originalSession.equals(cookieSession)) {
-                return;
+            try {
+                Session originalSession = getSessionFromCookie(containerResponse.getContainerRequest());
+                if (originalSession != null && originalSession.equals(cookieSession)) {
+                    return;
+                }
+            } catch (IOException e) {
+                // Keep going.
+                // It may mean a serialized class has changed and could not be loaded
+                // This means me have a new session and it's OK to override it
             }
 
             NewCookie session =

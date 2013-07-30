@@ -6,8 +6,11 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Purchasable;
+import org.mayocat.shop.shipping.ShippingOption;
+import org.mayocat.shop.shipping.model.Carrier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +24,13 @@ import com.google.common.collect.Sets;
  */
 public class Cart implements Serializable
 {
-    private static final long serialVersionUID = 4776955705209536037L;
-
     private static final transient Logger LOGGER = (Logger) LoggerFactory.getLogger(Cart.class);
 
     private Map<Purchasable, Long> items = Maps.newLinkedHashMap();
 
     private Currency currency;
+
+    private ShippingOption selectedOption;
 
     public Cart(Currency currency)
     {
@@ -98,13 +101,37 @@ public class Cart implements Serializable
         return total;
     }
 
-    public BigDecimal getTotal()
+    public BigDecimal getItemsTotal()
     {
         BigDecimal total = BigDecimal.ZERO;
         for (Purchasable item : items.keySet()) {
             total = total.add(getItemTotal(item));
         }
         return total;
+    }
+
+    public BigDecimal getTotal()
+    {
+        BigDecimal total = getItemsTotal();
+        if (getSelectedOption() != null) {
+            total = total.add(getSelectedOption().getPrice());
+        }
+        return total;
+    }
+
+    public ShippingOption getSelectedOption()
+    {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(ShippingOption selectedOption)
+    {
+        this.selectedOption = selectedOption;
+    }
+
+    public boolean isEmpty()
+    {
+        return items.isEmpty();
     }
 
     public void empty()
@@ -124,6 +151,7 @@ public class Cart implements Serializable
         final Cart other = (Cart) obj;
 
         return Objects.equal(this.items, other.items)
-                && Objects.equal(this.currency, other.currency);
+                && Objects.equal(this.currency, other.currency)
+                && Objects.equal(this.selectedOption, other.selectedOption);
     }
 }

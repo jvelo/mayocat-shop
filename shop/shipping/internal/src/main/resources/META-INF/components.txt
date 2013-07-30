@@ -1,0 +1,7 @@
+org.mayocat.shop.shipping.rest.resource.LocationsResource
+org.mayocat.shop.shipping.rest.resource.CarrierResource
+org.mayocat.shop.shipping.configuration.ShippingGestaltConfigurationSource
+org.mayocat.shop.shipping.store.jdbi.DBICarrierStore
+org.mayocat.shop.shipping.strategy.FlatStrategyPriceCalculator
+org.mayocat.shop.shipping.strategy.PriceStrategyPriceCalculator
+org.mayocat.shop.shipping.DefaultShippingService

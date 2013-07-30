@@ -1,9 +1,6 @@
 package org.mayocat.shop.shipping.store.jdbi;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,7 +19,6 @@ import org.xwiki.component.phase.InitializationException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 import mayoapp.dao.CarrierDAO;
 

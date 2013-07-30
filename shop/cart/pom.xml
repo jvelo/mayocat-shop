@@ -20,6 +20,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-shipping-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-store-api</artifactId>
             <version>${project.version}</version>

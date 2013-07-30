@@ -34,7 +34,13 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-shipping</artifactId>
+            <artifactId>mayocat-shop-shipping-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-shipping-internal</artifactId>
             <version>${project.version}</version>
         </dependency>
 

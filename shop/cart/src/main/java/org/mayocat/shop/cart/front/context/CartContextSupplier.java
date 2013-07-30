@@ -16,6 +16,7 @@ import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContext;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
+import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.util.Utils;
 import org.xwiki.component.annotation.Component;
@@ -36,13 +37,16 @@ public class CartContextSupplier implements FrontContextSupplier
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
+    private ShippingService shippingService;
+
+    @Inject
     private Execution execution;
 
     @FrontContextContributor(path = "/")
     public void contributeRootContext(@FrontContext Map data)
     {
-        CartContextBuilder builder =
-                new CartContextBuilder(attachmentStore.get(), thumbnailStore.get(), execution.getContext().getTheme());
+        CartContextBuilder builder = new CartContextBuilder(attachmentStore.get(), thumbnailStore.get(),
+                shippingService, execution.getContext().getTheme());
 
         // TODO we need to find a way to have Jersey @Context injection in context suppliers...
         // so that we could here for example get the request locale via @Context Locale locale

@@ -20,11 +20,23 @@ public class CartContext
 
     private List<CartItemContext> items = Lists.newArrayList();
 
+    private PriceRepresentation itemsTotal;
+
+    private boolean hasShipping;
+
+    private PriceRepresentation shipping;
+
+    private List<ShippingOptionContext> shippingOptions;
+
+    private ShippingOptionContext selectedShippingOption;
+
     private PriceRepresentation total;
 
-    public CartContext(List<CartItemContext> items, Long numberOfItems, PriceRepresentation total)
+    public CartContext(List<CartItemContext> items, Long numberOfItems, PriceRepresentation itemsTotal,
+            PriceRepresentation total)
     {
         this.items = items;
+        this.itemsTotal = itemsTotal;
         this.total = total;
         this.numberOfItems = numberOfItems;
     }
@@ -42,5 +54,50 @@ public class CartContext
     public Long getNumberOfItems()
     {
         return numberOfItems;
+    }
+
+    public PriceRepresentation getShipping()
+    {
+        return shipping;
+    }
+
+    public void setShipping(PriceRepresentation shipping)
+    {
+        this.shipping = shipping;
+    }
+
+    public List<ShippingOptionContext> getShippingOptions()
+    {
+        return shippingOptions;
+    }
+
+    public void setShippingOptions(List<ShippingOptionContext> shippingOptions)
+    {
+        this.shippingOptions = shippingOptions;
+    }
+
+    public ShippingOptionContext getSelectedShippingOption()
+    {
+        return selectedShippingOption;
+    }
+
+    public void setSelectedShippingOption(ShippingOptionContext selectedShippingOption)
+    {
+        this.selectedShippingOption = selectedShippingOption;
+    }
+
+    public PriceRepresentation getItemsTotal()
+    {
+        return itemsTotal;
+    }
+
+    public boolean isHasShipping()
+    {
+        return hasShipping;
+    }
+
+    public void setHasShipping(boolean hasShipping)
+    {
+        this.hasShipping = hasShipping;
     }
 }

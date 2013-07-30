@@ -52,6 +52,26 @@
             {{/items}}
 
 
+            {{#hasShipping}}
+            <div class="shipping item">
+                <div class="thumbnail">
+                    Shipping
+                </div>
+                <div class="inner">
+                    <select name="shipping_option">
+                        {{#shippingOptions}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{title}}</option>
+                        {{/shippingOptions}}
+                    </select>
+                    <input type="submit" name="shipping_option" value="Update" />
+                    <h3 class="title itemTotal">
+                        {{shipping.amountCompact}}{{shipping.currency.localSymbol}}
+                    </h3>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            {{/hasShipping}}
+
             <div class="total">
                 <div class="thumbnail">&nbsp;</div>
                 <div class="inner">

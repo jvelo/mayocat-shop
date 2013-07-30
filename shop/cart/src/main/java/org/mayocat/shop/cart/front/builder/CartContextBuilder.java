@@ -1,5 +1,6 @@
 package org.mayocat.shop.cart.front.builder;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,11 +17,14 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.cart.front.context.CartContext;
 import org.mayocat.shop.cart.front.context.CartItemContext;
+import org.mayocat.shop.cart.front.context.ShippingOptionContext;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
+import org.mayocat.shop.shipping.ShippingOption;
+import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
 import org.slf4j.Logger;
@@ -43,12 +47,19 @@ public class CartContextBuilder
 
     private ImageContextBuilder imageContextBuilder;
 
+    private ShippingService shippingService;
+
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(CartContextBuilder.class);
 
-    public CartContextBuilder(AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
+    public CartContextBuilder(
+            AttachmentStore attachmentStore,
+            ThumbnailStore thumbnailStore,
+            ShippingService shippingService,
+            Theme theme)
     {
         this.attachmentStore = attachmentStore;
         this.thumbnailStore = thumbnailStore;
+        this.shippingService = shippingService;
         this.imageContextBuilder = new ImageContextBuilder(theme);
     }
 
@@ -132,6 +143,41 @@ public class CartContextBuilder
             itemsContext.add(cir);
         }
 
-        return new CartContext(itemsContext, numberOfItems, total);
+        PriceRepresentation itemsTotal =
+                new PriceRepresentation(cart.getItemsTotal(), cart.getCurrency(), locale);
+
+        CartContext context = new CartContext(itemsContext, numberOfItems, itemsTotal, total);
+        context.setHasShipping(shippingService.isShippingEnabled());
+
+        if (context.isHasShipping()) {
+            PriceRepresentation shippingPrice = new PriceRepresentation(
+                    cart.getSelectedOption() != null ? cart.getSelectedOption().getPrice() : BigDecimal.ZERO,
+                    cart.getCurrency(), locale);
+
+            if (cart.getSelectedOption() != null) {
+                context.setSelectedShippingOption(buildOption(cart.getSelectedOption(), cart, locale, true));
+            }
+
+            List<ShippingOptionContext> availableOptionsContext = new ArrayList<ShippingOptionContext>();
+            List<ShippingOption> availableOptions = shippingService.getOptions(cart.getItems());
+            for (ShippingOption option : availableOptions) {
+                availableOptionsContext.add(buildOption(option, cart, locale, cart.getSelectedOption() != null &&
+                        cart.getSelectedOption().getCarrierId().equals(option.getCarrierId())));
+            }
+            context.setShippingOptions(availableOptionsContext);
+            context.setShipping(shippingPrice);
+        }
+
+        return context;
+    }
+
+    private ShippingOptionContext buildOption(ShippingOption option, Cart cart, Locale locale, boolean selected)
+    {
+        PriceRepresentation optionPrice =
+                new PriceRepresentation(option.getPrice(), cart.getCurrency(), locale);
+        ShippingOptionContext context =
+                new ShippingOptionContext(option.getCarrierId(), option.getTitle(), optionPrice);
+        context.setSelected(selected);
+        return context;
     }
 }
