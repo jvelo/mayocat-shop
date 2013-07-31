@@ -31,7 +31,10 @@ import org.skife.jdbi.v2.unstable.BindIn;
 public interface CarrierDAO extends Transactional<CarrierDAO>
 {
     @SqlQuery
-    public Carrier findById(@Bind("id") UUID id);
+    // returned as a Set so that carrier rules get folded.
+    // FIXME. Find a better way to fold joined rows.
+    // Follow https://github.com/brianm/jdbi/pull/69
+    public Set<Carrier> findById(@Bind("id") UUID id);
 
     @SqlQuery
     public Set<Carrier> findAll(@BindBean("tenant") Tenant tenant);

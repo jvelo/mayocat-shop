@@ -1,6 +1,7 @@
 package org.mayocat.shop.shipping.store.jdbi;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,7 +39,11 @@ public class DBICarrierStore implements CarrierStore, Initializable
 
     public Carrier findById(UUID id)
     {
-        return carrierDAO.findById(id);
+        Iterator<Carrier> carrier = carrierDAO.findById(id).iterator();
+        if (carrier.hasNext()) {
+            return carrier.next();
+        }
+        return null;
     }
 
     public Set<Carrier> findAll()
