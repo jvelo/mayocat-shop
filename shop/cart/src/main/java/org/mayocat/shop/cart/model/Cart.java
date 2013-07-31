@@ -132,6 +132,7 @@ public class Cart implements Serializable
     public void empty()
     {
         items.clear();
+        this.selectedShippingOption = null;
     }
 
     @Override

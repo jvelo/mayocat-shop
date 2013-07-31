@@ -87,7 +87,6 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setActionType(ACTION_TYPE_CREATE);
         request.setCurrencyCode(((Currency) options.get(BaseOption.CURRENCY)).getCurrencyCode());
 
-
         String baseURI = (String) options.get(BaseOption.BASE_URL);
         String orderId = options.get(BaseOption.ORDER_ID).toString();
 

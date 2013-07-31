@@ -190,7 +190,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         try {
 
             CheckoutResponse response = new CheckoutResponse();
-            GatewayResponse gatewayResponse = gateway.purchase(cart.getItemsTotal(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
 
             if (gatewayResponse.isSuccessful()) {
 
