@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -23,7 +22,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.jackson.OptionalStringListDeserializer;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
@@ -39,7 +37,6 @@ import org.mayocat.theme.Breakpoint;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -78,6 +75,8 @@ public class CartResource extends AbstractFrontResource implements Resource
         Cart cart = cartAccessor.getCart();
         cart.addItem(product, quantity);
 
+        recalculateShipping();
+
         return Response.seeOther(new URI("/cart")).build();
     }
 
@@ -97,6 +96,8 @@ public class CartResource extends AbstractFrontResource implements Resource
 
         Cart cart = cartAccessor.getCart();
         cart.removeItem(product);
+
+        recalculateShipping();
 
         return Response.seeOther(new URI("/cart")).build();
     }
@@ -138,8 +139,8 @@ public class CartResource extends AbstractFrontResource implements Resource
             // Handle update request
             for (String key : queryParams.keySet()) {
                 if (key.startsWith("quantity_")) {
-                    Long quantity = Long.valueOf(queryParams.getFirst(key));
                     try {
+                        Long quantity = Long.valueOf(queryParams.getFirst(key));
                         Integer index = Integer.valueOf(key.substring("quantity_".length()));
 
                         Map<Purchasable, Long> items = cart.getItems();
@@ -171,11 +172,14 @@ public class CartResource extends AbstractFrontResource implements Resource
             cart.setSelectedOption(option);
         }
 
+        recalculateShipping();
+
         return Response.seeOther(new URI("/cart")).build();
     }
 
     @GET
-    public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
+    @Produces("application/json")
+    public Map<String, Object> getCartContext(@Context UriInfo uriInfo)
     {
         Cart cart = cartAccessor.getCart();
         if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.getSelectedOption() == null) {
@@ -184,10 +188,27 @@ public class CartResource extends AbstractFrontResource implements Resource
                 cart.setSelectedOption(options.get(0));
             }
         }
-
-        FrontView result = new FrontView("cart", breakpoint);
         Map<String, Object> context = getContext(uriInfo);
-        result.putContext(context);
+        return context;
+    }
+
+    @GET
+    @Produces("text/html;q=2")
+    public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
+    {
+        FrontView result = new FrontView("cart", breakpoint);
+        result.putContext(getCartContext(uriInfo));
         return result;
+    }
+
+    private void recalculateShipping()
+    {
+        Cart cart = cartAccessor.getCart();
+        if (cart.getSelectedOption() == null) {
+            // Nothing to do
+            return;
+        }
+        UUID selectedCarrierId = cart.getSelectedOption().getCarrierId();
+        cart.setSelectedOption(shippingService.getOption(selectedCarrierId, cart.getItems()));
     }
 }

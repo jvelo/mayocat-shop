@@ -93,6 +93,11 @@ a.button:hover, form input[type='submit']:hover {
   transition: none !important;
 }
 
+html.no-js .visible-when-js,
+html.js .visible-when-no-js {
+  display:none !important;
+}
+
 /* Global header */
 
 #top-bar {
@@ -678,8 +683,35 @@ address {
   line-height: 24px;
 }
 
-/* 123 Ocean */
+/* Cart icons */
 
-div.ocean123  img {
-  width: 200px;
+span.cart-icon:after {
+  min-width: 21px;
+  text-align: center;
+  display: inline-block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius:50%;
+  -khtml-border-radius:50%;
+  border-radius: 50%;
+  background-color: @strongColor1;
+  border: 0px solid transparent;
+  color: white;
+}
+
+span.cart-icon:after:hover {
+  cursor: pointer;
+}
+
+span.cart-icon.remove:after {
+  content: "\2716";
+}
+
+span.cart-icon.minus:after {
+  content: "\002D";
+  font-weight: bold;
+}
+
+span.cart-icon.plus:after {
+  content: "\002B";
+  font-weight: bold;
 }

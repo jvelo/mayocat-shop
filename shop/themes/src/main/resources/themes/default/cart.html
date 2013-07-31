@@ -12,98 +12,18 @@
 
     {{#cart}}
     <section class="cart">
-
-        {{#if items}}
-        <form method="post" action="/cart/update">
-
-            {{#items}}
-            <div class="item">
-
-                <div class="thumbnail">
-                    <img src="http://placehold.it/137x137"/>
-                </div>
-
-                <div class="inner">
-                    <div class="description">
-                        <h3 class="title">{{title}}</h3>
-                        <span>{{description}}</span>
-                    </div>
-
-                    <div class="itemDetail">
-                        <div class="unitPrice">{{amountCompact}}{{currency.localSymbol}}</div>
-
-                        <div class="quantity">
-                            Quantity <input type="text" size="3" name="quantity_{{@index}}" value="{{quantity}}"/>
-                            <input type="submit" class="update" name="update" value="Update" />
-                        </div>
-
-                    </div>
-
-                    <div class="removeItem">
-                        <input type="submit" name="remove_{{@index}}" value="Remove"/>
-                    </div>
-
-                    <h3 class="title itemTotal">
-                        {{itemTotal.amountCompact}}{{itemTotal.currency.localSymbol}}
-                    </h3>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            {{/items}}
-
-
-            {{#hasShipping}}
-            <div class="shipping item">
-                <div class="thumbnail">
-                    Shipping
-                </div>
-                <div class="inner">
-                    <select name="shipping_option">
-                        {{#shippingOptions}}
-                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{title}}</option>
-                        {{/shippingOptions}}
-                    </select>
-                    <input type="submit" name="shipping_option" value="Update" />
-                    {{#selectedShippingOption}}
-                    <div class="shippingDetails">
-                        Delivery time: {{deliveryTime.minimumDays}} - {{deliveryTime.maximumDays}} day(s) &mdash;
-                        ships to: {{destinations}}
-                    </div>
-                    {{/selectedShippingOption}}
-                    <h3 class="title itemTotal">
-                        {{shipping.amountCompact}}{{shipping.currency.localSymbol}}
-                    </h3>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            {{/hasShipping}}
-
-            <div class="total">
-                <div class="thumbnail">&nbsp;</div>
-                <div class="inner">
-                    <h3 class="title">Total</h3>
-
-                    <h3 class="title itemTotal">
-                        {{#../total}} {{amountCompact}} {{currency.localSymbol}} {{/../total}}
-                    </h3>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </form>
-
-        <div class="checkout">
-            <a class="button" disabled="disabled">Continue checkout</a>
+        <div id="cart-table">
+            {{includeTemplate 'cart_table.html'}}
         </div>
-
-        {{else}}
-        Nothing to see in there.
-        {{/if}}
     </section>
 
     <aside>
-
     </aside>
 
     <div class="clearfix"></div>
     {{/cart}}
 </div>
+
+<script id="cart-table-template" type="text/x-handlebars-template">
+    {{templateSource 'cart_table.html'}}
+</script>
