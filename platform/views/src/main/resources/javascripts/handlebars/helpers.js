@@ -1,6 +1,4 @@
-var global = this;
-
-(function ()
+(function (global)
 {
     if (typeof out === "undefined") {
         // Can be useful for Q&D debugging
@@ -54,6 +52,14 @@ var global = this;
             return new Handlebars.SafeString(partial(context));
         }
         return "Partial not found : " + template;
+    });
+
+    Handlebars.registerHelper('templateSource', function (template, options)
+    {
+        var themeManager = getComponent(ThemeManager);
+        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
+
+        return String(resolved.getContent());
     });
 
     Handlebars.registerHelper('includeTemplate', function (template, options)
@@ -117,4 +123,4 @@ var global = this;
         return undefined;
     });
 
-})();
+})(this);
