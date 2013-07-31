@@ -66,6 +66,25 @@
                     <td>{{item.quantity}}</td>
                     <td>{{item.itemTotal | money:'EUR'}} {{order.currency}}</td>
                 </tr>
+                <tr ng-show="order.data.shipping" class="itemsTotal">
+                    <td>
+                        Items total (without shipping)
+                    </td>
+                    <td>{{order.itemsTotal | money:'EUR'}} {{order.currency}}</td>
+                    <td>1</td>
+                    <td>{{order.itemsTotal | money:'EUR'}} {{order.currency}}</td>
+                </tr>
+                <tr ng-show="order.data.shipping" class="shipping">
+                    <td>
+                        Shipping &mdash;
+                        <small>
+                            {{order.data.shipping.title}} (calculated by {{order.data.shipping.strategy}})
+                        </small>
+                    </td>
+                    <td>{{order.shipping | money:'EUR'}} {{order.currency}}</td>
+                    <td>1</td>
+                    <td>{{order.shipping | money:'EUR'}} {{order.currency}}</td>
+                </tr>
                 </tbody>
                 <tfoot>
                 <td colspan="3">Total</td>

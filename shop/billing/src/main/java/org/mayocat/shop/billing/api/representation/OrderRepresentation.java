@@ -29,6 +29,8 @@ public class OrderRepresentation
 
     private BigDecimal itemsTotal;
 
+    private BigDecimal shipping;
+
     private BigDecimal grandTotal;
 
     private Order.Status status;
@@ -62,6 +64,7 @@ public class OrderRepresentation
         this.currency = order.getCurrency();
         this.numberOfItems = order.getNumberOfItems();
         this.itemsTotal = order.getItemsTotal();
+        this.shipping = order.getShipping();
         this.grandTotal = order.getGrandTotal();
         this.status = order.getStatus();
         this.data = order.getOrderData();
@@ -135,6 +138,16 @@ public class OrderRepresentation
     public void setItemsTotal(BigDecimal itemsTotal)
     {
         this.itemsTotal = itemsTotal;
+    }
+
+    public BigDecimal getShipping()
+    {
+        return shipping;
+    }
+
+    public void setShipping(BigDecimal shipping)
+    {
+        this.shipping = shipping;
     }
 
     public BigDecimal getGrandTotal()

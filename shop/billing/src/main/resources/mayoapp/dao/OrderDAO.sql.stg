@@ -2,7 +2,7 @@ group OrderDAO;
 
 createOrder() ::= <<
     INSERT INTO purchase_order (entity_id, customer_id, delivery_address_id, billing_address_id, creation_date,
-        update_date, currency, number_of_items, items_total, grand_total, status, order_data)
+        update_date, currency, number_of_items, items_total, shipping, grand_total, status, order_data)
     VALUES (:order.id,
             :order.customerId,
             :order.deliveryAddressId,
@@ -12,6 +12,7 @@ createOrder() ::= <<
             :order.currency,
             :order.numberOfItems,
             :order.itemsTotal,
+            :order.shipping,
             :order.grandTotal,
             :order.status,
             :order.orderData)

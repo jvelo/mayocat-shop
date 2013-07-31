@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -154,18 +153,18 @@ public class CartContextBuilder
 
         if (context.isHasShipping()) {
             PriceRepresentation shippingPrice = new PriceRepresentation(
-                    cart.getSelectedOption() != null ? cart.getSelectedOption().getPrice() : BigDecimal.ZERO,
+                    cart.getSelectedShippingOption() != null ? cart.getSelectedShippingOption().getPrice() : BigDecimal.ZERO,
                     cart.getCurrency(), locale);
 
-            if (cart.getSelectedOption() != null) {
-                context.setSelectedShippingOption(buildOption(cart.getSelectedOption(), cart, locale, true));
+            if (cart.getSelectedShippingOption() != null) {
+                context.setSelectedShippingOption(buildOption(cart.getSelectedShippingOption(), cart, locale, true));
             }
 
             List<ShippingOptionContext> availableOptionsContext = new ArrayList<ShippingOptionContext>();
             List<ShippingOption> availableOptions = shippingService.getOptions(cart.getItems());
             for (ShippingOption option : availableOptions) {
-                availableOptionsContext.add(buildOption(option, cart, locale, cart.getSelectedOption() != null &&
-                        cart.getSelectedOption().getCarrierId().equals(option.getCarrierId())));
+                availableOptionsContext.add(buildOption(option, cart, locale, cart.getSelectedShippingOption() != null &&
+                        cart.getSelectedShippingOption().getCarrierId().equals(option.getCarrierId())));
             }
             context.setShippingOptions(availableOptionsContext);
             context.setShipping(shippingPrice);

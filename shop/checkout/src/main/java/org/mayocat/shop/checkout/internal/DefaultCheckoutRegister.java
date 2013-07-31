@@ -32,6 +32,8 @@ import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
+import org.mayocat.shop.shipping.ShippingService;
+import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -70,8 +72,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     @Inject
     private Provider<PaymentOperationStore> paymentOperationStore;
 
+    @Inject
+    private ShippingService shippingService;
+
     @Override
-    public CheckoutResponse checkout(Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
+    public CheckoutResponse checkout(final Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
             Address billingAddress) throws CheckoutException
     {
 
@@ -82,6 +87,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             UUID customerId;
             UUID deliveryAddressId = null;
             UUID billingAddressId = null;
+            Map<String, Object> data = Maps.newHashMap(); // Order JSON data
 
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
@@ -105,24 +111,12 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setDeliveryAddressId(deliveryAddressId);
             order.setCustomerId(customerId);
 
-            order.setGrandTotal(cart.getItemsTotal());
-            order.setItemsTotal(cart.getItemsTotal());
-
+            // Items
             Long numberOfItems = 0l;
             final Map<Purchasable, Long> items = cart.getItems();
-            for (Purchasable purchasable : items.keySet()) {
-                numberOfItems += items.get(purchasable);
-            }
-
-            order.setNumberOfItems(numberOfItems);
-            order.setCreationDate(new Date());
-            order.setUpdateDate(order.getCreationDate());
-            order.setCurrency(cart.getCurrency());
-            order.setStatus(Order.Status.NONE);
-
-            Map<String, Object> data = Maps.newHashMap();
             List<Map<String, Object>> orderItems = Lists.newArrayList();
             for (final Purchasable p : items.keySet()) {
+                numberOfItems += items.get(p);
                 orderItems.add(new HashMap<String, Object>()
                 {
                     {
@@ -135,7 +129,33 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     }
                 });
             }
+            order.setNumberOfItems(numberOfItems);
+            order.setItemsTotal(cart.getItemsTotal());
             data.put("items", orderItems);
+
+            // Shipping
+            if (cart.getSelectedShippingOption() != null) {
+                final Carrier carrier = shippingService.getCarrier(cart.getSelectedShippingOption().getCarrierId());
+                order.setShipping(cart.getSelectedShippingOption().getPrice());
+                data.put("shipping", new HashMap<String, Object>(){
+                    {
+                        put("carrierId", carrier.getId());
+                        put("title", carrier.getTitle());
+                        put("strategy", carrier.getStrategy());
+                    }
+                });
+            }
+
+            // Dates, currency, status
+            order.setCreationDate(new Date());
+            order.setUpdateDate(order.getCreationDate());
+            order.setCurrency(cart.getCurrency());
+            order.setStatus(Order.Status.NONE);
+
+            // Grand total
+            order.setGrandTotal(cart.getTotal());
+
+            // JSON data
             order.setOrderData(data);
 
             order = orderStore.get().create(order);

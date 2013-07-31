@@ -3,21 +3,16 @@ package org.mayocat.shop.cart.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.shipping.ShippingOption;
-import org.mayocat.shop.shipping.model.Carrier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * @version $Id$
@@ -30,7 +25,7 @@ public class Cart implements Serializable
 
     private Currency currency;
 
-    private ShippingOption selectedOption;
+    private ShippingOption selectedShippingOption;
 
     public Cart(Currency currency)
     {
@@ -113,20 +108,20 @@ public class Cart implements Serializable
     public BigDecimal getTotal()
     {
         BigDecimal total = getItemsTotal();
-        if (getSelectedOption() != null) {
-            total = total.add(getSelectedOption().getPrice());
+        if (getSelectedShippingOption() != null) {
+            total = total.add(getSelectedShippingOption().getPrice());
         }
         return total;
     }
 
-    public ShippingOption getSelectedOption()
+    public ShippingOption getSelectedShippingOption()
     {
-        return selectedOption;
+        return selectedShippingOption;
     }
 
-    public void setSelectedOption(ShippingOption selectedOption)
+    public void setSelectedShippingOption(ShippingOption selectedOption)
     {
-        this.selectedOption = selectedOption;
+        this.selectedShippingOption = selectedOption;
     }
 
     public boolean isEmpty()
@@ -152,6 +147,6 @@ public class Cart implements Serializable
 
         return Objects.equal(this.items, other.items)
                 && Objects.equal(this.currency, other.currency)
-                && Objects.equal(this.selectedOption, other.selectedOption);
+                && Objects.equal(this.selectedShippingOption, other.selectedShippingOption);
     }
 }

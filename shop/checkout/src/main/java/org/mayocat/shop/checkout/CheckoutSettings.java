@@ -11,7 +11,7 @@ public class CheckoutSettings
 {
     @Valid
     @JsonProperty
-    private String defaultPaymentGateway;
+    private String defaultPaymentGateway = "paypaladaptivepayments";
 
     public String getDefaultPaymentGateway()
     {

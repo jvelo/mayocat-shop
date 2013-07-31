@@ -169,7 +169,7 @@ public class CartResource extends AbstractFrontResource implements Resource
         if (queryParams.getFirst("shipping_option") != null) {
             UUID carrierId = UUID.fromString(queryParams.getFirst("shipping_option"));
             ShippingOption option = shippingService.getOption(carrierId, cart.getItems());
-            cart.setSelectedOption(option);
+            cart.setSelectedShippingOption(option);
         }
 
         recalculateShipping();
@@ -182,10 +182,10 @@ public class CartResource extends AbstractFrontResource implements Resource
     public Map<String, Object> getCartContext(@Context UriInfo uriInfo)
     {
         Cart cart = cartAccessor.getCart();
-        if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.getSelectedOption() == null) {
+        if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.getSelectedShippingOption() == null) {
             List<ShippingOption> options = shippingService.getOptions(cart.getItems());
             if (!options.isEmpty()) {
-                cart.setSelectedOption(options.get(0));
+                cart.setSelectedShippingOption(options.get(0));
             }
         }
         Map<String, Object> context = getContext(uriInfo);
@@ -204,11 +204,11 @@ public class CartResource extends AbstractFrontResource implements Resource
     private void recalculateShipping()
     {
         Cart cart = cartAccessor.getCart();
-        if (cart.getSelectedOption() == null) {
+        if (cart.getSelectedShippingOption() == null) {
             // Nothing to do
             return;
         }
-        UUID selectedCarrierId = cart.getSelectedOption().getCarrierId();
-        cart.setSelectedOption(shippingService.getOption(selectedCarrierId, cart.getItems()));
+        UUID selectedCarrierId = cart.getSelectedShippingOption().getCarrierId();
+        cart.setSelectedShippingOption(shippingService.getOption(selectedCarrierId, cart.getItems()));
     }
 }

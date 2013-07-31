@@ -52,6 +52,8 @@ public class Order implements Entity
 
     private BigDecimal itemsTotal;
 
+    private BigDecimal shipping;
+
     private BigDecimal grandTotal;
 
     private Status status;
@@ -136,6 +138,16 @@ public class Order implements Entity
     public void setItemsTotal(BigDecimal itemsTotal)
     {
         this.itemsTotal = itemsTotal;
+    }
+
+    public BigDecimal getShipping()
+    {
+        return shipping;
+    }
+
+    public void setShipping(BigDecimal shipping)
+    {
+        this.shipping = shipping;
     }
 
     public BigDecimal getGrandTotal()
