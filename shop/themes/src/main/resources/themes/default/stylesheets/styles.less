@@ -44,6 +44,14 @@ h1, h2, h3 {
   font-weight: 100;
 }
 
+h2.cursive {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: @edgeColor2;
+  font-size: 35px;
+  line-height: 12px
+}
+
 h1, h3.title {
   font-size: 58px;
   line-height: 58px;
@@ -65,6 +73,11 @@ form input[type='submit'], a.button {
   color: white;
   background-color: @headingsColor1;
   font-weight: 100;
+}
+
+.big-button {
+  font-size: 28px;
+  padding: 10px 20px;
 }
 
 a.button:hover, form input[type='submit']:hover {
@@ -502,11 +515,6 @@ body > footer > nav div.block ul {
   font-size: 32px;
   text-align: right;
   margin-top: 47px;
-
-}
-
-#content.cart section .checkout a {
-  padding: 10px 20px;
 }
 
 /* Image gallery */
@@ -615,14 +623,6 @@ div.gallery.initialized li.thumbnail {
   width: 960px;
 }
 
-.carousel .controls h2 {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  color: lighten(#000, 30%);
-  font-size: 35px;
-  line-height: 12px
-}
-
 .carousel .controls .left,
 .carousel .controls .right {
   width: 117px;
@@ -676,13 +676,6 @@ div.gallery.initialized li.thumbnail {
   right: 10px;
 }
 
-/* Misc */
-
-address {
-  font-style: normal;
-  line-height: 24px;
-}
-
 /* Cart icons */
 
 span.cart-icon:after {
@@ -714,4 +707,47 @@ span.cart-icon.minus:after {
 span.cart-icon.plus:after {
   content: "\002B";
   font-weight: bold;
+}
+
+/* Checkout form */
+
+form[name='checkout'] h2 {
+  padding: 40px 0;
+}
+
+form[name='checkout'] input[type='text'],
+form[name='checkout'] input[type='text'] {
+  background-color:@edgeColor1;
+  border: none;
+  margin-bottom: 16px;
+  width: 300px;
+  height: 25px;
+  color: #9ea9ba;
+  text-indent: 5px;
+}
+
+form[name='checkout'] div.continue {
+  margin-top: 25px;
+}
+
+form[name='checkout'] span.mandatory:after  {
+  margin-left: -24px;
+  min-width: 21px;
+  text-align: center;
+  display: inline-block;
+  content: "\002A";
+  color: #9ea9ba;
+}
+
+form[name='checkout'] div.error{
+  margin-bottom: 7px;
+  font-size: 12px;
+  color: #CF2324;
+}
+
+/* Misc */
+
+address {
+  font-style: normal;
+  line-height: 24px;
 }

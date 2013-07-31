@@ -1,68 +1,79 @@
-<form method="post" action="/checkout">
+<div class="content">
 
-    <fieldset>
+    <div class="checkout-progress">
+        <ul class="wizard">
+            <li class="step">1. Your order</li>
+            <li class="step active">2. Shipping information</li>
+            <li class="step">3. Payment</li>
+            <li class="step">4. Confirmation</li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
 
-        <h2>Checkout</h2>
+    <form method="post" action="/checkout" name="checkout">
+
+        <h2 class="cursive">Your shipping information</h2>
 
         <div class="controls">
             {{#errors.email}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.email}}
+            <span class="mandatory"></span>
             <input type="text" name="email" value="{{request.email}}" placeholder="email"/>
         </div>
 
         <div class="controls">
             {{#errors.firstName}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.firstName}}
+            <span class="mandatory"></span>
             <input type="text" name="firstName" value="{{request.firstName}}" placeholder="First name"/>
         </div>
 
         <div class="controls">
             {{#errors.lastName}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.lastName}}
+            <span class="mandatory"></span>
             <input type="text" name="lastName" value="{{request.lastName}}" placeholder="Last name"/>
         </div>
 
         <div class="controls">
             {{#errors.street}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.street}}
+            <span class="mandatory"></span>
             <input type="text" name="street" value="{{request.street}}" placeholder="Street"/>
         </div>
 
         <div class="controls">
             {{#errors.zip}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.zip}}
+            <span class="mandatory"></span>
             <input type="text" name="zip" value="{{request.street}}" placeholder="Zip"/>
         </div>
 
         <div class="controls">
             {{#errors.city}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.city}}
+
             <input type="text" name="city" value="{{request.city}}" placeholder="City"/>
         </div>
 
         <div class="controls">
             {{#errors.country}}
-            Error ! {{this.errorType}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.country}}
+            <span class="mandatory"></span>
             <input type="text" name="country" value="{{request.country}}" placeholder="Country"/>
         </div>
 
-        <div class="controls">
-            <input type="submit" value="Checkout"/>
+        <div class="controls continue">
+            <input type="submit" class="big-button" value="Continue checkout"/>
         </div>
 
-    </fieldset>
-</form>
+    </form>
+</div>
+
