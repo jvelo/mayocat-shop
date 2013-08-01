@@ -1,7 +1,7 @@
 group ProductDAO;
 
 createProduct() ::= <<
-    INSERT INTO product (entity_id, position, title, model, on_shelf, description, price, stock, featured_image_id)
+    INSERT INTO product (entity_id, position, title, model, on_shelf, description, price, weight, stock, featured_image_id)
     VALUES (:product.id,
             :position,
             :product.title,
@@ -9,6 +9,7 @@ createProduct() ::= <<
             :product.onShelf,
             :product.description,
             :product.price,
+            :product.weight,
             :product.stock,
             :product.featuredImageId)
 >>
@@ -20,6 +21,7 @@ updateProduct() ::= <<
            description = :product.description,
            on_shelf = :product.onShelf,
            price = :product.price,
+           weight = :product.weight,
            stock = :product.stock,
            featured_image_id = :product.featuredImageId
     WHERE  entity_id = :product.id

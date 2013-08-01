@@ -21,6 +21,7 @@ public class ProductMapper implements ResultSetMapper<Product>
         product.setDescription(resultSet.getString("description"));
         product.setOnShelf(resultSet.getBoolean("on_shelf"));
         product.setPrice(resultSet.getBigDecimal("price"));
+        product.setWeight(resultSet.getBigDecimal("weight"));
         UUID featuredImageId = (UUID) resultSet.getObject("featured_image_id");
         if (featuredImageId != null) {
             product.setFeaturedImageId(featuredImageId);

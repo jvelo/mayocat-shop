@@ -242,8 +242,9 @@ angular.module('settings', ['ngResource'])
                 });
             });
 
-            configurationService.getSettings("catalog.currencies.main", function (mainCurrency) {
-                $scope.mainCurrency = mainCurrency.value;
+            configurationService.get("catalog", function(catalogSettings){
+                $scope.mainCurrency = catalogSettings.currencies.main;
+                $scope.weightUnit = catalogSettings.products.weightUnit;
             });
 
             $scope.loadCarriers();

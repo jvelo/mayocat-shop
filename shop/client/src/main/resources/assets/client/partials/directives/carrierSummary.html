@@ -15,7 +15,7 @@
     </thead>
     <tr ng-repeat="rule in carrier.rules">
         <td>
-            <span ng-show="carrier.strategy == 'weight'">{{rule.fromValue}} - {{rule.upToValue}} kg</span>
+            <span ng-show="carrier.strategy == 'weight'">{{rule.fromValue}} - {{rule.upToValue}} {{weightUnit}}</span>
             <span ng-show="carrier.strategy == 'price'">{{rule.fromValue}} - {{rule.upToValue}} {{mainCurrency}}</span>
         </td>
         <td>{{rule.price}} {{mainCurrency}}</td>

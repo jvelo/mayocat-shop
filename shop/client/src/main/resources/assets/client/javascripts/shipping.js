@@ -132,10 +132,11 @@
              * duration, pricing, etc.
              */
             return {
-                templateUrl: "partials/directives/carrierSummary.html?v=2", // Defeat browser cache http://git.io/6dPuFQ
+                templateUrl: "partials/directives/carrierSummary.html?v=3", // Defeat browser cache http://git.io/6dPuFQ
                 scope: {
                     carrier: '=',
-                    mainCurrency: '='
+                    mainCurrency: '=',
+                    weightUnit: '='
                 },
                 restrict: 'E'
             }

@@ -33,7 +33,7 @@
                             <div><a ng-click="editCarrier(carrier);">Edit zone</a></div>
                             <div><a ng-click="deleteCarrier(carrier);">Delete zone</a></div>
                         </div>
-                        <carrier-summary carrier="carrier" main-currency="mainCurrency"/>
+                        <carrier-summary carrier="carrier" main-currency="mainCurrency" weight-unit="weightUnit"/>
                     </li>
                 </ul>
 
@@ -172,7 +172,7 @@
                             From  <input type="text" class="span1" value="{{fromValue(editedCarrier.rules, $index - 1)}}" disabled />
                             up to <input type="text" class="span1" ng-model="rule.upToValue" />
 
-                            <span ng-show="editedCarrier.strategy == 'weight'">kg</span>
+                            <span ng-show="editedCarrier.strategy == 'weight'"> {{weightUnit}} </span>
                             <span ng-show="editedCarrier.strategy == 'price'"> {{mainCurrency}}</span>
 
                                     <span class="alert-error alert" ng-show="rule.upToValue < fromValue(editedCarrier.rules, $index - 1)">
@@ -189,7 +189,7 @@
                         <td>
                             From  <input type="text" class="span1" value="" disabled/>
                             up to <input type="text" class="span1" disabled/>
-                            <span ng-show="editedCarrier.strategy == 'weight'">kg</span>
+                            <span ng-show="editedCarrier.strategy == 'weight'"> {{weightUnit}} </span>
                             <span ng-show="editedCarrier.strategy == 'price'"> {{mainCurrency}}</span>
                         </td>
                         <td>
@@ -202,7 +202,7 @@
                     </tr>
                     <tr ng-show="editedCarrier.strategy == 'weight'" class="hasInput">
                         <td>
-                            Additional kg
+                            Additional {{weightUnit}}
                         </td>
                         <td ng-repeat="carrier in [editedCarrier]">
                             <!-- trick to have currency being displayed correctly.

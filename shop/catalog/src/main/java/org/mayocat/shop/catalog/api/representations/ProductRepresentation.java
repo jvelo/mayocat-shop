@@ -29,6 +29,8 @@ public class ProductRepresentation
 
     private BigDecimal price;
 
+    private BigDecimal weight;
+
     private Integer stock;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -71,6 +73,7 @@ public class ProductRepresentation
         this.description = product.getDescription();
         this.onShelf = product.getOnShelf();
         this.price = product.getUnitPrice();
+        this.weight = product.getWeight();
         this.stock = product.getStock();
 
         this.href = Resource.API_ROOT_PATH + ProductEntity.PATH + "/" + this.slug;
@@ -139,6 +142,16 @@ public class ProductRepresentation
     public void setPrice(BigDecimal price)
     {
         this.price = price;
+    }
+
+    public BigDecimal getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight)
+    {
+        this.weight = weight;
     }
 
     public List<AddonRepresentation> getAddons()

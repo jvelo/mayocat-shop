@@ -163,6 +163,10 @@ angular.module('product', ['ngResource'])
                         }
                     }
                 });
+                configurationService.get("catalog", function (catalogConfiguration) {
+                    $scope.hasWeight = catalogConfiguration.products.weight;
+                    $scope.weightUnit = catalogConfiguration.products.weightUnit;
+                });
             }
 
             // Initialize existing product or new product

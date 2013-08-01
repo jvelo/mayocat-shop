@@ -62,6 +62,34 @@
                                    ng-model="settings.catalog.products.stock.value"/>
                         </label>
                     </div>
+
+                    <!-- Weight -->
+                    <div ng-show="isVisible('catalog.products.weight')"
+                         ng-class="{default: isDefaultValue('catalog.products.weight')}">
+
+                        <label class="checkbox">
+                            have weight (keep this checked if you want to calculate shipping costs by weight)
+                            <input type="checkbox"
+                                   id="weightEnabled"
+                                   ng-model="settings.catalog.products.weight.value"/>
+                        </label>
+                    </div>
+
+                    <div ng-show="isVisible('catalog.products.weightUnit')"
+                         ng-class="{default: isDefaultValue('catalog.products.weightUnit')}">
+
+
+                        <dd>
+                            <label class="checkbox">
+                                weight unit
+
+                                <select ng-disabled="!settings.catalog.products.weight.value"
+                                        ng-model="settings.catalog.products.weightUnit.value"
+                                        ng-options="value.unit as (value.label + ' (' + value.unit + ')') for value in [{'unit':'kg','label':'Kilogram'}, {'unit':'g','label':'Gram'}, {'unit':'oz','label':'Ounce'}, {'unit':'lb','label':'Pound'} ]">
+                                </select>
+                            </label>
+                        </dd>
+                    </div>
                 </div>
 
             </fieldset>

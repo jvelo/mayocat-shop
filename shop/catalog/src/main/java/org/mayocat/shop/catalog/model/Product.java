@@ -44,6 +44,8 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
 
     private BigDecimal price;
 
+    private BigDecimal weight;
+
     private Integer stock;
 
     @DoNotIndex
@@ -128,6 +130,16 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
         this.price = price;
     }
 
+    public BigDecimal getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight)
+    {
+        this.weight = weight;
+    }
+
     @Override
     public PerhapsLoaded<List<Addon>> getAddons()
     {
@@ -189,6 +201,7 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
                 && Objects.equal(this.onShelf, other.onShelf)
                 && Objects.equal(this.price, other.price)
                 && Objects.equal(this.stock, other.stock)
+                && Objects.equal(this.weight, other.weight)
                 && Objects.equal(this.featuredImageId, other.featuredImageId);
     }
 
@@ -201,7 +214,8 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
                 this.onShelf,
                 this.price,
                 this.stock,
-                this.featuredImageId
+                this.featuredImageId,
+                this.weight
         );
     }
 
