@@ -271,11 +271,11 @@
                     disabled: '='
                 },
                 restrict: 'E',
-                template: ' <currency-picker model="new"></currency-picker>' +
-                    '<input type="submit" class="btn" ng-disabled="!new" value="Add" ng-click="add()">' +
-                    '<p><ul class="pickerElements"><li ng-repeat="currency in model">' +
+                template: '<div><ul class="pickerElements"><li ng-repeat="currency in model">' +
                     '<button class="btn btn-mini" ng-click="remove(currency)">{{currency}} &times;</span></button>' +
-                    '</li></ul></p>',
+                    '</li></ul></div><div class="clearfix"></div>' +
+                    '<currency-picker model="new"></currency-picker>' +
+                    '<input type="submit" class="btn" ng-disabled="!new" value="Add" ng-click="add()">',
                 controller: function ($scope) {
                     $scope.add = function() {
                         if ($scope.model.indexOf($scope.new) < 0) {

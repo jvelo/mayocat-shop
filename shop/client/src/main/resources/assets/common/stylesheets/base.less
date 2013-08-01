@@ -137,7 +137,7 @@ h1 input:not([type=submit]):not([type=file]) {
   height: 40px !important;
 }
 
-input:not([type=submit]):not([type=file]) {
+input:not([type=submit]):not([type=file]):not([type=checkbox]) {
   height: 30px !important;
 }
 
@@ -300,9 +300,10 @@ body > div.loader {
   border-left: 2px solid #c3bcb6 !important;
 }
 
-.block p, {
+.block p, .block p label {
   font-size: 11px;
   line-height: 14px;
+  margin-top: 11px;
 }
 
 #main .intro {
