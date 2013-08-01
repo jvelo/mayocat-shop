@@ -148,12 +148,12 @@
                 <textarea id="carrier-description" ng-model="editedCarrier.description"></textarea>
 
                 <div class="duration">
-                    Shipping duration :
+                    Delivery time
                     from <input type="text" ng-model="editedCarrier.minimumDays" class="span1" />
                     to <input type="text" ng-model="editedCarrier.maximumDays" class="span1" /> day(s)
                             <span class="alert-error alert"
                                   ng-show="!validShippingDurationRange(editedCarrier)">
-                                Shipping duration range is not valid
+                                  delivery time range is not valid
                             </span>
                 </div>
 
