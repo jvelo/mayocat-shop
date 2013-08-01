@@ -85,12 +85,6 @@ catalog:
       default: true
       configurable: true
       visible: true
-    variants:
-      default: true
-    priceVariesWithVariants:
-      default: true
-      configurable: false
-      visible: false
 
 checkout:
   defaultPaymentGateway: paypaladaptivepayments
