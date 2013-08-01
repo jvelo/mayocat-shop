@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-addons</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.8</version>
     </parent>
     <artifactId>mayocat-platform-addons-api</artifactId>
     <packaging>jar</packaging>

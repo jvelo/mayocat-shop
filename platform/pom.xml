@@ -3,12 +3,12 @@
     <parent>
         <groupId>org.mayocat</groupId>
         <artifactId>mayocat-parent</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.8</version>
     </parent>
     <groupId>org.mayocat.platform</groupId>
     <artifactId>mayocat-platform-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.8</version>
 
     <name>Mayocat Platform - Parent POM</name>
     <description>The platform to build applications upon</description>
