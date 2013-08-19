@@ -1,6 +1,7 @@
 package org.mayocat.shop.catalog.front.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.front.builder.CollectionContextBuilder;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
@@ -85,12 +87,22 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         context.put(PAGE_TITLE, collection.getTitle());
         context.put(PAGE_DESCRIPTION, collection.getDescription());
 
+        Theme theme = this.execution.getContext().getTheme();
+
+        List<Product> products = catalogService.findProductsForCollection(collection);
+
+        CollectionContextBuilder builder =
+                new CollectionContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+
+        // TODO get the collection images
+        context.put("collection", builder.build(collection, Collections.<Image>emptyList(), products));
+
         // Sets the "current" flag on the current collection
         try {
             List<Map<String, Object>> collections = (List<Map<String, Object>>) context.get(COLLECTIONS);
             for (Map<String, Object> c : collections) {
                 if (c.containsKey(ContextConstants.URL) &&
-                        c.get(ContextConstants.URL).equals(PATH + SLASH + collection.getSlug()))
+                        c.get(ContextConstants.URL).equals(PATH + Resource.SLASH + collection.getSlug()))
                 {
                     c.put("current", true);
                 }
@@ -98,39 +110,6 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         } catch (ClassCastException e) {
             // Ignore
         }
-
-        // TODO Introduce a notion of "Front representation"
-        Map<String, Object> collectionContext = Maps.newHashMap();
-        collectionContext.put("title", collection.getTitle());
-        collectionContext.put("description", collection.getDescription());
-        collectionContext.put(SLUG, collection.getSlug());
-
-        List<Product> products = catalogService.findProductsForCollection(collection);
-        List<Map<String, Object>> productsContext = Lists.newArrayList();
-
-        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
-        Theme theme = this.execution.getContext().getTheme();
-        ProductContextBuilder productContextBuilder = new ProductContextBuilder(configuration, generalSettings, theme);
-
-        for (final Product product : products) {
-            List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
-            List<Image> images = new ArrayList<Image>();
-            for (Attachment attachment : attachments) {
-                if (isImage(attachment)) {
-                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                    Image image = new Image(attachment, thumbnails);
-                    images.add(image);
-                }
-            }
-
-            Map<String, Object> productContext = productContextBuilder.build(product, images);
-            productsContext.add(productContext);
-        }
-
-        collectionContext.put("products", productsContext);
-
-        context.put("collection", collectionContext);
 
         result.putContext(context);
 

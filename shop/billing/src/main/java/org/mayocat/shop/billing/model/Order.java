@@ -9,8 +9,8 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
-import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.Index;
 
 /**
@@ -60,11 +60,11 @@ public class Order implements Entity
 
     private Map<String, Object> orderData;
 
-    private PerhapsLoaded<Customer> customer = PerhapsLoaded.notLoaded();
+    private Association<Customer> customer = Association.notLoaded();
 
-    private PerhapsLoaded<Address> billingAddress = PerhapsLoaded.notLoaded();
+    private Association<Address> billingAddress = Association.notLoaded();
 
-    private PerhapsLoaded<Address> deliveryAddress = PerhapsLoaded.notLoaded();
+    private Association<Address> deliveryAddress = Association.notLoaded();
 
     @Override
     public UUID getId()
@@ -210,32 +210,32 @@ public class Order implements Entity
         this.billingAddressId = billingAddressId;
     }
 
-    public PerhapsLoaded<Customer> getCustomer()
+    public Association<Customer> getCustomer()
     {
         return customer;
     }
 
-    public void setCustomer(PerhapsLoaded<Customer> customer)
+    public void setCustomer(Association<Customer> customer)
     {
         this.customer = customer;
     }
 
-    public PerhapsLoaded<Address> getBillingAddress()
+    public Association<Address> getBillingAddress()
     {
         return billingAddress;
     }
 
-    public void setBillingAddress(PerhapsLoaded<Address> billingAddress)
+    public void setBillingAddress(Association<Address> billingAddress)
     {
         this.billingAddress = billingAddress;
     }
 
-    public PerhapsLoaded<Address> getDeliveryAddress()
+    public Association<Address> getDeliveryAddress()
     {
         return deliveryAddress;
     }
 
-    public void setDeliveryAddress(PerhapsLoaded<Address> deliveryAddress)
+    public void setDeliveryAddress(Association<Address> deliveryAddress)
     {
         this.deliveryAddress = deliveryAddress;
     }

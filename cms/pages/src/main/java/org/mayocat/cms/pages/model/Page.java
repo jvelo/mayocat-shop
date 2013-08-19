@@ -8,11 +8,11 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Association;
 import org.mayocat.model.Child;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
-import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.Index;
@@ -46,7 +46,7 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     @Index
     private String content;
 
-    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
+    private Association<List<Addon>> addons = Association.notLoaded();
 
     private Optional<String> model = Optional.absent();
 
@@ -126,14 +126,14 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     }
 
     @Override
-    public PerhapsLoaded<List<Addon>> getAddons()
+    public Association<List<Addon>> getAddons()
     {
         return addons;
     }
 
     public void setAddons(List<Addon> addons)
     {
-        this.addons = new PerhapsLoaded<List<Addon>>(addons);
+        this.addons = new Association<List<Addon>>(addons);
     }
 
     public void setModel(String model)

@@ -7,7 +7,7 @@ import java.util.Currency;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.model.PerhapsLoaded;
+import org.mayocat.model.Association;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
@@ -56,7 +56,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             customer.setEmail(resultSet.getString("email"));
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setLastName(resultSet.getString("last_name"));
-            order.setCustomer(new PerhapsLoaded(customer));
+            order.setCustomer(new Association(customer));
         } catch (SQLException e) {
             // Nevermind
         }
@@ -70,7 +70,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             billing.setZip(resultSet.getString("billing_address_zip"));
             billing.setCity(resultSet.getString("billing_address_city"));
             billing.setCountry(resultSet.getString("billing_address_country"));
-            order.setBillingAddress(new PerhapsLoaded<Address>(billing));
+            order.setBillingAddress(new Association<Address>(billing));
         } catch (SQLException e) {
             // Nevermind
         }
@@ -84,7 +84,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             delivery.setZip(resultSet.getString("delivery_address_zip"));
             delivery.setCity(resultSet.getString("delivery_address_city"));
             delivery.setCountry(resultSet.getString("delivery_address_country"));
-            order.setDeliveryAddress(new PerhapsLoaded<Address>(delivery));
+            order.setDeliveryAddress(new Association<Address>(delivery));
         } catch (SQLException e) {
             // Nevermind
         }

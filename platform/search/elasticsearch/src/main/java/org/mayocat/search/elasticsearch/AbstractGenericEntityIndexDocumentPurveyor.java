@@ -14,11 +14,11 @@ import org.elasticsearch.common.collect.Maps;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.Execution;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Association;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Identifiable;
-import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.Slug;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
@@ -106,7 +106,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
                             // They're not located in the "properties" object like the other entity properties,
                             // but they're stored in their own "addon" object
 
-                            PerhapsLoaded<List<Addon>> addons = (PerhapsLoaded<List<Addon>>) field.get(entity);
+                            Association<List<Addon>> addons = (Association<List<Addon>>) field.get(entity);
                             if (addons.isLoaded()) {
                                 source.put("addons", extractAddons(addons.get()));
                             }
@@ -187,7 +187,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
     private boolean isAddonField(Class fieldClass, Field field)
     {
         try {
-            if (PerhapsLoaded.class.isAssignableFrom(fieldClass)) {
+            if (Association.class.isAssignableFrom(fieldClass)) {
                 ParameterizedType type = (ParameterizedType) field.getGenericType();
                 if (type.getActualTypeArguments().length > 0) {
                     ParameterizedType listType = (ParameterizedType) type.getActualTypeArguments()[0];

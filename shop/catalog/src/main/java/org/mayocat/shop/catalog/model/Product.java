@@ -9,10 +9,10 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Association;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
-import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.Index;
@@ -51,7 +51,11 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     @DoNotIndex
     private UUID featuredImageId;
 
-    private transient PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
+    private transient Association<List<Addon>> addons = Association.notLoaded();
+
+    private transient Association<Collection> featuredCollection = Association.notLoaded();
+
+    private transient Association<List<Collection>> collections = Association.notLoaded();
 
     @DoNotIndex
     private Optional<String> model = Optional.absent();
@@ -141,14 +145,34 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     }
 
     @Override
-    public PerhapsLoaded<List<Addon>> getAddons()
+    public Association<List<Addon>> getAddons()
     {
         return this.addons;
     }
 
     public void setAddons(List<Addon> addons)
     {
-        this.addons = new PerhapsLoaded<List<Addon>>(addons);
+        this.addons = new Association<List<Addon>>(addons);
+    }
+
+    public Association<Collection> getFeaturedCollection()
+    {
+        return featuredCollection;
+    }
+
+    public void setFeaturedCollection(Collection featuredCollection)
+    {
+        this.featuredCollection = new Association<Collection>(featuredCollection);
+    }
+
+    public Association<List<Collection>> getCollections()
+    {
+        return collections;
+    }
+
+    public void setCollections(List<Collection> collections)
+    {
+        this.collections = new Association<List<Collection>>(collections);
     }
 
     public void setModel(String model)

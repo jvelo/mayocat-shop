@@ -12,16 +12,16 @@ import com.google.common.base.Objects;
  *
  * @version $Id$
  */
-public class PerhapsLoaded<T> implements Serializable
+public class Association<T> implements Serializable
 {
     private T reference;
 
-    public static PerhapsLoaded notLoaded()
+    public static Association notLoaded()
     {
-        return new PerhapsLoaded(null);
+        return new Association(null);
     }
 
-    public PerhapsLoaded(T t)
+    public Association(T t)
     {
         this.reference = t;
     }
@@ -58,7 +58,7 @@ public class PerhapsLoaded<T> implements Serializable
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PerhapsLoaded<T> other = (PerhapsLoaded<T>) obj;
+        final Association<T> other = (Association<T>) obj;
 
         return Objects.equal(this.get(), other.get());
     }
@@ -72,6 +72,6 @@ public class PerhapsLoaded<T> implements Serializable
     @Override
     public String toString()
     {
-        return "PerhapsLoaded of [" + reference + "]";
+        return "Association of [" + reference + "]";
     }
 }

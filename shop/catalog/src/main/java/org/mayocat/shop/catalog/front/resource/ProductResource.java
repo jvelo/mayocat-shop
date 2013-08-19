@@ -34,6 +34,7 @@ import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
@@ -74,6 +75,9 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
+    private Provider<CollectionStore> collectionStore;
+
+    @Inject
     private Execution execution;
 
     @GET
@@ -105,10 +109,10 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         FrontView result = new FrontView("products", Optional.<String>absent(), breakpoint);
         Map<String, Object> context = getContext(uriInfo);
         context.put(ContextConstants.PAGE_TITLE, "All products");
-        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
+
         Theme theme = this.execution.getContext().getTheme();
-        ProductContextBuilder builder = new ProductContextBuilder(configuration, generalSettings, theme);
+        ProductContextBuilder builder =
+                new ProductContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
 
@@ -136,6 +140,15 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             }
             Map<String, Object> productContext = builder.build(product, images);
             productsContext.add(productContext);
+
+            List<org.mayocat.shop.catalog.model.Collection> collections =
+                    collectionStore.get().findAllForProduct(product);
+            product.setCollections(collections);
+            if (collections.size() > 0) {
+                // Here we take the first collection in the list, but in the future we should have the featured
+                // collection as the parent entity of this product
+                product.setFeaturedCollection(collections.get(0));
+            }
         }
 
         context.put("products", productsContext);
@@ -154,15 +167,21 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             return new FrontView("404", breakpoint);
         }
 
+        List<org.mayocat.shop.catalog.model.Collection> collections =
+                collectionStore.get().findAllForProduct(product);
+        product.setCollections(collections);
+        if (collections.size() > 0) {
+            // Here we take the first collection in the list, but in the future we should have the featured
+            // collection as the parent entity of this product
+            product.setFeaturedCollection(collections.get(0));
+        }
+
         FrontView result = new FrontView("product", product.getModel(), breakpoint);
 
         Map<String, Object> context = getContext(uriInfo);
 
         context.put(ContextConstants.PAGE_TITLE, product.getTitle());
         context.put(ContextConstants.PAGE_DESCRIPTION, product.getDescription());
-
-        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
 
         Theme theme = this.execution.getContext().getTheme();
 
@@ -176,7 +195,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             }
         }
 
-        ProductContextBuilder builder = new ProductContextBuilder(configuration, generalSettings, theme);
+        ProductContextBuilder builder =
+                new ProductContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
         Map<String, Object> productContext = builder.build(product, images);
 
         context.put("product", productContext);

@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface HasAddons
 {
-    PerhapsLoaded<List<Addon>> getAddons();
+    Association<List<Addon>> getAddons();
 
     void setAddons(List<Addon> addons);
 }

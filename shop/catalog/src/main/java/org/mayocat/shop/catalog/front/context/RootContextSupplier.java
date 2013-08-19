@@ -173,9 +173,8 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
         }
 
-        final CatalogSettings configuration = configurationService.getSettings(CatalogSettings.class);
-        final GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class);
-        ProductContextBuilder builder = new ProductContextBuilder(configuration, generalSettings, theme);
+        ProductContextBuilder builder = new ProductContextBuilder(configurationService, attachmentStore.get(),
+                thumbnailStore.get(), theme);
 
         for (final Product product : products) {
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()

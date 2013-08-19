@@ -1,28 +1,29 @@
 package org.mayocat.shop.catalog.front.builder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.addons.front.builder.AddonContextBuilder;
-import org.mayocat.addons.model.AddonField;
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.addons.util.AddonUtils;
+import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
+import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.shop.catalog.api.representations.CollectionRepresentation;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
+import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -41,15 +42,19 @@ public class ProductContextBuilder implements ContextConstants
 
     private AddonContextBuilder addonContextBuilder;
 
-    public ProductContextBuilder(CatalogSettings catalogSettings, GeneralSettings generalSettings,
-            Theme theme)
+    private CollectionContextBuilder collectionContextBuilder;
+
+    public ProductContextBuilder(ConfigurationService configurationService, AttachmentStore attachmentStore,
+            ThumbnailStore thumbnailStore, Theme theme)
     {
-        this.catalogSettings = catalogSettings;
-        this.generalSettings = generalSettings;
+        catalogSettings = configurationService.getSettings(CatalogSettings.class);
+        generalSettings = configurationService.getSettings(GeneralSettings.class);
         this.theme = theme;
 
         imageContextBuilder = new ImageContextBuilder(theme);
         addonContextBuilder = new AddonContextBuilder();
+        collectionContextBuilder =
+                new CollectionContextBuilder(configurationService, attachmentStore, thumbnailStore, theme);
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)
@@ -100,6 +105,14 @@ public class ProductContextBuilder implements ContextConstants
         if (product.getAddons().isLoaded()) {
             Map<String, AddonGroup> themeAddons = theme.getAddons();
             productContext.put("theme_addons", addonContextBuilder.build(themeAddons, product.getAddons().get()));
+        }
+
+        // Collection
+
+        if (product.getFeaturedCollection().isLoaded()) {
+            Map<String, Object> featuredCollection = collectionContextBuilder.build(
+                    product.getFeaturedCollection().get(), Collections.<Image>emptyList());
+            productContext.put("featured_collection", featuredCollection);
         }
 
         return productContext;

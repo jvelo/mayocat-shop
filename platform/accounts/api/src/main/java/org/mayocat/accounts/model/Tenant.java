@@ -10,10 +10,10 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.image.model.Image;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
-import org.mayocat.model.PerhapsLoaded;
 import org.mayocat.model.annotation.Index;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,10 +46,10 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     private TenantConfiguration configuration;
 
     @Index
-    private PerhapsLoaded<List<Addon>> addons = PerhapsLoaded.notLoaded();
+    private Association<List<Addon>> addons = Association.notLoaded();
 
     @JsonIgnore
-    private PerhapsLoaded<Image> featuredImage = PerhapsLoaded.notLoaded();
+    private Association<Image> featuredImage = Association.notLoaded();
 
     ///////////////////////////////////////////////////
 
@@ -129,7 +129,7 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     }
 
     @Override
-    public PerhapsLoaded<List<Addon>> getAddons()
+    public Association<List<Addon>> getAddons()
     {
         return this.addons;
     }
@@ -137,7 +137,7 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     @Override
     public void setAddons(List<Addon> addons)
     {
-        this.addons = new PerhapsLoaded<List<Addon>>(addons);
+        this.addons = new Association<List<Addon>>(addons);
     }
 
     public UUID getFeaturedImageId()
@@ -150,14 +150,14 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
         this.featuredImageId = featuredImageId;
     }
 
-    public PerhapsLoaded<Image> getFeaturedImage()
+    public Association<Image> getFeaturedImage()
     {
         return featuredImage;
     }
 
     public void setFeaturedImage(Image featuredImage)
     {
-        this.featuredImage = new PerhapsLoaded<Image>(featuredImage);
+        this.featuredImage = new Association<Image>(featuredImage);
     }
 
     // ///////////////////////////////////////////////////////////
