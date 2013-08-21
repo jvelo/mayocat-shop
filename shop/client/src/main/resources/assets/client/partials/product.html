@@ -29,7 +29,7 @@
                                 <span class="featured-star" ng-class="{featured: image.featured}"
                                       ng-click="selectFeatureImage(image)" />
                                 <div class="btn-group pull-right">
-                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown">
                                         Actions
                                         <span class="caret"></span>
                                     </a>
@@ -38,10 +38,23 @@
                                             data-toggle="modal"
                                             href="#editThumbnails">Edit thumbnails
                                         </li>
+                                        <li ng-click="image.editMeta = true">Edit metadata</li>
                                         <li ng-click="removeImage(image)">Remove</li>
                                     </ul>
                                 </div>
                                 <div class="clearfix"></div>
+                            </div>
+                            <div ng-show="image.editMeta" class="metadata">
+                                <div>
+                                    <input type="text" ng-model="image.title"
+                                           placeholder="Image's title (alternative text)"/>
+                                </div>
+                                <div>
+                                    <textarea rows="5" ng-model="image.description"
+                                              placeholder="Description (Optional)"></textarea>
+                                </div>
+                                <button type="button" class="btn" ng-click="image.editMeta = false">Cancel</button>
+                                <button type="button" class="btn btn-primary" ng-click="updateImageMeta(image)">Update</button>
                             </div>
                         </div>
                     </li>

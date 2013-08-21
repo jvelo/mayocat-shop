@@ -89,7 +89,23 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     @Override
     public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
     {
-        //To change body of implemented methods use File | ExposedSettings | File Templates.
+        this.dao.begin();
+
+        Attachment originalAttachment = this.findBySlug(entity.getSlug());
+
+        if (originalAttachment == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+
+        entity.setId(originalAttachment.getId());
+        Integer updatedRows = this.dao.updateAttachment(entity);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating attachment");
+        }
     }
 
     @Override

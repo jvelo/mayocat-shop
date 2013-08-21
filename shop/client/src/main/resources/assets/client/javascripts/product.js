@@ -104,6 +104,12 @@ angular.module('product', ['ngResource'])
                 });
             }
 
+            $scope.updateImageMeta = function (image) {
+                $http.post("/api/products/" + $scope.slug + "/images/" + image.slug, image).success(function () {
+                        $scope.reloadImages();
+                    });
+            }
+
             $scope.reloadImages = function () {
                 $scope.product.images = $http.get("/api/products/" + $scope.slug + "/images").success(function (data) {
                     $scope.product.images = data;

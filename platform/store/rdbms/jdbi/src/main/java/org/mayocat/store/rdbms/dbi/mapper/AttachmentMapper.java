@@ -19,6 +19,7 @@ public class AttachmentMapper implements ResultSetMapper<Attachment>
         Attachment attachment = new Attachment();
         attachment.setId((UUID) resultSet.getObject("id"));
         attachment.setTitle(resultSet.getString("title"));
+        attachment.setDescription(resultSet.getString("description"));
         attachment.setSlug(resultSet.getString("slug"));
         attachment.setData(resultSet.getBinaryStream("data"));
         attachment.setExtension(resultSet.getString("extension"));

@@ -40,6 +40,15 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
    void createAttachment(@Bind("entity") UUID entityId, @BindBean("attachment") Attachment attachment,
             @Bind("data") byte[] data);
 
+    @SqlUpdate
+    (
+        " UPDATE attachment" +
+        " SET    title = :attachment.title," +
+        "        description = :attachment.description" +
+        " WHERE  entity_id = :attachment.id"
+    )
+    Integer updateAttachment(@BindBean("attachment") Attachment attachment);
+
     @SqlQuery
     (
         "SELECT * " +

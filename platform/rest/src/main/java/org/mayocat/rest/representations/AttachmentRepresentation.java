@@ -9,6 +9,8 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
 {
     private FileRepresentation file;
 
+    private String description;
+
     public AttachmentRepresentation()
     {
         // No-arg constructor required for Jackson deserialization
@@ -19,6 +21,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
     {
         super(buildAttachmentApiHref(attachment), attachment.getSlug(), attachment.getTitle());
         this.file = buildFileRepresentation(attachment);
+        this.description = attachment.getDescription();
     }
 
     /**
@@ -34,6 +37,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
     {
         super(uri, attachment.getSlug(), attachment.getTitle());
         this.file = file;
+        this.description = attachment.getDescription();
     }
 
     public FileRepresentation getFile()
@@ -44,6 +48,11 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
     public void setFile(FileRepresentation file)
     {
         this.file = file;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
