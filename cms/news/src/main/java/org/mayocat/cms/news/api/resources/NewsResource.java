@@ -192,7 +192,7 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
                 {
                     // If the article is being published and has no publication date, set it to right now
                     article.setPublicationDate(new Date());
-                } else {
+                } else if (updatedArticleRepresentation.getPublicationDate() != null) {
                     article.setPublicationDate(updatedArticleRepresentation.getPublicationDate().toDate());
                 }
 
