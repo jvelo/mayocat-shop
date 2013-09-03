@@ -31,8 +31,7 @@
         }, obj);
     };
 
-    var getComponent = function (clazz, hint)
-    {
+    var getComponent = function (clazz, hint) {
         hint = typeof hint === "undefined" ? "default" : hint;
         return org.mayocat.util.Utils.getComponent(clazz, hint);
     };
@@ -44,8 +43,7 @@
 
     // Handlears helpers -----------------------------------------------------------------------------------------------
 
-    Handlebars.registerHelper('include', function (template, options)
-    {
+    Handlebars.registerHelper('include', function (template, options) {
         var partial = Handlebars.partials[template];
         var context = Object.extend(Object.extend({}, this), options.hash);
         if (typeof partial === "function") {
@@ -54,16 +52,14 @@
         return "Partial not found : " + template;
     });
 
-    Handlebars.registerHelper('templateSource', function (template, options)
-    {
+    Handlebars.registerHelper('templateSource', function (template, options) {
         var themeManager = getComponent(ThemeManager);
         var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
 
         return String(resolved.getContent());
     });
 
-    Handlebars.registerHelper('includeTemplate', function (template, options)
-    {
+    Handlebars.registerHelper('includeTemplate', function (template, options) {
         var themeManager = getComponent(ThemeManager);
         var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
 
@@ -81,13 +77,11 @@
         return "Partial not found : [" + template + "] with id [" + resolved.getId() + "]";
     });
 
-    Handlebars.registerHelper('resource', function (path, options)
-    {
+    Handlebars.registerHelper('resource', function (path, options) {
         return "/resources/" + path;
     });
 
-    Handlebars.registerHelper('isPath', function (path, options)
-    {
+    Handlebars.registerHelper('isPath', function (path, options) {
         if (typeof this.location !== "undefined") {
             if (path === this.location.path) {
                 return options.fn(this);
@@ -96,8 +90,7 @@
         return options.inverse(this);
     });
 
-    Handlebars.registerHelper('addon', function (path, options)
-    {
+    Handlebars.registerHelper('addon', function (path, options) {
         // Defaults
         var sources = ["theme", "platform"],
             valueType = "display";
