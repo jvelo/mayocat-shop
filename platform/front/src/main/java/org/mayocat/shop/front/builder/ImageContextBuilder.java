@@ -41,6 +41,8 @@ public class ImageContextBuilder
         context.setTitle(ContextUtils.safeString(image.getAttachment().getTitle()));
         context.setDescription(ContextUtils.safeString(image.getAttachment().getDescription()));
         context.put("featured", featured);
+        context.put("url", MessageFormat.format("/images/{0}.{1}", image.getAttachment().getSlug(),
+                image.getAttachment().getExtension()));
 
         if (theme != null && theme.getThumbnails().size() > 0) {
             for (String dimensionName : theme.getThumbnails().keySet()) {
