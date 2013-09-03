@@ -138,8 +138,6 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
                 Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
                 images.add(image);
             }
-            Map<String, Object> productContext = builder.build(product, images);
-            productsContext.add(productContext);
 
             List<org.mayocat.shop.catalog.model.Collection> collections =
                     collectionStore.get().findAllForProduct(product);
@@ -149,6 +147,9 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
                 // collection as the parent entity of this product
                 product.setFeaturedCollection(collections.get(0));
             }
+
+            Map<String, Object> productContext = builder.build(product, images);
+            productsContext.add(productContext);
         }
 
         context.put("products", productsContext);
