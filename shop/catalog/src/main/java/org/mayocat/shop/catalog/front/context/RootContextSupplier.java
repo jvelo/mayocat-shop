@@ -150,7 +150,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         // Temporarly put a product list in the context.
         // It is prefixed with __unsupported__ since the goal is to replace this with a "menu builder" feature
 
-        List<Map<String, Object>> productsContext = Lists.newArrayList();
+        final List<Map<String, Object>> productsContext = Lists.newArrayList();
         List<Product> products = this.productStore.get().findAllOnShelf(24, 0);
         java.util.Collection<UUID> featuredImageIds = Collections2.transform(products,
                 new Function<Product, UUID>()
@@ -203,7 +203,12 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             productsContext.add(productContext);
         }
 
-        data.put("__unsupported__products", productsContext);
+        data.put("__unsupported__products", productsContext); // kept for backward compatibility
+        data.put("products", new HashMap(){
+            {
+                put ("all",  productsContext);
+            }
+        });
 
         // Pages
 
