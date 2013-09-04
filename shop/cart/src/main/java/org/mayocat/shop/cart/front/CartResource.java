@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  */
 @Component("/cart")
 @Path("/cart")
-@Produces(MediaType.TEXT_HTML)
+@Produces(MediaType.WILDCARD)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class CartResource extends AbstractFrontResource implements Resource

@@ -1,0 +1,32 @@
+group TurnoverStatsDAO;
+
+daily() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+     WHERE  creation_date BETWEEN current_date AND localtimestamp
+       AND  status in ('SHIPPED', 'PAID')
+>>
+
+weekly() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+     WHERE  creation_date BETWEEN localtimestamp - interval '7 days' AND localtimestamp
+       AND  status in ('SHIPPED', 'PAID')
+>>
+
+monthly() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+     WHERE  creation_date BETWEEN localtimestamp - interval '30 days' AND localtimestamp
+       AND  status in ('SHIPPED', 'PAID')
+>>
+
+forever() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+     WHERE  status in ('SHIPPED', 'PAID')
+>>

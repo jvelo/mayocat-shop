@@ -1,18 +1,19 @@
 <h1 class="big">Orders</h1>
 
-<div>
+<div class="orders row">
 
     <div class="alert alert-info" ng-show="orders.length <= 0">There are no orders yet.</div>
 
-    <table class="table table-hover" ng-show="orders.length > 0">
-        <thead>
+    <div class="span9">
+        <table class="table table-hover" ng-show="orders.length > 0">
+            <thead>
             <tr>
                 <th>Date</th>
                 <th>Amount</th>
                 <th>Status</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             <tr ng-repeat="order in orders"
                 ng-click="setRoute('/orders/' + order.slug)"
                 ng-class="getClass(order.status)">
@@ -34,8 +35,62 @@
                 </td>
                 <td ng-bind="getStatus(order.status)"></td>
             </tr>
-        </tbody>
+            </tbody>
+        </table>
+    </div>
 
-    </table>
+    <div class="well span3" ng-show="orders.length > 0">
+        <h2>Turnover</h2>
+        <ul class="stats unstyled">
+            <li>
+                <strong>
+                    Today
+                    <div>
+                        <h4>
+                            <money amount="stats.daily.total" currency="mainCurrency"></money>
+                        </h4>
+                    </div>
+                    <div>for {{stats.daily.numberOfOrders}} order(s)</div>
+                </strong>
+            </li>
+            <li>
+                Last 7 days
+                <div>
+                    <h4>
+                        <money amount="stats.weekly.total" currency="mainCurrency"></money>
+                    </h4>
+                </div>
+                <div>for {{stats.weekly.numberOfOrders}} order(s)</div>
+            </li>
+            <li>
+                Last 30 days
+                <div>
+                    <h4>
+                        <money amount="stats.monthly.total" currency="mainCurrency"></money>
+                    </h4>
+                </div>
+                <div>for {{stats.monthly.numberOfOrders}} order(s)</div>
+            </li>
+            <li>
+                Overall
+                <div>
+                    <h4>
+                        <money amount="stats.forever.total" currency="mainCurrency"></money>
+                    </h4>
+                </div>
+                <div>for {{stats.forever.numberOfOrders}} order(s)</div>
+            </li>
+        </ul>
+    </div>
 
+</div>
+
+<div class="pagination">
+    <ul>
+        <li ng-repeat="n in range(pages)"
+            ng-class="{active: n == currentPage}"
+            ng-click="setPage(n)">
+            <a href ng-bind="n + 1">1</a>
+        </li>
+    </ul>
 </div>

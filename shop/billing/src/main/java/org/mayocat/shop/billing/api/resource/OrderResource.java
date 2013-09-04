@@ -78,7 +78,8 @@ public class OrderResource implements Resource
         Integer total = this.orderStore.get().countAll();
         ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<OrderRepresentation>(
                 PATH,
-                offset, number,
+                number,
+                offset,
                 new ArrayList<OrderRepresentation>(representations),
                 total
         );
