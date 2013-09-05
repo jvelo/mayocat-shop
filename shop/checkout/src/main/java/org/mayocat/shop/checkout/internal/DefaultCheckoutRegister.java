@@ -79,7 +79,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     public CheckoutResponse checkout(final Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
             Address billingAddress) throws CheckoutException
     {
-
         Preconditions.checkNotNull(customer);
         Order order;
 
@@ -137,7 +136,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             if (cart.getSelectedShippingOption() != null) {
                 final Carrier carrier = shippingService.getCarrier(cart.getSelectedShippingOption().getCarrierId());
                 order.setShipping(cart.getSelectedShippingOption().getPrice());
-                data.put("shipping", new HashMap<String, Object>(){
+                data.put("shipping", new HashMap<String, Object>()
+                {
                     {
                         put("carrierId", carrier.getId());
                         put("title", carrier.getTitle());
@@ -159,7 +159,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setOrderData(data);
 
             order = orderStore.get().create(order);
-
         } catch (EntityAlreadyExistsException e1) {
             throw new CheckoutException(e1);
         } catch (InvalidEntityException e2) {
@@ -180,15 +179,14 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
         Map<Option, Object> options = Maps.newHashMap();
         options.put(BaseOption.BASE_URL, uriInfo.getBaseUri().toString());
-        options.put(BaseOption.CANCEL_URL,
-                uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH);
+        options.put(BaseOption.CANCEL_URL, uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + order.getId() + "/" +
+                CheckoutResource.PAYMENT_CANCEL_PATH);
         options.put(BaseOption.RETURN_URL,
                 uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
         options.put(BaseOption.CURRENCY, cart.getCurrency());
         options.put(BaseOption.ORDER_ID, order.getId());
 
         try {
-
             CheckoutResponse response = new CheckoutResponse();
             GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
 
@@ -212,7 +210,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     PaymentOperation operation = gatewayResponse.getOperation();
                     operation.setOrderId(order.getId());
                     paymentOperationStore.get().create(operation);
-
                 } catch (EntityDoesNotExistException e) {
                     this.logger.error("Order error while checking out cart", e);
                     throw new CheckoutException(e);
@@ -230,6 +227,17 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             }
         } catch (GatewayException e) {
             this.logger.error("Payment error while checking out cart", e);
+            throw new CheckoutException(e);
+        }
+    }
+
+    @Override
+    public void dropOrder(UUID orderId) throws CheckoutException
+    {
+        Order order = orderStore.get().findById(orderId);
+        try {
+            orderStore.get().delete(order);
+        } catch (EntityDoesNotExistException e) {
             throw new CheckoutException(e);
         }
     }

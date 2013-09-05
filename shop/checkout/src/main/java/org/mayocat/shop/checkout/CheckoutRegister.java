@@ -1,5 +1,7 @@
 package org.mayocat.shop.checkout;
 
+import java.util.UUID;
+
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.shop.billing.model.Address;
@@ -18,4 +20,6 @@ public interface CheckoutRegister
 
     CheckoutResponse checkout(Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
             Address billingAddress) throws CheckoutException;
+
+    void dropOrder(UUID orderId) throws CheckoutException;
 }

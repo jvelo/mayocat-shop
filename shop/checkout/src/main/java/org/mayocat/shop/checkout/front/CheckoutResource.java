@@ -4,12 +4,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -50,9 +52,9 @@ public class CheckoutResource implements Resource
 {
     public static final String PATH = "checkout";
 
-    public static final String PAYMENT_RETURN_PATH = "returned";
+    public static final String PAYMENT_RETURN_PATH = "return";
 
-    public static final String PAYMENT_CANCEL_PATH = "cancelled";
+    public static final String PAYMENT_CANCEL_PATH = "cancel";
 
     @Inject
     private FrontContextManager contextManager;
@@ -238,9 +240,16 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    @Path(PAYMENT_CANCEL_PATH)
-    public FrontView cancelFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    @Path("{orderId}/" + PAYMENT_CANCEL_PATH)
+    public FrontView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId,
+            @Context UriInfo uriInfo, @Context Breakpoint breakpoint)
     {
+        try {
+            checkoutRegister.dropOrder(orderId);
+        } catch (CheckoutException e) {
+            this.logger.error("Failed to cancel order", e);
+        }
+
         FrontView result = new FrontView("checkout/cancelled", breakpoint);
         Map<String, Object> bindings = contextManager.getContext(uriInfo);
 
