@@ -1,25 +1,12 @@
 package org.mayocat.shop.payment.api.resources;
 
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Strings;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
-import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.event.PaymentOperationEvent;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
@@ -28,6 +15,15 @@ import org.mayocat.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.ObservationManager;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @version $Id$
@@ -60,22 +56,31 @@ public class PaymentResource implements Resource
     public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId, @PathParam("orderId") UUID orderId,
             MultivaluedMap<String, String> data)
     {
-        GatewayFactory factory = gatewayFactories.get(gatewayId);
-        PaymentGateway gateway = factory.createGateway();
+        GatewayFactory factory  = gatewayFactories.get(gatewayId);
+        PaymentGateway gateway  = factory.createGateway();
+        GatewayResponse response;
 
         try {
-            GatewayResponse response = gateway.acknowledge(data);
+            response = gateway.acknowledge(data);
             PaymentOperation op = response.getOperation();
             op.setOrderId(orderId);
             paymentOperationStore.get().create(op);
 
             observationManager.notify(new PaymentOperationEvent(), op);
+
         } catch (GatewayException e) {
             this.logger.error("Failed to acknowledge payment", e);
+            throw new WebApplicationException( e );
         } catch (InvalidEntityException e) {
             this.logger.error("Failed to acknowledge payment", e);
+            throw new WebApplicationException( e );
         } catch (EntityAlreadyExistsException e) {
             this.logger.error("Failed to acknowledge payment", e);
+            throw new WebApplicationException( e );
+        }
+
+        if (!Strings.isNullOrEmpty(response.getResponseText())) {
+            return Response.ok(response.getResponseText()).build();
         }
 
         return Response.ok().build();
