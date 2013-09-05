@@ -203,7 +203,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);
                 } else {
-                    order.setStatus(Order.Status.WAITING_FOR_PAYMENT);
+                    order.setStatus(Order.Status.PAYMENT_PENDING);
                 }
 
                 try {

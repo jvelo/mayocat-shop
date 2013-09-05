@@ -34,7 +34,8 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
     public abstract Integer updateOrder(@BindBean("order") Order order);
 
     @SqlQuery
-    public abstract List<Order> findAllWithStatus(@Bind("number") Integer number, @Bind("offset") Integer offset,
+    public abstract List<Order> findAllPaidOrAwaitingPayment(@Bind("number") Integer number,
+            @Bind("offset") Integer offset,
             @BindBean("tenant") Tenant tenant);
 
     @SqlQuery

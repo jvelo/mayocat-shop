@@ -111,9 +111,9 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     }
 
     @Override
-    public List<Order> findAllWithStatus(Integer number, Integer offset)
+    public List<Order> findAllPaidOrAwaitingPayment(Integer number, Integer offset)
     {
-        return this.dao.findAllWithStatus(number, offset, getTenant());
+        return this.dao.findAllPaidOrAwaitingPayment(number, offset, getTenant());
     }
 
     @Override

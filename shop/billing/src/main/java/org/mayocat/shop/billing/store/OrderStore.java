@@ -14,8 +14,15 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface OrderStore extends Store<Order, UUID>, EntityStore
 {
-    List<Order> findAllWithStatus(Integer number, Integer offset);
+    /**
+     * Lists all order that have a status different than {@link Order.Status#NONE} and {@link
+     * Order.Status#PAYMENT_PENDING}
+     *
+     * @param number the number of orders to bring back
+     * @param offset the offset at which to start finding the orders at
+     * @return the matched orders
+     */
+    List<Order> findAllPaidOrAwaitingPayment(Integer number, Integer offset);
 
     Order findBySlug(String order);
-
 }

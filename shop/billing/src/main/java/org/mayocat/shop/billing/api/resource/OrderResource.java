@@ -64,7 +64,7 @@ public class OrderResource implements Resource
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
         final DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
-        List<Order> orders = orderStore.get().findAllWithStatus(number, offset);
+        List<Order> orders = orderStore.get().findAllPaidOrAwaitingPayment(number, offset);
 
         Collection<OrderRepresentation> representations =
                 Collections2.transform(orders, new Function<Order, OrderRepresentation>()

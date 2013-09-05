@@ -1,0 +1,1 @@
+UPDATE purchase_order SET status='PAYMENT_PENDING' WHERE status='WAITING_FOR_PAYMENT';

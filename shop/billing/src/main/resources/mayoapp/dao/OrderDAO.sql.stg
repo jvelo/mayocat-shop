@@ -24,13 +24,13 @@ updateOrder() ::= <<
     WHERE  entity_id = :order.id
 >>
 
-findAllWithStatus() ::= <<
+findAllPaidOrAwaitingPayment() ::= <<
     SELECT *
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     WHERE   entity.type = 'purchase_order'
         AND entity.tenant_id = :tenant.id
-        AND purchase_order.status != 'NONE'
+        AND purchase_order.status NOT IN ('NONE', 'PAYMENT_PENDING')
     ORDER BY purchase_order.creation_date DESC
     LIMIT  :number
     OFFSET :offset

@@ -20,12 +20,39 @@ public class Order implements Entity
 {
     public enum Status
     {
+        /**
+         * The order has no status
+         */
         NONE,
+        /**
+         * Payment has been initialized (for example a credit card transaction has been initialized and we're waiting
+         * for confirmation from the server
+         */
+        PAYMENT_PENDING,
+        /**
+         * The order is waiting for a future payment. Example: the customer has chosen a check payment method, and we're
+         * waiting for the check
+         */
         WAITING_FOR_PAYMENT,
+        /**
+         * Payment has failed (for example refused by an authorization server)
+         */
         PAYMENT_FAILED,
+        /**
+         * The order has been paid and the payment is acknowledged
+         */
         PAID,
+        /**
+         * The order is prepared for shipment
+         */
         PREPARED,
+        /**
+         * The order is shipped
+         */
         SHIPPED,
+        /**
+         * The order is cancelled
+         */
         CANCELLED
     }
 
