@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.8.2</version>
     </parent>
     <artifactId>mayocat-platform-base</artifactId>
     <packaging>jar</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.8.2</version>
 
     <name>Mayocat Platform - Base</name>
     <description>Some base classes and interfaces</description>
