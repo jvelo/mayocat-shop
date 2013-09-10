@@ -60,7 +60,7 @@ public class PaymentOperationEventListener implements EventListener
         if (operation.getResult().equals(PaymentOperation.Result.CAPTURED)) {
 
             Order order = orderStore.get().findById(operation.getOrderId());
-            if (order.getStatus().equals(Order.Status.WAITING_FOR_PAYMENT)) {
+            if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
 
                 this.logger.debug("Updating order paid status");
                 try {
