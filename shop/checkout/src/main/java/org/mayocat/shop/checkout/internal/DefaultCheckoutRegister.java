@@ -176,6 +176,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
         GatewayFactory factory = gatewayFactories.get(defaultGatewayFactory);
         PaymentGateway gateway = factory.createGateway();
+        if (gateway == null) {
+            throw new CheckoutException("Gateway could not be created.");
+        }
 
         Map<Option, Object> options = Maps.newHashMap();
         options.put(BaseOption.BASE_URL, uriInfo.getBaseUri().toString());
