@@ -110,6 +110,7 @@ public class ResourceResource implements Resource
             MimetypesFileTypeMap mtftp = new MimetypesFileTypeMap();
             mtftp.addMimeTypes("application/javascript js");
             mtftp.addMimeTypes("text/css css");
+            mtftp.addMimeTypes("image/svg+xml svg");
 
             String contentType = mtftp.getContentType(file);
             if (!contentType.equals("application/octet-stream")) {
