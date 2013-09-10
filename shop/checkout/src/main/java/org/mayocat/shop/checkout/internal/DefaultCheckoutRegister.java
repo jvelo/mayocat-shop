@@ -205,7 +205,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 }
 
                 try {
-
                     orderStore.get().update(order);
                     PaymentOperation operation = gatewayResponse.getOperation();
                     operation.setOrderId(order.getId());
