@@ -204,6 +204,12 @@ public class CartResource extends AbstractFrontResource implements Resource
     private void recalculateShipping()
     {
         Cart cart = cartAccessor.getCart();
+
+        // In case shipping has been disabled
+        if (!shippingService.isShippingEnabled()) {
+            cart.setSelectedShippingOption(null);
+        }
+
         if (cart.getSelectedShippingOption() == null) {
             // Nothing to do
             return;
