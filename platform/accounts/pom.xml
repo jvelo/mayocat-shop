@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.8.2</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-accounts</artifactId>
     <packaging>pom</packaging>
