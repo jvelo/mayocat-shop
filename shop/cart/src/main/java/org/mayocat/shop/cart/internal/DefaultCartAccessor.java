@@ -6,7 +6,9 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.context.Execution;
 import org.mayocat.session.Session;
 import org.mayocat.shop.cart.CartAccessor;
+import org.mayocat.shop.cart.CartInSessionConverter;
 import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.cart.model.CartInSession;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,19 +30,36 @@ public class DefaultCartAccessor implements CartAccessor
     @Inject
     private Execution execution;
 
+    @Inject
+    private CartInSessionConverter cartInSessionConverter;
+
     @Override
     public Cart getCart()
     {
         Session session = this.execution.getContext().getSession();
         if (session.getAttribute(SESSION_CART_KEY) != null) {
-            Cart cart = (Cart) session.getAttribute(SESSION_CART_KEY);
-            LOGGER.debug("Retrieved cart from session with {} items", cart.getItems().keySet());
-            return cart;
+            try {
+                CartInSession cartInSession = (CartInSession) session.getAttribute(SESSION_CART_KEY);
+                Cart cart = cartInSessionConverter.loadFromCartInSession(cartInSession);
+                LOGGER.debug("Retrieved cart from session with {} items", cart.getItems().keySet());
+                return cart;
+            }
+            catch (ClassCastException e) {
+                // Backward compatibility : the session attribute use to contain the cart directly.
+                // We do nothing, the code below will create a new cart.
+            }
         }
 
         CatalogSettings catalogSettings = configurationService.getSettings(CatalogSettings.class);
         Cart cart = new Cart(catalogSettings.getCurrencies().getMainCurrency().getValue());
-        session.setAttribute(SESSION_CART_KEY, cart);
+        session.setAttribute(SESSION_CART_KEY, cartInSessionConverter.convertToCartInSession(cart));
         return cart;
+    }
+
+    @Override
+    public void setCart(Cart cart)
+    {
+        Session session = this.execution.getContext().getSession();
+        session.setAttribute(SESSION_CART_KEY, cartInSessionConverter.convertToCartInSession(cart));
     }
 }
