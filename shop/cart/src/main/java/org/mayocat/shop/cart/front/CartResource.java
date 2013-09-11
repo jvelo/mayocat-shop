@@ -77,6 +77,8 @@ public class CartResource extends AbstractFrontResource implements Resource
 
         recalculateShipping();
 
+        cartAccessor.setCart(cart);
+
         return Response.seeOther(new URI("/cart")).build();
     }
 
@@ -173,6 +175,8 @@ public class CartResource extends AbstractFrontResource implements Resource
         }
 
         recalculateShipping();
+
+        cartAccessor.setCart(cart);
 
         return Response.seeOther(new URI("/cart")).build();
     }

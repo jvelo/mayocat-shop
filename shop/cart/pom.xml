@@ -69,5 +69,14 @@
             <version>${xwiki.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Need to drag this for some reason -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

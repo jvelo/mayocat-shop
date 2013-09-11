@@ -11,4 +11,6 @@ import org.xwiki.component.annotation.Role;
 public interface CartAccessor
 {
     public Cart getCart();
+
+    void setCart(Cart cart);
 }
