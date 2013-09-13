@@ -6,7 +6,8 @@ var mayocat = angular.module('mayocat', [
     'mayocat.image',
     'mayocat.thumbnail',
     'mayocat.configuration',
-    'mayocat.time'
+    'mayocat.time',
+    'mayocat.entitiesLocalization'
 ]);
 
 /**

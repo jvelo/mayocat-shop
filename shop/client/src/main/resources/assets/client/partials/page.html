@@ -6,15 +6,17 @@
 
         <div ng-show="page.title != undefined">
 
+            {{pageCoco}}
+
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="page.title" placeholder="Page's title"/>
+                <input type="text" class="title" ng-model="page.title" localized placeholder="Page's title"/>
             </h1>
 
             <!-- Description -->
             <div ng-show="!isNew()">
                 <label>Content</label>
-                <textarea class="" rows="10" ng-model="page.content" ck-editor/>
+                <textarea class="" rows="10" ng-model="page.content" ck-editor localized />
             </div>
 
             <div class="block" ng-show="!isNew()">

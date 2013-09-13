@@ -40,8 +40,7 @@
                                ng-disabled="!isConfigurable('general.locales.main')"/>
                     </div>
 
-                    <!-- Other locales
-                     FIXME not yet supported
+                    <!-- Other locales -->
                     <div ng-show="isVisible('general.locales.others')"
                          ng-class="{default: isDefaultValue('general.locales.others')}">
                         <p><label for="otherLocales">Other languages</label></p>
@@ -50,7 +49,7 @@
                                 ng-model="settings.general.locales.others.value"
                                 id="otherLocales"
                                 ng-disabled="!isConfigurable('general.locales.others')"/>
-                    </div>-->
+                    </div>
 
                     <!-- Theme -->
                     <div ng-show="isVisible('theme.active')"

@@ -14,7 +14,16 @@ angular.module('product', ['ngResource'])
         'imageService',
         'configurationService',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, catalogService, addonsService, imageService, configurationService) {
+        function ($scope,
+                  $rootScope,
+                  $routeParams,
+                  $resource,
+                  $http,
+                  $location,
+                  catalogService,
+                  addonsService,
+                  imageService,
+                  configurationService) {
 
             $scope.slug = $routeParams.product;
 
@@ -197,10 +206,13 @@ angular.module('product', ['ngResource'])
                         // angular directives.
                         $scope.product.onShelf = undefined;
                     }
+
+                    $scope.localProduct = $scope.product;
                 });
             }
             else {
                 $scope.product = $scope.newProduct();
+                $scope.localProduct = $scope.product;
                 $scope.initializeAddons();
                 $scope.initializeModels();
             }

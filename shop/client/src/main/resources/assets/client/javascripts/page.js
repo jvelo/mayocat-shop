@@ -1,21 +1,125 @@
 'use strict'
 
+angular.module('entities', [])
+
+    .factory('entityBaseMixin', function ($routeParams) {
+        return function(entityType) {
+            var mixin = {};
+
+            mixin.slug = $routeParams[entityType];
+
+            mixin[entityType];
+            return mixin;
+        }
+     })
+
+    .factory('entityModelMixin', function (configurationService) {
+        return function (entityType, scope) {
+            var mixin = {};
+
+            mixin.initializeModels = function () {
+                scope.models = [];
+                configurationService.get("entities", function (entities) {
+                    if (typeof entities[entityType] !== 'undefined') {
+                        for (var modelId in entities[entityType].models) {
+                            if (entities[entityType].models.hasOwnProperty(modelId)) {
+                                var model = entities[entityType].models[modelId];
+                                scope.models.push({
+                                    id: modelId,
+                                    name: model.name
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+            return mixin;
+        }
+    })
+
+    .factory('entityAddonsMixin', function (addonsService) {
+        return function(entityType, scope) {
+            var mixin = {};
+
+            mixin.initializeAddons = function () {
+                addonsService.initializeEntityAddons(entityType, scope[entityType]).then(function (addons) {
+                    scope.addons = addons;
+                });
+            }
+
+            return mixin;
+        }
+    })
+
+    .factory('entityLocalizationMixin', function (addonsService) {
+        return function(entityType, scope) {
+            var mixin = {};
+
+            return mixin;
+        }
+    })
+
+    .factory('entityImageMixin', function (imageService, $http) {
+        return function (entityType, scope) {
+            var mixin = {};
+
+            mixin.editThumbnails = function (image) {
+                mixin.$emit('thumbnails:edit', entityType, image);
+            }
+
+            mixin.reloadImages = function () {
+                $http.get("/api/" + entityType + "s/" + scope.slug + "/images")
+                    .success(function (data) {
+                        scope[entityType].images = data;
+                    }
+                );
+            }
+
+            mixin.selectFeatureImage = function (image) {
+                imageService.selectFeatured(scope[entityType], image);
+            }
+
+            mixin.removeImage = function (image) {
+                $http.delete("/api/products/" + scope.slug + "/images/" + image.slug).success(function () {
+                    mixin.reloadImages();
+                });
+            }
+
+            mixin.getImageUploadUri = function () {
+                return "/api/" + entityType + "s/" + scope.slug + "/attachments";
+            }
+
+            return mixin;
+        }
+    });
+
 angular.module('page', ['ngResource'])
 
     .controller('PageController', [
         '$scope',
         '$rootScope',
-        '$routeParams',
         '$resource',
         '$http',
         '$location',
-        'addonsService',
-        'imageService',
-        'configurationService',
+        'entityBaseMixin',
+        'entityImageMixin',
+        'entityAddonsMixin',
+        'entityModelMixin',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService, configurationService) {
+        function ($scope,
+                  $rootScope,
+                  $resource,
+                  $http,
+                  $location,
+                  entityBaseMixin,
+                  entityImageMixin,
+                  entityAddonsMixin,
+                  entityModelMixin) {
 
-            $scope.slug = $routeParams.page;
+            angular.extend($scope, entityBaseMixin("page", $scope));
+            angular.extend($scope, entityAddonsMixin("page", $scope));
+            angular.extend($scope, entityModelMixin("page", $scope));
+            angular.extend($scope, entityImageMixin("page", $scope));
 
             $scope.publishPage = function () {
                 $scope.page.published = true;
@@ -46,10 +150,6 @@ angular.module('page', ['ngResource'])
                 }
             };
 
-            $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', "page", image);
-            }
-
             $scope.PageResource = $resource("/api/pages/:slug");
 
             $scope.isNew = function () {
@@ -62,49 +162,6 @@ angular.module('page', ['ngResource'])
                     title: "",
                     addons: []
                 };
-            }
-
-            $scope.reloadImages = function () {
-                $scope.page.images = $http.get("/api/pages/" + $scope.slug + "/images").success(function (data) {
-                    $scope.page.images = data;
-                });
-            }
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.page, image);
-            }
-
-            $scope.removeImage = function(image) {
-                $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
-                    $scope.reloadImages();
-                });
-            }
-
-            $scope.getImageUploadUri = function () {
-                return "/api/pages/" + $scope.slug + "/attachments";
-            }
-
-            $scope.initializeAddons = function () {
-                addonsService.initializeEntityAddons("page", $scope.page).then(function (addons) {
-                    $scope.addons = addons;
-                });
-            }
-
-            $scope.initializeModels = function () {
-                $scope.models = [];
-                configurationService.get("entities", function (entities) {
-                    if (typeof entities.page !== 'undefined') {
-                        for (var modelId in entities.page.models) {
-                            if (entities.page.models.hasOwnProperty(modelId)) {
-                                var model = entities.page.models[modelId];
-                                $scope.models.push({
-                                    id: modelId,
-                                    name: model.name
-                                });
-                            }
-                        }
-                    }
-                });
             }
 
             // Initialize existing page or new page
