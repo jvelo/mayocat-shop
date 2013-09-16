@@ -7,9 +7,9 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 @Index
-public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage, Purchasable
+public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Purchasable
 {
     private static final long serialVersionUID = 6998229869430511994L;
 

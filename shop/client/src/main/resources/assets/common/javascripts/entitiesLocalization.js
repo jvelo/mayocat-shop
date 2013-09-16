@@ -39,7 +39,7 @@
 
         }])
 
-        .directive("localized", ['entitiesLocalizationService', function (localizationService) {
+        .directive("localized", ['$rootScope', 'entitiesLocalizationService', function ($rootScope, localizationService) {
             return {
                 scope: {
                 },
@@ -62,6 +62,18 @@
                     $scope.select = function(locale) {
                         $scope.selectedLocale = locale;
                     };
+
+                    $scope.$watch('selectedLocale', function () {
+                        $rootScope.$broadcast("entity:editedLocaleChanged", {
+                            "locale": $scope.selectedLocale
+                        })
+                    });
+
+                    $scope.$on("entity:editedLocaleChanged", function (event, data) {
+                        if (event.currentScope !== event.targetScope) {
+                            $scope.selectedLocale = data.locale
+                        }
+                    });
 
                     localizationService.getLocales().then(function (locales) {
                         $scope.selectedLocale = locales.main;

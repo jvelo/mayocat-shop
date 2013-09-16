@@ -43,7 +43,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
 
         this.dao.createEntity(article, ARTICLE_TABLE_NAME, getTenant());
         this.dao.createArticle(article);
-        this.dao.insertTranslations(entityId, article.getTranslations());
+        //this.dao.insertTranslations(entityId, article.getTranslations());
         this.dao.createOrUpdateAddons(article);
 
         this.dao.commit();
@@ -108,7 +108,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     @Override
     public Article findBySlug(String slug)
     {
-        Article article = this.dao.findBySlugWithTranslations(ARTICLE_TABLE_NAME, slug, getTenant());
+        Article article = this.dao.findBySlug(ARTICLE_TABLE_NAME, slug, getTenant());
         if (article != null) {
             List<Addon> addons = this.dao.findAddons(article);
             article.setAddons(addons);

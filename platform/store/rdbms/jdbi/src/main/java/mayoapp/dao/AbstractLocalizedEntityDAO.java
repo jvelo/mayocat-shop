@@ -1,15 +1,9 @@
 package mayoapp.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
 
-import org.mayocat.model.Localized;
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.model.Translations;
+import org.mayocat.model.Localized;
 import org.mayocat.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.store.rdbms.dbi.jointype.EntityTranslationJoinRow;
 import org.mayocat.store.rdbms.dbi.mapper.EntityTranslationsJoinRowMapper;
@@ -25,6 +19,7 @@ public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements
     EntityDAO<E>
 {
 
+    /*
     public void insertTranslations(UUID entityId, Translations translations)
     {
         if (translations == null) {
@@ -50,13 +45,14 @@ public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements
             insertTranslations("small", ids, languages, texts);
         }
     }
+    */
 
     public E findBySlugWithTranslations(String type, String slug, Tenant tenant) {
         List<EntityTranslationJoinRow> rows = this.findBySlugWithTranslationsRows(type, slug, tenant);
 
         E entity = null;
         Class< E > thisEntityType = Generics.getTypeParameter(getClass(), Localized.class);
-        Translations translations = new Translations();
+
         EntityExtractor<E> extractor = new EntityExtractor<E>();
         for (EntityTranslationJoinRow row : rows) {
             if (entity == null) {
@@ -64,15 +60,15 @@ public abstract class AbstractLocalizedEntityDAO<E extends Localized> implements
             }
             String field = row.getField();
             if (field != null) {
-                if (!translations.containsKey(field)) {
-                    translations.put(field, new HashMap<Locale, String>());
-                }
-                Map<Locale, String> fieldTranslations = translations.get(field);
-                fieldTranslations.put(row.getLocale(), row.getText());
+                //if (!translations.containsKey(field)) {
+                //    translations.put(field, new HashMap<Locale, String>());
+                //}
+                //Map<Locale, String> fieldTranslations = translations.get(field);
+                //fieldTranslations.put(row.getLocale(), row.getText());
             }
         }
         if (entity != null) {
-            entity.setTranslations(translations);
+            //entity.setTranslations(translations);
         }
         return entity;
     }

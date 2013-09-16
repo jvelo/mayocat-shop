@@ -18,7 +18,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 
 @RegisterMapper(ProductMapper.class)
 @UseStringTemplate3StatementLocator
-public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> implements Transactional<ProductDAO>,
+public abstract class ProductDAO implements EntityDAO<Product>, Transactional<ProductDAO>,
         PositionedDAO<Product>, AddonsDAO<Product>
 {
     @SqlUpdate
@@ -45,7 +45,7 @@ public abstract class ProductDAO extends AbstractLocalizedEntityDAO<Product> imp
 
     public Product findBySlug(String slug, Tenant tenant)
     {
-        return this.findBySlugWithTranslations("product", slug, tenant);
+        return this.findBySlug("product", slug, tenant);
     }
 
     public void createOrUpdateAddons(Product entity)

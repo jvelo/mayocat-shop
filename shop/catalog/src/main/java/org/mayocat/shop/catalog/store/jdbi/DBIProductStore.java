@@ -67,7 +67,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             lastIndex = 0;
         }
         this.dao.createProduct(lastIndex + 1, product);
-        this.dao.insertTranslations(entityId, product.getTranslations());
+        // this.dao.insertTranslations(entityId, product.getTranslations());
         this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
@@ -172,7 +172,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     public Product findBySlug(String slug)
     {
-        Product product = this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
+        Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant());
         if (product != null) {
             List<Addon> addons = this.dao.findAddons(product);
             product.setAddons(addons);

@@ -52,8 +52,34 @@ angular.module('entities', [])
     })
 
     .factory('entityLocalizationMixin', function (addonsService) {
+
+        var capitalize = function(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        };
+
         return function(entityType, scope) {
-            var mixin = {};
+            var mixin = {},
+                localizedKey = "localized" + capitalize(entityType);
+
+            mixin.initializeLocalization = function(){
+                scope[localizedKey] = scope[entityType];
+            }
+
+            mixin.localizedVersions = {
+                "en_US" : {
+                    "title" : "YOYO",
+                    "content" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut faucibus urna. Cras ultricies mattis lorem mattis scelerisque. Nam turpis ante, cursus et tristique non, vulputate non lorem. Etiam tortor nibh, congue aliquet turpis nec, aliquam euismod augue. Etiam a ornare neque. Curabitur condimentum molestie nulla, vel vestibulum arcu ullamcorper pulvinar. Nunc sodales feugiat iaculis. Nunc sed ipsum imperdiet, scelerisque diam ut, cursus elit. In sagittis risus nec nibh pulvinar convallis. Mauris eu neque egestas justo ullamcorper gravida a ut lacus. Praesent in tellus molestie, rutrum enim sit amet, egestas felis. Proin et erat urna. Mauris dapibus porttitor porta. Mauris elementum ipsum ut nibh aliquet, quis sagittis dui imperdiet."
+                }
+            }
+
+            scope.$on("entity:editedLocaleChanged", function(event, data){
+                if (typeof scope.localizedVersions[data.locale] !== 'undefined') {
+                    scope[localizedKey] = scope.localizedVersions[data.locale];
+                }
+                else {
+                    scope[localizedKey] = scope[entityType];
+                }
+            });
 
             return mixin;
         }
@@ -105,6 +131,7 @@ angular.module('page', ['ngResource'])
         'entityImageMixin',
         'entityAddonsMixin',
         'entityModelMixin',
+        'entityLocalizationMixin',
 
         function ($scope,
                   $rootScope,
@@ -114,12 +141,14 @@ angular.module('page', ['ngResource'])
                   entityBaseMixin,
                   entityImageMixin,
                   entityAddonsMixin,
-                  entityModelMixin) {
+                  entityModelMixin,
+                  entityLocalizationMixin) {
 
             angular.extend($scope, entityBaseMixin("page", $scope));
             angular.extend($scope, entityAddonsMixin("page", $scope));
             angular.extend($scope, entityModelMixin("page", $scope));
             angular.extend($scope, entityImageMixin("page", $scope));
+            angular.extend($scope, entityLocalizationMixin("page", $scope));
 
             $scope.publishPage = function () {
                 $scope.page.published = true;
@@ -173,6 +202,7 @@ angular.module('page', ['ngResource'])
 
                     $scope.initializeAddons();
                     $scope.initializeModels();
+                    $scope.initializeLocalization();
 
                     if ($scope.page.published == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -187,6 +217,7 @@ angular.module('page', ['ngResource'])
                 $scope.page = $scope.newPage();
                 $scope.initializeAddons();
                 $scope.initializeModels();
+                $scope.initializeLocalization();
             }
 
             $scope.confirmDeletion = function () {

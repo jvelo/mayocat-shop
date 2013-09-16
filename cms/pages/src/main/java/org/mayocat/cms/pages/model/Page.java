@@ -1,29 +1,33 @@
 package org.mayocat.cms.pages.model;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
-import org.mayocat.model.annotation.LocalizationFieldType;
-import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.model.annotation.LocalizationFieldType;
+//import org.mayocat.model.annotation.Localized;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel, HasFeaturedImage
+public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasFeaturedImage
 {
     private UUID id;
 
@@ -37,12 +41,12 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     @Index
     private Boolean published;
 
-    @Localized(type = LocalizationFieldType.SMALL)
+    //@Localized(type = LocalizationFieldType.SMALL)
     @Index
     @NotNull
     private String title;
 
-    @Localized(type = LocalizationFieldType.MEDIUM)
+    //@Localized(type = LocalizationFieldType.MEDIUM)
     @Index
     private String content;
 
@@ -194,5 +198,11 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     public String toString()
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
+    }
+
+    @Override
+    public Map<Locale, Object> getLocalizedVersions()
+    {
+        return Maps.newHashMap();
     }
 }

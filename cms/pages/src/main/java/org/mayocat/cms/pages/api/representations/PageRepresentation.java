@@ -1,6 +1,7 @@
 package org.mayocat.cms.pages.api.representations;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.pages.model.Page;
@@ -36,6 +37,8 @@ public class PageRepresentation
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
+
+    private Map<String, Object> localizedVersions = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

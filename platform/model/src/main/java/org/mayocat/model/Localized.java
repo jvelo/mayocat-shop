@@ -1,12 +1,9 @@
 package org.mayocat.model;
 
 import java.util.Locale;
+import java.util.Map;
 
 public interface Localized extends Entity
 {
-    String getLocalizedText(String field, Locale locale);
-    
-    Translations getTranslations();
-    
-    void setTranslations(Translations translations);
+    Map<Locale, Object> getLocalizedVersions();
 }

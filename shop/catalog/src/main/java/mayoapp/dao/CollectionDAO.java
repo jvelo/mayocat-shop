@@ -22,8 +22,7 @@ import com.google.common.collect.ImmutableList;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapper(CollectionMapper.class)
-public abstract class CollectionDAO extends AbstractLocalizedEntityDAO<Collection>
-        implements Transactional<CollectionDAO>, PositionedDAO<Collection>
+public abstract class CollectionDAO  implements EntityDAO<Collection>, Transactional<CollectionDAO>, PositionedDAO<Collection>
 {
     @SqlUpdate
     public abstract void create(@Bind("position") Integer position, @BindBean("collection") Collection collection);
@@ -54,7 +53,7 @@ public abstract class CollectionDAO extends AbstractLocalizedEntityDAO<Collectio
 
     public Collection findBySlug(String slug, Tenant tenant)
     {
-        return this.findBySlugWithTranslations("collection", slug, tenant);
+        return this.findBySlug("collection", slug, tenant);
     }
 
     public List<EntityAndCount<Collection>> findAllWithProductCount(Tenant tenant)
