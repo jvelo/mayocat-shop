@@ -213,7 +213,7 @@
 
         .filter('money', ['moneyService', function (moneyService) {
             return function (amount, currencyCode) {
-                if (typeof amount === 'undefined') {
+                if (typeof amount === 'undefined' || amount === null) {
                     // Garbage in, garbage out
                     return;
                 }
@@ -336,30 +336,6 @@
                 }
             }
         }])
-
-        .directive('money', ['moneyService', function (moneyService) {
-            return {
-                scope: {
-                    amount: '=',
-                    currency: '='
-                },
-                restrict: 'E',
-                template: '<span ng-bind="format(amount)"></span> {{currency}}',
-                controller: function ($scope) {
-                    $scope.format = function (amount) {
-                        if (typeof amount !== "undefined") {
-                            return amount.toFixed($scope.decimals);
-                        }
-                    }
-                },
-                link: function ($scope, element, attrs, controller) {
-                    $scope.decimals = moneyService.getCurrency($scope.currency) ?
-                        moneyService.getCurrency($scope.currency).decimals : 2;
-                    $scope.format();
-                }
-            }
-        }]);
-
 })();
 
 
