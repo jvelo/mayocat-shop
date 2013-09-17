@@ -619,9 +619,9 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
     }]);
 
 
-mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', 'authenticationService',
+mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',
-    function ($rootScope, $scope, $location, $http, authenticationService, configurationService) {
+    function ($rootScope, $scope, $location, $http, $translate, authenticationService, configurationService) {
 
 
         /**
@@ -723,5 +723,14 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         $scope.setRoute = function (href) {
             $location.url(href);
         };
+
+        $scope.changeLocale = function (locale) {
+            $rootScope.$broadcast('ChangeLocale', locale);
+        };
+
+        $scope.$on('ChangeLocale', function (event, locale) {
+            localStorage.locale = locale;
+            $translate.uses(locale);
+        });
 
     }]);
