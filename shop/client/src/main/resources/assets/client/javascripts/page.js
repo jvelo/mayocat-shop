@@ -61,18 +61,15 @@ angular.module('entities', [])
             var mixin = {},
                 localizedKey = "localized" + capitalize(entityType);
 
+            scope.localizedVersions = {};
+
             mixin.initializeLocalization = function(){
                 scope[localizedKey] = scope[entityType];
-            }
-
-            mixin.localizedVersions = {
-                "en_US" : {
-                    "title" : "YOYO",
-                    "content" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut faucibus urna. Cras ultricies mattis lorem mattis scelerisque. Nam turpis ante, cursus et tristique non, vulputate non lorem. Etiam tortor nibh, congue aliquet turpis nec, aliquam euismod augue. Etiam a ornare neque. Curabitur condimentum molestie nulla, vel vestibulum arcu ullamcorper pulvinar. Nunc sodales feugiat iaculis. Nunc sed ipsum imperdiet, scelerisque diam ut, cursus elit. In sagittis risus nec nibh pulvinar convallis. Mauris eu neque egestas justo ullamcorper gravida a ut lacus. Praesent in tellus molestie, rutrum enim sit amet, egestas felis. Proin et erat urna. Mauris dapibus porttitor porta. Mauris elementum ipsum ut nibh aliquet, quis sagittis dui imperdiet."
-                }
+                scope.localizedVersions =  scope[entityType].localizedVersions;
             }
 
             scope.$on("entity:editedLocaleChanged", function(event, data){
+
                 if (typeof scope.localizedVersions[data.locale] !== 'undefined') {
                     scope[localizedKey] = scope.localizedVersions[data.locale];
                 }

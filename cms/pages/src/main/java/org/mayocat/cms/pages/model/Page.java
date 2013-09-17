@@ -56,6 +56,8 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
 
     private UUID featuredImageId;
 
+    private Map<Locale, Object> localizedVersions;
+
     public Page()
     {
     }
@@ -200,9 +202,15 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
 
+    public void setLocalizedVersions(Map<Locale, Object> versions) {
+        this.localizedVersions = versions;
+    }
+
     @Override
     public Map<Locale, Object> getLocalizedVersions()
     {
-        return Maps.newHashMap();
+        return localizedVersions;
     }
+
+
 }

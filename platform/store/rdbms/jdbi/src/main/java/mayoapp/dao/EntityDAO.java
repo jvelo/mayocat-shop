@@ -74,28 +74,28 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.id = :id"
     )
     E findById(@Define("type") String type, @Bind("id") UUID id);
 
     @SqlQuery
     (
-        "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.slug = :slug AND entity.type = '<type>' AND tenant_id is null"
     )
     E findBySlug(@Define("type") String type, @Bind("slug") String slug);
 
     @SqlQuery
     (
-        "SELECT * FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.slug = :slug AND entity.type = '<type>' AND entity.tenant_id = :tenant.id"
     )
     E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM entity " +
         "INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.type = '<type>'"
@@ -104,7 +104,7 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM entity " +
         "INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.type = '<type>'" +
@@ -114,7 +114,7 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
@@ -126,7 +126,7 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
@@ -152,7 +152,7 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
@@ -162,7 +162,7 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +

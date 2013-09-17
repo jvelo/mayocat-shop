@@ -121,7 +121,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     @Override
     public Page findBySlug(String slug)
     {
-        Page page = this.dao.findBySlugWithTranslations(PAGE_TABLE_NAME, slug, getTenant());
+        Page page = this.dao.findBySlug(PAGE_TABLE_NAME, slug, getTenant());
         if (page != null) {
             List<Addon> addons = this.dao.findAddons(page);
             page.setAddons(addons);

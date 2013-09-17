@@ -1,6 +1,7 @@
 package org.mayocat.cms.pages.api.representations;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
@@ -38,7 +39,7 @@ public class PageRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
 
-    private Map<String, Object> localizedVersions = null;
+    private Map<Locale, Object> localizedVersions = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +56,7 @@ public class PageRepresentation
         this.href = Resource.API_ROOT_PATH + PageEntity.PATH + "/" + page.getSlug();
         this.title = page.getTitle();
         this.content = page.getContent();
+        this.localizedVersions = page.getLocalizedVersions();
     }
 
     public PageRepresentation(Page page, List<ImageRepresentation> images)
@@ -121,5 +123,10 @@ public class PageRepresentation
     public void setFeaturedImage(ImageRepresentation featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public Map<Locale, Object> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 }
