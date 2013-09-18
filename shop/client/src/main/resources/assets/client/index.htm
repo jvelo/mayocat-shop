@@ -83,6 +83,10 @@
     <script src="javascripts/collection.js"></script>
     <script src="javascripts/localization.js"></script>
 
+    <!-- Localization files -->
+    <script src="localizations/en.js"></script>
+    <script src="localizations/fr.js"></script>
+
     <!-- IE Fix for HTML5 Tags -->
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -112,7 +116,7 @@
             </div>
 
             <p class="logout">
-                <small ng-click="logout()" class="clickable">Logout</small>
+                <small ng-click="logout()" class="clickable">{{'authentication.action.logout' | translate}}</small>
             </p>
         </header>
 
@@ -120,7 +124,7 @@
         <ul class="">
             <li active-class="active">
                 <a href="#/orders">
-                    <h2>Orders</h2>
+                    <h2>{{'order.title.orders' | translate}}</h2>
                 </a>
             </li>
         </ul>
@@ -164,7 +168,7 @@
 
     <!-- Message show when there is no tenant at this address -->
     <div class="hero-unit" ng-show="tenant == undefined && authenticated != undefined">
-        <h1>Nothing to see here.</h1>
+        <h1>{{'entity.alert.notFound' | translate}}</h1>
     </div>
 
     <!-- Main container-->
@@ -199,25 +203,25 @@
                 <button class="btn btn-mini btn-primary" ng-click="changeLocale('fr')">FR</button>
                 <button class="btn btn-mini btn-primary" ng-click="changeLocale('en')">EN</button>
             </div>
-            <h3>Authentication required</h3>
+            <h3>{{'authentication.misc.title' | translate}}</h3>
         </div>
         <div class="modal-body">
             <p>
             <fieldset>
-                <label>User name or email</label>
+                <label>{{'authentication.misc.username' | translate}}</label>
                 <input type="text" class="span3" ng-model="username"/>
-                <label>Password</label>
+                <label>{{'authentication.misc.password' | translate}}</label>
                 <input type="password" class="span3" ng-model="password"/>
-                <label>Remember me</label>
+                <label>{{'authentication.misc.remember' | translate}}</label>
                 <input type="checkbox" ng-model="remember"/>
             </fieldset>
             </p>
             <div class="alert" ng-show="authenticationFailed">
-                We could not authenticate you with these credentials.
+                {{'authentication.alert.failure' | translate}}
             </div>
         </div>
         <div class="modal-footer">
-            <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
+            <input type="submit" value="{{'authentication.action.login' | translate}}" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
         </div>
     </form>
 </div>

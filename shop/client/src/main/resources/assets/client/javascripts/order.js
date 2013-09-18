@@ -54,4 +54,15 @@ angular.module('order', ['ngResource'])
                     callback && callback.call();
                 });
             }
+
+            $scope.getTranslationProperties = function () {
+                var order = $scope.order || {},
+                    shipping = ((order.data || {}).shipping || {});
+
+                return {
+                    slug: order.slug || "",
+                    shippingTitle: shipping.title || "",
+                    shippingStrategy : shipping.strategy || ""
+                };
+            };
         }]);
