@@ -20,7 +20,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @RegisterMapper(PageMapper.class)
 @UseStringTemplate3StatementLocator
 public abstract class PageDAO implements EntityDAO<Page>, Transactional<PageDAO>,
-        PositionedDAO<Page>, AddonsDAO<Page>
+    PositionedDAO<Page>, AddonsDAO<Page>, LocalizationDAO<Page>
 {
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);

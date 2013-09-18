@@ -63,17 +63,43 @@ angular.module('entities', [])
 
             scope.localizedVersions = {};
 
-            mixin.initializeLocalization = function(){
+            mixin.initializeLocalization = function () {
                 scope[localizedKey] = scope[entityType];
-                scope.localizedVersions =  scope[entityType].localizedVersions;
             }
 
             scope.$on("entity:editedLocaleChanged", function(event, data){
+                // Save edited version if necessary
 
-                if (typeof scope.localizedVersions[data.locale] !== 'undefined') {
-                    scope[localizedKey] = scope.localizedVersions[data.locale];
+                if (typeof scope[entityType] == "undefined" || !scope[entityType].$resolved) {
+                    // We are not ready
+                    return;
                 }
-                else {
+
+                var translatedProperties = ["title", "content"];
+
+                for (var entry in translatedProperties) {
+                    if (translatedProperties.hasOwnProperty(entry)) {
+                        if (data.isMainLocale) {
+                            scope[entityType][entry] = scope[localizedKey][entry];
+                        }
+                        else {
+                            scope[entityType].localizedVersions[data.locale][entry] = scope[localizedKey][entry];
+                        }
+                    }
+                    console.log("THERE", scope[entityType].localizedVersions);
+                }
+
+                if (typeof scope[entityType].localizedVersions === "undefined") {
+                    scope[entityType].localizedVersions = {};
+                }
+
+                if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined') {
+                    scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                }
+                else if (!data.isMainLocale) {
+                    scope[entityType].localizedVersions[data.locale] = "";
+                    scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                } else {
                     scope[localizedKey] = scope[entityType];
                 }
             });
@@ -169,6 +195,7 @@ angular.module('page', ['ngResource'])
                         });
                 }
                 else {
+                    console.log("SAVING", $scope.page);
                     $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function () {
                         $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');

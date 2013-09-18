@@ -65,7 +65,8 @@
 
                     $scope.$watch('selectedLocale', function () {
                         $rootScope.$broadcast("entity:editedLocaleChanged", {
-                            "locale": $scope.selectedLocale
+                            "locale": $scope.selectedLocale,
+                            "isMainLocale" : $scope.selectedLocale == $scope.mainLocale
                         })
                     });
 
@@ -76,6 +77,7 @@
                     });
 
                     localizationService.getLocales().then(function (locales) {
+                        $scope.mainLocale = locales.main;
                         $scope.selectedLocale = locales.main;
                         $scope.locales = [ locales.main ];
                         $scope.locales.push.apply($scope.locales, locales.others);

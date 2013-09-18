@@ -178,6 +178,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
                 page.setContent(updatedPageRepresentation.getContent());
                 page.setModel(updatedPageRepresentation.getModel());
                 page.setPublished(updatedPageRepresentation.getPublished());
+                page.setLocalizedVersions(updatedPageRepresentation.getLocalizedVersions());
 
                 // Addons
                 if (updatedPageRepresentation.getAddons() != null) {

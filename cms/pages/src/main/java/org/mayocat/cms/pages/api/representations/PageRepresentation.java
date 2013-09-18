@@ -11,6 +11,7 @@ import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -39,6 +40,7 @@ public class PageRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<Locale, Object> localizedVersions = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

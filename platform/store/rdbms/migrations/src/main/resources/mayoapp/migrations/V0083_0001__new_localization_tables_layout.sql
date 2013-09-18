@@ -23,3 +23,20 @@ CREATE OR REPLACE FUNCTION localization_data(the_entity_id uuid) RETURNS json
       WHERE localized_entity.entity_id = the_entity_id
   ) l
 $$;
+
+CREATE OR REPLACE FUNCTION upsert_translation( in_entity_id uuid, in_locale text, in_entity json ) RETURNS void
+  LANGUAGE plpgsql
+  AS $$
+BEGIN
+    UPDATE localized_entity set entity = in_entity WHERE entity_id = in_entity_id and locale = in_locale;
+    IF FOUND THEN
+        RETURN;
+    END IF;
+    BEGIN
+        INSERT INTO localized_entity (entity_id, locale, entity) values (in_entity_id, in_locale, in_entity);
+    EXCEPTION WHEN OTHERS THEN
+        UPDATE localized_entity set entity = in_entity WHERE entity_id = in_entity_id and locale = in_locale;
+    END;
+    RETURN;
+END;
+$$;
