@@ -57,7 +57,7 @@ angular.module('entities', [])
             return string.charAt(0).toUpperCase() + string.slice(1);
         };
 
-        return function(entityType, scope) {
+        return function(entityType, scope, options) {
             var mixin = {},
                 localizedKey = "localized" + capitalize(entityType);
 
@@ -75,9 +75,9 @@ angular.module('entities', [])
                     return;
                 }
 
-                var translatedProperties = ["title", "content"];
+                options.translatedProperties = options.translatedProperties || [];
 
-                for (var entry in translatedProperties) {
+                for (var entry in options.translatedProperties) {
                     if (translatedProperties.hasOwnProperty(entry)) {
                         if (data.isMainLocale) {
                             scope[entityType][entry] = scope[localizedKey][entry];
@@ -86,7 +86,6 @@ angular.module('entities', [])
                             scope[entityType].localizedVersions[data.locale][entry] = scope[localizedKey][entry];
                         }
                     }
-                    console.log("THERE", scope[entityType].localizedVersions);
                 }
 
                 if (typeof scope[entityType].localizedVersions === "undefined") {
@@ -171,7 +170,9 @@ angular.module('page', ['ngResource'])
             angular.extend($scope, entityAddonsMixin("page", $scope));
             angular.extend($scope, entityModelMixin("page", $scope));
             angular.extend($scope, entityImageMixin("page", $scope));
-            angular.extend($scope, entityLocalizationMixin("page", $scope));
+            angular.extend($scope, entityLocalizationMixin("page", $scope, {
+                translatedProperties: ["title", "content"]
+            }));
 
             $scope.publishPage = function () {
                 $scope.page.published = true;
@@ -195,7 +196,6 @@ angular.module('page', ['ngResource'])
                         });
                 }
                 else {
-                    console.log("SAVING", $scope.page);
                     $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function () {
                         $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');
