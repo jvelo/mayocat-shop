@@ -78,7 +78,7 @@ angular.module('entities', [])
                 options.translatedProperties = options.translatedProperties || [];
 
                 for (var entry in options.translatedProperties) {
-                    if (translatedProperties.hasOwnProperty(entry)) {
+                    if (options.translatedProperties.hasOwnProperty(entry)) {
                         if (data.isMainLocale) {
                             scope[entityType][entry] = scope[localizedKey][entry];
                         }
