@@ -6,10 +6,23 @@
             action: {
                 update: "Update",
                 back: "Back"
+                remove: "Remove",
+
+                editThumbnails: "Edit thumbnails"
             },
 
             alert: {
                 notFound: "Nothing to see here."
+            }
+        },
+
+        home: {
+            title: {
+                welcome: "Welcome"
+            },
+
+            explanation: {
+                home: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products."
             }
         },
 
@@ -28,6 +41,30 @@
 
             alert: {
                 failure: "We could not authenticate you with these credentials."
+            }
+        },
+
+        upload: {
+            misc: {
+                uploading: "Uploading...",
+                uploaded: "Uploaded!",
+                failed: "Failed"
+            },
+
+            explanation: {
+                dropHere: "Drag images from your computer and drop them in this area",
+            },
+
+            placeholder: {
+                title: "Image's title (alternative text)",
+                description: "Description (optional)"
+            },
+
+            action: {
+                browse: "Browse...",
+                dismiss: "Dismiss",
+                upload: "Upload",
+                uploadAll: "Upload all"
             }
         },
 

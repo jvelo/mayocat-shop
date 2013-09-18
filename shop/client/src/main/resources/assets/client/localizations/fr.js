@@ -6,10 +6,23 @@
             action: {
                 update: "Mettre à jour",
                 back: "Retour"
+                remove: "Retirer",
+
+                editThumbnails: "Modifier les miniatures"
             },
 
             alert: {
                 notFound: "Il n'y a rien à voir ici."
+            }
+        },
+
+        home: {
+            title: {
+                welcome: "Bienvenue"
+            },
+
+            explanation: {
+                home: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits."
             }
         },
 
@@ -28,6 +41,30 @@
 
             alert: {
                 failure: "Nous ne pouvons pas vous connecter avec ces identifiants."
+            }
+        },
+
+        upload: {
+            misc: {
+                uploading: "En cours de téléchargement...",
+                uploaded: "Téléchargement terminé !",
+                failed: "Échec"
+            },
+
+            explanation: {
+                dropHere: "Déplacez des images de votre ordinateur et déposez-les dans cette zone"
+            },
+
+            placeholder: {
+                title: "Titre de l'image (texte alternatif)",
+                description: "Description (facultatif)"
+            },
+
+            action: {
+                browse: "Parcourir...",
+                dismiss: "Abandonner",
+                upload: "Envoyer",
+                uploadAll: "Tout envoyer"
             }
         },
 
