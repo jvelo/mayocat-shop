@@ -57,8 +57,18 @@
                     '</ul>' +
                     '</div>',
 
-                controller: function ($scope, $element, $attrs) {
+                compile: function (element, attrs, transclude) {
+                    return {
+                        post: function postLink(scope, iElement, iAttrs, controller) {
+                            if (iElement.find("textarea").length > 0) {
+                                iElement.find(".add-on").removeClass("add-on");
+                                iElement.addClass("textarea");
+                            }
+                        }
+                    }
+                },
 
+                controller: function ($scope, $element, $attrs) {
                     $scope.select = function(locale) {
                         $scope.selectedLocale = locale;
                     };
