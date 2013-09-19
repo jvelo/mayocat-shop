@@ -48,7 +48,7 @@
                 </ul>
                 <div class="modal hide fade" ng-include="'/common/partials/editThumbnails.html'" id="editThumbnails"></div>
                 <div class="alert" ng-show="page.images.length <= 0">
-                    <strong>No image yet</strong> - use the area below to add images to this page.
+                    <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
                 </div>
                 <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
             </div>

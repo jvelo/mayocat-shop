@@ -3,10 +3,24 @@
 
     var enLocalization = {
         entity: {
+            misc: {
+                defaultModel: "Default model"
+            },
+
+            title: {
+                model: "Model",
+                confirmDeletion: "Confirm deletion"
+            },
+
             action: {
+                create: "Create",
+                edit: "Edit",
+                save: "Save",
                 update: "Update",
-                back: "Back"
+                publish: "Publish online",
+                cancel: "Cancel",
                 remove: "Remove",
+                back: "Back",
 
                 editThumbnails: "Edit thumbnails"
             },
@@ -119,6 +133,81 @@
 
             alert: {
                 empty: "There are no orders yet."
+            }
+        },
+
+        product: {
+            misc: {
+                price: "Price",
+                weight: "Weight",
+                stock: "Stock",
+
+                uncategorized: "Uncategorized",
+                description: "Description"
+            },
+
+            title: {
+                products: "Products",
+                allProducts: "All products",
+                newProduct: "New product",
+                editProduct: "Edit product",
+
+                collections: "Collections",
+                newCollection: "New collection",
+                editCollection: "Edit collection",
+
+                catalog: "Catalog"
+            },
+
+            explanation: {
+                product: "You can edit your products to change their characteristics or images, and also manage their availability and price.",
+                collection: "Collections let you categorize your products and group them together in a single page on your website."
+            },
+
+            placeholder: {
+                productTitle: "Product's title",
+                collectionTitle: "Collection's title",
+                initialStock: "Initial stock"
+            },
+
+            status: {
+                onShelf: "On shelf",
+                withdrawnFromSale: "Withdrawn from sale"
+            },
+
+            action: {
+                addProduct: "Add a new product",
+                deleteProduct: "Delete this product",
+                manageProduct: "Manage product",
+                addCollection: "Add a new collection",
+                deleteCollection: "Delete this collection"
+            },
+
+            alert: {
+                confirmProductDeletion: "Please confirm you want to delete this product. There's no coming back!",
+                confirmCollectionDeletion: "Please confirm you want to delete this collection. There's no coming back!"
+            }
+        },
+
+        image: {
+            misc: {
+                actions: "Actions"
+            },
+
+            title: {
+                images: "Images ({imagesLength})"
+            },
+
+            explanation: {
+                noImage: "- use the area below to add images to this product."
+            },
+
+            action: {
+                editMetadata: "Edit metadata"
+            },
+
+            alert: {
+                noImage: "No image yet"
             }
         }
     };

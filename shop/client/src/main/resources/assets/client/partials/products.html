@@ -1,27 +1,26 @@
 <div ng-controller="CatalogController">
-    <h1 class="big">Catalog</h1>
+    <h1 class="big">{{'product.title.catalog' | translate}}</h1>
 
     <div class="intro">
-        <h2>Products</h2>
+        <h2>{{'product.title.products' | translate}}</h2>
         <p>
-            You can edit your products to change their characteristics or images, and also manage their availability
-            and price.
+            {{'product.explanation.product' | translate}}
         </p>
         <div class="buttons">
-            <a ng-click="setRoute('products/_new')" class="btn btn-primary btn-large">Add a new product</a>
+            <a ng-click="setRoute('products/_new')" class="btn btn-primary btn-large">{{'product.action.addProduct' | translate}}</a>
         </div>
     </div>
 
     <div class="intro" ng-show="hasCollections">
-        <h2>Collections</h2>
+        <h2>{{'product.title.collections' | translate}}</h2>
         <p>
-            Collections let you categorize your products and group them together in a single page on your website.
+            {{'product.explanation.collection' | translate}}
         </p>
         <div class="buttons">
             <!--
             <a href="#/collections/">Manage collections</a>
             -->
-            <a ng-click="setRoute('collections/_new')" class="btn btn-primary btn-large">Add a new collection</a>
+            <a ng-click="setRoute('collections/_new')" class="btn btn-primary btn-large">{{'product.action.addCollection' | translate}}</a>
         </div>
     </div>
 </div>
