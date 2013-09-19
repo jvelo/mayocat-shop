@@ -209,6 +209,58 @@
             alert: {
                 noImage: "No image yet"
             }
+        },
+
+        content: {
+            misc: {
+                content: "Content"
+            },
+
+            title: {
+                pages: "Pages",
+                allPages: "All pages",
+                newPage: "New page",
+                editPage: "Edit page",
+
+                news: "News",
+                allArticles: "All news articles",
+                newArticle: "New article",
+                editArticle: "Edit article",
+
+                contents: "Contents"
+            },
+
+            explanation: {
+                page: "This area lists all content pages of your web site. For each page you can modify its content, title, images and layout. You can also create new pages and delete existing ones.",
+                news: "Just like a blog, you can add here news article that will be highlighted on your web site and that you can publish on social networks."
+            },
+
+            placeholder: {
+                pageTitle: "Page's title",
+                articleTitle: "Article's title"
+            },
+
+            status: {
+                published: "Published",
+                unpublished: "Unpublished",
+                publishedOn: "Published on {articleDate}"
+            },
+
+            action: {
+                createPage: "Create a new page",
+                deletePage: "Delete this page",
+
+                createArticle: "Create a news article",
+                deleteArticle: "Delete this article",
+
+                changePublicationDate: "Change publication date",
+                changeDate: "Change date"
+            },
+
+            alert: {
+                confirmPageDeletion: "Please confirm you want to delete this page. There's no coming back!",
+                confirmArticleDeletion: "Please confirm you want to delete this article. There's no coming back!"
+            }
         }
     };
 

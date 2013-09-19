@@ -195,4 +195,13 @@ angular.module('article', ['ngResource'])
                 });
             };
 
+            $scope.getTranslationProperties = function () {
+                var article = $scope.article || {};
+
+                return {
+                    articleDate: timeService.convertISO8601toLocalDate(article.publicationDate || '', 'LLL'),
+                    imagesLength: (article.images || {}).length || 0
+                };
+            };
+
         }]);
