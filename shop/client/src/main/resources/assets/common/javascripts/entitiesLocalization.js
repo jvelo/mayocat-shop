@@ -63,11 +63,13 @@
                         $scope.selectedLocale = locale;
                     };
 
-                    $scope.$watch('selectedLocale', function () {
+                    $scope.$watch('selectedLocale', function (locale, oldLocale) {
                         $rootScope.$broadcast("entity:editedLocaleChanged", {
                             "locale": $scope.selectedLocale,
-                            "isMainLocale" : $scope.selectedLocale == $scope.mainLocale
-                        })
+                            "previously": oldLocale,
+                            "isMainLocale": $scope.selectedLocale == $scope.mainLocale,
+                            "wasMainLocale": $scope.mainLocale === oldLocale
+                        });
                     });
 
                     $scope.$on("entity:editedLocaleChanged", function (event, data) {

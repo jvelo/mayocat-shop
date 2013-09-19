@@ -70,35 +70,25 @@ angular.module('entities', [])
             scope.$on("entity:editedLocaleChanged", function(event, data){
                 // Save edited version if necessary
 
-                if (typeof scope[entityType] == "undefined" || !scope[entityType].$resolved) {
+                if (typeof scope[entityType] === "undefined" || !scope[entityType].$resolved) {
                     // We are not ready
                     return;
-                }
-
-                options.translatedProperties = options.translatedProperties || [];
-
-                for (var entry in options.translatedProperties) {
-                    if (options.translatedProperties.hasOwnProperty(entry)) {
-                        if (data.isMainLocale) {
-                            scope[entityType][entry] = scope[localizedKey][entry];
-                        }
-                        else {
-                            scope[entityType].localizedVersions[data.locale][entry] = scope[localizedKey][entry];
-                        }
-                    }
                 }
 
                 if (typeof scope[entityType].localizedVersions === "undefined") {
                     scope[entityType].localizedVersions = {};
                 }
 
-                if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined') {
+                if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
+                    // If there is a localized version with the new locale to be edited, then use it
                     scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
                 }
                 else if (!data.isMainLocale) {
-                    scope[entityType].localizedVersions[data.locale] = "";
+                    // Else if it's not the main locale to be edited, edit it
+                    scope[entityType].localizedVersions[data.locale] = {};
                     scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
                 } else {
+                    // Else edit the main locale
                     scope[localizedKey] = scope[entityType];
                 }
             });
@@ -170,9 +160,7 @@ angular.module('page', ['ngResource'])
             angular.extend($scope, entityAddonsMixin("page", $scope));
             angular.extend($scope, entityModelMixin("page", $scope));
             angular.extend($scope, entityImageMixin("page", $scope));
-            angular.extend($scope, entityLocalizationMixin("page", $scope, {
-                translatedProperties: ["title", "content"]
-            }));
+            angular.extend($scope, entityLocalizationMixin("page", $scope));
 
             $scope.publishPage = function () {
                 $scope.page.published = true;
