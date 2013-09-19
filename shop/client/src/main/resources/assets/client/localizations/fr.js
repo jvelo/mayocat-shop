@@ -209,6 +209,58 @@
             alert: {
                 noImage: "Aucune image"
             }
+        },
+
+        content: {
+            misc: {
+                content: "Contenu"
+            },
+
+            title: {
+                pages: "Pages",
+                allPages: "Toutes les pages",
+                newPage: "Nouvelle page",
+                editPage: "Modifier la page",
+
+                news: "Actualités",
+                allArticles: "Toutes les actualités",
+                newArticle: "Nouvelle actualité",
+                editArticle: "Modifier l'actualité",
+
+                contents: "Contenus"
+            },
+
+            explanation: {
+                page: "Cette section liste toutes les pages de votre site web. Pour chaque page, vous pouvez modifier son contenu, son titre, ses images et sa disposition. Vous pouvez aussi créer de nouvelles pages et supprimer celles existantes.",
+                news: "Tout comme un blog, vous pouvez ajouter ici de nouvelles actualités qui seront mises en avant sur votre site web et que vous pouvez publier sur les réseaux sociaux."
+            },
+
+            placeholder: {
+                pageTitle: "Titre de la page",
+                articleTitle: "Titre de l'actualité"
+            },
+
+            status: {
+                published: "Publiée",
+                unpublished: "Non-publié",
+                publishedOn: "Publié le {articleDate}"
+            },
+
+            action: {
+                createPage: "Créer une nouvelle page",
+                deletePage: "Supprimer cette page",
+
+                createArticle: "Créer une actualité",
+                deleteArticle: "Supprimer cette actualité",
+
+                changePublicationDate: "Modifier la date de publication",
+                changeDate: "Modifier la date"
+            },
+
+            alert: {
+                confirmPageDeletion: "Veuillez confirmer la suppression de cette page. Cette opération ne peut pas être annulée !",
+                confirmArticleDeletion: "Veuillez confirmer la suppression de cette actualité. Cette opération ne peut pas être annulée !"
+            }
         }
     };
 

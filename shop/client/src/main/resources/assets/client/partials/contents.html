@@ -1,14 +1,14 @@
-<h1 class="big">Contents</h1>
+<h1 class="big">{{'content.title.contents' | translate}}</h1>
 
 <div class="intro">
-    <h2>Pages</h2>
+    <h2>{{'content.title.pages' | translate}}</h2>
     <p>
-    This area lists all content pages of your web site.
-    For each page you can modify contents, titles, images and layout. You can also create new pages and delete existing
-    ones.
+        {{'content.explanation.page' | translate}}
     </p>
     <div class="buttons">
-        <a ng-click="setRoute('pages/_new')" class="btn btn-primary btn-large">Create a new page</a>
+        <a ng-click="setRoute('pages/_new')" class="btn btn-primary btn-large">
+            {{'content.action.createPage' | translate}}
+        </a>
     </div>
 </div>
 
