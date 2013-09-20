@@ -1,6 +1,6 @@
 <form>
     <div class="page-header">
-        <h1 class="">Shop information</h1>
+        <h1 class="">{{'settings.title.shop' | translate}}</h1>
     </div>
 
     <article class="entity" ng-class="{'loading': tenant.slug == undefined}">
@@ -13,11 +13,11 @@
 
                     <div class="block">
                         <!-- Shop name -->
-                        <p>Shop name</p>
-                        <input type="text" ng-model="tenant.name" placeholder="Enter the shop name" />
+                        <p>{{'settings.misc.shopName' | translate}}</p>
+                        <input type="text" ng-model="tenant.name" placeholder="{{'settings.placeholder.shopName' | translate}}" />
 
                         <!-- Shop logo -->
-                        <p>Shop logo</p>
+                        <p>{{'settings.misc.shopLogo' | translate}}</p>
                         <div ng-show="tenant.featuredImage">
                                 <img ng-src="{{tenant.featuredImage.file.href}}?height=100"/>
                         </div>
@@ -52,7 +52,9 @@
 
                 <!-- Save button -->
                 <div class="hasLoading">
-                    <button ng-click="updateTenant()" class="btn btn-large btn-primary">Save</button>
+                    <button ng-click="updateTenant()" class="btn btn-large btn-primary">
+                        {{'entity.action.update' | translate}}
+                    </button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>

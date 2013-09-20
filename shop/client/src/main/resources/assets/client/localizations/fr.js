@@ -261,6 +261,103 @@
                 confirmPageDeletion: "Veuillez confirmer la suppression de cette page. Cette opération ne peut pas être annulée !",
                 confirmArticleDeletion: "Veuillez confirmer la suppression de cette actualité. Cette opération ne peut pas être annulée !"
             }
+        },
+
+        settings: {
+            misc: {
+                general: "Général",
+                shop: "Boutique",
+                catalog: "Catalogue",
+                shipping: "Frais de port",
+
+                timeZone: "Fuseau horaire",
+                selectTimeZone: "Sélectionnez un fuseau horaire ",
+                defaultLanguage: "Langage par défaut",
+                theme: "Thème",
+
+                shopName: "Nom de la boutique",
+                shopLogo: "Logo de la boutique",
+
+                byWeight: "Selon le poids",
+                byPrice: "Selon le prix",
+                flatRate: "Selon un coût forfaitaire",
+                none: "Aucun",
+
+                defaultCurrency: "Devise par défaut",
+                otherCurrencies: "Autres devises",
+                categoriesManagement: "Gestion des catégories",
+                stockManagement: "Gestion de stocks",
+                weightManagement: "Gestion du poids (laissez ceci coché si vous souhaitez calculer les frais de port en fonction du poids)",
+                weightUnit: "Unité de poids",
+
+                selectedDestinations: "{numberOfSelectedDestinations, plural, one{Destination sélectionnée} other{Destinations sélectionnées}} :",
+                carrierName: "Nom",
+                carrierDescription: "Description (facultatif)",
+
+                deliveryTimePart1: "Délai de livraison de",
+                deliveryTimePart2: "à",
+                deliveryTimePart3: "{maximumDaysSelected, plural, one{jour} other{jours}}",
+
+                weight: "Poids",
+                orderAmount: "Montant de la commande",
+                shippingPrice: "Coût des frais de port",
+
+                carrierValuePart1: "De",
+                carrierValuePart2: "jusqu'à",
+
+                additionalWeight: "{weightUnit} additionnels",
+                currencyPerOrder: "{mainCurrency} par commande",
+                currencyPerItem: "{mainCurrency} par article",
+
+                carrierDestination: "{numberOfDestinations, plural, one{Destination} other{Destinations}} :",
+                deliveryTime: "Temps de livraison :",
+                deliveryDays: "{deliveryMaximumDays, plural, one{jour} other{jours}}"
+            },
+
+            title: {
+                settings: "Paramètres",
+                sections: "Sections",
+
+                general: "Paramètres généraux",
+                shop: "À propos de la boutique",
+                catalog: "Catalogue",
+                shipping: "Frais de port",
+
+                currencies: "Devises",
+                geographicDestinations: "Destinations géographiques",
+                carrier: "Transporteur",
+                pricing: "Tarifs"
+            },
+
+            explanation: {
+                shipping: "Vous pouvez choisir de facturer les frais de port en fonction du poids ou du prix, ou bien choisir un prix fixe par produit en plus d'un coût forfaitaire pour chaque commande.",
+                weight: "La stratégie de facturation des frais de port en fonction du poids n'est pas activée. Activez-la si vous souhaitez facturer les frais de port à vos clients en fonction du poids des produits.",
+                price: "La stratégie de facturation des frais de port en fonction du montant total de la commande n'est pas activée. Activez-la si vous souhaitez facturer les frais de port à vos clients en fonction du montant total de la commande.",
+                flatRate: "La stratégie de facturation des frais de port selon un coût forfaitaire n'est pas activée. Activez-la si vous souhaitez facturer les frais de port à vos clients en fonction du nombre d'articles en plus d'un coût forfaitaire.",
+                none: "Utilisez cette section si vous souhaitez désactiver toute facturation des frais de ports.",
+                costsDisabled: "La facturation des frais de port est actuellement désactivée. Si vous souhaitez facturer les frais de ports à vos clients, choisissez d'abord une stratégie de facturation disponible ci-dessus : en fonction du poids, du prix ou bien selon un coût forfaitaire."
+            },
+
+            placeholder: {
+                shopName: "Entrez le nom de la boutique"
+            },
+
+            action: {
+                addZone: "Ajouter une nouvelle zone",
+                editZone: "Modifier la zone",
+                deleteZone: "Supprimer la zone",
+
+                activateWeight: "Activer la stratégie de poids",
+                activatePrice: "Activer la stratégie de prix",
+                activateFlatRate: "Activer la stratégie de coût forfaitaire",
+                disableShippingCosts: "Désactiver les frais de ports"
+            },
+
+            alert: {
+                deliveryTime: "La période de livraison n'est pas valide",
+                carrierValueInferior: "La dernière valeur est inférieure à la première",
+                carrierValueInvalid: "Format non-conforme"
+            }
         }
     };
 
