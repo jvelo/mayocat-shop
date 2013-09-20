@@ -82,6 +82,21 @@
             }
         },
 
+        thumbnailEditor: {
+            misc: {
+                editing: "Editing:"
+            },
+
+            title: {
+                editThumbnails: "Edit image thumbnails"
+            },
+
+            action: {
+                saveAndNext: "Save and next",
+                close: "Close"
+            }
+        },
+
         order: {
             misc: {
                 statusShort: "Status",
