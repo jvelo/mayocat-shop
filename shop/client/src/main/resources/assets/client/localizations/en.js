@@ -261,6 +261,104 @@
                 confirmPageDeletion: "Please confirm you want to delete this page. There's no coming back!",
                 confirmArticleDeletion: "Please confirm you want to delete this article. There's no coming back!"
             }
+        },
+
+        settings: {
+            misc: {
+                general: "General",
+                shop: "Shop information",
+                catalog: "Catalog",
+                shipping: "Shipping",
+
+                timeZone: "Time zone",
+                selectTimeZone: "Select a time zone",
+                defaultLanguage: "Default language",
+                theme: "Theme",
+
+                shopName: "Shop name",
+                shopLogo: "Shop logo",
+
+                byWeight: "By weight",
+                byPrice: "By price",
+                flatRate: "Flat rate",
+                none: "None",
+
+                defaultCurrency: "Default currency",
+                otherCurrencies: "Other currencies",
+                categoriesManagement: "Category management",
+                stockManagement: "Stock management",
+                weightManagement: "Weight management (keep this checked if you want to calculate shipping costs by weight)",
+                weightUnit: "Weight unit",
+
+                selectedDestinations: "Selected {numberOfSelectedDestinations, plural, one{destination} other{destinations}}:",
+                carrierName: "Name",
+                carrierDescription: "Description (optional)",
+
+                deliveryTimePart1: "Delivery time from",
+                deliveryTimePart2: "to",
+                deliveryTimePart3: "{maximumDaysSelected, plural, one{day} other{days}}",
+
+                weight: "Weight",
+                orderAmount: "Order amount",
+                shippingPrice: "Shipping price",
+
+                carrierValuePart1: "From",
+                carrierValuePart2: "up to",
+
+                additionalWeight: "Additional {weightUnit}",
+                currencyPerOrder: "{mainCurrency} per order",
+                currencyPerItem: "{mainCurrency} per item",
+
+                carrierDestination: "{numberOfDestinations, plural, one{Destination} other{Destinations}}:",
+                deliveryTime: "Delivery time:",
+                deliveryDays: "{deliveryMaximumDays, plural, one{day} other{days}}",
+                costPerOrderAndPerItem: "{costPerOrder} {mainCurrency} per order, {costPerItem} {mainCurrency} per item"
+            },
+
+            title: {
+                settings: "Settings",
+                sections: "Sections",
+
+                general: "General settings",
+                shop: "Shop information",
+                catalog: "Catalog settings",
+                shipping: "Shipping settings",
+
+                currencies: "Currencies",
+                geographicDestinations: "Geographic destinations",
+                carrier: "Carrier",
+                pricing: "Pricing"
+            },
+
+            explanation: {
+                shipping: "You can choose to charge shipping costs according to order weight or price, or have a flat rate by number of products plus fixed rate by order.",
+                weight: "Shipping pricing strategy by weight is not active. Activate it if you want to charge customers for shipping according to products weight.",
+                price: "Shipping pricing strategy by order total amount is not active. Activate it if you want to charge customers for shipping according to order total amount.",
+                flatRate: "Flat rate shipping pricing strategy is not active. Activate it if you want to charge customers for shipping according to number of items purchased plus per-order constant.",
+                none: "Use this if you wish to disable shipping costs altogether.",
+                costsDisabled: "Shipping costs are currently disabled. If you wish to charge customers for shipping costs, first pick up a pricing strategy from the strategies available above: per weight, per price, or flat rate."
+            },
+
+            placeholder: {
+                shopName: "Enter the shop name"
+            },
+
+            action: {
+                addZone: "Add new zone",
+                editZone: "Edit zone",
+                deleteZone: "Delete zone",
+
+                activateWeight: "Activate weight strategy",
+                activatePrice: "Activate price strategy",
+                activateFlatRate: "Activate flat rate strategy",
+                disableShippingCosts: "Disable shipping costs"
+            },
+
+            alert: {
+                deliveryTime: "Delivery time range is not valid",
+                carrierValueInferior: "The \"up to\" value is inferior to \"from\" value",
+                carrierValueInvalid: "Invalid format"
+            }
         }
     };
 
