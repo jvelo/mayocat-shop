@@ -82,6 +82,21 @@
             }
         },
 
+        thumbnailEditor: {
+            misc: {
+                editing: "Modification de :",
+            },
+
+            title: {
+                editThumbnails: "Modification des miniatures"
+            },
+
+            action: {
+                saveAndNext: "Sauvegarder et continuer",
+                close: "Fermer"
+            }
+        },
+
         order: {
             misc: {
                 statusShort: "État",
