@@ -2,7 +2,7 @@
 <div id="list" ng-controller="CatalogController">
 
     <div class="header">
-        <h2>All products</h2>
+        <h2>{{'product.title.allProducts' | translate}}</h2>
     </div>
 
     <scroll>
@@ -40,7 +40,9 @@
             <ul>
                 <li ng-class="{hasChildren: hasCollections}">
                     <div class="listItem" ng-show="hasCollections">
-                        <span class="collection">Uncategorized</span>
+                        <span class="collection">
+                            {{'product.misc.uncategorized' | translate:getTranslationProperties()}}
+                        </span>
                     </div>
                     <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
                         <li ng-repeat="product in products" data-handle="{{product.slug}}" data-type="products">

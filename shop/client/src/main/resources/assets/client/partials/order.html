@@ -1,58 +1,60 @@
-<h1 class="small" ng-show="!isNew()">Manage order</h1>
+<h1 class="small" ng-show="!isNew()">{{'order.title.order' | translate}}</h1>
 <span class="pull-right">
-    <a ng-click="setRoute('/orders/')">Back</a>
+    <a ng-click="setRoute('/orders/')">{{'entity.action.back' | translate}}</a>
 </span>
 
 <div class="entity order" ng-class="{'loading': order.status == undefined}">
 
     <div ng-show="order.status">
         <div class="header">
-            <h1>Order #{{order.slug}} <span ng-class="{'loading': isSaving}"></span></h1>
+            <h1>{{'order.misc.orderName' | translate:getTranslationProperties()}} <span ng-class="{'loading': isSaving}"></span></h1>
 
             <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
         </div>
 
         <div class="block">
             <h3>
-                Order status
+                {{'order.misc.statusLong' | translate}}
             </h3>
 
             <div class="wizard">
                 <ul class="steps">
                     <li ng-class="{'active': order.status == 'WAITING_FOR_PAYMENT'}">
-                        <span class="badge badge-info">1</span>Waiting for payment<span class="chevron"></span>
+                        <span class="badge badge-info">1</span>{{'order.status.waitingForPayment' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'PAID'}">
-                        <span class="badge">2</span>Paid<span class="chevron"></span>
+                        <span class="badge">2</span>{{'order.status.paid' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'PREPARED'}">
-                        <span class="badge">3</span>Prepared<span class="chevron"></span>
+                        <span class="badge">3</span>{{'order.status.prepared' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'SHIPPED'}">
-                        <span class="badge">4</span>Shipped<span class="chevron"></span>
+                        <span class="badge">4</span>{{'order.status.shipped' | translate}}<span class="chevron"></span>
                     </li>
                 </ul>
                 <div class="actions">
                     <button class="btn" ng-click="paymentReceived()" ng-show="order.status == 'WAITING_FOR_PAYMENT'">
-                        Payment
-                        received
+                        {{'order.action.paymentReceived' | translate}}
                     </button>
-                    <button class="btn" ng-click="prepared()" ng-show="order.status == 'PAID'">Command prepared</button>
-                    <button class="btn" ng-click="shipped()" ng-show="order.status == 'PREPARED'">Command shipped
+                    <button class="btn" ng-click="prepared()" ng-show="order.status == 'PAID'">
+                        {{'order.action.commandPrepared' | translate}}
+                    </button>
+                    <button class="btn" ng-click="shipped()" ng-show="order.status == 'PREPARED'">
+                        {{'order.action.commandShipped' | translate}}
                     </button>
                 </div>
             </div>
         </div>
 
         <div class="block">
-            <h3>Items</h3>
+            <h3>{{'order.title.items' | translate}}</h3>
 
             <table class="table">
                 <thead>
-                <th>Item</th>
-                <th>Unit price</th>
-                <th>Quantity</th>
-                <th>Total</th>
+                <th>{{'order.title.item' | translate}}</th>
+                <th>{{'order.misc.unitPrice' | translate}}</th>
+                <th>{{'order.misc.quantity' | translate}}</th>
+                <th>{{'order.misc.total' | translate}}</th>
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in order.data.items">
@@ -68,7 +70,7 @@
                 </tr>
                 <tr ng-show="order.data.shipping" class="itemsTotal">
                     <td>
-                        Items total (without shipping)
+                        {{'order.misc.itemsTotal' | translate}}
                     </td>
                     <td>{{order.itemsTotal | money:'EUR'}} {{order.currency}}</td>
                     <td>1</td>
@@ -76,9 +78,9 @@
                 </tr>
                 <tr ng-show="order.data.shipping" class="shipping">
                     <td>
-                        Shipping &mdash;
+                        {{'order.misc.shipping' | translate}} &mdash;
                         <small>
-                            {{order.data.shipping.title}} (calculated by {{order.data.shipping.strategy}})
+                            {{'order.misc.shippingCalculation' | translate:getTranslationProperties()}}
                         </small>
                     </td>
                     <td>{{order.shipping | money:'EUR'}} {{order.currency}}</td>
@@ -87,14 +89,14 @@
                 </tr>
                 </tbody>
                 <tfoot>
-                <td colspan="3">Total</td>
+                <td colspan="3">{{'order.misc.total' | translate}}</td>
                 <td>{{order.grandTotal | money:'EUR'}} {{order.currency}}</td>
                 </tfoot>
             </table>
         </div>
 
         <div class="block">
-            <h3>Customer</h3>
+            <h3>{{'order.title.customer' | translate}}</h3>
 
             <div class="vcard">
                 <div>
@@ -105,7 +107,7 @@
                 </div>
 
                 <div ng-show="order.deliveryAddress">
-                    <strong>Delivery address</strong>
+                    <strong>{{'order.misc.deliveryAddress' | translate}}</strong>
 
                     <div class="adr">
                         <div class="fn">{{order.deliveryAddress.fullName}}</div>

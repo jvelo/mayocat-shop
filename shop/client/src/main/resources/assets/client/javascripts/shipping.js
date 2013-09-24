@@ -132,13 +132,26 @@
              * duration, pricing, etc.
              */
             return {
-                templateUrl: "partials/directives/carrierSummary.html?v=3", // Defeat browser cache http://git.io/6dPuFQ
+                templateUrl: "partials/directives/carrierSummary.html?v=4", // Defeat browser cache http://git.io/6dPuFQ
                 scope: {
                     carrier: '=',
                     mainCurrency: '=',
                     weightUnit: '='
                 },
-                restrict: 'E'
+                restrict: 'E',
+                controller: function ($scope) {
+                    $scope.getTranslationProperties = function () {
+                        var carrier = $scope.carrier || {};
+
+                        return {
+                            numberOfDestinations: (carrier.destinations || {}).length || 0,
+                            deliveryMaximumDays: carrier.maximumDays || 0,
+                            costPerOrder: carrier.perShipping || 0,
+                            costPerItem: carrier.perItem || 0,
+                            mainCurrency: $scope.mainCurrency || ''
+                        };
+                    };
+                }
             }
         }])
 

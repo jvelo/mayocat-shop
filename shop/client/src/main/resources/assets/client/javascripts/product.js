@@ -219,5 +219,11 @@ angular.module('product', ['ngResource'])
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                return {
+                    imagesLength: (($scope.product || {}).images || {}).length || 0
+                };
+            };
+
         }])
 ;

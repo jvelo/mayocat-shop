@@ -3,7 +3,7 @@
     <div class="span8">
         <!-- header -->
         <div class="page-header">
-            <h1 class="">General settings</h1>
+            <h1 class="">{{'settings.title.general' | translate}}</h1>
         </div>
 
         <form name="generalForm">
@@ -13,12 +13,12 @@
                     <!-- Shop timezone -->
                     <div ng-show="isVisible('general.time.timeZone')"
                          ng-class="{default: isDefaultValue('general.time.timeZone')}">
-                        <p><label for="shopTimeZone">Time zone</label></p>
+                        <p><label for="shopTimeZone">{{'settings.misc.timeZone' | translate}}</label></p>
 
                         <select id="shopTimezone" name="name" class="input-xlarge"
                                 ng-model="settings.general.time.timeZone.value"
                                 ng-disabled="!isConfigurable('general.time.timeZone')">
-                            <option value="">-- Select a time zone --</option>
+                            <option value="">-- {{'settings.misc.selectTimeZone' | translate}} --</option>
                             <optgroup ng-repeat="(region, list) in timeZoneRegions" label="{{ region }}">
                                 <option ng-repeat="(value, timeZone) in list"
                                         value="{{ value }}"
@@ -32,7 +32,7 @@
                     <!-- Default locale -->
                     <div ng-show="isVisible('general.locales.main')"
                          ng-class="{default: isDefaultValue('general.locales.main')}">
-                        <p><label cfor="defaultLocale">Default language</label></p>
+                        <p><label cfor="defaultLocale">{{'settings.misc.defaultLanguage' | translate}}</label></p>
 
                         <input type="text" name="name" class="input-xlarge"
                                ng-model="settings.general.locales.main.value"
@@ -55,7 +55,7 @@
                     <!-- Theme -->
                     <div ng-show="isVisible('theme.active')"
                          ng-class="{default: isDefaultValue('theme.active')}">
-                        <p><label class="control-label" for="theme">Theme</label></p>
+                        <p><label class="control-label" for="theme">{{'settings.misc.theme' | translate}}</label></p>
 
                         <input type="text" name="name" class="input-xlarge"
                                ng-model="settings.theme.active.value"
@@ -77,7 +77,7 @@
                     class="btn btn-large btn-primary"
                     ng-disabled="!settingsForm.shopForm.$dirty
                     && !settingsForm.generalForm.$dirty">
-                    Update
+                {{'entity.action.update' | translate}}
             </button>
             <span ng-class="{'loading': isSaving}"></span>
         </div>
