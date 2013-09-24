@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.general.GeneralSettings;
+import org.mayocat.context.Execution;
 import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
@@ -21,6 +24,8 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -35,6 +40,9 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
 
     @Inject
     private Logger logger;
+
+    @Inject
+    private Execution execution;
 
     private Node<Binding> bindings;
 
@@ -67,6 +75,39 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
                 put("path", "/" + uriInfo.getPath());
             }
         });
+
+        // Manage list of locales and corresponding links
+        List<Map<String, String>> locales = Lists.newArrayList();
+        GeneralSettings settings = execution.getContext().getSettings(GeneralSettings.class);
+        final Locale mainLocale = settings.getLocales().getMainLocale().getValue();
+        locales.add(new HashMap()
+        {
+            {
+                put("url", "/" + uriInfo.getPath());
+                put("tag", mainLocale.toLanguageTag());
+                put("country", mainLocale.getDisplayCountry(mainLocale));
+                put("language", mainLocale.getDisplayLanguage(mainLocale));
+                put("current", mainLocale.equals(execution.getContext().getLocale()));
+            }
+        });
+        List<Locale> alternativeLocales = Objects.firstNonNull(
+                settings.getLocales().getOtherLocales().getValue(), ImmutableList.<Locale>of());
+        if (!alternativeLocales.isEmpty()) {
+            for (final Locale locale : alternativeLocales) {
+                locales.add(new HashMap()
+                {
+                    {
+                        put("url", "/" + locale.toLanguageTag() + "/" + uriInfo.getPath());
+                        put("tag", locale.toLanguageTag());
+                        put("country", locale.getDisplayCountry(locale));
+                        put("language", locale.getDisplayLanguage(locale));
+                        put("current", locale.equals(execution.getContext().getLocale()));
+                    }
+                });
+            }
+        }
+
+        result.put("locales", locales);
 
         // Root path ('/')
         invokeNodeMethods(result, bindings);
