@@ -1,5 +1,6 @@
 package org.mayocat.context;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
@@ -18,6 +19,8 @@ public class Context
     private User user;
 
     private Theme theme;
+
+    private Locale locale;
 
     private Map<Class, Object> settings = null;
 
@@ -83,6 +86,22 @@ public class Context
             return (T) this.settings.get(c);
         }
         return null;
+    }
+
+    public Locale getLocale()
+    {
+        if (locale == null) {
+            throw new RuntimeException("Illegal attempt at accessing context locale before it is initialized");
+        }
+        return locale;
+    }
+
+    public void setLocale(Locale locale)
+    {
+        if (this.locale != null) {
+            throw new RuntimeException("Illegal attempt at replacing already initialized locale");
+        }
+        this.locale = locale;
     }
 
     public Session getSession()
