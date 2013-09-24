@@ -7,9 +7,9 @@ angular.module('settings', ['ngResource'])
     // Controller for the general settings UI
     // See partials/settingsGeneral.html
     //
-    .controller('SettingsController', ['$scope', '$rootScope', 'configurationService', 'timeService',
+    .controller('SettingsController', ['$scope', '$rootScope', 'configurationService', 'timeService', 'localesService',
 
-        function ($scope, $rootScope, configurationService, timeService) {
+        function ($scope, $rootScope, configurationService, timeService, localesService) {
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -36,6 +36,8 @@ angular.module('settings', ['ngResource'])
             // Initialization ------------------------------------------------------------------------------------------
 
             $scope.timeZoneRegions = timeService.getTimeZoneData();
+
+            $scope.locales = localesService.getData();
 
             configurationService.getSettings(function (settings) {
                 $scope.settings = settings;

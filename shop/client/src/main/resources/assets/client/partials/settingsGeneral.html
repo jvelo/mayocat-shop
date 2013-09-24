@@ -34,23 +34,35 @@
                          ng-class="{default: isDefaultValue('general.locales.main')}">
                         <p><label cfor="defaultLocale">Default language</label></p>
 
-                        <input type="text" name="name" class="input-xlarge"
+                        <select class="input-xlarge"
                                ng-model="settings.general.locales.main.value"
                                id="defaultLocale"
-                               ng-disabled="!isConfigurable('general.locales.main')"/>
+                               ng-disabled="!isConfigurable('general.locales.main')">
+                            <option value="">-- Select a language --</option>
+                            <option ng-repeat="locale in locales"
+                                        value="{{ locale.tag }}"
+                                        ng-selected="locale.tag == settings.general.locales.main.value">
+                                    {{ locale.name }}
+                            </option>
+                        </select>
                     </div>
 
-                    <!-- Other locales
-                     FIXME not yet supported
+                    <!-- Other locales -->
                     <div ng-show="isVisible('general.locales.others')"
                          ng-class="{default: isDefaultValue('general.locales.others')}">
                         <p><label for="otherLocales">Other languages</label></p>
-
-                            <input type="text" name="name" class="input-xlarge"
-                                ng-model="settings.general.locales.others.value"
-                                id="otherLocales"
-                                ng-disabled="!isConfigurable('general.locales.others')"/>
-                    </div>-->
+                        {{settings.general.locales.others.value}}
+                        <list-picker ng-model="settings.general.locales.others.value"
+                                     ng-disabled="!isConfigurable('general.locales.others')">
+                            <select class="input-xlarge" id="otherLocales">
+                                <option value="">-- Select a language --</option>
+                                <option ng-repeat="locale in locales"
+                                        value="{{ locale.tag }}">
+                                    {{ locale.name }}
+                                </option>
+                            </select>
+                        </list-picker>
+                    </div>
 
                     <!-- Theme -->
                     <div ng-show="isVisible('theme.active')"

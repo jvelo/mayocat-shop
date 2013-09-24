@@ -19,6 +19,7 @@ import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.rest.Provider;
+import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
 import org.mayocat.task.Task;
 import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
@@ -73,6 +74,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         this.objectMapperFactory.registerModule(new TimeZoneModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
+        this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
 
         this.addModule(new AccountsModule());
     }
