@@ -22,6 +22,8 @@ public class Context
 
     private Locale locale;
 
+    private Boolean alternativeLocale;
+
     private Map<Class, Object> settings = null;
 
     public Context(Tenant tenant, User user)
@@ -102,6 +104,23 @@ public class Context
             throw new RuntimeException("Illegal attempt at replacing already initialized locale");
         }
         this.locale = locale;
+    }
+
+    public boolean isAlternativeLocale()
+    {
+        if (alternativeLocale == null) {
+            throw new RuntimeException(
+                    "Illegal attempt at accessing context alternative locale flag before it is initialized");
+        }
+        return alternativeLocale;
+    }
+
+    public void setAlternativeLocale(boolean alternativeLocale)
+    {
+        if (this.alternativeLocale != null) {
+            throw new RuntimeException("Illegal attempt at replacing already initialized alternative locale flag");
+        }
+        this.alternativeLocale = alternativeLocale;
     }
 
     public Session getSession()

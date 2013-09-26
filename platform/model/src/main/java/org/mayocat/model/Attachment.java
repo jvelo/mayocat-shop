@@ -3,6 +3,8 @@ package org.mayocat.model;
 import java.io.InputStream;
 import java.util.UUID;
 
+import org.mayocat.model.annotation.LocalizedField;
+
 /**
  * @version $Id$
  */
@@ -12,6 +14,7 @@ public class Attachment implements Entity, Child
 
     private String slug;
 
+    @LocalizedField
     private String title;
 
     private String description;

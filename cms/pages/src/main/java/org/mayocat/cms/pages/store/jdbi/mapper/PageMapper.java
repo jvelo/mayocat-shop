@@ -35,10 +35,10 @@ public class PageMapper implements ResultSetMapper<Page>
         if (!Strings.isNullOrEmpty(resultSet.getString("localization_data"))) {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                Map<Locale, Object> localizedVersions = Maps.newHashMap();
+                Map<Locale, Map<String, Object>> localizedVersions = Maps.newHashMap();
                 Map[] data = mapper.readValue(resultSet.getString("localization_data"), Map[].class);
                 for (Map map : data) {
-                    localizedVersions.put(LocaleUtils.toLocale((String) map.get("locale")), map.get("entity"));
+                    localizedVersions.put(LocaleUtils.toLocale((String) map.get("locale")), (Map)map.get("entity"));
                 }
                 page.setLocalizedVersions(localizedVersions);
             } catch (IOException e) {

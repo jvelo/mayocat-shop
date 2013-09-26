@@ -32,7 +32,7 @@ public class DefaultTheme implements Theme
 
     @Valid
     @JsonProperty
-    private Map<String, Model> models = Maps.newHashMap();
+    private Map<String, Model> models = Maps.newLinkedHashMap();
 
     @Valid
     @JsonProperty

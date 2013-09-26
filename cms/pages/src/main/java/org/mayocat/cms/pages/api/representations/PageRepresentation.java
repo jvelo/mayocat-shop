@@ -41,7 +41,7 @@ public class PageRepresentation
     private List<AddonRepresentation> addons = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<Locale, Object> localizedVersions = null;
+    private Map<Locale, Map<String, Object>> localizedVersions = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -127,7 +127,7 @@ public class PageRepresentation
         this.featuredImage = featuredImage;
     }
 
-    public Map<Locale, Object> getLocalizedVersions()
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
     {
         return localizedVersions;
     }

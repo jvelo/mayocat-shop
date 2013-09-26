@@ -44,6 +44,7 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
                     containerRequest.setUris(containerRequest.getBaseUri(), builder.build());
 
                     execution.getContext().setLocale(locale);
+                    execution.getContext().setAlternativeLocale(true);
                     localeSet = true;
                     break;
                 }
@@ -52,6 +53,7 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
 
         if (!localeSet) {
             execution.getContext().setLocale(settings.getLocales().getMainLocale().getValue());
+            execution.getContext().setAlternativeLocale(false);
         }
 
         return containerRequest;

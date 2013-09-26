@@ -78,7 +78,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         this.dao.createOrUpdateAddons(page);
 
         if (page.getLocalizedVersions() != null && !page.getLocalizedVersions().isEmpty()) {
-            Map<Locale, Object> localizedVersions = page.getLocalizedVersions();
+            Map<Locale, Map<String, Object>> localizedVersions = page.getLocalizedVersions();
             for (Locale locale : localizedVersions.keySet()) {
                 this.dao.createOrUpdateTranslation(page.getId(), locale, localizedVersions.get(locale));
             }

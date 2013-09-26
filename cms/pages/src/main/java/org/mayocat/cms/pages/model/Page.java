@@ -17,12 +17,10 @@ import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.Index;
-import org.mayocat.model.annotation.LocalizationFieldType;
-//import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -41,12 +39,12 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     @Index
     private Boolean published;
 
-    //@Localized(type = LocalizationFieldType.SMALL)
+    @LocalizedField
     @Index
     @NotNull
     private String title;
 
-    //@Localized(type = LocalizationFieldType.MEDIUM)
+    @LocalizedField
     @Index
     private String content;
 
