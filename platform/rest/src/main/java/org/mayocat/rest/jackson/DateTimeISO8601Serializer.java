@@ -13,13 +13,15 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 public class DateTimeISO8601Serializer extends StdSerializer<DateTime>
 {
-    public DateTimeISO8601Serializer() { super(DateTime.class); }
+    public DateTimeISO8601Serializer()
+    {
+        super(DateTime.class);
+    }
 
     @Override
-    public void serialize(DateTime value, JsonGenerator jgen, SerializerProvider provider) throws IOException,
-            JsonProcessingException
+    public void serialize(DateTime value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException
     {
         // ISO 8601 without milliseconds
-        jgen.writeString(value.toString("yyyy-MM-dd'T'HH:mm:ssZZ"));
+        jsonGenerator.writeString(value.toString("yyyy-MM-dd'T'HH:mm:ssZZ"));
     }
 }
