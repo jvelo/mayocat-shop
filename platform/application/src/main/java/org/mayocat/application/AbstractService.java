@@ -15,9 +15,11 @@ import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
 import org.mayocat.lifecycle.Managed;
 import org.mayocat.Module;
+import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.rest.Provider;
+import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
 import org.mayocat.task.Task;
 import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
@@ -34,6 +36,8 @@ import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.yammer.dropwizard.Service;
@@ -70,6 +74,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         this.objectMapperFactory.registerModule(new TimeZoneModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
+        this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
 
         this.addModule(new AccountsModule());
     }
@@ -88,8 +93,12 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
                 CookieSessionContainerFilter.class.getCanonicalName());
+
+        List<String> requestFilters = Arrays.asList(CookieSessionContainerFilter.class.getCanonicalName(),
+                LocalizationContainerFilter.class.getCanonicalName());
+
         environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
-                CookieSessionContainerFilter.class.getCanonicalName());
+                Joiner.on(",").join(requestFilters));
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);

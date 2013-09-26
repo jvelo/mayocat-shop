@@ -47,7 +47,7 @@
                     Today
                     <div>
                         <h4>
-                            <money amount="stats.daily.total" currency="mainCurrency"></money>
+                            {{stats.daily.total | money:mainCurrency}} {{mainCurrency}}
                         </h4>
                     </div>
                     <div>for {{stats.daily.numberOfOrders}} order(s)</div>
@@ -57,7 +57,7 @@
                 Last 7 days
                 <div>
                     <h4>
-                        <money amount="stats.weekly.total" currency="mainCurrency"></money>
+                        {{stats.weekly.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
                 <div>for {{stats.weekly.numberOfOrders}} order(s)</div>
@@ -66,7 +66,7 @@
                 Last 30 days
                 <div>
                     <h4>
-                        <money amount="stats.monthly.total" currency="mainCurrency"></money>
+                        {{stats.monthly.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
                 <div>for {{stats.monthly.numberOfOrders}} order(s)</div>
@@ -75,7 +75,7 @@
                 Overall
                 <div>
                     <h4>
-                        <money amount="stats.forever.total" currency="mainCurrency"></money>
+                        {{stats.forever.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
                 <div>for {{stats.forever.numberOfOrders}} order(s)</div>

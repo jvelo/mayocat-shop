@@ -8,6 +8,7 @@ var mayocat = angular.module('mayocat', [
     'mayocat.configuration',
     'mayocat.time',
     'mayocat.entitiesLocalization'
+    'mayocat.locales'
 ]);
 
 /**
@@ -71,6 +72,48 @@ mayocat.config(function ($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 });
 
+
+/**
+ * Simple list picker directive to manage a list of elements
+ *
+ * TODO: handle ng-disabled
+ */
+mayocat.directive('listPicker', [function(){
+    return {
+        restrict: 'E',
+        require: 'ngModel',
+        transclude: 'element',
+        replace: true,
+        template: '<div><div><ul class="pickerElements"><li ng-repeat="element in model">' +
+            '<button class="btn btn-mini" ng-click="remove(element)">{{element}} &times;</span></button>' +
+            '</li></ul></div><div class="clearfix"></div>' +
+            '<span ng-transclude></span>' +
+            '<input type="submit" class="btn" value="Add" ng-click="add()"></div>',
+
+        link: function (scope, element, attr, ngModel) {
+            scope.$watch(function () {
+                return ngModel.$modelValue;
+            }, function (modelValue) {
+                scope.model = modelValue;
+            });
+            scope.$watch("model", function (value) {
+                ngModel.$setViewValue(value);
+            });
+        },
+        controller: function ($scope, $element, $attrs) {
+            $scope.add = function () {
+                $scope.new = $element.find("select,input").attr("value");
+                if ($scope.model.indexOf($scope.new) < 0) {
+                    $scope.model.push($scope.new);
+                }
+                $scope.new = "";
+            }
+            $scope.remove = function (currency) {
+                $scope.model.splice($scope.model.indexOf(currency), 1);
+            }
+        }
+    };
+}]);
 
 /**
  * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
