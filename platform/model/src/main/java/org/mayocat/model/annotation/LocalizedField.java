@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface Localized
+public @interface LocalizedField
 {
     LocalizationFieldType type() default LocalizationFieldType.SMALL;
 }

@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.mayocat.store.rdbms.dbi.dao.util.StringUtil;
+import org.mayocat.util.StringUtil;
 
 /**
  * @version $Id$

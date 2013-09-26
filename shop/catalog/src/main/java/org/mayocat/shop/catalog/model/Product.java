@@ -14,7 +14,7 @@ import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.annotation.DoNotIndex;
-import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.annotation.LocalizedField;
 import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
@@ -34,12 +34,12 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     @Size(min = 1)
     private String slug;
 
-    @Localized
+    @LocalizedField
     @NotNull
     @Size(min = 1)
     private String title;
 
-    @Localized
+    @LocalizedField
     private transient String description;
 
     private BigDecimal price;

@@ -1,4 +1,4 @@
-package org.mayocat.store.rdbms.dbi.dao.util;
+package org.mayocat.util;
 
 /**
  * @version $Id$

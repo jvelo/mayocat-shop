@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.meta.PageEntity;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
@@ -58,6 +59,9 @@ public class PageResource extends AbstractFrontResource implements Resource
 
     @Inject
     private Execution execution;
+
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
 
     @Path("{slug}")
     @GET

@@ -1,6 +1,7 @@
 package org.mayocat.store.rdbms.dbi.dao.util;
 
 import org.junit.Test;
+import org.mayocat.util.StringUtil;
 
 import junit.framework.Assert;
 

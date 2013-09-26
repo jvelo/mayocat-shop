@@ -15,7 +15,7 @@ import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizationFieldType;
-import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -32,7 +32,7 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
     @Size(min = 1)
     private String slug;
 
-    @Localized(type = LocalizationFieldType.SMALL)
+    @LocalizedField(type = LocalizationFieldType.SMALL)
     @Index
     @NotNull
     public String title;
