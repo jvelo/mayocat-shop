@@ -7,8 +7,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.mayocat.localization.EntityLocalizationService;
-import org.mayocat.localization.util.CopyUtil;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.LocalizedField;
 import org.xwiki.component.annotation.Component;
@@ -31,7 +31,8 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
             return entity;
         }
 
-        T copiedEntity = (T) CopyUtil.deepCopy(entity);
+        T copiedEntity = SerializationUtils.clone(entity);
+
         if (copiedEntity == null) {
             return entity;
         }
