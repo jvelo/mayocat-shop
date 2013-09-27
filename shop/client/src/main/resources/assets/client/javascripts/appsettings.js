@@ -6,7 +6,7 @@
         "applicationName" : "Mayocat",
 
         defaultLocale: "en",
-        localizations: {
+        localization: {
             /* Populated with the localization objects from the `localizations` folder.
                There's no need to manually specify an object here, it's automatically done
                by the localization files. */
