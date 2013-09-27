@@ -2,19 +2,19 @@
     <div class="span8">
         <!-- header -->
         <div class="page-header">
-            <h1 class="">Catalog settings</h1>
+            <h1 class="">{{'settings.title.catalog' | translate}}</h1>
         </div>
 
         <form name="shopForm">
             <fieldset>
-                <legend>Currencies</legend>
+                <legend>{{'settings.title.currencies' | translate}}</legend>
 
                 <div class="block">
 
                     <!-- Default currency -->
                     <div ng-show="isVisible('catalog.currencies.main')"
                          ng-class="{default: isDefaultValue('catalog.currencies.main')}">
-                        <p><label>Default currency</label></p>
+                        <p><label>{{'settings.misc.defaultCurrency' | translate}}</label></p>
 
                             <currency-picker model="settings.catalog.currencies.main.value"
                                              disabled="!isConfigurable('catalog.currencies.main')"
@@ -24,7 +24,7 @@
                     <!-- Other currencies -->
                     <div ng-show="isVisible('catalog.currencies.others')"
                          ng-class="{default: isDefaultValue('catalog.currencies.others')}">
-                        <p><label>Other currencies</label></p>
+                        <p><label>{{'settings.misc.otherCurrencies' | translate}}</label></p>
 
                             <currency-list-picker model="settings.catalog.currencies.others.value"
                                                   disabled="!isConfigurable('catalog.currencies.others')"
@@ -35,7 +35,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>Products</legend>
+                <legend>{{'product.title.products' | translate}}</legend>
 
                 <div class="block">
 
@@ -44,7 +44,7 @@
                          ng-class="{default: isDefaultValue('catalog.products.collections')}">
 
                         <label class="checkbox">
-                            belong to categories
+                            {{'settings.misc.categoriesManagement' | translate}}
                             <input type="checkbox"
                                    id="collectionsEnabled"
                                    ng-model="settings.catalog.products.collections.value"/>
@@ -56,7 +56,7 @@
                          ng-class="{default: isDefaultValue('catalog.products.stock')}">
 
                         <label class="checkbox">
-                            have stock
+                            {{'settings.misc.stockManagement' | translate}}
                             <input type="checkbox"
                                    id="stockEnabled"
                                    ng-model="settings.catalog.products.stock.value"/>
@@ -68,7 +68,7 @@
                          ng-class="{default: isDefaultValue('catalog.products.weight')}">
 
                         <label class="checkbox">
-                            have weight (keep this checked if you want to calculate shipping costs by weight)
+                            {{'settings.misc.weightManagement' | translate}}
                             <input type="checkbox"
                                    id="weightEnabled"
                                    ng-model="settings.catalog.products.weight.value"/>
@@ -81,8 +81,7 @@
 
                         <dd>
                             <label class="checkbox">
-                                weight unit
-
+                                {{'settings.misc.weightUnit' | translate}}
                                 <select ng-disabled="!settings.catalog.products.weight.value"
                                         ng-model="settings.catalog.products.weightUnit.value"
                                         ng-options="value.unit as (value.label + ' (' + value.unit + ')') for value in [{'unit':'kg','label':'Kilogram'}, {'unit':'g','label':'Gram'}, {'unit':'oz','label':'Ounce'}, {'unit':'lb','label':'Pound'} ]">
@@ -102,7 +101,7 @@
         <div class="buttons hasLoading">
             <button ng-click="updateSettings()"
                     class="btn btn-large btn-primary">
-                Update
+                {{'entity.action.update' | translate}}
             </button>
             <span ng-class="{'loading': isSaving}"></span>
         </div>

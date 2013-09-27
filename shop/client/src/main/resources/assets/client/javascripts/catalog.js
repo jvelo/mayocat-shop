@@ -128,4 +128,11 @@ angular.module('catalog', [])
             $scope.$on("catalog:refreshCatalog", function () {
                 $scope.refreshCatalog();
             })
+
+            $scope.getTranslationProperties = function () {
+                return {
+                    numberOfProducts: $scope.products.length
+                };
+            };
+
         }]);
