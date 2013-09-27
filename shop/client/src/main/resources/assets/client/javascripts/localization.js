@@ -3,17 +3,17 @@
 
     MayocatShop.config(['$translateProvider', function ($translateProvider) {
         var defaultLocale = Mayocat.defaultLocale,
-            localizations = Mayocat.localizations,
-            localization;
+            localization = Mayocat.localization,
+            locale;
 
         $translateProvider.useMessageFormatInterpolation();
 
         // Add all the localization objects to the translate provider
-        for(var locale in localizations) {
-            localization = localizations[locale];
+        for(var key in localization) {
+            locale = localization[key];
 
-            if(!localization.hasOwnProperty(locale)){
-                $translateProvider.translations(locale, localization);
+            if(!locale.hasOwnProperty(key)){
+                $translateProvider.translations(key, locale);
             }
         }
 
