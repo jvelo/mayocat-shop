@@ -1,4 +1,4 @@
-configura'use strict'
+'use strict'
 
 angular.module('page', ['ngResource'])
 
