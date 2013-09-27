@@ -2,6 +2,11 @@
     'use strict';
 
     var enLocalization = {
+
+        /**
+         * Translations linked to generic Mayocat entities
+         */
+
         entity: {
             misc: {
                 defaultModel: "Default model"
@@ -30,6 +35,10 @@
             }
         },
 
+        /**
+         * Translations linked to the homepage
+         */
+
         home: {
             title: {
                 welcome: "Welcome"
@@ -39,6 +48,10 @@
                 home: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products."
             }
         },
+
+        /**
+         * Translations linked to the authentication module
+         */
 
         authentication: {
             misc: {
@@ -57,6 +70,10 @@
                 failure: "We could not authenticate you with these credentials."
             }
         },
+
+        /**
+         * Translations linked to the image upload module
+         */
 
         upload: {
             misc: {
@@ -82,6 +99,10 @@
             }
         },
 
+        /**
+         * Translations linked to the thumbnail editor
+         */
+
         thumbnailEditor: {
             misc: {
                 editing: "Editing:"
@@ -96,6 +117,10 @@
                 close: "Close"
             }
         },
+
+        /**
+         * Translations linked to the orders and the turnover
+         */
 
         order: {
             misc: {
@@ -151,6 +176,10 @@
             }
         },
 
+        /**
+         * Translations linked to the collections and their products
+         */
+
         product: {
             misc: {
                 price: "Price",
@@ -204,6 +233,10 @@
             }
         },
 
+        /**
+         * Translations linked to the image module used for the forms which accepts image upload
+         */
+
         image: {
             misc: {
                 actions: "Actions"
@@ -225,6 +258,10 @@
                 noImage: "No image yet"
             }
         },
+
+        /**
+         * Translations linked to the content section (which includes pages and news articles)
+         */
 
         content: {
             misc: {
@@ -277,6 +314,10 @@
                 confirmArticleDeletion: "Please confirm you want to delete this article. There's no coming back!"
             }
         },
+
+        /**
+         * Translations linked to the whole settings
+         */
 
         settings: {
             misc: {
