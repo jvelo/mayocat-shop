@@ -44,7 +44,8 @@ public class DefaultThemeLoader implements ThemeLoader
         JsonNode node;
 
         if (themeConfig == null) {
-            return null; // FIXME => Exception ?
+            logger.warn("No theme configured for tenant ; using default theme.");
+            return new DefaultTheme();
         }
 
         switch (themeConfig.getType()) {
@@ -57,7 +58,13 @@ public class DefaultThemeLoader implements ThemeLoader
                 break;
         }
 
-        final Theme theme = mapper.readValue(new TreeTraversingParser(node), DefaultTheme.class);
+        Theme theme = mapper.readValue(new TreeTraversingParser(node), DefaultTheme.class);
+
+        if (theme == null) {
+            logger.warn("Failed to load a theme from configuration ; using default theme");
+            theme = new DefaultTheme();
+        }
+
         return theme;
     }
 }

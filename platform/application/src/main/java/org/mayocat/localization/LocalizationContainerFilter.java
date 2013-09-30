@@ -28,8 +28,13 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
             return containerRequest;
         }
 
-        boolean localeSet = false;
         Execution execution = Utils.getComponent(Execution.class);
+
+        if (execution.getContext().getTenant() == null) {
+            return containerRequest;
+        }
+
+        boolean localeSet = false;
         GeneralSettings settings = execution.getContext().getSettings(GeneralSettings.class);
         URI requestURI = containerRequest.getRequestUri();
 

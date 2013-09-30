@@ -46,6 +46,7 @@
                         <include>assets/common/javascripts/image.js</include>
                         <include>assets/common/javascripts/thumbnail.js</include>
                         <include>assets/common/javascripts/time.js</include>
+                        <include>assets/common/javascripts/locales.js</include>
                         <include>assets/common/javascripts/configuration.js</include>
                         <include>assets/common/javascripts/entitiesLocalization.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
