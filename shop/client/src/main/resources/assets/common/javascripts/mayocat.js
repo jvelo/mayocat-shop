@@ -492,13 +492,15 @@ mayocat.directive('ckEditor', function () {
                 removeButtons: "Subscript,Superscript",
                 height: '290px',
                 width: '99%',
+                removeDialogTabs: '',
                 extraPlugins: 'image2,imagebrowser',
                 imageBrowser_listUrl: "/path/to/images_list.json"
             };
 
             CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
-            CKEDITOR.config.mayocat_entity_uri = "/api/product/texas/";
+
+            CKEDITOR.config.mayocat_entity_uri = "/api/products/texas/";
             var ck = CKEDITOR.replace(elm[0], ckOptions);
 
             if (!ngModel) return;

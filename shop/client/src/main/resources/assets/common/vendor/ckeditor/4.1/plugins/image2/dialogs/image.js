@@ -190,8 +190,6 @@
 					this.setValue( value );
 				};
 
-			var previewPreloader;
-
 			var onImgLoadEvent = function() {
 					// Image is ready.
 					var original = this.originalElement;
@@ -199,9 +197,6 @@
 					original.removeListener( 'load', onImgLoadEvent );
 					original.removeListener( 'error', onImgLoadErrorEvent );
 					original.removeListener( 'abort', onImgLoadErrorEvent );
-
-					// Hide loader
-					//CKEDITOR.document.getById( imagePreviewLoaderId ).setStyle( 'display', 'none' );
 
 					// New image -> new domensions
 					if ( !this.dontResetSize )
@@ -226,11 +221,6 @@
 					// Set Error image.
 					var noimage = CKEDITOR.getUrl( CKEDITOR.plugins.get( 'image' ).path + 'images/noimage.png' );
 
-					if ( this.preview )
-						this.preview.setAttribute( 'src', noimage );
-
-					// Hide loader
-					CKEDITOR.document.getById( imagePreviewLoaderId ).setStyle( 'display', 'none' );
 					switchLockRatio( this, false ); // Unlock.
 				};
 
@@ -239,7 +229,6 @@
 				},
 				btnLockSizesId = numbering( 'btnLockSizes' ),
 				btnResetSizeId = numbering( 'btnResetSize' ),
-				imagePreviewLoaderId = numbering( 'ImagePreviewLoader' ),
 				previewLinkId = numbering( 'previewLink' ),
 				previewImageId = numbering( 'previewImage' );
 
@@ -265,12 +254,6 @@
 						sel = editor.getSelection(),
 						element = sel && sel.getSelectedElement(),
 						link = element && editor.elementPath( element ).contains( 'a', 1 );
-
-					//Hide loader.
-					CKEDITOR.document.getById( imagePreviewLoaderId ).setStyle( 'display', 'none' );
-					// Create the preview before setup the dialog contents.
-					previewPreloader = new CKEDITOR.dom.element( 'img', editor.document );
-					this.preview = CKEDITOR.document.getById( previewImageId );
 
 					// Copy of the image
 					this.originalElement = editor.document.createElement( 'img' );
@@ -318,11 +301,6 @@
 					// Refresh LockRatio button
 					switchLockRatio( this, true );
 
-					// Dont show preview if no URL given.
-					if ( !CKEDITOR.tools.trim( this.getValueOf( 'info', 'txtUrl' ) ) ) {
-						this.preview.removeAttribute( 'src' );
-						this.preview.setStyle( 'display', 'none' );
-					}
 				},
 				onOk: function() {
 					// Edit existing Image.
@@ -437,86 +415,45 @@
 						type: 'vbox',
 						padding: 0,
 						children: [
-							{
-							type: 'hbox',
-							widths: [ '280px', '110px' ],
-							align: 'right',
-							children: [
-								{
-								id: 'txtUrl',
-								type: 'text',
-								label: editor.lang.common.url,
-								required: true,
-								onChange: function() {
-									var dialog = this.getDialog(),
-										newUrl = this.getValue();
+                            {
+                                id: 'mayoUrl',
+                                type: 'html',
+                                html: '<div id="mayoProductImgs"></div>',
+                                onLoad: function() {
+                                    $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
+                                        $.each(data, function(i, v) {
+                                            var $el = $('<div>')
+                                                .css('float', 'left')
+                                                .css('margin', '2px')
+                                                .append(
+                                                    $('<img>')
+                                                        .attr('src', v.file.href + '?width=90&height=90')
+                                                        .css('border', '2px solid white')
+                                                        .data('href', v.file.href)
+                                                );
+                                            $('#mayoProductImgs').append($el);
+                                        });
+                                        $('#mayoProductImgs').on('click', 'img', function() {
+                                            $('#mayoProductImgs img').each(function(i, e) {
+                                                $(this).css('border', '2px solid white');
+                                            })
+                                            $(this).css('border', '2px solid blue');
+                                            $('#mayoProductImgs').data('selectedHref', $(this).data('href'));
+                                        })
+                                    });
 
-									//Update original image
-									if ( newUrl.length > 0 ) //Prevent from load before onShow
-									{
-										dialog = this.getDialog();
-										var original = dialog.originalElement;
 
-										dialog.preview.removeStyle( 'display' );
-
-										original.setCustomData( 'isReady', 'false' );
-										// Show loader
-										var loader = CKEDITOR.document.getById( imagePreviewLoaderId );
-										if ( loader )
-											loader.setStyle( 'display', '' );
-
-										original.on( 'load', onImgLoadEvent, dialog );
-										original.on( 'error', onImgLoadErrorEvent, dialog );
-										original.on( 'abort', onImgLoadErrorEvent, dialog );
-										original.setAttribute( 'src', newUrl );
-
-										// Query the preloader to figure out the url impacted by based href.
-										previewPreloader.setAttribute( 'src', newUrl );
-										dialog.preview.setAttribute( 'src', previewPreloader.$.src );
-										updatePreview( dialog );
-									}
-									// Dont show preview if no URL given.
-									else if ( dialog.preview ) {
-										dialog.preview.removeAttribute( 'src' );
-										dialog.preview.setStyle( 'display', 'none' );
-									}
-								},
-								setup: function( type, element ) {
-									if ( type == IMAGE ) {
-										var url = element.data( 'cke-saved-src' ) || element.getAttribute( 'src' );
-										var field = this;
-
-										this.getDialog().dontResetSize = true;
-
-										field.setValue( url ); // And call this.onChange()
-										// Manually set the initial value.(#4191)
-										field.setInitValue();
-									}
-								},
-								commit: function( type, element ) {
-									if ( type == IMAGE && ( this.getValue() || this.isChanged() ) ) {
-										element.data( 'cke-saved-src', this.getValue() );
-										element.setAttribute( 'src', this.getValue() );
-									} else if ( type == CLEANUP ) {
-										element.setAttribute( 'src', '' ); // If removeAttribute doesn't work.
-										element.removeAttribute( 'src' );
-									}
-								},
-								validate: CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
-							},
-								{
-								type: 'button',
-								id: 'browse',
-								// v-align with the 'txtUrl' field.
-								// TODO: We need something better than a fixed size here.
-								style: 'display:inline-block;margin-top:10px;',
-								align: 'center',
-								label: editor.lang.common.browseServer,
-								hidden: true,
-								filebrowser: 'info:txtUrl'
-							}
-							]
-						}
+                                },
+                                commit: function( type, element ) {
+                                    if ( type == IMAGE ) {
+                                        element.data( 'cke-saved-src', $('#mayoProductImgs').data('selectedHref') );
+                                        element.setAttribute( 'src', $('#mayoProductImgs').data('selectedHref') );
+                                    } else if ( type == CLEANUP ) {
+                                        element.setAttribute( 'src', '' ); // If removeAttribute doesn't work.
+                                        element.removeAttribute( 'src' );
+                                    }
+                                }
+                            }
 						]
 					},
 						{
@@ -908,27 +845,8 @@
 								]
 							}
 							]
-						},
-							{
-							type: 'vbox',
-							height: '250px',
-							children: [
-								{
-								type: 'html',
-								id: 'htmlPreview',
-								style: 'width:95%;',
-								html: '<div>' + CKEDITOR.tools.htmlEncode( editor.lang.common.preview ) + '<br>' +
-									'<div id="' + imagePreviewLoaderId + '" class="ImagePreviewLoader" style="display:none"><div class="loading">&nbsp;</div></div>' +
-									'<div class="ImagePreviewBox"><table><tr><td>' +
-										'<a href="javascript:void(0)" target="_blank" onclick="return false;" id="' + previewLinkId + '">' +
-										'<img id="' + previewImageId + '" alt="" /></a>' +
-										( editor.config.image_previewText || 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. ' +
-											'Maecenas feugiat consequat diam. Maecenas metus. Vivamus diam purus, cursus a, commodo non, facilisis vitae, ' +
-											'nulla. Aenean dictum lacinia tortor. Nunc iaculis, nibh non iaculis aliquam, orci felis euismod neque, sed ornare massa mauris sed velit. Nulla pretium mi et risus. Fusce mi pede, tempor id, cursus ac, ullamcorper nec, enim. Sed tortor. Curabitur molestie. Duis velit augue, condimentum at, ultrices a, luctus ut, orci. Donec pellentesque egestas eros. Integer cursus, augue in cursus faucibus, eros pede bibendum sem, in tempus tellus justo quis ligula. Etiam eget tortor. Vestibulum rutrum, est ut placerat elementum, lectus nisl aliquam velit, tempor aliquam eros nunc nonummy metus. In eros metus, gravida a, gravida sed, lobortis id, turpis. Ut ultrices, ipsum at venenatis fringilla, sem nulla lacinia tellus, eget aliquet turpis mauris non enim. Nam turpis. Suspendisse lacinia. Curabitur ac tortor ut ipsum egestas elementum. Nunc imperdiet gravida mauris.' ) +
-									'</td></tr></table></div></div>'
-								}
-							]
 						}
+
 						]
 					}
 					]
@@ -1001,28 +919,6 @@
 									element.setAttribute( 'target', this.getValue() );
 							}
 						}
-					}
-					]
-				},
-					{
-					id: 'Upload',
-					hidden: true,
-					filebrowser: 'uploadButton',
-					label: editor.lang.image.upload,
-					elements: [
-						{
-						type: 'file',
-						id: 'upload',
-						label: editor.lang.image.btnUpload,
-						style: 'height:40px',
-						size: 38
-					},
-						{
-						type: 'fileButton',
-						id: 'uploadButton',
-						filebrowser: 'info:txtUrl',
-						label: editor.lang.image.btnUpload,
-						'for': [ 'Upload', 'upload' ]
 					}
 					]
 				},
