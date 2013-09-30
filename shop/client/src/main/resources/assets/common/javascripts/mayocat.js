@@ -351,7 +351,7 @@ mayocat.directive('ckEditor', function () {
         link: function (scope, elm, attr, ngModel) {
             CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
-            CKEDITOR.config.mayocat_entity_uri = "/api/product/texas/";
+            CKEDITOR.config.mayocat_entity_uri = "/api/products/texas/";
             var ck = CKEDITOR.replace(elm[0],
                 {
                     toolbarGroups: [
