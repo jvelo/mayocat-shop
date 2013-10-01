@@ -409,11 +409,18 @@ mayocat.directive('ckEditor', function () {
 
             if (!ngModel) return;
 
-            //loaded didn't seem to work, but instanceReady did
-            //I added this because sometimes $render would call setData before the ckeditor was ready
+            // loaded didn't seem to work, but instanceReady did
+            // I added this because sometimes $render would call setData before the ckeditor was ready
             ck.on('instanceReady', function () {
                 ck.setData(ngModel.$viewValue);
             });
+
+            // Make sure that if the model changes, the values is passed backed to the ckeditor
+            // Example: value comes from an AJAX request, and that creates a race condition vs. ckeditor initialization
+            scope.$watch(ngModel, function(){
+                ck.setData(ngModel.$viewValue);
+            });
+
 
             ck.on('pasteState', function () {
                 scope.$apply(function () {
