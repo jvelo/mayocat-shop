@@ -433,7 +433,7 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
  * See http://stackoverflow.com/questions/11997246/bind-ckeditor-value-to-model-text-in-angularjs-and-rails
  * and http://stackoverflow.com/questions/15483579/angularjs-ckeditor-directive-sometimes-fails-to-load-data-from-a-service
  */
-mayocat.directive('ckEditor', function () {
+mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
@@ -493,7 +493,7 @@ mayocat.directive('ckEditor', function () {
                 height: '290px',
                 width: '99%',
                 removeDialogTabs: '',
-                extraPlugins: 'image2,imagebrowser',
+                extraPlugins: 'image2',
                 imageBrowser_listUrl: "/path/to/images_list.json"
             };
 
@@ -549,7 +549,7 @@ mayocat.directive('ckEditor', function () {
 
         }
     };
-});
+}]);
 
 /**
  * Scroll directive.
