@@ -418,7 +418,7 @@
                             {
                                 id: 'mayoUrl',
                                 type: 'html',
-                                html: '<div id="' + mayoProductImgsId + '"><div style="display:hidden;">Images du produit</div></div>',
+                                html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images du produit</div></div>',
                                 onLoad: function() {
                                     var $imgsDiv = $(document.getElementById(mayoProductImgsId));
                                     $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
