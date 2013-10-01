@@ -230,7 +230,7 @@
 				btnLockSizesId = numbering( 'btnLockSizes' ),
 				btnResetSizeId = numbering( 'btnResetSize' ),
 				previewLinkId = numbering( 'previewLink' ),
-				previewImageId = numbering( 'previewImage' );
+                mayoProductImgsId = numbering( 'mayoProductImgs');
 
 			return {
 				title: "Insérer une image",
@@ -418,9 +418,11 @@
                             {
                                 id: 'mayoUrl',
                                 type: 'html',
-                                html: '<div>Images du produit</div><div id="mayoProductImgs"></div>',
+                                html: '<div id="' + mayoProductImgsId + '"><div style="display:hidden;">Images du produit</div></div>',
                                 onLoad: function() {
+                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
                                     $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
+                                        $imgsDiv.children('div:hidden').show();
                                         $.each(data, function(i, v) {
                                             var $el = $('<div>')
                                                 .css({'float': 'left','margin': '2px'})
@@ -431,15 +433,15 @@
                                                         .css('border', '2px solid white')
                                                         .data('href', v.file.href)
                                                 );
-                                            $('#mayoProductImgs').append($el);
+                                            $imgsDiv.append($el);
                                         });
-                                        $('#mayoProductImgs')
+                                        $imgsDiv
                                         .on('click', 'img', function() {
-                                            $('#mayoProductImgs img').each(function(i, e) {
+                                            $imgsDiv.find('img').each(function(i, e) {
                                                 $(this).css('border', '2px solid white');
                                             })
                                             $(this).css('border', '2px solid blue');
-                                            $('#mayoProductImgs').data('selectedHref', $(this).data('href'));
+                                            $imgsDiv.data('selectedHref', $(this).data('href'));
                                         })
                                         .on('mouseenter', 'img', function() {
                                             $(this).css('cursor', 'pointer');
@@ -447,17 +449,19 @@
                                     });
                                 },
                                 setup: function( type, element ) {
+                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
                                     if ( type == IMAGE ) {
                                         var href = element.data( 'cke-saved-src' ) || element.getAttribute( 'src' );
-                                        $('#mayoProductImgs img').each(function(i, e) {
+                                        $imgsDiv.find('img').each(function(i, e) {
                                             if ($(this).data('href') == href) $(this).css('border', '2px solid blue');
                                         })
                                     }
                                 },
                                 commit: function( type, element ) {
+                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
                                     if ( type == IMAGE ) {
-                                        element.data( 'cke-saved-src', $('#mayoProductImgs').data('selectedHref') );
-                                        element.setAttribute( 'src', $('#mayoProductImgs').data('selectedHref') );
+                                        element.data( 'cke-saved-src', $imgsDiv.data('selectedHref') );
+                                        element.setAttribute( 'src', $imgsDiv.data('selectedHref') );
                                     } else if ( type == CLEANUP ) {
                                         element.setAttribute( 'src', '' ); // If removeAttribute doesn't work.
                                         element.removeAttribute( 'src' );
