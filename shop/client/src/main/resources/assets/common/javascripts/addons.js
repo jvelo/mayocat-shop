@@ -252,8 +252,6 @@ angular.module('mayocat.addons', ['ngResource'])
                 scope.$watch(
                     'addon',
                     function (definition) {
-                        console.log("LOCALIZED OBJECT", scope);
-
                         scope.type = addonsService.type(definition.type, definition.editor);
 
                         var editor = addonsService.editor(scope.object.type, definition, {

@@ -130,7 +130,7 @@ describe('Addons', function () {
             expect(
                 addonsService.editor("string", {})
             ).toBe(
-                "<input ng-model=$parent.object.value type='text' >"
+                "<input ng-model=object.value type='text' >"
             );
 
             // Simple string, disabled
@@ -141,7 +141,7 @@ describe('Addons', function () {
                     }
                 })
             ).toBe(
-                "<input ng-model=$parent.object.value type='text' disabled='disabled' >"
+                "<input ng-model=object.value type='text' disabled='disabled' >"
             );
 
             // Textarea
@@ -150,7 +150,7 @@ describe('Addons', function () {
                     "editor" : "textarea"
                 })
             ).toBe(
-                "<textarea ng-model=$parent.object.value ></textarea>"
+                "<textarea ng-model=object.value ></textarea>"
             );
 
             // With placeholder
