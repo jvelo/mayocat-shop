@@ -233,9 +233,9 @@
 				previewImageId = numbering( 'previewImage' );
 
 			return {
-				title: "Salut bande de tarés" /*editor.lang.image[ dialogType == 'image2' ? 'title' : 'titleButton' ]*/,
-				minWidth: 420,
-				minHeight: 360,
+				title: "Insérer une image",
+				minWidth: 520,
+				minHeight: 260,
 				onShow: function() {
 					this.imageElement = false;
 					this.linkElement = false;
@@ -418,7 +418,7 @@
                             {
                                 id: 'mayoUrl',
                                 type: 'html',
-                                html: '<div id="mayoProductImgs"></div>',
+                                html: '<div>Images du produit</div><div id="mayoProductImgs"></div>',
                                 onLoad: function() {
                                     $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
                                         $.each(data, function(i, v) {
@@ -441,8 +441,6 @@
                                             $('#mayoProductImgs').data('selectedHref', $(this).data('href'));
                                         })
                                     });
-
-
                                 },
                                 commit: function( type, element ) {
                                     if ( type == IMAGE ) {
@@ -489,13 +487,9 @@
 							children: [
 								{
 								type: 'hbox',
+                                style: 'width:100px;margin:0;',
 								requiredContent: 'img{width,height}',
-								widths: [ '50%', '50%' ],
 								children: [
-									{
-									type: 'vbox',
-									padding: 1,
-									children: [
 										{
 										type: 'text',
 										width: '40px',
@@ -575,13 +569,11 @@
 												element.removeStyle( 'height' );
 											}
 										}
-									}
-									]
 								},
 									{
 									id: 'ratioLock',
 									type: 'html',
-									style: 'margin-top:30px;width:40px;height:40px;',
+									style: 'width:40px;height:40px;',
 									onLoad: function() {
 										// Activate Reset button
 										var resetButton = CKEDITOR.document.getById( btnResetSizeId ),
@@ -678,6 +670,10 @@
 										}
 									}
 								},
+                                {
+                                type: 'hbox',
+                                style: 'width:100px;margin:0;',
+                                children: [
 									{
 									type: 'text',
 									id: 'txtHSpace',
@@ -778,7 +774,9 @@
 											element.removeStyle( 'margin-bottom' );
 										}
 									}
-								},
+								}
+                                ]
+                                },
 									{
 									id: 'cmbAlign',
 									requiredContent: 'img{float}',
