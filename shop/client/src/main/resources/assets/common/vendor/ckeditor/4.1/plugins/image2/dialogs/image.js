@@ -446,6 +446,14 @@
                                         });
                                     });
                                 },
+                                setup: function( type, element ) {
+                                    if ( type == IMAGE ) {
+                                        var href = element.data( 'cke-saved-src' ) || element.getAttribute( 'src' );
+                                        $('#mayoProductImgs img').each(function(i, e) {
+                                            if ($(this).data('href') == href) $(this).css('border', '2px solid blue');
+                                        })
+                                    }
+                                },
                                 commit: function( type, element ) {
                                     if ( type == IMAGE ) {
                                         element.data( 'cke-saved-src', $('#mayoProductImgs').data('selectedHref') );
