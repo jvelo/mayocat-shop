@@ -39,7 +39,7 @@
 
         }])
 
-        .directive("localized", ['$rootScope', 'entitiesLocalizationService', function ($rootScope, localizationService) {
+        .directive("localized", ['$compile', '$rootScope', 'entitiesLocalizationService', function ($compile, $rootScope, localizationService) {
             return {
                 scope: {
                 },
@@ -56,7 +56,6 @@
                     '<li ng-repeat="locale in locales" ng-click="select(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>' +
                     '</ul>' +
                     '</div>',
-
                 compile: function (element, attrs, transclude) {
                     return {
                         post: function postLink(scope, iElement, iAttrs, controller) {
@@ -69,17 +68,20 @@
                 },
 
                 controller: function ($scope, $element, $attrs) {
+
                     $scope.select = function(locale) {
                         $scope.selectedLocale = locale;
                     };
 
                     $scope.$watch('selectedLocale', function (locale, oldLocale) {
-                        $rootScope.$broadcast("entity:editedLocaleChanged", {
-                            "locale": $scope.selectedLocale,
-                            "previously": oldLocale,
-                            "isMainLocale": $scope.selectedLocale == $scope.mainLocale,
-                            "wasMainLocale": $scope.mainLocale === oldLocale
-                        });
+                        if (locale !== undefined) {
+                            $rootScope.$broadcast("entity:editedLocaleChanged", {
+                                "locale": $scope.selectedLocale,
+                                "previously": oldLocale,
+                                "isMainLocale": $scope.selectedLocale == $scope.mainLocale,
+                                "wasMainLocale": $scope.mainLocale === oldLocale
+                            });
+                        }
                     });
 
                     $scope.$on("entity:editedLocaleChanged", function (event, data) {
@@ -88,9 +90,9 @@
                         }
                     });
 
-                    localizationService.getLocales().then(function (locales) {
+                    localizationService.getLocales().then(function(locales) {
                         $scope.mainLocale = locales.main;
-                        $scope.selectedLocale = locales.main;
+                        $scope.selectedLocale = $scope.mainLocale;
                         $scope.locales = [ locales.main ];
                         $scope.locales.push.apply($scope.locales, locales.others);
                     });

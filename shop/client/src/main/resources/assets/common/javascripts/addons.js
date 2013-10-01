@@ -119,6 +119,10 @@ angular.module('mayocat.addons', ['ngResource'])
                     output += "disabled='disabled' "
                 }
 
+                if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
+                    output += "localization='localized' "
+                }
+
                 if (typeof editors[editor] !== "undefined" && typeof editors[editor].extraAttributes === "function") {
                     output += editors[editor].extraAttributes();
                 }
@@ -206,16 +210,35 @@ angular.module('mayocat.addons', ['ngResource'])
         };
     }])
 
-    .directive("addonString", [function ($compile) {
+    .directive("addonString", ["$compile", function ($compile) {
+
+        var linker = function (scope, element, attrs) {
+            scope.$watch("addonString", function(toto){
+console.log(scope.value);
+                if (attrs.localization === "localized") {
+                    var html = "<input type='text' name='whatever' placeholder={{placeholder}} " +
+                        "ng-model='value' ng-disabled=disabled localized />";
+                }
+                else {
+                    var html = "<input type='text' name='whatever' placeholder={{placeholder}} " +
+                        "ng-model='value' ng-disabled='disabled' />";
+                }
+
+                element.html(html);
+                var updated = $compile(element.contents())(scope);
+            });
+        }
+
         return {
-            restrict: "E",
-            scope: {
-                name: '@',
-                placeholder: '@',
-                disabled: '@',
-                value: '='
+            restrict:"E",
+            scope:{
+                name:'@',
+                placeholder:'@',
+                disabled:'@',
+                value:'=',
+                localized:'@localization'
             },
-            template: "<input type='text' name='whatever' placeholder={{placeholder}} ng-model='value' ng-disabled=disabled />"
+            link:linker
         };
     }])
 
