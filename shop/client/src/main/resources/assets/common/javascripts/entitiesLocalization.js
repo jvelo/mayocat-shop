@@ -48,7 +48,7 @@
                 transclude: 'element',
                 replace: true,
                 template: '' +
-                    '<div class="locales-wrapper input-append"><div ng-transclude style="display:inline-block"></div>' +
+                    '<div class="locales-wrapper input-append"><div ng-transclude></div>' +
                     '<span class="locales-switch add-on">' +
                     '<div class="btn-group"><a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">' +
                     '<img src="/common/images/flags/{{selectedLocale}}.png"/><span class="caret"></span></a>' +

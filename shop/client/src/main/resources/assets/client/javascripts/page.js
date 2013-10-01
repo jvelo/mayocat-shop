@@ -61,8 +61,6 @@ angular.module('entities', [])
             var mixin = {},
                 localizedKey = "localized" + capitalize(entityType);
 
-            scope.localizedVersions = {};
-
             mixin.initializeLocalization = function () {
                 scope[localizedKey] = scope[entityType];
             }
@@ -82,11 +80,13 @@ angular.module('entities', [])
                 if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
                     // If there is a localized version with the new locale to be edited, then use it
                     scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+
                 }
                 else if (!data.isMainLocale) {
                     // Else if it's not the main locale to be edited, edit it
                     scope[entityType].localizedVersions[data.locale] = {};
                     scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+
                 } else {
                     // Else edit the main locale
                     scope[localizedKey] = scope[entityType];

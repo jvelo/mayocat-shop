@@ -26,13 +26,29 @@ angular.module('mayocat.addons', ['ngResource'])
 
         // Register default editors supported by the platform
         // - Select box
+        registerEditor("string", {
+            tagName: "input",
+            type: "string",
+            extraAttributes: "type='text'"
+        });
+        registerEditor("textarea", {
+            tagName: "textarea",
+            closingTag: true,
+            type: "string"
+        });
+        registerEditor("wysiwyg", {
+            tagName: "textarea",
+            closingTag: true,
+            type: "html",
+            extraAttributes: "ck-editor"
+        });
         registerEditor("selectBox", {
-           type: function() {
-               return "string";
-           },
-           extraAttributes: function(){
-               return "options=addon.properties.listValues";
-           }
+            tagName: "select",
+            type: "string",
+            extraAttributes: "ng-options='value.key || value as value.name || value for value in addon.properties.listValues'",
+            postProcess: function (string) {
+                return "<div>" + string + "</div>"
+            }
         });
 
         /**
@@ -96,38 +112,65 @@ angular.module('mayocat.addons', ['ngResource'])
              * @param {object} options an optional option hash
              * @returns {string}
              */
-            editor: function (type, definition, options) {
+            editor:function (type, definition, options) {
+
+                // Safeguards against undefined addon definition and options
+                definition = typeof definition !== "undefined" ? definition : {};
+                options = typeof options !== "undefined" ? options : {};
 
                 var editor = definition.editor,
-                    dasherize = function (s) {
-                        if (typeof s === 'undefined') return;
-                        return s.replace(/([A-Z])/g, function ($1) {
-                            return "-" + $1.toLowerCase();
-                        });
-                };
-
-                options = typeof options !== "undefined" ? options : {};
+                    output = "",
+                    tagName;
 
                 if (typeof editor === "undefined") {
                     editor = defaultEditors[type];
                 }
 
-                var output = '<addon-' + dasherize(editor) + ' placeholder={{addon.placeholder}} value=value ';
+                tagName = editors[editor].tagName;
+
+                output += "<" + tagName;
+
+                if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
+                    output += " ng-model=localizedObject.value ";
+                }
+                else {
+                    output += " ng-model=object.value ";
+                }
+
+                if (typeof editors[editor].extraAttributes !== "undefined") {
+                    if (typeof editors[editor].extraAttributes === "function") {
+                        output += editors[editor].extraAttributes();
+                    }
+                    else {
+                        output += editors[editor].extraAttributes;
+                    }
+                    output += " "; // safety guard
+                }
+
+                if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
+                    output += "localized ";
+                }
+
+                if (typeof definition.placeholder !== "undefined") {
+                    output += " placeholder={{addon.placeholder}} ";
+                }
 
                 if (typeof definition.properties !== "undefined" && !!definition.properties.readOnly
                     && !options.ignoreReadOnly) {
                     output += "disabled='disabled' "
                 }
 
-                if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
-                    output += "localization='localized' "
+                output += ">";
+
+                if (editors[editor].closingTag) {
+                    output += "</";
+                    output += tagName;
+                    output += '>';
                 }
 
-                if (typeof editors[editor] !== "undefined" && typeof editors[editor].extraAttributes === "function") {
-                    output += editors[editor].extraAttributes();
+                if (typeof editors[editor].postProcess === "function") {
+                    output = editors[editor].postProcess(output);
                 }
-
-                output += '/>';
 
                 return output;
             },
@@ -196,95 +239,24 @@ angular.module('mayocat.addons', ['ngResource'])
         }
     })
 
-    .directive("addonSelectBox", [function ($compile) {
-        return {
-            restrict: "E",
-            scope: {
-                disabled: '@',
-                value: '=',
-                options: '='
-            },
-            template: "<div><select name='whatever' ng-model='value' " +
-                "ng-options='value.key || value as value.name || value for value in options'" +
-                "ng-disabled=disabled></select></div>"
-        };
-    }])
-
-    .directive("addonString", ["$compile", function ($compile) {
-
-        var linker = function (scope, element, attrs) {
-            scope.$watch("addonString", function(toto){
-console.log(scope.value);
-                if (attrs.localization === "localized") {
-                    var html = "<input type='text' name='whatever' placeholder={{placeholder}} " +
-                        "ng-model='value' ng-disabled=disabled localized />";
-                }
-                else {
-                    var html = "<input type='text' name='whatever' placeholder={{placeholder}} " +
-                        "ng-model='value' ng-disabled='disabled' />";
-                }
-
-                element.html(html);
-                var updated = $compile(element.contents())(scope);
-            });
-        }
-
-        return {
-            restrict:"E",
-            scope:{
-                name:'@',
-                placeholder:'@',
-                disabled:'@',
-                value:'=',
-                localized:'@localization'
-            },
-            link:linker
-        };
-    }])
-
-    .directive("addonTextarea", [function ($compile) {
-        return {
-            restrict: "E",
-            scope: {
-                name: '@',
-                placeholder: '@',
-                disabled: '@',
-                value: '='
-            },
-            template: "<textarea name='whatever' placeholder={{placeholder}} ng-model='value' ng-disabled=disabled />"
-        };
-    }])
-
-    .directive("addonWysiwyg", [function ($compile) {
-        return {
-            restrict: "E",
-            scope: {
-                name: '@',
-                placeholder: '@',
-                disabled: '@',
-                value: '='
-            },
-            template: "<textarea name='whatever' placeholder={{placeholder}} ng-model='value' ck-editor ng-disabled=disabled></textarea>"
-        };
-    }])
-
     .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
         return {
             scope: {
                 addon: '=definition',
-                value: '=value',
-                type: '=type',
-                ignoreReadOnly: '='
+                object: '=',
+                localizedObject: "="
             },
             restrict: "E",
-            link: function (scope, element, attrs) {
+            link: function(scope, element, attrs) {
 
                 scope.$watch(
                     'addon',
                     function (definition) {
+                        console.log("LOCALIZED OBJECT", scope);
+
                         scope.type = addonsService.type(definition.type, definition.editor);
 
-                        var editor = addonsService.editor(scope.type, definition, {
+                        var editor = addonsService.editor(scope.object.type, definition, {
                             "ignoreReadOnly" : typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
                         });
 
@@ -294,7 +266,7 @@ console.log(scope.value);
                         }
 
                         element.html(editor);
-                        var updated = $compile(element.contents())(scope);
+                        $compile(element.contents())(scope);
                     }
                 );
             }
