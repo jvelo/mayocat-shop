@@ -73,6 +73,12 @@
   border-top-right-radius: 5px;
 }
 
+/* Addons */
+
+addon-string {
+  display: block;
+}
+
 /* Orders */
 
 .orders ul.stats li {
@@ -190,6 +196,14 @@ destination-picker p.destination {
 
 .locales-wrapper {
   position: relative;
+  width: 100%;
+}
+
+.locales-wrapper:not(.textarea) div[ng-transclude] {
+  display: inline-block;
+  width: 90%; // Guesswork fallback when there is no calc
+  width: -webkit-calc(~"100% - 46px");
+  width: calc(~"100% - 46px");
 }
 
 .locales-wrapper.textarea .locales-switch {
