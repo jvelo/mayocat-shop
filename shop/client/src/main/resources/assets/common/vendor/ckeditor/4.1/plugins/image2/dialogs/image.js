@@ -234,7 +234,7 @@
 
 			return {
 				title: "Insérer une image",
-				minWidth: 520,
+				minWidth: 620,
 				minHeight: 260,
 				onShow: function() {
 					this.imageElement = false;
@@ -423,23 +423,27 @@
                                     $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
                                         $.each(data, function(i, v) {
                                             var $el = $('<div>')
-                                                .css('float', 'left')
-                                                .css('margin', '2px')
+                                                .css({'float': 'left','margin': '2px'})
                                                 .append(
                                                     $('<img>')
                                                         .attr('src', v.file.href + '?width=90&height=90')
+                                                        .attr('rel', 'attachement')
                                                         .css('border', '2px solid white')
                                                         .data('href', v.file.href)
                                                 );
                                             $('#mayoProductImgs').append($el);
                                         });
-                                        $('#mayoProductImgs').on('click', 'img', function() {
+                                        $('#mayoProductImgs')
+                                        .on('click', 'img', function() {
                                             $('#mayoProductImgs img').each(function(i, e) {
                                                 $(this).css('border', '2px solid white');
                                             })
                                             $(this).css('border', '2px solid blue');
                                             $('#mayoProductImgs').data('selectedHref', $(this).data('href'));
                                         })
+                                        .on('mouseenter', 'img', function() {
+                                            $(this).css('cursor', 'pointer');
+                                        });
                                     });
                                 },
                                 commit: function( type, element ) {
