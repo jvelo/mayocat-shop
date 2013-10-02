@@ -281,6 +281,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setPrice(updatedProductRepresentation.getPrice());
                 product.setWeight(updatedProductRepresentation.getWeight());
                 product.setStock(updatedProductRepresentation.getStock());
+                product.setLocalizedVersions(updatedProductRepresentation.getLocalizedVersions());
                 product.setAddons(addonsRepresentationUnmarshaller.unmarshall(updatedProductRepresentation.getAddons()));
 
                 // Featured image

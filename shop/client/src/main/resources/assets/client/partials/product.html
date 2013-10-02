@@ -8,13 +8,13 @@
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="localProduct.title" placeholder="Product's title" />
+                <input type="text" class="title" ng-model="localizedProduct.title" placeholder="Product's title" localized />
             </h1>
 
             <!-- Description -->
             <div ng-show="!isNew()">
                 <label>Description</label>
-                <textarea class="" rows="10" ng-model="product.description" ck-editor />
+                <textarea class="" rows="10" ng-model="localizedProduct.description" ck-editor localized />
             </div>
 
             <div class="block" ng-show="!isNew()">
@@ -76,9 +76,10 @@
                 <ul>
                     <li ng-repeat="addon in group.fields">
                         {{addon.definition.name}}
+
                         <addon definition="addon.definition"
-                               value="product.addons[addon.index].value"
-                               type="product.addons[addon.index].type"></addon>
+                               object="product.addons[addon.index]"
+                               localized-object="localizedProduct.addons[addon.index]"></addon>
                     </li>
                 </ul>
             </div>

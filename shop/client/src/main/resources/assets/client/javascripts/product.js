@@ -10,9 +10,8 @@ angular.module('product', ['ngResource'])
         '$http',
         '$location',
         'catalogService',
-        'addonsService',
-        'imageService',
         'configurationService',
+        'entityMixins',
 
         function ($scope,
                   $rootScope,
@@ -21,11 +20,10 @@ angular.module('product', ['ngResource'])
                   $http,
                   $location,
                   catalogService,
-                  addonsService,
-                  imageService,
-                  configurationService) {
+                  configurationService,
+                  entityMixins) {
 
-            $scope.slug = $routeParams.product;
+            entityMixins.extendAll($scope, "product");
 
             $scope.publishProduct = function () {
                 $scope.product.onShelf = true;
@@ -77,10 +75,6 @@ angular.module('product', ['ngResource'])
                 }
             };
 
-            $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', "product", image);
-            }
-
             $scope.collectionOperation = function (collection, operation) {
                 $resource("/api/collections/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
                     "save": {
@@ -107,32 +101,6 @@ angular.module('product', ['ngResource'])
                 };
             }
 
-            $scope.removeImage = function (image) {
-                $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
-                    $scope.reloadImages();
-                });
-            }
-
-            $scope.updateImageMeta = function (image) {
-                $http.post("/api/products/" + $scope.slug + "/images/" + image.slug, image).success(function () {
-                        $scope.reloadImages();
-                    });
-            }
-
-            $scope.reloadImages = function () {
-                $scope.product.images = $http.get("/api/products/" + $scope.slug + "/images").success(function (data) {
-                    $scope.product.images = data;
-                });
-            }
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.product, image);
-            }
-
-            $scope.getImageUploadUri = function () {
-                return "/api/products/" + $scope.slug + "/attachments";
-            }
-
             $scope.initializeCollections = function () {
                 catalogService.hasCollections(function (hasCollections) {
                     $scope.hasCollections = hasCollections;
@@ -157,32 +125,10 @@ angular.module('product', ['ngResource'])
                 });
             }
 
-            $scope.initializeAddons = function () {
-                addonsService.initializeEntityAddons("product", $scope.product).then(function (addons) {
-                    $scope.addons = addons;
-                });
-            }
-
-            $scope.initializeModels = function () {
-                $scope.models = [];
-                configurationService.get("entities", function (entities) {
-                    if (typeof entities.product !== 'undefined') {
-                        for (var modelId in entities.product.models) {
-                            if (entities.product.models.hasOwnProperty(modelId)) {
-                                var model = entities.product.models[modelId];
-                                $scope.models.push({
-                                    id: modelId,
-                                    name: model.name
-                                });
-                            }
-                        }
-                    }
-                });
-                configurationService.get("catalog", function (catalogConfiguration) {
-                    $scope.hasWeight = catalogConfiguration.products.weight;
-                    $scope.weightUnit = catalogConfiguration.products.weightUnit;
-                });
-            }
+            configurationService.get("catalog", function (catalogConfiguration) {
+                $scope.hasWeight = catalogConfiguration.products.weight;
+                $scope.weightUnit = catalogConfiguration.products.weightUnit;
+            });
 
             // Initialize existing product or new product
 
@@ -198,6 +144,7 @@ angular.module('product', ['ngResource'])
                     // Same for addons
                     $scope.initializeAddons();
                     $scope.initializeModels();
+                    $scope.initializeLocalization();
 
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -215,6 +162,7 @@ angular.module('product', ['ngResource'])
                 $scope.localProduct = $scope.product;
                 $scope.initializeAddons();
                 $scope.initializeModels();
+                $scope.initializeLocalization();
             }
 
             $scope.confirmDeletion = function () {

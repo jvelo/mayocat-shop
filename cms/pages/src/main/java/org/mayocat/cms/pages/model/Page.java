@@ -162,6 +162,17 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
         this.featuredImageId = featuredImageId;
     }
 
+    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
+    {
+        this.localizedVersions = versions;
+    }
+
+    @Override
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
+    }
+
     // //////////////////////////////////////////////
 
     @Override
@@ -198,16 +209,5 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     public String toString()
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
-    }
-
-    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
-    {
-        this.localizedVersions = versions;
-    }
-
-    @Override
-    public Map<Locale, Map<String, Object>> getLocalizedVersions()
-    {
-        return localizedVersions;
     }
 }
