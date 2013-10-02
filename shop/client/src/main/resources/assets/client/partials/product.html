@@ -100,6 +100,7 @@
                     <div class="hasLoading">
                         <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">Save</button>
                         <button ng-disabled="productForm.$invalid" ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online</button>
+                        <span ng-class="{'loading': isSaving}"></span>
                     </div>
                 </div>
                 <div ng-show="product.onShelf != undefined">
