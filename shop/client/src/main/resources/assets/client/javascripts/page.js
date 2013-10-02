@@ -28,14 +28,24 @@ angular.module('page', ['ngResource'])
                     $http.post("/api/pages/", $scope.page)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            var fragments = headers("location").split('/'),
-                                slug = fragments[fragments.length - 1];
-                            $rootScope.$broadcast('pages:refreshList');
-                            $location.url("/pages/" + slug);
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+                                $rootScope.$broadcast('pages:refreshList');
+                                $location.url("/pages/" + slug);
+                            }
+                            else {
+                                if (status === 409) {
+                                    $rootScope.$broadcast('event:nameConflictError');
+                                }
+                                else {
+                                    // Generic error
+                                    $rootScope.$broadcast('event:serverError');
+                                }
+                            }
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            // TODO handle 409 conflict
                         });
                 }
                 else {

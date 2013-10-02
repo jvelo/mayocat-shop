@@ -35,7 +35,7 @@ angular.module('collection', ['ngResource'])
                             }
                             else {
                                 if (status === 409) {
-                                    $rootScope.$broadcast('event:nameConflictError', {});
+                                    $rootScope.$broadcast('event:nameConflictError');
                                 }
                                 else {
                                     // Generic error
@@ -46,7 +46,6 @@ angular.module('collection', ['ngResource'])
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             callback && callback.call();
-                            // TODO handle 409 conflict etc.
                         });
                 }
                 else {
