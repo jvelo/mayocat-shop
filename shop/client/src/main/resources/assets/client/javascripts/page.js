@@ -2,137 +2,6 @@
 
     'use strict'
 
-    angular.module('entities', [])
-
-        .factory('entityBaseMixin', function ($routeParams) {
-            return function (entityType) {
-                var mixin = {};
-
-                mixin.slug = $routeParams[entityType];
-
-                mixin[entityType];
-                return mixin;
-            }
-        })
-
-        .factory('entityModelMixin', function (configurationService) {
-            return function (entityType, scope) {
-                var mixin = {};
-
-                mixin.initializeModels = function () {
-                    scope.models = [];
-                    configurationService.get("entities", function (entities) {
-                        if (typeof entities[entityType] !== 'undefined') {
-                            for (var modelId in entities[entityType].models) {
-                                if (entities[entityType].models.hasOwnProperty(modelId)) {
-                                    var model = entities[entityType].models[modelId];
-                                    scope.models.push({
-                                        id:modelId,
-                                        name:model.name
-                                    });
-                                }
-                            }
-                        }
-                    });
-                }
-                return mixin;
-            }
-        })
-
-        .factory('entityAddonsMixin', function (addonsService) {
-            return function (entityType, scope) {
-                var mixin = {};
-
-                mixin.initializeAddons = function () {
-                    addonsService.initializeEntityAddons(entityType, scope[entityType]).then(function (addons) {
-                        scope.addons = addons;
-                    });
-                }
-
-                return mixin;
-            }
-        })
-
-        .factory('entityLocalizationMixin', function (addonsService) {
-
-            var capitalize = function (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            };
-
-            return function (entityType, scope, options) {
-                var mixin = {},
-                    localizedKey = "localized" + capitalize(entityType);
-
-                mixin.initializeLocalization = function () {
-                    scope[localizedKey] = scope[entityType];
-                }
-
-                scope.$on("entity:editedLocaleChanged", function (event, data) {
-                    // Save edited version if necessary
-
-                    if (typeof scope[entityType] === "undefined" || !scope[entityType].$resolved) {
-                        // We are not ready
-                        return;
-                    }
-
-                    if (typeof scope[entityType].localizedVersions === "undefined") {
-                        scope[entityType].localizedVersions = {};
-                    }
-
-                    if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
-                        // If there is a localized version with the new locale to be edited, then use it
-                        scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
-
-                    }
-                    else if (!data.isMainLocale) {
-                        // Else if it's not the main locale to be edited, edit it
-                        scope[entityType].localizedVersions[data.locale] = {};
-                        scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
-
-                    } else {
-                        // Else edit the main locale
-                        scope[localizedKey] = scope[entityType];
-                    }
-                });
-
-                return mixin;
-            }
-        })
-
-        .factory('entityImageMixin', function (imageService, $http) {
-            return function (entityType, scope) {
-                var mixin = {};
-
-                mixin.editThumbnails = function (image) {
-                    mixin.$emit('thumbnails:edit', entityType, image);
-                }
-
-                mixin.reloadImages = function () {
-                    $http.get("/api/" + entityType + "s/" + scope.slug + "/images")
-                        .success(function (data) {
-                            scope[entityType].images = data;
-                        }
-                    );
-                }
-
-                mixin.selectFeatureImage = function (image) {
-                    imageService.selectFeatured(scope[entityType], image);
-                }
-
-                mixin.removeImage = function (image) {
-                    $http.delete("/api/products/" + scope.slug + "/images/" + image.slug).success(function () {
-                        mixin.reloadImages();
-                    });
-                }
-
-                mixin.getImageUploadUri = function () {
-                    return "/api/" + entityType + "s/" + scope.slug + "/attachments";
-                }
-
-                return mixin;
-            }
-        });
-
     angular.module('page', ['ngResource'])
 
         .controller('PageController', [
@@ -141,19 +10,11 @@
         '$resource',
         '$http',
         '$location',
-        'entityBaseMixin',
-        'entityImageMixin',
-        'entityAddonsMixin',
-        'entityModelMixin',
-        'entityLocalizationMixin',
+        'entityMixins',
 
-        function ($scope, $rootScope, $resource, $http, $location, entityBaseMixin, entityImageMixin, entityAddonsMixin, entityModelMixin, entityLocalizationMixin) {
+        function ($scope, $rootScope, $resource, $http, $location, entityMixins) {
 
-            angular.extend($scope, entityBaseMixin("page", $scope));
-            angular.extend($scope, entityAddonsMixin("page", $scope));
-            angular.extend($scope, entityModelMixin("page", $scope));
-            angular.extend($scope, entityImageMixin("page", $scope));
-            angular.extend($scope, entityLocalizationMixin("page", $scope));
+            entityMixins.extendAll($scope, "page");
 
             $scope.publishPage = function () {
                 $scope.page.published = true;

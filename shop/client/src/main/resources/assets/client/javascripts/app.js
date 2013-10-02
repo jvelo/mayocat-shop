@@ -4,7 +4,6 @@ var MayocatShop = angular.module('MayocatShop', [
     'search',
     'money',
     'shipping',
-    'entities',
     'product',
     'collection',
     'catalog',

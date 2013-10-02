@@ -1,0 +1,258 @@
+(function () {
+
+    'use strict'
+
+    angular.module('mayocat.entities', [])
+
+        .factory('entityMixins', [
+            'entityBaseMixin',
+            'entityModelMixin',
+            'entityAddonsMixin',
+            'entityLocalizationMixin',
+            'entityImageMixin',
+            function(){
+                var allMixins = arguments;
+                return {
+                    extendAll: function($scope, entityType){
+                        for (var mixin in allMixins) {
+                            if (allMixins.hasOwnProperty(mixin)) {
+                                angular.extend($scope, allMixins[mixin](entityType));
+                            }
+                        }
+                    }
+                }
+            }
+        ])
+
+        .factory('entityBaseMixin', ["$routeParams" ,function ($routeParams) {
+            return function (entityType) {
+                var mixin = {
+                    slug: $routeParams[entityType]
+                };
+                return mixin;
+            }
+        }])
+
+        .factory('entityModelMixin', ["configurationService", function (configurationService) {
+            return function (entityType) {
+                var mixin = {};
+
+                mixin.initializeModels = function () {
+                    var scope = this;
+                    scope.models = [];
+                    configurationService.get("entities", function (entities) {
+                        if (typeof entities[entityType] !== 'undefined') {
+                            for (var modelId in entities[entityType].models) {
+                                if (entities[entityType].models.hasOwnProperty(modelId)) {
+                                    var model = entities[entityType].models[modelId];
+                                    scope.models.push({
+                                        id:modelId,
+                                        name:model.name
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+                return mixin;
+            }
+        }])
+
+        .factory('entityAddonsMixin', ["addonsService", function (addonsService) {
+            return function (entityType) {
+                var mixin = {};
+
+                mixin.initializeAddons = function () {
+                    var scope = this;
+                    addonsService.initializeEntityAddons(entityType, scope[entityType]).then(function (addons) {
+                        scope.addons = addons;
+                    });
+                }
+
+                return mixin;
+            }
+        }])
+
+        .factory('entityLocalizationMixin', [function () {
+
+            var capitalize = function (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            };
+
+            return function (entityType, options) {
+                var mixin = {},
+                    localizedKey = "localized" + capitalize(entityType);
+
+                mixin.initializeLocalization = function () {
+                    var scope = this;
+                    scope[localizedKey] = scope[entityType];
+                    scope.$on("entity:editedLocaleChanged", function (event, data) {
+                        // Save edited version if necessary
+
+                        if (typeof scope[entityType] === "undefined" || !scope[entityType].$resolved) {
+                            // We are not ready
+                            return;
+                        }
+
+                        if (typeof scope[entityType].localizedVersions === "undefined") {
+                            scope[entityType].localizedVersions = {};
+                        }
+
+                        if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
+                            // If there is a localized version with the new locale to be edited, then use it
+                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+
+                        }
+                        else if (!data.isMainLocale) {
+                            // Else if it's not the main locale to be edited, edit it
+                            scope[entityType].localizedVersions[data.locale] = {};
+                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+
+                        } else {
+                            // Else edit the main locale
+                            scope[localizedKey] = scope[entityType];
+                        }
+                    });
+
+                }
+
+                return mixin;
+            }
+        }])
+
+        .factory('entityImageMixin', function (imageService, $http) {
+            return function (entityType) {
+                var mixin = {};
+
+                mixin.editThumbnails = function (image) {
+                    mixin.$emit('thumbnails:edit', entityType, image);
+                }
+
+                mixin.reloadImages = function () {
+                    var scope = this;
+                    $http.get("/api/" + entityType + "s/" + scope.slug + "/images")
+                        .success(function (data) {
+                            scope[entityType].images = data;
+                        }
+                    );
+                }
+
+                mixin.selectFeatureImage = function (image) {
+                    var scope = this;
+                    imageService.selectFeatured(scope[entityType], image);
+                }
+
+                mixin.removeImage = function (image) {
+                    var scope = this;
+                    $http.delete("/api/products/" + scope.slug + "/images/" + image.slug).success(function () {
+                        mixin.reloadImages();
+                    });
+                }
+
+                mixin.getImageUploadUri = function () {
+                    var scope = this;
+                    return "/api/" + entityType + "s/" + scope.slug + "/attachments";
+                }
+
+                return mixin;
+            }
+        })
+
+        .factory('entityLocalizationService', ['$q', 'configurationService', function ($q, configurationService) {
+
+            var locales,
+                promise;
+
+            var getLocales = function () {
+
+                //if we already have a promise, just return that so it doesn't run twice.
+                if (promise) {
+                    return promise;
+                }
+
+                var deferred = $q.defer();
+                promise = deferred.promise;
+
+                if (locales) {
+                    //if we already have data, return that.
+                    deferred.resolve(locales);
+                } else {
+                    configurationService.get("general", function (generalConfiguration) {
+                        locales = {
+                            main:generalConfiguration.locales.main,
+                            others:generalConfiguration.locales.others
+                        };
+                        deferred.resolve(locales);
+                    });
+                }
+                return promise;
+            }
+
+            return {
+                getLocales:getLocales
+            };
+        }])
+
+        .directive("localized", ['$compile', '$rootScope', 'entityLocalizationService',
+            function ($compile, $rootScope, localizationService) {
+            return {
+                scope:{
+                },
+                priority:100, // Must execute BEFORE other directives like ck-editor, etc.
+                restrict:'A',
+                transclude:'element',
+                replace:true,
+                template:'' +
+                    '<div class="locales-wrapper input-append"><div ng-transclude></div>' +
+                    '<span class="locales-switch add-on">' +
+                    '<div class="btn-group"><a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">' +
+                    '<img src="/common/images/flags/{{selectedLocale}}.png"/><span class="caret"></span></a>' +
+                    '<ul class="dropdown-menu">' +
+                    '<li ng-repeat="locale in locales" ng-click="select(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>' +
+                    '</ul>' +
+                    '</div>',
+                compile:function (element, attrs, transclude) {
+                    return {
+                        post:function postLink(scope, iElement, iAttrs, controller) {
+                            if (iElement.find("textarea").length > 0) {
+                                iElement.find(".add-on").removeClass("add-on");
+                                iElement.addClass("textarea");
+                            }
+                        }
+                    }
+                },
+
+                controller:function ($scope, $element, $attrs) {
+
+                    $scope.select = function (locale) {
+                        $scope.selectedLocale = locale;
+                    };
+
+                    $scope.$watch('selectedLocale', function (locale, oldLocale) {
+                        if (locale !== undefined) {
+                            $rootScope.$broadcast("entity:editedLocaleChanged", {
+                                "locale":$scope.selectedLocale,
+                                "previously":oldLocale,
+                                "isMainLocale":$scope.selectedLocale == $scope.mainLocale,
+                                "wasMainLocale":$scope.mainLocale === oldLocale
+                            });
+                        }
+                    });
+
+                    $scope.$on("entity:editedLocaleChanged", function (event, data) {
+                        if (event.currentScope !== event.targetScope) {
+                            $scope.selectedLocale = data.locale
+                        }
+                    });
+
+                    localizationService.getLocales().then(function (locales) {
+                        $scope.mainLocale = locales.main;
+                        $scope.selectedLocale = $scope.mainLocale;
+                        $scope.locales = [ locales.main ];
+                        $scope.locales.push.apply($scope.locales, locales.others);
+                    });
+                }
+            }
+        }])
+
+})();
