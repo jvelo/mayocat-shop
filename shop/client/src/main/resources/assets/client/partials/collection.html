@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">Edit collection</h1>
 <h1 class="small" ng-show="isNew()">New collection</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading':collection.title == undefined}">
+<form name="collectionForm">
+    <article class="entity">
 
-        <div ng-show="collection.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="collection.title"/>
+                <input type="text" class="title" ng-model="collection.title" required />
             </h1>
 
             <!-- Description -->
@@ -24,14 +24,14 @@
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Create</button>
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">Create</button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
             <div ng-show="!isNew()">
                 <!-- Update collection -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">delete this collection</small>
+            <small class="clickme" ng-click="confirmDeletion()">delete this collection</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="collection:confirmDelete"

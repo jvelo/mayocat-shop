@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">Edit product</h1>
 <h1 class="small" ng-show="isNew()">New product</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading': product.title == undefined}">
+<form name="productForm">
+    <article class="entity">
 
-        <div ng-show="product.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="product.title" placeholder="Product's title"/>
+                <input type="text" class="title" ng-model="product.title" placeholder="Product's title" required />
             </h1>
 
             <!-- Description -->
@@ -86,20 +86,21 @@
 
     </article>
     </div>
-    <aside ng-show="product.title != undefined">
+    <aside>
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
+                    <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
             <div ng-show="!isNew()">
                 <div ng-show="product.onShelf == undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateProduct()" class="btn btn-large btn">Save</button>
+                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">Save</button>
                         <button ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online</button>
+                        <span ng-class="{'loading': isSaving}"></span>
                     </div>
                 </div>
                 <div ng-show="product.onShelf != undefined">
@@ -125,7 +126,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">delete this product</small>
+            <small class="clickme" ng-click="confirmDeletion()">delete this product</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="product:confirmDelete"

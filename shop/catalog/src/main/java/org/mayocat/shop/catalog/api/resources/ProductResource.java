@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -266,7 +267,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Authorized
     // Partial update : NOT idempotent
     public Response updateProduct(@PathParam("slug") String slug,
-            ProductRepresentation updatedProductRepresentation)
+            @Valid ProductRepresentation updatedProductRepresentation)
     {
         try {
             Product product = this.productStore.get().findBySlug(slug);
@@ -343,7 +344,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @POST
     @Timed
     @Authorized //(roles = { Role.ADMIN })
-    public Response createProduct(ProductRepresentation productRepresentation)
+    public Response createProduct(@Valid ProductRepresentation productRepresentation)
     {
         try {
             Product product = new Product();
