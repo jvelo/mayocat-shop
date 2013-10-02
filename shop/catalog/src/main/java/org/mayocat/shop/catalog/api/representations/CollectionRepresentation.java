@@ -2,6 +2,7 @@ package org.mayocat.shop.catalog.api.representations;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class CollectionRepresentation
 {
+    @NotEmpty
     private String title;
 
     private String description;
