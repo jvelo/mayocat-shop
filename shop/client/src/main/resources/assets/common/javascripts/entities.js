@@ -10,7 +10,7 @@
             'entityAddonsMixin',
             'entityLocalizationMixin',
             'entityImageMixin',
-            function(){
+            function() {
                 var allMixins = arguments;
                 return {
                     extendAll: function($scope, entityType){
@@ -82,6 +82,12 @@
             return function (entityType, options) {
                 var mixin = {},
                     localizedKey = "localized" + capitalize(entityType);
+
+                // Will hold the localized version of this entity, that is intended to be used with ng-model in
+                // entities partials. Example, for an "event" entity, the localized key will be localizedEvent,
+                // and could be used in the following way it's edition partial :
+                // <textarea ng-model="localizedEvent.description" ck-editor localized />
+                mixin[localizedKey] = {};
 
                 mixin.initializeLocalization = function () {
                     var scope = this;
