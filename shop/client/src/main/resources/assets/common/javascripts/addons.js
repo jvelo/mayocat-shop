@@ -184,54 +184,97 @@
                  * @param entity the actual entity object to initialize addons for
                  * @returns {Object} the promise of this realization
                  */
-                // TODO refactor this method to reduce the level of conditional branch nesting
                 initializeEntityAddons:function (entityType, entity) {
-                    var entityAddons = [];
-                    var deferred = $q.defer();
-                    configurationService.get("entities", function (entities) {
-                        if (typeof entities !== 'undefined' && typeof entities[entityType] !== 'undefined') {
-                            var addons = entities[entityType].addons;
-                            for (var sourceName in addons) {
-                                if (addons.hasOwnProperty(sourceName)) {
-                                    var source = addons[sourceName];
-                                    for (var groupKey in source) {
-                                        if (source.hasOwnProperty(groupKey)) {
-                                            var group = source[groupKey];
-                                            var definitions = group.fields;
-                                            var currentGroupIndex = entityAddons.push({
-                                                key:groupKey,
-                                                source:sourceName,
-                                                name:group.name,
-                                                text:group.text,
-                                                properties:group.properties,
-                                                fields:[]
-                                            }) - 1;
-                                            for (var key in definitions) {
-                                                if (definitions.hasOwnProperty(key)) {
-                                                    var index = getAddonIndex(entity.addons, groupKey, key, sourceName),
-                                                        definition = definitions[key];
-                                                    if (index < 0) {
-                                                        // Create addon container lazily
-                                                        entity.addons.push({
-                                                            'key':key,
-                                                            'group':groupKey,
-                                                            source:sourceName,
-                                                            type:definition.type,
-                                                            value:null
-                                                        });
-                                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName);
-                                                    }
-                                                    entityAddons[currentGroupIndex].fields.push({
-                                                        key:key,
-                                                        definition:definition,
-                                                        index:index
-                                                    });
-                                                }
-                                            }
-                                        }
+
+                    var entityAddons = [],
+                        deferred = $q.defer();
+
+                    configurationService.get(function (configuration) {
+                        var entities = configuration.entities,
+                            locales = configuration.general.locales.others || [];
+
+
+                        if (typeof entities === 'undefined' || typeof entities[entityType] === 'undefined') {
+                            deferred.resolve(entityAddons);
+                        }
+
+                        if (typeof entity.localizedVersions === "undefined") {
+                            entity.localizedVersions = {};
+                        }
+                        locales.forEach(function (locale) {
+                            if (typeof entity.localizedVersions[locale] === "undefined") {
+                                entity.localizedVersions[locale] = {};
+                            }
+                            if (typeof entity.localizedVersions[locale].addons === "undefined") {
+                                entity.localizedVersions[locale].addons = [];
+                            }
+                        });
+
+                        var addons = entities[entityType].addons,
+                            addonKeys = Object.keys(addons);
+                        for (var i=0; i<addonKeys.length; i++) {
+                            var sourceName = addonKeys[i],
+                                source = addons[sourceName],
+                                groupKeys = Object.keys(source);
+                            for (var j=0; j<groupKeys.length; j++) {
+                                var groupKey = groupKeys[j],
+                                    group = source[groupKey],
+                                    definitions = group.fields,
+                                    definitionKeys = Object.keys(definitions),
+                                    currentGroupIndex = entityAddons.push({
+                                        key:groupKey,
+                                        source:sourceName,
+                                        name:group.name,
+                                        text:group.text,
+                                        properties:group.properties,
+                                        fields:[]
+                                    }) - 1;
+                                for (var k = 0; k < definitionKeys.length; k++) {
+                                    var key = definitionKeys[k],
+                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName),
+                                        definition = definitions[key];
+                                    if (index < 0) {
+                                        // Create addon container lazily
+                                        entity.addons.push({
+                                            key:key,
+                                            group:groupKey,
+                                            source:sourceName,
+                                            type:definition.type,
+                                            value:null
+                                        });
+                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName);
                                     }
+                                    entityAddons[currentGroupIndex].fields.push({
+                                        key:key,
+                                        definition:definition,
+                                        index:index
+                                    });
                                 }
                             }
+
+                        }
+                        // Initialize localized copies
+                        for (var i = 0; i < entity.addons.length; i++) {
+                            var addon = entity.addons[i];
+                            locales.forEach(function (locale) {
+                                var localIndex = getAddonIndex(
+                                        entity.localizedVersions[locale].addons,
+                                        addon.group,
+                                        addon.key,
+                                        addon.source
+                                    ),
+                                    localizedValue = null
+
+                                if (localIndex > 0) {
+                                    // We found a value for this addon for this locale, so get it
+                                    localizedValue = entity.localizedVersions[locale].addons[localIndex].value
+                                }
+
+                                // We always push the localized version of an addon at the exact same index as the "main"
+                                // one, effectively ignoring the local one's index
+                                entity.localizedVersions[locale].addons[i] = angular.copy(entity.addons[i]);
+                                entity.localizedVersions[locale].addons[i].value = localizedValue;
+                            });
                         }
                         deferred.resolve(entityAddons);
                     });
