@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,8 +31,6 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
