@@ -21,6 +21,12 @@ describe('Addons', function () {
                             }
                         }
                     }
+                },
+                "general" : {
+                    "locales" :{
+                        "main" : "en_US",
+                        "others" : []
+                    }
                 }
             };
 
