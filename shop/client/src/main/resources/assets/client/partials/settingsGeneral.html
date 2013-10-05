@@ -52,7 +52,8 @@
                          ng-class="{default: isDefaultValue('general.locales.others')}">
                         <p><label for="otherLocales">Other languages</label></p>
                         <list-picker ng-model="settings.general.locales.others.value"
-                                     ng-disabled="!isConfigurable('general.locales.others')">
+                                     ng-disabled="!isConfigurable('general.locales.others')"
+                                     display="displayLocale()">
                             <select class="input-xlarge" id="otherLocales">
                                 <option value="">-- Select a language --</option>
                                 <option ng-repeat="locale in locales"

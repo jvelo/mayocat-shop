@@ -78,14 +78,14 @@ mayocat.config(function ($httpProvider) {
  *
  * TODO: handle ng-disabled
  */
-mayocat.directive('listPicker', [function(){
+mayocat.directive('listPicker', ['$parse', function($parse){
     return {
         restrict: 'E',
         require: 'ngModel',
         transclude: 'element',
         replace: true,
         template: '<div><div><ul class="pickerElements"><li ng-repeat="element in model">' +
-            '<button class="btn btn-mini" ng-click="remove(element)">{{element}} &times;</span></button>' +
+            '<button class="btn btn-mini" ng-click="remove(element)">{{getDisplayElement(element)}} &times;</span></button>' +
             '</li></ul></div><div class="clearfix"></div>' +
             '<span ng-transclude></span>' +
             '<input type="submit" class="btn" value="Add" ng-click="add()"></div>',
@@ -110,6 +110,13 @@ mayocat.directive('listPicker', [function(){
             }
             $scope.remove = function (currency) {
                 $scope.model.splice($scope.model.indexOf(currency), 1);
+            }
+            if (typeof $attrs.display !== 'undefined') {
+                var passed = $parse($attrs.display);
+            }
+            $scope.getDisplayElement = function (element) {
+                $scope.elementToDisplay = element;
+                return passed ? passed($scope): element;
             }
         }
     };

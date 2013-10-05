@@ -33,6 +33,19 @@ angular.module('settings', ['ngResource'])
                 return configurationService.isDefaultValue($scope.settings, path);
             };
 
+            /**
+             * Function passed to the list-picker to handle the display of locale tags
+             */
+            $scope.displayLocale = function () {
+                var locales = $scope.locales.$$v; // this is morally wrong
+                for (var i = 0; i < locales.length; i++) {
+                    if (locales[i].tag === $scope.elementToDisplay) {
+                        return locales[i].name;
+                    }
+                }
+                return $scope.elementToDisplay;
+            }
+
             // Initialization ------------------------------------------------------------------------------------------
 
             $scope.timeZoneRegions = timeService.getTimeZoneData();
