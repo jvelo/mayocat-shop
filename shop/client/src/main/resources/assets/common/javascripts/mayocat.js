@@ -442,7 +442,7 @@ mayocat.directive('ckEditor', function () {
             };
 
             // Create a new ckEditor with a new locale when this last one is changed
-            scope.$on('ChangeLocale', function (event, locale) {
+            scope.$on('ui:localChanged', function (event, locale) {
                 var data = ck.getData();
                 
                 ckOptions.language = locale;
@@ -756,13 +756,14 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
             $location.url(href);
         };
 
-        $scope.changeLocale = function (locale) {
-            $rootScope.$broadcast('ChangeLocale', locale);
-        };
+        $rootScope.uiLocale = localStorage.locale || Mayocat.defaultLocale;
 
-        $scope.$on('ChangeLocale', function (event, locale) {
+        $scope.changeLocale = function (locale) {
+            $rootScope.$broadcast('ui:localeChanged', locale);
+
             localStorage.locale = locale;
+            $rootScope.uiLocale = locale;
             $translate.uses(locale);
-        });
+        };
 
     }]);

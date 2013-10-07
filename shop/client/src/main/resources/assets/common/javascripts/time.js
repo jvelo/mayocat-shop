@@ -414,8 +414,8 @@
         // Default lang
         moment.lang(localStorage.locale || (Mayocat || {}).defaultLocale || 'en');
 
-        // Listen to the `ChangeLocale` event, see `mayocat.js` for the broadcast.
-        $rootScope.$on('ChangeLocale', function (event, locale) {
+        // Listen to the `ui:localedChanged` event, see `mayocat.js` for the broadcast.
+        $rootScope.$on('ui:localeChanged', function (event, locale) {
             moment.lang(locale);
         });
 

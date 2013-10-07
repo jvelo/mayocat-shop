@@ -111,8 +111,12 @@
             </p>
 
             <div class="btn-group">
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('fr')">FR</button>
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('en')">EN</button>
+                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                <img src="/common/images/flags/{{uiLocale}}.png"/><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="locale in ['en', 'fr']" ng-click="changeLocale(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>
+                </ul>
+
             </div>
 
             <p class="logout">
