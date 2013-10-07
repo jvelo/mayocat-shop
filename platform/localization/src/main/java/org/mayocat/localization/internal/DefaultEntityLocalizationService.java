@@ -3,17 +3,23 @@ package org.mayocat.localization.internal;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.mayocat.context.Execution;
 import org.mayocat.localization.EntityLocalizationService;
+import org.mayocat.model.Addon;
+import org.mayocat.model.Entity;
+import org.mayocat.model.HasAddons;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.LocalizedField;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 /**
@@ -54,6 +60,13 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
             return entity;
         }
 
+        // Handle entity fields :
+        // - loops over methods, checking for setters, then for each one of them
+        // - infer a field name from found setter
+        // - check if that field has a "LocalizedField" annotation, if not ignore
+        // - if it does, try to find this field in the locale's map of translations
+        // - if found and not null or empty string use the setter to set this as the localized field value
+
         for (Method method : copiedEntity.getClass().getDeclaredMethods()) {
             if (method.getName().startsWith("set") && Character.isUpperCase(method.getName().charAt(3))) {
                 // Found a setter.
@@ -78,11 +91,9 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
 
                         value = copiedEntity.getLocalizedVersions().get(locale).get(fieldName);
 
-                        if (value.getClass().isAssignableFrom(String.class)) {
+                        if (String.class.isAssignableFrom(value.getClass()) && Strings.isNullOrEmpty((String) value)) {
                             // Ignore empty strings, consider them as nulls
-                            if (Strings.isNullOrEmpty((String) value)) {
-                                continue;
-                            }
+                            continue;
                         }
 
                         boolean setterAccessible = method.isAccessible();
@@ -98,6 +109,56 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
                 }
             }
         }
+
+        // Handle entity addons :
+        // - check if entity has addons and those addons are loaded, and the localized version contains something
+        // for addons
+        // - if yes, then loop over all the entity addons, and for each :
+        // - try to find the equivalent addon in the map of translation
+        // - if found, and its value is not null or empty string, replace the addon value by the localized one
+
+        if (hasLoadedAddons(copiedEntity) && copiedEntity.getLocalizedVersions().get(locale).containsKey("addons")) {
+            List<Addon> entityAddons = ((HasAddons) copiedEntity).getAddons().get();
+            List<Map<String, Object>> localizedAddons =
+                    (List<Map<String, Object>>) copiedEntity.getLocalizedVersions().get(locale).get("addons");
+
+            for (Addon addon : entityAddons) {
+                Optional<Map<String, Object>> localized = findLocalizedAddon(addon, localizedAddons);
+                if (localized.isPresent()) {
+                    Object value = localized.get().get("value");
+
+                    if (value == null ||
+                            (String.class.isAssignableFrom(value.getClass()) && Strings.isNullOrEmpty((String) value)))
+                    {
+                        // Ignore empty strings, consider them as nulls
+                        continue;
+                    }
+
+                    addon.setValue(value);
+                }
+            }
+        }
+
         return copiedEntity;
     }
+
+    private boolean hasLoadedAddons(Entity entity)
+    {
+        return HasAddons.class.isAssignableFrom(entity.getClass()) && ((HasAddons) entity).getAddons().isLoaded();
+    }
+
+    private Optional<Map<String, Object>> findLocalizedAddon(Addon addon, List<Map<String, Object>> localizedAddons)
+    {
+        for (Map<String, Object> localized : localizedAddons) {
+            if (addon.getSource().toJson().equals(localized.get("source"))
+                    && addon.getGroup().equals(localized.get("group"))
+                    && addon.getKey().equals(localized.get("key")))
+            {
+
+                return Optional.of(localized);
+            }
+        }
+        return Optional.absent();
+    }
+
 }
