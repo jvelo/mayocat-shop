@@ -33,4 +33,14 @@ public class SomeEntityURLFactory implements EntityURLFactory<SomeEntity>
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public URL create(SomeEntity entity)
+    {
+        try {
+            return new URL("http://perdu.com");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

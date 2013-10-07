@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
@@ -30,7 +29,6 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
@@ -41,6 +39,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
@@ -80,6 +79,9 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
     @Inject
     private Execution execution;
 
+    @Inject
+    private EntityURLFactory urlFactory;
+
     @GET
     public FrontView getProducts(@QueryParam("page") Integer page, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
@@ -111,8 +113,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
         Theme theme = this.execution.getContext().getTheme();
-        ProductContextBuilder builder =
-                new ProductContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        ProductContextBuilder builder = new ProductContextBuilder(
+                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
 
@@ -196,8 +198,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
             }
         }
 
-        ProductContextBuilder builder =
-                new ProductContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        ProductContextBuilder builder = new ProductContextBuilder(
+                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
         Map<String, Object> productContext = builder.build(product, images);
 
         context.put("product", productContext);

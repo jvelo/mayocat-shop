@@ -41,6 +41,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.resources.ResourceResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
@@ -85,6 +86,9 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
     @Inject
     private Provider<CollectionStore> collectionStore;
+
+    @Inject
+    private EntityURLFactory urlFactory;
 
     @FrontContextContributor(path = "/")
     public void contributeRootContext(@FrontContext Map data)
@@ -134,7 +138,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             collectionsContext.add(new HashMap<String, Object>()
             {
                 {
-                    put(ContextConstants.URL, "/" + CollectionEntity.PATH + "/" + collection.getSlug());
+                    put(ContextConstants.URL, urlFactory.create(collection));
                     put("title", collection.getTitle());
                     put("description", collection.getDescription());
                 }
@@ -173,7 +177,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
         }
 
-        ProductContextBuilder builder = new ProductContextBuilder(configurationService, attachmentStore.get(),
+        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService, attachmentStore.get(),
                 thumbnailStore.get(), theme);
 
         for (final Product product : products) {
@@ -212,7 +216,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
         // Pages
 
-        PageContextBuilder pageContextBuilder = new PageContextBuilder(theme);
+        PageContextBuilder pageContextBuilder = new PageContextBuilder(urlFactory, theme);
         List<Map<String, Object>> pagesContext = Lists.newArrayList();
         List<Page> rootPages = this.pageStore.get().findAllRootPages();
 

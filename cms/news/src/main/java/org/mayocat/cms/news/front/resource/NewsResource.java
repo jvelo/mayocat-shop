@@ -31,14 +31,12 @@ import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
-import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.util.ContextUtils;
@@ -48,7 +46,6 @@ import org.mayocat.theme.Theme;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -190,8 +187,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         Map<String, Object> context = Maps.newHashMap();
         context.put("title", ContextUtils.safeString(article.getTitle()));
         context.put("content", ContextUtils.safeHtml(article.getContent()));
-        context.put("url", urlFactory.create(article, this.execution.getContext().getTenant()));
-        context.put(ContextConstants.URL, PATH + SLASH + article.getSlug());
+        context.put(ContextConstants.URL, urlFactory.create(article));
         context.put(ContextConstants.SLUG, article.getSlug());
 
         if (article.getPublicationDate() != null) {

@@ -33,4 +33,13 @@ public interface EntityURLFactory<E extends Entity>
      * @return the public URL corresponding to this entity and tenant
      */
     URL create(E entity, Tenant tenant);
+
+    /**
+     * Same as {@link #create(org.mayocat.model.Entity, org.mayocat.accounts.model.Tenant, URLType)} with the {@link
+     * URLType#PUBLIC} type of URL, and the context's tenant (the tenant this request is executed against)
+     *
+     * @param entity the entity to create the URL for
+     * @return the public URL corresponding to this entity and tenant
+     */
+    URL create(E entity);
 }

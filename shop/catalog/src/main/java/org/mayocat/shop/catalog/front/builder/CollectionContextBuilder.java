@@ -26,6 +26,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -47,9 +48,12 @@ public class CollectionContextBuilder implements ContextConstants
 
     private ImageContextBuilder imageContextBuilder;
 
-    public CollectionContextBuilder(ConfigurationService configurationService, AttachmentStore attachmentStore,
-            ThumbnailStore thumbnailStore, Theme theme)
+    private EntityURLFactory urlFactory;
+
+    public CollectionContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
+            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
     {
+        this.urlFactory = urlFactory;
         this.theme = theme;
         this.attachmentStore = attachmentStore;
         this.thumbnailStore = thumbnailStore;
@@ -68,12 +72,12 @@ public class CollectionContextBuilder implements ContextConstants
         collectionContext.put("title", collection.getTitle());
         collectionContext.put("description", collection.getDescription());
         collectionContext.put(SLUG, collection.getSlug());
-        collectionContext.put(URL, "/" + CollectionEntity.PATH + "/" + collection.getSlug());
+        collectionContext.put(URL, "/" + urlFactory.create(collection));
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
 
         ProductContextBuilder productContextBuilder =
-                new ProductContextBuilder(configurationService, attachmentStore, thumbnailStore, theme);
+                new ProductContextBuilder(urlFactory, configurationService, attachmentStore, thumbnailStore, theme);
 
         if (products != null) {
             for (final Product product : products) {

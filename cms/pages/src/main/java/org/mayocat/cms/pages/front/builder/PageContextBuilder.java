@@ -13,6 +13,7 @@ import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -29,8 +30,11 @@ public class PageContextBuilder
 
     private AddonContextBuilder addonContextBuilder;
 
-    public PageContextBuilder(Theme theme)
+    private EntityURLFactory urlFactory;
+
+    public PageContextBuilder(EntityURLFactory urlFactory, Theme theme)
     {
+        this.urlFactory = urlFactory;
         this.theme = theme;
 
         imageContextBuilder = new ImageContextBuilder(theme);
@@ -44,7 +48,7 @@ public class PageContextBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
-        pageContext.put(ContextConstants.URL, PageResource.PATH + PageResource.SLASH + page.getSlug());
+        pageContext.put(ContextConstants.URL, urlFactory.create(page));
         pageContext.put(ContextConstants.SLUG, page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();

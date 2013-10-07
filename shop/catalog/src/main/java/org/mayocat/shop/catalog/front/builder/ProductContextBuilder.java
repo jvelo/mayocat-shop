@@ -13,16 +13,15 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.shop.catalog.api.representations.CollectionRepresentation;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
-import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,9 +43,13 @@ public class ProductContextBuilder implements ContextConstants
 
     private CollectionContextBuilder collectionContextBuilder;
 
-    public ProductContextBuilder(ConfigurationService configurationService, AttachmentStore attachmentStore,
-            ThumbnailStore thumbnailStore, Theme theme)
+    private EntityURLFactory urlFactory;
+
+    public ProductContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
+            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
     {
+        this.urlFactory = urlFactory;
+
         catalogSettings = configurationService.getSettings(CatalogSettings.class);
         generalSettings = configurationService.getSettings(GeneralSettings.class);
         this.theme = theme;
@@ -54,7 +57,7 @@ public class ProductContextBuilder implements ContextConstants
         imageContextBuilder = new ImageContextBuilder(theme);
         addonContextBuilder = new AddonContextBuilder();
         collectionContextBuilder =
-                new CollectionContextBuilder(configurationService, attachmentStore, thumbnailStore, theme);
+                new CollectionContextBuilder(urlFactory, configurationService, attachmentStore, thumbnailStore, theme);
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)
@@ -63,7 +66,7 @@ public class ProductContextBuilder implements ContextConstants
 
         productContext.put("title", ContextUtils.safeString(product.getTitle()));
         productContext.put("description", ContextUtils.safeHtml(product.getDescription()));
-        productContext.put(URL, "/" + ProductEntity.PATH + "/" + product.getSlug());
+        productContext.put(URL, urlFactory.create(product));
         productContext.put(SLUG, product.getSlug());
 
         // Prices

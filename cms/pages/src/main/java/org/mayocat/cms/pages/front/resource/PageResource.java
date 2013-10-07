@@ -34,6 +34,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -62,6 +63,9 @@ public class PageResource extends AbstractFrontResource implements Resource
 
     @Inject
     private EntityLocalizationService entityLocalizationService;
+
+    @Inject
+    private EntityURLFactory entityURLFactory;
 
     @Path("{slug}")
     @GET
@@ -93,7 +97,7 @@ public class PageResource extends AbstractFrontResource implements Resource
             }
         }
 
-        PageContextBuilder builder = new PageContextBuilder(theme);
+        PageContextBuilder builder = new PageContextBuilder(entityURLFactory, theme);
         Map<String, Object> pageContext = builder.build(
                 execution.getContext().isAlternativeLocale() ?
                         entityLocalizationService.localize(page, execution.getContext().getLocale()) : page,
