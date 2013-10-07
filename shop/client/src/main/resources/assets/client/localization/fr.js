@@ -377,6 +377,6 @@
     };
 
     // Expose the localization to the Mayocat settings
-    Mayocat.localizations.fr = frLocalization;
+    Mayocat.localization.fr = frLocalization;
 
 })();

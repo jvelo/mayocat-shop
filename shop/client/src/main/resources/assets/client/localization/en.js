@@ -419,6 +419,6 @@
     };
 
     // Expose the localization to the Mayocat settings
-    Mayocat.localizations.en = enLocalization;
+    Mayocat.localization.en = enLocalization;
 
 })();
