@@ -98,11 +98,7 @@ public class PageResource extends AbstractFrontResource implements Resource
         }
 
         PageContextBuilder builder = new PageContextBuilder(entityURLFactory, theme);
-        Map<String, Object> pageContext = builder.build(
-                execution.getContext().isAlternativeLocale() ?
-                        entityLocalizationService.localize(page, execution.getContext().getLocale()) : page,
-                images
-        );
+        Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
 
         context.put("page", pageContext);
         result.putContext(context);

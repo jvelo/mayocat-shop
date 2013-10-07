@@ -8,10 +8,13 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.mayocat.context.Execution;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.LocalizedField;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Strings;
 
 /**
  * @version $Id$
@@ -21,6 +24,20 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
 {
     @Inject
     private org.slf4j.Logger logger;
+
+    @Inject
+    private Execution execution;
+
+    @Override
+    public <T extends Localized> T localize(T entity)
+    {
+        if (this.execution.getContext() == null || !this.execution.getContext().isAlternativeLocale()) {
+            return entity;
+        }
+        else {
+            return localize(entity, this.execution.getContext().getLocale());
+        }
+    }
 
     @Override
     public <T extends Localized> T localize(T entity, Locale locale)
@@ -58,7 +75,15 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
                 {
                     Object value = null;
                     if (copiedEntity.getLocalizedVersions().get(locale).containsKey(fieldName)) {
+
                         value = copiedEntity.getLocalizedVersions().get(locale).get(fieldName);
+
+                        if (value.getClass().isAssignableFrom(String.class)) {
+                            // Ignore empty strings, consider them as nulls
+                            if (Strings.isNullOrEmpty((String) value)) {
+                                continue;
+                            }
+                        }
 
                         boolean setterAccessible = method.isAccessible();
                         method.setAccessible(true);

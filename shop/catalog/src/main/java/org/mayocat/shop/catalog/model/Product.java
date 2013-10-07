@@ -54,11 +54,11 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     @DoNotIndex
     private UUID featuredImageId;
 
-    private transient Association<List<Addon>> addons = Association.notLoaded();
+    private Association<List<Addon>> addons = Association.notLoaded();
 
-    private transient Association<Collection> featuredCollection = Association.notLoaded();
+    private Association<Collection> featuredCollection = Association.notLoaded();
 
-    private transient Association<List<Collection>> collections = Association.notLoaded();
+    private Association<List<Collection>> collections = Association.notLoaded();
 
     private Map<Locale, Map<String, Object>> localizedVersions;
 

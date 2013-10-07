@@ -39,7 +39,7 @@ lastPosition() ::= <<
 >>
 
 findOrphanProducts() ::= <<
-    SELECT *
+    SELECT entity.*, product.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN product
                    ON product.entity_id = entity.id
@@ -51,7 +51,7 @@ findOrphanProducts() ::= <<
 >>
 
 findAllForCollection() ::= <<
-    SELECT *
+    SELECT entity.*, product.*, localization_data(entity_id)
     FROM   collection_product
            INNER JOIN entity
                    ON entity.id = collection_product.product_id
@@ -62,7 +62,7 @@ findAllForCollection() ::= <<
 >>
 
 findAllOnShelf() ::= <<
-    SELECT *
+    SELECT entity.*, product.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN product
                    ON entity.id = product.entity_id

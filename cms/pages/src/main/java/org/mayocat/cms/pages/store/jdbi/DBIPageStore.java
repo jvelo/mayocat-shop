@@ -55,7 +55,6 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
             lastIndex = 0;
         }
         this.dao.createPage(lastIndex + 1, page);
-        //this.dao.insertTranslations(entityId, page.getTranslations());
         this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();

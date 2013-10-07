@@ -23,6 +23,7 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
@@ -89,6 +90,9 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
     @Inject
     private EntityURLFactory urlFactory;
+
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
 
     @FrontContextContributor(path = "/")
     public void contributeRootContext(@FrontContext Map data)
@@ -203,7 +207,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                 Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
                 images.add(image);
             }
-            Map<String, Object> productContext = builder.build(product, images);
+            Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
             productsContext.add(productContext);
         }
 

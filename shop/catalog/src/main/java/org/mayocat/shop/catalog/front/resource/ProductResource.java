@@ -25,6 +25,7 @@ import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
@@ -81,6 +82,9 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
     @Inject
     private EntityURLFactory urlFactory;
+
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
 
     @GET
     public FrontView getProducts(@QueryParam("page") Integer page, @Context Breakpoint breakpoint,
@@ -150,7 +154,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
                 product.setFeaturedCollection(collections.get(0));
             }
 
-            Map<String, Object> productContext = builder.build(product, images);
+            Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
             productsContext.add(productContext);
         }
 
@@ -200,7 +204,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
 
         ProductContextBuilder builder = new ProductContextBuilder(
                 urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
-        Map<String, Object> productContext = builder.build(product, images);
+        Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
 
         context.put("product", productContext);
         result.putContext(context);
