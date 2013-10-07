@@ -25,7 +25,9 @@ public class PageMapper implements ResultSetMapper<Page>
     public Page map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         Page page = new Page((UUID) resultSet.getObject("id"));
-        page.setPublished(resultSet.getBoolean("published"));
+        if (resultSet.getObject("published") != null) {
+            page.setPublished(resultSet.getBoolean("published"));
+        }
         page.setTitle(resultSet.getString("title"));
         page.setSlug(resultSet.getString("slug"));
         page.setContent(resultSet.getString("content"));
