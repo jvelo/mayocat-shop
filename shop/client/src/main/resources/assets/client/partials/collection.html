@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">{{'product.title.editCollection' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'product.title.newCollection' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading':collection.title == undefined}">
+<form name="collectionForm">
+    <article class="entity">
 
-        <div ng-show="collection.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="collection.title" placeholder="{{'product.placeholder.collectionTitle' | translate}}"/>
+                <input type="text" class="title" ng-model="collection.title" placeholder="{{'product.placeholder.collectionTitle' | translate}}" required/>
             </h1>
 
             <!-- Description -->
@@ -24,7 +24,7 @@
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">
                         {{'entity.action.create' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -33,7 +33,7 @@
             <div ng-show="!isNew()">
                 <!-- Update collection -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">
                         {{'entity.action.update' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -51,7 +51,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">{{'product.action.deleteCollection' | translate}}</small>
+            <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteCollection' | translate}}</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="collection:confirmDelete"

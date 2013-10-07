@@ -44,12 +44,11 @@ angular.module('product', ['ngResource'])
                             }
                             else {
                                 if (status === 409) {
-                                    // TODO display a different error than the generic server error
-                                    $rootScope.$broadcast('event:serverError', {});
+                                    $rootScope.$broadcast('event:nameConflictError');
                                 }
                                 else {
                                     // Generic error
-                                    $scope.$parent.$broadcast('event:serverError');
+                                    $rootScope.$broadcast('event:serverError');
                                 }
                             }
                         })

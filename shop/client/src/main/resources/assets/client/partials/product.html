@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">{{'product.title.editProduct' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'product.title.newProduct' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading': product.title == undefined}">
+<form name="productForm">
+    <article class="entity">
 
-        <div ng-show="product.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="localizedProduct.title" placeholder="{{'product.placeholder.productTitle' | translate}}" localized/>
+                <input type="text" class="title" ng-model="localizedProduct.title" placeholder="{{'product.placeholder.productTitle' | translate}}" localized required/>
             </h1>
 
             <!-- Description -->
@@ -96,12 +96,12 @@
 
     </article>
     </div>
-    <aside ng-show="product.title != undefined">
+    <aside>
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateProduct()" class="btn btn-large btn-primary">
+                    <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn-primary">
                         {{'entity.action.create' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -110,12 +110,13 @@
             <div ng-show="!isNew()">
                 <div ng-show="product.onShelf == undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateProduct()" class="btn btn-large btn">
+                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">
                             {{'entity.action.save' | translate}}
                         </button>
                         <button ng-click="publishProduct()" class="btn btn-large btn-primary">
                             {{'entity.action.publish' | translate}}
                         </button>
+                        <span ng-class="{'loading': isSaving}"></span>
                     </div>
                 </div>
                 <div ng-show="product.onShelf != undefined">
@@ -147,7 +148,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
+            <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="product:confirmDelete"

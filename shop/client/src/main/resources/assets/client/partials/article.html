@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">{{'content.title.editArticle' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newArticle' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading': article.title == undefined}">
+<form name="articleForm">
+    <article class="entity">
 
-        <div ng-show="article.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="article.title" placeholder="{{'content.placeholder.articleTitle' | translate}}"/>
+                <input type="text" class="title" ng-model="article.title" placeholder="{{'content.placeholder.articleTitle' | translate}}" required/>
             </h1>
 
             <!-- Description -->
@@ -77,12 +77,12 @@
 
     </article>
     </div>
-    <aside ng-show="article.title != undefined">
+    <aside>
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new article -->
                 <div class="hasLoading">
-                    <button ng-click="updateArticle()" class="btn btn-large btn-primary">
+                    <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn-primary">
                         {{'entity.action.create' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -91,7 +91,7 @@
             <div ng-show="!isNew()">
                 <div ng-show="article.published == undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateArticle()" class="btn btn-large btn">
+                        <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn">
                             {{'entity.action.save' | translate}}
                         </button>
                         <button ng-click="publishArticle()" class="btn btn-large btn-primary">
@@ -102,7 +102,7 @@
                 </div>
                 <div ng-show="article.published != undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateArticle()" class="btn btn-large btn-primary">
+                        <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn-primary">
                             {{'entity.action.update' | translate}}
                         </button>
                         <span ng-class="{'loading': isSaving}"></span>
@@ -120,7 +120,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">
+            <small class="clickme" ng-click="confirmDeletion()">
                 {{'content.action.deleteArticle' | translate}}
             </small>
         </div>

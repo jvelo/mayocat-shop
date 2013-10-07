@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.meta.PageEntity;
@@ -27,6 +28,7 @@ public class PageRepresentation
 
     private String href;
 
+    @NotEmpty
     private String title;
 
     private String content;

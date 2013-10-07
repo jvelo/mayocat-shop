@@ -26,16 +26,26 @@ angular.module('collection', ['ngResource'])
                     $http.post("/api/collections/", $scope.collection)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            var fragments = headers("location").split('/'),
-                                slug = fragments[fragments.length - 1];
-                            $location.url("/collections/" + slug);
-                            $rootScope.$broadcast("catalog:refreshCatalog");
-                            callback && callback.call();
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+                                $location.url("/collections/" + slug);
+                                $rootScope.$broadcast("catalog:refreshCatalog");
+                                callback && callback.call();
+                            }
+                            else {
+                                if (status === 409) {
+                                    $rootScope.$broadcast('event:nameConflictError');
+                                }
+                                else {
+                                    // Generic error
+                                    $rootScope.$broadcast('event:serverError');
+                                }
+                            }
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             callback && callback.call();
-                            // TODO handle 409 conflict etc.
                         });
                 }
                 else {

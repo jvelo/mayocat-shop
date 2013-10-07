@@ -1,14 +1,14 @@
 <h1 class="small" ng-show="!isNew()">{{'content.title.editPage' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newPage' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading': page.title == undefined}">
+<form name="pageForm">
+    <article class="entity">
 
-        <div ng-show="page.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="localizedPage.title" localized placeholder="{{'content.placeholder.pageTitle' | translate}}"/>
+                <input type="text" class="title" ng-model="localizedPage.title" localized placeholder="{{'content.placeholder.pageTitle' | translate}}" required />
             </h1>
 
             <!-- Description -->
@@ -77,12 +77,12 @@
 
     </article>
     </div>
-    <aside ng-show="page.title != undefined">
+    <aside>
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new page -->
                 <div class="hasLoading">
-                    <button ng-click="updatePage()" class="btn btn-large btn-primary">
+                    <button ng-disabled="pageForm.$invalid" ng-click="updatePage()" class="btn btn-large btn-primary">
                         {{'entity.action.create' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -91,7 +91,7 @@
             <div ng-show="!isNew()">
                 <div ng-show="page.published == undefined">
                     <div class="hasLoading">
-                        <button ng-click="updatePage()" class="btn btn-large btn">
+                        <button ng-disabled="pageForm.$invalid" ng-click="updatePage()" class="btn btn-large btn">
                             {{'entity.action.save' | translate}}
                         </button>
                         <button ng-click="publishPage()" class="btn btn-large btn-primary">
@@ -102,7 +102,7 @@
                 </div>
                 <div ng-show="page.published != undefined">
                     <div class="hasLoading">
-                        <button ng-click="updatePage()" class="btn btn-large btn-primary">
+                        <button ng-disabled="pageForm.$invalid" ng-click="updatePage()" class="btn btn-large btn-primary">
                             {{'entity.action.update' | translate}}
                         </button>
                         <span ng-class="{'loading': isSaving}"></span>
