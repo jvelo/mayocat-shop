@@ -126,12 +126,12 @@
             }
         }])
 
-        .factory('entityImageMixin', function (imageService, $http) {
+        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', function (imageService, $http, $rootScope) {
             return function (entityType) {
                 var mixin = {};
 
                 mixin.editThumbnails = function (image) {
-                    mixin.$emit('thumbnails:edit', entityType, image);
+                    $rootScope.$broadcast('thumbnails:edit', entityType, image);
                 }
 
                 mixin.reloadImages = function () {
@@ -151,7 +151,7 @@
                 mixin.removeImage = function (image) {
                     var scope = this;
                     $http.delete("/api/products/" + scope.slug + "/images/" + image.slug).success(function () {
-                        mixin.reloadImages();
+                        scope.reloadImages();
                     });
                 }
 
@@ -162,7 +162,7 @@
 
                 return mixin;
             }
-        })
+        }])
 
         .factory('entityLocalizationService', ['$q', 'configurationService', function ($q, configurationService) {
 
