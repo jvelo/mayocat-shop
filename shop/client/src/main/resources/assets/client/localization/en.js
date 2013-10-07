@@ -4,9 +4,17 @@
     var enLocalization = {
 
         /**
+         * Global translations, not linked to a particular aspect of the app
+         */
+        global: {
+            actions: {
+                add: "Add"
+            }
+        },
+
+        /**
          * Translations linked to generic Mayocat entities
          */
-
         entity: {
             misc: {
                 defaultModel: "Default model"
@@ -329,6 +337,8 @@
                 timeZone: "Time zone",
                 selectTimeZone: "Select a time zone",
                 defaultLanguage: "Default language",
+                otherLanguages: "Other languages",
+                selectALanguage: "-- Select a language --",
                 theme: "Theme",
 
                 shopName: "Shop name",

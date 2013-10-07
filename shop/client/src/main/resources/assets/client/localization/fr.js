@@ -2,6 +2,12 @@
     'use strict';
 
     var frLocalization = {
+
+        global: {
+            actions: {
+                add: "Ajouter"
+            }
+        },
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
@@ -288,6 +294,8 @@
                 timeZone: "Fuseau horaire",
                 selectTimeZone: "Sélectionnez un fuseau horaire ",
                 defaultLanguage: "Langage par défaut",
+                otherLanguages: "Autres langages",
+                selectALanguage: "-- Choisir un langage --",
                 theme: "Thème",
 
                 shopName: "Nom de la boutique",

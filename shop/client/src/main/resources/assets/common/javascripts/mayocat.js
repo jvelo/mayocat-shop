@@ -88,7 +88,7 @@ mayocat.directive('listPicker', ['$parse', function($parse){
             '<button class="btn btn-mini" ng-click="remove(element)">{{getDisplayElement(element)}} &times;</span></button>' +
             '</li></ul></div><div class="clearfix"></div>' +
             '<span ng-transclude></span>' +
-            '<input type="submit" class="btn" value="Add" ng-click="add()"></div>',
+            '<input type="submit" class="btn" value="{{\'global.actions.add\' | translate}}" ng-click="add()"></div>',
 
         link: function (scope, element, attr, ngModel) {
             scope.$watch(function () {
