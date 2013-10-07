@@ -1,7 +1,7 @@
 <div ng-controller="ThumbnailsEditorController" xmlns="http://www.w3.org/1999/html">
     <div class="modal-header">
         <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Edit image thumbnails</h3>
+        <h3>{{'thumbnailEditor.title.editThumbnails'| translate}}</h3>
     </div>
     <form class="form-horizontal">
         <div class="modal-body">
@@ -20,14 +20,16 @@
                                 </thumbnail-editor>
                                 <p class="pull-left">
                                     <small>
-                                        <em>Editing:</em>
+                                        <em>{{'thumbnailEditor.misc.editing'| translate}}</em>
                                         <strong>{{currentSource}}</strong> -
                                         <strong>{{currentSize.name}}</strong>
-                                        ({{currentSize.width}}x{{currentSize.height}})
+                                        ({{currentSize.width}} x {{currentSize.height}})
                                     </small>
                                 </p>
                                 <p class="pull-right">
-                                    <a class="btn btn-primary" ng-click="save()">Save and next</a>
+                                    <a class="btn btn-primary" ng-click="save()">
+                                        {{'thumbnailEditor.action.saveAndNext'| translate}}
+                                    </a>
                                 </p>
                             </li>
                         </ul>
@@ -64,6 +66,8 @@
         </div>
     </form>
     <div class="modal-footer">
-        <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">Close</a>
+        <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
+            {{'thumbnailEditor.action.close'| translate}}
+        </a>
     </div>
 </div>

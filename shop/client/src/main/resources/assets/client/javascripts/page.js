@@ -100,6 +100,12 @@
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                return {
+                    imagesLength: (($scope.page || {}).images || {}).length || 0
+                };
+            };
+
         }]);
 
 })();

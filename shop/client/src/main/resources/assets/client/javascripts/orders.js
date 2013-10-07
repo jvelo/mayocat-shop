@@ -2,8 +2,8 @@
 
 angular.module('orders', [])
 
-    .controller('OrdersController', ['$scope', '$resource', 'configurationService',
-        function ($scope, $resource, configurationService) {
+    .controller('OrdersController', ['$scope', '$resource', '$translate', 'configurationService', 'timeService',
+        function ($scope, $resource, $translate, configurationService, timeService) {
 
             $scope.ordersPerPage = 15;
 
@@ -24,7 +24,11 @@ angular.module('orders', [])
             }
 
             $scope.getStatus = function (status) {
-                return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().replace(/_/g, ' ');
+                var camelCaseStatus = status.toLowerCase().replace(/-(.)/g, function(match, grp1) {
+                    return grp1.toUpperCase();
+                });
+
+                return $translate('order.status.' + camelCaseStatus);
             }
 
             $scope.getClass = function(status) {
@@ -59,5 +63,17 @@ angular.module('orders', [])
             configurationService.get("catalog", function(catalogSettings){
                 $scope.mainCurrency = catalogSettings.currencies.main;
             });
+
+            $scope.getTranslationProperties = function (options) {
+                if (options.period) {
+                    return {
+                        numberOfOrders: (($scope.stats || {})[options.period] || {}).numberOfOrders || 0
+                    };
+                } else if (options.order) {
+                    return {
+                        numberOfItems: options.order.numberOfItems || 0
+                    };
+                }
+            };
 
         }]);

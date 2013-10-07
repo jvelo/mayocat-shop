@@ -225,6 +225,16 @@ angular.module('settings', ['ngResource'])
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                var editedCarrier = $scope.editedCarrier || {};
+                return {
+                    mainCurrency: $scope.mainCurrency || '',
+                    weightUnit: $scope.weightUnit || '',
+                    numberOfSelectedDestinations: (editedCarrier.destinations || {}).length || 0,
+                    maximumDaysSelected: editedCarrier.maximumDays || 0
+                };
+            };
+
             $scope.$watch('editedCarrier.destinations', function (path) {
                 if (typeof $scope.editedCarrier !== 'undefined') {
                     shippingService.getNames($scope.editedCarrier.destinations).then(function(names){

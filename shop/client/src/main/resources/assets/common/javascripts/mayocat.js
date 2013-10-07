@@ -400,19 +400,21 @@ mayocat.directive('ckEditor', function () {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
-            var ck = CKEDITOR.replace(elm[0],
-                {
-                    toolbarGroups: [
-                        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                        { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
-                        { name: 'links' },
-                        { name: 'styles' }
-                    ],
-                    removePlugins: 'elementspath',
-                    height: '290px',
-                    width: '99%'
-                }
-            );
+            var ckOptions = {
+                language: localStorage.locale || Mayocat.defaultLocale,
+                toolbarGroups: [
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                    { name: 'links' },
+                    { name: 'styles' }
+                ],
+                removePlugins: 'elementspath',
+                height: '290px',
+                width: '99%'
+            };
+
+            var textarea = elm[0],
+                ck = CKEDITOR.replace(textarea, ckOptions);
 
             if (!ngModel) return;
 
@@ -438,6 +440,21 @@ mayocat.directive('ckEditor', function () {
             ngModel.$render = function (value) {
                 ck.setData(ngModel.$viewValue);
             };
+
+            // Create a new ckEditor with a new locale when this last one is changed
+            scope.$on('ChangeLocale', function (event, locale) {
+                var data = ck.getData();
+                
+                ckOptions.language = locale;
+                ckOptions.on = {
+                    instanceReady: function () {
+                        this.setData(data);
+                    }
+                };
+
+                ck.destroy();
+                ck = CKEDITOR.replace(textarea, ckOptions);
+            });
 
         }
     };
@@ -634,9 +651,9 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
     }]);
 
 
-mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', 'authenticationService',
+mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',
-    function ($rootScope, $scope, $location, $http, authenticationService, configurationService) {
+    function ($rootScope, $scope, $location, $http, $translate, authenticationService, configurationService) {
 
 
         /**
@@ -738,5 +755,14 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         $scope.setRoute = function (href) {
             $location.url(href);
         };
+
+        $scope.changeLocale = function (locale) {
+            $rootScope.$broadcast('ChangeLocale', locale);
+        };
+
+        $scope.$on('ChangeLocale', function (event, locale) {
+            localStorage.locale = locale;
+            $translate.uses(locale);
+        });
 
     }]);
