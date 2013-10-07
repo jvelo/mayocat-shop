@@ -144,7 +144,6 @@ angular.module('product', ['ngResource'])
                     $scope.initializeAddons();
                     $scope.initializeModels();
                     $scope.initializeLocalization();
-
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -152,13 +151,10 @@ angular.module('product', ['ngResource'])
                         // angular directives.
                         $scope.product.onShelf = undefined;
                     }
-
-                    $scope.localProduct = $scope.product;
                 });
             }
             else {
                 $scope.product = $scope.newProduct();
-                $scope.localProduct = $scope.product;
                 $scope.initializeAddons();
                 $scope.initializeModels();
                 $scope.initializeLocalization();
