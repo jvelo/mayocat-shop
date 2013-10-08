@@ -39,12 +39,32 @@
                                             href="#editThumbnails">
                                             {{'entity.action.editThumbnails' | translate}}
                                         </li>
+                                        <li ng-click="image.editMeta = true">
+                                            {{'image.action.editMetadata' | translate}}
+                                        </li>
                                         <li ng-click="removeImage(image)">
                                             {{'entity.action.remove' | translate}}
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="clearfix"></div>
+                            </div>
+                            <div ng-show="image.editMeta" class="metadata">
+                                <div>
+                                    <input type="text" ng-model="image.title"
+                                           placeholder="{{'upload.placeholder.title' | translate}}"/>
+                                </div>
+                                <div>
+                                    <textarea rows="5" ng-model="image.description"
+                                              placeholder="{{'upload.placeholder.description' | translate}}"></textarea>
+                                </div>
+                                <span ng-class="{'loading': image.isSaving}"></span>
+                                <button type="button" class="btn" ng-click="image.editMeta = false">
+                                    {{'entity.action.cancel' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-primary" ng-click="updateImageMeta(image)">
+                                    {{'entity.action.update' | translate}}
+                                </button>
                             </div>
                         </div>
                     </li>
