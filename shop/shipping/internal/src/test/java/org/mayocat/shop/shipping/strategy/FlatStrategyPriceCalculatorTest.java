@@ -27,7 +27,6 @@ public class FlatStrategyPriceCalculatorTest
     @Test
     public void testFlatStrategyPriceCalculation() throws ComponentLookupException
     {
-
         Carrier carrier = new Carrier();
         carrier.setPerShipping(BigDecimal.TEN);
         carrier.setPerItem(BigDecimal.ONE);
@@ -53,5 +52,19 @@ public class FlatStrategyPriceCalculatorTest
         items.put(product2, 3l);
         price = this.componentManager.getComponentUnderTest().getPrice(carrier, items);
         Assert.assertEquals(BigDecimal.valueOf(17), price);
+    }
+
+    @Test
+    public void testFlatStrategyPriceCalculationWhenCartIsEmpty() throws ComponentLookupException
+    {
+        Carrier carrier = new Carrier();
+        carrier.setPerShipping(BigDecimal.TEN);
+        carrier.setPerItem(BigDecimal.ONE);
+
+        Map<Purchasable, Long> items = Maps.newHashMap();
+
+        BigDecimal price = this.componentManager.getComponentUnderTest().getPrice(carrier, items);
+
+        Assert.assertEquals(BigDecimal.ZERO, price);
     }
 }

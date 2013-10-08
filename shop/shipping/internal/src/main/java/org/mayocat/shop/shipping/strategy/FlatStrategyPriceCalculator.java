@@ -22,6 +22,12 @@ public class FlatStrategyPriceCalculator implements StrategyPriceCalculator
         for (Long number : items.values()) {
             numberOfItems += number;
         }
+
+        if (numberOfItems == 0) {
+            // If the cart is empty, there's no shipping to be paid
+            return BigDecimal.ZERO;
+        }
+
         price = price.add(carrier.getPerItem().multiply(BigDecimal.valueOf(numberOfItems)));
         return price;
     }

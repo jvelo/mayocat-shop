@@ -39,6 +39,9 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 
 /**
+ * One important rule is  : every time the cart state is modified, CartAccessor#setCart MUST be called, in order
+ * for the cart serialization in the session (cookies) to be updated.
+ *
  * @version $Id$
  */
 @Component("/cart")
@@ -75,9 +78,9 @@ public class CartResource extends AbstractFrontResource implements Resource
         Cart cart = cartAccessor.getCart();
         cart.addItem(product, quantity);
 
-        recalculateShipping();
-
         cartAccessor.setCart(cart);
+
+        recalculateShipping();
 
         return Response.seeOther(new URI("/cart")).build();
     }
@@ -174,9 +177,9 @@ public class CartResource extends AbstractFrontResource implements Resource
             cart.setSelectedShippingOption(option);
         }
 
-        recalculateShipping();
-
         cartAccessor.setCart(cart);
+
+        recalculateShipping();
 
         return Response.seeOther(new URI("/cart")).build();
     }
@@ -190,6 +193,7 @@ public class CartResource extends AbstractFrontResource implements Resource
             List<ShippingOption> options = shippingService.getOptions(cart.getItems());
             if (!options.isEmpty()) {
                 cart.setSelectedShippingOption(options.get(0));
+                cartAccessor.setCart(cart);
             }
         }
         Map<String, Object> context = getContext(uriInfo);
@@ -209,16 +213,31 @@ public class CartResource extends AbstractFrontResource implements Resource
     {
         Cart cart = cartAccessor.getCart();
 
-        // In case shipping has been disabled
-        if (!shippingService.isShippingEnabled()) {
+        // In case shipping has been disabled or cart emptied
+        if (!shippingService.isShippingEnabled() || cartIsEmpty(cart)) {
             cart.setSelectedShippingOption(null);
+            cartAccessor.setCart(cart);
+            return;
         }
 
         if (cart.getSelectedShippingOption() == null) {
-            // Nothing to do
+            // Nothing else to do if we get there
             return;
         }
+
         UUID selectedCarrierId = cart.getSelectedShippingOption().getCarrierId();
         cart.setSelectedShippingOption(shippingService.getOption(selectedCarrierId, cart.getItems()));
+
+        cartAccessor.setCart(cart);
+    }
+
+    private boolean cartIsEmpty(Cart cart)
+    {
+        for (Long i : cart.getItems().values()) {
+            if (i > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
