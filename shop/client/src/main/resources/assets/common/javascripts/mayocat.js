@@ -401,7 +401,6 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
-            CKEDITOR.config.mayocat_entity_uri = "/api/products/texas/";
             var ckOptions = {
                 language: localStorage.locale || Mayocat.defaultLocale,
                 toolbarGroups: [
@@ -445,6 +444,10 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             ngModel.$render = function (value) {
                 ck.setData(ngModel.$viewValue);
             };
+
+            scope.$on('entity:initialized', function(event, entity){
+                CKEDITOR.config.mayocat_entityUri = entity.uri;
+            });
 
             // Create a new ckEditor with a new locale when this last one is changed
             scope.$on('ui:localeChanged', function (event, locale) {
