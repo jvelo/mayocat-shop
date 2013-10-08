@@ -2,6 +2,10 @@
 
     'use strict'
 
+    var capitalize = function (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     angular.module('mayocat.entities', [])
 
         .factory('entityMixins', [
@@ -10,25 +14,67 @@
             'entityAddonsMixin',
             'entityLocalizationMixin',
             'entityImageMixin',
-            function() {
-                var allMixins = arguments;
+            function () {
+                var allMixins = [
+                        'entityBaseMixin',
+                        'entityModelMixin',
+                        'entityAddonsMixin',
+                        'entityLocalizationMixin',
+                        'entityImageMixin'
+                    ],
+                    args = arguments;
                 return {
-                    extendAll: function($scope, entityType){
-                        for (var mixin in allMixins) {
-                            if (allMixins.hasOwnProperty(mixin)) {
-                                angular.extend($scope, allMixins[mixin](entityType));
-                            }
+                    extendAll: function ($scope, entityType, options) {
+                        // Make sure the options hash exists.
+                        options = typeof options === "undefined" ? {} : options;
+
+                        // Iterate over all mixins, find its option object in the global option hash, and then extend
+                        // the passed scope with it.
+                        for (var i = 0; i < allMixins.length; i++) {
+                            var mixin = allMixins[i];
+                            var mixinName = mixin.substring(6);
+                            mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
+                            var mixinOptions = options[mixinName];
+                            angular.extend($scope, args[i](entityType, mixinOptions));
                         }
                     }
                 }
             }
         ])
 
-        .factory('entityBaseMixin', ["$routeParams" ,function ($routeParams) {
-            return function (entityType) {
+        .factory('entityBaseMixin', ["$routeParams" , "$rootScope", function ($routeParams, $rootScope) {
+            return function (entityType, options) {
+                console.log("Options", options);
+                options = typeof options === "undefined" ? {} : options;
                 var mixin = {
-                    slug: $routeParams[entityType]
+                    slug: $routeParams[entityType],
+                    isNew: function () {
+                        var scope = this;
+                        return scope.slug == "_new";
+                    },
+                    initializeEntity: function() {
+                        var scope = this;
+
+                        scope.initializeAddons && scope.initializeAddons();
+                        scope.initializeModels && scope.initializeModels();
+                        scope.initializeLocalization && scope.initializeLocalization();
+
+                        $rootScope.$broadcast("entity:initialized", {
+                            type: entityType,
+                            uri: (options.apiBase || "/api/" + entityType + "s/") + scope.slug + "/"
+                        });
+                    }
                 };
+
+                // Expose a function to create a new entity instance of this entity type.
+                // Example, for the entity type "page", this will expose a function newPage() that can be used
+                // in the page entity partial HTML file.
+                mixin["new" + capitalize(entityType)] = function () {
+                    return {
+                        slug: ""
+                    };
+                };
+
                 return mixin;
             }
         }])
@@ -64,6 +110,7 @@
 
                 mixin.initializeAddons = function () {
                     var scope = this;
+                    scope.addons = [];
                     addonsService.initializeEntityAddons(entityType, scope[entityType]).then(function (addons) {
                         scope.addons = addons;
                     });
@@ -74,10 +121,6 @@
         }])
 
         .factory('entityLocalizationMixin', [function () {
-
-            var capitalize = function (string) {
-                return string.charAt(0).toUpperCase() + string.slice(1);
-            };
 
             return function (entityType, options) {
                 var mixin = {},

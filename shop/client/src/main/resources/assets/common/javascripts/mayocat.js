@@ -441,6 +441,10 @@ mayocat.directive('ckEditor', function () {
                 ck.setData(ngModel.$viewValue);
             };
 
+            scope.$on('entity:initialized', function(event, entity){
+                CKEDITOR.config.mayocat_entityUri = entity.uri;
+            });
+
             // Create a new ckEditor with a new locale when this last one is changed
             scope.$on('ui:localeChanged', function (event, locale) {
                 var data = ck.getData();

@@ -88,18 +88,6 @@ angular.module('product', ['ngResource'])
 
             $scope.ProductResource = $resource("/api/products/:slug");
 
-            $scope.isNew = function () {
-                return $scope.slug == "_new";
-            };
-
-            $scope.newProduct = function () {
-                return {
-                    slug: "",
-                    title: "",
-                    addons: []
-                };
-            }
-
             $scope.initializeCollections = function () {
                 catalogService.hasCollections(function (hasCollections) {
                     $scope.hasCollections = hasCollections;
@@ -141,9 +129,8 @@ angular.module('product', ['ngResource'])
                     $scope.initializeCollections();
 
                     // Same for addons
-                    $scope.initializeAddons();
-                    $scope.initializeModels();
-                    $scope.initializeLocalization();
+                    $scope.initializeEntity();
+
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -155,9 +142,8 @@ angular.module('product', ['ngResource'])
             }
             else {
                 $scope.product = $scope.newProduct();
-                $scope.initializeAddons();
-                $scope.initializeModels();
-                $scope.initializeLocalization();
+
+                $scope.initializeEntity();
             }
 
             $scope.confirmDeletion = function () {

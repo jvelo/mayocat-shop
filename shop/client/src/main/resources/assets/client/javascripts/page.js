@@ -57,18 +57,6 @@
 
             $scope.PageResource = $resource("/api/pages/:slug");
 
-            $scope.isNew = function () {
-                return $scope.slug == "_new";
-            };
-
-            $scope.newPage = function () {
-                return {
-                    slug:"",
-                    title:"",
-                    addons:[]
-                };
-            }
-
             // Initialize existing page or new page
 
             if (!$scope.isNew()) {
@@ -76,9 +64,7 @@
                     "slug":$scope.slug,
                     "expand":["images"] }, function () {
 
-                    $scope.initializeAddons();
-                    $scope.initializeModels();
-                    $scope.initializeLocalization();
+                    $scope.initializeEntity();
 
                     if ($scope.page.published == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -91,9 +77,8 @@
             }
             else {
                 $scope.page = $scope.newPage();
-                $scope.initializeAddons();
-                $scope.initializeModels();
-                $scope.initializeLocalization();
+
+                $scope.initializeEntity();
             }
 
             $scope.confirmDeletion = function () {
