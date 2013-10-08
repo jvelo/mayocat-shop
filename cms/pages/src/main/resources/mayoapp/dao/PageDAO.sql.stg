@@ -1,7 +1,7 @@
 group PageDAO;
 
 findAllRootPages() ::= <<
-    SELECT *
+    SELECT entity.*, page.*, localization_data(entity_id)
     FROM entity
     INNER JOIN page ON entity.id = page.entity_id
     WHERE entity.type = 'page'

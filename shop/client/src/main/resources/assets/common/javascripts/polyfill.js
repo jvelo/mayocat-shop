@@ -1,3 +1,17 @@
+// Array forEach from MDN
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Compatibility
+if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function (fn, scope) {
+        'use strict';
+        var i, len;
+        for (i = 0, len = this.length; i < len; ++i) {
+            if (i in this) {
+                fn.call(scope, this[i], i, this);
+            }
+        }
+    };
+}
+
 // Array reduce for old browsers
 if ('function' !== typeof Array.prototype.reduce) {
     Array.prototype.reduce = function(callback, opt_initialValue){

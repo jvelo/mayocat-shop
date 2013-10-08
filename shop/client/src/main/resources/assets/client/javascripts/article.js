@@ -46,16 +46,26 @@ angular.module('article', ['ngResource'])
                     $http.post("/api/news/", $scope.article)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            var fragments = headers("location").split('/'),
-                                slug = fragments[fragments.length - 1];
-                            $location.url("/news/" + slug);
-                            $rootScope.$broadcast("news:articles:refreshList");
-                            callback && callback.call();
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+                                $location.url("/news/" + slug);
+                                $rootScope.$broadcast("news:articles:refreshList");
+                                callback && callback.call();
+                            }
+                            else {
+                                if (status === 409) {
+                                    $rootScope.$broadcast('event:nameConflictError');
+                                }
+                                else {
+                                    // Generic error
+                                    $rootScope.$broadcast('event:serverError');
+                                }
+                            }
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
                             callback && callback.call();
-                            // TODO handle 409 conflict
                         });
                 }
                 else {
@@ -193,6 +203,15 @@ angular.module('article', ['ngResource'])
                     $rootScope.$broadcast("news:articles:refreshList");
                     $location.url("/contents");
                 });
+            };
+
+            $scope.getTranslationProperties = function () {
+                var article = $scope.article || {};
+
+                return {
+                    articleDate: timeService.convertISO8601toLocalDate(article.publicationDate || '', 'LLL'),
+                    imagesLength: (article.images || {}).length || 0
+                };
             };
 
         }]);

@@ -3,7 +3,7 @@
 
     angular.module('mayocat.time', [])
 
-    .factory('timeService', function () {
+    .factory('timeService', ['$rootScope', function ($rootScope) {
 
         var defaultPrintFormat = "YYYY-MM-DD HH:mm";
 
@@ -411,6 +411,14 @@
             }
         };
 
+        // Default lang
+        moment.lang(localStorage.locale || (Mayocat || {}).defaultLocale || 'en');
+
+        // Listen to the `ui:localedChanged` event, see `mayocat.js` for the broadcast.
+        $rootScope.$on('ui:localeChanged', function (event, locale) {
+            moment.lang(locale);
+        });
+
         return {
 
             getTimeZoneData: function () {
@@ -452,7 +460,7 @@
 
         };
 
-    })
+    }])
 
     .filter('timestampAsDate', ['timeService', function (timeService) {
         return function (timestamp, format) {

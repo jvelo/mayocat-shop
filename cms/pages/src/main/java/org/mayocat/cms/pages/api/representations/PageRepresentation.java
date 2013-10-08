@@ -1,7 +1,10 @@
 package org.mayocat.cms.pages.api.representations;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.meta.PageEntity;
@@ -9,6 +12,7 @@ import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.rest.Resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -24,6 +28,7 @@ public class PageRepresentation
 
     private String href;
 
+    @NotEmpty
     private String title;
 
     private String content;
@@ -36,6 +41,9 @@ public class PageRepresentation
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<Locale, Map<String, Object>> localizedVersions = null;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +60,7 @@ public class PageRepresentation
         this.href = Resource.API_ROOT_PATH + PageEntity.PATH + "/" + page.getSlug();
         this.title = page.getTitle();
         this.content = page.getContent();
+        this.localizedVersions = page.getLocalizedVersions();
     }
 
     public PageRepresentation(Page page, List<ImageRepresentation> images)
@@ -118,5 +127,10 @@ public class PageRepresentation
     public void setFeaturedImage(ImageRepresentation featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 }

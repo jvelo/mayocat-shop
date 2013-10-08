@@ -3,9 +3,9 @@ package mayoapp.dao;
 import java.util.List;
 
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.jdbi.mapper.PageMapper;
-import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -19,8 +19,8 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  */
 @RegisterMapper(PageMapper.class)
 @UseStringTemplate3StatementLocator
-public abstract class PageDAO extends AbstractLocalizedEntityDAO<Page> implements Transactional<PageDAO>,
-        PositionedDAO<Page>, AddonsDAO<Page>
+public abstract class PageDAO implements EntityDAO<Page>, Transactional<PageDAO>,
+    PositionedDAO<Page>, AddonsDAO<Page>, LocalizationDAO<Page>
 {
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);

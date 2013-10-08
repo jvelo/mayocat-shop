@@ -1,12 +1,8 @@
 package org.mayocat.shop.shipping.configuration;
 
-import java.math.BigDecimal;
-
 import org.mayocat.configuration.Configurable;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.shop.shipping.Strategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @version $Id$

@@ -36,4 +36,10 @@ public class AttachmentURLFactory extends AbstractEntityURLFactory<Attachment> i
     {
         throw new UnsupportedOperationException("Not implemented");
     }
+
+    @Override
+    public URL create(Attachment entity)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

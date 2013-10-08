@@ -21,6 +21,12 @@ describe('Addons', function () {
                             }
                         }
                     }
+                },
+                "general" : {
+                    "locales" :{
+                        "main" : "en_US",
+                        "others" : []
+                    }
                 }
             };
 
@@ -106,6 +112,67 @@ describe('Addons', function () {
             });
 
             httpBackend.flush();
+        });
+
+        it("Should return or guess addon type correctly", function(){
+            // Default type when there is no other information
+            expect(addonsService.type()).toBe("string");
+
+            // When we precise the type, we expect it back
+            expect(addonsService.type("json")).toBe("json");
+
+            // When we don't precise the type but the editor, we expect the type defined by the editor
+            addonsService.registerEditor("myCustomEditor", {
+                type: function(){
+                    return "html";
+                }
+            });
+            expect(addonsService.type(undefined, "myCustomEditor")).toBe("html");
+        });
+
+        it("Should compute editor templates based on definition and registered editors", function(){
+
+            // Simple string
+            expect(
+                addonsService.editor("string", {})
+            ).toBe(
+                "<input ng-model=object.value type='text' >"
+            );
+
+            // Simple string, disabled
+            expect(
+                addonsService.editor("string", {
+                    "properties" : {
+                        "readOnly": true
+                    }
+                })
+            ).toBe(
+                "<input ng-model=object.value type='text' disabled='disabled' >"
+            );
+
+            // Textarea
+            expect(
+                addonsService.editor("string", {
+                    "editor" : "textarea"
+                })
+            ).toBe(
+                "<textarea ng-model=object.value ></textarea>"
+            );
+
+            // With placeholder
+            // @Ignore
+            // This fails with (sic) :
+            // Expected '<input ng-model=$parent.object.value placeholder={{addon.placeholder}} type='text'>' to equal '<input ng-model=$parent.object.value placeholder={{addon.placeholder}} type='text'>'.
+            /*
+            expect(
+                addonsService.editor("string", {
+                    "placeholder" : "Some helper string"
+                })
+            ).toEqual(
+                "<input ng-model=$parent.object.value placeholder={{addon.placeholder}} type='text'>"
+            );
+            */
+
         });
 
     });

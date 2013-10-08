@@ -32,6 +32,10 @@
     <script src="/common/vendor/angular/1.1.5/angular.min.js"></script>
     <script src="/common/vendor/angular/1.1.5/angular-resource.min.js"></script>
     <script src="/common/vendor/angular-ui/tabs.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate.min.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate-interpolation-messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/locales.js"></script>
     <script src="/common/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
     <script src="/common/vendor/moment.min.js"></script>
     <script src="/common/vendor/blueimp/jquery.fileupload.js"></script>
@@ -51,8 +55,6 @@
     <script src="/common/vendor/ckeditor/4.1/plugins/imagebrowser/plugin.js"></script>
 
     <script src="/common/vendor/lesscss/less-1.3.3.min.js"></script>
-    <!-- Always clear local storage when running with less.js -->
-    <script>localStorage.clear();</script>
 
     <!-- Application scripts -->
     <script src="/common/javascripts/polyfill.js"></script>
@@ -61,8 +63,10 @@
     <script src="/common/javascripts/addons.js"></script>
     <script src="/common/javascripts/image.js"></script>
     <script src="/common/javascripts/time.js"></script>
+    <script src="/common/javascripts/locales.js"></script>
     <script src="/common/javascripts/thumbnail.js"></script>
     <script src="/common/javascripts/configuration.js"></script>
+    <script src="/common/javascripts/entities.js"></script>
 
     <script src="javascripts/appsettings.js"></script>
     <script src="javascripts/settings.js"></script>
@@ -79,6 +83,11 @@
     <script src="javascripts/order.js"></script>
     <script src="javascripts/product.js"></script>
     <script src="javascripts/collection.js"></script>
+    <script src="javascripts/localization.js"></script>
+
+    <!-- Localization files -->
+    <script src="localization/en.js"></script>
+    <script src="localization/fr.js"></script>
 
     <!-- IE Fix for HTML5 Tags -->
     <!--[if lt IE 9]>
@@ -102,8 +111,18 @@
                        target="_new"></a>
                 </small>
             </p>
+
+            <div class="btn-group">
+                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                <img src="/common/images/flags/{{uiLocale}}.png"/><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="locale in ['en', 'fr']" ng-click="changeLocale(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>
+                </ul>
+
+            </div>
+
             <p class="logout">
-                <small ng-click="logout()" class="clickable">Logout</small>
+                <small ng-click="logout()" class="clickable">{{'authentication.action.logout' | translate}}</small>
             </p>
         </header>
 
@@ -111,7 +130,7 @@
         <ul class="">
             <li active-class="active">
                 <a href="#/orders">
-                    <h2>Orders</h2>
+                    <h2>{{'order.title.orders' | translate}}</h2>
                 </a>
             </li>
         </ul>
@@ -120,22 +139,22 @@
         <ul class="">
             <li active-class="active">
                 <a href="#/catalog" other-active-href="#/collections/,#/products/">
-                    <h2>Products</h2>
+                    <h2>{{'product.title.products' | translate}}</h2>
                 </a>
             </li>
             <li active-class="active">
                 <a href="#/contents" other-active-href="#/pages/,#/news">
-                    <h2>Contents</h2>
+                    <h2>{{'content.title.contents' | translate}}</h2>
                 </a>
                 <ul ng-show="isNews || isPages" class="sub-menu">
                     <li active-class="active">
                         <a href="#/contents" other-active-href="#/pages/">
-                            Pages
+                            {{'content.title.pages' | translate}}
                         </a>
                     </li>
                     <li active-class="active">
                         <a href="#/news">
-                            News
+                            {{'content.title.news' | translate}}
                         </a>
                     </li>
                 </ul>
@@ -146,7 +165,7 @@
         <ul class="">
             <li active-class="active">
                 <a href="#/settings/">
-                    <h2>Settings</h2>
+                    <h2>{{'settings.title.settings' | translate}}</h2>
                 </a>
             </li>
         </ul>
@@ -155,7 +174,7 @@
 
     <!-- Message show when there is no tenant at this address -->
     <div class="hero-unit" ng-show="tenant == undefined && authenticated != undefined">
-        <h1>Nothing to see here.</h1>
+        <h1>{{'entity.alert.notFound' | translate}}</h1>
     </div>
 
     <!-- Main container-->
@@ -186,25 +205,29 @@
 <div class="modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated" id="loginModal">
     <form class="" ng-controller="LoginController">
         <div class="modal-header">
-            <h3>Authentication required</h3>
+            <div class="btn-group">
+                <button class="btn btn-mini btn-primary" ng-click="changeLocale('fr')">FR</button>
+                <button class="btn btn-mini btn-primary" ng-click="changeLocale('en')">EN</button>
+            </div>
+            <h3>{{'authentication.misc.title' | translate}}</h3>
         </div>
         <div class="modal-body">
             <p>
             <fieldset>
-                <label>User name or email</label>
+                <label>{{'authentication.misc.username' | translate}}</label>
                 <input type="text" class="span3" ng-model="username"/>
-                <label>Password</label>
+                <label>{{'authentication.misc.password' | translate}}</label>
                 <input type="password" class="span3" ng-model="password"/>
-                <label>Remember me</label>
+                <label>{{'authentication.misc.remember' | translate}}</label>
                 <input type="checkbox" ng-model="remember"/>
             </fieldset>
             </p>
             <div class="alert" ng-show="authenticationFailed">
-                We could not authenticate you with these credentials.
+                {{'authentication.alert.failure' | translate}}
             </div>
         </div>
         <div class="modal-footer">
-            <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
+            <input type="submit" value="{{'authentication.action.login' | translate}}" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
         </div>
     </form>
 </div>
@@ -215,7 +238,10 @@
      ng-include="'/common/partials/serverError.html'"
      modal-trigger="event:serverError"
      id="errorModal"></div>
-
+ <div class="modal hide fade"
+      ng-include="'/common/partials/nameConflictError.html'"
+      modal-trigger="event:nameConflictError"
+      id="errorModal"></div>
 
 </body>
 </html>

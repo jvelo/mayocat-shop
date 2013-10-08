@@ -8,23 +8,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mayocat.context.CookieSessionContainerFilter;
-import org.mayocat.event.EventListener;
+import org.mayocat.Module;
+import org.mayocat.accounts.AccountsModule;
+import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.configuration.jackson.TimeZoneModule;
+import org.mayocat.context.CookieSessionContainerFilter;
+import org.mayocat.event.ApplicationStartedEvent;
+import org.mayocat.event.EventListener;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
 import org.mayocat.lifecycle.Managed;
-import org.mayocat.Module;
+import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.rest.Provider;
-import org.mayocat.task.Task;
-import org.mayocat.accounts.AccountsModule;
-import org.mayocat.configuration.AbstractSettings;
-import org.mayocat.configuration.jackson.TimeZoneModule;
-import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.jackson.MayocatJodaModule;
+import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
+import org.mayocat.task.Task;
 import org.mayocat.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,10 @@ import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.yammer.dropwizard.Service;
@@ -58,6 +64,9 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
     protected abstract void registerComponents(C configuration, Environment environment);
 
+    private List<Class> requestFilters = Lists.newArrayList();
+    private List<Class> responseFilters = Lists.newArrayList();
+
     public static Set<String> getStaticPaths()
     {
         return staticPaths;
@@ -70,6 +79,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         this.objectMapperFactory.registerModule(new TimeZoneModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
+        this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
 
         this.addModule(new AccountsModule());
     }
@@ -88,11 +98,53 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
 
         environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
                 CookieSessionContainerFilter.class.getCanonicalName());
-        environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
-                CookieSessionContainerFilter.class.getCanonicalName());
+        environment.getJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS);
+
+        // Default filters
+        addRequestFilter(CookieSessionContainerFilter.class);
+        addRequestFilter(LocalizationContainerFilter.class);
+        addResponseFilter(CookieSessionContainerFilter.class);
+
+        // Register Jersey container request filters
+        environment.setJerseyProperty(
+                ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
+                Joiner.on(",").join(
+                        Collections2.transform(this.requestFilters, new Function<Class, String>()
+                        {
+                            public String apply(Class string)
+                            {
+                                return string.getCanonicalName();
+                            }
+                        })
+                )
+        );
+
+        // Register Jersey container response filters
+        environment.setJerseyProperty(
+                ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
+                Joiner.on(",").join(
+                        Collections2.transform(this.responseFilters, new Function<Class, String>()
+                        {
+                            public String apply(Class string)
+                            {
+                                return string.getCanonicalName();
+                            }
+                        })
+                )
+        );
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
+    }
+
+    public final void addRequestFilter(Class clazz)
+    {
+        this.requestFilters.add(clazz);
+    }
+
+    public final void addResponseFilter(Class clazz)
+    {
+        this.responseFilters.add(clazz);
     }
 
     protected void addModule(Module module)

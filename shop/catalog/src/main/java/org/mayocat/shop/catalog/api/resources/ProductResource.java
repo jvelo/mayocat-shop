@@ -5,11 +5,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -32,8 +32,6 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
@@ -266,7 +264,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Authorized
     // Partial update : NOT idempotent
     public Response updateProduct(@PathParam("slug") String slug,
-            ProductRepresentation updatedProductRepresentation)
+            @Valid ProductRepresentation updatedProductRepresentation)
     {
         try {
             Product product = this.productStore.get().findBySlug(slug);
@@ -281,6 +279,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setPrice(updatedProductRepresentation.getPrice());
                 product.setWeight(updatedProductRepresentation.getWeight());
                 product.setStock(updatedProductRepresentation.getStock());
+                product.setLocalizedVersions(updatedProductRepresentation.getLocalizedVersions());
                 product.setAddons(addonsRepresentationUnmarshaller.unmarshall(updatedProductRepresentation.getAddons()));
 
                 // Featured image
@@ -343,7 +342,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @POST
     @Timed
     @Authorized //(roles = { Role.ADMIN })
-    public Response createProduct(ProductRepresentation productRepresentation)
+    public Response createProduct(@Valid ProductRepresentation productRepresentation)
     {
         try {
             Product product = new Product();

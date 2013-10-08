@@ -5,16 +5,15 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
-import org.mayocat.model.Translations;
-import org.mayocat.model.annotation.LocalizationFieldType;
-import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.model.annotation.LocalizationFieldType;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 
-public class Collection extends AbstractLocalizedEntity implements HasFeaturedImage
+public class Collection implements Entity, HasFeaturedImage
 {
     private UUID id;
 
@@ -23,12 +22,12 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
     @Size(min = 1)
     private String slug;
 
-    @Localized(type = LocalizationFieldType.SMALL)
+    @LocalizedField(type = LocalizationFieldType.SMALL)
     @Index
     @NotNull
     private String title;
 
-    @Localized(type = LocalizationFieldType.MEDIUM)
+    @LocalizedField(type = LocalizationFieldType.MEDIUM)
     @Index
     private String description;
 
@@ -39,20 +38,9 @@ public class Collection extends AbstractLocalizedEntity implements HasFeaturedIm
         super();
     }
 
-    public Collection(Translations translations)
-    {
-        super(translations);
-    }
-
     public Collection(UUID id)
     {
         super();
-        this.id = id;
-    }
-
-    public Collection(UUID id, Translations translations)
-    {
-        super(translations);
         this.id = id;
     }
 

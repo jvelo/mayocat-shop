@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.meta.PageEntity;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.rest.Resource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
@@ -33,6 +34,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -58,6 +60,12 @@ public class PageResource extends AbstractFrontResource implements Resource
 
     @Inject
     private Execution execution;
+
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
+
+    @Inject
+    private EntityURLFactory entityURLFactory;
 
     @Path("{slug}")
     @GET
@@ -89,8 +97,8 @@ public class PageResource extends AbstractFrontResource implements Resource
             }
         }
 
-        PageContextBuilder builder = new PageContextBuilder(theme);
-        Map<String, Object> pageContext = builder.build(page, images);
+        PageContextBuilder builder = new PageContextBuilder(entityURLFactory, theme);
+        Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
 
         context.put("page", pageContext);
         result.putContext(context);

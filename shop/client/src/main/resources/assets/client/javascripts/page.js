@@ -1,21 +1,20 @@
-'use strict'
+(function () {
 
-angular.module('page', ['ngResource'])
+    'use strict'
 
-    .controller('PageController', [
+    angular.module('page', ['ngResource'])
+
+        .controller('PageController', [
         '$scope',
         '$rootScope',
-        '$routeParams',
         '$resource',
         '$http',
         '$location',
-        'addonsService',
-        'imageService',
-        'configurationService',
+        'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService, configurationService) {
+        function ($scope, $rootScope, $resource, $http, $location, entityMixins) {
 
-            $scope.slug = $routeParams.page;
+            entityMixins.extendAll($scope, "page");
 
             $scope.publishPage = function () {
                 $scope.page.published = true;
@@ -28,27 +27,33 @@ angular.module('page', ['ngResource'])
                     $http.post("/api/pages/", $scope.page)
                         .success(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            var fragments = headers("location").split('/'),
-                                slug = fragments[fragments.length - 1];
-                            $rootScope.$broadcast('pages:refreshList');
-                            $location.url("/pages/" + slug);
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+                                $rootScope.$broadcast('pages:refreshList');
+                                $location.url("/pages/" + slug);
+                            }
+                            else {
+                                if (status === 409) {
+                                    $rootScope.$broadcast('event:nameConflictError');
+                                }
+                                else {
+                                    // Generic error
+                                    $rootScope.$broadcast('event:serverError');
+                                }
+                            }
                         })
                         .error(function (data, status, headers, config) {
                             $scope.isSaving = false;
-                            // TODO handle 409 conflict
                         });
                 }
                 else {
-                    $scope.PageResource.save({ "slug": $scope.slug }, $scope.page, function () {
+                    $scope.PageResource.save({ "slug":$scope.slug }, $scope.page, function () {
                         $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');
                     });
                 }
             };
-
-            $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', "page", image);
-            }
 
             $scope.PageResource = $resource("/api/pages/:slug");
 
@@ -58,64 +63,22 @@ angular.module('page', ['ngResource'])
 
             $scope.newPage = function () {
                 return {
-                    slug: "",
-                    title: "",
-                    addons: []
+                    slug:"",
+                    title:"",
+                    addons:[]
                 };
-            }
-
-            $scope.reloadImages = function () {
-                $scope.page.images = $http.get("/api/pages/" + $scope.slug + "/images").success(function (data) {
-                    $scope.page.images = data;
-                });
-            }
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.page, image);
-            }
-
-            $scope.removeImage = function(image) {
-                $http.delete("/api/products/" + $scope.slug + "/images/" + image.slug).success(function () {
-                    $scope.reloadImages();
-                });
-            }
-
-            $scope.getImageUploadUri = function () {
-                return "/api/pages/" + $scope.slug + "/attachments";
-            }
-
-            $scope.initializeAddons = function () {
-                addonsService.initializeEntityAddons("page", $scope.page).then(function (addons) {
-                    $scope.addons = addons;
-                });
-            }
-
-            $scope.initializeModels = function () {
-                $scope.models = [];
-                configurationService.get("entities", function (entities) {
-                    if (typeof entities.page !== 'undefined') {
-                        for (var modelId in entities.page.models) {
-                            if (entities.page.models.hasOwnProperty(modelId)) {
-                                var model = entities.page.models[modelId];
-                                $scope.models.push({
-                                    id: modelId,
-                                    name: model.name
-                                });
-                            }
-                        }
-                    }
-                });
             }
 
             // Initialize existing page or new page
 
             if (!$scope.isNew()) {
                 $scope.page = $scope.PageResource.get({
-                    "slug": $scope.slug,
-                    "expand": ["images"] }, function () {
+                    "slug":$scope.slug,
+                    "expand":["images"] }, function () {
 
                     $scope.initializeAddons();
                     $scope.initializeModels();
+                    $scope.initializeLocalization();
 
                     if ($scope.page.published == null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -130,6 +93,7 @@ angular.module('page', ['ngResource'])
                 $scope.page = $scope.newPage();
                 $scope.initializeAddons();
                 $scope.initializeModels();
+                $scope.initializeLocalization();
             }
 
             $scope.confirmDeletion = function () {
@@ -138,7 +102,7 @@ angular.module('page', ['ngResource'])
 
             $scope.deletePage = function () {
                 $scope.PageResource.delete({
-                    "slug": $scope.slug
+                    "slug":$scope.slug
                 }, function () {
                     $rootScope.$broadcast('page:dismissConfirmDelete');
                     $rootScope.$broadcast('pages:refreshList');
@@ -146,4 +110,12 @@ angular.module('page', ['ngResource'])
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                return {
+                    imagesLength: (($scope.page || {}).images || {}).length || 0
+                };
+            };
+
         }]);
+
+})();

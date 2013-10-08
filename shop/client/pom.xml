@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>com.github.searls</groupId>
                 <artifactId>jasmine-maven-plugin</artifactId>
-                <version>1.2.0.0</version>
+                <version>1.3.1.3</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -46,7 +46,9 @@
                         <include>assets/common/javascripts/image.js</include>
                         <include>assets/common/javascripts/thumbnail.js</include>
                         <include>assets/common/javascripts/time.js</include>
+                        <include>assets/common/javascripts/locales.js</include>
                         <include>assets/common/javascripts/configuration.js</include>
+                        <include>assets/common/javascripts/entities.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
                         <include>assets/client/javascripts/settings.js</include>
                         <include>assets/client/javascripts/controllers.js</include>

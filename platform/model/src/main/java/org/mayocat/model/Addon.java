@@ -1,5 +1,6 @@
 package org.mayocat.model;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * @version $Id$
  */
-public class Addon<T>
+public class Addon<T> implements Serializable
 {
     @JsonIgnore
     private UUID entityId;

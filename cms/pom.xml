@@ -20,6 +20,11 @@
       <artifactId>mayocat-platform-image-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.mayocat.platform</groupId>
+          <artifactId>mayocat-platform-localization</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
   <modules>

@@ -6,10 +6,10 @@
                     <h4 ng-show="headerText && headerText != ''">{{headerText}}</h4>
                     <p ng-show="dragAndDrop">
                         <i class="icon-download-alt"/>
-                        Drag images from your computer and drop them in this area
+                        {{'upload.explanation.dropHere' | translate}}
                     </p>
                     <span class="btn fileinput-button">
-                        <span>Browse...</span>
+                        <span>{{'upload.action.browse' | translate}}</span>
                         <input type="file" name="file" ng-multiple="multiple">
                      </span>
                     <div class="clearfix"></div>
@@ -34,42 +34,42 @@
                             <div class="size" ng-show="!file.uploaded && !file.progress">
                                 <p>
                                     <input type="text" ng-model="file.title"
-                                           placeholder="Image's title (alternative text)"/>
+                                           placeholder="{{'upload.placeholder.title' | translate}}"/>
                                 </p>
                                 <p>
                                     <textarea rows="5" ng-model="file.description"
-                                              placeholder="Description (Optional)"></textarea>
+                                              placeholder="{{'upload.placeholder.description' | translate}}"></textarea>
                                 </p>
                             </div>
                             <div class="clearfix"></div>
                             <span class="cancel span2" ng-show="!file.uploaded && !file.progress">
                                 <button ng-show="!file.loaded" type="button" class="btn" ng-click="remove($index)">
-                                    Remove
+                                    {{'upload.action.remove' | translate}}
                                 </button>
                             </span>
                             <span class="cancel span10" ng-show="file.progress">
                                 <div ng-show="!file.uploaded && !file.failed" class="alert">
-                                    Uploading...
+                                    {{'upload.misc.uploading' | translate}}
                                 </div>
                                 <div ng-show="file.failed" class="alert alert-error">
-                                    Failed
+                                    {{'upload.misc.failed' | translate}}
                                     <div class="pull-right">
                                         <button ng-show="!file.loaded" type="button" class="btn"
                                                 ng-click="remove($index)">
-                                            Dismiss
+                                            {{'upload.action.dismiss' | translate}}
                                         </button>
                                     </div>
                                 </div>
                                 <div ng-show="file.uploaded" class="alert alert-block">
-                                    Uploaded !
+                                    {{'upload.misc.uploaded' | translate}}
                                     <div class="pull-right">
                                         <button ng-show="!file.loaded" type="button" class="btn btn-primary"
                                                 ng-click="remove($index)">
-                                            Edit thumbnails
+                                            {{'entity.action.editThumbnails' | translate}}
                                         </button>
                                         <button ng-show="!file.loaded" type="button" class="btn"
                                                 ng-click="remove($index)">
-                                            Dismiss
+                                            {{'upload.action.dismiss' | translate}}
                                         </button>
                                     </div>
                                     <div class="clearfix"></div>
@@ -86,8 +86,8 @@
                     <div class="pull-right" ng-show="files.length > 0">
                         <button id="startupload" type="button" class="btn btn-primary" ng-click="submit()">
                             <i class="icon-upload icon-white"></i>
-                            <span ng-show="multiple">Upload all</span>
-                            <span ng-show="!multiple">Upload</span>
+                            <span ng-show="multiple">{{'upload.action.uploadAll' | translate}}</span>
+                            <span ng-show="!multiple">{{'upload.action.upload' | translate}}</span>
                         </button>
                     </div>
                     <div class="clearfix"></div>

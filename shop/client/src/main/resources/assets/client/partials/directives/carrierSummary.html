@@ -1,17 +1,24 @@
 <h4>{{carrier.title}}</h4>
 <div class="destinations">
-    Destination(s) : {{carrier.displayDestinations}}
+    {{'settings.misc.carrierDestination' | translate:getTranslationProperties()}}
+    {{carrier.displayDestinations}}
 </div>
 <div class="duration">
-    Delivery time : {{carrier.minimumDays}} - {{carrier.maximumDays}} day(s)
+    {{'settings.misc.deliveryTime' | translate}}
+    {{carrier.minimumDays}} - {{carrier.maximumDays}}
+    {{'settings.misc.deliveryDays' | translate:getTranslationProperties()}}
 </div>
 <table class="table" ng-show="carrier.strategy == 'weight' || carrier.strategy == 'price'">
     <thead>
     <th>
-        <span ng-show="carrier.strategy == 'weight'">Weight</span>
-        <span ng-show="carrier.strategy == 'price'">Order amount</span>
+        <span ng-show="carrier.strategy == 'weight'">
+            {{'settings.misc.weight' | translate}}
+        </span>
+        <span ng-show="carrier.strategy == 'price'">
+            {{'settings.misc.orderAmount' | translate}}
+        </span>
     </th>
-    <th>Shipping price</th>
+    <th>{{'settings.misc.shippingPrice' | translate}}</th>
     </thead>
     <tr ng-repeat="rule in carrier.rules">
         <td>
@@ -22,5 +29,5 @@
     </tr>
 </table>
 <div ng-show="carrier.strategy == 'flat'">
-        {{carrier.perShipping}} {{mainCurrency}} per order, {{carrier.perItem}} {{mainCurrency}} per item
+        {{'settings.misc.costPerOrderAndPerItem' | translate:getTranslationProperties()}}
 </div>

@@ -1,19 +1,19 @@
-<h1 class="small" ng-show="!isNew()">Edit collection</h1>
-<h1 class="small" ng-show="isNew()">New collection</h1>
+<h1 class="small" ng-show="!isNew()">{{'product.title.editCollection' | translate}}</h1>
+<h1 class="small" ng-show="isNew()">{{'product.title.newCollection' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading':collection.title == undefined}">
+<form name="collectionForm">
+    <article class="entity">
 
-        <div ng-show="collection.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="collection.title"/>
+                <input type="text" class="title" ng-model="collection.title" placeholder="{{'product.placeholder.collectionTitle' | translate}}" required/>
             </h1>
 
             <!-- Description -->
             <div ng-show="!isNew()">
-                <label>Description</label>
+                <label>{{'product.misc.description' | translate}}</label>
                 <textarea rows="10" ng-model="collection.description"/>
             </div>
         </div>
@@ -24,14 +24,18 @@
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Create</button>
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">
+                        {{'entity.action.create' | translate}}
+                    </button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
             <div ng-show="!isNew()">
                 <!-- Update collection -->
                 <div class="hasLoading">
-                    <button ng-click="updateCollection()" class="btn btn-large btn-primary">Update</button>
+                    <button ng-disabled="collectionForm.$invalid" ng-click="updateCollection()" class="btn btn-large btn-primary">
+                        {{'entity.action.update' | translate}}
+                    </button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
@@ -47,7 +51,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">delete this collection</small>
+            <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteCollection' | translate}}</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="collection:confirmDelete"
@@ -55,14 +59,18 @@
              id="confirmDeleteCollectionModal">
             <div class="modal-header">
                 <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Confirm deletion</h3>
+                <h3>{{'product.title.confirmDeletion' | translate}}</h3>
             </div>
             <div class="modal-body">
-                Please confirm you want to delete this collection. There's no coming back !
+                {{'product.alert.confirmCollectionDeletion' | translate}}
             </div>
             <div class="modal-footer">
-                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">Cancel</a>
-                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">Delete this collection</a>
+                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
+                    {{'entity.action.cancel' | translate}}
+                </a>
+                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">
+                    {{'product.action.deleteCollection' | translate}}
+                </a>
             </div>
         </div>
 

@@ -2,7 +2,10 @@ package org.mayocat.shop.catalog.api.representations;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.shop.catalog.model.Product;
@@ -21,6 +24,7 @@ public class ProductRepresentation
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String model;
 
+    @NotEmpty
     private String title;
 
     private String description;
@@ -44,6 +48,9 @@ public class ProductRepresentation
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<AddonRepresentation> addons = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<Locale, Map<String, Object>> localizedVersions = null;
 
     private String href;
 
@@ -75,6 +82,7 @@ public class ProductRepresentation
         this.price = product.getUnitPrice();
         this.weight = product.getWeight();
         this.stock = product.getStock();
+        this.localizedVersions = product.getLocalizedVersions();
 
         this.href = Resource.API_ROOT_PATH + ProductEntity.PATH + "/" + this.slug;
 
@@ -192,6 +200,11 @@ public class ProductRepresentation
     public void setFeaturedImage(ImageRepresentation featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 
 }

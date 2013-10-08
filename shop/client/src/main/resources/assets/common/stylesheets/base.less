@@ -141,11 +141,11 @@ input:not([type=submit]):not([type=file]):not([type=checkbox]) {
   height: auto !important;
 }
 
-h1 input:not([type=submit]):not([type=file]):not([type=checkbox]) {
+h1 input:not([type=submit]):not([type=file]):not([type=checkbox]),
+h1 .input-append .add-on, h1.input-prepend .add-on {
   height: 40px !important;
   padding-top: 8px;
 }
-
 
 /* Buttons */
 
@@ -170,7 +170,7 @@ h1 input:not([type=submit]):not([type=file]):not([type=checkbox]) {
 
 /* Pointer cursor */
 
-.dragme {
+.clickme, .dragme {
   cursor: pointer;
 }
 

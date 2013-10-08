@@ -7,15 +7,15 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
-import org.mayocat.model.annotation.LocalizationFieldType;
-import org.mayocat.model.annotation.Localized;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.model.annotation.LocalizationFieldType;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -23,7 +23,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Article extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage
+public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
 {
     private UUID id;
 
@@ -32,7 +32,7 @@ public class Article extends AbstractLocalizedEntity implements HasAddons, HasMo
     @Size(min = 1)
     private String slug;
 
-    @Localized(type = LocalizationFieldType.SMALL)
+    @LocalizedField(type = LocalizationFieldType.SMALL)
     @Index
     @NotNull
     public String title;

@@ -2,26 +2,29 @@ package org.mayocat.shop.catalog.model;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
+import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.DoNotIndex;
-import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.annotation.LocalizedField;
 import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 @Index
-public class Product extends AbstractLocalizedEntity implements HasAddons, HasModel, HasFeaturedImage, Purchasable
+public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Purchasable, Localized
 {
     private static final long serialVersionUID = 6998229869430511994L;
 
@@ -34,12 +37,12 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     @Size(min = 1)
     private String slug;
 
-    @Localized
+    @LocalizedField
     @NotNull
     @Size(min = 1)
     private String title;
 
-    @Localized
+    @LocalizedField
     private transient String description;
 
     private BigDecimal price;
@@ -51,11 +54,13 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     @DoNotIndex
     private UUID featuredImageId;
 
-    private transient Association<List<Addon>> addons = Association.notLoaded();
+    private Association<List<Addon>> addons = Association.notLoaded();
 
-    private transient Association<Collection> featuredCollection = Association.notLoaded();
+    private Association<Collection> featuredCollection = Association.notLoaded();
 
-    private transient Association<List<Collection>> collections = Association.notLoaded();
+    private Association<List<Collection>> collections = Association.notLoaded();
+
+    private Map<Locale, Map<String, Object>> localizedVersions;
 
     @DoNotIndex
     private Optional<String> model = Optional.absent();
@@ -205,6 +210,17 @@ public class Product extends AbstractLocalizedEntity implements HasAddons, HasMo
     public void setStock(Integer stock)
     {
         this.stock = stock;
+    }
+
+    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
+    {
+        this.localizedVersions = versions;
+    }
+
+    @Override
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 
     ////////////////////////////////////////////////

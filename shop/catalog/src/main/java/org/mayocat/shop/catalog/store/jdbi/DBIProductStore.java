@@ -2,6 +2,8 @@ package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -67,7 +69,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             lastIndex = 0;
         }
         this.dao.createProduct(lastIndex + 1, product);
-        this.dao.insertTranslations(entityId, product.getTranslations());
+        // this.dao.insertTranslations(entityId, product.getTranslations());
         this.dao.createOrUpdateAddons(product);
 
         this.dao.commit();
@@ -97,6 +99,13 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         product.setId(originalProduct.getId());
         Integer updatedRows = this.dao.updateProduct(product);
         this.dao.createOrUpdateAddons(product);
+
+        if (product.getLocalizedVersions() != null && !product.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = product.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(product.getId(), locale, localizedVersions.get(locale));
+            }
+        }
 
         this.dao.commit();
 
@@ -172,7 +181,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     public Product findBySlug(String slug)
     {
-        Product product = this.dao.findBySlugWithTranslations(PRODUCT_TABLE_NAME, slug, getTenant());
+        Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant());
         if (product != null) {
             List<Addon> addons = this.dao.findAddons(product);
             product.setAddons(addons);

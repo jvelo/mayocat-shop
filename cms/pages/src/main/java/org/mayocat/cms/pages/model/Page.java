@@ -1,21 +1,23 @@
 package org.mayocat.cms.pages.model;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.AbstractLocalizedEntity;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
+import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
-import org.mayocat.model.annotation.LocalizationFieldType;
-import org.mayocat.model.annotation.Localized;
+import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -23,7 +25,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Page extends AbstractLocalizedEntity implements Child, HasAddons, HasModel, HasFeaturedImage
+public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasFeaturedImage
 {
     private UUID id;
 
@@ -37,12 +39,12 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     @Index
     private Boolean published;
 
-    @Localized(type = LocalizationFieldType.SMALL)
+    @LocalizedField
     @Index
     @NotNull
     private String title;
 
-    @Localized(type = LocalizationFieldType.MEDIUM)
+    @LocalizedField
     @Index
     private String content;
 
@@ -51,6 +53,8 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     private Optional<String> model = Optional.absent();
 
     private UUID featuredImageId;
+
+    private Map<Locale, Map<String, Object>> localizedVersions;
 
     public Page()
     {
@@ -156,6 +160,17 @@ public class Page extends AbstractLocalizedEntity implements Child, HasAddons, H
     public void setFeaturedImageId(UUID featuredImageId)
     {
         this.featuredImageId = featuredImageId;
+    }
+
+    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
+    {
+        this.localizedVersions = versions;
+    }
+
+    @Override
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 
     // //////////////////////////////////////////////

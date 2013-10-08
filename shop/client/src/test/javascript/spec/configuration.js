@@ -91,6 +91,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector, $rootScope, $controller) {
             httpBackend = $injector.get('$httpBackend');
+            httpBackend.when('GET', '/api/locales').respond({});
             httpBackend.when('GET', '/api/configuration/settings').respond({
                 "module":{
                     "propertySet":{

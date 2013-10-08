@@ -22,8 +22,8 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @RegisterMapper(ArticleMapper.class)
 @RegisterArgumentFactory(DateAsTimestampArgumentFactory.class)
 @UseStringTemplate3StatementLocator
-public abstract class ArticleDAO extends AbstractLocalizedEntityDAO<Article>
-        implements Transactional<ArticleDAO>, AddonsDAO<Article>
+public abstract class ArticleDAO
+        implements EntityDAO<Article>, Transactional<ArticleDAO>, AddonsDAO<Article>
 {
     @SqlUpdate
     public abstract void createArticle(@BindBean("article") Article article);

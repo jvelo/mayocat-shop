@@ -49,7 +49,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         this.dao.createEntity(collection, COLLECTION_TABLE_NAME, getTenant());
         Integer lastIndex = this.dao.lastPosition(getTenant());
         this.dao.create(lastIndex == null ? 0 : ++lastIndex, collection);
-        this.dao.insertTranslations(entityId, collection.getTranslations());
+        // this.dao.insertTranslations(entityId, collection.getTranslations());
 
         this.dao.commit();
 
@@ -170,7 +170,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public Collection findBySlug(String slug)
     {
-        return this.dao.findBySlugWithTranslations(COLLECTION_TABLE_NAME, slug, getTenant());
+        return this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant());
     }
 
     public void initialize() throws InitializationException

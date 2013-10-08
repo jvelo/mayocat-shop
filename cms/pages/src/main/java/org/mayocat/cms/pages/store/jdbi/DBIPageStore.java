@@ -1,6 +1,8 @@
 package org.mayocat.cms.pages.store.jdbi;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -13,11 +15,15 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
+
 import mayoapp.dao.PageDAO;
+
 import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -49,7 +55,6 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
             lastIndex = 0;
         }
         this.dao.createPage(lastIndex + 1, page);
-        this.dao.insertTranslations(entityId, page.getTranslations());
         this.dao.createOrUpdateAddons(page);
 
         this.dao.commit();
@@ -71,6 +76,13 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         Integer updatedRows = this.dao.updatePage(page);
         this.dao.createOrUpdateAddons(page);
 
+        if (page.getLocalizedVersions() != null && !page.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = page.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(page.getId(), locale, localizedVersions.get(locale));
+            }
+        }
+
         this.dao.commit();
 
         if (updatedRows <= 0) {
@@ -84,7 +96,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
         Integer updatedRows = 0;
         this.dao.begin();
         updatedRows += this.dao.deleteAddons(entity);
-        updatedRows += this.dao.deleteEntityEntityById(PAGE_TABLE_NAME, entity. getId());
+        updatedRows += this.dao.deleteEntityEntityById(PAGE_TABLE_NAME, entity.getId());
         updatedRows += this.dao.detachChildren(entity.getId());
         updatedRows += this.dao.deleteEntityAndChildrenById(entity.getId());
         this.dao.commit();
@@ -121,7 +133,7 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     @Override
     public Page findBySlug(String slug)
     {
-        Page page = this.dao.findBySlugWithTranslations(PAGE_TABLE_NAME, slug, getTenant());
+        Page page = this.dao.findBySlug(PAGE_TABLE_NAME, slug, getTenant());
         if (page != null) {
             List<Addon> addons = this.dao.findAddons(page);
             page.setAddons(addons);

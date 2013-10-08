@@ -18,8 +18,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mayocat.addons.front.builder.AddonContextBuilder;
 import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.cms.news.NewsSettings;
 import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
@@ -29,14 +31,12 @@ import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
-import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.util.ContextUtils;
@@ -46,7 +46,6 @@ import org.mayocat.theme.Theme;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -58,7 +57,7 @@ import com.google.common.collect.Maps;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class NewsResource extends AbstractFrontResource implements Resource
+public class NewsResource extends AbstractFrontResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + ArticleEntity.PATH;
 
@@ -98,6 +97,14 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Integer totalCount = articleStore.get().countAllPublished();
 
         Map<String, Object> context = getContext(uriInfo);
+
+        // Compute news page name
+        Map<String, String> parameters = Maps.newHashMap();
+        parameters.put("siteName", execution.getContext().getTenant().getName());
+        StrSubstitutor substitutor = new StrSubstitutor(parameters, "{{", "}}");
+        NewsSettings settings = configurationService.getSettings(NewsSettings.class);
+        context.put(PAGE_TITLE, substitutor.replace(settings.getNewsPageTitle().getValue()));
+
         List<Map<String, Object>> articlesContext = Lists.newArrayList();
         for (Article article : articles) {
             articlesContext.add(buildArticleContext(article));
@@ -155,6 +162,15 @@ public class NewsResource extends AbstractFrontResource implements Resource
         }
 
         Map<String, Object> context = getContext(uriInfo);
+
+        // Compute article page name
+        Map<String, String> parameters = Maps.newHashMap();
+        parameters.put("siteName", execution.getContext().getTenant().getName());
+        parameters.put("articleTitle", article.getTitle());
+        StrSubstitutor substitutor = new StrSubstitutor(parameters, "{{", "}}");
+        NewsSettings settings = configurationService.getSettings(NewsSettings.class);
+        context.put(PAGE_TITLE, substitutor.replace(settings.getArticlePageTitle().getValue()));
+
         context.put("article", buildArticleContext(article));
 
         FrontView result = new FrontView("article", breakpoint);
@@ -171,8 +187,7 @@ public class NewsResource extends AbstractFrontResource implements Resource
         Map<String, Object> context = Maps.newHashMap();
         context.put("title", ContextUtils.safeString(article.getTitle()));
         context.put("content", ContextUtils.safeHtml(article.getContent()));
-        context.put("url", urlFactory.create(article, this.execution.getContext().getTenant()));
-        context.put(ContextConstants.URL, PATH + SLASH + article.getSlug());
+        context.put(ContextConstants.URL, urlFactory.create(article));
         context.put(ContextConstants.SLUG, article.getSlug());
 
         if (article.getPublicationDate() != null) {
@@ -218,7 +233,7 @@ public class NewsResource extends AbstractFrontResource implements Resource
         }
 
         // Addons
-        if (article.getAddons().isLoaded()) {
+        if (article.getAddons().isLoaded() && theme != null) {
             AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
             Map<String, AddonGroup> themeAddons = theme.getAddons();
             context.put("theme_addons", addonContextBuilder.build(themeAddons, article.getAddons().get()));

@@ -88,9 +88,9 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         try {
             this.registerDBIFactoryComponent(environment, configuration);
         } catch (ComponentRepositoryException e) {
-            throw new RuntimeException("Failed to register DBI factory component");
+            throw new RuntimeException("Failed to register DBI factory component", e);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Failed to register DBI factory component");
+            throw new RuntimeException("Failed to register DBI factory component", e);
         }
     }
 }

@@ -3,6 +3,7 @@ package org.mayocat.shop.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.cms.news.NewsSettings;
 import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
@@ -48,6 +49,11 @@ public class MayocatShopSettings extends AbstractSettings
     @JsonProperty
     private ShippingSettings shipping = new ShippingSettings();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private NewsSettings news = new NewsSettings();
+
     public DatabaseConfiguration getDatabaseConfiguration()
     {
         return database;
@@ -76,5 +82,10 @@ public class MayocatShopSettings extends AbstractSettings
     public ShippingSettings getShippingSettings()
     {
         return shipping;
+    }
+
+    public NewsSettings getNewsSettings()
+    {
+        return news;
     }
 }

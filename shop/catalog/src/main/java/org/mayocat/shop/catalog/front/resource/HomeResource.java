@@ -25,15 +25,16 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -66,6 +67,9 @@ public class HomeResource extends AbstractFrontResource implements Resource
     @Inject
     private Execution execution;
 
+    @Inject
+    private EntityURLFactory urlFactory;
+
     @GET
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
     {
@@ -88,7 +92,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
 
             List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
                     .asList("png", "jpg", "jpeg", "gif"));
-            List<Image> images = new ArrayList<Image>();
+            List<Image> images = new ArrayList<>();
             for (Attachment attachment : attachments) {
                 if (AbstractFrontResource.isImage(attachment)) {
                     List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
@@ -97,7 +101,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
                 }
             }
 
-            PageContextBuilder builder = new PageContextBuilder(theme);
+            PageContextBuilder builder = new PageContextBuilder(urlFactory, theme);
             Map<String, Object> pageContext = builder.build(page, images);
             context.put("home", pageContext);
         }

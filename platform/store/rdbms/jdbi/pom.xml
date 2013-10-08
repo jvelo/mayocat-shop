@@ -51,7 +51,7 @@
 
         <!-- Postgres driver dependecy required for the UUID JDBC custom type -->
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.driver.version}</version>
             <scope>provided</scope>

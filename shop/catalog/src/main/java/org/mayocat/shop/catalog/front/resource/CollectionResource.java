@@ -38,6 +38,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
+import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;
@@ -70,6 +71,9 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
     @Inject
     private Execution execution;
 
+    @Inject
+    private EntityURLFactory urlFactory;
+
     @Path("{slug}")
     @GET
     public FrontView getCollection(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
@@ -91,8 +95,8 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
 
         List<Product> products = catalogService.findProductsForCollection(collection);
 
-        CollectionContextBuilder builder =
-                new CollectionContextBuilder(configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        CollectionContextBuilder builder = new CollectionContextBuilder(
+                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         // TODO get the collection images
         context.put("collection", builder.build(collection, Collections.<Image>emptyList(), products));
@@ -102,7 +106,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
             List<Map<String, Object>> collections = (List<Map<String, Object>>) context.get(COLLECTIONS);
             for (Map<String, Object> c : collections) {
                 if (c.containsKey(ContextConstants.URL) &&
-                        c.get(ContextConstants.URL).equals(PATH + Resource.SLASH + collection.getSlug()))
+                        c.get(ContextConstants.URL).equals(urlFactory.create(collection)))
                 {
                     c.put("current", true);
                 }

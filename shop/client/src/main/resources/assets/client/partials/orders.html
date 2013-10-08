@@ -1,16 +1,16 @@
-<h1 class="big">Orders</h1>
+<h1 class="big">{{'order.title.orders' | translate}}</h1>
 
 <div class="orders row">
 
-    <div class="alert alert-info" ng-show="orders.length <= 0">There are no orders yet.</div>
+    <div class="alert alert-info" ng-show="orders.length <= 0">{{'order.alert.empty' | translate}}</div>
 
     <div class="span9">
         <table class="table table-hover" ng-show="orders.length > 0">
             <thead>
             <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th>{{'order.misc.date' | translate}}</th>
+                <th>{{'order.misc.amount' | translate}}</th>
+                <th>{{'order.misc.statusShort' | translate}}</th>
             </tr>
             </thead>
             <tbody>
@@ -18,7 +18,9 @@
                 ng-click="setRoute('/orders/' + order.slug)"
                 ng-class="getClass(order.status)">
                 <td>
-                    <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
+                    <div>
+                        {{order.creationDate | iso8601toLocalDate:'LLL'}}
+                    </div>
                     <div>
                         <small>
                             {{order.slug}}
@@ -29,7 +31,7 @@
                     <div>{{order.grandTotal | money:'EUR'}} {{order.currency}}</div>
                     <div>
                         <small>
-                            {{order.numberOfItems}} items
+                            {{'order.misc.itemsNumber' | translate:getTranslationProperties({ order:order }) }}
                         </small>
                     </div>
                 </td>
@@ -39,46 +41,46 @@
         </table>
     </div>
 
-    <div class="well span3" ng-show="orders.length > 0">
-        <h2>Turnover</h2>
+    <div class="well span4" ng-show="orders.length > 0">
+        <h2>{{'order.title.turnover' | translate}}</h2>
         <ul class="stats unstyled">
             <li>
                 <strong>
-                    Today
+                    {{'order.period.today' | translate}}
                     <div>
                         <h4>
                             {{stats.daily.total | money:mainCurrency}} {{mainCurrency}}
                         </h4>
                     </div>
-                    <div>for {{stats.daily.numberOfOrders}} order(s)</div>
+                    <div>{{'order.misc.ordersNumber' | translate:getTranslationProperties({ period:'daily' }) }}</div>
                 </strong>
             </li>
             <li>
-                Last 7 days
+                {{'order.period.weekly' | translate}}
                 <div>
                     <h4>
                         {{stats.weekly.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
-                <div>for {{stats.weekly.numberOfOrders}} order(s)</div>
+                <div>{{'order.misc.ordersNumber' | translate:getTranslationProperties({ period:'weekly' }) }}</div>
             </li>
             <li>
-                Last 30 days
+                {{'order.period.monthly' | translate}}
                 <div>
                     <h4>
                         {{stats.monthly.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
-                <div>for {{stats.monthly.numberOfOrders}} order(s)</div>
+                <div>{{'order.misc.ordersNumber' | translate:getTranslationProperties({ period:'monthly' }) }}</div>
             </li>
             <li>
-                Overall
+                {{'order.period.overall' | translate}}
                 <div>
                     <h4>
                         {{stats.forever.total | money:mainCurrency}} {{mainCurrency}}
                     </h4>
                 </div>
-                <div>for {{stats.forever.numberOfOrders}} order(s)</div>
+                <div>{{'order.misc.ordersNumber' | translate:getTranslationProperties({ period:'forever' }) }}</div>
             </li>
         </ul>
     </div>

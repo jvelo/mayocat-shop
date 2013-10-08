@@ -1,24 +1,24 @@
-<h1 class="small" ng-show="!isNew()">Edit product</h1>
-<h1 class="small" ng-show="isNew()">New product</h1>
+<h1 class="small" ng-show="!isNew()">{{'product.title.editProduct' | translate}}</h1>
+<h1 class="small" ng-show="isNew()">{{'product.title.newProduct' | translate}}</h1>
 
-<form>
-    <article class="entity" ng-class="{'loading': product.title == undefined}">
+<form name="productForm">
+    <article class="entity">
 
-        <div ng-show="product.title != undefined">
+        <div>
 
             <!-- Title -->
             <h1>
-                <input type="text" class="title" ng-model="product.title" placeholder="Product's title"/>
+                <input type="text" class="title" ng-model="localizedProduct.title" placeholder="{{'product.placeholder.productTitle' | translate}}" localized required/>
             </h1>
 
             <!-- Description -->
             <div ng-show="!isNew()">
-                <label>Description</label>
-                <textarea class="" rows="10" ng-model="product.description" ck-editor />
+                <label>{{'product.misc.description' | translate}}</label>
+                <textarea class="" rows="10" ng-model="localizedProduct.description" ck-editor localized />
             </div>
 
             <div class="block" ng-show="!isNew()">
-                <h3>Images ({{product.images.length}})</h3>
+                <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
                     <li ng-repeat="image in product.images">
                         <div class="thumbnail">
@@ -30,16 +30,21 @@
                                       ng-click="selectFeatureImage(image)" />
                                 <div class="btn-group pull-right">
                                     <a class="btn dropdown-toggle" data-toggle="dropdown">
-                                        Actions
+                                        {{'image.misc.actions' | translate}}
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li ng-click="editThumbnails(image)"
                                             data-toggle="modal"
-                                            href="#editThumbnails">Edit thumbnails
+                                            href="#editThumbnails">
+                                            {{'entity.action.editThumbnails' | translate}}
                                         </li>
-                                        <li ng-click="image.editMeta = true">Edit metadata</li>
-                                        <li ng-click="removeImage(image)">Remove</li>
+                                        <li ng-click="image.editMeta = true">
+                                            {{'image.action.editMetadata' | translate}}
+                                        </li>
+                                        <li ng-click="removeImage(image)">
+                                            {{'entity.action.remove' | translate}}
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="clearfix"></div>
@@ -47,21 +52,25 @@
                             <div ng-show="image.editMeta" class="metadata">
                                 <div>
                                     <input type="text" ng-model="image.title"
-                                           placeholder="Image's title (alternative text)"/>
+                                           placeholder="{{'upload.placeholder.title' | translate}}"/>
                                 </div>
                                 <div>
                                     <textarea rows="5" ng-model="image.description"
-                                              placeholder="Description (Optional)"></textarea>
+                                              placeholder="{{'upload.placeholder.description' | translate}}"></textarea>
                                 </div>
-                                <button type="button" class="btn" ng-click="image.editMeta = false">Cancel</button>
-                                <button type="button" class="btn btn-primary" ng-click="updateImageMeta(image)">Update</button>
+                                <button type="button" class="btn" ng-click="image.editMeta = false">
+                                    {{'entity.action.cancel' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-primary" ng-click="updateImageMeta(image)">
+                                    {{'entity.action.update' | translate}}
+                                </button>
                             </div>
                         </div>
                     </li>
                 </ul>
                 <div class="modal hide fade" ng-include="'/common/partials/editThumbnails.html'" id="editThumbnails"></div>
                 <div class="alert" ng-show="product.images.length <= 0">
-                    <strong>No image yet</strong> - use the area below to add images to this product.
+                    <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
                 </div>
                 <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
             </div>
@@ -76,9 +85,10 @@
                 <ul>
                     <li ng-repeat="addon in group.fields">
                         {{addon.definition.name}}
+
                         <addon definition="addon.definition"
-                               value="product.addons[addon.index].value"
-                               type="product.addons[addon.index].type"></addon>
+                               object="product.addons[addon.index]"
+                               localized-object="localizedProduct.addons[addon.index]"></addon>
                     </li>
                 </ul>
             </div>
@@ -86,31 +96,44 @@
 
     </article>
     </div>
-    <aside ng-show="product.title != undefined">
+    <aside>
         <div class="buttons">
             <div ng-show="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-click="updateProduct()" class="btn btn-large btn-primary">Create</button>
+                    <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn-primary">
+                        {{'entity.action.create' | translate}}
+                    </button>
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
             <div ng-show="!isNew()">
                 <div ng-show="product.onShelf == undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateProduct()" class="btn btn-large btn">Save</button>
-                        <button ng-click="publishProduct()" class="btn btn-large btn-primary">Publish online</button>
+                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">
+                            {{'entity.action.save' | translate}}
+                        </button>
+                        <button ng-click="publishProduct()" class="btn btn-large btn-primary">
+                            {{'entity.action.publish' | translate}}
+                        </button>
+                        <span ng-class="{'loading': isSaving}"></span>
                     </div>
                 </div>
                 <div ng-show="product.onShelf != undefined">
                     <div class="hasLoading">
-                        <button ng-click="updateProduct()" class="btn btn-large btn-primary">Update</button>
+                        <button ng-click="updateProduct()" class="btn btn-large btn-primary">
+                            {{'entity.action.update' | translate}}
+                        </button>
                         <span ng-class="{'loading': isSaving}"></span>
                     </div>
                     <div>
-                        <span ng-class="{strong: product.onShelf}">on shelf</span>
+                        <span ng-class="{strong: product.onShelf}">
+                            {{'product.status.onShelf' | translate}}
+                        </span>
                         <switch-button ng-model="product.onShelf"></switch-button>
-                        <span ng-class="{strong: !product.onShelf}">withdrawn from sale</span>
+                        <span ng-class="{strong: !product.onShelf}">
+                            {{'product.status.withdrawnFromSale' | translate}}
+                        </span>
                     </div>
                 </div>
                 <!-- Publish / update product -->
@@ -125,7 +148,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small ng-click="confirmDeletion()">delete this product</small>
+            <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
         </div>
         <div class="modal hide fade"
              modal-trigger="product:confirmDelete"
@@ -133,26 +156,30 @@
              id="confirmDeleteProductModal">
             <div class="modal-header">
                 <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Confirm deletion</h3>
+                <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
             </div>
             <div class="modal-body">
-                Please confirm you want to delete this product. There's no coming back !
+                {{'product.alert.confirmProductDeletion' | translate}}
             </div>
             <div class="modal-footer">
-                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">Cancel</a>
-                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">Delete this product</a>
+                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
+                    {{'entity.action.cancel' | translate}}
+                </a>
+                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">
+                    {{'product.action.deleteProduct' | translate}}
+                </a>
             </div>
         </div>
 
         <div class="block" ng-show="!isNew() && models.length > 0">
-            <h3>Model</h3>
+            <h3>{{'entity.title.model' | translate}}</h3>
             <select ng-model="product.model" ng-options="model.id as model.name for model in models">
-                <option value="">Default model</option>
+                <option value="">{{'entity.misc.defaultModel' | translate}}</option>
             </select>
         </div>
 
         <div class="block" ng-show="!isNew() && hasCollections && collections.length > 0">
-            <h3>Collections</h3>
+            <h3>{{'product.title.collections' | translate}}</h3>
             <ul class="list unstyled">
                 <li ng-repeat="collection in collections">
                     <input type="checkbox" ng-model="collection.hasProduct"/> {{collection.title}}
@@ -161,7 +188,7 @@
         </div>
 
         <div class="block" ng-show="!isNew()">
-            <h3>Price</h3>
+            <h3>{{'product.misc.price' | translate}}</h3>
 
             <div>
                 <money-amount ng-model="product.price" currency="EUR"/>
@@ -169,18 +196,18 @@
         </div>
 
         <div class="block" ng-show="!isNew() && hasWeight">
-            <h3>Weight</h3>
+            <h3>{{'product.misc.weight' | translate}}</h3>
 
             <div>
-                <input type="text" placeholder="Weight" ng-model="product.weight" /> {{weightUnit}}
+                <input type="text" placeholder="{{'product.misc.weight' | translate}}" ng-model="product.weight" /> {{weightUnit}}
             </div>
         </div>
 
         <div class="block" ng-show="!isNew()">
-            <h3>Stock</h3>
+            <h3>{{'product.misc.stock' | translate}}</h3>
 
             <div>
-                <input type="text" placeholder="Initial stock" ng-model="product.stock" />
+                <input type="text" placeholder="{{'product.placeholder.initialStock' | translate}}" ng-model="product.stock" />
             </div>
         </div>
     </aside>

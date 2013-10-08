@@ -6,7 +6,9 @@ var mayocat = angular.module('mayocat', [
     'mayocat.image',
     'mayocat.thumbnail',
     'mayocat.configuration',
-    'mayocat.time'
+    'mayocat.time',
+    'mayocat.entities',
+    'mayocat.locales'
 ]);
 
 /**
@@ -70,6 +72,55 @@ mayocat.config(function ($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 });
 
+
+/**
+ * Simple list picker directive to manage a list of elements
+ *
+ * TODO: handle ng-disabled
+ */
+mayocat.directive('listPicker', ['$parse', function($parse){
+    return {
+        restrict: 'E',
+        require: 'ngModel',
+        transclude: 'element',
+        replace: true,
+        template: '<div><div><ul class="pickerElements"><li ng-repeat="element in model">' +
+            '<button class="btn btn-mini" ng-click="remove(element)">{{getDisplayElement(element)}} &times;</span></button>' +
+            '</li></ul></div><div class="clearfix"></div>' +
+            '<span ng-transclude></span>' +
+            '<input type="submit" class="btn" value="{{\'global.actions.add\' | translate}}" ng-click="add()"></div>',
+
+        link: function (scope, element, attr, ngModel) {
+            scope.$watch(function () {
+                return ngModel.$modelValue;
+            }, function (modelValue) {
+                scope.model = modelValue;
+            });
+            scope.$watch("model", function (value) {
+                ngModel.$setViewValue(value);
+            });
+        },
+        controller: function ($scope, $element, $attrs) {
+            $scope.add = function () {
+                $scope.new = $element.find("select,input").attr("value");
+                if ($scope.model.indexOf($scope.new) < 0) {
+                    $scope.model.push($scope.new);
+                }
+                $scope.new = "";
+            }
+            $scope.remove = function (currency) {
+                $scope.model.splice($scope.model.indexOf(currency), 1);
+            }
+            if (typeof $attrs.display !== 'undefined') {
+                var passed = $parse($attrs.display);
+            }
+            $scope.getDisplayElement = function (element) {
+                $scope.elementToDisplay = element;
+                return passed ? passed($scope): element;
+            }
+        }
+    };
+}]);
 
 /**
  * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
@@ -351,31 +402,39 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
         link: function (scope, elm, attr, ngModel) {
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
             CKEDITOR.config.mayocat_entity_uri = "/api/products/texas/";
-            var ck = CKEDITOR.replace(elm[0],
-                {
-                    toolbarGroups: [
-                        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                        { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
-                        { name: 'links' },
-                        { name: 'styles' },
-                        { name: 'insert' },
-                        { name: 'tools' }
-                    ],
-                    removePlugins: 'elementspath,image',
-                    height: '290px',
-                    width: '99%',
-                    removeDialogTabs: '',
-                    extraPlugins: 'image2',
-                }
-            );
+            var ckOptions = {
+                language: localStorage.locale || Mayocat.defaultLocale,
+                toolbarGroups: [
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                    { name: 'links' },
+                    { name: 'styles' },
+                    { name: 'insert' },
+                    { name: 'tools' }
+                ],
+                removePlugins: 'elementspath,image',
+                height: '290px',
+                width: '99%',
+                removeDialogTabs: '',
+                extraPlugins: 'image2'
+            }
+            var textarea = elm[0],
+                ck = CKEDITOR.replace(textarea, ckOptions);
 
             if (!ngModel) return;
 
-            //loaded didn't seem to work, but instanceReady did
-            //I added this because sometimes $render would call setData before the ckeditor was ready
+            // loaded didn't seem to work, but instanceReady did
+            // I added this because sometimes $render would call setData before the ckeditor was ready
             ck.on('instanceReady', function () {
                 ck.setData(ngModel.$viewValue);
             });
+
+            // Make sure that if the model changes, the values is passed backed to the ckeditor
+            // Example: value comes from an AJAX request, and that creates a race condition vs. ckeditor initialization
+            scope.$watch(ngModel, function(){
+                ck.setData(ngModel.$viewValue);
+            });
+
 
             ck.on('pasteState', function () {
                 scope.$apply(function () {
@@ -386,6 +445,21 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             ngModel.$render = function (value) {
                 ck.setData(ngModel.$viewValue);
             };
+
+            // Create a new ckEditor with a new locale when this last one is changed
+            scope.$on('ui:localeChanged', function (event, locale) {
+                var data = ck.getData();
+
+                ckOptions.language = locale;
+                ckOptions.on = {
+                    instanceReady: function () {
+                        this.setData(data);
+                    }
+                };
+
+                ck.destroy();
+                ck = CKEDITOR.replace(textarea, ckOptions);
+            });
 
         }
     };
@@ -582,9 +656,9 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
     }]);
 
 
-mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', 'authenticationService',
+mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',
-    function ($rootScope, $scope, $location, $http, authenticationService, configurationService) {
+    function ($rootScope, $scope, $location, $http, $translate, authenticationService, configurationService) {
 
 
         /**
@@ -685,6 +759,16 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
 
         $scope.setRoute = function (href) {
             $location.url(href);
+        };
+
+        $rootScope.uiLocale = localStorage.locale || Mayocat.defaultLocale;
+
+        $scope.changeLocale = function (locale) {
+            $rootScope.$broadcast('ui:localeChanged', locale);
+
+            localStorage.locale = locale;
+            $rootScope.uiLocale = locale;
+            $translate.uses(locale);
         };
 
     }]);
