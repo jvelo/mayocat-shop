@@ -288,6 +288,30 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
         return result;
     }
 
+
+    @Path("{slug}/images/{imageSlug}")
+    @POST
+    @Consumes(MediaType.WILDCARD)
+    public Response updateImage(@PathParam("slug") String slug, @PathParam("imageSlug") String imageSlug,
+            ImageRepresentation image)
+    {
+        Attachment attachment = getAttachmentStore().findBySlug(imageSlug);
+        if (attachment == null) {
+            return Response.status(404).build();
+        }
+        try {
+            attachment.setTitle(image.getTitle());
+            attachment.setDescription(image.getDescription());
+            getAttachmentStore().update(attachment);
+            return Response.noContent().build();
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(404).build();
+        } catch (InvalidEntityException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+
     @Path("{slug}/images/{imageSlug}")
     @DELETE
     @Consumes(MediaType.WILDCARD)
