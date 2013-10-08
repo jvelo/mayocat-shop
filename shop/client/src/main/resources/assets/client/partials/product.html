@@ -58,6 +58,7 @@
                                     <textarea rows="5" ng-model="image.description"
                                               placeholder="{{'upload.placeholder.description' | translate}}"></textarea>
                                 </div>
+                                <span ng-class="{'loading': image.isSaving}"></span>
                                 <button type="button" class="btn" ng-click="image.editMeta = false">
                                     {{'entity.action.cancel' | translate}}
                                 </button>
