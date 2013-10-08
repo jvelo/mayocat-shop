@@ -79,7 +79,7 @@
                 var slug = $routeParams[entityType];
 
                 var mixin = {
-                    slug: slug,
+                    slug: $routeParams[entityType],
                     isNew: function () {
                         var scope = this;
                         return scope.slug == "_new";
@@ -90,6 +90,10 @@
                         scope.initializeAddons && scope.initializeAddons();
                         scope.initializeModels && scope.initializeModels();
                         scope.initializeLocalization && scope.initializeLocalization();
+                        $rootScope.$broadcast("entity:initialized", {
+                            type: entityType,
+                            uri: (options.apiBase || "/api/" + entityType + "s/") + scope.slug + "/"
+                        });
                     }
                 };
 

@@ -437,6 +437,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
+
             var ckOptions = {
                 language: localStorage.locale || Mayocat.defaultLocale,
                 toolbarGroups: [
@@ -528,7 +529,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
                 ck.setData(ngModel.$viewValue);
             };
 
-            scope.$on('entity:initialized', function (event, entity) {
+            scope.$on('entity:initialized', function(event, entity){
                 CKEDITOR.config.mayocat_entityUri = entity.uri;
             });
 
