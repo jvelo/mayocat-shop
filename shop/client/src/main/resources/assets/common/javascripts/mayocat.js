@@ -195,7 +195,13 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             // Custom dropzone option
             $scope.dropzone = typeof $scope.requestedDropZone === "string"
                 ? $($scope.requestedDropZone)
-                : $($element).find('.dropzone');
+                : $element.find('.dropzone');
+
+            if ($scope.dropzone && typeof $scope.dropzone.length !== "undefined") {
+                // The file upload widget expects an element, not a jQuery-style array
+                $scope.dropzone = $scope.dropzone[0];
+            }
+
         },
         compile: function compile(tElement, tAttrs, transclude) {
             return {
