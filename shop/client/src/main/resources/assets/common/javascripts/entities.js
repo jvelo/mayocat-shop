@@ -177,13 +177,32 @@
                     $rootScope.$broadcast('thumbnails:edit', entityType, image);
                 }
 
+                mixin.updateImageMeta = function (image) {
+                    image.isSaving = true;
+
+                    var scope = this;
+                    $http.post("/api/" + entityType + "s/" + scope.slug + "/images/" + image.slug, image)
+                        .success(function(data, status) {
+                            image.isSaving = false;
+
+                            if(status < 400) {
+                                image.editMeta = false;
+                            } else {
+                                $rootScope.$broadcast('event:serverError');
+                            }
+                        })
+                        .error(function() {
+                            image.isSaving = false;
+                            $rootScope.$broadcast('event:serverError');
+                        });
+                }
+
                 mixin.reloadImages = function () {
                     var scope = this;
                     $http.get("/api/" + entityType + "s/" + scope.slug + "/images")
                         .success(function (data) {
                             scope[entityType].images = data;
-                        }
-                    );
+                        });
                 }
 
                 mixin.selectFeatureImage = function (image) {
