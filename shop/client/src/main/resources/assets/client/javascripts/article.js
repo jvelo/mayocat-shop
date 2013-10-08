@@ -9,12 +9,17 @@ angular.module('article', ['ngResource'])
         '$resource',
         '$http',
         '$location',
-        'addonsService',
-        'imageService',
         'timeService',
         'configurationService',
+        'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, addonsService, imageService, timeService, configurationService) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, timeService, configurationService, entityMixins) {
+
+            entityMixins.extend(["base", "image"], $scope, "article", {
+                "base" : {
+                    "apiBase" : "/api/news/"
+                }
+            });
 
             /**
              * Helper function to parse time entered by a user.
@@ -30,8 +35,6 @@ angular.module('article', ['ngResource'])
                 }
                 return result;
             };
-
-            $scope.slug = $routeParams.article;
 
             $scope.publishArticle = function () {
                 $scope.article.published = true;
@@ -100,67 +103,9 @@ angular.module('article', ['ngResource'])
                 $scope.newPublicationTime = null;
             };
 
-            $scope.editThumbnails = function (image) {
-                $rootScope.$broadcast('thumbnails:edit', "article", image);
-            };
+
 
             $scope.ArticleResource = $resource("/api/news/:slug");
-
-            $scope.isNew = function () {
-                return $scope.slug == "_new";
-            };
-
-            $scope.newArticle = function () {
-                return {
-                    slug: "",
-                    title: "",
-                    addons: []
-                };
-            };
-
-            $scope.reloadImages = function () {
-                $scope.article.images = $http.get("/api/news/" + $scope.slug + "/images").success(function (data) {
-                    $scope.article.images = data;
-                });
-            };
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.article, image);
-            };
-
-            $scope.removeImage = function(image) {
-                $http.delete("/api/news/" + $scope.slug + "/images/" + image.slug).success(function () {
-                    $scope.reloadImages();
-                });
-            };
-
-            $scope.getImageUploadUri = function () {
-                return "/api/news/" + $scope.slug + "/attachments";
-            };
-
-            $scope.initializeAddons = function () {
-                addonsService.initializeEntityAddons("article", $scope.article).then(function (addons) {
-                    $scope.addons = addons;
-                });
-            };
-
-
-            $scope.initializeModels = function () {
-                $scope.models = [];
-                configurationService.get("entities", function (entities) {
-                    if (typeof entities.article !== 'undefined') {
-                        for (var modelId in entities.article.models) {
-                            if (entities.article.models.hasOwnProperty(modelId)) {
-                                var model = entities.article.models[modelId];
-                                $scope.models.push({
-                                    id: modelId,
-                                    name: model.name
-                                });
-                            }
-                        }
-                    }
-                });
-            };
 
             // Initialize existing page or new page
 
@@ -169,8 +114,7 @@ angular.module('article', ['ngResource'])
                     "slug": $scope.slug,
                     "expand": ["images"] }, function () {
 
-                    $scope.initializeAddons();
-                    $scope.initializeModels();
+                    $scope.initializeEntity();
 
                     if ($scope.article.published === null) {
                         // "null" does not seem to be evaluated properly in angular directives
@@ -187,8 +131,7 @@ angular.module('article', ['ngResource'])
             }
             else {
                 $scope.article = $scope.newArticle();
-                $scope.initializeAddons();
-                $scope.initializeModels();
+                $scope.initializeEntity();
             }
 
             $scope.confirmDeletion = function () {
