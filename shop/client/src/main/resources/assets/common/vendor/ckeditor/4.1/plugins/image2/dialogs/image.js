@@ -421,7 +421,7 @@
                                 html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images du produit</div></div>',
                                 onLoad: function() {
                                     var $imgsDiv = $(document.getElementById(mayoProductImgsId));
-                                    $.get(CKEDITOR.config.mayocat_entity_uri + 'images', function(data) {
+                                    $.get(CKEDITOR.config.mayocat_entityUri + 'images', function(data) {
                                         $imgsDiv.children('div:hidden').show();
                                         $.each(data, function(i, v) {
                                             var $el = $('<div>')
