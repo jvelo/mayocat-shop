@@ -193,7 +193,7 @@
 
                 mixin.removeImage = function (image) {
                     var scope = this;
-                    $http.delete("/api/products/" + scope.slug + "/images/" + image.slug).success(function () {
+                    $http.delete("/api/" + entityType + "s/" + scope.slug + "/images/" + image.slug).success(function () {
                         scope.reloadImages();
                     });
                 }
