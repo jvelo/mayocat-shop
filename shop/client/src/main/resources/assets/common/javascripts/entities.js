@@ -44,7 +44,6 @@
 
         .factory('entityBaseMixin', ["$routeParams" , "$rootScope", function ($routeParams, $rootScope) {
             return function (entityType, options) {
-                console.log("Options", options);
                 options = typeof options === "undefined" ? {} : options;
                 var mixin = {
                     slug: $routeParams[entityType],
