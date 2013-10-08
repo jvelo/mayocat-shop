@@ -442,9 +442,9 @@ mayocat.directive('ckEditor', function () {
             };
 
             // Create a new ckEditor with a new locale when this last one is changed
-            scope.$on('ui:localChanged', function (event, locale) {
+            scope.$on('ui:localeChanged', function (event, locale) {
                 var data = ck.getData();
-                
+
                 ckOptions.language = locale;
                 ckOptions.on = {
                     instanceReady: function () {
