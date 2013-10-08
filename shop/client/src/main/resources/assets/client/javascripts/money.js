@@ -332,6 +332,10 @@
                         if (!isNaN(parseFloat(value))) {
                             controller.$setViewValue(parseFloat(value));
                         }
+                        else if (value === "") {
+                            // If the money field has been cleared, we clear the value
+                            controller.$setViewValue(undefined);
+                        }
                     });
                 }
             }
