@@ -10,9 +10,10 @@
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'entityMixins',
 
-        function ($scope, $rootScope, $resource, $http, $location, entityMixins) {
+        function ($scope, $rootScope, $resource, $http, $location, $modal, entityMixins) {
 
             entityMixins.extendAll($scope, "page");
 
@@ -39,7 +40,7 @@
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })

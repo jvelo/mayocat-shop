@@ -1,8 +1,8 @@
 'use strict'
 
 angular.module('collection', ['ngResource'])
-    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http',
-        function ($scope, $rootScope, $routeParams, $resource, $location, $http) {
+    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http', '$modal',
+        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal) {
 
             $scope.slug = $routeParams.collection;
             $scope.CollectionResource = $resource("/api/collections/:slug");
@@ -39,7 +39,7 @@ angular.module('collection', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })

@@ -28,6 +28,7 @@
     <script src="/common/vendor/bootstrap/contrib/bootstrap-datepicker.js"></script>
     <script src="/common/vendor/angular/1.1.5/angular.min.js"></script>
     <script src="/common/vendor/angular/1.1.5/angular-resource.min.js"></script>
+    <script src="/common/vendor/angular/contrib/ui-bootstrap.js"></script>
     <script src="/common/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
     <script src="/common/vendor/moment.min.js"></script>
     <script src="/common/vendor/blueimp/jquery.fileupload.js"></script>
@@ -108,10 +109,10 @@
     <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
 
     <!-- Error modal -->
-    <div class="modal hide fade"
-         ng-include="'/common/partials/serverError.html'"
-         modal-trigger="event:serverError"
-         id="errorModal"></div>
+
+    <script type="text/ng-template" id="serverError.html">
+        <ng-include src="'/common/partials/serverError.html'"></ng-include>
+    </script>
 
 </div>
 </body>

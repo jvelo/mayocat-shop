@@ -231,15 +231,15 @@
 </div>
 <div class="modal-backdrop" ng-show="tenant != undefined && authenticated != undefined && !authenticated"></div>
 
-<!-- Error modal -->
-<div class="modal hide fade"
-     ng-include="'/common/partials/serverError.html'"
-     modal-trigger="event:serverError"
-     id="errorModal"></div>
- <div class="modal hide fade"
-      ng-include="'/common/partials/nameConflictError.html'"
-      modal-trigger="event:nameConflictError"
-      id="errorModal"></div>
+<!-- Error modals -->
+
+<script type="text/ng-template" id="serverError.html">
+    <ng-include src="'/common/partials/serverError.html'"></ng-include>
+</script>
+
+<script type="text/ng-template" id="nameConflictError.html">
+    <ng-include src="'/common/partials/nameConflictError.html'"></ng-include>
+</script>
 
 </body>
 </html>

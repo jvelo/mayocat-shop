@@ -9,11 +9,12 @@ angular.module('article', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'timeService',
         'configurationService',
         'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, timeService, configurationService, entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, timeService, configurationService, entityMixins) {
 
             entityMixins.extend(["base", "image"], $scope, "article", {
                 "base" : {
@@ -62,7 +63,7 @@ angular.module('article', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })

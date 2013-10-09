@@ -196,7 +196,7 @@
             }
         }])
 
-        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', function (imageService, $http, $rootScope) {
+        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', '$modal', function (imageService, $http, $rootScope, $modal) {
             return function (entityType) {
                 var mixin = {};
 
@@ -216,12 +216,14 @@
                             if(status < 400) {
                                 image.editMeta = false;
                             } else {
-                                $rootScope.$broadcast('event:serverError');
+                                // Generic error
+                                $modal.open({ templateUrl: 'serverError.html' });
                             }
                         })
                         .error(function() {
                             image.isSaving = false;
-                            $rootScope.$broadcast('event:serverError');
+                            // Generic error
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
 

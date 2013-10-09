@@ -9,6 +9,7 @@ angular.module('product', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'catalogService',
         'configurationService',
         'entityMixins',
@@ -19,6 +20,7 @@ angular.module('product', ['ngResource'])
                   $resource,
                   $http,
                   $location,
+                  $modal,
                   catalogService,
                   configurationService,
                   entityMixins) {
@@ -48,7 +50,7 @@ angular.module('product', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })

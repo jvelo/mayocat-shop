@@ -226,7 +226,8 @@ angular.module('TenantManager.tenants', [])
 //
 var TenantManager = angular.module('TenantManager', [
     'mayocat',
-    'TenantManager.tenants'
+    'TenantManager.tenants',
+    'ui.bootstrap'
 ]);
 
 TenantManager.controller("ManagerController", ['$scope', 'configurationService', '$location',
