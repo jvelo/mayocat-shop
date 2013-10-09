@@ -19,12 +19,15 @@ import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.StoreException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.mayocat.store.rdbms.dbi.MoveEntityInListOperation;
+
 import mayoapp.dao.CollectionDAO;
+import mayoapp.dao.ProductDAO;
+
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
-@Component(hints={"jdbi", "default"})
+@Component(hints = { "jdbi", "default" })
 public class DBICollectionStore extends DBIEntityStore implements CollectionStore, Initializable
 {
     private static final String COLLECTION_TABLE_NAME = "collection";
@@ -32,6 +35,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public static final String COLLECTION_POSITION = "collection.position";
 
     private CollectionDAO dao;
+
+    private ProductDAO productDao;
 
     public Collection create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
     {
@@ -94,7 +99,6 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         }
     }
 
-
     public void moveCollection(String collectionToMove, String collectionToMoveRelativeTo,
             RelativePosition relativePosition) throws InvalidMoveOperation
     {
@@ -107,6 +111,25 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
         if (moveOp.hasMoved()) {
             this.dao.updatePositions(COLLECTION_TABLE_NAME, moveOp.getEntities(), moveOp.getPositions());
+        }
+
+        this.dao.commit();
+    }
+
+    @Override
+    public void moveProductInCollection(Collection collection, String productToMove, String productToMoveRelativeTo,
+            RelativePosition relativePosition) throws InvalidMoveOperation
+    {
+        this.dao.begin();
+
+        List<Product> categoryProducts = this.productDao.findAllForCollection(collection);
+
+        MoveEntityInListOperation<Product> moveOp =
+                new MoveEntityInListOperation<>(categoryProducts, productToMove,
+                        productToMoveRelativeTo, relativePosition);
+
+        if (moveOp.hasMoved()) {
+            this.dao.updateProductPosition(moveOp.getEntities(), moveOp.getPositions());
         }
 
         this.dao.commit();
@@ -176,6 +199,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(CollectionDAO.class);
+        this.productDao = this.getDbi().onDemand(ProductDAO.class);
         super.initialize();
     }
 }

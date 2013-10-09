@@ -12,8 +12,10 @@ import org.mayocat.store.rdbms.dbi.jointype.EntityAndCountsJoinRow;
 import org.mayocat.store.rdbms.dbi.mapper.EntityAndCountsJoinRowMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -46,6 +48,10 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     @SqlUpdate
     public abstract void removeProduct(@BindBean("collection") Collection collection,
             @BindBean("product") Product product);
+
+    @SqlBatch
+    public abstract void updateProductPosition(@BindBean("product") List<Product> entity,
+            @Bind("position") List<Integer> position);
 
     @RegisterMapper(EntityAndCountsJoinRowMapper.class)
     @SqlQuery

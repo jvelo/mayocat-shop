@@ -211,6 +211,8 @@ public class DefaultCatalogService implements CatalogService
     public void moveProductInCollection(Collection collection, String slugOfProductToMove, String relativeSlug,
             InsertPosition insertPosition) throws InvalidMoveOperation
     {
-        throw new InvalidMoveOperation();
+        this.collectionStore.get().moveProductInCollection(collection, slugOfProductToMove, relativeSlug,
+                insertPosition.equals(InsertPosition.AFTER) ? HasOrderedCollections.RelativePosition.AFTER :
+                        HasOrderedCollections.RelativePosition.BEFORE);
     }
 }

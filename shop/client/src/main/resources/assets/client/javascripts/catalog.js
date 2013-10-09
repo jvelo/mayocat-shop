@@ -40,10 +40,8 @@ angular.module('catalog', [])
                     });
                 });
             },
-            moveCollection: function (slug, target, position) {
-            },
-            moveProduct: function (slug, target, position) {
-                $http.post('/api/collections/_all/move',
+            moveProduct: function (path, slug, target, position) {
+                $http.post('/api/collections/' + path + '/moveProduct',
                     "product=" + slug + "&" + position + "=" + target,
                     { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
                     .success(function (data) {
@@ -104,19 +102,82 @@ angular.module('catalog', [])
                 }
             }
 
-            $scope.changePosition = function () {
-                if (typeof $scope.changeOperation === "undefined") {
-                    return;
+            $scope.collectionSortableOptions = {
+                update: function(event, ui) {
+                    var itemScope = ui.item.scope(),
+                        index = ui.item.index(),
+                        target,
+                        afterOrBefore;
+
+                    if (index > 0) {
+                        target = ui.item.prev().scope().collection.slug;
+                        afterOrBefore = "after";
+                    }
+                    else {
+                        target = ui.item.next().scope().collection.slug;
+                        afterOrBefore = "before";
+                    }
+
+                    catalogService.move(
+                        "collections",
+                        itemScope.collection.slug,
+                        target,
+                        afterOrBefore
+                    );
                 }
+            }
 
-                catalogService.move(
-                    $scope.changeOperation.type,
-                    $scope.changeOperation.handle,
-                    $scope.changeOperation.target,
-                    $scope.changeOperation.position
-                );
 
-                $scope.changeOperation = undefined;
+            $scope.productsInCollectionSortableOptions = {
+                update: function(event, ui) {
+                    var itemScope = ui.item.scope(),
+                        index = ui.item.index(),
+                        target,
+                        afterOrBefore;
+
+                    if (index > 0) {
+                        target = ui.item.prev().scope().product.slug;
+                        afterOrBefore = "after";
+                    }
+                    else {
+                        target = ui.item.next().scope().product.slug;
+                        afterOrBefore = "before";
+                    }
+
+                    var collectionSlug = itemScope.$parent.collection.slug;
+
+                    catalogService.moveProduct(
+                        collectionSlug,
+                        itemScope.product.slug,
+                        target,
+                        afterOrBefore
+                    );
+                }
+            }
+
+            $scope.uncategorizedProductsSortableOptions = {
+                update: function(event, ui) {
+                    var itemScope = ui.item.scope(),
+                        index = ui.item.index(),
+                        target,
+                        afterOrBefore;
+
+                    if (index > 0) {
+                        target = ui.item.prev().scope().product.slug;
+                        afterOrBefore = "after";
+                    }
+                    else {
+                        target = ui.item.next().scope().product.slug;
+                        afterOrBefore = "before";
+                    }
+
+                    catalogService.move(
+                        "products",
+                        itemScope.product.slug,
+                        target,
+                        afterOrBefore
+                    );
+                }
             }
 
             configurationService.get("catalog.products.collections", function (value) {

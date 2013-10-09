@@ -82,7 +82,7 @@
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('page:confirmDelete');
+                $rootScope.$broadcast('page:confirmDelete:' + $scope.page.slug);
             }
 
             $scope.deletePage = function () {

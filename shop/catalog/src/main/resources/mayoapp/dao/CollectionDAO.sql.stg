@@ -79,3 +79,9 @@ findWithProductCountRows() ::= <<
     WHERE  entity.tenant_id = :tenant.id
     ORDER BY collection.position
 >>
+
+updateProductPosition() ::= <<
+    UPDATE collection_product
+    SET    position = :position
+    WHERE  product_id = :product.id
+>>

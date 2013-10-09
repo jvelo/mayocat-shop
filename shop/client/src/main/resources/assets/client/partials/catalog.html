@@ -8,9 +8,8 @@
     <scroll>
         <!-- list collections -->
         <div ng-show="hasCollections">
-            <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                <li ng-repeat="collection in collections" data-handle="{{collection.slug}}" data-type="collections"
-                    ng-class="{hasChildren: collection.products.length > 0}">
+            <ul class="list" ui-sortable="collectionSortableOptions" ng-model="collections">
+                <li ng-repeat="collection in collections" ng-class="{hasChildren: collection.products.length > 0}">
                     <div class="droptarget">
                         <div class="listItem">
                         <span class="collection" ng-click="toggleExpand(collection)">
@@ -18,8 +17,8 @@
                         </span>
                         </div>
                         <div ng-show="collection.isExpanded && collection.products.length > 0">
-                            <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                                <li ng-repeat="product in collection.products" data-handle="{{product.slug}}">
+                            <ul class="list" ui-sortable="productsInCollectionSortableOptions" ng-model="collection.products">
+                                <li ng-repeat="product in collection.products">
                                     <div class="row droptarget">
                                         <div>
                                             <a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a>
@@ -44,8 +43,8 @@
                             {{'product.misc.uncategorized' | translate:getTranslationProperties()}}
                         </span>
                     </div>
-                    <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-                        <li ng-repeat="product in products" data-handle="{{product.slug}}" data-type="products">
+                    <ul class="list" ui-sortable="uncategorizedProductsSortableOptions" ng-model="products">
+                        <li ng-repeat="product in products">
                             <div class="droptarget">
                                 <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
                                 <div><span class="dragme move-handle"></span></div>

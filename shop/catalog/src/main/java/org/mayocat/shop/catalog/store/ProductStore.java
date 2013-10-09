@@ -16,7 +16,7 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 {    
     Product findBySlug(String slug);
 
-    void moveProduct(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)
+    void moveProduct(String productToMove, String productToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 
     List<Product> findOrphanProducts();

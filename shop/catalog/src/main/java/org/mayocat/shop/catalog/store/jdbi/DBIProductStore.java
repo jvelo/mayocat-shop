@@ -140,7 +140,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
         List<Product> allProducts = this.findAll();
         MoveEntityInListOperation<Product> moveOp =
-                new MoveEntityInListOperation<Product>(allProducts, productToMove,
+                new MoveEntityInListOperation<>(allProducts, productToMove,
                         productToMoveRelativeTo, relativePosition);
 
         if (moveOp.hasMoved()) {

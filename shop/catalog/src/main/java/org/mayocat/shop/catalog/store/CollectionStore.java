@@ -24,6 +24,9 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
     void moveCollection(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 
+    void moveProductInCollection(Collection collection, String productToMove, String productToMoveRelativeTo,
+            RelativePosition relativePosition) throws InvalidMoveOperation;
+
     List<EntityAndCount<Collection>> findAllWithProductCount();
 
     List<Collection> findAll();
