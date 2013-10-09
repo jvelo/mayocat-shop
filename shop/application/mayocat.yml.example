@@ -51,7 +51,7 @@ platform:
 general:
   locales:
     main:
-      default: fr_FR
+      default: en
       configurable: false
       visible: true
     others:
