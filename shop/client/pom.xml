@@ -35,7 +35,6 @@
                         <include>assets/common/vendor/angular/1.1.5/angular-resource.min.js</include>
                         <include>assets/common/vendor/angular/1.1.5/angular-mocks.js</include>
                         <include>assets/common/vendor/moment.min.js</include>
-                        <include>assets/client/vendor/sortable-ng.js</include>
                         <include>assets/client/vendor/angular-strap.min.js</include>
                     </preloadSources>
                     <sourceIncludes>
