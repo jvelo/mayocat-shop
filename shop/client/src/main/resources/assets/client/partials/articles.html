@@ -8,9 +8,11 @@
     <!-- list pages -->
     <scroll>
         <ul class="list">
-            <li ng-repeat="article in articles" data-handle="{{article.slug}}">
-                <div class="droptarget listItem">
-                    <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>
+            <li ng-repeat="article in articles">
+                <div>
+                    <div class="droptarget">
+                        <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>
+                    </div>
                 </div>
             </li>
         </ul>

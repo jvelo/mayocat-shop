@@ -7,11 +7,13 @@
 
     <!-- list pages -->
     <scroll>
-        <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
-            <li ng-repeat="page in pages" data-handle="{{page.slug}}">
-                <div class="droptarget listItem">
-                    <div><a ng-click="setRoute('/pages/' + page.slug)">{{page.title}}</a></div>
-                    <div><span class="dragme move-handle"></span></div>
+        <ul class="list">
+            <li ng-repeat="page in pages" data-handle="{{page.slug}}" class="hasChildren">
+                <div>
+                    <div class="droptarget">
+                        <div><a ng-click="setRoute('/pages/' + page.slug)">{{page.title}}</a></div>
+                        <div><span class="dragme move-handle"></span></div>
+                    </div>
                 </div>
             </li>
         </ul>

@@ -193,12 +193,9 @@ header .btn-group {
   z-index: 100;
 }
 
-#list .droptarget .listItem {
-  padding: 0px 0px 11px 15px
-}
-
+#list .droptarget .listItem,
 #list .listItem {
-  padding: 11px 0px 11px 15px;
+  padding: 0px 0px 0px 11px
 }
 
 .sub-list #list li.listItem.active {
@@ -209,10 +206,27 @@ header .btn-group {
 
 #list ul ul li .droptarget {
   padding-left: 10px !important;
+  padding-bottom: 11px;
+}
+
+#list ul li.hasChildren > .droptarget {
+  padding-bottom: 0px;
+  border-bottom: 0;
+}
+#list ul li.hasChildren > div > div.listItem {
+  padding-bottom:11px
 }
 
 #list ul li.hasChildren ul li .droptarget {
-  padding-left: 25px !important;
+  padding-left: 8px !important;
+}
+
+#list ul.list li {
+  text-indent: 10px !important;
+}
+
+#list ul li .uncategorized {
+  padding-top: 11px;
 }
 
 #list .move-handle {
