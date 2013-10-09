@@ -211,7 +211,7 @@
                         });
 
                         var addons = entities[entityType].addons,
-                            addonKeys = Object.keys(addons);
+                            addonKeys = addons ? Object.keys(addons) : [];
                         for (var i=0; i<addonKeys.length; i++) {
                             var sourceName = addonKeys[i],
                                 source = addons[sourceName],
