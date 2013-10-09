@@ -346,6 +346,12 @@
                         $scope.selectedLocale = $scope.mainLocale;
                         $scope.locales = [ locales.main ];
                         $scope.locales.push.apply($scope.locales, locales.others);
+
+                        if ($scope.locales.length === 1) {
+                            // If there is only one locale, we don't display a locale switcher, but the plain field
+                            $($element).removeClass("locales-wrapper input-append");
+                            $($element).find(".locales-switch").addClass("hidden");
+                        }
                     });
                 }
             }
