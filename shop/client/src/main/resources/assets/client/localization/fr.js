@@ -308,7 +308,7 @@
 
                 defaultCurrency: "Devise par défaut",
                 otherCurrencies: "Autres devises",
-                categoriesManagement: "Gestion des catégories",
+                collectionsManagement: "Gestion des collections",
                 stockManagement: "Gestion de stocks",
                 weightManagement: "Gestion du poids (laissez ceci coché si vous souhaitez calculer les frais de port en fonction du poids)",
                 weightUnit: "Unité de poids",
