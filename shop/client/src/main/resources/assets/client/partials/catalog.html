@@ -12,7 +12,9 @@
                 <li ng-repeat="collection in collections" ng-class="{hasChildren: collection.products.length > 0}">
                     <div class="droptarget">
                         <div class="listItem">
-                        <span class="collection" ng-click="toggleExpand(collection)">
+                        <i class="icon clickme" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
+                           ng-click="toggleExpand(collection)"/>
+                        <span class="collection">
                             <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
                         </span>
                         </div>
