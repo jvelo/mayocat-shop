@@ -196,6 +196,7 @@ public class CollectionResource implements Resource
             Collection updatedCollection)
     {
         try {
+            updatedCollection.setSlug(slug);
             this.catalogService.updateCollection(updatedCollection);
 
             return Response.ok().build();
