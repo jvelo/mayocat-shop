@@ -57,14 +57,15 @@ angular.module('collection', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('collection:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionCollection.html' });
+                $scope.modalInstance.result.then($scope.deleteCollection);
             }
 
-            $scope.deleteProduct = function () {
+            $scope.deleteCollection = function () {
                 $scope.CollectionResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('collection:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });

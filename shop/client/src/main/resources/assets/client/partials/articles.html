@@ -17,3 +17,22 @@
     </scroll>
 
 </div>
+
+<!-- Deletion modal for articles -->
+<script type="text/ng-template" id="confirmDeletionArticle.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'content.alert.confirmArticleDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'content.action.deleteArticle' | translate}}
+        </button>
+    </div>
+</script>

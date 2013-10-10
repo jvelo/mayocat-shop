@@ -83,14 +83,15 @@
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('page:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionPage.html' });
+                $scope.modalInstance.result.then($scope.deletePage);
             }
 
             $scope.deletePage = function () {
                 $scope.PageResource.delete({
                     "slug":$scope.slug
                 }, function () {
-                    $rootScope.$broadcast('page:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('pages:refreshList');
                     $location.url("/contents");
                 });

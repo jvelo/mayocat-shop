@@ -151,26 +151,6 @@
         <div class="block delete" ng-show="!isNew()">
             <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
         </div>
-        <div class="modal hide fade"
-             modal-trigger="product:confirmDelete"
-             modal-dismiss="product:dismissConfirmDelete"
-             id="confirmDeleteProductModal">
-            <div class="modal-header">
-                <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
-            </div>
-            <div class="modal-body">
-                {{'product.alert.confirmProductDeletion' | translate}}
-            </div>
-            <div class="modal-footer">
-                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
-                    {{'entity.action.cancel' | translate}}
-                </a>
-                <a class="btn btn-danger" ng-click="deleteProduct()" aria-hidden="true">
-                    {{'product.action.deleteProduct' | translate}}
-                </a>
-            </div>
-        </div>
 
         <div class="block" ng-show="!isNew() && models.length > 0">
             <h3>{{'entity.title.model' | translate}}</h3>

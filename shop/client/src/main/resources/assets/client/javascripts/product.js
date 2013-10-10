@@ -150,14 +150,15 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('product:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
+                $scope.modalInstance.result.then($scope.deleteProduct);
             }
 
             $scope.deleteProduct = function () {
                 $scope.ProductResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('product:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });

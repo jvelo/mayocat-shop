@@ -136,14 +136,15 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('article:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionArticle.html' });
+                $scope.modalInstance.result.then($scope.deleteArticle);
             };
 
             $scope.deleteArticle = function () {
                 $scope.ArticleResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('article:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast("news:articles:refreshList");
                     $location.url("/contents");
                 });
