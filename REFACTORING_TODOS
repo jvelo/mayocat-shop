@@ -1,8 +1,0 @@
-- Change the getAddons() + conveyAddon() API to Optional<List<Addon>> getAddons() in product -> DONE except for translations
-  - Same for getTranslations()
-  - => maybe create our own option type with an appropriate semantic like MaybeLoaded<Addons>, MaybeLoaded<Translations> etc.
-- Use ResultSetRepresentation in catalog lists
-- Check usage of plural in package names (i.e. representations vs. representation)
-- Change thumbnails config format to be more in line with addons/models
-- AbstractLocalizedEntity -> IsLocalized interface
-- Handle correctly the case where no theme.yml can be found for current tenant (no valid theme set)
