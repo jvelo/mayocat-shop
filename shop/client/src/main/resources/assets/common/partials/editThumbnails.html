@@ -1,73 +1,71 @@
-<div ng-controller="ThumbnailsEditorController" xmlns="http://www.w3.org/1999/html">
-    <div class="modal-header">
-        <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>{{'thumbnailEditor.title.editThumbnails'| translate}}</h3>
-    </div>
-    <form class="form-horizontal">
-        <div class="modal-body">
-            <div class="pull-left">
-                <ul class="unstyled">
-                    <li ng-repeat="source in ['platform', 'theme']">
-                        <ul class="unstyled">
-                            <li ng-repeat="size in configuration[entityType].thumbnails[source]"
-                                ng-show="isEdited(source, size)">
-                                <thumbnail-editor
-                                        width="size.width"
-                                        height="size.height"
-                                        image="image.file.href"
-                                        selection="getSelection(source, size)"
-                                        >
-                                </thumbnail-editor>
-                                <p class="pull-left">
-                                    <small>
-                                        <em>{{'thumbnailEditor.misc.editing'| translate}}</em>
-                                        <strong>{{currentSource}}</strong> -
-                                        <strong>{{currentSize.name}}</strong>
-                                        ({{currentSize.width}} x {{currentSize.height}})
-                                    </small>
-                                </p>
-                                <p class="pull-right">
-                                    <a class="btn btn-primary" ng-click="save()">
-                                        {{'thumbnailEditor.action.saveAndNext'| translate}}
-                                    </a>
-                                </p>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="pull-left thumbnails-list">
-                <ul class="nav nav-tabs nav-stacked" ng-repeat="source in ['platform', 'theme']"
-                    ng-show="keys(configuration[entityType].thumbnails[source]).length > 0">
-                    <li ng-repeat="size in configuration[entityType].thumbnails[source]"
-                        ng-class="{active: isEdited(source, size)}">
-                        <a ng-click="edit(source, size)">
-                            <h3 class="pull-left">
-                                {{size.name}}
-                                <small>({{source}})</small>
-                                <i ng-class="getType(source, size)"></i>
-                            </h3>
-                            <span class="pull-right dimensions">
-                                {{size.width}} x {{size.height}}
-                            </span>
+<div class="modal-header">
+    <button type="button" class="close" ng-click="$close()">&times;</button>
+    <h3>{{'thumbnailEditor.title.editThumbnails'| translate}}</h3>
+</div>
+<form class="form-horizontal">
+    <div class="modal-body">
+        <div class="pull-left crop-zone">
+            <ul class="unstyled">
+                <li ng-repeat="source in ['platform', 'theme']">
+                    <ul class="unstyled">
+                        <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                            ng-show="isEdited(source, size)">
+                            <thumbnail-editor
+                                    width="size.width"
+                                    height="size.height"
+                                    image="image.file.href"
+                                    selection="getSelection(source, size)"
+                                    >
+                            </thumbnail-editor>
+                            
+                            <a class="btn btn-primary pull-right" ng-click="save()">
+                                {{'thumbnailEditor.action.saveAndNext'| translate}}
+                            </a>
 
-                            <div class="clearfix"></div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <!-- TODO
-            <hr />
-            <div class="preview">
-                <h3>Preview</h3>
-            </div>
-            -->
-            <div class="clearfix"></div>
+                            <p>
+                                <small>
+                                    <em>{{'thumbnailEditor.misc.editing'| translate}}</em>
+                                    <strong>{{currentSource}}</strong> -
+                                    <strong>{{currentSize.name}}</strong>
+                                    ({{currentSize.width}} x {{currentSize.height}})
+                                </small>
+                            </p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-    </form>
-    <div class="modal-footer">
-        <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
-            {{'thumbnailEditor.action.close'| translate}}
-        </a>
+        <div class="pull-left thumbnails-list">
+            <ul class="nav nav-tabs nav-stacked" ng-repeat="source in ['platform', 'theme']"
+                ng-show="keys(configuration[entityType].thumbnails[source]).length > 0">
+                <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                    ng-class="{active: isEdited(source, size)}">
+                    <a ng-click="edit(source, size)">
+                        <h3 class="pull-left">
+                            {{size.name}}
+                            <small>({{source}})</small>
+                            <i ng-class="getType(source, size)"></i>
+                        </h3>
+                        <span class="pull-right dimensions">
+                            {{size.width}} x {{size.height}}
+                        </span>
+
+                        <div class="clearfix"></div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- TODO
+        <hr />
+        <div class="preview">
+            <h3>Preview</h3>
+        </div>
+        -->
+        <div class="clearfix"></div>
     </div>
+</form>
+<div class="modal-footer">
+    <button class="btn" ng-click="$close()">
+        {{'thumbnailEditor.action.close'| translate}}
+    </button>
 </div>

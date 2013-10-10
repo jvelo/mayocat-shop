@@ -201,7 +201,16 @@
                 var mixin = {};
 
                 mixin.editThumbnails = function (image) {
-                    $rootScope.$broadcast('thumbnails:edit', entityType, image);
+                    var scope = $rootScope.$new(true);
+                    scope.entityType = entityType;
+                    scope.image = image;
+
+                    $modal.open({
+                        templateUrl: '/common/partials/editThumbnails.html',
+                        windowClass: 'editThumbnails',
+                        controller: 'ThumbnailsEditorController',
+                        scope: scope
+                    });
                 }
 
                 mixin.updateImageMeta = function (image) {
