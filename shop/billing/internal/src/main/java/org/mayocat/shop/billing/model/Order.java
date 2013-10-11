@@ -56,6 +56,10 @@ public class Order implements Entity
         CANCELLED
     }
 
+    public static final String ORDER_DATA_ITEMS = "items";
+
+    public static final String ORDER_DATA_SHIPPING = "shipping";
+
     private UUID id;
 
     private UUID customerId;

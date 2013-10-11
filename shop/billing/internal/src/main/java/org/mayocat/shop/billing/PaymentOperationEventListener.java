@@ -6,13 +6,17 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.shop.billing.event.OrderPaidEvent;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.payment.event.PaymentOperationEvent;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.EventListener;
+import org.xwiki.observation.ObservationManager;
 import org.xwiki.observation.event.Event;
 
 /**
@@ -37,6 +41,18 @@ public class PaymentOperationEventListener implements EventListener
      */
     @Inject
     private Logger logger;
+
+    /**
+     * Component manager, used to access the {@link #observationManager}.
+     */
+    @Inject
+    private ComponentManager componentManager;
+
+    /**
+     * The observation manager used to notify events. Not injected, as it would create a cycling dependency with this
+     * event component.
+     */
+    private ObservationManager observationManager;
 
     @Override
     public String getName()
@@ -66,10 +82,25 @@ public class PaymentOperationEventListener implements EventListener
                 try {
                     order.setStatus(Order.Status.PAID);
                     orderStore.get().update(order);
+
+                    getObservationManager().notify(new OrderPaidEvent(), order, order.getOrderData());
                 } catch (Exception e) {
                     this.logger.error("Failed to update order status", e);
                 }
             }
         }
+    }
+
+    private ObservationManager getObservationManager()
+    {
+        if (this.observationManager == null) {
+            try {
+                this.observationManager = componentManager.getInstance(ObservationManager.class);
+            } catch (ComponentLookupException e) {
+                throw new RuntimeException("Failed to get an observation manager", e);
+            }
+        }
+
+        return this.observationManager;
     }
 }
