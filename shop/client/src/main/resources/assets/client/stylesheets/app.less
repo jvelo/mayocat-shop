@@ -241,3 +241,109 @@ list-picker select {
 .locales-wrapper .dropdown-menu li {
   text-align: center;
 }
+
+/* Locales switching as input add-ons */
+
+.input-append, .input-prepend {
+
+  .add-on.locales-switch {
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
+    border: 1px solid #ababab;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      top: 0; bottom: 0;
+      border: none;
+      border-left: 1px solid #ddd;
+      z-index: 20;
+    }
+
+    .caret {
+      margin-left: 5px;
+    }
+
+    .btn-group, .open, .btn {
+      border: none;
+      background: none !important;
+
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .btn-group {
+      padding: 0 5px;
+
+      .btn {
+        padding: 0 6px;
+      }
+    }
+
+    .dropdown-menu {
+      top: -webkit-calc(~"100% - 2px");
+      top: calc(~"100% - 2px");
+      padding-top: 10px;
+      width: 100% !important;
+
+      background: #eee;
+      border-top: none;
+      border-color: #ababab;
+
+      -webkit-border-radius: 0 0 6px 6px;
+      border-radius: 0 0 6px 6px;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+
+      z-index: 10;
+
+      li {
+        padding: 0 0 4px 9px;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #fbfbfb;
+        }
+      }
+    }
+  }
+
+}
+
+.input-prepend.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-left: none !important;
+  }
+
+  .add-on {
+    border-right: none;
+
+    &:before {
+      right: 0;
+    }
+  }
+}
+
+.input-append.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-right: none !important;
+  }
+
+  .add-on {
+    border-left: none;
+
+    &:before {
+      left: 0;
+    }
+  }
+
+  .dropdown-menu {
+    left: 1px;
+  }
+}
