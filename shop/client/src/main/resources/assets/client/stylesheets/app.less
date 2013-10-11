@@ -218,13 +218,17 @@ list-picker select {
 .locales-wrapper {
   position: relative;
   width: 100%;
+
+  .caret {
+    margin-left: 5px;
+  }
 }
 
 .locales-wrapper:not(.textarea) div[ng-transclude] {
   display: inline-block;
   width: 90%; // Guesswork fallback when there is no calc
-  width: -webkit-calc(~"100% - 46px");
-  width: calc(~"100% - 46px");
+  width: -webkit-calc(~"100% - 54px");
+  width: calc(~"100% - 54px");
 }
 
 .locales-wrapper.textarea .locales-switch {
@@ -233,11 +237,178 @@ list-picker select {
   right: 0;
 }
 
-.locales-wrapper .dropdown-menu {
-  min-width: 37px;
-  width: 37px;
+.locales-wrapper {
+  .btn-group, .open, .btn {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .btn, .dropdown-menu {
+    background: #eee !important;
+  }
+
+  .dropdown-menu {
+    top: -webkit-calc(~"100% - 2px");
+    top: calc(~"100% - 2px");
+    padding: 10px 0 0 0;
+    min-width: 37px;
+    width: 100% !important;
+    border-top: none;
+
+    -webkit-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    overflow: hidden;
+
+    li {
+      padding: 0 0 4px 9px;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fbfbfb;
+      }
+    }
+  }
 }
 
-.locales-wrapper .dropdown-menu li {
-  text-align: center;
+/* Entities localization as input add-ons */
+
+.input-append, .input-prepend {
+
+  .add-on.locales-switch {
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
+    border: 1px solid #ababab;
+    z-index: 20;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      top: 0; bottom: 0;
+      border: none;
+      border-left: 1px solid #ddd;
+      z-index: 20;
+    }
+
+    .btn-group, .open, .btn {
+      border: none;
+    }
+
+    .btn-group {
+      padding: 0 5px;
+
+      .btn {
+        padding: 0 6px;
+      }
+    }
+
+    .dropdown-menu {
+      border-color: #ababab;
+      z-index: 10;
+    }
+  }
+
+}
+
+.input-prepend.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-left: none !important;
+  }
+
+  .add-on {
+    border-right: none;
+
+    &:before {
+      right: 0;
+    }
+  }
+}
+
+.input-append.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-right: none !important;
+  }
+
+  .add-on {
+    border-left: none;
+
+    &:before {
+      left: 0;
+    }
+  }
+
+  .dropdown-menu {
+    left: 1px;
+  }
+}
+
+/* Entities localization as textarea add-ons */
+
+.locales-wrapper.textarea:not([ck-editor]) {
+  textarea {
+    -webkit-border-radius: 5px 0 5px 5px;
+    border-radius: 5px 0 5px 5px;
+  }
+
+  .btn-group {
+    margin-top: -8px;
+
+    .btn {
+      border-color: #b0b0b0;
+      border-bottom: none;
+
+      -webkit-border-radius: 5px 5px 0 0;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .dropdown-menu {
+      left: 0px;
+      padding-top: 1px;
+
+      li {
+        padding: 2px 0 3px 12px;
+      }
+    }
+  }
+}
+
+/* Entities localization for ckeditor */
+
+.locales-wrapper[ck-editor] .btn-group {
+  position: relative;
+  top: 28px; right: 12px;
+  z-index: 10;
+
+  .btn, .dropdown-menu {
+    border-color: #959595;
+  }
+
+  .btn {
+    position: relative;
+    padding-top: 3px;
+    height: 28px;
+
+    -webkit-border-radius: 3px !important;
+    border-radius: 3px !important;
+
+    z-index: 20;
+  }
+
+  .dropdown-menu {
+    top: -webkit-calc(~"100% - 6px");
+    top: calc(~"100% - 6px");
+    left: 0;
+    padding-top: 3px;
+
+    li {
+      padding: 2px 0 3px 12px;
+    }
+  }
 }
