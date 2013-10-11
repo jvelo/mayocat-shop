@@ -218,6 +218,10 @@ list-picker select {
 .locales-wrapper {
   position: relative;
   width: 100%;
+
+  .caret {
+    margin-left: 5px;
+  }
 }
 
 .locales-wrapper:not(.textarea) div[ng-transclude] {
@@ -233,16 +237,46 @@ list-picker select {
   right: 0;
 }
 
-.locales-wrapper .dropdown-menu {
-  min-width: 37px;
-  width: 37px;
+.locales-wrapper {
+  .btn-group, .open, .btn {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .dropdown-menu {
+    min-width: 37px;
+    width: 37px;
+
+    top: -webkit-calc(~"100% - 2px");
+    top: calc(~"100% - 2px");
+    padding-top: 10px;
+    width: 100% !important;
+
+    background: #eee;
+    border-top: none;
+
+    -webkit-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
+    li {
+      padding: 0 0 4px 9px;
+      text-align: left !important;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fbfbfb;
+      }
+    }
+  }
 }
 
 .locales-wrapper .dropdown-menu li {
   text-align: center;
 }
 
-/* Locales switching as input add-ons */
+/* Entities localization as input add-ons */
 
 .input-append, .input-prepend {
 
@@ -251,6 +285,7 @@ list-picker select {
     padding-left: 0;
     padding-right: 0;
     border: 1px solid #ababab;
+    z-index: 20;
 
     &:before {
       content: " ";
@@ -261,16 +296,9 @@ list-picker select {
       z-index: 20;
     }
 
-    .caret {
-      margin-left: 5px;
-    }
-
     .btn-group, .open, .btn {
       border: none;
       background: none !important;
-
-      -webkit-box-shadow: none;
-      box-shadow: none;
     }
 
     .btn-group {
@@ -282,31 +310,8 @@ list-picker select {
     }
 
     .dropdown-menu {
-      top: -webkit-calc(~"100% - 2px");
-      top: calc(~"100% - 2px");
-      padding-top: 10px;
-      width: 100% !important;
-
-      background: #eee;
-      border-top: none;
       border-color: #ababab;
-
-      -webkit-border-radius: 0 0 6px 6px;
-      border-radius: 0 0 6px 6px;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-
       z-index: 10;
-
-      li {
-        padding: 0 0 4px 9px;
-        text-align: left;
-        cursor: pointer;
-
-        &:hover {
-          background-color: #fbfbfb;
-        }
-      }
     }
   }
 
@@ -345,5 +350,40 @@ list-picker select {
 
   .dropdown-menu {
     left: 1px;
+  }
+}
+
+/* Entities localization for ckeditor */
+
+.locales-wrapper[ck-editor] .btn-group {
+  position: relative;
+  top: 28px; right: 12px;
+  z-index: 10;
+
+  .btn, .dropdown-menu {
+    border-color: #959595;
+  }
+
+  .btn {
+    position: relative;
+    padding-top: 3px;
+    height: 28px;
+    background: #eee;
+
+    -webkit-border-radius: 3px !important;
+    border-radius: 3px !important;
+
+    z-index: 20;
+  }
+
+  .dropdown-menu {
+    top: -webkit-calc(~"100% - 6px");
+    top: calc(~"100% - 6px");
+    left: 0;
+    padding-top: 3px;
+
+    li {
+      padding: 2px 0 3px 12px;
+    }
   }
 }
