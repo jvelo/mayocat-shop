@@ -56,6 +56,8 @@ public class PaymentResource implements Resource
     public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId, @PathParam("orderId") UUID orderId,
             MultivaluedMap<String, String> data)
     {
+        this.logger.debug("Entered acknowledgePayment for gateway {} and order ID {}", gatewayId, orderId);
+
         GatewayFactory factory  = gatewayFactories.get(gatewayId);
         PaymentGateway gateway  = factory.createGateway();
         GatewayResponse response;

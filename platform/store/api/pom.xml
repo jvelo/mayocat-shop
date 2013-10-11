@@ -19,13 +19,5 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-configuration-platform</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        -->
     </dependencies>
 </project>

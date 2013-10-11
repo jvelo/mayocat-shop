@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.HasOrderedCollections;
 import org.mayocat.store.InvalidMoveOperation;
@@ -24,4 +25,6 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
     List<Product> findAllForCollection(Collection collection);
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
+
+    void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException;
 }

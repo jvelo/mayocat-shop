@@ -117,6 +117,30 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
+    public void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException
+    {
+        this.dao.begin();
+
+        Product product = this.findById(productId);
+
+        if (product == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+
+        product.setStock((product == null ? 0 : product.getStock()) + stockOffset);
+        Integer updatedRows = this.dao.updateProduct(product);
+
+        this.dao.commit();
+
+        if (updatedRows <= 0) {
+            throw new StoreException("No rows was updated when updating product");
+        }
+
+        getObservationManager().notify(new EntityUpdatedEvent(), product);
+    }
+
+    @Override
     public void delete(@Valid Product entity) throws EntityDoesNotExistException
     {
         Integer updatedRows = 0;
@@ -205,8 +229,10 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     public Product findById(UUID id)
     {
         Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
-        List<Addon> addons = this.dao.findAddons(product);
-        product.setAddons(addons);
+        if (product != null) {
+            List<Addon> addons = this.dao.findAddons(product);
+            product.setAddons(addons);
+        }
         return product;
     }
 

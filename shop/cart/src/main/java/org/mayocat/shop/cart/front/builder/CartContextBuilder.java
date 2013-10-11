@@ -180,9 +180,11 @@ public class CartContextBuilder
         ShippingOptionContext context =
                 new ShippingOptionContext(option.getCarrierId(), option.getTitle(), optionPrice);
         Carrier carrier = shippingService.getCarrier(option.getCarrierId());
-        context.setDeliveryTime(new DeliveryTimeContext(carrier.getMinimumDays(), carrier.getMaximumDays()));
-        context.setDestinations(shippingService.getDestinationNames(carrier.getDestinations()));
-        context.setSelected(selected);
+        if (carrier != null) {
+            context.setDeliveryTime(new DeliveryTimeContext(carrier.getMinimumDays(), carrier.getMaximumDays()));
+            context.setDestinations(shippingService.getDestinationNames(carrier.getDestinations()));
+            context.setSelected(selected);
+        }
         return context;
     }
 }

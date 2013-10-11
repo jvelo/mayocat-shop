@@ -67,6 +67,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-billing-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-payment-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-money</artifactId>
             <version>${joda-money.version}</version>

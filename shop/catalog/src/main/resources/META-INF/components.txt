@@ -1,4 +1,5 @@
 org.mayocat.shop.catalog.internal.DefaultCatalogService
+org.mayocat.shop.catalog.internal.UpdateStockWhenOrderIsPaid
 org.mayocat.shop.catalog.store.jdbi.DBICollectionStore
 org.mayocat.shop.catalog.store.jdbi.DBIProductStore
 org.mayocat.shop.catalog.api.resources.ProductResource

@@ -5,45 +5,14 @@
         <artifactId>mayocat-shop-parent</artifactId>
         <version>0.9-SNAPSHOT</version>
     </parent>
-    <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-billing</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Mayocat Shop - Billing</name>
-    <description>Handling of billing (orders, customers, invoices, etc.)</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-rdbms-migrations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-payment-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-model</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-rest</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <description>Billing module</description>
+
+    <modules>
+        <module>api</module>
+        <module>internal</module>
+    </modules>
 </project>

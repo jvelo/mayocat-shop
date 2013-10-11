@@ -43,7 +43,9 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
                 // Poor-man's pattern matching...
                 if (Product.class.isAssignableFrom(clazz)) {
                     p = productStore.findById(idAndType.getId());
-                    cart.addItem(p, cartInSession.getItems().get(idAndType));
+                    if (p != null) {
+                        cart.addItem(p, cartInSession.getItems().get(idAndType));
+                    }
                 } else {
                     // Purchasable not managed...
                 }

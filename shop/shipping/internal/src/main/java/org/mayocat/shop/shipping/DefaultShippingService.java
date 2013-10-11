@@ -133,6 +133,9 @@ public class DefaultShippingService implements ShippingService
 
     private ShippingOption getOption(Carrier carrier, Map<Purchasable, Long> items)
     {
+        if (carrier == null) {
+            return null;
+        }
         Strategy strategy = carrier.getStrategy();
         try {
             StrategyPriceCalculator priceCalculator =

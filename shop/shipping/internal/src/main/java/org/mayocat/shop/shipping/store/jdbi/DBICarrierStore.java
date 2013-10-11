@@ -1,6 +1,7 @@
 package org.mayocat.shop.shipping.store.jdbi;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -77,7 +78,7 @@ public class DBICarrierStore implements CarrierStore, Initializable
                 carrierDAO.addRule(carrier.getId(), rule);
             }
         }
-        carrierDAO.removeRules(carrier.getId(), Collections2.transform(carrier.getRules(),
+        Collection<BigDecimal> excluded = Collections2.transform(carrier.getRules(),
                 new Function<CarrierRule, BigDecimal>()
                 {
                     @Override
@@ -86,7 +87,10 @@ public class DBICarrierStore implements CarrierStore, Initializable
                         return rule.getUpToValue();
                     }
                 }
-        ));
+        );
+        if (excluded.size() > 0) {
+            carrierDAO.removeRules(carrier.getId(), excluded);
+        }
         carrierDAO.commit();
     }
 

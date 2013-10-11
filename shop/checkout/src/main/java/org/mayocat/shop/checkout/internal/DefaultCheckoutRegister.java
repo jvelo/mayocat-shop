@@ -17,6 +17,7 @@ import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.AddressStore;
 import org.mayocat.shop.billing.store.CustomerStore;
 import org.mayocat.shop.billing.store.OrderStore;
+import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.checkout.CheckoutException;
@@ -75,6 +76,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     @Inject
     private ShippingService shippingService;
 
+    @Inject
+    private CartAccessor cartAccessor;
+
     @Override
     public CheckoutResponse checkout(final Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
             Address billingAddress) throws CheckoutException
@@ -130,13 +134,13 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             }
             order.setNumberOfItems(numberOfItems);
             order.setItemsTotal(cart.getItemsTotal());
-            data.put("items", orderItems);
+            data.put(Order.ORDER_DATA_ITEMS, orderItems);
 
             // Shipping
             if (cart.getSelectedShippingOption() != null) {
                 final Carrier carrier = shippingService.getCarrier(cart.getSelectedShippingOption().getCarrierId());
                 order.setShipping(cart.getSelectedShippingOption().getPrice());
-                data.put("shipping", new HashMap<String, Object>()
+                data.put(Order.ORDER_DATA_SHIPPING, new HashMap<String, Object>()
                 {
                     {
                         put("carrierId", carrier.getId());
@@ -200,6 +204,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 }
 
                 cart.empty();
+                cartAccessor.setCart(cart);
 
                 if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);

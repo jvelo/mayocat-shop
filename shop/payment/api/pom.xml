@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.xwiki.commons</groupId>
             <artifactId>xwiki-commons-component-api</artifactId>
-            <version>4.4.1</version>
+            <version>${xwiki.version}</version>
         </dependency>
     </dependencies>
 </project>
