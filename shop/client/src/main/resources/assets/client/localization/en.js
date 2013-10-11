@@ -351,7 +351,7 @@
 
                 defaultCurrency: "Default currency",
                 otherCurrencies: "Other currencies",
-                categoriesManagement: "Category management",
+                collectionsManagement: "Collections management",
                 stockManagement: "Stock management",
                 weightManagement: "Weight management (keep this checked if you want to calculate shipping costs by weight)",
                 weightUnit: "Weight unit",

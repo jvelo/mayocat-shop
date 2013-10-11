@@ -146,7 +146,7 @@ angular.module('article', ['ngResource'])
                 }, function () {
                     $scope.modalInstance.close();
                     $rootScope.$broadcast("news:articles:refreshList");
-                    $location.url("/contents");
+                    $location.url("/news");
                 });
             };
 
