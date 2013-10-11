@@ -20,16 +20,20 @@
             <div class="wizard">
                 <ul class="steps">
                     <li ng-class="{'active': order.status == 'WAITING_FOR_PAYMENT'}">
-                        <span class="badge badge-info">1</span>{{'order.status.waitingForPayment' | translate}}<span class="chevron"></span>
+                        <span ng-class="{'badge-info': order.status == 'WAITING_FOR_PAYMENT'}" class="badge">1</span>
+                        {{'order.status.waitingForPayment' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'PAID'}">
-                        <span class="badge">2</span>{{'order.status.paid' | translate}}<span class="chevron"></span>
+                        <span ng-class="{'badge-info': order.status == 'PAID'}" class="badge">2</span>
+                        {{'order.status.paid' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'PREPARED'}">
-                        <span class="badge">3</span>{{'order.status.prepared' | translate}}<span class="chevron"></span>
+                        <span ng-class="{'badge-info': order.status == 'PREPARED'}" class="badge">3</span>
+                        {{'order.status.prepared' | translate}}<span class="chevron"></span>
                     </li>
                     <li ng-class="{'active': order.status == 'SHIPPED'}">
-                        <span class="badge">4</span>{{'order.status.shipped' | translate}}<span class="chevron"></span>
+                        <span ng-class="{'badge-info': order.status == 'SHIPPED'}" class="badge">4</span>
+                        {{'order.status.shipped' | translate}}<span class="chevron"></span>
                     </li>
                 </ul>
                 <div class="actions">
