@@ -227,8 +227,8 @@ list-picker select {
 .locales-wrapper:not(.textarea) div[ng-transclude] {
   display: inline-block;
   width: 90%; // Guesswork fallback when there is no calc
-  width: -webkit-calc(~"100% - 46px");
-  width: calc(~"100% - 46px");
+  width: -webkit-calc(~"100% - 54px");
+  width: calc(~"100% - 54px");
 }
 
 .locales-wrapper.textarea .locales-switch {
@@ -243,26 +243,27 @@ list-picker select {
     box-shadow: none !important;
   }
 
-  .dropdown-menu {
-    min-width: 37px;
-    width: 37px;
+  .btn, .dropdown-menu {
+    background: #eee !important;
+  }
 
+  .dropdown-menu {
     top: -webkit-calc(~"100% - 2px");
     top: calc(~"100% - 2px");
-    padding-top: 10px;
+    padding: 10px 0 0 0;
+    min-width: 37px;
     width: 100% !important;
-
-    background: #eee;
     border-top: none;
 
     -webkit-border-radius: 0 0 6px 6px;
     border-radius: 0 0 6px 6px;
     -webkit-box-shadow: none;
     box-shadow: none;
+    overflow: hidden;
 
     li {
       padding: 0 0 4px 9px;
-      text-align: left !important;
+      text-align: left;
       cursor: pointer;
 
       &:hover {
@@ -270,10 +271,6 @@ list-picker select {
       }
     }
   }
-}
-
-.locales-wrapper .dropdown-menu li {
-  text-align: center;
 }
 
 /* Entities localization as input add-ons */
@@ -298,7 +295,6 @@ list-picker select {
 
     .btn-group, .open, .btn {
       border: none;
-      background: none !important;
     }
 
     .btn-group {
@@ -353,6 +349,36 @@ list-picker select {
   }
 }
 
+/* Entities localization as textarea add-ons */
+
+.locales-wrapper.textarea:not([ck-editor]) {
+  textarea {
+    -webkit-border-radius: 5px 0 5px 5px;
+    border-radius: 5px 0 5px 5px;
+  }
+
+  .btn-group {
+    margin-top: -8px;
+
+    .btn {
+      border-color: #b0b0b0;
+      border-bottom: none;
+
+      -webkit-border-radius: 5px 5px 0 0;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .dropdown-menu {
+      left: 0px;
+      padding-top: 1px;
+
+      li {
+        padding: 2px 0 3px 12px;
+      }
+    }
+  }
+}
+
 /* Entities localization for ckeditor */
 
 .locales-wrapper[ck-editor] .btn-group {
@@ -368,7 +394,6 @@ list-picker select {
     position: relative;
     padding-top: 3px;
     height: 28px;
-    background: #eee;
 
     -webkit-border-radius: 3px !important;
     border-radius: 3px !important;
