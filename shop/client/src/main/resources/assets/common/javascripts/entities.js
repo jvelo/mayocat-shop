@@ -312,8 +312,8 @@
                 template:'' +
                     '<div class="locales-wrapper input-append"><div ng-transclude></div>' +
                     '<span class="locales-switch add-on">' +
-                    '<div class="btn-group"><a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">' +
-                    '<img src="/common/images/flags/{{selectedLocale}}.png"/><span class="caret"></span></a>' +
+                    '<div class="btn-group"><a class="btn dropdown-toggle" data-toggle="dropdown">' +
+                    '<img src="/common/images/flags/{{selectedLocale}}.png"/> <span class="caret"></span></a>' +
                     '<ul class="dropdown-menu">' +
                     '<li ng-repeat="locale in locales" ng-click="select(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>' +
                     '</ul>' +
