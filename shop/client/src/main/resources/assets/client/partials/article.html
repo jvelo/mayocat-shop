@@ -34,9 +34,7 @@
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li ng-click="editThumbnails(image)"
-                                            data-toggle="modal"
-                                            href="#editThumbnails">
+                                        <li ng-click="editThumbnails(image)">
                                             {{'entity.action.editThumbnails' | translate}}
                                         </li>
                                         <li ng-click="image.editMeta = true">
@@ -69,7 +67,6 @@
                         </div>
                     </li>
                 </ul>
-                <div class="modal hide fade" ng-include="'/common/partials/editThumbnails.html'" id="editThumbnails"></div>
                 <div class="alert" ng-show="article.images.length <= 0">
                     <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
                 </div>
@@ -143,26 +140,6 @@
             <small class="clickme" ng-click="confirmDeletion()">
                 {{'content.action.deleteArticle' | translate}}
             </small>
-        </div>
-        <div class="modal hide fade"
-             modal-trigger="article:confirmDelete"
-             modal-dismiss="article:dismissConfirmDelete"
-             id="confirmDeleteArticleModal">
-            <div class="modal-header">
-                <button type="button" ng-href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
-            </div>
-            <div class="modal-body">
-                {{'content.alert.confirmArticleDeletion' | translate}}
-            </div>
-            <div class="modal-footer">
-                <a class="btn" data-dismiss="modal" href="#" aria-hidden="true">
-                    {{'entity.action.cancel' | translate}}
-                </a>
-                <a class="btn btn-danger" ng-click="deleteArticle()" aria-hidden="true">
-                    {{'content.action.deleteArticle' | translate}}
-                </a>
-            </div>
         </div>
 
         <div class="block" ng-show="!isNew()">

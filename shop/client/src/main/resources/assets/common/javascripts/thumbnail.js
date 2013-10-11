@@ -3,6 +3,18 @@ angular.module('mayocat.thumbnail', ['ngResource'])
     .controller('ThumbnailsEditorController', ['$scope', '$resource', 'configurationService',
         function ($scope, $resource, configurationService) {
 
+            function initializeEdition() {
+                var themeSource = $scope.configuration[$scope.entityType].thumbnails.theme,
+                    currentSize;
+                for (key in themeSource) {
+                    themeSource[key].id = key;
+                    if (themeSource.hasOwnProperty(key) && typeof currentSize === "undefined") {
+                        currentSize = themeSource[key];
+                    }
+                }
+                $scope.currentSize = currentSize;
+            }
+
             function reduce(numerator, denominator) {
                 if (isNaN(numerator) || isNaN(denominator)) return NaN;
                 var gcd = function gcd(a, b) {
@@ -113,21 +125,6 @@ angular.module('mayocat.thumbnail', ['ngResource'])
                 };
             });
 
-            $scope.$on('thumbnails:edit', function (event, entityType, image) {
-                $scope.image = image;
-                $scope.entityType = entityType;
-
-                var themeSource = $scope.configuration[$scope.entityType].thumbnails.theme,
-                    currentSize;
-                for (key in themeSource) {
-                    themeSource[key].id = key;
-                    if (themeSource.hasOwnProperty(key) && typeof currentSize === "undefined") {
-                        currentSize = themeSource[key];
-                    }
-                }
-                $scope.currentSize = currentSize;
-            });
-
             $scope.addOrUpdateThumbnail = function (data) {
                 for (var i = 0; i < $scope.image.thumbnails.length; i++) {
                     if ($scope.image.thumbnails[i].source === data.source
@@ -164,6 +161,8 @@ angular.module('mayocat.thumbnail', ['ngResource'])
             configurationService.get(function (data) {
                 $scope.configuration = data.entities;
                 $scope.currentSource = "theme";
+
+                initializeEdition();
             });
 
         }]);

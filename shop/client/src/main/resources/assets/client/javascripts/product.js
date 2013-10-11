@@ -9,6 +9,7 @@ angular.module('product', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'catalogService',
         'configurationService',
         'entityMixins',
@@ -19,6 +20,7 @@ angular.module('product', ['ngResource'])
                   $resource,
                   $http,
                   $location,
+                  $modal,
                   catalogService,
                   configurationService,
                   entityMixins) {
@@ -48,7 +50,7 @@ angular.module('product', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })
@@ -148,14 +150,15 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('product:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
+                $scope.modalInstance.result.then($scope.deleteProduct);
             }
 
             $scope.deleteProduct = function () {
                 $scope.ProductResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('product:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });

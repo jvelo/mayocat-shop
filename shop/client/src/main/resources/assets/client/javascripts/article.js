@@ -9,11 +9,12 @@ angular.module('article', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'timeService',
         'configurationService',
         'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, timeService, configurationService, entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, timeService, configurationService, entityMixins) {
 
             entityMixins.extend(["base", "image"], $scope, "article", {
                 "base" : {
@@ -62,7 +63,7 @@ angular.module('article', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })
@@ -135,14 +136,15 @@ angular.module('article', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('article:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionArticle.html' });
+                $scope.modalInstance.result.then($scope.deleteArticle);
             };
 
             $scope.deleteArticle = function () {
                 $scope.ArticleResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('article:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast("news:articles:refreshList");
                     $location.url("/contents");
                 });

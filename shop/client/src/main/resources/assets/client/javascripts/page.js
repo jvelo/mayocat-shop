@@ -10,9 +10,10 @@
         '$resource',
         '$http',
         '$location',
+        '$modal',
         'entityMixins',
 
-        function ($scope, $rootScope, $resource, $http, $location, entityMixins) {
+        function ($scope, $rootScope, $resource, $http, $location, $modal, entityMixins) {
 
             entityMixins.extendAll($scope, "page");
 
@@ -39,7 +40,7 @@
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })
@@ -82,14 +83,15 @@
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('page:confirmDelete:' + $scope.page.slug);
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionPage.html' });
+                $scope.modalInstance.result.then($scope.deletePage);
             }
 
             $scope.deletePage = function () {
                 $scope.PageResource.delete({
                     "slug":$scope.slug
                 }, function () {
-                    $rootScope.$broadcast('page:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('pages:refreshList');
                     $location.url("/contents");
                 });

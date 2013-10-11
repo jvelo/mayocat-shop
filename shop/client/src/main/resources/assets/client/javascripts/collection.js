@@ -1,8 +1,8 @@
 'use strict'
 
 angular.module('collection', ['ngResource'])
-    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http',
-        function ($scope, $rootScope, $routeParams, $resource, $location, $http) {
+    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http', '$modal',
+        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal) {
 
             $scope.slug = $routeParams.collection;
             $scope.CollectionResource = $resource("/api/collections/:slug");
@@ -39,7 +39,7 @@ angular.module('collection', ['ngResource'])
                                 }
                                 else {
                                     // Generic error
-                                    $rootScope.$broadcast('event:serverError');
+                                    $modal.open({ templateUrl: 'serverError.html' });
                                 }
                             }
                         })
@@ -57,14 +57,15 @@ angular.module('collection', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $rootScope.$broadcast('collection:confirmDelete');
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionCollection.html' });
+                $scope.modalInstance.result.then($scope.deleteCollection);
             }
 
-            $scope.deleteProduct = function () {
+            $scope.deleteCollection = function () {
                 $scope.CollectionResource.delete({
                     "slug": $scope.slug
                 }, function () {
-                    $rootScope.$broadcast('collection:dismissConfirmDelete');
+                    $scope.modalInstance.close();
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });

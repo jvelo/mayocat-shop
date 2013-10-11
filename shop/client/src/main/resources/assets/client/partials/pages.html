@@ -20,3 +20,22 @@
     </scroll>
 
 </div>
+
+<!-- Deletion modal for pages -->
+<script type="text/ng-template" id="confirmDeletionPage.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'content.alert.confirmPageDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'content.action.deletePage' | translate}}
+        </button>
+    </div>
+</script>

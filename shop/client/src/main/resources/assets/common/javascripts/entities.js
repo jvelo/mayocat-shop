@@ -196,12 +196,21 @@
             }
         }])
 
-        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', function (imageService, $http, $rootScope) {
+        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', '$modal', function (imageService, $http, $rootScope, $modal) {
             return function (entityType) {
                 var mixin = {};
 
                 mixin.editThumbnails = function (image) {
-                    $rootScope.$broadcast('thumbnails:edit', entityType, image);
+                    var scope = $rootScope.$new(true);
+                    scope.entityType = entityType;
+                    scope.image = image;
+
+                    $modal.open({
+                        templateUrl: '/common/partials/editThumbnails.html',
+                        windowClass: 'editThumbnails',
+                        controller: 'ThumbnailsEditorController',
+                        scope: scope
+                    });
                 }
 
                 mixin.updateImageMeta = function (image) {
@@ -216,12 +225,14 @@
                             if(status < 400) {
                                 image.editMeta = false;
                             } else {
-                                $rootScope.$broadcast('event:serverError');
+                                // Generic error
+                                $modal.open({ templateUrl: 'serverError.html' });
                             }
                         })
                         .error(function() {
                             image.isSaving = false;
-                            $rootScope.$broadcast('event:serverError');
+                            // Generic error
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
 

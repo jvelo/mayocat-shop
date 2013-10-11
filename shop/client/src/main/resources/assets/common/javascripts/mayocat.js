@@ -123,36 +123,6 @@ mayocat.directive('listPicker', ['$parse', function($parse){
 }]);
 
 /**
- * A directive for bootstrap modals that will trigger the modal to show when a particular event is broadcast.
- */
-mayocat.directive('modalTrigger', ['$rootScope', function ($rootScope) {
-    return {
-        restrict: "A",
-        link: function ($scope, element, attrs) {
-            var event = attrs.modalTrigger;
-            $rootScope.$on(event, function () {
-                $(element).modal("show");
-            });
-        }
-    }
-}]);
-
-/**
- * A directive for bootstrap modals that will trigger the modal to be dismissed when a particular event is broadcast.
- */
-mayocat.directive('modalDismiss', ['$rootScope', function ($rootScope) {
-    return {
-        restrict: "A",
-        link: function ($scope, element, attrs) {
-            var event = attrs.modalDismiss;
-            $rootScope.$on(event, function () {
-                $(element).modal("hide");
-            });
-        }
-    }
-}]);
-
-/**
  * Image upload directive.
  */
 mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
