@@ -46,7 +46,7 @@ public class CartContextSupplier implements FrontContextSupplier
     public void contributeRootContext(@FrontContext Map data)
     {
         CartContextBuilder builder = new CartContextBuilder(attachmentStore.get(), thumbnailStore.get(),
-                shippingService, execution.getContext().getTheme());
+                shippingService, execution.getContext().getTheme().getDefinition());
 
         // TODO we need to find a way to have Jersey @Context injection in context suppliers...
         // so that we could here for example get the request locale via @Context Locale locale

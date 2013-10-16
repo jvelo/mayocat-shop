@@ -20,7 +20,7 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -35,7 +35,7 @@ public class ProductContextBuilder implements ContextConstants
 
     private GeneralSettings generalSettings;
 
-    private Theme theme;
+    private ThemeDefinition theme;
 
     private ImageContextBuilder imageContextBuilder;
 
@@ -46,7 +46,7 @@ public class ProductContextBuilder implements ContextConstants
     private EntityURLFactory urlFactory;
 
     public ProductContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
+            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
 

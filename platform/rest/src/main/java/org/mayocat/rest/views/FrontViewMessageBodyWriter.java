@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.mayocat.theme.ThemeManager;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
@@ -40,7 +40,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     private Provider<TemplateEngine> engine;
 
     @Inject
-    private ThemeManager themeManager;
+    private ThemeFileResolver themeFileResolver;
 
     @Inject
     private Logger logger;
@@ -65,14 +65,14 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     {
         try {
 
-            Template template = themeManager.getIndexTemplate(frontView.getBreakpoint());
+            Template template = themeFileResolver.getIndexTemplate(frontView.getBreakpoint());
             Template layout = null;
 
             if (frontView.getModel().isPresent()) {
-                Optional<String> path = themeManager.resolveModelPath(frontView.getModel().get());
+                Optional<String> path = themeFileResolver.resolveModelPath(frontView.getModel().get());
                 if (path.isPresent()) {
                     try {
-                        layout = themeManager.getTemplate(path.get(), frontView.getBreakpoint());
+                        layout = themeFileResolver.getTemplate(path.get(), frontView.getBreakpoint());
                     } catch (TemplateNotFoundException e) {
                         // Keep going
                     }
@@ -81,7 +81,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             }
 
             if (layout == null) {
-                layout = themeManager.getTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
+                layout = themeFileResolver.getTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
             }
 
             frontView.getContext().put("template_content", layout.getId());
@@ -117,7 +117,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             Map<String, Object> context = frontView.getContext();
             String jsonContext = mapper.writeValueAsString(context);
 
-            Template error = themeManager.getTemplate("error.html", frontView.getBreakpoint());
+            Template error = themeFileResolver.getTemplate("error.html", frontView.getBreakpoint());
             Map<String, Object> errorContext = Maps.newHashMap();
             errorContext.put("error", e.getMessage());
             errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));

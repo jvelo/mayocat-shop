@@ -9,6 +9,7 @@ import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.session.Session;
 import org.mayocat.session.cookies.CookieSession;
 import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 
 public class Context
 {

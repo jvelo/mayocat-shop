@@ -6,16 +6,13 @@ import java.util.Map;
 
 import org.mayocat.addons.front.builder.AddonContextBuilder;
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.cms.pages.front.resource.PageResource;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.image.model.Image;
-import org.mayocat.addons.front.builder.AddonContextBuilderHelper;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -24,7 +21,7 @@ import com.google.common.collect.Maps;
  */
 public class PageContextBuilder
 {
-    private Theme theme;
+    private ThemeDefinition theme;
 
     private ImageContextBuilder imageContextBuilder;
 
@@ -32,7 +29,7 @@ public class PageContextBuilder
 
     private EntityURLFactory urlFactory;
 
-    public PageContextBuilder(EntityURLFactory urlFactory, Theme theme)
+    public PageContextBuilder(EntityURLFactory urlFactory, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
         this.theme = theme;

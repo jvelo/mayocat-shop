@@ -1,6 +1,5 @@
 package org.mayocat.shop.catalog.front.resource;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +16,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
-import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
 import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.CollectionContextBuilder;
-import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -37,12 +31,9 @@ import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -91,7 +82,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         context.put(PAGE_TITLE, collection.getTitle());
         context.put(PAGE_DESCRIPTION, collection.getDescription());
 
-        Theme theme = this.execution.getContext().getTheme();
+        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
 
         List<Product> products = catalogService.findProductsForCollection(collection);
 

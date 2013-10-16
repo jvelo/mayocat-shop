@@ -2,22 +2,15 @@ package org.mayocat.shop.catalog.front.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
-import org.mayocat.shop.catalog.CatalogService;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -25,7 +18,7 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -38,7 +31,7 @@ public class CollectionContextBuilder implements ContextConstants
 {
     public static final String PATH = Resource.ROOT_PATH + CollectionEntity.PATH;
 
-    private Theme theme;
+    private ThemeDefinition theme;
 
     private ConfigurationService configurationService;
 
@@ -51,7 +44,7 @@ public class CollectionContextBuilder implements ContextConstants
     private EntityURLFactory urlFactory;
 
     public CollectionContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, Theme theme)
+            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
         this.theme = theme;

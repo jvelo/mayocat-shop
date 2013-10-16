@@ -39,7 +39,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -116,7 +116,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         Map<String, Object> context = getContext(uriInfo);
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
-        Theme theme = this.execution.getContext().getTheme();
+        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
         ProductContextBuilder builder = new ProductContextBuilder(
                 urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
@@ -190,7 +190,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         context.put(ContextConstants.PAGE_TITLE, product.getTitle());
         context.put(ContextConstants.PAGE_DESCRIPTION, product.getDescription());
 
-        Theme theme = this.execution.getContext().getTheme();
+        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
         List<Image> images = new ArrayList<Image>();

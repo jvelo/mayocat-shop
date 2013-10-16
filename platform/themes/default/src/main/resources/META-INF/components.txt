@@ -1,3 +1,4 @@
-org.mayocat.theme.internal.DefaultThemeManager
+org.mayocat.theme.internal.DefaultThemeFileResolver
 org.mayocat.theme.internal.DefaultUserAgentBreakpointDetector
-org.mayocat.theme.internal.DefaultThemeLoader
+org.mayocat.theme.internal.DefaultThemeManager
+org.mayocat.theme.internal.DefaultThemeLocalizationService

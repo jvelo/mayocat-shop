@@ -90,7 +90,8 @@ public class DefaultAddonsRepresentationUnmarshaller implements AddonsRepresenta
 
         if (!option.isPresent() && execution.getContext().getTheme() != null) {
             // 2. Find in theme
-            option = AddonUtils.findAddonDefinition(addonToFind, execution.getContext().getTheme().getAddons());
+            option = AddonUtils
+                    .findAddonDefinition(addonToFind, execution.getContext().getTheme().getDefinition().getAddons());
         }
 
         return option;

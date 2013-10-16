@@ -17,7 +17,7 @@ import org.mayocat.authorization.Authenticator;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.event.EventListener;
 import org.mayocat.multitenancy.TenantResolver;
-import org.mayocat.theme.ThemeLoader;
+import org.mayocat.theme.ThemeManager;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -42,7 +42,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     private ConfigurationService configurationService;
 
     @Inject
-    private ThemeLoader themeLoader;
+    private ThemeManager themeManager;
 
     @Inject
     private Execution execution;
@@ -97,13 +97,9 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         context.setUser(user.orNull());
 
-        // 4. Theme
+        // 4. ThemeDefinition
         if (tenant != null) {
-            try {
-                context.setTheme(themeLoader.load());
-            } catch (IOException e) {
-                logger.warn("Failed to load theme");
-            }
+            context.setTheme(themeManager.getTheme());
         }
     }
 

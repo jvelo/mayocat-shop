@@ -57,8 +57,14 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<Class, Object> getSettings()
     {
+        return this.getSettings(this.execution.getContext().getTenant());
+    }
+
+    @Override
+    public Map<Class, Object> getSettings(Tenant tenant)
+    {
         ObjectMapper mapper = getObjectMapper();
-        Map<String, Object> mergedConfiguration = getSettingsAsJson();
+        Map<String, Object> mergedConfiguration = getSettingsAsJson(tenant);
         Map<Class, Object> configurations = Maps.newHashMap();
         for (String source : exposedSettings.keySet()) {
             Map<String, Object> merged = (Map<String, Object>) mergedConfiguration.get(source);
@@ -77,21 +83,33 @@ public class DefaultConfigurationService implements ConfigurationService
     }
 
     @Override
+    public <T extends ExposedSettings> T getSettings(Class<T> c, Tenant tenant)
+    {
+        return (T) this.getSettings(tenant).get(c);
+    }
+
+    @Override
     public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
         return (T) this.getSettings().get(c);
     }
 
     @Override
-    public Map<String, Object> getSettingsAsJson()
+    public Map<String, Object> getSettingsAsJson(Tenant tenant)
     {
         if (execution.getContext().getTenant() == null) {
             return Collections.emptyMap();
         }
-        Map<String, Object> tenantConfiguration = execution.getContext().getTenant().getConfiguration();
+        Map<String, Object> tenantConfiguration = tenant.getConfiguration();
         Map<String, Object> platformConfiguration = this.getExposedPlatformSettingsAsJson();
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
         return merger.merge();
+    }
+
+    @Override
+    public Map<String, Object> getSettingsAsJson()
+    {
+        return this.getSettingsAsJson(execution.getContext().getTenant());
     }
 
     @Override

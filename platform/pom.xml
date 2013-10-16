@@ -21,6 +21,7 @@
         <module>context</module>
         <module>session</module>
         <module>url</module>
+        <module>files</module>
         <module>search</module>
         <module>accounts</module>
         <module>multitenancy</module>

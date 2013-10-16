@@ -16,6 +16,7 @@ import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.context.CookieSessionContainerFilter;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.event.EventListener;
+import org.mayocat.files.FileWatcherManager;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
 import org.mayocat.lifecycle.Managed;

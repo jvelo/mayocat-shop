@@ -33,7 +33,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -88,7 +88,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
             context.put(ContextConstants.PAGE_TITLE, page.getTitle());
             context.put(ContextConstants.PAGE_DESCRIPTION, page.getContent());
 
-            Theme theme = this.execution.getContext().getTheme();
+            ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
 
             List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
                     .asList("png", "jpg", "jpeg", "gif"));

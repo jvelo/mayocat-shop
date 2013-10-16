@@ -25,9 +25,7 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
-import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.context.Execution;
 import org.mayocat.shop.catalog.model.Product;
@@ -41,7 +39,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.resources.ResourceResource;
 import org.mayocat.store.AttachmentStore;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -99,7 +97,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
     {
         final GeneralSettings config = execution.getContext().getSettings(GeneralSettings.class);
         Tenant tenant = execution.getContext().getTenant();
-        Theme theme = execution.getContext().getTheme();
+        ThemeDefinition theme = execution.getContext().getTheme().getDefinition();
 
         Map site = Maps.newHashMap();
         site.put(SITE_TITLE, tenant.getName());

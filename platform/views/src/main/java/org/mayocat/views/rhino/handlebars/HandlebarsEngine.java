@@ -31,36 +31,47 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     @Inject
     private Logger logger;
 
-    private static final String HANDLEBARS_FILENAME = "handlebars.js";
+    private enum JSFile {
 
-    private static final String HANDLEBARS_SWAG_HELPERS_FILENAME = "swag.min.js";
+        HANDLEBARS("handlebars.js", "javascripts/vendor/"),
+        SWAG_HELPERS("swag.min.js", "javascripts/vendor/"),
+        MAYO_HELPERS("helpers.js", "javascripts/handlebars/");
 
-    private static final String HANDLEBARS_HELPERS_FILENAME = "helpers.js";
+        private String fileName;
+        private String path;
+        JSFile(String fileName, String path)
+        {
+            this.fileName = fileName;
+            this.path = path;
+        }
 
-    private static final String HANDLEBARS_FILEPATH = "javascripts/vendor/" + HANDLEBARS_FILENAME;
+        private String getFileName() {
+            return fileName;
+        }
 
-    private static final String HANDLEBARS_HELPERS_FILEPATH = "javascripts/handlebars/" + HANDLEBARS_HELPERS_FILENAME;
-
-    private static final String HANDLEBARS_SWAG_HELPERS_FILEPATH = "javascripts/vendor/" + HANDLEBARS_SWAG_HELPERS_FILENAME;
+        private String getFilePath() {
+            return path + "/" + getFileName();
+        }
+    }
 
     public HandlebarsEngine() throws IOException
     {
-        super(HANDLEBARS_FILENAME, getResourceReader(HANDLEBARS_FILEPATH));
+        super(JSFile.HANDLEBARS.getFileName(), getResourceReader(JSFile.HANDLEBARS.getFilePath()));
     }
 
     @Override
     protected void initialize()
     {
         try {
-            Reader helpersReader = getResourceReader(HANDLEBARS_HELPERS_FILEPATH);
-            Reader swagHelpersReader = getResourceReader(HANDLEBARS_SWAG_HELPERS_FILEPATH);
+            Reader helpersReader = getResourceReader(JSFile.MAYO_HELPERS.getFilePath());
+            Reader swagHelpersReader = getResourceReader(JSFile.SWAG_HELPERS.getFilePath());
             Context engineContext = Context.enter();
             engineContext.setOptimizationLevel(9);
             try {
                 Scriptable globalScope = getScope();
                 engineContext.evaluateReader(globalScope,
                         helpersReader,
-                        HANDLEBARS_HELPERS_FILENAME,
+                        JSFile.MAYO_HELPERS.getFileName(),
                         0,
                         null);
                 // Export the global object as "window" otherwise swag.js doesn't know in which environment it runs
@@ -68,7 +79,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                 engineContext.evaluateString(globalScope, "var window = this;", "fixswag.js", 0 , null);
                 engineContext.evaluateReader(globalScope,
                         swagHelpersReader,
-                        HANDLEBARS_SWAG_HELPERS_FILENAME,
+                        JSFile.SWAG_HELPERS.getFileName(),
                         0,
                         null);
             } finally {

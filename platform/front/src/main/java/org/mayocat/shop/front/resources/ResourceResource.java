@@ -7,7 +7,7 @@ import com.google.common.io.Resources;
 import com.yammer.dropwizard.assets.ResourceURL;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.ThemeManager;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.ThemeResource;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -34,7 +34,7 @@ public class ResourceResource implements Resource
     public static final String PATH = "/resources/";
 
     @Inject
-    private ThemeManager themeManager;
+    private ThemeFileResolver themeFileResolver;
 
     @Inject
     private Logger logger;
@@ -44,7 +44,7 @@ public class ResourceResource implements Resource
     public Response getResource(@PathParam("path") String resource, @Context Breakpoint breakpoint, @Context
     Request request) throws Exception
     {
-        ThemeResource themeResource = themeManager.getResource(resource, breakpoint);
+        ThemeResource themeResource = themeFileResolver.getResource(resource, breakpoint);
         if (themeResource == null) {
             logger.debug("Resource [{}] with breakpoint [{}] not found", resource, breakpoint);
             throw new WebApplicationException(404);

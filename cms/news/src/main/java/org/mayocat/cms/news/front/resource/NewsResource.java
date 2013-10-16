@@ -42,7 +42,7 @@ import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -181,7 +181,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
     private Map<String, Object> buildArticleContext(Article article)
     {
-        Theme theme = this.execution.getContext().getTheme();
+        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
 
         Map<String, Object> context = Maps.newHashMap();

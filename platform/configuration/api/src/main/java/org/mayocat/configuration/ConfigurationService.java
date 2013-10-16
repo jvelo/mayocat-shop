@@ -2,6 +2,7 @@ package org.mayocat.configuration;
 
 import java.util.Map;
 
+import org.mayocat.accounts.model.Tenant;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -13,11 +14,17 @@ import org.xwiki.component.annotation.Role;
 public interface ConfigurationService
 {
     /**
+     * Same as {@link #getSettings(org.mayocat.accounts.model.Tenant)}, for the context's tenant
+     */
+    Map<Class, Object> getSettings();
+
+    /**
+     * @param tenant the tenant to get the settings for
      * @return the whole map of {@link ExposedSettings}, merged (meaning per-tenant settings value are overriding
      *         platform defaults when they exists/are defined). Keys are individual settings classes, and values their
      *         corresponding (merged) instance.
      */
-    Map<Class, Object> getSettings();
+    Map<Class, Object> getSettings(Tenant tenant);
 
     /**
      * @param c the class of the settings to get.
@@ -25,6 +32,14 @@ public interface ConfigurationService
      * @see #getSettings()
      */
     <T extends ExposedSettings> T getSettings(Class<T> c);
+
+    /**
+     * @param c the class of the settings to get.
+     * @param tenant the tenant to get the settings for
+     * @return the top level settings entry, merged, for this class, if it exists.
+     * @see #getSettings()
+     */
+    <T extends ExposedSettings> T getSettings(Class<T> c, Tenant tenant);
 
     /**
      * Updates the per-tenant settings for the context tenant with the passed configuration.
@@ -42,11 +57,19 @@ public interface ConfigurationService
     void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException;
 
     /**
-     * Same behavior as {@link #getSettings()}, but ready for JSON serialization
+     * @see {@link #getSettingsAsJson()}
      *
-     * @return the settings as a map ready for JSON serialization
+     * Returns settings as JSON for the context tenant
      */
     Map<String, Object> getSettingsAsJson();
+
+    /**
+     * Same behavior as {@link #getSettings()}, but ready for JSON serialization
+     *
+     * @param tenant the tenant to get the settings for
+     * @return the settings as a map ready for JSON serialization
+     */
+    Map<String, Object> getSettingsAsJson(Tenant tenant);
 
     /**
      * Same behavior as {@link #getSettings()}, but ready for JSON serialization

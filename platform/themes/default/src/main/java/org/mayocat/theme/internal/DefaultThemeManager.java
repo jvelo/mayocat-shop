@@ -1,38 +1,49 @@
 package org.mayocat.theme.internal;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Optional;
+import com.google.common.io.Resources;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 
-import javax.inject.Inject;
-
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.context.Execution;
-import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.Model;
-import org.mayocat.theme.TemplateNotFoundException;
-import org.mayocat.theme.Theme;
-import org.mayocat.theme.ThemeManager;
-import org.mayocat.theme.ThemeResource;
-import org.mayocat.theme.UserAgentBreakpointDetector;
-import org.mayocat.views.Template;
+import org.mayocat.theme.*;
 import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
+import javax.inject.Inject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * @version $Id$
  */
+@Component
 public class DefaultThemeManager implements ThemeManager
 {
     private final static String THEMES_FOLDER_NAME = "themes";
 
-    private static final String INDEX_HTML = "index.html";
+    private final static String TENANTS_FOLDER_NAME = "tenants";
+
+    @Inject
+    private ObjectMapperFactory objectMapperFactory;
+
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private ThemeFileResolver themeFileResolver;
+
+    @Inject
+    private ConfigurationService configurationService;
 
     @Inject
     private FilesSettings filesSettings;
@@ -40,200 +51,90 @@ public class DefaultThemeManager implements ThemeManager
     @Inject
     private Execution execution;
 
-    @Inject
-    private ConfigurationService configurationService;
-
-    @Inject
-    private UserAgentBreakpointDetector breakpointDetector;
-
-    @Inject
-    private Logger logger;
-
     @Override
-    public Template getIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
+    public Theme getTheme()
     {
-        try {
-            String content = this.getTemplateContent(INDEX_HTML, breakpoint);
-            Template template = new Template(generateTemplateId(INDEX_HTML, breakpoint), content);
-            return template;
-        } catch (IOException e) {
-            throw new TemplateNotFoundException(e);
-        }
+        return getTheme(this.execution.getContext().getTenant());
     }
 
     @Override
-    public Template getTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
+    public Theme getTheme(Tenant tenant)
     {
         try {
-            String content = this.getTemplateContent(name, breakpoint);
-            Template template = new Template(generateTemplateId(name, breakpoint), content, true);
-            return template;
-        } catch (IOException e) {
-            throw new TemplateNotFoundException(e);
-        }
-    }
+            ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
+            JsonNode node;
 
-    @Override
-    public ThemeResource getResource(String name, Breakpoint breakpoint)
-    {
-        try {
-            ThemeResource result = getResource(getActiveThemeId(), name, breakpoint);
-            if (result == null) {
-                result = getResource(getDefaultThemeId(), name, breakpoint);
+            String themeId = getActiveThemeId(tenant);
+
+            boolean isThemeInTenantDirectory = true;
+            File themeDirectory = getTenantThemeDirectory(tenant.getSlug(), themeId);
+            if (!themeDirectory.exists()) {
+                isThemeInTenantDirectory = false;
+                themeDirectory = getGlobalThemeDirectory(themeId);
+
+                if (!themeDirectory.exists()) {
+                    Optional<String> path = getClasspathThemeYmlPath(themeId);
+                    if (path.isPresent()) {
+                        node = mapper.readTree(Resources.getResource(path.get()));
+                        ThemeDefinition definition =
+                                mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
+
+                        Theme theme = new Theme(Paths.get(path.get()), definition, null, Theme.Type.FILE_SYSTEM);
+                        return theme;
+                    } else {
+                        return null;
+                    }
+                }
             }
-            return result;
+
+            node = mapper.readTree(new File(themeDirectory.getPath() + "/theme.yml"));
+            ThemeDefinition definition = mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
+
+            Theme theme = new Theme(themeDirectory.toPath(), definition, null, Theme.Type.FILE_SYSTEM);
+            if (isThemeInTenantDirectory) {
+                // The theme lives in the tenant directory
+                theme.setTenantOwnTheme(true);
+            }
+
+            return theme;
         } catch (IOException e) {
-            this.logger.warn("I/O Exception while resolving resource [{}]", name, e);
+            logger.warn("Failed to load a theme from configuration ; using default theme");
             return null;
         }
     }
 
-    @Override
-    public Optional<String> resolveModelPath(String id)
+    private File getTenantThemeDirectory(String tenantSlug, String themeId)
     {
-        Map<String, Model> models = getTheme().getModels();
-        if (models.containsKey(id)) {
-            return Optional.fromNullable(models.get(id).getFile());
-        }
-        return Optional.absent();
+        String tenantThemePath = filesSettings.getPermanentDirectory() + "/" + TENANTS_FOLDER_NAME + "/" + tenantSlug
+                + "/" + THEMES_FOLDER_NAME + "/" + themeId + "/";
+
+        File file = new File(tenantThemePath);
+        return file;
     }
 
-    private String generateTemplateId(String layoutName, Breakpoint breakpoint)
+    private File getGlobalThemeDirectory(String themeId)
     {
-        String themeName = execution.getContext().getTheme().getName();
-        String templateId =
-                themeName.length() + themeName + "_" + breakpoint.toString().length() + breakpoint.toString()
-                        + "_" + layoutName.length() + layoutName;
-        return "" + templateId.hashCode();
+        String themePath =
+                filesSettings.getPermanentDirectory() + "/" + THEMES_FOLDER_NAME + "/" + themeId + "/";
+
+        File file = new File(themePath);
+        return file;
     }
 
-    private String getTemplateContent(String name, Breakpoint breakpoint) throws TemplateNotFoundException, IOException
+    private Optional<String> getClasspathThemeYmlPath(String themeId)
     {
-        String result = getTemplateContent(getActiveThemeId(), name, breakpoint);
-        if (result == null) {
-            result = getTemplateContent(getDefaultThemeId(), name, breakpoint);
-        }
-        if (result == null) {
-            throw new TemplateNotFoundException();
-        }
-        return result;
-    }
-
-    private ThemeResource getResource(String theme, String name, Breakpoint breakpoint) throws IOException
-    {
-        File file;
-        String path;
-
-        // 1. Tenant themes folder
-        String tenantThemePath =
-                filesSettings.getPermanentDirectory() + "/tenants/" + getTenantSlug() + "/" + THEMES_FOLDER_NAME + "/" +
-                        theme + "/";
-
-        // 1.1 With breakpoint
-        path = tenantThemePath + breakpoint.getFolder() + "/" + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
-        }
-
-        // 1.2 Fallback (without breakpoint)
-        path = tenantThemePath + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
-        }
-
-        // 2. Global
-        String globalThemePath = filesSettings.getPermanentDirectory() + "/" + THEMES_FOLDER_NAME + "/" +
-                theme + "/";
-
-        // 2.1 With breakpoint
-        path = globalThemePath + breakpoint.getFolder() + "/" + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
-        }
-
-        // 2.2 Fallback (without breakpoint)
-        path = globalThemePath + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
-        }
-
-        // 3 Classpath
-        String url = THEMES_FOLDER_NAME + "/" + theme + "/";
-
-        // 3.1 With breakpoint
+        String themePath = THEMES_FOLDER_NAME + "/" + themeId + "/";
         try {
-            path = url + breakpoint.getFolder() + "/" + name;
-            Resources.getResource(path);
-            return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
+            Resources.getResource(themePath);
+            return Optional.of(themePath);
         } catch (IllegalArgumentException e) {
-            // keep going...
-        }
-
-        // 3.2 Fallback (without breakpoint)
-        try {
-            path = url + name;
-            Resources.getResource(path);
-            return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
-        } catch (IllegalArgumentException e) {
-            // keep going...
-        }
-
-        return null;
-    }
-
-    /**
-     * Tries to get template content for a certain theme and breakpoint. Tries in order : - tenant theme folder in
-     * persistent directory (example : data/tenants/thetenant/themes/thetheme/[breakpoint/]filename - global theme
-     * folder in persistent directory (example : data/themes/thetheme/[breakpoint/]filename) - classpath (example uri :
-     * /themes/thetheme/[breakpoint/]filename) For each step, checks the breakpoint (if set) and fallback on the
-     * no-breakpoint file
-     *
-     * @param theme the theme for which to try and get the template content
-     * @param name the name of the template to get
-     * @param breakpoint the breakpoint for which to get the template content
-     * @return the content of the template, or null if not found
-     * @throws IOException when there is an IO exception getting the content
-     */
-    private String getTemplateContent(String theme, String name, Breakpoint breakpoint) throws IOException
-    {
-        ThemeResource resource = this.getResource(theme, name, breakpoint);
-        if (resource == null) {
-            return null;
-        }
-
-        switch (resource.getType()) {
-            default:
-            case FILE:
-                return Files.toString(new File(resource.getPath()), Charsets.UTF_8);
-            case CLASSPATH_RESOURCE:
-                return Resources.toString(Resources.getResource(resource.getPath()), Charsets.UTF_8);
+            return Optional.absent();
         }
     }
 
-    private Theme getTheme()
+    private String getActiveThemeId(Tenant tenant)
     {
-        return execution.getContext().getTheme();
-    }
-
-    private String getActiveThemeId()
-    {
-        ThemeSettings settings = configurationService.getSettings(ThemeSettings.class);
+        ThemeSettings settings = configurationService.getSettings(ThemeSettings.class, tenant);
         return settings.getActive().getValue();
     }
-
-    private String getDefaultThemeId()
-    {
-        ThemeSettings settings = configurationService.getSettings(ThemeSettings.class);
-        return settings.getActive().getDefaultValue();
-    }
-
-    private String getTenantSlug()
-    {
-        return execution.getContext().getTenant().getSlug();
-    }
 }
-

@@ -39,7 +39,11 @@
     // Java bindings ---------------------------------------------------------------------------------------------------
 
     var ThemeManager = org.mayocat.theme.ThemeManager,
-        Breakpoint = Packages.org.mayocat.theme.Breakpoint;
+        ThemeLocalizationServiceClass = org.mayocat.theme.ThemeLocalizationService,
+        Breakpoint = Packages.org.mayocat.theme.Breakpoint,
+        themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
+        themeManager = getComponent(ThemeManager),
+        execution = getComponent(org.mayocat.context.Execution);
 
     // Handlears helpers -----------------------------------------------------------------------------------------------
 
@@ -53,14 +57,11 @@
     });
 
     Handlebars.registerHelper('templateSource', function (template, options) {
-        var themeManager = getComponent(ThemeManager);
         var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
-
         return String(resolved.getContent());
     });
 
     Handlebars.registerHelper('includeTemplate', function (template, options) {
-        var themeManager = getComponent(ThemeManager);
         var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
 
         var name = resolved.getId(),
@@ -114,6 +115,10 @@
         }
         // surrender when there is no source left
         return undefined;
+    });
+
+    Handlebars.registerHelper('message', function(key, options){
+        return String(themeLocalizationService.getMessage(key, options.hash));
     });
 
 })(this);

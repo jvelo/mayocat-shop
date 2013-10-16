@@ -1,7 +1,6 @@
 package org.mayocat.shop.front.builder;
 
 import java.text.MessageFormat;
-import java.util.Map;
 
 import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
 import org.mayocat.image.model.Image;
@@ -10,20 +9,18 @@ import org.mayocat.image.util.ImageUtils;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.shop.front.util.ContextUtils;
-import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
 public class ImageContextBuilder
 {
-    private Theme theme;
+    private ThemeDefinition theme;
 
-    public ImageContextBuilder(Theme theme)
+    public ImageContextBuilder(ThemeDefinition theme)
     {
         this.theme = theme;
     }

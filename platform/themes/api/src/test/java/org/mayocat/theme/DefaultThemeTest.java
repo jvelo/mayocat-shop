@@ -37,7 +37,7 @@ public class DefaultThemeTest
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
 
         String themeConfig = Resources.toString(Resources.getResource("theme.yml"), Charsets.UTF_8);
-        Theme theme = mapper.readValue(themeConfig, DefaultTheme.class);
+        ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 
         Assert.assertEquals("Default theme", theme.getName());
         Assert.assertTrue(
@@ -71,7 +71,7 @@ public class DefaultThemeTest
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
 
         String themeConfig = Resources.toString(Resources.getResource("empty-theme.yml"), Charsets.UTF_8);
-        Theme theme = mapper.readValue(themeConfig, DefaultTheme.class);
+        ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 
         Assert.assertEquals("Empty theme", theme.getName());
         Assert.assertEquals("", theme.getDescription());
