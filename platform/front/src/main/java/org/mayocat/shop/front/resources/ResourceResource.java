@@ -1,22 +1,10 @@
 package org.mayocat.shop.front.resources;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.util.Date;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Optional;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+import com.yammer.dropwizard.assets.ResourceURL;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeManager;
@@ -24,16 +12,17 @@ import org.mayocat.theme.ThemeResource;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
-import com.yammer.dropwizard.assets.ResourceURL;
-
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-import net.sf.jmimemagic.MagicMatchNotFoundException;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * @version $Id$
@@ -95,7 +84,7 @@ public class ResourceResource implements Resource
         CacheControl cacheControl = new CacheControl();
         cacheControl.setMaxAge(24 * 3600);
         Response.ResponseBuilder builder = request.evaluatePreconditions(new Date(lastModified), eTag);
-        String mimeType = guessExtension(file).or("application/octet-stream");
+        String mimeType = guessMimeType(file).or("application/octet-stream");
 
         if (builder == null) {
             builder = Response.ok(file, mimeType);
@@ -104,32 +93,11 @@ public class ResourceResource implements Resource
         return builder.cacheControl(cacheControl).lastModified(new Date(lastModified)).build();
     }
 
-    private Optional<String> guessExtension(File file)
-    {
+    private Optional<String> guessMimeType(File file) {
         try {
-            MimetypesFileTypeMap mtftp = new MimetypesFileTypeMap();
-            mtftp.addMimeTypes("application/javascript js");
-            mtftp.addMimeTypes("text/css css");
-            mtftp.addMimeTypes("image/svg+xml svg");
-
-            String contentType = mtftp.getContentType(file);
-            if (!contentType.equals("application/octet-stream")) {
-                return Optional.of(contentType);
-            }
-
-            try {
-                MagicMatch match = Magic.getMagicMatch(file, true);
-                String guessedExtension = match.getMimeType();
-                if (!Strings.isNullOrEmpty(guessedExtension)) {
-                    return Optional.of(guessedExtension);
-                } else {
-                    return Optional.absent();
-                }
-            } catch (MagicMatchNotFoundException e) {
-                return Optional.absent();
-            }
-        } catch (Exception e) {
-            this.logger.warn("Error while attempting to guess attachment extension", e);
+            return Optional.fromNullable(java.nio.file.Files.probeContentType(file.toPath()));
+        } catch (IOException e) {
+            this.logger.warn("Error while attempting to resource mime type", e);
             return Optional.absent();
         }
     }
