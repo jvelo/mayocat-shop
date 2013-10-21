@@ -1,5 +1,7 @@
 package org.mayocat.theme;
 
+import java.nio.file.Path;
+
 /**
  * @version $Id$
  */
@@ -13,15 +15,15 @@ public class ThemeResource
 
     private Type type;
 
-    private String path;
+    private Path path;
 
-    public ThemeResource(Type type, String path)
+    public ThemeResource(Type type, Path path)
     {
         this.type = type;
         this.path = path;
     }
 
-    public String getPath()
+    public Path getPath()
     {
         return this.path;
     }

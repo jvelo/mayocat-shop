@@ -38,8 +38,6 @@ public class FileWatcher extends Thread
 
     private ComponentManager componentManager;
 
-    private FilesSettings filesSettings;
-
     private Path permanentDirectory;
 
     private WatchService watchService;
@@ -53,9 +51,9 @@ public class FileWatcher extends Thread
         this.componentManager = Objects.requireNonNull(componentManager);
 
         try {
-            this.filesSettings = componentManager.getInstance(FilesSettings.class);
+            FilesSettings filesSettings = componentManager.getInstance(FilesSettings.class);
             this.observationManager = componentManager.getInstance(ObservationManager.class);
-            this.permanentDirectory = Paths.get(filesSettings.getPermanentDirectory());
+            this.permanentDirectory = filesSettings.getPermanentDirectory();
 
             watchService = FileSystems.getDefault().newWatchService();
         } catch (ComponentLookupException | IOException e) {

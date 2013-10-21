@@ -156,7 +156,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     {
         try {
             final Builder settings = ImmutableSettings.settingsBuilder();
-            settings.put("path.data", filesSettings.getPermanentDirectory());
+            settings.put("path.data", filesSettings.getPermanentDirectory().toString());
             settings.put("client.transport.sniff", true);
             settings.build();
 

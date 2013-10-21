@@ -19,9 +19,13 @@ import org.xwiki.component.annotation.Component;
 
 import javax.inject.Inject;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @version $Id$
@@ -29,6 +33,27 @@ import java.nio.file.Paths;
 @Component
 public class DefaultThemeManager implements ThemeManager
 {
+    /**
+     * The "levels" at which themes can be defined.
+     */
+    private enum Level
+    {
+        /**
+         * The tenant own permanent directory
+         */
+        TENANT_DIRECTORY,
+        /**
+         * The global themes directory
+         */
+        THEME_DIRECTORY,
+        /**
+         * The JVM classpath
+         */
+        CLASSPATH
+    }
+
+    private static final String THEME_YML = "theme.yml";
+
     private final static String THEMES_FOLDER_NAME = "themes";
 
     private final static String TENANTS_FOLDER_NAME = "tenants";
@@ -60,72 +85,95 @@ public class DefaultThemeManager implements ThemeManager
     @Override
     public Theme getTheme(Tenant tenant)
     {
-        try {
-            ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-            JsonNode node;
+        String themeId = getActiveThemeId(tenant);
+        return getTheme(themeId, Optional.of(tenant), Collections.<Level>emptyList());
+    }
 
-            String themeId = getActiveThemeId(tenant);
+    private Theme getTheme(String themeId, Optional<Tenant> tenant, List<Level> ignore)
+    {
+        Level level = Level.TENANT_DIRECTORY;
+        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
+        JsonNode node;
 
-            boolean isThemeInTenantDirectory = true;
-            File themeDirectory = getTenantThemeDirectory(tenant.getSlug(), themeId);
-            if (!themeDirectory.exists()) {
-                isThemeInTenantDirectory = false;
-                themeDirectory = getGlobalThemeDirectory(themeId);
+        Path themeDirectory = null;
 
-                if (!themeDirectory.exists()) {
-                    Optional<String> path = getClasspathThemeYmlPath(themeId);
-                    if (path.isPresent()) {
-                        node = mapper.readTree(Resources.getResource(path.get()));
-                        ThemeDefinition definition =
-                                mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
-
-                        Theme theme = new Theme(Paths.get(path.get()), definition, null, Theme.Type.FILE_SYSTEM);
-                        return theme;
-                    } else {
-                        return null;
-                    }
-                }
-            }
-
-            node = mapper.readTree(new File(themeDirectory.getPath() + "/theme.yml"));
-            ThemeDefinition definition = mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
-
-            Theme theme = new Theme(themeDirectory.toPath(), definition, null, Theme.Type.FILE_SYSTEM);
-            if (isThemeInTenantDirectory) {
-                // The theme lives in the tenant directory
-                theme.setTenantOwnTheme(true);
-            }
-
-            return theme;
-        } catch (IOException e) {
-            logger.warn("Failed to load a theme from configuration ; using default theme");
-            return null;
+        if (tenant.isPresent() && !ignore.contains(Level.TENANT_DIRECTORY)) {
+            themeDirectory = getTenantThemeDirectory(tenant.get().getSlug(), themeId);
         }
-    }
 
-    private File getTenantThemeDirectory(String tenantSlug, String themeId)
-    {
-        String tenantThemePath = filesSettings.getPermanentDirectory() + "/" + TENANTS_FOLDER_NAME + "/" + tenantSlug
-                + "/" + THEMES_FOLDER_NAME + "/" + themeId + "/";
+        if ((themeDirectory == null || !themeDirectory.toFile().exists()) &&
+                !ignore.contains(Level.THEME_DIRECTORY))
+        {
+            level = Level.THEME_DIRECTORY;
+            themeDirectory = getGlobalThemeDirectory(themeId);
+        }
 
-        File file = new File(tenantThemePath);
-        return file;
-    }
+        if (themeDirectory == null || !themeDirectory.toFile().exists()) {
+            Optional<Path> path = getClasspathThemePath(themeId);
+            if (path.isPresent() && !ignore.contains(Level.CLASSPATH)) {
+                try {
+                    node = mapper.readTree(Resources.getResource(path.get().resolve(THEME_YML).toString()));
+                    ThemeDefinition definition =
+                            mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
 
-    private File getGlobalThemeDirectory(String themeId)
-    {
-        String themePath =
-                filesSettings.getPermanentDirectory() + "/" + THEMES_FOLDER_NAME + "/" + themeId + "/";
+                    Theme theme = new Theme(path.get(), definition, null, Theme.Type.CLASSPATH);
+                    return theme;
+                } catch (IOException e) {
+                    logger.warn("Failed to load a theme from configuration : invalid theme.yml definition");
+                    return null;
+                }
+            } else {
+                // Here there is nothing more we can do ; surrender
+                return null;
+            }
+        }
 
-        File file = new File(themePath);
-        return file;
-    }
-
-    private Optional<String> getClasspathThemeYmlPath(String themeId)
-    {
-        String themePath = THEMES_FOLDER_NAME + "/" + themeId + "/";
+        ThemeDefinition definition = null;
+        Theme parent = null;
         try {
-            Resources.getResource(themePath);
+            node = mapper.readTree(themeDirectory.resolve("theme.yml").toFile());
+            definition = mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
+        } catch (IOException e) {
+            // theme.yml file not found or invalid -> theme might have a parent
+            if (tenant.isPresent()) {
+                parent = getTheme(themeId, Optional.<Tenant>absent(), Arrays.asList(level));
+
+                // FIXME
+                // Decide here if we want to always fall-back on the default theme.
+                // It might create an odd theme development experience...
+            }
+        }
+
+        Theme theme = new Theme(themeDirectory, definition, parent, Theme.Type.FILE_SYSTEM);
+        if (!level.equals(Level.THEME_DIRECTORY)) {
+            // The theme lives in the tenant directory
+            theme.setTenantOwnTheme(true);
+        }
+
+        return theme;
+    }
+
+    private Path getTenantThemeDirectory(String tenantSlug, String themeId)
+    {
+        return filesSettings.getPermanentDirectory()
+                .resolve(TENANTS_FOLDER_NAME)
+                .resolve(tenantSlug)
+                .resolve(THEMES_FOLDER_NAME)
+                .resolve(themeId);
+    }
+
+    private Path getGlobalThemeDirectory(String themeId)
+    {
+        return filesSettings.getPermanentDirectory()
+                .resolve(THEMES_FOLDER_NAME)
+                .resolve(themeId);
+    }
+
+    private Optional<Path> getClasspathThemePath(String themeId)
+    {
+        Path themePath = Paths.get(THEMES_FOLDER_NAME).resolve(themeId);
+        try {
+            Resources.getResource(themePath.toString());
             return Optional.of(themePath);
         } catch (IllegalArgumentException e) {
             return Optional.absent();

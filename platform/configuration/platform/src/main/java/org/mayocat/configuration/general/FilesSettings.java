@@ -1,5 +1,8 @@
 package org.mayocat.configuration.general;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -8,17 +11,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class FilesSettings
 {
     @JsonProperty
-    private String permanentDirectory = "data";
+    private Path permanentDirectory = Paths.get("data");
 
     @JsonProperty
-    private String temporaryDirectory = "tmp";
+    private Path temporaryDirectory = Paths.get("tmp");
 
-    public String getPermanentDirectory()
+    public Path getPermanentDirectory()
     {
         return permanentDirectory;
     }
 
-    public String getTemporaryDirectory()
+    public Path getTemporaryDirectory()
     {
         return temporaryDirectory;
     }

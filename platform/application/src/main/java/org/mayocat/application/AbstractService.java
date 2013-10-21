@@ -12,6 +12,7 @@ import org.mayocat.Module;
 import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.configuration.jackson.NIOModule;
 import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.context.CookieSessionContainerFilter;
 import org.mayocat.event.ApplicationStartedEvent;
@@ -79,6 +80,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.objectMapperFactory = bootstrap.getObjectMapperFactory();
 
         this.objectMapperFactory.registerModule(new TimeZoneModule());
+        this.objectMapperFactory.registerModule(new NIOModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
         this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
 

@@ -1,17 +1,22 @@
 package org.mayocat.theme.internal;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.context.Execution;
-import org.mayocat.theme.*;
+import org.mayocat.files.FileManager;
+import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.Model;
+import org.mayocat.theme.TemplateNotFoundException;
+import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeResource;
+import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
 
@@ -25,12 +30,10 @@ import com.google.common.io.Resources;
  */
 public class DefaultThemeFileResolver implements ThemeFileResolver
 {
-    private final static String THEMES_FOLDER_NAME = "themes";
-
     private static final String INDEX_HTML = "index.html";
 
     @Inject
-    private FilesSettings filesSettings;
+    private FileManager fileManager;
 
     @Inject
     private Execution execution;
@@ -72,10 +75,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     public ThemeResource getResource(String name, Breakpoint breakpoint)
     {
         try {
-            ThemeResource result = getResource(getActiveThemeId(), name, breakpoint);
-            if (result == null) {
-                result = getResource(getDefaultThemeId(), name, breakpoint);
-            }
+            ThemeResource result = getResource(getActiveTheme(), name, breakpoint);
             return result;
         } catch (IOException e) {
             this.logger.warn("I/O Exception while resolving resource [{}]", name, e);
@@ -104,79 +104,50 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private String getTemplateContent(String name, Breakpoint breakpoint) throws TemplateNotFoundException, IOException
     {
-        String result = getTemplateContent(getActiveThemeId(), name, breakpoint);
-        if (result == null) {
-            result = getTemplateContent(getDefaultThemeId(), name, breakpoint);
-        }
+        String result = getTemplateContent(getActiveTheme(), name, breakpoint);
         if (result == null) {
             throw new TemplateNotFoundException();
         }
         return result;
     }
 
-    private ThemeResource getResource(String theme, String name, Breakpoint breakpoint) throws IOException
+    private ThemeResource getResource(Theme theme, String name, Breakpoint breakpoint) throws IOException
     {
-        File file;
-        String path;
+        Path path = theme.getPath();
+        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
+            path = path.resolve(breakpoint.getFolder());
+        }
+        path = path.resolve(name);
 
-        // 1. Tenant themes folder
-        String tenantThemePath =
-                filesSettings.getPermanentDirectory() + "/tenants/" + getTenantSlug() + "/" + THEMES_FOLDER_NAME + "/" +
-                        theme + "/";
+        switch (theme.getType()) {
+            case FILE_SYSTEM:
+                if (path.toFile().exists()) {
+                    return new ThemeResource(ThemeResource.Type.FILE, path);
+                }
+                break;
 
-        // 1.1 With breakpoint
-        path = tenantThemePath + breakpoint.getFolder() + "/" + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
+            case CLASSPATH:
+                try {
+                    Resources.getResource(path.toString());
+                    return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
+                } catch (IllegalArgumentException e) {
+                    // Go on
+                }
+                break;
         }
 
-        // 1.2 Fallback (without breakpoint)
-        path = tenantThemePath + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
+        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
+            // Maybe without the breakpoint
+            return getResource(theme, name, Breakpoint.DEFAULT);
         }
 
-        // 2. Global
-        String globalThemePath = filesSettings.getPermanentDirectory() + "/" + THEMES_FOLDER_NAME + "/" +
-                theme + "/";
+        if (theme.getParent() != null) {
 
-        // 2.1 With breakpoint
-        path = globalThemePath + breakpoint.getFolder() + "/" + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
+            // Not found yet and theme has parent : try in parent
+            return getResource(theme.getParent(), name, breakpoint);
         }
 
-        // 2.2 Fallback (without breakpoint)
-        path = globalThemePath + name;
-        file = new File(path);
-        if (file.exists()) {
-            return new ThemeResource(ThemeResource.Type.FILE, path);
-        }
-
-        // 3 Classpath
-        String url = THEMES_FOLDER_NAME + "/" + theme + "/";
-
-        // 3.1 With breakpoint
-        try {
-            path = url + breakpoint.getFolder() + "/" + name;
-            Resources.getResource(path);
-            return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
-        } catch (IllegalArgumentException e) {
-            // keep going...
-        }
-
-        // 3.2 Fallback (without breakpoint)
-        try {
-            path = url + name;
-            Resources.getResource(path);
-            return new ThemeResource(ThemeResource.Type.CLASSPATH_RESOURCE, path);
-        } catch (IllegalArgumentException e) {
-            // keep going...
-        }
-
+        // Not found at all, nevermind
         return null;
     }
 
@@ -193,7 +164,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
      * @return the content of the template, or null if not found
      * @throws IOException when there is an IO exception getting the content
      */
-    private String getTemplateContent(String theme, String name, Breakpoint breakpoint) throws IOException
+    private String getTemplateContent(Theme theme, String name, Breakpoint breakpoint) throws IOException
     {
         ThemeResource resource = this.getResource(theme, name, breakpoint);
         if (resource == null) {
@@ -203,9 +174,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         switch (resource.getType()) {
             default:
             case FILE:
-                return Files.toString(new File(resource.getPath()), Charsets.UTF_8);
+                return Files.toString(resource.getPath().toFile(), Charsets.UTF_8);
             case CLASSPATH_RESOURCE:
-                return Resources.toString(Resources.getResource(resource.getPath()), Charsets.UTF_8);
+                return Resources.toString(Resources.getResource(resource.getPath().toString()), Charsets.UTF_8);
         }
     }
 
@@ -214,21 +185,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return execution.getContext().getTheme().getDefinition();
     }
 
-    private String getActiveThemeId()
+    private Theme getActiveTheme()
     {
-        ThemeSettings settings = configurationService.getSettings(ThemeSettings.class);
-        return settings.getActive().getValue();
-    }
-
-    private String getDefaultThemeId()
-    {
-        ThemeSettings settings = configurationService.getSettings(ThemeSettings.class);
-        return settings.getActive().getDefaultValue();
-    }
-
-    private String getTenantSlug()
-    {
-        return execution.getContext().getTenant().getSlug();
+        return this.execution.getContext().getTheme();
     }
 }
 

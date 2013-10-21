@@ -55,10 +55,10 @@ public class ResourceResource implements Resource
         switch (themeResource.getType()) {
             default:
             case FILE:
-                file = new File(themeResource.getPath());
+                file = themeResource.getPath().toFile();
                 break;
             case CLASSPATH_RESOURCE:
-                URI uri = Resources.getResource(themeResource.getPath()).toURI();
+                URI uri = Resources.getResource(themeResource.getPath().toString()).toURI();
 
                 if (uri.getScheme().equals("jar")) {
                     // Not supported for now
