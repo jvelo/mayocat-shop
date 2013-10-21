@@ -8,7 +8,8 @@ var mayocat = angular.module('mayocat', [
     'mayocat.configuration',
     'mayocat.time',
     'mayocat.entities',
-    'mayocat.locales'
+    'mayocat.locales',
+    'pascalprecht.translate'
 ]);
 
 /**
@@ -736,7 +737,7 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
             $location.url(href);
         };
 
-        $rootScope.uiLocale = localStorage.locale || Mayocat.defaultLocale;
+        $rootScope.uiLocale = localStorage.locale || (typeof Mayocat !== 'undefined' ? Mayocat.defaultLocale : "en");
 
         $scope.changeLocale = function (locale) {
             $rootScope.$broadcast('ui:localeChanged', locale);

@@ -412,7 +412,7 @@
         };
 
         // Default lang
-        moment.lang(localStorage.locale || (Mayocat || {}).defaultLocale || 'en');
+        moment.lang(localStorage.locale || (typeof Mayocat !== 'undefined' ? Mayocat.defaultLocale : "en"));
 
         // Listen to the `ui:localedChanged` event, see `mayocat.js` for the broadcast.
         $rootScope.$on('ui:localeChanged', function (event, locale) {

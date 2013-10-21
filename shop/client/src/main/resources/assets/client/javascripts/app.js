@@ -17,7 +17,6 @@ var MayocatShop = angular.module('MayocatShop', [
                          // TODO rationalize on ui-bootstrap
     'ui.bootstrap',
     'ui.sortable',
-    'pascalprecht.translate'
 ]);
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
