@@ -382,10 +382,54 @@ mayocat.directive('ckEditor', function () {
                 toolbarGroups: [
                     { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
                     { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                    "/",
                     { name: 'links' },
-                    { name: 'styles' }
+                    { name: 'styles' },
+                    { name: 'insert' },
+                    { name: 'tools' }
                 ],
-                removePlugins: 'elementspath',
+                stylesSet: [
+                    {
+                        name: 'Special Container',
+                        element: 'div',
+                        styles: {
+                            padding: '5px 10px',
+                            background: '#eee',
+                            border: '1px solid #ccc'
+                        }
+                    },
+                    { name: 'Small',			element: 'small' },
+                    { name: 'Computer Code',	element: 'code' },
+                    { name: 'Inline Quotation',	element: 'q' },
+                    /* Object Styles */
+                    {
+                        name: 'Styled image (left)',
+                        element: 'img',
+                        attributes: { 'class': 'left' }
+                    },
+                    {
+                        name: 'Styled image (right)',
+                        element: 'img',
+                        attributes: { 'class': 'right' }
+                    },
+                    {
+                        name: 'Compact table',
+                        element: 'table',
+                        attributes: {
+                            cellpadding: '5',
+                            cellspacing: '0',
+                            border: '1',
+                            bordercolor: '#ccc'
+                        },
+                        styles: {
+                            'border-collapse': 'collapse'
+                        }
+                    },
+                    { name: 'Borderless Table',		element: 'table',	styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
+                    { name: 'Square Bulleted List',	element: 'ul',		styles: { 'list-style-type': 'square' } }
+                ],
+                removePlugins: 'elementspath,horizontalrule,image',
+                removeButtons: "Subscript,Superscript",
                 height: '290px',
                 width: '99%'
             };
