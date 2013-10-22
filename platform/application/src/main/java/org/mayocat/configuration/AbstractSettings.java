@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.mayocat.configuration.general.FilesSettings;
+import org.mayocat.mail.SmtpSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
@@ -44,6 +45,11 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private SearchEngineSettings searchEngine = new SearchEngineSettings();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SmtpSettings smtp = new SmtpSettings();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -69,8 +75,13 @@ public class AbstractSettings extends Configuration
         return files;
     }
 
-    public SiteSettings getSite()
+    public SiteSettings getSiteSettings()
     {
         return site;
+    }
+
+    public SmtpSettings getSmtpSettings()
+    {
+        return smtp;
     }
 }

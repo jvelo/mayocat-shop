@@ -22,6 +22,7 @@
         <module>session</module>
         <module>url</module>
         <module>files</module>
+        <module>mail</module>
         <module>search</module>
         <module>accounts</module>
         <module>multitenancy</module>

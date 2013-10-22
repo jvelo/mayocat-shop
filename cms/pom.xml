@@ -30,6 +30,7 @@
   <modules>
     <module>pages</module>
     <module>news</module>
+    <module>contact</module>
   </modules>
 
 </project>
