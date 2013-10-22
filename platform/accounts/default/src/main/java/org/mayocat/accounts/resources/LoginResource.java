@@ -38,7 +38,7 @@ public class LoginResource implements Resource
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response login(@FormParam("username") String username, @FormParam("password") String password,
-        @FormParam("remember") @DefaultValue("false") Boolean remember)
+            @FormParam("remember") @DefaultValue("false") Boolean remember)
     {
         try {
             User user = accountsService.findUserByEmailOrUserName(username);
@@ -60,15 +60,14 @@ public class LoginResource implements Resource
             // See http://curl.haxx.se/rfc/cookie_spec.html
 
             // Create the new cookies to be sent with the response
-            NewCookie newUserCookie =
-                new NewCookie("username", crypter.encrypt(username), "/", null, null, remember ? ageWhenRemember : -1,
-                    false);
-            NewCookie newPassCookie =
-                new NewCookie("password", crypter.encrypt(password), "/", null, null, remember ? ageWhenRemember : -1,
-                    false);
+            NewCookie newUserCookie = new NewCookie("username", crypter.encrypt(username), "/", null, null,
+                    remember ? ageWhenRemember : -1, false);
+            NewCookie newPassCookie = new NewCookie("password", crypter.encrypt(password), "/", null, null,
+                    remember ? ageWhenRemember : -1, false);
+            NewCookie newRememberMe = new NewCookie("remember", remember.toString(), "/", null, null,
+                    remember ? ageWhenRemember : -1, false);
 
-            return Response.ok().cookie(newUserCookie, newPassCookie).build();
-
+            return Response.ok().cookie(newUserCookie, newPassCookie, newRememberMe).build();
         } catch (EncryptionException e) {
             // Don't give more information than this
             return Response.status(Status.INTERNAL_SERVER_ERROR)

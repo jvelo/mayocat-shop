@@ -41,4 +41,6 @@ public interface AccountsService
     List<Role> findRolesForUser(User user);
 
     public User findUserByEmailOrUserName(String userNameOrEmail);
+
+    void updateUser(User user) throws EntityDoesNotExistException, InvalidEntityException;
 }

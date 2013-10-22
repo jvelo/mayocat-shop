@@ -98,9 +98,19 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         return user;
     }
 
-    public void update(User entity) throws InvalidEntityException
+    public void update(User user) throws EntityDoesNotExistException, InvalidEntityException
     {
-        // TODO Auto-generated method stub
+        this.dao.begin();
+
+        User existingUser = this.dao.findBySlug(user.getSlug(), getTenant());
+
+        if (existingUser == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+
+        this.dao.update(user, getTenant());
+        this.dao.commit();
     }
 
     @Override

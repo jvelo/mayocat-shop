@@ -115,6 +115,12 @@ public class DefaultAccountsService implements AccountsService
     }
 
     @Override
+    public void updateUser(User user) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        this.userStore.get().update(user);
+    }
+
+    @Override
     public List<Role> findRolesForUser(User user)
     {
         return this.userStore.get().findRolesForUser(user);
