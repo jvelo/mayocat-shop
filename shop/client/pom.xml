@@ -36,6 +36,10 @@
                         <include>assets/common/vendor/angular/1.1.5/angular-mocks.js</include>
                         <include>assets/common/vendor/moment.min.js</include>
                         <include>assets/client/vendor/angular-strap.min.js</include>
+                        <include>assets/common/vendor/angular/contrib/angular-translate.min.js</include>
+                        <include>assets/common/vendor/angular/contrib/angular-translate-interpolation-messageformat.min.js</include>
+                        <include>assets/common/vendor/messageformat/messageformat.min.js</include>
+                        <include>assets/common/vendor/messageformat/locales.js</include>
                     </preloadSources>
                     <sourceIncludes>
                         <include>assets/common/javascripts/polyfill.js</include>
