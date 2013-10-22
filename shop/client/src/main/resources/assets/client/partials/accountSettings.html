@@ -1,0 +1,38 @@
+<h1 class="big">{{'account.title' | translate}}</h1>
+
+<div>
+    <button class="btn" ng-click="changeMyPassword()">{{'account.passwordChange.title' | translate}}</button>
+</div>
+
+<!-- Deletion modal for articles -->
+<script type="text/ng-template" id="changeMyPassword.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'account.passwordChange.title' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <fieldset>
+                <!-- Current password -->
+                <label>{{'account.passwordChange.currentPassword' | translate}}</label>
+                <input type="password" class="span3" ng-model="currentPassword" />
+
+                <!-- New password -->
+                <label>{{'account.passwordChange.newPassword' | translate}}</label>
+                <input type="password" class="span3" ng-model="newPassword"/>
+
+                <!-- Type it again -->
+                <label>{{'account.passwordChange.newPasswordAgain' | translate}}</label>
+                <input type="password" class="span3" ng-model="newPassword2"/>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'global.actions.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'account.passwordChange.title' | translate}}
+        </button>
+    </div>
+</script>

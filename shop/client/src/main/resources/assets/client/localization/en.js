@@ -8,7 +8,9 @@
          */
         global: {
             actions: {
-                add: "Add"
+                add: "Add",
+                confirm: "Confirm",
+                cancel: "Cancel"
             }
         },
 
@@ -383,6 +385,7 @@
 
             title: {
                 settings: "Settings",
+                myAccount: "My account",
                 sections: "Sections",
 
                 general: "General settings",
@@ -425,7 +428,21 @@
                 carrierValueInferior: "The \"up to\" value is inferior to \"from\" value",
                 carrierValueInvalid: "Invalid format"
             }
+        },
+
+        /**
+         * Translation related to "My account"
+         */
+        account: {
+            title:"My account",
+            passwordChange: {
+                title : "Change my password",
+                currentPassword: "Current password",
+                newPassword: "New password",
+                newPasswordAgain: "Type it again"
+            }
         }
+
     };
 
     // Expose the localization to the Mayocat settings

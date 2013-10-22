@@ -5,7 +5,9 @@
 
         global: {
             actions: {
-                add: "Ajouter"
+                add: "Ajouter",
+                confirm: "Confirmer",
+                cancel: "Annuler"
             }
         },
         entity: {
@@ -339,6 +341,7 @@
 
             title: {
                 settings: "Paramètres",
+                myAccount: "Mon compte",
                 sections: "Sections",
 
                 general: "Paramètres généraux",
@@ -380,6 +383,16 @@
                 deliveryTime: "La période de livraison n'est pas valide",
                 carrierValueInferior: "La dernière valeur est inférieure à la première",
                 carrierValueInvalid: "Format non-conforme"
+            }
+        },
+
+        account: {
+            title:"Mon compte",
+            passwordChange: {
+                title : "Changer mon mot de passe",
+                currentPassword: "Mot de passe actuel",
+                newPassword: "Nouveau mot de passe",
+                newPasswordAgain: "Entrez-le à nouveau"
             }
         }
     };

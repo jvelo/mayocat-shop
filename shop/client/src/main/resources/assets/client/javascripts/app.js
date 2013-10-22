@@ -1,6 +1,7 @@
 var MayocatShop = angular.module('MayocatShop', [
     'mayocat',
     'settings',
+    'account',
     'search',
     'money',
     'shipping',
@@ -37,6 +38,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         when('/settings/tenant', {templateUrl: 'partials/settingsTenant.html', controller: 'SettingsTenantController', title: 'Settings'}).
         when('/settings/catalog', {templateUrl: 'partials/settingsCatalog.html', controller: 'SettingsController', title: 'Settings'}).
         when('/settings/shipping', {templateUrl: 'partials/settingsShipping.html', controller: 'SettingsShippingController', title: 'Settings'}).
+        when('/me', {templateUrl: 'partials/accountSettings.html?1', controller: 'AccountSettings', title: 'My Account'}).
         otherwise({redirectTo: '/'});
 }]);
 
