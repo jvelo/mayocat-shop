@@ -1,16 +1,13 @@
-package org.mayocat.session.cookies;
+package org.mayocat.context.scope.cookie;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.mayocat.session.Session;
+import org.mayocat.context.scope.Session;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.UnmodifiableIterator;
 
 /**
  * @version $Id$

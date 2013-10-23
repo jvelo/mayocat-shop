@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -27,25 +26,17 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.accounts.representations.UserAndTenantRepresentation;
-import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
-import org.mayocat.model.Addon;
-import org.mayocat.model.AddonFieldType;
-import org.mayocat.model.AddonSource;
-import org.mayocat.rest.Resource;
-import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -59,7 +50,7 @@ public class TenantManagerResource implements ManagerResource
     public static final String PATH = MANAGER_API_ROOT_PATH + TenantEntity.PATH;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private AccountsService accountsService;
@@ -159,7 +150,7 @@ public class TenantManagerResource implements ManagerResource
             tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons()));
             tenant.setCreationDate(new Date());
             accountsService.createTenant(tenant);
-            execution.getContext().setTenant(tenant);
+            context.setTenant(tenant);
             accountsService.createInitialUser(userAndTenant.getUser());
             return Response.ok().build();
         } catch (EntityAlreadyExistsException e) {
@@ -173,12 +164,12 @@ public class TenantManagerResource implements ManagerResource
     {
         if (multitenancySettings.getRequiredRoleForTenantCreation() != Role.NONE) {
 
-            User contextUser = execution.getContext().getUser();
+            User contextUser = context.getUser();
             if (contextUser == null || !contextUser.isGlobal()) {
                 return false;
             }
 
-            return gatekeeper.userHasRole(execution.getContext().getUser(),
+            return gatekeeper.userHasRole(context.getUser(),
                     multitenancySettings.getRequiredRoleForTenantCreation());
         } else {
             return true;

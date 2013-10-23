@@ -42,8 +42,7 @@
         ThemeLocalizationServiceClass = org.mayocat.theme.ThemeLocalizationService,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint,
         themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
-        themeManager = getComponent(ThemeManager),
-        execution = getComponent(org.mayocat.context.Execution);
+        themeManager = getComponent(ThemeManager);
 
     // Handlears helpers -----------------------------------------------------------------------------------------------
 

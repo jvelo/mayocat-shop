@@ -1,7 +1,7 @@
 package org.mayocat.context;
 
-import org.mayocat.session.Flash;
-import org.mayocat.session.cookies.CookieFlash;
+import org.mayocat.context.scope.Flash;
+import org.mayocat.context.scope.cookie.CookieFlash;
 
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
@@ -21,22 +21,21 @@ public class FlashScopeCookieContainerFilter extends AbstractScopeCookieContaine
     }
 
     @Override
-    protected boolean scopeExistsAndNotEmpty(Execution execution)
+    protected boolean scopeExistsAndNotEmpty(WebContext context)
     {
-        return execution.getContext() != null && execution.getContext().getFlash() != null &&
-                !execution.getContext().getFlash().isEmpty();
+        return context != null && context.getFlash() != null && !context.getFlash().isEmpty();
     }
 
     @Override
-    protected Flash getScope(Execution execution)
+    protected Flash getScope(WebContext context)
     {
-        return execution.getContext().getFlash();
+        return context.getFlash();
     }
 
     @Override
-    protected void setScope(Execution execution, Flash scope)
+    protected void setScope(WebContext context, Flash scope)
     {
-        execution.getContext().setFlash(scope);
+        context.setFlash(scope);
     }
 
     @Override

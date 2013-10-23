@@ -1,6 +1,5 @@
 package org.mayocat.context;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,6 +14,8 @@ import org.mayocat.accounts.model.User;
 import org.mayocat.application.AbstractService;
 import org.mayocat.authorization.Authenticator;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.context.internal.DefaultWebContext;
+import org.mayocat.context.internal.ThreadLocalWebContext;
 import org.mayocat.event.EventListener;
 import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.theme.ThemeManager;
@@ -45,7 +46,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     private ThemeManager themeManager;
 
     @Inject
-    private Execution execution;
+    @Named("default") // -> This is the ThreadLocalWebContext
+    private WebContext context;
 
     @Inject
     private Logger logger;
@@ -55,7 +57,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         if (isStaticPath(((HttpServletRequest) servletRequestEvent.getServletRequest()).getRequestURI())) {
             return;
         }
-        this.execution.setContext(null);
+
+        ((ThreadLocalWebContext) this.context).setContext(null);
     }
 
     public void requestInitialized(ServletRequestEvent servletRequestEvent)
@@ -69,11 +72,11 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         String host = getHost(servletRequestEvent);
         Tenant tenant = this.tenantResolver.get().resolve(host);
 
-        Context context = new Context(tenant, null);
+        DefaultWebContext context = new DefaultWebContext(tenant, null);
 
-        // Set the context in the execution already, even if we haven't figured out if there is a valid user yet.
+        // Set the context in the context already, even if we haven't figured out if there is a valid user yet.
         // The context tenant is actually needed to find out the context user and to initialize tenant configurations
-        this.execution.setContext(context);
+        ((ThreadLocalWebContext) this.context).setContext(context);
 
         // 2. Configurations
 
@@ -108,7 +111,6 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         return ((HttpServletRequest) event.getServletRequest()).getHeader(headerName);
     }
 
-
     private String getHost(ServletRequestEvent event)
     {
         return ((HttpServletRequest) event.getServletRequest()).getServerName();
@@ -119,7 +121,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         return ((HttpServletRequest) event.getServletRequest()).getRequestURI();
     }
 
-    private boolean isStaticPath(String path) {
+    private boolean isStaticPath(String path)
+    {
         for (String staticPath : AbstractService.getStaticPaths()) {
             if (path.startsWith(staticPath)) {
                 return true;

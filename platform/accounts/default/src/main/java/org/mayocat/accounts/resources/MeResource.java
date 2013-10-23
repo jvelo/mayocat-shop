@@ -13,8 +13,7 @@ import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.accounts.representations.UserAndTenantRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Context;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.xwiki.component.annotation.Component;
 
@@ -34,7 +33,7 @@ public class MeResource implements Resource
     private AccountsService accountsService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private GeneralSettings generalSettings;
@@ -44,11 +43,10 @@ public class MeResource implements Resource
     {
         UserAndTenantRepresentation userAndTenant = new UserAndTenantRepresentation();
 
-        if (this.execution.getContext().getTenant() != null) {
+        if (this.context.getTenant() != null) {
             userAndTenant
-                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.execution.getContext().getTenant()));
+                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.context.getTenant()));
         }
-        Context context = execution.getContext();
         userAndTenant.setUser(context.getUser());
 
         return userAndTenant;

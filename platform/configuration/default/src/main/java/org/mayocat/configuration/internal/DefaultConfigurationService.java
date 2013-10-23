@@ -15,7 +15,7 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;
 import org.mayocat.configuration.jackson.GestaltConfigurationModule;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -44,7 +44,7 @@ public class DefaultConfigurationService implements ConfigurationService
     private ObjectMapperFactory objectMapperFactory;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private Logger logger;
@@ -57,7 +57,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<Class, Object> getSettings()
     {
-        return this.getSettings(this.execution.getContext().getTenant());
+        return this.getSettings(this.context.getTenant());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getSettingsAsJson(Tenant tenant)
     {
-        if (execution.getContext().getTenant() == null) {
+        if (context.getTenant() == null) {
             return Collections.emptyMap();
         }
         Map<String, Object> tenantConfiguration = tenant.getConfiguration();
@@ -109,7 +109,7 @@ public class DefaultConfigurationService implements ConfigurationService
     @Override
     public Map<String, Object> getSettingsAsJson()
     {
-        return this.getSettingsAsJson(execution.getContext().getTenant());
+        return this.getSettingsAsJson(context.getTenant());
     }
 
     @Override
@@ -148,7 +148,7 @@ public class DefaultConfigurationService implements ConfigurationService
             throw new NoSuchModuleException();
         }
 
-        Tenant tenant = this.execution.getContext().getTenant();
+        Tenant tenant = this.context.getTenant();
         TenantConfiguration currentConfiguration = tenant.getConfiguration();
         Map<String, Object> data = Maps.newHashMap(currentConfiguration.getData());
 
@@ -168,17 +168,20 @@ public class DefaultConfigurationService implements ConfigurationService
             if (ExposedSettings.class.isAssignableFrom(value.getClass())) {
                 // If the gestalt source returns an "exposed setting", then we get the version merged with the tenant
                 // configuration.
-                Class<? extends ExposedSettings> configurationClass = (Class<? extends ExposedSettings>) value.getClass();
+                Class<? extends ExposedSettings> configurationClass =
+                        (Class<? extends ExposedSettings>) value.getClass();
                 value = this.getSettings(configurationClass);
             }
             result.put(key, value);
         }
         try {
-            return mapper.readValue(mapper.writeValueAsString(result), new TypeReference<Map<String, Object>>(){});
+            return mapper.readValue(mapper.writeValueAsString(result), new TypeReference<Map<String, Object>>()
+            {
+            });
         } catch (JsonProcessingException e) {
             this.logger.error("Failed to convert gestalt configuration [{}]", e);
             throw new RuntimeException(e);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             this.logger.error("Failed to convert configurations to map", e);
             throw new RuntimeException(e);
         }
@@ -198,7 +201,9 @@ public class DefaultConfigurationService implements ConfigurationService
         }
         try {
             String json = mapper.writeValueAsString(configurationsToSerialize);
-            exposedPlatformSettingsAsJson = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+            exposedPlatformSettingsAsJson = mapper.readValue(json, new TypeReference<Map<String, Object>>()
+            {
+            });
             return exposedPlatformSettingsAsJson;
         } catch (JsonProcessingException e) {
             this.logger.error("Failed to convert configurations to map", e);

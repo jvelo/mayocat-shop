@@ -8,7 +8,7 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.model.AddonSource;
@@ -34,7 +34,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     private EntityMetaRegistry entityMetaRegistry;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public Object get()
@@ -45,7 +45,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             entities.put(meta.getEntityName(), data);
         }
 
-        ThemeDefinition theme = execution.getContext().getTheme().getDefinition();
+        ThemeDefinition theme = context.getTheme().getDefinition();
 
         if (theme != null) {
             addAddons(entities, theme.getAddons(), AddonSource.THEME);

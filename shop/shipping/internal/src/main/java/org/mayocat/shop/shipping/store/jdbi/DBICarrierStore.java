@@ -9,7 +9,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.shipping.Strategy;
 import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.shop.shipping.model.CarrierRule;
@@ -31,7 +31,7 @@ import mayoapp.dao.CarrierDAO;
 public class DBICarrierStore implements CarrierStore, Initializable
 {
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private DBIProvider dbi;
@@ -102,7 +102,7 @@ public class DBICarrierStore implements CarrierStore, Initializable
 
     protected Tenant getTenant()
     {
-        return this.execution.getContext().getTenant();
+        return this.context.getTenant();
     }
 
     @Override

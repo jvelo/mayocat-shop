@@ -14,7 +14,7 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
@@ -42,7 +42,7 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
     private Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     private Node<Binding> bindings;
 
@@ -78,7 +78,7 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
 
         // Manage list of locales and corresponding links
         List<Map<String, String>> locales = Lists.newArrayList();
-        GeneralSettings settings = execution.getContext().getSettings(GeneralSettings.class);
+        GeneralSettings settings = context.getSettings(GeneralSettings.class);
         final Locale mainLocale = settings.getLocales().getMainLocale().getValue();
         locales.add(new HashMap()
         {
@@ -87,7 +87,7 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
                 put("tag", mainLocale.toLanguageTag());
                 put("country", mainLocale.getDisplayCountry(mainLocale));
                 put("language", mainLocale.getDisplayLanguage(mainLocale));
-                put("current", mainLocale.equals(execution.getContext().getLocale()));
+                put("current", mainLocale.equals(context.getLocale()));
             }
         });
         List<Locale> alternativeLocales = Objects.firstNonNull(
@@ -101,7 +101,7 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
                         put("tag", locale.toLanguageTag());
                         put("country", locale.getDisplayCountry(locale));
                         put("language", locale.getDisplayLanguage(locale));
-                        put("current", locale.equals(execution.getContext().getLocale()));
+                        put("current", locale.equals(context.getLocale()));
                     }
                 });
             }

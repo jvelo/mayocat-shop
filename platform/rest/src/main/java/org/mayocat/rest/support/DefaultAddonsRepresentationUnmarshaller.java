@@ -1,17 +1,15 @@
 package org.mayocat.rest.support;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
 import org.mayocat.addons.model.AddonField;
-import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.addons.model.BaseProperties;
 import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.configuration.PlatformSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Addon;
 import org.mayocat.model.AddonFieldType;
 import org.mayocat.model.AddonSource;
@@ -30,7 +28,7 @@ public class DefaultAddonsRepresentationUnmarshaller implements AddonsRepresenta
     private PlatformSettings platformSettings;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public List<Addon> unmarshall(List<AddonRepresentation> addonRepresentations)
@@ -88,10 +86,10 @@ public class DefaultAddonsRepresentationUnmarshaller implements AddonsRepresenta
         // 1. Find in platform
         option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.getAddons());
 
-        if (!option.isPresent() && execution.getContext().getTheme() != null) {
+        if (!option.isPresent() && context.getTheme() != null) {
             // 2. Find in theme
             option = AddonUtils
-                    .findAddonDefinition(addonToFind, execution.getContext().getTheme().getDefinition().getAddons());
+                    .findAddonDefinition(addonToFind, context.getTheme().getDefinition().getAddons());
         }
 
         return option;

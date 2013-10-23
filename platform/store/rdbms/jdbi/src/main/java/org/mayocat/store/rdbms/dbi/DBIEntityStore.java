@@ -3,7 +3,7 @@ package org.mayocat.store.rdbms.dbi;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.store.EntityStore;
 import mayoapp.dao.EntityDAO;
 import org.skife.jdbi.v2.DBI;
@@ -16,7 +16,7 @@ import org.xwiki.observation.ObservationManager;
 public class DBIEntityStore implements EntityStore, Initializable
 {
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private DBIProvider dbi;
@@ -37,7 +37,7 @@ public class DBIEntityStore implements EntityStore, Initializable
 
     protected Tenant getTenant()
     {
-        return this.execution.getContext().getTenant();
+        return this.context.getTenant();
     }
 
     @Override

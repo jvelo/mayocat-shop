@@ -20,15 +20,15 @@ import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.general.GeneralSettings;
+import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
-import org.mayocat.session.Flash;
+import org.mayocat.context.scope.Flash;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.model.Collection;
-import org.mayocat.context.Execution;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.catalog.store.ProductStore;
@@ -64,7 +64,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
     public static final String THEME_PATH = "THEME_PATH";
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private PlatformSettings platformSettings;
@@ -96,9 +96,9 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
     @FrontContextContributor(path = "/")
     public void contributeRootContext(@FrontContext Map data)
     {
-        final GeneralSettings config = execution.getContext().getSettings(GeneralSettings.class);
-        Tenant tenant = execution.getContext().getTenant();
-        ThemeDefinition theme = execution.getContext().getTheme().getDefinition();
+        final GeneralSettings config = context.getSettings(GeneralSettings.class);
+        Tenant tenant = context.getTenant();
+        ThemeDefinition theme = context.getTheme().getDefinition();
 
         Map site = Maps.newHashMap();
         site.put(SITE_TITLE, tenant.getName());
@@ -151,7 +151,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         data.put(COLLECTIONS, collectionsContext);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
-        data.put(PAGE_TITLE, execution.getContext().getTenant().getName());
+        data.put(PAGE_TITLE, context.getTenant().getName());
 
         // FIXME
         // Temporarly put a product list in the context.
@@ -271,7 +271,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
         data.put("pages", pagesContext);
 
-        Flash flash = execution.getContext().getFlash();
+        Flash flash = context.getFlash();
         if (!flash.isEmpty()) {
             Map<String, Object> flashMap = new HashMap();
             for (String attribute : flash.getAttributeNames()) {

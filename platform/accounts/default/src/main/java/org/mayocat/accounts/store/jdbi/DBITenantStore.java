@@ -10,7 +10,8 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
 import mayoapp.dao.TenantDAO;
-import org.mayocat.context.Execution;
+
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Addon;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -30,7 +31,7 @@ public class DBITenantStore implements TenantStore, Initializable
     private static final String TENANT_TABLE_NAME = "tenant";
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private DBIProvider dbi;
@@ -157,7 +158,7 @@ public class DBITenantStore implements TenantStore, Initializable
 
     private Tenant getTenant()
     {
-        return this.execution.getContext().getTenant();
+        return this.context.getTenant();
     }
 
     private String convertConfigurationToJSON(TenantConfiguration configuration) throws JsonProcessingException

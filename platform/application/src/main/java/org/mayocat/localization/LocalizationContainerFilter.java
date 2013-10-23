@@ -8,7 +8,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.mayocat.application.AbstractService;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.util.Utils;
 
 import com.google.common.base.Objects;
@@ -28,14 +28,14 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
             return containerRequest;
         }
 
-        Execution execution = Utils.getComponent(Execution.class);
+        WebContext context = Utils.getComponent(WebContext.class);
 
-        if (execution.getContext().getTenant() == null) {
+        if (context.getTenant() == null) {
             return containerRequest;
         }
 
         boolean localeSet = false;
-        GeneralSettings settings = execution.getContext().getSettings(GeneralSettings.class);
+        GeneralSettings settings = context.getSettings(GeneralSettings.class);
         URI requestURI = containerRequest.getRequestUri();
 
         List<Locale> alternativeLocales = Objects.firstNonNull(
@@ -48,8 +48,8 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
                     builder.replacePath(requestURI.getPath().substring(locale.toString().length() + 1));
                     containerRequest.setUris(containerRequest.getBaseUri(), builder.build());
 
-                    execution.getContext().setLocale(locale);
-                    execution.getContext().setAlternativeLocale(true);
+                    context.setLocale(locale);
+                    context.setAlternativeLocale(true);
                     localeSet = true;
                     break;
                 }
@@ -57,8 +57,8 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
         }
 
         if (!localeSet) {
-            execution.getContext().setLocale(settings.getLocales().getMainLocale().getValue());
-            execution.getContext().setAlternativeLocale(false);
+            context.setLocale(settings.getLocales().getMainLocale().getValue());
+            context.setAlternativeLocale(false);
         }
 
         return containerRequest;

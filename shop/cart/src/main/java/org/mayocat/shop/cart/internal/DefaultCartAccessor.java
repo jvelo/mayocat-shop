@@ -3,8 +3,8 @@ package org.mayocat.shop.cart.internal;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
-import org.mayocat.session.Session;
+import org.mayocat.context.WebContext;
+import org.mayocat.context.scope.Session;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.CartInSessionConverter;
 import org.mayocat.shop.cart.model.Cart;
@@ -28,7 +28,7 @@ public class DefaultCartAccessor implements CartAccessor
     private ConfigurationService configurationService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private CartInSessionConverter cartInSessionConverter;
@@ -36,7 +36,7 @@ public class DefaultCartAccessor implements CartAccessor
     @Override
     public Cart getCart()
     {
-        Session session = this.execution.getContext().getSession();
+        Session session = this.context.getSession();
         if (session.getAttribute(SESSION_CART_KEY) != null) {
             try {
                 CartInSession cartInSession = (CartInSession) session.getAttribute(SESSION_CART_KEY);
@@ -59,7 +59,7 @@ public class DefaultCartAccessor implements CartAccessor
     @Override
     public void setCart(Cart cart)
     {
-        Session session = this.execution.getContext().getSession();
+        Session session = this.context.getSession();
         session.setAttribute(SESSION_CART_KEY, cartInSessionConverter.convertToCartInSession(cart));
     }
 }

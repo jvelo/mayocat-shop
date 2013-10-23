@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Entity;
@@ -32,16 +32,16 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
     private org.slf4j.Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public <T extends Localized> T localize(T entity)
     {
-        if (this.execution.getContext() == null || !this.execution.getContext().isAlternativeLocale()) {
+        if (this.context == null || !this.context.isAlternativeLocale()) {
             return entity;
         }
         else {
-            return localize(entity, this.execution.getContext().getLocale());
+            return localize(entity, this.context.getLocale());
         }
     }
 

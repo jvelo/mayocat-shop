@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.files.PermanentFileEvent;
 import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeLocalizationService;
@@ -37,7 +37,7 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
     public static final String PROPERTIES_FILE_EXTENSION = ".properties";
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private ObservationManager observationManager;
@@ -77,13 +77,13 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
     @Override
     public String getMessageTemplate(String key)
     {
-        return getMessageTemplate(key, execution.getContext().getLocale());
+        return getMessageTemplate(key, context.getLocale());
     }
 
     @Override
     public String getMessageTemplate(String key, Locale locale)
     {
-        Theme theme = execution.getContext().getTheme();
+        Theme theme = context.getTheme();
 
         Path propertiesPath = theme.getPath()
                 .resolve(LOCALIZATION_DIRECTORY)
@@ -122,7 +122,7 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
     @Override
     public String getMessage(String key, Map<String, Object> arguments)
     {
-        return getMessage(key, execution.getContext().getLocale(), arguments);
+        return getMessage(key, context.getLocale(), arguments);
     }
 
     @Override
@@ -140,6 +140,6 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
 
     private Locale getDefaultLocale()
     {
-        return execution.getContext().getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue();
+        return context.getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue();
     }
 }

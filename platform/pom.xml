@@ -19,7 +19,6 @@
         <module>base</module>
         <module>store</module>
         <module>context</module>
-        <module>session</module>
         <module>url</module>
         <module>files</module>
         <module>mail</module>

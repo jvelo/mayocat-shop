@@ -17,8 +17,7 @@ import org.mayocat.accounts.meta.UserEntity;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.context.Context;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -40,7 +39,7 @@ public class UserResource implements Resource
     private AccountsService accountsService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @POST
     @Timed
@@ -49,7 +48,6 @@ public class UserResource implements Resource
     @ExistingTenant
     public Response addUser(@Valid User user)
     {
-        Context context = execution.getContext();
         try {
             if (context.getUser() == null) {
                 // This can only mean there is no user recorded in database,

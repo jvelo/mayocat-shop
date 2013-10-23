@@ -1,4 +1,4 @@
-package org.mayocat.context;
+package org.mayocat.context.internal;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -7,14 +7,14 @@ import java.util.Map;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
-import org.mayocat.session.Flash;
-import org.mayocat.session.Session;
-import org.mayocat.session.cookies.CookieFlash;
-import org.mayocat.session.cookies.CookieSession;
+import org.mayocat.context.WebContext;
+import org.mayocat.context.scope.Flash;
+import org.mayocat.context.scope.Session;
+import org.mayocat.context.scope.cookie.CookieFlash;
+import org.mayocat.context.scope.cookie.CookieSession;
 import org.mayocat.theme.Theme;
-import org.mayocat.theme.ThemeDefinition;
 
-public class Context
+public class DefaultWebContext implements WebContext
 {
     private Flash flash;
 
@@ -32,22 +32,25 @@ public class Context
 
     private Map<Class, Object> settings = null;
 
-    public Context(Tenant tenant, User user)
+    public DefaultWebContext(Tenant tenant, User user)
     {
         this.tenant = tenant;
         this.user = user;
     }
 
+    @Override
     public Tenant getTenant()
     {
         return tenant;
     }
 
+    @Override
     public User getUser()
     {
         return user;
     }
 
+    @Override
     public void setUser(User user)
     {
         if (this.user != null) {
@@ -56,6 +59,7 @@ public class Context
         this.user = user;
     }
 
+    @Override
     public void setTenant(Tenant tenant)
     {
         if (this.tenant != null) {
@@ -64,11 +68,13 @@ public class Context
         this.tenant = tenant;
     }
 
+    @Override
     public Theme getTheme()
     {
         return theme;
     }
 
+    @Override
     public void setTheme(Theme theme)
     {
         if (this.theme != null) {
@@ -77,6 +83,7 @@ public class Context
         this.theme = theme;
     }
 
+    @Override
     public void setSettings(Map<Class, Object> settings)
     {
         if (this.settings != null) {
@@ -85,6 +92,7 @@ public class Context
         this.settings = settings;
     }
 
+    @Override
     public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
         if (settings == null) {
@@ -96,6 +104,7 @@ public class Context
         return null;
     }
 
+    @Override
     public Locale getLocale()
     {
         if (locale == null) {
@@ -104,6 +113,7 @@ public class Context
         return locale;
     }
 
+    @Override
     public void setLocale(Locale locale)
     {
         if (this.locale != null) {
@@ -112,6 +122,7 @@ public class Context
         this.locale = locale;
     }
 
+    @Override
     public boolean isAlternativeLocale()
     {
         if (alternativeLocale == null) {
@@ -121,6 +132,7 @@ public class Context
         return alternativeLocale;
     }
 
+    @Override
     public void setAlternativeLocale(boolean alternativeLocale)
     {
         if (this.alternativeLocale != null) {
@@ -129,6 +141,7 @@ public class Context
         this.alternativeLocale = alternativeLocale;
     }
 
+    @Override
     public Session getSession()
     {
         if (session == null) {
@@ -137,16 +150,19 @@ public class Context
         return session;
     }
 
+    @Override
     public void setSession(Session session)
     {
         this.session = session;
     }
 
+    @Override
     public void setFlash(Flash flash)
     {
         this.flash = flash;
     }
 
+    @Override
     public Flash getFlash()
     {
         if (flash == null) {
@@ -155,11 +171,13 @@ public class Context
         return flash;
     }
 
+    @Override
     public void flash(String name, Serializable value)
     {
         getFlash().setAttribute(name, value);
     }
 
+    @Override
     public void session(String name, Serializable value)
     {
         getSession().setAttribute(name, value);

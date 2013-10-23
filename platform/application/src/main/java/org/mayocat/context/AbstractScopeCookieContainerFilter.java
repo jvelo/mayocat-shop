@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import org.mayocat.configuration.SecuritySettings;
 import org.mayocat.security.Cipher;
 import org.mayocat.security.EncryptionException;
-import org.mayocat.session.WebScope;
+import org.mayocat.context.scope.WebScope;
 import org.mayocat.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +45,11 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
 
     protected abstract String getScopeAndCookieName();
 
-    protected abstract boolean scopeExistsAndNotEmpty(Execution execution);
+    protected abstract boolean scopeExistsAndNotEmpty(WebContext context);
 
-    protected abstract T getScope(Execution execution);
+    protected abstract T getScope(WebContext context);
 
-    protected abstract void setScope(Execution execution, T scope);
+    protected abstract void setScope(WebContext context, T scope);
 
     protected abstract boolean encryptAndSign();
 
@@ -64,9 +64,9 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
 
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse)
     {
-        Execution execution = Utils.getComponent(Execution.class);
-        if (execution.getContext() != null && scopeExistsAndNotEmpty(execution)) {
-            storeScopeInCookies(execution, containerResponse);
+        WebContext context = Utils.getComponent(WebContext.class);
+        if (context != null && scopeExistsAndNotEmpty(context)) {
+            storeScopeInCookies(context, containerResponse);
         }
         return containerResponse;
     }
@@ -75,26 +75,24 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
     public ContainerRequest filter(ContainerRequest containerRequest)
     {
         T scope = null;
-        Execution execution = Utils.getComponent(Execution.class);
-        if (execution.getContext() != null) {
-            try {
-                scope = getScopeFromCookies(containerRequest);
-                if (scope != null) {
-                    setScope(execution, scope);
-                }
-            } catch (IOException e) {
-                LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
-            } catch (EncryptionException e) {
-                LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
+        WebContext context = Utils.getComponent(WebContext.class);
+        try {
+            scope = getScopeFromCookies(containerRequest);
+            if (scope != null) {
+                setScope(context, scope);
             }
+        } catch (IOException e) {
+            LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
+        } catch (EncryptionException e) {
+            LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
         }
         return containerRequest;
     }
 
-    protected void storeScopeInCookies(Execution execution, ContainerResponse containerResponse)
+    protected void storeScopeInCookies(WebContext context, ContainerResponse containerResponse)
     {
         Cipher cipher = Utils.getComponent(Cipher.class);
-        T cookieScope = getScope(execution);
+        T cookieScope = getScope(context);
 
         try {
             String cookieValue;

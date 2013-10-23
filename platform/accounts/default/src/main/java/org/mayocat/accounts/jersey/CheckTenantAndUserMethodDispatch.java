@@ -12,7 +12,7 @@ import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.resources.UserResource;
 import org.mayocat.authorization.Gatekeeper;
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.error.ErrorUtil;
@@ -35,7 +35,7 @@ import com.sun.jersey.spi.dispatch.RequestDispatcher;
 public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchAdapter, Provider
 {
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private Gatekeeper gatekeeper;
@@ -44,7 +44,7 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
     private AccountsService accountsService;
 
     /**
-     * Request dispatcher that checks if a valid tenant has been set in the execution context, throws a NOT FOUND (404)
+     * Request dispatcher that checks if a valid tenant has been set in the context, throws a NOT FOUND (404)
      * if none is found. <p /> Used when {@link org.mayocat.rest.annotation.ExistingTenant} annotation is present on a resource.
      */
     private class CheckValidTenantRequestDispatcher implements RequestDispatcher
@@ -59,7 +59,7 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
         @Override
         public void dispatch(Object resource, HttpContext httpContext)
         {
-            if (execution.getContext().getTenant() == null) {
+            if (context.getTenant() == null) {
                 throw new WebApplicationException(
                         ErrorUtil.buildError(Response.Status.NOT_FOUND, StandardError.NOT_A_VALID_TENANT,
                                 "No valid tenant at this address"));
@@ -91,7 +91,7 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
         @Override
         public void dispatch(Object resource, HttpContext httpContext)
         {
-            User user = execution.getContext().getUser();
+            User user = context.getUser();
 
             if (user != null) {
                 if (!this.checkAuthorization(user)) {
@@ -158,12 +158,8 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
     {
         private final ResourceMethodDispatchProvider provider;
 
-        // FIXME : useless ?
-        private final Execution execution;
-
-        public AnnotationResourceMethodDispatchProvider(Execution execution, ResourceMethodDispatchProvider provider)
+        public AnnotationResourceMethodDispatchProvider(ResourceMethodDispatchProvider provider)
         {
-            this.execution = execution;
             this.provider = provider;
         }
 
@@ -207,6 +203,6 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
     @Override
     public ResourceMethodDispatchProvider adapt(ResourceMethodDispatchProvider provider)
     {
-        return new AnnotationResourceMethodDispatchProvider(execution, provider);
+        return new AnnotationResourceMethodDispatchProvider(provider);
     }
 }

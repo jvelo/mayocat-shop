@@ -1,9 +1,9 @@
-package org.mayocat.session.cookies;
+package org.mayocat.context.scope.cookie;
 
-import org.mayocat.session.Flash;
+import org.mayocat.context.scope.Flash;
 
 /**
- * Cookie based implementation of the {@link Flash} session.
+ * Cookie based implementation of the {@link org.mayocat.context.scope.Flash} session.
  *
  * @version $Id$
  */

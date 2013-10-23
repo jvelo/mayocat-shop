@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -78,7 +78,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
     private Provider<CollectionStore> collectionStore;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private EntityURLFactory urlFactory;
@@ -116,7 +116,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         Map<String, Object> context = getContext(uriInfo);
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
-        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
+        ThemeDefinition theme = this.context.getTheme().getDefinition();
         ProductContextBuilder builder = new ProductContextBuilder(
                 urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
@@ -190,7 +190,7 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         context.put(ContextConstants.PAGE_TITLE, product.getTitle());
         context.put(ContextConstants.PAGE_DESCRIPTION, product.getDescription());
 
-        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
+        ThemeDefinition theme = this.context.getTheme().getDefinition();
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
         List<Image> images = new ArrayList<Image>();

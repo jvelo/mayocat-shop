@@ -12,14 +12,13 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.theme.*;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import javax.inject.Inject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,12 +73,12 @@ public class DefaultThemeManager implements ThemeManager
     private FilesSettings filesSettings;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public Theme getTheme()
     {
-        return getTheme(this.execution.getContext().getTenant());
+        return getTheme(this.context.getTenant());
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.io.InputStream;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
     private Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private ObjectMapperFactory objectMapperFactory;
@@ -67,7 +67,7 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
 
         File tenantConfigurationFile =
                 new File(filesSettings.getPermanentDirectory() + SLASH + TENANTS_DIRECTORY + SLASH
-                        + this.execution.getContext().getTenant().getSlug() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
+                        + this.context.getTenant().getSlug() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
                         SLASH + TENANT_CONFIGURATION_FILENAME);
 
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());

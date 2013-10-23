@@ -7,9 +7,7 @@ import javax.inject.Inject;
 
 import org.jvnet.inflector.Noun;
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Entity;
 import org.mayocat.model.annotation.PluralForm;
 
@@ -19,7 +17,7 @@ import org.mayocat.model.annotation.PluralForm;
 public abstract class AbstractGenericEntityURLFactory<E extends Entity> extends AbstractEntityURLFactory<E>
 {
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public URL create(E entity, Tenant tenant)
@@ -30,7 +28,7 @@ public abstract class AbstractGenericEntityURLFactory<E extends Entity> extends 
     @Override
     public URL create(E entity)
     {
-        return this.create(entity, execution.getContext().getTenant(), URLType.PUBLIC);
+        return this.create(entity, context.getTenant(), URLType.PUBLIC);
     }
 
     @Override
@@ -48,8 +46,8 @@ public abstract class AbstractGenericEntityURLFactory<E extends Entity> extends 
                 case PUBLIC:
                 default:
                     urlString += "/";
-                    if (execution.getContext() != null && execution.getContext().isAlternativeLocale()) {
-                        urlString += execution.getContext().getLocale() + "/";
+                    if (context != null && context.isAlternativeLocale()) {
+                        urlString += context.getLocale() + "/";
                     }
                     break;
             }

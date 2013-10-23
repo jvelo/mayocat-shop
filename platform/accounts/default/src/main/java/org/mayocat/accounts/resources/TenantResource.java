@@ -27,8 +27,6 @@ import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Context;
-import org.mayocat.context.Execution;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -59,7 +57,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
     public static final String PATH = API_ROOT_PATH + "tenant";
 
     @Inject
-    private Execution execution;
+    private org.mayocat.context.WebContext context;
 
     @Inject
     private AccountsService accountsService;
@@ -79,7 +77,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
     public Response currentTenant()
     {
         TenantRepresentation representation =
-                new TenantRepresentation(getGlobalTimeZone(), execution.getContext().getTenant(), null, getImages());
+                new TenantRepresentation(getGlobalTimeZone(), context.getTenant(), null, getImages());
         return Response.ok(representation).build();
     }
 
@@ -88,7 +86,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
     public List<ImageRepresentation> getImages()
     {
         List<ImageRepresentation> result = new ArrayList();
-        Tenant tenant = execution.getContext().getTenant();
+        Tenant tenant = context.getTenant();
         if (tenant == null) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).build());
         }
@@ -119,7 +117,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
             @FormDataParam("title") String title, @FormDataParam("description") String description,
             @QueryParam("featuredImage") @DefaultValue("false") Boolean featuredImage)
     {
-        Tenant tenant = this.execution.getContext().getTenant();
+        Tenant tenant = this.context.getTenant();
         if (tenant == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -162,7 +160,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
     @ExistingTenant
     public Response updateTenant(TenantRepresentation tenantRepresentation)
     {
-        Tenant tenant = this.execution.getContext().getTenant();
+        Tenant tenant = this.context.getTenant();
 
         tenant.setName(tenantRepresentation.getName());
         tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons()));
@@ -182,7 +180,6 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
     public Response updateTenant(Tenant updatedTenant)
     {
         try {
-            Context context = execution.getContext();
             if (context.getTenant() == null) {
                 // Should not happen
                 return Response.status(404).build();

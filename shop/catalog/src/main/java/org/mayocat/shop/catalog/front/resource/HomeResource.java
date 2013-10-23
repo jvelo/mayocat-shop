@@ -20,7 +20,7 @@ import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -65,7 +65,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
     private Provider<PageStore> pageStore;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private EntityURLFactory urlFactory;
@@ -88,7 +88,7 @@ public class HomeResource extends AbstractFrontResource implements Resource
             context.put(ContextConstants.PAGE_TITLE, page.getTitle());
             context.put(ContextConstants.PAGE_DESCRIPTION, page.getContent());
 
-            ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
+            ThemeDefinition theme = this.context.getTheme().getDefinition();
 
             List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
                     .asList("png", "jpg", "jpeg", "gif"));

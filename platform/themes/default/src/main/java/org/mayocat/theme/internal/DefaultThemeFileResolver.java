@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.files.FileManager;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Model;
@@ -36,7 +36,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     private FileManager fileManager;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private ConfigurationService configurationService;
@@ -95,7 +95,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private String generateTemplateId(String layoutName, Breakpoint breakpoint)
     {
-        String themeName = execution.getContext().getTheme().getDefinition().getName();
+        String themeName = context.getTheme().getDefinition().getName();
         String templateId =
                 themeName.length() + themeName + "_" + breakpoint.toString().length() + breakpoint.toString()
                         + "_" + layoutName.length() + layoutName;
@@ -182,12 +182,12 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeDefinition getThemeDefinition()
     {
-        return execution.getContext().getTheme().getDefinition();
+        return context.getTheme().getDefinition();
     }
 
     private Theme getActiveTheme()
     {
-        return this.execution.getContext().getTheme();
+        return this.context.getTheme();
     }
 }
 

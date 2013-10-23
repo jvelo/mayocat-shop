@@ -1,4 +1,4 @@
-package org.mayocat.session;
+package org.mayocat.context.scope;
 
 import java.io.Serializable;
 import java.util.Set;

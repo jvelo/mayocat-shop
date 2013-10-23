@@ -27,7 +27,7 @@ import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
@@ -79,7 +79,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
     private ConfigurationService configurationService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @GET
     public FrontView getNews(@Context Breakpoint breakpoint, @Context UriInfo uriInfo,
@@ -100,7 +100,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         // Compute news page name
         Map<String, String> parameters = Maps.newHashMap();
-        parameters.put("siteName", execution.getContext().getTenant().getName());
+        parameters.put("siteName", this.context.getTenant().getName());
         StrSubstitutor substitutor = new StrSubstitutor(parameters, "{{", "}}");
         NewsSettings settings = configurationService.getSettings(NewsSettings.class);
         context.put(PAGE_TITLE, substitutor.replace(settings.getNewsPageTitle().getValue()));
@@ -165,7 +165,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         // Compute article page name
         Map<String, String> parameters = Maps.newHashMap();
-        parameters.put("siteName", execution.getContext().getTenant().getName());
+        parameters.put("siteName", this.context.getTenant().getName());
         parameters.put("articleTitle", article.getTitle());
         StrSubstitutor substitutor = new StrSubstitutor(parameters, "{{", "}}");
         NewsSettings settings = configurationService.getSettings(NewsSettings.class);
@@ -181,7 +181,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
     private Map<String, Object> buildArticleContext(Article article)
     {
-        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
+        ThemeDefinition theme = this.context.getTheme().getDefinition();
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
 
         Map<String, Object> context = Maps.newHashMap();

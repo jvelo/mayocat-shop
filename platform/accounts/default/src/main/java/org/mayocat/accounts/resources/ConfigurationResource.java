@@ -14,11 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.context.Execution;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.Resource;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -38,9 +37,6 @@ public class ConfigurationResource implements Resource
 
     @Inject
     private ConfigurationService configurationService;
-
-    @Inject
-    private Execution execution;
 
     @GET
     @Timed

@@ -10,11 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.mail.Mail;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailService;
@@ -43,7 +41,7 @@ public class ContactResource implements Resource, ContextConstants
     private MailService mailService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @POST
     public Response postContactMessage(MultivaluedMap<String, String> form)
@@ -61,10 +59,10 @@ public class ContactResource implements Resource, ContextConstants
             URI returnTo = new URI(sentFrom);
             try {
                 mailService.sendEmail(mail);
-                execution.getContext().flash("postContactMessage", "Success");
+                context.flash("postContactMessage", "Success");
                 return Response.seeOther(returnTo).build();
             } catch (MailException e) {
-                execution.getContext().flash("postContactMessage", "Failure");
+                context.flash("postContactMessage", "Failure");
                 return Response.seeOther(returnTo).build();
             }
         } catch (URISyntaxException e) {

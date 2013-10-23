@@ -28,7 +28,7 @@ import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Entity;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
@@ -65,7 +65,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     private EntityIndexDocumentPurveyor entityIndexDocumentPurveyor;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private Map<String, EntityMappingGenerator> mappingGenerators;
@@ -103,10 +103,10 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     @Override
     public void index(Entity entity) throws SearchEngineException
     {
-        if (execution.getContext().getTenant() == null) {
-            throw new SearchEngineException("Cannot index entity : no tenant given and none in execution context");
+        if (context.getTenant() == null) {
+            throw new SearchEngineException("Cannot index entity : no tenant given and none in context context");
         }
-        index(entity, execution.getContext().getTenant());
+        index(entity, context.getTenant());
     }
 
     public void index(final Entity entity, final Tenant tenant) throws SearchEngineException

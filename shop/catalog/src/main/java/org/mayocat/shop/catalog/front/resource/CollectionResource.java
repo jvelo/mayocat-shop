@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.shop.catalog.CatalogService;
@@ -60,7 +60,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
     private Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private EntityURLFactory urlFactory;
@@ -82,7 +82,7 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
         context.put(PAGE_TITLE, collection.getTitle());
         context.put(PAGE_DESCRIPTION, collection.getDescription());
 
-        ThemeDefinition theme = this.execution.getContext().getTheme().getDefinition();
+        ThemeDefinition theme = this.context.getTheme().getDefinition();
 
         List<Product> products = catalogService.findProductsForCollection(collection);
 
