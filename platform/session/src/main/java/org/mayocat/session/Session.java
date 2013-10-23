@@ -7,13 +7,6 @@ import java.util.Set;
 /**
  * @version $Id$
  */
-public interface Session extends Serializable
+public interface Session extends WebScope
 {
-    boolean isEmpty();
-
-    Set<String> getAttributeNames();
-
-    Object getAttribute(String string);
-
-    void setAttribute(String key, Serializable value);
 }

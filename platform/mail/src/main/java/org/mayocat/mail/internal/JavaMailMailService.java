@@ -1,5 +1,6 @@
 package org.mayocat.mail.internal;
 
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -18,6 +19,9 @@ import org.mayocat.mail.MailService;
 import org.mayocat.mail.SmtpSettings;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 /**
  * Implementation of {@link org.mayocat.mail.MailService} based on JavaMail/SMTP
  *
@@ -32,10 +36,14 @@ public class JavaMailMailService implements MailService
     @Override
     public void sendEmail(Mail mail) throws MailException
     {
+        Preconditions.checkNotNull(mail.getFrom(), "Cannot send a message without a from address");
+
         Properties properties = new Properties();
         properties.put("mail.transport.protocol", "smtp");
         properties.put("mail.smtp.host", smtpSettings.getServer());
         properties.put("mail.smtp.port", smtpSettings.getPort());
+        properties.put("mail.smtp.timeout", 1000);
+        properties.put("mail.smtp.connectiontimeout", 1000);
 
         for (String key : smtpSettings.getProperties().keySet()) {
             properties.put(key, smtpSettings.getProperties().get(key));
@@ -88,7 +96,9 @@ public class JavaMailMailService implements MailService
             message.setSubject(mail.getSubject());
 
             // Body text
-            message.setText(mail.getText());
+            if (mail.getText() !=  null) {
+                message.setText(mail.getText());
+            }
 
             // Boom goes the dynamite
             Transport.send(message);

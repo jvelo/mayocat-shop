@@ -14,10 +14,10 @@ import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.jackson.NIOModule;
 import org.mayocat.configuration.jackson.TimeZoneModule;
-import org.mayocat.context.CookieSessionContainerFilter;
+import org.mayocat.context.FlashScopeCookieContainerFilter;
+import org.mayocat.context.SessionScopeCookieContainerFilter;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.event.EventListener;
-import org.mayocat.files.FileWatcherManager;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
 import org.mayocat.lifecycle.Managed;
@@ -99,14 +99,12 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         registerTasks(environment);
         registerManagedServices(environment);
 
-        environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
-                CookieSessionContainerFilter.class.getCanonicalName());
-        environment.getJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS);
-
         // Default filters
-        addRequestFilter(CookieSessionContainerFilter.class);
+        addRequestFilter(SessionScopeCookieContainerFilter.class);
+        addRequestFilter(FlashScopeCookieContainerFilter.class);
         addRequestFilter(LocalizationContainerFilter.class);
-        addResponseFilter(CookieSessionContainerFilter.class);
+        addResponseFilter(SessionScopeCookieContainerFilter.class);
+        addResponseFilter(FlashScopeCookieContainerFilter.class);
 
         // Register Jersey container request filters
         environment.setJerseyProperty(

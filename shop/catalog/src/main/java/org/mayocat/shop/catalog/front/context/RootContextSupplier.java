@@ -25,6 +25,7 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
+import org.mayocat.session.Flash;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.context.Execution;
@@ -269,5 +270,14 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         }
 
         data.put("pages", pagesContext);
+
+        Flash flash = execution.getContext().getFlash();
+        if (!flash.isEmpty()) {
+            Map<String, Object> flashMap = new HashMap();
+            for (String attribute : flash.getAttributeNames()) {
+                flashMap.put(attribute, flash.getAttribute(attribute));
+            }
+            data.put("flash", flashMap);
+        }
     }
 }

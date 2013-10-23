@@ -1,18 +1,23 @@
 package org.mayocat.context;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.session.Flash;
 import org.mayocat.session.Session;
+import org.mayocat.session.cookies.CookieFlash;
 import org.mayocat.session.cookies.CookieSession;
 import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 
 public class Context
 {
+    private Flash flash;
+
     private Session session;
 
     private Tenant tenant;
@@ -135,5 +140,28 @@ public class Context
     public void setSession(Session session)
     {
         this.session = session;
+    }
+
+    public void setFlash(Flash flash)
+    {
+        this.flash = flash;
+    }
+
+    public Flash getFlash()
+    {
+        if (flash == null) {
+            flash = new CookieFlash();
+        }
+        return flash;
+    }
+
+    public void flash(String name, Serializable value)
+    {
+        getFlash().setAttribute(name, value);
+    }
+
+    public void session(String name, Serializable value)
+    {
+        getSession().setAttribute(name, value);
     }
 }

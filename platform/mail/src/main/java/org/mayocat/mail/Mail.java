@@ -14,11 +14,11 @@ public class Mail
 {
     private String from;
 
-    private List<String> to = Lists.newArrayList();
+    private List<String> to;
 
-    private List<String> cc = Lists.newArrayList();
+    private List<String> cc;
 
-    private List<String> bcc = Lists.newArrayList();
+    private List<String> bcc;
 
     private String subject;
 
@@ -26,6 +26,9 @@ public class Mail
 
     public Mail()
     {
+        to = Lists.newArrayList();
+        cc = Lists.newArrayList();
+        bcc = Lists.newArrayList();
     }
 
     public Mail from(String from)
