@@ -14,6 +14,12 @@
         themeLocalizationService = Mayocat.getComponent(tlsClass);
 
     Handlebars.registerHelper('contactForm', function () {
+
+        if (typeof this.flash !== 'undefined' && typeof this.flash.postContactMessage !== 'undefined') {
+            // Form has been posted, display nothing
+            return;
+        }
+
         var options,
             context;
 
