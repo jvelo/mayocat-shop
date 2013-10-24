@@ -285,6 +285,15 @@
         },
 
         settings: {
+
+            tenant: {
+                contactEmail : "Email de contact",
+                contactEmailPlaceholder : "L'email auquel seront envoyées les notifications",
+                shopName: "Nom de la boutique",
+                shopLogo: "Logo de la boutique",
+                shopNamePlaceholder: "Entrez le nom de la boutique"
+            },
+
             misc: {
                 general: "Général",
                 shop: "Boutique",
@@ -297,9 +306,6 @@
                 otherLanguages: "Autres langages",
                 selectALanguage: "-- Choisir un langage --",
                 theme: "Thème",
-
-                shopName: "Nom de la boutique",
-                shopLogo: "Logo de la boutique",
 
                 byWeight: "Selon le poids",
                 byPrice: "Selon le prix",
@@ -359,10 +365,6 @@
                 flatRate: "La stratégie de facturation des frais de port selon un coût forfaitaire n'est pas activée. Activez-la si vous souhaitez facturer les frais de port à vos clients en fonction du nombre d'articles en plus d'un coût forfaitaire.",
                 none: "Utilisez cette section si vous souhaitez désactiver toute facturation des frais de ports.",
                 costsDisabled: "La facturation des frais de port est actuellement désactivée. Si vous souhaitez facturer les frais de ports à vos clients, choisissez d'abord une stratégie de facturation disponible ci-dessus : en fonction du poids, du prix ou bien selon un coût forfaitaire."
-            },
-
-            placeholder: {
-                shopName: "Entrez le nom de la boutique"
             },
 
             action: {

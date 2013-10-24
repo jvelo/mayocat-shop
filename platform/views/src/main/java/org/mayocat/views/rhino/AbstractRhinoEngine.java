@@ -6,15 +6,25 @@ import java.io.Reader;
 import org.mayocat.views.TemplateEngine;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import org.xwiki.component.phase.Initializable;
 
 /**
  * @version $Id$
  */
-public abstract class AbstractRhinoEngine implements TemplateEngine
+public abstract class AbstractRhinoEngine implements TemplateEngine, Initializable
 {
     private Scriptable globalScope;
 
+    private String engineFileName;
+    private Reader engineReader;
+
     public AbstractRhinoEngine(String engineFileName, Reader engineReader)
+    {
+        this.engineFileName = engineFileName;
+        this.engineReader = engineReader;
+    }
+
+    public void initialize()
     {
         try {
             Context engineContext = Context.enter();
@@ -34,13 +44,10 @@ public abstract class AbstractRhinoEngine implements TemplateEngine
             throw new RuntimeException("ERROR : Unable to load engine resource: ", ex);
         }
 
-        this.initialize();
+        initializeEngine();
     }
 
-    protected void initialize()
-    {
-        // Intended to be overridden by implementing classes;
-    }
+    protected abstract void initializeEngine();
 
     protected Scriptable getScope()
     {

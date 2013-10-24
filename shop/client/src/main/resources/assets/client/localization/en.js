@@ -328,6 +328,15 @@
          */
 
         settings: {
+
+            tenant: {
+                contactEmail : "Contact email",
+                contactEmailPlaceholder : "Email at which notifications will be sent",
+                shopName: "Shop name",
+                shopLogo: "Shop logo",
+                shopNamePlaceholder: "Enter the shop name"
+            },
+
             misc: {
                 general: "General",
                 shop: "Shop information",
@@ -340,9 +349,6 @@
                 otherLanguages: "Other languages",
                 selectALanguage: "-- Select a language --",
                 theme: "Theme",
-
-                shopName: "Shop name",
-                shopLogo: "Shop logo",
 
                 byWeight: "By weight",
                 byPrice: "By price",
@@ -403,10 +409,6 @@
                 flatRate: "Flat rate shipping pricing strategy is not active. Activate it if you want to charge customers for shipping according to number of items purchased plus per-order constant.",
                 none: "Use this if you wish to disable shipping costs altogether.",
                 costsDisabled: "Shipping costs are currently disabled. If you wish to charge customers for shipping costs, first pick up a pricing strategy from the strategies available above: per weight, per price, or flat rate."
-            },
-
-            placeholder: {
-                shopName: "Enter the shop name"
             },
 
             action: {

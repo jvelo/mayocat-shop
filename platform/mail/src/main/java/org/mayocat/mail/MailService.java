@@ -10,5 +10,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface MailService
 {
+    Mail emailToTenant();
+
     void sendEmail(Mail mail) throws MailException;
 }

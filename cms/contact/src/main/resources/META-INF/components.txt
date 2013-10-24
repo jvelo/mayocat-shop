@@ -1,1 +1,2 @@
 org.mayocat.cms.contact.ContactResource
+org.mayocat.cms.contact.handlebars.ContactHelpersScript

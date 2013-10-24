@@ -27,6 +27,8 @@ public class TenantRepresentation
 
     private String name;
 
+    private String contactEmail;
+
     @JsonIgnore
     // Ignored on de-serialization only. See getter and setter
     private DateTime creationDate;
@@ -66,6 +68,7 @@ public class TenantRepresentation
 
         this.slug = tenant.getSlug();
         this.name = tenant.getName();
+        this.contactEmail = tenant.getContactEmail();
         this.defaultHost = tenant.getDefaultHost();
 
         if (tenant.getAddons().isLoaded()) {
@@ -151,5 +154,10 @@ public class TenantRepresentation
     public void setImages(List<ImageRepresentation> images)
     {
         this.images = images;
+    }
+
+    public String getContactEmail()
+    {
+        return contactEmail;
     }
 }

@@ -23,7 +23,8 @@ public class FlashScopeCookieContainerFilter extends AbstractScopeCookieContaine
     @Override
     protected boolean scopeExistsAndNotEmpty(WebContext context)
     {
-        return context != null && context.getFlash() != null && !context.getFlash().isEmpty();
+        return context != null && context.getFlash() != null && !context.getFlash().isEmpty() &&
+                !context.getFlash().isConsumed();
     }
 
     @Override

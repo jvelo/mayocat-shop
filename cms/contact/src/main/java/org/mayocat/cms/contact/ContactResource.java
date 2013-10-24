@@ -2,6 +2,7 @@ package org.mayocat.cms.contact;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mayocat.context.WebContext;
 import org.mayocat.mail.Mail;
 import org.mayocat.mail.MailException;
@@ -37,6 +39,12 @@ public class ContactResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + "contact";
 
+    private static final String PARAMETER_REDIRECT_TO = "redirectTo";
+
+    private static final String PARAMETER_SUBJECT = "subject";
+
+    private static final String DEFAULT_SUBJECT = "New contact message";
+
     @Inject
     private MailService mailService;
 
@@ -46,17 +54,26 @@ public class ContactResource implements Resource, ContextConstants
     @POST
     public Response postContactMessage(MultivaluedMap<String, String> form)
     {
-        String sentFrom = form.getFirst("sentFrom");
+        String redirectTo = form.getFirst(PARAMETER_REDIRECT_TO);
 
-        if (Strings.isNullOrEmpty(sentFrom)) {
+        if (Strings.isNullOrEmpty(redirectTo)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        // TODO
-        Mail mail = new Mail().from("toto@example.fr").to("jerome@velociter.fr");
+        String subject = StringUtils.defaultIfBlank(form.getFirst(PARAMETER_SUBJECT), DEFAULT_SUBJECT);
+
+        String text = "";
+
+        for (String name : form.keySet()) {
+            if (!Arrays.asList(PARAMETER_REDIRECT_TO, PARAMETER_SUBJECT).contains(name)) {
+                text += (name.toUpperCase() + ": " + form.getFirst(name) + "\n");
+            }
+        }
+
+        Mail mail = mailService.emailToTenant().subject(subject).text(text);
 
         try {
-            URI returnTo = new URI(sentFrom);
+            URI returnTo = new URI(redirectTo);
             try {
                 mailService.sendEmail(mail);
                 context.flash("postContactMessage", "Success");

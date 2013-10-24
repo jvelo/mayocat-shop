@@ -10,14 +10,17 @@
 
                 <div ng-show="tenant.slug != undefined">
 
-
                     <div class="block">
                         <!-- Shop name -->
-                        <p>{{'settings.misc.shopName' | translate}}</p>
-                        <input type="text" ng-model="tenant.name" placeholder="{{'settings.placeholder.shopName' | translate}}" />
+                        <p>{{'settings.tenant.shopName' | translate}}</p>
+                        <input type="text" ng-model="tenant.name" placeholder="{{'settings.tenant.shopNamePlaceholder' | translate}}" />
+
+                        <!-- Contact email -->
+                        <p>{{'settings.tenant.contactEmail' | translate}}</p>
+                        <input type="text" ng-model="tenant.contactEmail" placeholder="{{'settings.tenant.contactEmailPlaceholder' | translate}}" />
 
                         <!-- Shop logo -->
-                        <p>{{'settings.misc.shopLogo' | translate}}</p>
+                        <p>{{'settings.tenant.shopLogo' | translate}}</p>
                         <div ng-show="tenant.featuredImage">
                                 <img ng-src="{{tenant.featuredImage.file.href}}?height=100"/>
                         </div>
@@ -26,6 +29,7 @@
                                       drag-and-drop="false"
                                       multiple="false">
                         </image-upload>
+
                     </div>
 
                     <!-- Shop addons (if any) -->

@@ -14,18 +14,21 @@ create() ::= <<
                  configuration,
                  configuration_version,
                  name,
+                 contact_email,
                  creation_date)
     VALUES      (:tenant.id,
                  :tenant.defaultHost,
                  :data,
                  :version,
                  :tenant.name,
+                 :tenant.contactEmail
                  :tenant.creationDate)
 >>
 
 update() ::= <<
     UPDATE  tenant
     SET     name = :tenant.name,
+            contact_email = :tenant.contactEmail,
             default_host = :tenant.defaultHost,
             featured_image_id = :tenant.featuredImageId
     WHERE   entity_id = :tenant.id

@@ -1,5 +1,6 @@
-(function (global)
+var Mayocat = (function (global, Mayocat)
 {
+
     if (typeof out === "undefined") {
         // Can be useful for Q&D debugging
         // usage: out['println(java.lang.String)']("Hello " + something);
@@ -31,7 +32,7 @@
         }, obj);
     };
 
-    var getComponent = function (clazz, hint) {
+    var getComponent = Mayocat.getComponent = function (clazz, hint) {
         hint = typeof hint === "undefined" ? "default" : hint;
         return org.mayocat.util.Utils.getComponent(clazz, hint);
     };
@@ -120,4 +121,6 @@
         return String(themeLocalizationService.getMessage(key, options.hash));
     });
 
-})(this);
+    return Mayocat;
+
+})(this, Mayocat || {});

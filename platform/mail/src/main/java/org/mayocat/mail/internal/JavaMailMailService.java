@@ -13,6 +13,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.mayocat.configuration.general.GeneralSettings;
+import org.mayocat.context.WebContext;
 import org.mayocat.mail.Mail;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailService;
@@ -32,6 +34,18 @@ public class JavaMailMailService implements MailService
 {
     @Inject
     private SmtpSettings smtpSettings;
+
+    @Inject
+    private GeneralSettings generalSettings;
+
+    @Inject
+    private WebContext context;
+
+    @Override
+    public Mail emailToTenant()
+    {
+        return new Mail().from(generalSettings.getNotificationsEmail()).to(context.getTenant().getContactEmail());
+    }
 
     @Override
     public void sendEmail(Mail mail) throws MailException
@@ -96,7 +110,7 @@ public class JavaMailMailService implements MailService
             message.setSubject(mail.getSubject());
 
             // Body text
-            if (mail.getText() !=  null) {
+            if (mail.getText() != null) {
                 message.setText(mail.getText());
             }
 

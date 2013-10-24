@@ -68,6 +68,9 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
         if (context != null && scopeExistsAndNotEmpty(context)) {
             storeScopeInCookies(context, containerResponse);
         }
+        else {
+            deleteCookie(containerResponse);
+        }
         return containerResponse;
     }
 
@@ -87,6 +90,15 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
             LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
         }
         return containerRequest;
+    }
+
+    protected void deleteCookie(ContainerResponse containerResponse)
+    {
+        NewCookie scope = new NewCookie(getScopeAndCookieName(), "", "/", null, 1, "", 0, false);
+        Response cookieResponse =
+                Response.fromResponse(containerResponse.getResponse()).cookie(scope).build();
+
+        containerResponse.setResponse(cookieResponse);
     }
 
     protected void storeScopeInCookies(WebContext context, ContainerResponse containerResponse)

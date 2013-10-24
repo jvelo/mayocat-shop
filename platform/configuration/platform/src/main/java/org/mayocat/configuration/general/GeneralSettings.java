@@ -21,6 +21,10 @@ public class GeneralSettings implements ExposedSettings
     @JsonProperty
     private TimeSettings time = new TimeSettings();
 
+    @Valid
+    @JsonProperty
+    private String notificationsEmail = "Mayocat Shop Notifications<no-reply@mayocat.org>";
+
     public LocalesSettings getLocales()
     {
         return locales;
@@ -29,6 +33,11 @@ public class GeneralSettings implements ExposedSettings
     public TimeSettings getTime()
     {
         return time;
+    }
+
+    public String getNotificationsEmail()
+    {
+        return notificationsEmail;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

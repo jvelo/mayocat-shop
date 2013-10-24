@@ -35,6 +35,8 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     @NotBlank
     private String name;
 
+    private String contactEmail;
+
     private Date creationDate;
 
     // FIXME
@@ -116,6 +118,16 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public String getContactEmail()
+    {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail)
+    {
+        this.contactEmail = contactEmail;
     }
 
     public Date getCreationDate()
