@@ -39,11 +39,11 @@ var Mayocat = (function (global, Mayocat)
 
     // Java bindings ---------------------------------------------------------------------------------------------------
 
-    var ThemeManager = org.mayocat.theme.ThemeManager,
+    var ThemeFileResolverClass = org.mayocat.theme.ThemeFileResolver,
         ThemeLocalizationServiceClass = org.mayocat.theme.ThemeLocalizationService,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint,
         themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
-        themeManager = getComponent(ThemeManager);
+        themeFileResolver = getComponent(ThemeFileResolverClass);
 
     // Handlears helpers -----------------------------------------------------------------------------------------------
 
@@ -57,12 +57,12 @@ var Mayocat = (function (global, Mayocat)
     });
 
     Handlebars.registerHelper('templateSource', function (template, options) {
-        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, Breakpoint.DEFAULT);
         return String(resolved.getContent());
     });
 
     Handlebars.registerHelper('includeTemplate', function (template, options) {
-        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, Breakpoint.DEFAULT);
 
         var name = resolved.getId(),
             content = String(resolved.getContent());

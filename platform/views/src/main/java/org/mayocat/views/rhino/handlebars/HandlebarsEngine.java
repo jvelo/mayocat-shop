@@ -41,9 +41,9 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     private enum JSFile
     {
 
-        HANDLEBARS("handlebars.js", "javascripts/vendor/"),
-        SWAG_HELPERS("swag.min.js", "javascripts/vendor/"),
-        MAYO_HELPERS("helpers.js", "javascripts/handlebars/");
+        HANDLEBARS("handlebars.js", "javascripts/vendor"),
+        SWAG_HELPERS("swag.min.js", "javascripts/vendor"),
+        MAYO_HELPERS("helpers.js", "javascripts/handlebars");
 
         private String fileName;
 
