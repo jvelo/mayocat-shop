@@ -32,7 +32,7 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
     @Size(min = 1)
     private String slug;
 
-    @LocalizedField(type = LocalizationFieldType.SMALL)
+    @LocalizedField
     @Index
     @NotNull
     public String title;

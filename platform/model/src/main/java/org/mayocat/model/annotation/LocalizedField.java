@@ -11,6 +11,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface LocalizedField
 {
-    LocalizationFieldType type() default LocalizationFieldType.SMALL;
 }
 

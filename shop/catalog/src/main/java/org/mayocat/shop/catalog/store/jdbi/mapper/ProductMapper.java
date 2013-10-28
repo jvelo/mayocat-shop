@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.store.rdbms.dbi.mapper.MapperUtils;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -36,7 +37,9 @@ public class ProductMapper implements ResultSetMapper<Product>
             product.setFeaturedImageId(featuredImageId);
         }
 
-        if (!Strings.isNullOrEmpty(resultSet.getString("localization_data"))) {
+        if (MapperUtils.hasColumn("localization_data", resultSet) &&
+                !Strings.isNullOrEmpty(resultSet.getString("localization_data")))
+        {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 Map<Locale, Map<String, Object>> localizedVersions = Maps.newHashMap();
