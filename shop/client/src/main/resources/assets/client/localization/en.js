@@ -1,4 +1,4 @@
-(function () {
+(function (Mayocat) {
     'use strict';
 
     var enLocalization = {
@@ -430,7 +430,9 @@
         }
     };
 
+    Mayocat.localization = Mayocat.localization || {};
+
     // Expose the localization to the Mayocat settings
     Mayocat.localization.en = enLocalization;
 
-})();
+})(Mayocat);

@@ -1,7 +1,10 @@
-(function() {
+(function(Mayocat) {
     'use strict';
 
     MayocatShop.config(['$translateProvider', function ($translateProvider) {
+
+        Mayocat.defaultLocale = Mayocat.defaultLocale || "en";
+
         var defaultLocale = Mayocat.defaultLocale,
             localization = Mayocat.localization,
             locale;
@@ -21,4 +24,4 @@
         $translateProvider.fallbackLanguage(defaultLocale);
     }]);
 
-})();
+})(Mayocat);
