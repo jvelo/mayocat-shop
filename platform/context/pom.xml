@@ -22,12 +22,6 @@
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-session</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-themes-api</artifactId>
             <version>${project.version}</version>
         </dependency>
