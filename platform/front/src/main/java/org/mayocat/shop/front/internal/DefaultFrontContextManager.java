@@ -18,7 +18,6 @@ import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.FrontContextManager;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
-import org.mayocat.shop.front.context.ContextConstants;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -69,45 +68,25 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
     public Map<String, Object> getContext(final UriInfo uriInfo)
     {
         Map result = Maps.newHashMap();
-        result.put(ContextConstants.LOCATION, new HashMap()
-        {
-            {
-                put("path", "/" + uriInfo.getPath());
-            }
-        });
 
         // Manage list of locales and corresponding links
-        List<Map<String, String>> locales = Lists.newArrayList();
+        Map<String, Map<String, String>> locales = Maps.newHashMap();
         GeneralSettings settings = context.getSettings(GeneralSettings.class);
         final Locale mainLocale = settings.getLocales().getMainLocale().getValue();
-        locales.add(new HashMap()
-        {
-            {
-                put("url", "/" + uriInfo.getPath());
-                put("tag", mainLocale.toLanguageTag());
-                put("country", mainLocale.getDisplayCountry(mainLocale));
-                put("language", mainLocale.getDisplayLanguage(mainLocale));
-                put("current", mainLocale.equals(context.getLocale()));
-            }
-        });
+        locales.put(mainLocale.toLanguageTag(), buildLocale(mainLocale, uriInfo, true));
         List<Locale> alternativeLocales = Objects.firstNonNull(
                 settings.getLocales().getOtherLocales().getValue(), ImmutableList.<Locale>of());
         if (!alternativeLocales.isEmpty()) {
             for (final Locale locale : alternativeLocales) {
-                locales.add(new HashMap()
-                {
-                    {
-                        put("url", "/" + locale.toLanguageTag() + "/" + uriInfo.getPath());
-                        put("tag", locale.toLanguageTag());
-                        put("country", locale.getDisplayCountry(locale));
-                        put("language", locale.getDisplayLanguage(locale));
-                        put("current", locale.equals(context.getLocale()));
-                    }
-                });
+                locales.put(locale.toLanguageTag(), buildLocale(locale, uriInfo, false));
             }
         }
 
         result.put("locales", locales);
+        result.put("locale", buildLocale(context.getLocale(), uriInfo, mainLocale.equals(context.getLocale())));
+        result.put("localePath", context.isAlternativeLocale() ? ("/" + context.getLocale().toLanguageTag()) : "");
+        result.put("url", result.get("localePath") + "/" + uriInfo.getPath());
+        result.put("canonicalUrl", "/" + uriInfo.getPath());
 
         // Root path ('/')
         invokeNodeMethods(result, bindings);
@@ -117,6 +96,21 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
             walkNode(bindings, uriInfo.getPathSegments(), result);
         }
         return result;
+    }
+
+    private Map<String, String> buildLocale(final Locale locale, final UriInfo uriInfo, final boolean isMainLocale)
+    {
+        return new HashMap()
+        {
+            {
+                put("url", (isMainLocale ? "" : "/" + locale.toLanguageTag()) + "/" + uriInfo.getPath());
+                put("tag", locale.toLanguageTag());
+                put("code", locale.getLanguage());
+                put("country", locale.getDisplayCountry(locale));
+                put("language", locale.getDisplayLanguage(locale));
+                put("current", locale.equals(context.getLocale()));
+            }
+        };
     }
 
     @Override

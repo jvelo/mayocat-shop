@@ -19,6 +19,7 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.front.builder.CollectionContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
@@ -65,6 +66,9 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
     @Inject
     private EntityURLFactory urlFactory;
 
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
+
     @Path("{slug}")
     @GET
     public FrontView getCollection(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
@@ -86,11 +90,13 @@ public class CollectionResource extends AbstractFrontResource implements Resourc
 
         List<Product> products = catalogService.findProductsForCollection(collection);
 
-        CollectionContextBuilder builder = new CollectionContextBuilder(
-                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        CollectionContextBuilder builder = new CollectionContextBuilder(urlFactory, entityLocalizationService,
+                configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         // TODO get the collection images
-        context.put("collection", builder.build(collection, Collections.<Image>emptyList(), products));
+        context.put("collection",
+                builder.build(entityLocalizationService.localize(collection), Collections.<Image>emptyList(),
+                        products));
 
         // Sets the "current" flag on the current collection
         try {

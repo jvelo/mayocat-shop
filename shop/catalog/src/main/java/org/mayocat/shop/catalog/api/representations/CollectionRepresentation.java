@@ -1,6 +1,8 @@
 package org.mayocat.shop.catalog.api.representations;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.mayocat.rest.representations.ImageRepresentation;
@@ -31,6 +33,9 @@ public class CollectionRepresentation
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ImageRepresentation> images = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<Locale, Map<String, Object>> localizedVersions = null;
 
     private String href;
 
@@ -68,6 +73,8 @@ public class CollectionRepresentation
             // where a single collection is shared across tenant and can have a large number of products.
             this.numberOfProducts = Long.valueOf(products.size());
         }
+
+        this.localizedVersions = collection.getLocalizedVersions();
     }
 
     public String getTitle()
@@ -118,5 +125,10 @@ public class CollectionRepresentation
     public void setImages(List<ImageRepresentation> images)
     {
         this.images = images;
+    }
+
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 }

@@ -13,6 +13,7 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.catalog.model.Product;
@@ -43,21 +44,27 @@ public class ProductContextBuilder implements ContextConstants
 
     private CollectionContextBuilder collectionContextBuilder;
 
+    private EntityLocalizationService entityLocalizationService;
+
     private EntityURLFactory urlFactory;
 
     public ProductContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, ThemeDefinition theme)
+            EntityLocalizationService entityLocalizationService,  AttachmentStore attachmentStore,
+            ThumbnailStore thumbnailStore, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
 
         catalogSettings = configurationService.getSettings(CatalogSettings.class);
         generalSettings = configurationService.getSettings(GeneralSettings.class);
+
+        this.entityLocalizationService = entityLocalizationService;
+
         this.theme = theme;
 
         imageContextBuilder = new ImageContextBuilder(theme);
         addonContextBuilder = new AddonContextBuilder();
-        collectionContextBuilder =
-                new CollectionContextBuilder(urlFactory, configurationService, attachmentStore, thumbnailStore, theme);
+        collectionContextBuilder = new CollectionContextBuilder(urlFactory, entityLocalizationService,
+                configurationService, attachmentStore, thumbnailStore, theme);
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)
@@ -114,7 +121,8 @@ public class ProductContextBuilder implements ContextConstants
 
         if (product.getFeaturedCollection().isLoaded()) {
             Map<String, Object> featuredCollection = collectionContextBuilder.build(
-                    product.getFeaturedCollection().get(), Collections.<Image>emptyList());
+                    entityLocalizationService.localize(product.getFeaturedCollection().get()),
+                    Collections.<Image>emptyList());
             productContext.put("featured_collection", featuredCollection);
         }
 

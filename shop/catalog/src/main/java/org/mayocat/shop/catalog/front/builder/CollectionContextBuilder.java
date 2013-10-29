@@ -5,10 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
@@ -41,16 +44,20 @@ public class CollectionContextBuilder implements ContextConstants
 
     private ImageContextBuilder imageContextBuilder;
 
+    private EntityLocalizationService entityLocalizationService;
+
     private EntityURLFactory urlFactory;
 
-    public CollectionContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            AttachmentStore attachmentStore, ThumbnailStore thumbnailStore, ThemeDefinition theme)
+    public CollectionContextBuilder(EntityURLFactory urlFactory, EntityLocalizationService entityLocalizationService,
+            ConfigurationService configurationService, AttachmentStore attachmentStore,
+            ThumbnailStore thumbnailStore, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
         this.theme = theme;
         this.attachmentStore = attachmentStore;
         this.thumbnailStore = thumbnailStore;
         this.configurationService = configurationService;
+        this.entityLocalizationService = entityLocalizationService;
         this.imageContextBuilder = new ImageContextBuilder(theme);
     }
 
@@ -69,8 +76,8 @@ public class CollectionContextBuilder implements ContextConstants
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
 
-        ProductContextBuilder productContextBuilder =
-                new ProductContextBuilder(urlFactory, configurationService, attachmentStore, thumbnailStore, theme);
+        ProductContextBuilder productContextBuilder = new ProductContextBuilder(urlFactory, configurationService,
+                entityLocalizationService, attachmentStore, thumbnailStore, theme);
 
         if (products != null) {
             for (final Product product : products) {
@@ -79,12 +86,13 @@ public class CollectionContextBuilder implements ContextConstants
                 for (Attachment attachment : attachments) {
                     if (AbstractFrontResource.isImage(attachment)) {
                         List<Thumbnail> thumbnails = thumbnailStore.findAll(attachment);
-                        Image image = new Image(attachment, thumbnails);
+                        Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                         productImages.add(image);
                     }
                 }
 
-                Map<String, Object> productContext = productContextBuilder.build(product, productImages);
+                Map<String, Object> productContext =
+                        productContextBuilder.build(entityLocalizationService.localize(product), productImages);
                 productsContext.add(productContext);
             }
             collectionContext.put("products", productsContext);

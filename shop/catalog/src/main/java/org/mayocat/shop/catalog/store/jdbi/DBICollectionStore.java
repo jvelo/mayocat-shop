@@ -1,6 +1,8 @@
 package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -74,6 +76,13 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         }
         collection.setId(originalCollection.getId());
         Integer updatedRows = this.dao.update(collection);
+
+        if (collection.getLocalizedVersions() != null && !collection.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = collection.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(collection.getId(), locale, localizedVersions.get(locale));
+            }
+        }
 
         this.dao.commit();
 

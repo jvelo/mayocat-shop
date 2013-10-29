@@ -1,24 +1,22 @@
 'use strict'
 
 angular.module('collection', ['ngResource'])
-    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http', '$modal',
-        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal) {
+    .controller('CollectionController', [
+        '$scope',
+        '$rootScope',
+        '$routeParams',
+        '$resource',
+        '$location',
+        '$http',
+        '$modal',
+        'entityMixins',
+        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal, entityMixins) {
 
-            $scope.slug = $routeParams.collection;
+            entityMixins.extend(["base", "localization"], $scope, "collection");
+
             $scope.CollectionResource = $resource("/api/collections/:slug");
 
             // Functions
-
-            $scope.isNew = function () {
-                return $scope.slug == "_new";
-            };
-
-            $scope.newCollection = function () {
-                return {
-                    slug: "",
-                    title: ""
-                };
-            };
 
             $scope.updateCollection = function (callback) {
                 $scope.isSaving = true;
@@ -74,10 +72,16 @@ angular.module('collection', ['ngResource'])
             // Initialize
 
             if (!$scope.isNew()) {
-                $scope.collection = $scope.CollectionResource.get({ "slug": $scope.slug });
+                $scope.collection = $scope.CollectionResource.get({
+                    "slug": $scope.slug }, function () {
+
+                    $scope.initializeEntity();
+                });
             }
             else {
                 $scope.collection = $scope.newCollection();
+
+                $scope.initializeEntity();
             }
 
         }]);

@@ -31,7 +31,7 @@ lastPosition() ::= <<
 >>
 
 findAllForProduct() ::= <<
-    SELECT *
+    SELECT entity.*, collection.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN collection
                    ON entity.id = collection.entity_id
@@ -66,7 +66,7 @@ removeProduct() ::= <<
 >>
 
 findWithProductCountRows() ::= <<
-    SELECT *,
+    SELECT entity.*, collection.*, localization_data(entity_id),
            COALESCE(_count_collections.count, 0) AS _count
     FROM   entity
            INNER JOIN collection

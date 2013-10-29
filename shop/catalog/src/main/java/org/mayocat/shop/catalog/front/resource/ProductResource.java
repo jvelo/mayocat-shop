@@ -117,8 +117,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
         ThemeDefinition theme = this.context.getTheme().getDefinition();
-        ProductContextBuilder builder = new ProductContextBuilder(
-                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
+                entityLocalizationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         List<Map<String, Object>> productsContext = Lists.newArrayList();
 
@@ -141,7 +141,8 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
                         return thumbnail.getAttachmentId().equals(attachment.getId());
                     }
                 });
-                Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
+                Image image = new Image(entityLocalizationService.localize(attachment),
+                        new ArrayList<Thumbnail>(thumbnails));
                 images.add(image);
             }
 
@@ -197,13 +198,13 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
         for (Attachment attachment : attachments) {
             if (isImage(attachment)) {
                 List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                Image image = new Image(attachment, thumbnails);
+                Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                 images.add(image);
             }
         }
 
-        ProductContextBuilder builder = new ProductContextBuilder(
-                urlFactory, configurationService, attachmentStore.get(), thumbnailStore.get(), theme);
+        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
+                entityLocalizationService, attachmentStore.get(), thumbnailStore.get(), theme);
         Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
 
         context.put("product", productContext);

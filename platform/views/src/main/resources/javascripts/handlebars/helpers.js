@@ -83,10 +83,8 @@ var Mayocat = (function (global, Mayocat)
     });
 
     Handlebars.registerHelper('isPath', function (path, options) {
-        if (typeof this.location !== "undefined") {
-            if (path === this.location.path) {
+        if (path === this.canonicalUrl) {
                 return options.fn(this);
-            }
         }
         return options.inverse(this);
     });

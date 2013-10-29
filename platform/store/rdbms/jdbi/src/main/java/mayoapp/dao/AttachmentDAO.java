@@ -51,7 +51,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
@@ -62,7 +62,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
@@ -73,7 +73,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
@@ -86,7 +86,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
@@ -99,7 +99,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +
@@ -112,7 +112,7 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
 
     @SqlQuery
     (
-        "SELECT * " +
+        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
         "FROM   entity " +
         "       INNER JOIN attachment" +
         "               ON entity.id = attachment.entity_id " +

@@ -2,11 +2,11 @@ package mayoapp.dao;
 
 import java.util.List;
 
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.CollectionMapper;
-import org.mayocat.model.EntityAndCount;
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.store.rdbms.dbi.extraction.EntityExtractor;
 import org.mayocat.store.rdbms.dbi.jointype.EntityAndCountsJoinRow;
 import org.mayocat.store.rdbms.dbi.mapper.EntityAndCountsJoinRowMapper;
@@ -15,7 +15,6 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -24,7 +23,8 @@ import com.google.common.collect.ImmutableList;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapper(CollectionMapper.class)
-public abstract class CollectionDAO  implements EntityDAO<Collection>, Transactional<CollectionDAO>, PositionedDAO<Collection>
+public abstract class CollectionDAO  implements EntityDAO<Collection>, Transactional<CollectionDAO>, PositionedDAO<Collection>,
+        LocalizationDAO<Collection>
 {
     @SqlUpdate
     public abstract void create(@Bind("position") Integer position, @BindBean("collection") Collection collection);

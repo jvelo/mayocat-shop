@@ -180,8 +180,8 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
         }
 
-        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService, attachmentStore.get(),
-                thumbnailStore.get(), theme);
+        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
+                entityLocalizationService, attachmentStore.get(), thumbnailStore.get(), theme);
 
         for (final Product product : products) {
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
@@ -203,7 +203,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                                 return thumbnail.getAttachmentId().equals(attachment.getId());
                             }
                         });
-                Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
+                Image image = new Image(entityLocalizationService.localize(attachment), new ArrayList<>(thumbnails));
                 images.add(image);
             }
             Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
