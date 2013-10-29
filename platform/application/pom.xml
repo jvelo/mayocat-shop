@@ -92,6 +92,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-graphite</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+
         <!-- XWiki -->
         <dependency>
             <groupId>org.xwiki.commons</groupId>

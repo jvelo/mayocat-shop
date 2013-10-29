@@ -1,12 +1,14 @@
 package org.mayocat.application;
 
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.mayocat.Module;
 import org.mayocat.accounts.AccountsModule;
@@ -14,6 +16,7 @@ import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.jackson.NIOModule;
 import org.mayocat.configuration.jackson.TimeZoneModule;
+import org.mayocat.configuration.reporting.GraphiteSettings;
 import org.mayocat.context.FlashScopeCookieContainerFilter;
 import org.mayocat.context.SessionScopeCookieContainerFilter;
 import org.mayocat.event.ApplicationStartedEvent;
@@ -48,6 +51,10 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.reporting.GraphiteReporter;
+import com.yammer.metrics.reporting.JmxReporter;
 
 /**
  * @version $Id$
@@ -67,6 +74,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     protected abstract void registerComponents(C configuration, Environment environment);
 
     private List<Class> requestFilters = Lists.newArrayList();
+
     private List<Class> responseFilters = Lists.newArrayList();
 
     public static Set<String> getStaticPaths()
@@ -85,6 +93,27 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
 
         this.addModule(new AccountsModule());
+    }
+
+    private void initializeReporting(C configuration)
+    {
+        MetricsRegistry defaultRegistry = Metrics.defaultRegistry();
+
+        if (configuration.getReportingSettings().getGraphiteSettings().isPresent()) {
+            // Graphite reporting is configured
+            GraphiteSettings settings = configuration.getReportingSettings().getGraphiteSettings().get();
+
+            if (settings.getApiKey().isPresent()) {
+                GraphiteReporter.enable(defaultRegistry, 15, TimeUnit.SECONDS, settings.getHost(), settings.getPort(),
+                        settings.getApiKey().get());
+            } else {
+                GraphiteReporter.enable(defaultRegistry, 15, TimeUnit.SECONDS, settings.getHost(), settings.getPort());
+            }
+        }
+
+        if (configuration.getReportingSettings().getJmx()) {
+            JmxReporter.startDefault(defaultRegistry);
+        }
     }
 
     @Override
@@ -133,6 +162,8 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
                         })
                 )
         );
+
+        this.initializeReporting(configuration);
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);

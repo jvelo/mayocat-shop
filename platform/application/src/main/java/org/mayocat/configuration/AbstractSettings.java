@@ -34,7 +34,6 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private FilesSettings files = new FilesSettings();
 
-
     @Valid
     @NotNull
     @JsonProperty
@@ -49,6 +48,10 @@ public class AbstractSettings extends Configuration
     @NotNull
     @JsonProperty
     private SmtpSettings smtp = new SmtpSettings();
+
+    @Valid
+    @JsonProperty
+    private ReportingSettings reporting = new ReportingSettings();
 
     public MultitenancySettings getMultitenancySettings()
     {
@@ -83,5 +86,10 @@ public class AbstractSettings extends Configuration
     public SmtpSettings getSmtpSettings()
     {
         return smtp;
+    }
+
+    public ReportingSettings getReportingSettings()
+    {
+        return reporting;
     }
 }
