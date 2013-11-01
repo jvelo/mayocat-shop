@@ -1,5 +1,7 @@
 package org.mayocat.rest.resources;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.Valid;
@@ -39,7 +41,7 @@ public class ImageResource implements Resource
     @PUT
     @Path("/{slug}/thumbnails/")
     public Response createThumbnail(@PathParam("slug") String slug, @Valid
-    ThumbnailRepresentation thumbnailRepresentation)
+    List<ThumbnailRepresentation> thumbnailRepresentations)
     {
         Attachment file = this.attachmentStore.get().findBySlug(slug);
 
@@ -47,20 +49,24 @@ public class ImageResource implements Resource
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        Thumbnail thumbnail = new Thumbnail();
-        thumbnail.setAttachmentId(file.getId());
-        thumbnail.setSource(thumbnailRepresentation.getSource());
-        thumbnail.setHint(thumbnailRepresentation.getHint());
-        thumbnail.setX(thumbnailRepresentation.getX());
-        thumbnail.setY(thumbnailRepresentation.getY());
-        thumbnail.setWidth(thumbnailRepresentation.getWidth());
-        thumbnail.setHeight(thumbnailRepresentation.getHeight());
+        for (ThumbnailRepresentation thumbnailRepresentation : thumbnailRepresentations) {
+            Thumbnail thumbnail = new Thumbnail();
+            thumbnail.setAttachmentId(file.getId());
+            thumbnail.setSource(thumbnailRepresentation.getSource());
+            thumbnail.setHint(thumbnailRepresentation.getHint());
+            thumbnail.setX(thumbnailRepresentation.getX());
+            thumbnail.setY(thumbnailRepresentation.getY());
+            thumbnail.setWidth(thumbnailRepresentation.getWidth());
+            thumbnail.setHeight(thumbnailRepresentation.getHeight());
 
-        if (Strings.isNullOrEmpty(thumbnail.getRatio())) {
-            thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
+            if (Strings.isNullOrEmpty(thumbnailRepresentation.getRatio())) {
+                thumbnail.setRatio(ImageUtils.imageRatio(thumbnail.getWidth(), thumbnail.getHeight()));
+            } else {
+                thumbnail.setRatio(thumbnailRepresentation.getRatio());
+            }
+
+            this.thumbnailStore.get().createOrUpdateThumbnail(thumbnail);
         }
-
-        this.thumbnailStore.get().createOrUpdateThumbnail(thumbnail);
 
         return Response.ok().build();
     }

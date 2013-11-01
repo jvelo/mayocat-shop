@@ -183,6 +183,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
         try {
             attachment.setTitle(image.getTitle());
             attachment.setDescription(image.getDescription());
+            attachment.setLocalizedVersions(image.getLocalizedVersions());
             getAttachmentStore().update(attachment);
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {

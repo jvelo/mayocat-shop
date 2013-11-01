@@ -34,8 +34,7 @@
                 cancel: "Cancel",
                 remove: "Remove",
                 back: "Back",
-
-                editThumbnails: "Edit thumbnails"
+                editImage: "Edit image"
             },
 
             alert: {
@@ -111,17 +110,13 @@
          * Translations linked to the thumbnail editor
          */
 
-        thumbnailEditor: {
-            misc: {
-                editing: "Editing:"
-            },
-
+        imageEditor: {
             title: {
-                editThumbnails: "Edit image thumbnails"
+                editImage: "Edit image"
             },
 
             action: {
-                saveAndNext: "Save and next",
+                save: "Save",
                 close: "Close"
             }
         },

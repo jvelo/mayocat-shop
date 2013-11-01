@@ -4,7 +4,6 @@ var mayocat = angular.module('mayocat', [
     'mayocat.authentication',
     'mayocat.addons',
     'mayocat.image',
-    'mayocat.thumbnail',
     'mayocat.configuration',
     'mayocat.time',
     'mayocat.entities',
@@ -312,56 +311,89 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
             'selection': '&'
         },
         link: function postLink($scope, element, attrs) {
-            var imageElement = $("<img />").load(
-                function () {
-                    if ($scope.selection() === undefined) {
 
-                        // If no initial selection was passed to the widget, we compute the largest box
-                        // that can fit the desired thumbnail in.
+            var parent = element.parent()[0],
+                hasInitialized = false;
 
-                        var sizeRatio = $scope.width() / $scope.height(),
-                            imageRatio = $(this).width() / $(this).height(),
-                            width,
-                            height;
+            var initializeLazy = function () {
+                if (($(parent).attr("style") == undefined|| $(parent).attr("style") == "") && !hasInitialized) {
+                // TODO find a better way to check if displayed
+                    var imageElement = $("<img />").load(
+                        function () {
+                            if ($scope.selection() === undefined) {
+                                // If no initial selection was passed to the widget, we compute the largest centered box
+                                // that can fit the desired thumbnail in.
 
-                        // FIXME sometimes the image width and height are still 0, even though we are in the
-                        // load callback.
+                                var sizeRatio = $scope.width() / $scope.height(),
+                                    imageRatio = $(this).width() / $(this).height(),
+                                    x, y, width, height;
 
-                        width = sizeRatio > imageRatio ? $(this).height() * sizeRatio : $(this).width();
-                        height = sizeRatio > imageRatio ? $(this).height() : $(this).width() * sizeRatio;
-
-                        var i = 0;
-                        var setSelection = function () {
-                            if (typeof $scope.api !== "undefined") {
-                                $scope.api.setSelect([ 0, 0, width, height ]);
-                            }
-                            else {
-                                // The image is loaded before the Jcrop API has been initialized fully.
-                                // Wait 0.1 s
-                                i++;
-                                if (i < 10) {
-                                    setTimeout(setSelection, 100);
+                                if (imageRatio < sizeRatio) {
+                                    // Width is limitating, calculate height
+                                    x = 0;
+                                    width = $(this).width();
+                                    height = width / sizeRatio;
+                                    y = ($(this).height() - height) / 2;
                                 }
-                                // Give up after 10 tries
+                                else {
+                                    // Height is limitating, calculate width
+                                    y = 0;
+                                    height = $(this).height();
+                                    width = height * sizeRatio;
+                                    x = ($(this).width() - width) / 2;
+                                }
+
+                                if (width > 0 && height > 0) {
+                                    var i = 0;
+                                    var setSelection = function () {
+                                        if (typeof $scope.api !== "undefined") {
+                                            $scope.api.setSelect([ x, y, width, height ]);
+                                        }
+                                        else {
+                                            // The image is loaded before the Jcrop API has been initialized fully.
+                                            // Wait 0.1 s
+                                            i++;
+                                            if (i < 10) {
+                                                setTimeout(setSelection, 100);
+                                            }
+                                            // Give up after 10 tries
+                                        }
+                                    }
+                                    setSelection();
+                                }
                             }
                         }
-                        setSelection();
-                    }
-                }
-            ).attr("src", $scope.image());
-            $(element).html($("<div/>").html(imageElement));
+                    ).attr("src", $scope.image());
+                    $(element).html($("<div/>").html(imageElement));
 
-            $(imageElement).Jcrop({
-                boxWidth: 500,
-                boxHeight: 500,
-                setSelect: $scope.selection(),
-                aspectRatio: $scope.width() / $scope.height(),
-                onSelect: function (coordinates) {
-                    $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
+                    $(imageElement).Jcrop({
+                        boxWidth: 400,
+                        boxHeight: 400,
+                        setSelect: $scope.selection(),
+                        aspectRatio: $scope.width() / $scope.height(),
+                        onSelect: function (coordinates) {
+                            $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
+                        }
+                    }, function () {
+                        $scope.api = this;
+                    });
+                    hasInitialized = true;
                 }
-            }, function () {
-                $scope.api = this;
+            };
+
+            var observer = new MutationObserver(function (mutations) {
+                $scope.$apply(function ($scope) {
+                    initializeLazy();
+                });
             });
+
+            observer.observe(parent, { attributes: true, childList: false, characterData: false, subtree: false });
+
+            window.setTimeout(function(){
+                $scope.$apply(function ($scope) {
+                    initializeLazy();
+                });
+            }, 0);
 
         }
     }

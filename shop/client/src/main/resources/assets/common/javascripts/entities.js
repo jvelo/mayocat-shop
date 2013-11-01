@@ -165,7 +165,8 @@
                     scope.$on("entity:editedLocaleChanged", function (event, data) {
                         // Save edited version if necessary
 
-                        if (typeof scope[entityType] === "undefined" || !scope[entityType].$resolved) {
+                        if (typeof scope[entityType] === "undefined" ||
+                            (typeof scope[entityType].$resolved !== 'undefined' && !scope[entityType].$resolved)) {
                             // We are not ready
                             return;
                         }
@@ -196,44 +197,26 @@
             }
         }])
 
-        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', '$modal', function (imageService, $http, $rootScope, $modal) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', 'entityLocalizationMixin',
+            function ($http, $rootScope, $modal, entityLocalizationMixin) {
             return function (entityType) {
                 var mixin = {};
 
-                mixin.editThumbnails = function (image) {
-                    var scope = $rootScope.$new(true);
-                    scope.entityType = entityType;
-                    scope.image = image;
+                mixin.editImage = function (image) {
+                    var scope = this,
+                        modalScope = $rootScope.$new(true);
+                    modalScope.entityType = entityType;
+                    modalScope.image = image;
 
-                    $modal.open({
-                        templateUrl: '/common/partials/editThumbnails.html',
-                        windowClass: 'editThumbnails',
-                        controller: 'ThumbnailsEditorController',
-                        scope: scope
+                    scope.modalInstance = $modal.open({
+                        templateUrl: '/common/partials/editImage.html',
+                        windowClass: 'editImage',
+                        controller: 'ImageEditorController',
+                        scope: modalScope
                     });
-                }
-
-                mixin.updateImageMeta = function (image) {
-                    image.isSaving = true;
-
-                    var scope = this;
-
-                    $http.post($rootScope.entity.uri +  "/images/" + image.slug, image)
-                        .success(function(data, status) {
-                            image.isSaving = false;
-
-                            if(status < 400) {
-                                image.editMeta = false;
-                            } else {
-                                // Generic error
-                                $modal.open({ templateUrl: 'serverError.html' });
-                            }
-                        })
-                        .error(function() {
-                            image.isSaving = false;
-                            // Generic error
-                            $modal.open({ templateUrl: 'serverError.html' });
-                        });
+                    scope.modalInstance.result.then(function () {
+                        scope.reloadImages();
+                    });
                 }
 
                 mixin.reloadImages = function () {
@@ -245,8 +228,19 @@
                 }
 
                 mixin.selectFeatureImage = function (image) {
-                    var scope = this;
-                    imageService.selectFeatured(scope[entityType], image);
+                    var scope = this,
+                        entity = scope[entityType];
+                    for (var img in entity.images) {
+                        if (entity.images.hasOwnProperty(img)) {
+                            if (entity.images[img].href === image.href) {
+                                entity.images[img].featured = true;
+                                entity.featuredImage = entity.images[img];
+                            }
+                            else {
+                                entity.images[img].featured = false;
+                            }
+                        }
+                    }
                 }
 
                 mixin.removeImage = function (image) {

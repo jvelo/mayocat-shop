@@ -31,8 +31,7 @@ public class DBIThumbnailStore implements ThumbnailStore, Initializable
         this.dao.begin();
 
         Thumbnail existing = this.dao
-                .findThumbnail(thumbnail.getAttachmentId(), thumbnail.getSource(), thumbnail.getHint(),
-                        thumbnail.getRatio());
+                .findThumbnail(thumbnail.getAttachmentId(), thumbnail.getSource(), thumbnail.getHint());
 
         if (existing != null) {
             this.dao.updateThumbnail(thumbnail);

@@ -27,8 +27,7 @@
                 cancel: "Annuler",
                 remove: "Retirer",
                 back: "Retour",
-
-                editThumbnails: "Modifier les miniatures"
+                editImage: "Modifier l'image"
             },
 
             alert: {
@@ -88,17 +87,13 @@
             }
         },
 
-        thumbnailEditor: {
-            misc: {
-                editing: "Modification de :",
-            },
-
+        imageEditor: {
             title: {
-                editThumbnails: "Modification des miniatures"
+                editImage: "Editer l'image"
             },
 
             action: {
-                saveAndNext: "Sauvegarder et continuer",
+                save: "Sauvegarder",
                 close: "Fermer"
             }
         },

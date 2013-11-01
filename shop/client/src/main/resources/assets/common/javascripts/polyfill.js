@@ -47,6 +47,31 @@ if ('function' !== typeof Array.prototype.reduce) {
     };
 }
 
+// Array filter from MDN
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function (fn, context) {
+        var i,
+            value,
+            result = [],
+            length;
+
+        if (!this || typeof fn !== 'function' || (fn instanceof RegExp)) {
+            throw new TypeError();
+        }
+
+        length = this.length;
+
+        for (i = 0; i < length; i++) {
+            if (this.hasOwnProperty(i)) {
+                value = this[i];
+                if (fn.call(context, value, i, this)) {
+                    result.push(value);
+                }
+            }
+        }
+        return result;
+    };
+}
 // Object.keys
 if (!Object.keys) {
     Object.keys = (function () {

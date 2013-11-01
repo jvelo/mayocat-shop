@@ -21,7 +21,7 @@ import org.skife.jdbi.v2.unstable.BindIn;
  */
 @UseStringTemplate3StatementLocator
 @RegisterMapper(AttachmentMapper.class)
-public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<AttachmentDAO>
+public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<AttachmentDAO>, LocalizationDAO<Attachment>
 {
     @SqlUpdate
     (

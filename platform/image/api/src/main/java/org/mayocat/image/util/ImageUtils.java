@@ -3,6 +3,7 @@ package org.mayocat.image.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.math.IntMath;
 
 /**
@@ -18,6 +19,9 @@ public class ImageUtils
      */
     public static String imageRatio(Integer width, Integer height)
     {
+        Preconditions.checkArgument(!(width == 0 && height == 0),
+                "Cannot compute image ration when both width and height are zero");
+
         Integer gcd = IntMath.gcd(width, height);
         return (width / gcd) + ":" + (height / gcd);
     }

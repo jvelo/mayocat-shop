@@ -304,6 +304,7 @@ public class PageResource extends AbstractAttachmentResource implements Resource
         try {
             attachment.setTitle(image.getTitle());
             attachment.setDescription(image.getDescription());
+            attachment.setLocalizedVersions(image.getLocalizedVersions());
             getAttachmentStore().update(attachment);
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {

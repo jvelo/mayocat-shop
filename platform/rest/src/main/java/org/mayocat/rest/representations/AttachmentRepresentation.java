@@ -1,6 +1,11 @@
 package org.mayocat.rest.representations;
 
+import java.util.Locale;
+import java.util.Map;
+
 import org.mayocat.model.Attachment;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * @version $Id$
@@ -10,6 +15,9 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
     private FileRepresentation file;
 
     private String description;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<Locale, Map<String, Object>> localizedVersions = null;
 
     public AttachmentRepresentation()
     {
@@ -22,6 +30,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
         super(buildAttachmentApiHref(attachment), attachment.getSlug(), attachment.getTitle());
         this.file = buildFileRepresentation(attachment);
         this.description = attachment.getDescription();
+        this.localizedVersions = attachment.getLocalizedVersions();
     }
 
     /**
@@ -38,6 +47,7 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
         super(uri, attachment.getSlug(), attachment.getTitle());
         this.file = file;
         this.description = attachment.getDescription();
+        this.localizedVersions = attachment.getLocalizedVersions();
     }
 
     public FileRepresentation getFile()
@@ -53,6 +63,11 @@ public class AttachmentRepresentation extends EntityReferenceRepresentation
     public String getDescription()
     {
         return description;
+    }
+
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

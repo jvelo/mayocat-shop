@@ -3,6 +3,8 @@ package org.mayocat.store.rdbms.dbi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -87,19 +89,26 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
-    public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Attachment attachment) throws EntityDoesNotExistException, InvalidEntityException
     {
         this.dao.begin();
 
-        Attachment originalAttachment = this.findBySlug(entity.getSlug());
+        Attachment originalAttachment = this.findBySlug(attachment.getSlug());
 
         if (originalAttachment == null) {
             this.dao.commit();
             throw new EntityDoesNotExistException();
         }
 
-        entity.setId(originalAttachment.getId());
-        Integer updatedRows = this.dao.updateAttachment(entity);
+        attachment.setId(originalAttachment.getId());
+        Integer updatedRows = this.dao.updateAttachment(attachment);
+
+        if (attachment.getLocalizedVersions() != null && !attachment.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = attachment.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(attachment.getId(), locale, localizedVersions.get(locale));
+            }
+        }
 
         this.dao.commit();
 

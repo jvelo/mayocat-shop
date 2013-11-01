@@ -75,6 +75,22 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
     Thumbnail findThumbnail(@Bind("id") UUID id, @Bind("source") String source, @Bind("hint") String hint,
             @Bind("ratio") String ratio);
 
+    @SqlQuery(
+            "SELECT attachment_id, " +
+                    "       source, " +
+                    "       hint, " +
+                    "       ratio, " +
+                    "       x, " +
+                    "       y, " +
+                    "       width, " +
+                    "       height " +
+                    "FROM   thumbnail " +
+                    "WHERE  attachment_id = :id" +
+                    "       AND source = :source " +
+                    "       AND hint = :hint"
+    )
+    Thumbnail findThumbnail(@Bind("id") UUID id, @Bind("source") String source, @Bind("hint") String hint);
+
     @SqlQuery
     (
         "SELECT attachment_id, " +
