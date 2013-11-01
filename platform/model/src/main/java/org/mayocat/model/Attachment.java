@@ -26,7 +26,7 @@ public class Attachment implements Entity, Child, Localized
 
     private String extension;
 
-    private InputStream data;
+    private transient InputStream data;
 
     private UUID parentId;
 

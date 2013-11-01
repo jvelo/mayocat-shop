@@ -13,6 +13,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.mayocat.context.WebContext;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.Localized;
@@ -58,6 +59,11 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
 
         if (copiedEntity == null) {
             return entity;
+        }
+
+        // Special I/O case for attachment : set back the input stream manually
+        if (copiedEntity instanceof Attachment) {
+            ((Attachment) copiedEntity).setData(((Attachment) entity).getData());
         }
 
         // Handle entity fields :
