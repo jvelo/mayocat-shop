@@ -1,6 +1,7 @@
 package org.mayocat.localization;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,7 +12,11 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.util.Utils;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
@@ -21,6 +26,21 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
  */
 public class LocalizationContainerFilter implements ContainerRequestFilter
 {
+    private static final Predicate<String> IS_BLANK = matchesAllOf(CharMatcher.WHITESPACE);
+
+    private static final Predicate<String> IS_NULL_OR_BLANK = Predicates.and(Predicates.notNull(), IS_BLANK);
+
+    private static Predicate<String> matchesAllOf(final CharMatcher charMatcher)
+    {
+        return new Predicate<String>()
+        {
+            public boolean apply(String string)
+            {
+                return charMatcher.matchesAllOf(string);
+            }
+        };
+    }
+
     @Override
     public ContainerRequest filter(ContainerRequest containerRequest)
     {
@@ -43,7 +63,11 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
 
         if (!alternativeLocales.isEmpty()) {
             for (Locale locale : alternativeLocales) {
-                if (requestURI.getPath().startsWith("/" + locale.toLanguageTag())) {
+                List<String> fragments = ImmutableList.copyOf(
+                        Collections2.filter(Arrays.asList(requestURI.getPath().toString().split("/")),
+                                Predicates.not(IS_NULL_OR_BLANK))
+                );
+                if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
                     UriBuilder builder = UriBuilder.fromUri(requestURI);
                     builder.replacePath(requestURI.getPath().substring(locale.toString().length() + 1));
                     containerRequest.setUris(containerRequest.getBaseUri(), builder.build());
