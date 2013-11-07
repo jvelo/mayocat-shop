@@ -49,7 +49,9 @@ public class ImageContextBuilder
 
                 if (bestFit.isPresent()) {
                     String url =
-                            MessageFormat.format("/images/thumbnails/{0}_{1}_{2}_{3}_{4}.{5}?width={6}&height={7}",
+                            MessageFormat.format(
+                                    "/images/thumbnails/{0}_{1,number,#}_{2,number,#}_{3,number,#}_{4,number,#}.{5}" +
+                                            "?width={6,number,#}&height={7,number,#}",
                                     image.getAttachment().getSlug(),
                                     bestFit.get().getX(),
                                     bestFit.get().getY(),
@@ -61,7 +63,7 @@ public class ImageContextBuilder
                     context.put("theme_" + dimensionName + "_url", url);
                 } else {
                     String url =
-                            MessageFormat.format("/images/{0}.{1}?width={2}&height={3}",
+                            MessageFormat.format("/images/{0}.{1}?width={2,number,#}&height={3,number,#}",
                                     image.getAttachment().getSlug(),
                                     image.getAttachment().getExtension(),
                                     definition.getWidth(),

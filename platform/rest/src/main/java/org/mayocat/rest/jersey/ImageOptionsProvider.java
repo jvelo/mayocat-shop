@@ -39,6 +39,11 @@ public class ImageOptionsProvider implements InjectableProvider<Context, Paramet
                 Optional<Integer> width = extractValue(httpContext.getRequest().getQueryParameters().get(WIDTH_OPTION));
                 Optional<Integer> height =
                         extractValue(httpContext.getRequest().getQueryParameters().get(HEIGHT_OPTION));
+
+                if (!width.isPresent() && !height.isPresent()) {
+                    return Optional.absent();
+                }
+
                 return Optional.of(new ImageOptions(width, height));
             }
             return Optional.absent();
