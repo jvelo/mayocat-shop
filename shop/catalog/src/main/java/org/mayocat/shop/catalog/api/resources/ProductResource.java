@@ -102,7 +102,6 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     @Path("{slug}")
     @GET
     @Timed
-    @Authorized
     public Object getProduct(@PathParam("slug") String slug,
             @QueryParam("expand") @DefaultValue("") List<String> expansions)
     {
@@ -154,6 +153,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     }
 
     @Path("{slug}/images/{imageSlug}")
+    @Authorized
     @DELETE
     @Consumes(MediaType.WILDCARD)
     public Response detachImage(@PathParam("slug") String slug, @PathParam("imageSlug") String imageSlug)
@@ -171,6 +171,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
     }
 
     @Path("{slug}/images/{imageSlug}")
+    @Authorized
     @POST
     @Consumes(MediaType.WILDCARD)
     public Response updateImage(@PathParam("slug") String slug, @PathParam("imageSlug") String imageSlug,
@@ -195,6 +196,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
 
     @Path("{slug}/attachments")
+    @Authorized
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response addAttachment(@PathParam("slug") String slug,
