@@ -92,7 +92,7 @@ public class PageResource extends AbstractFrontResource implements Resource
         for (Attachment attachment : attachments) {
             if (AbstractFrontResource.isImage(attachment)) {
                 List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                Image image = new Image(attachment, thumbnails);
+                Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                 images.add(image);
             }
         }
