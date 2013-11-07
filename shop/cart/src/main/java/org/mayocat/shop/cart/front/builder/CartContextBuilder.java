@@ -21,6 +21,7 @@ import org.mayocat.shop.cart.front.context.DeliveryTimeContext;
 import org.mayocat.shop.cart.front.context.ShippingOptionContext;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
@@ -128,6 +129,16 @@ public class CartContextBuilder
             cir.setTitle(purchasable.getTitle());
             cir.setDescription(purchasable.getDescription());
             cir.setQuantity(quantity);
+
+            if (Product.class.isAssignableFrom(purchasable.getClass())) {
+                cir.setType("product");
+                cir.setSlug(((Product) purchasable).getSlug());
+            } else {
+                cir.setType(purchasable.getClass().getSimpleName().toLowerCase());
+            }
+
+            cir.setId(purchasable.getId());
+
             if (images.size() > 0) {
                 ImageContext featuredImageContext = imageContextBuilder.createImageContext(images.get(0));
                 cir.setFeaturedImage(featuredImageContext);

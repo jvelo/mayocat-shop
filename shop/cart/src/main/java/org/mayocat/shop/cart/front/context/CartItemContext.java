@@ -1,7 +1,11 @@
 package org.mayocat.shop.cart.front.context;
 
+import java.util.UUID;
+
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.front.context.ImageContext;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * @version $Id$
@@ -13,6 +17,13 @@ public class CartItemContext
     private String description;
 
     private Long quantity;
+
+    private String type;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String slug;
+
+    private UUID id;
 
     private PriceRepresentation unitPrice;
 
@@ -78,5 +89,35 @@ public class CartItemContext
     public void setFeaturedImage(ImageContext featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+    public String getSlug()
+    {
+        return slug;
+    }
+
+    public void setSlug(String slug)
+    {
+        this.slug = slug;
+    }
+
+    public UUID getId()
+    {
+        return id;
+    }
+
+    public void setId(UUID id)
+    {
+        this.id = id;
     }
 }
