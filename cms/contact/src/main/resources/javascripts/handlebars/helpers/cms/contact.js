@@ -10,7 +10,7 @@
         var out = java.lang.System.out;
     }
 
-    var tlsClass = org.mayocat.theme.ThemeLocalizationService,
+    var tlsClass = org.mayocat.localization.ThemeLocalizationService,
         themeLocalizationService = Mayocat.getComponent(tlsClass);
 
     Handlebars.registerHelper('contactForm', function () {

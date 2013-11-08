@@ -40,7 +40,7 @@ var Mayocat = (function (global, Mayocat)
     // Java bindings ---------------------------------------------------------------------------------------------------
 
     var ThemeFileResolverClass = org.mayocat.theme.ThemeFileResolver,
-        ThemeLocalizationServiceClass = org.mayocat.theme.ThemeLocalizationService,
+        ThemeLocalizationServiceClass = org.mayocat.localization.ThemeLocalizationService,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint,
         themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
         themeFileResolver = getComponent(ThemeFileResolverClass);

@@ -1,4 +1,4 @@
-package org.mayocat.theme;
+package org.mayocat.localization;
 
 import org.xwiki.component.annotation.Role;
 

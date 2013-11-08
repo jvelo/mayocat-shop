@@ -1,4 +1,4 @@
-package org.mayocat.theme.internal;
+package org.mayocat.localization.internal;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.files.PermanentFileEvent;
 import org.mayocat.theme.Theme;
-import org.mayocat.theme.ThemeLocalizationService;
+import org.mayocat.localization.ThemeLocalizationService;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
