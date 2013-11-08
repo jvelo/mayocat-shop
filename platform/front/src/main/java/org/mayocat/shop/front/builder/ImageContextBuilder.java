@@ -87,7 +87,7 @@ public class ImageContextBuilder
             for (String dimensionName : theme.getThumbnails().keySet()) {
 
                 ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
-                String url = MessageFormat.format("http://placehold.it/{0}x{1}", definition.getWidth(),
+                String url = MessageFormat.format("http://placehold.it/{0,number,#}x{1,number,#}", definition.getWidth(),
                         definition.getHeight());
                 context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);
             }
