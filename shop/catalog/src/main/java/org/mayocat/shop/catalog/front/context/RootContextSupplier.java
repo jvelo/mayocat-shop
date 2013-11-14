@@ -118,9 +118,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                 }
             }
         }
-        if (!logoFound) {
-            site.put("logo", imageContextBuilder.createPlaceholderImageContext(true));
-        }
 
         if (tenant.getAddons().isLoaded()) {
             AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
