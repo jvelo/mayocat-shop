@@ -45,7 +45,8 @@ public class ProductMapper implements ResultSetMapper<Product>
                 Map<Locale, Map<String, Object>> localizedVersions = Maps.newHashMap();
                 Map[] data = mapper.readValue(resultSet.getString("localization_data"), Map[].class);
                 for (Map map : data) {
-                    localizedVersions.put(LocaleUtils.toLocale((String) map.get("locale")), (Map) map.get("entity"));
+
+                    localizedVersions.put(Locale.forLanguageTag((String) map.get("locale")), (Map) map.get("entity"));
                 }
                 product.setLocalizedVersions(localizedVersions);
             } catch (IOException e) {
