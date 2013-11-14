@@ -1,4 +1,4 @@
-package org.mayocat.configuration.thumbnails;
+package org.mayocat.configuration.images;
 
 /**
  * @version $Id$

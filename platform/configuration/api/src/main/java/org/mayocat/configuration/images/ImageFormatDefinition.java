@@ -1,4 +1,4 @@
-package org.mayocat.configuration.thumbnails;
+package org.mayocat.configuration.images;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class ThumbnailDefinition
+public class ImageFormatDefinition
 {
     @JsonProperty
     private String name;

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
+import org.mayocat.configuration.images.ImageFormatDefinition;
 
 import javax.validation.Valid;
 
@@ -27,7 +27,7 @@ public class ThemeDefinition
 
     @Valid
     @JsonProperty
-    private Map<String, ThumbnailDefinition> thumbnails = Maps.newHashMap();
+    private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
 
     @Valid
     @JsonProperty
@@ -47,9 +47,9 @@ public class ThemeDefinition
         return description;
     }
 
-    public Map<String, ThumbnailDefinition> getThumbnails()
+    public Map<String, ImageFormatDefinition> getImageFormats()
     {
-        return thumbnails;
+        return images;
     }
 
     public Map<String, Model> getModels()

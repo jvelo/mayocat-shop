@@ -19,7 +19,7 @@
             <ul class="unstyled">
                 <li ng-repeat="source in ['platform', 'theme']">
                     <ul class="unstyled">
-                        <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                        <li ng-repeat="size in configuration[entityType].images[source]"
                             ng-show="isEdited(source, size)">
                             <thumbnail-editor
                                     width="size.width"

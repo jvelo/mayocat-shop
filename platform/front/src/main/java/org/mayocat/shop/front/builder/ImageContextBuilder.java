@@ -2,7 +2,7 @@ package org.mayocat.shop.front.builder;
 
 import java.text.MessageFormat;
 
-import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
+import org.mayocat.configuration.images.ImageFormatDefinition;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.util.ImageUtils;
@@ -41,9 +41,9 @@ public class ImageContextBuilder
         context.put("url", MessageFormat.format("/images/{0}.{1}", image.getAttachment().getSlug(),
                 image.getAttachment().getExtension()));
 
-        if (theme != null && theme.getThumbnails().size() > 0) {
-            for (String dimensionName : theme.getThumbnails().keySet()) {
-                ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+        if (theme != null && theme.getImageFormats().size() > 0) {
+            for (String dimensionName : theme.getImageFormats().keySet()) {
+                ImageFormatDefinition definition = theme.getImageFormats().get(dimensionName);
                 Optional<Thumbnail> bestFit = findBestFit(image, definition.getWidth(),
                         definition.getHeight());
 
@@ -83,10 +83,10 @@ public class ImageContextBuilder
     public ImageContext createPlaceholderImageContext(boolean featured)
     {
         ImageContext context = new ImageContext("http://placehold.it/800x800");
-        if (theme != null && theme.getThumbnails().size() > 0) {
-            for (String dimensionName : theme.getThumbnails().keySet()) {
+        if (theme != null && theme.getImageFormats().size() > 0) {
+            for (String dimensionName : theme.getImageFormats().keySet()) {
 
-                ThumbnailDefinition definition = theme.getThumbnails().get(dimensionName);
+                ImageFormatDefinition definition = theme.getImageFormats().get(dimensionName);
                 String url = MessageFormat.format("http://placehold.it/{0,number,#}x{1,number,#}", definition.getWidth(),
                         definition.getHeight());
                 context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);

@@ -6,7 +6,7 @@ angular.module('mayocat.image', ['ngResource'])
             entityMixins.extend("localization", $scope, "image");
 
             function initializeEdition() {
-                var themeSource = $scope.configuration[$scope.entityType].thumbnails.theme,
+                var themeSource = $scope.configuration[$scope.entityType].images.theme,
                     currentSize;
                 for (var key in themeSource) {
                     themeSource[key].id = key;
