@@ -9,6 +9,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.money.format.MoneyFormatter;
 import org.joda.money.format.MoneyFormatterBuilder;
+import org.mayocat.shop.catalog.util.MoneyUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,7 +32,7 @@ public class CurrencyRepresentation
         this.symbol = CURRENCY_FORMATTER.withLocale(locale).print(
                 Money.of(CurrencyUnit.of(currency), BigDecimal.TEN, RoundingMode.HALF_EVEN));
 
-        this.localSymbol = symbol;
+        this.localSymbol = MoneyUtil.getLocalSymbol(currency);
     }
 
     public String getLocalSymbol()
