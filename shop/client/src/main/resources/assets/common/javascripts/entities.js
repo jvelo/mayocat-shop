@@ -97,7 +97,7 @@
 
                 $rootScope.entity = {
                     type: entityType,
-                    uri: (options.apiBase || "/api/" + entityType + "s/") + slug,
+                    uri: (options.apiBase || "/api/" + entityType + "s/") + (options.noSlug ? "" : slug),
                     slug: slug
                 };
                 $rootScope.$broadcast("entity:initialized", $rootScope.entity);

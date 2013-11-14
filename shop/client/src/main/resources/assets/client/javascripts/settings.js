@@ -64,8 +64,17 @@ angular.module('settings', ['ngResource'])
     // Controller for the tenant (shop information) settings UI
     // See partials/settingsTenant.html
     //
-    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'imageService',
-        function ($scope, $resource, $http, addonsService, imageService) {
+    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'entityMixins',
+        function ($scope, $resource, $http, addonsService, entityMixins) {
+
+            entityMixins.extend(["base", "addons", "image"], $scope, "tenant", {
+                "base": {
+                    "apiBase": "/api/tenant/",
+                    "noSlug" : true
+                }
+            });
+
+            $scope.TenantResource = $resource("/api/tenant/");
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -82,31 +91,13 @@ angular.module('settings', ['ngResource'])
                 });
             }
 
-            $scope.reloadImages = function (file) {
-                // Reload list of images
-                $scope.tenant.images = $http.get("/api/tenant/images").success(function (data) {
-                    $scope.tenant.images = data;
-                });
-                // Reload featured image
-                var tenant = $scope.TenantResource.get({
-                }, function () {
-                    $scope.tenant.featuredImage = tenant.featuredImage;
-                });
-            }
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.product, image);
-            }
-
             // Initialization ------------------------------------------------------------------------------------------
 
             $scope.addons = [];
 
-            $scope.TenantResource = $resource("/api/tenant/");
-
             $scope.tenant = $scope.TenantResource.get({
             }, function () {
-                $scope.initializeAddons();
+                $scope.initializeEntity();
             });
 
         }
