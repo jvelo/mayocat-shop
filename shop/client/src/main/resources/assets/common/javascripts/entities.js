@@ -209,7 +209,7 @@
                     modalScope.image = image;
 
                     scope.modalInstance = $modal.open({
-                        templateUrl: '/common/partials/editImage.html',
+                        templateUrl: '/common/partials/editImage.html?2',
                         windowClass: 'editImage',
                         controller: 'ImageEditorController',
                         scope: modalScope

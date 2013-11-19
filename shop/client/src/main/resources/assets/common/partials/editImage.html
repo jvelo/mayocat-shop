@@ -6,8 +6,8 @@
     <div class="modal-body">
         <div class="pull-left thumbnails-list">
             <ul class="nav nav-tabs nav-stacked" ng-repeat="source in ['platform', 'theme']"
-                ng-show="keys(configuration[entityType].thumbnails[source]).length > 0">
-                <li ng-repeat="size in configuration[entityType].thumbnails[source]"
+                ng-show="keys(configuration[entityType].images[source]).length > 0">
+                <li ng-repeat="size in configuration[entityType].images[source]"
                     ng-class="{active: isEdited(source, size)}"
                     ng-click="edit(source, size)" class="clickme">
                     {{size.name}}
