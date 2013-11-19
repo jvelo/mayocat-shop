@@ -3,8 +3,10 @@ package org.mayocat.rest.views;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -115,8 +117,15 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Map<String, Object> context = frontView.getContext();
             String jsonContext = mapper.writeValueAsString(context);
-
-            Template error = themeFileResolver.getTemplate("error.html", frontView.getBreakpoint());
+            Template error;
+            try {
+                 error = themeFileResolver.getTemplate("500.html", frontView.getBreakpoint());
+            }
+            catch (TemplateNotFoundException notFound) {
+                // Fallback on the classpath hosted error 500 file
+                error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),
+                        Charsets.UTF_8));
+            }
             Map<String, Object> errorContext = Maps.newHashMap();
             errorContext.put("error", e.getMessage());
             errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
