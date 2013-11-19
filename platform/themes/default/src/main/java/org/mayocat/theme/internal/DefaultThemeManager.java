@@ -136,10 +136,6 @@ public class DefaultThemeManager implements ThemeManager
             // theme.yml file not found or invalid -> theme might have a parent
             if (tenant.isPresent()) {
                 parent = getTheme(themeId, Optional.<Tenant>absent(), Arrays.asList(level));
-
-                // FIXME
-                // Decide here if we want to always fall-back on the default theme.
-                // It might create an odd theme development experience...
             }
         }
 

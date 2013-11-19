@@ -61,7 +61,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
     public final static String SITE_TITLE = "title";
 
-    public static final String THEME_PATH = "THEME_PATH";
+    public static final String THEME_PATH = "themePath";
 
     @Inject
     private WebContext context;
@@ -106,7 +106,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
         List<Attachment> siteAttachments = this.attachmentStore.get().findAllChildrenOf(tenant);
         List<Image> siteImages = new ArrayList<Image>();
-        boolean logoFound = false;
         for (Attachment attachment : siteAttachments) {
             if (AbstractFrontResource.isImage(attachment)) {
                 if (attachment.getId().equals(tenant.getFeaturedImageId())) {
@@ -114,7 +113,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                     Image image = new Image(attachment, thumbnails);
                     siteImages.add(image);
                     site.put("logo", imageContextBuilder.createImageContext(image, true));
-                    logoFound = true;
                 }
             }
         }
@@ -128,11 +126,8 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         data.put(THEME_PATH, ResourceResource.PATH);
         data.put(SITE, site);
 
-        // FIXME
-        // Do we always want to support the collections context ?
-        // Or should it be supported via the menu builder like the products.
         List<Collection> collections = this.collectionStore.get().findAll(24, 0);
-        List<Map<String, Object>> collectionsContext = Lists.newArrayList();
+        final List<Map<String, Object>> collectionsContext = Lists.newArrayList();
 
         for (final Collection collection : collections) {
             collectionsContext.add(new HashMap<String, Object>()
@@ -145,17 +140,18 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             });
         }
 
-        data.put(COLLECTIONS, collectionsContext);
+        data.put(COLLECTIONS, new HashMap()
+        {
+            {
+                put("all", collectionsContext);
+            }
+        });
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
         data.put(PAGE_TITLE, context.getTenant().getName());
 
-        // FIXME
-        // Temporarly put a product list in the context.
-        // It is prefixed with __unsupported__ since the goal is to replace this with a "menu builder" feature
-
         final List<Map<String, Object>> productsContext = Lists.newArrayList();
-        List<Product> products = this.productStore.get().findAllOnShelf(24, 0);
+        List<Product> products = this.productStore.get().findAllOnShelf(120, 0);
         java.util.Collection<UUID> featuredImageIds = Collections2.transform(products,
                 new Function<Product, UUID>()
                 {
@@ -203,11 +199,18 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                 Image image = new Image(entityLocalizationService.localize(attachment), new ArrayList<>(thumbnails));
                 images.add(image);
             }
+            List<org.mayocat.shop.catalog.model.Collection> productCollections =
+                    collectionStore.get().findAllForProduct(product);
+            product.setCollections(productCollections);
+            if (collections.size() > 0) {
+                // Here we take the first collection in the list, but in the future we should have the featured
+                // collection as the parent entity of this product
+                product.setFeaturedCollection(collections.get(0));
+            }
             Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
             productsContext.add(productContext);
         }
 
-        data.put("__unsupported__products", productsContext); // kept for backward compatibility
         data.put("products", new HashMap(){
             {
                 put ("all",  productsContext);
@@ -217,7 +220,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         // Pages
 
         PageContextBuilder pageContextBuilder = new PageContextBuilder(urlFactory, theme);
-        List<Map<String, Object>> pagesContext = Lists.newArrayList();
+        final List<Map<String, Object>> pagesContext = Lists.newArrayList();
         List<Page> rootPages = this.pageStore.get().findAllRootPages();
 
         featuredImageIds = Collections2.transform(rootPages,
@@ -230,7 +233,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                     }
                 }
         );
-        ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         if (ids.isEmpty()) {
             allImages = Collections.emptyList();
             allThumbnails = Collections.emptyList();
@@ -266,7 +269,11 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             pagesContext.add(pageContext);
         }
 
-        data.put("pages", pagesContext);
+        data.put("pages", new HashMap(){
+            {
+                put ("roots",  pagesContext);
+            }
+        });
 
         Flash flash = context.getFlash();
         if (!flash.isEmpty()) {

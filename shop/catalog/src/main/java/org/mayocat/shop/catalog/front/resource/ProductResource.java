@@ -90,76 +90,10 @@ public class ProductResource extends AbstractFrontResource implements Resource, 
     public FrontView getProducts(@QueryParam("page") Integer page, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
-        List<Product> products = this.productStore.get().findAllOnShelf(24, 0);
-        Collection<UUID> featuredImageIds = Collections2.transform(products,
-                new Function<Product, UUID>()
-                {
-                    @Override
-                    public UUID apply(final Product product)
-                    {
-                        return product.getFeaturedImageId();
-                    }
-                }
-        );
-        List<UUID> ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
-        List<Attachment> allImages;
-        List<Thumbnail> allThumbnails;
-        if (ids.isEmpty()) {
-            allImages = Collections.emptyList();
-            allThumbnails = Collections.emptyList();
-        } else {
-            allImages = this.attachmentStore.get().findByIds(ids);
-            allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
-        }
-
         FrontView result = new FrontView("products", Optional.<String>absent(), breakpoint);
         Map<String, Object> context = getContext(uriInfo);
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
-        ThemeDefinition theme = this.context.getTheme().getDefinition();
-        ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
-                entityLocalizationService, attachmentStore.get(), thumbnailStore.get(), theme);
-
-        List<Map<String, Object>> productsContext = Lists.newArrayList();
-
-        for (final Product product : products) {
-            Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
-            {
-                @Override
-                public boolean apply(@Nullable Attachment attachment)
-                {
-                    return attachment.getId().equals(product.getFeaturedImageId());
-                }
-            });
-            List<Image> images = new ArrayList<Image>();
-            for (final Attachment attachment : attachments) {
-                Collection<Thumbnail> thumbnails = Collections2.filter(allThumbnails, new Predicate<Thumbnail>()
-                {
-                    @Override
-                    public boolean apply(@Nullable Thumbnail thumbnail)
-                    {
-                        return thumbnail.getAttachmentId().equals(attachment.getId());
-                    }
-                });
-                Image image = new Image(entityLocalizationService.localize(attachment),
-                        new ArrayList<Thumbnail>(thumbnails));
-                images.add(image);
-            }
-
-            List<org.mayocat.shop.catalog.model.Collection> collections =
-                    collectionStore.get().findAllForProduct(product);
-            product.setCollections(collections);
-            if (collections.size() > 0) {
-                // Here we take the first collection in the list, but in the future we should have the featured
-                // collection as the parent entity of this product
-                product.setFeaturedCollection(collections.get(0));
-            }
-
-            Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
-            productsContext.add(productContext);
-        }
-
-        context.put("products", productsContext);
         result.putContext(context);
 
         return result;
