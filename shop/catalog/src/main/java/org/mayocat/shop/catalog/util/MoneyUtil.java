@@ -42,6 +42,7 @@ public class MoneyUtil
      */
     public static String getLocalSymbol(Currency currency)
     {
-        return currency.getSymbol(currencyLocaleMap.get(currency));
+        return currencyLocaleMap.containsKey(currency) ? currency.getSymbol(currencyLocaleMap.get(currency)) :
+                currency.getSymbol();
     }
 }
