@@ -1,6 +1,7 @@
 <h1 class="big">{{'order.title.orders' | translate}}</h1>
 
-<div class="orders row">
+<div class="loading" ng-show="!orders"></div>
+<div class="orders row" ng-show="orders">
 
     <div class="alert alert-info" ng-show="orders.length <= 0">{{'order.alert.empty' | translate}}</div>
 

@@ -1,7 +1,8 @@
 <h1 class="small" ng-show="!isNew()">{{'content.title.editArticle' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newArticle' | translate}}</h1>
 
-<form name="articleForm">
+<div class="loading" ng-show="!article.slug"></div>
+<form name="articleForm" ng-show="article.slug">
     <article class="entity">
 
         <div>
