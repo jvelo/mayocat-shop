@@ -113,6 +113,13 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     private void writeException(FrontView frontView, ObjectMapper mapper, Exception e, OutputStream entityStream)
     {
         try {
+            // Note:
+            // This could be seen as a "server error", but we don't set the Status header to 500 because we want to be
+            // able to distinguish between actual server errors (internal Mayocat Shop server error) and theme
+            // developers errors (which this is).
+            // This is comes at play when setting up monitoring with alerts on a number of 5xx response above a
+            // certain threshold.
+
             // Re-serialize the context as json with indentation for better debugging
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Map<String, Object> context = frontView.getContext();
