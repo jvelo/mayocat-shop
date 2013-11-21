@@ -1,7 +1,8 @@
 <h1 class="small" ng-show="!isNew()">{{'product.title.editCollection' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'product.title.newCollection' | translate}}</h1>
 
-<form name="collectionForm">
+<div class="loading" ng-show="!collection.slug && !isNew()"></div>
+<form name="collectionForm" ng-show="collection.slug || isNew()">
     <article class="entity">
 
         <div>

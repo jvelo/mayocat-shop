@@ -1,8 +1,8 @@
 <h1 class="small" ng-show="!isNew()">{{'content.title.editArticle' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newArticle' | translate}}</h1>
 
-<div class="loading" ng-show="!article.slug"></div>
-<form name="articleForm" ng-show="article.slug">
+<div class="loading" ng-show="!article.slug && !isNew()"></div>
+<form name="articleForm" ng-show="article.slug || isNew()">
     <article class="entity">
 
         <div>
