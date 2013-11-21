@@ -37,6 +37,10 @@ public class ThemeDefinition
     @JsonProperty
     private Map<String, AddonGroup> addons = Collections.emptyMap();
 
+    @Valid
+    @JsonProperty
+    private Map<String, PaginationDefinition> pagination = Collections.emptyMap();
+
     public String getName()
     {
         return name;
@@ -60,5 +64,10 @@ public class ThemeDefinition
     public Map<String, AddonGroup> getAddons()
     {
         return this.addons;
+    }
+
+    public Map<String, PaginationDefinition> getPaginationDefinitions()
+    {
+        return pagination;
     }
 }
