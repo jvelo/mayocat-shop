@@ -21,7 +21,7 @@ import junit.framework.Assert;
 /**
  * @version $Id$
  */
-public class DefaultThemeTest
+public class ThemeDefinitionTest
 {
     private ObjectMapperFactory objectMapperFactory;
 
