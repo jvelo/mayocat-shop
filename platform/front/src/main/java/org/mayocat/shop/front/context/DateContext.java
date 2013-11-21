@@ -21,16 +21,22 @@ public class DateContext
 
     private Integer year;
 
+    private Long time;
+
+    private String dateTime;
+
     public DateContext(Date date, Locale locale)
     {
-        DateTime dateTime = new DateTime(date);
+        DateTime dt = new DateTime(date);
 
-        shortDate = DateTimeFormat.shortDate().withLocale(locale).print(dateTime);
-        longDate = DateTimeFormat.longDate().withLocale(locale).print(dateTime);
+        shortDate = DateTimeFormat.shortDate().withLocale(locale).print(dt);
+        longDate = DateTimeFormat.longDate().withLocale(locale).print(dt);
 
-        dayOfMonth = dateTime.getDayOfMonth();
-        monthOfYear = dateTime.getMonthOfYear();
-        year = dateTime.getYear();
+        dayOfMonth = dt.getDayOfMonth();
+        monthOfYear = dt.getMonthOfYear();
+        year = dt.getYear();
+        time = dt.toDate().getTime();
+        dateTime = dt.toString();
     }
 
     public String getShortDate()
@@ -56,5 +62,15 @@ public class DateContext
     public Integer getYear()
     {
         return year;
+    }
+
+    public Long getTime()
+    {
+        return time;
+    }
+
+    public String getDateTime()
+    {
+        return dateTime;
     }
 }
