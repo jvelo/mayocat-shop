@@ -117,6 +117,9 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
     @Override
     public List<T> findAll(Integer number, Integer offset)
     {
+        if (number == 0) {
+            return FluentIterable.from(entities.values()).skip(offset).toList();
+        }
         return FluentIterable.from(entities.values()).skip(offset).limit(number).toList();
     }
 

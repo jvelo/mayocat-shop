@@ -236,7 +236,8 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         }
         final Product other = (Product) obj;
 
-        return Objects.equal(this.title, other.title)
+        return     Objects.equal(this.id, other.id)
+                && Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.onShelf, other.onShelf)
                 && Objects.equal(this.price, other.price)
@@ -263,6 +264,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     public String toString()
     {
         return Objects.toStringHelper(this)
+                .addValue(id)
                 .addValue(this.title)
                 .addValue(this.slug)
                 .addValue(this.onShelf)
