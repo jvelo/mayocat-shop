@@ -33,6 +33,28 @@ public class MemoryProductStoreTest
     }
 
     @Test
+    public void testFindBySlug() throws InvalidEntityException, EntityAlreadyExistsException
+    {
+        Product product1 = new Product();
+        product1.setSlug("slug-1");
+
+        Product product2 = new Product();
+        product2.setSlug("slug-2");
+
+        Product product3 = new Product();
+        product3.setSlug("slug-3");
+
+        product1 = productStore.create(product1);
+        product2 = productStore.create(product2);
+        product3 = productStore.create(product3);
+
+        Product found = productStore.findBySlug("slug-2");
+        Assert.assertEquals(product2, found);
+        Assert.assertNotEquals(product1, found);
+        Assert.assertNotEquals(product3, found);
+    }
+
+    @Test
     public void testFindAllOnShelf() throws InvalidEntityException, EntityAlreadyExistsException
     {
         Product product1 = new Product();
