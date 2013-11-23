@@ -53,6 +53,10 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
                     throw new RuntimeException("Cannot apply with parent filter to non-child");
                 }
 
+                if (parent == null) {
+                    return ((Child) input).getParentId() == null;
+                }
+
                 return parent.getId().equals(((Child) input).getParentId());
             }
         };
@@ -73,7 +77,6 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         };
     }
 
-    @Override
     public T create(@Valid T entity) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (entity.getId() == null) {
@@ -88,7 +91,6 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         return entity;
     }
 
-    @Override
     public void update(@Valid T entity) throws EntityDoesNotExistException, InvalidEntityException
     {
         if (!exists(entity)) {
@@ -98,7 +100,6 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         entities.put(entity.getId(), entity);
     }
 
-    @Override
     public void delete(@Valid T entity) throws EntityDoesNotExistException
     {
         if (!exists(entity)) {
@@ -108,13 +109,11 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         entities.remove(entity.getId());
     }
 
-    @Override
     public Integer countAll()
     {
         return entities.size();
     }
 
-    @Override
     public List<T> findAll(Integer number, Integer offset)
     {
         if (number == 0) {
@@ -123,7 +122,6 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         return FluentIterable.from(entities.values()).skip(offset).limit(number).toList();
     }
 
-    @Override
     public List<T> findByIds(final List<UUID> ids)
     {
         return FluentIterable.from(entities.values()).filter(new Predicate<T>()
@@ -135,10 +133,14 @@ public class BaseEntityMemoryStore<T extends Identifiable> implements Store<T, U
         }).toList();
     }
 
-    @Override
     public T findById(UUID id)
     {
         return entities.get(id);
+    }
+
+    protected List<T> all()
+    {
+        return findAll(0, 0);
     }
 
     private boolean exists(T entity)

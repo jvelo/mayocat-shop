@@ -186,7 +186,9 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
         }
         final Page other = (Page) obj;
 
-        return Objects.equal(this.title, other.title)
+        return     Objects.equal(this.id, other.id)
+                && Objects.equal(this.parentId, other.parentId)
+                && Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.content, other.content)
                 && Objects.equal(this.published, other.published)
@@ -197,6 +199,8 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     public int hashCode()
     {
         return Objects.hashCode(
+                this.id,
+                this.parentId,
                 this.slug,
                 this.title,
                 this.content,
@@ -208,6 +212,9 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
+        return Objects.toStringHelper(this)
+                .addValue(this.id)
+                .addValue(this.title)
+                .addValue(this.slug).toString();
     }
 }
