@@ -30,7 +30,7 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
     {
         return new Predicate<CollectionPositionedEntity>()
         {
-            @Override public boolean apply(@Nullable CollectionPositionedEntity input)
+            public boolean apply(@Nullable CollectionPositionedEntity input)
             {
                 return input.getProducts().contains(product);
             }
