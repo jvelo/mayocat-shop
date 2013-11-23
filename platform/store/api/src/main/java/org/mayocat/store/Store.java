@@ -23,4 +23,6 @@ public interface Store<T extends Identifiable, K extends Serializable>
     List<T> findByIds(List<UUID> ids);
 
     T findById(UUID id);
+
+    // boolean exists(UUID id);
 }

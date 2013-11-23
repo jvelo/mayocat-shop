@@ -126,7 +126,9 @@ public class Collection implements Entity, HasFeaturedImage, Localized
         }
         final Collection other = (Collection) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
+        return Objects.equal(this.id, other.id)
+            && Objects.equal(this.title, other.title)
+            && Objects.equal(this.slug, other.slug)
             && Objects.equal(this.description, other.description);
     }
 

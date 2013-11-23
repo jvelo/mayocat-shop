@@ -163,7 +163,9 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
         }
         final Article other = (Article) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
+        return     Objects.equal(this.id, other.id)
+                && Objects.equal(this.title, other.title)
+                && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.content, other.content);
     }
 
