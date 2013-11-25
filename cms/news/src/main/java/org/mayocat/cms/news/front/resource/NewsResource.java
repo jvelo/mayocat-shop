@@ -132,7 +132,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
             articlesContext.put("previous", new HashMap<String, Object>()
             {
                 {
-                    put("pageNumber", currentPage - 1);
+                    put("number", currentPage - 1);
                     put("url", MessageFormat.format("/news/?page={0}", currentPage - 1));
                 }
             });
@@ -142,7 +142,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
             articlesContext.put("next", new HashMap<String, Object>()
             {
                 {
-                    put("pageNumber", currentPage + 1);
+                    put("number", currentPage + 1);
                     put("url", MessageFormat.format("/news/?page={0}", currentPage + 1));
                 }
             });
