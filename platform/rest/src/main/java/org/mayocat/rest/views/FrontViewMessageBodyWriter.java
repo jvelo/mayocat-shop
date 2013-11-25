@@ -10,8 +10,11 @@ import com.google.common.io.Resources;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.mayocat.context.WebContext;
+import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.TemplateNotFoundException;
+import org.mayocat.theme.ThemeManager;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.mayocat.views.TemplateEngineException;
@@ -45,7 +48,13 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     private ThemeFileResolver themeFileResolver;
 
     @Inject
+    private ThemeManager themeManager;
+
+    @Inject
     private Logger logger;
+
+    @Inject
+    private WebContext webContext;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
@@ -66,6 +75,12 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             throws IOException, WebApplicationException
     {
         try {
+
+            if (!webContext.getTheme().isValidDefinition()) {
+                // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
+                writeError("Invalid theme definition", entityStream);
+                return;
+            }
 
             Template template = themeFileResolver.getIndexTemplate(frontView.getBreakpoint());
             Template layout = null;
@@ -88,10 +103,10 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
 
             frontView.getContext().put("templateContent", layout.getId());
             frontView.getContext().put("template", frontView.getLayout());
-            ObjectMapper mapper = new ObjectMapper();
             String jsonContext = null;
 
             try {
+                ObjectMapper mapper = new ObjectMapper();
                 jsonContext = mapper.writeValueAsString(frontView.getContext());
                 engine.get().register(layout);
                 engine.get().register(template);
@@ -99,10 +114,10 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 entityStream.write(rendered.getBytes());
             } catch (JsonMappingException e) {
                 this.logger.warn("Failed to serialize JSON context", e);
-                writeException(frontView, mapper, e, entityStream);
+                writeException(frontView, e, entityStream);
             } catch (TemplateEngineException e) {
                 this.logger.warn("Template exception", e);
-                writeException(frontView, mapper, e, entityStream);
+                writeException(frontView, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -110,7 +125,31 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
         }
     }
 
-    private void writeException(FrontView frontView, ObjectMapper mapper, Exception e, OutputStream entityStream)
+    private void writeError(String message, OutputStream entityStream)
+    {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            Template error;
+            try {
+                error = themeFileResolver.getTemplate("500.html", Breakpoint.DEFAULT);
+            } catch (TemplateNotFoundException notFound) {
+                // Fallback on the classpath hosted error 500 file
+                error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),
+                        Charsets.UTF_8));
+            }
+            Map<String, Object> errorContext = Maps.newHashMap();
+            errorContext.put("error", message);
+
+            engine.get().register(error);
+            String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+            entityStream.write(rendered.getBytes());
+        } catch (Exception e1) {
+            throw new RuntimeException(e1);
+        }
+    }
+
+    private void writeException(FrontView frontView, Exception e, OutputStream entityStream)
     {
         try {
             // Note:
@@ -121,14 +160,14 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             // certain threshold.
 
             // Re-serialize the context as json with indentation for better debugging
+            ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Map<String, Object> context = frontView.getContext();
             String jsonContext = mapper.writeValueAsString(context);
             Template error;
             try {
-                 error = themeFileResolver.getTemplate("500.html", frontView.getBreakpoint());
-            }
-            catch (TemplateNotFoundException notFound) {
+                error = themeFileResolver.getTemplate("500.html", frontView.getBreakpoint());
+            } catch (TemplateNotFoundException notFound) {
                 // Fallback on the classpath hosted error 500 file
                 error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),
                         Charsets.UTF_8));

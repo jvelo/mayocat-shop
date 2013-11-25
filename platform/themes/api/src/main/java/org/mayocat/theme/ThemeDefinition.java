@@ -3,6 +3,7 @@ package org.mayocat.theme;
 import java.util.Collections;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import org.hibernate.validator.constraints.NotBlank;
@@ -19,7 +20,7 @@ public class ThemeDefinition
     @Valid
     @NotBlank
     @JsonProperty
-    private String name;
+    private String name = "";
 
     @Valid
     @JsonProperty
@@ -66,8 +67,14 @@ public class ThemeDefinition
         return this.addons;
     }
 
+    @JsonIgnore
     public Map<String, PaginationDefinition> getPaginationDefinitions()
     {
         return pagination;
+    }
+
+    public PaginationDefinition getPaginationDefinition(String key)
+    {
+        return pagination.containsKey(key) ? pagination.get(key) : new PaginationDefinition();
     }
 }
