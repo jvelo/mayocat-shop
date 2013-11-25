@@ -118,6 +118,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         for (int i = 1; i <= totalPages; i++) {
             Map<String, Object> iPage = Maps.newHashMap();
             iPage.put("number", i);
+            iPage.put("url", MessageFormat.format("/news/?page={0}", i));
             if (i == currentPage) {
                 iPage.put("current", true);
             }
