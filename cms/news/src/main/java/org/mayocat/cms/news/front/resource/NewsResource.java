@@ -1,8 +1,10 @@
 package org.mayocat.cms.news.front.resource;
 
 import java.math.RoundingMode;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,9 +87,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
     public FrontView getNews(@Context Breakpoint breakpoint, @Context UriInfo uriInfo,
             @QueryParam("page") @DefaultValue("1") Integer page)
     {
-        if (page < 1) {
-            page = 1;
-        }
+        final int currentPage = page < 1 ? 1 : page;
 
         Integer numberOfArticlesPerPAge =
                 context.getTheme().getDefinition().getPaginationDefinition("news").getItemsPerPage();
@@ -105,13 +105,12 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         NewsSettings settings = configurationService.getSettings(NewsSettings.class);
         context.put(PAGE_TITLE, substitutor.replace(settings.getNewsPageTitle().getValue()));
 
-        List<Map<String, Object>> articlesContext = Lists.newArrayList();
+        Map<String, Object> articlesContext = Maps.newHashMap();
+        List<Map<String, Object>> currentPageArticles = Lists.newArrayList();
         for (Article article : articles) {
-            articlesContext.add(buildArticleContext(article));
+            currentPageArticles.add(buildArticleContext(article));
         }
-        context.put("articles", articlesContext);
-
-        Map<String, Object> pagination = Maps.newHashMap();
+        articlesContext.put("list", currentPageArticles);
 
         Integer totalPages = IntMath.divide(totalCount, numberOfArticlesPerPAge, RoundingMode.UP);
 
@@ -119,29 +118,36 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         for (int i = 1; i <= totalPages; i++) {
             Map<String, Object> iPage = Maps.newHashMap();
             iPage.put("number", i);
-            if (i == page.intValue()) {
+            if (i == currentPage) {
                 iPage.put("current", true);
             }
             pages.add(iPage);
         }
 
-        pagination.put("pages", pages);
-        pagination.put("currentPage", page);
-        if (page > 1) {
-            pagination.put("hasNewer", true);
-            pagination.put("newer", page - 1);
-        } else {
-            pagination.put("hasNewer", false);
+        articlesContext.put("pages", pages);
+        articlesContext.put("currentPage", page);
+
+        if (currentPage > 1) {
+            articlesContext.put("previous", new HashMap<String, Object>()
+            {
+                {
+                    put("pageNumber", currentPage - 1);
+                    put("url", MessageFormat.format("/news/?page={0}", currentPage - 1));
+                }
+            });
         }
 
-        if (page < totalPages) {
-            pagination.put("hasOlder", true);
-            pagination.put("older", page + 1);
-        } else {
-            pagination.put("hasOlder", false);
+        if (currentPage < totalPages) {
+            articlesContext.put("next", new HashMap<String, Object>()
+            {
+                {
+                    put("pageNumber", currentPage + 1);
+                    put("url", MessageFormat.format("/news/?page={0}", currentPage + 1));
+                }
+            });
         }
 
-        context.put("pagination", pagination);
+        context.put("articles", articlesContext);
 
         FrontView result = new FrontView("news", breakpoint);
         result.putContext(context);
