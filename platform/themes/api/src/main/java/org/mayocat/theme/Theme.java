@@ -30,6 +30,8 @@ public class Theme
     // Is this a tenant "own" theme (a theme in the tenant theme directory)
     private boolean isTenantOwnTheme = false;
 
+    private boolean isValidDefinition = true;
+
     public Theme(Path path, ThemeDefinition definition)
     {
         this(path, definition, null, Type.FILE_SYSTEM);
@@ -53,6 +55,15 @@ public class Theme
         this.type = type;
     }
 
+    public Theme(Path path, ThemeDefinition definition, Theme parent, Type type, boolean isValidDefinition)
+    {
+        this.path = path;
+        this.definition = definition;
+        this.parent = parent;
+        this.type = type;
+        this.isValidDefinition = isValidDefinition;
+    }
+
     public Path getPath()
     {
         return path;
@@ -66,7 +77,7 @@ public class Theme
         if (parent != null) {
             return parent.getDefinition();
         }
-        return null;
+        return new ThemeDefinition();
     }
 
     public Theme getParent()
@@ -87,6 +98,11 @@ public class Theme
     public Type getType()
     {
         return type;
+    }
+
+    public boolean isValidDefinition()
+    {
+        return isValidDefinition;
     }
 
     @Override

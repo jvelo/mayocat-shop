@@ -66,6 +66,26 @@ public class ThemeDefinitionTest
     }
 
     @Test
+    public void testParsePagination() throws Exception
+    {
+        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
+
+        String themeConfig = Resources.toString(Resources.getResource("pagination-theme.yml"), Charsets.UTF_8);
+        ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
+
+        Map<String, PaginationDefinition> paginationDefinitions = theme.getPaginationDefinitions();
+
+        Assert.assertNotNull(paginationDefinitions.get("products"));
+        Assert.assertEquals(new Integer(10), paginationDefinitions.get("products").getItemsPerPage());
+
+        PaginationDefinition collection = paginationDefinitions.get("collection");
+        Assert.assertNotNull(collection);
+        Assert.assertEquals(new Integer(25), collection.getItemsPerPage());
+        Assert.assertNotNull(collection.getModels().get("custom-model"));
+        Assert.assertEquals(new Integer(12), collection.getModels().get("custom-model").getItemsPerPage());
+    }
+
+    @Test
     public void testParseEmptyTheme() throws Exception
     {
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
