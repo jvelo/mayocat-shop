@@ -1,5 +1,6 @@
 package org.mayocat.cms.news.front.resource;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.math.IntMath;
 
 /**
  * @version $Id$
@@ -60,8 +62,6 @@ import com.google.common.collect.Maps;
 public class NewsResource extends AbstractFrontResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + ArticleEntity.PATH;
-
-    private static final Integer DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE = 20;
 
     @Inject
     private Provider<ArticleStore> articleStore;
@@ -83,17 +83,17 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
     @GET
     public FrontView getNews(@Context Breakpoint breakpoint, @Context UriInfo uriInfo,
-            @QueryParam("page") @DefaultValue("0") Integer page)
+            @QueryParam("page") @DefaultValue("1") Integer page)
     {
-        if (page < 0) {
-            page = 0;
+        if (page < 1) {
+            page = 1;
         }
 
-        // TODO In the future we want themes to be able to declare the pagination settings for each entity
-        Integer numberOfArticlesPerPAge = DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE;
+        Integer numberOfArticlesPerPAge =
+                context.getTheme().getDefinition().getPaginationDefinitions().get("news").getItemsPerPage();
 
-        Integer offset = page * numberOfArticlesPerPAge;
-        List<Article> articles = articleStore.get().findAllPublished(offset, DEFAULT_NUMBER_OF_ARTICLES_PER_PAGE);
+        Integer offset = (page - 1) * numberOfArticlesPerPAge;
+        List<Article> articles = articleStore.get().findAllPublished(offset, numberOfArticlesPerPAge);
         Integer totalCount = articleStore.get().countAllPublished();
 
         Map<String, Object> context = getContext(uriInfo);
@@ -111,18 +111,12 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         }
         context.put("articles", articlesContext);
 
-        FrontView result = new FrontView("news", breakpoint);
-        result.putContext(context);
-
         Map<String, Object> pagination = Maps.newHashMap();
 
-        Integer totalPages = Double.valueOf(Math.floor(totalCount / numberOfArticlesPerPAge)).intValue();
-        if (!(totalCount % numberOfArticlesPerPAge == 0)) {
-            totalPages++;
-        }
+        Integer totalPages = IntMath.divide(totalCount, numberOfArticlesPerPAge, RoundingMode.UP);
 
         List<Map<String, Object>> pages = Lists.newArrayList();
-        for (int i = 0; i <= totalPages; i++) {
+        for (int i = 1; i <= totalPages; i++) {
             Map<String, Object> iPage = Maps.newHashMap();
             iPage.put("number", i);
             if (i == page.intValue()) {
@@ -133,11 +127,11 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         pagination.put("pages", pages);
         pagination.put("currentPage", page);
-        if (page > 0) {
-            pagination.put("hasMoreRecent", true);
-            pagination.put("moreRecent", page - 1);
+        if (page > 1) {
+            pagination.put("hasNewer", true);
+            pagination.put("newer", page - 1);
         } else {
-            pagination.put("hasMoreRecent", false);
+            pagination.put("hasNewer", false);
         }
 
         if (page < totalPages) {
@@ -146,6 +140,11 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         } else {
             pagination.put("hasOlder", false);
         }
+
+        context.put("pagination", pagination);
+
+        FrontView result = new FrontView("news", breakpoint);
+        result.putContext(context);
 
         return result;
     }
