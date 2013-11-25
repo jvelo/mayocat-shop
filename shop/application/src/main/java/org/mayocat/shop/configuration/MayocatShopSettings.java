@@ -20,7 +20,6 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 public class MayocatShopSettings extends AbstractSettings
 {
     @Valid
-    @NotNull
     @JsonProperty
     private DatabaseConfiguration database = new DatabaseConfiguration();
 

@@ -1,0 +1,81 @@
+http:
+  port: 9192
+  adminPort: 9193
+
+logging:
+  loggers:
+      "org.mayocat": DEBUG
+      # Silence MagicParser verbose INFO logs
+      "net.sf.jmimemagic.MagicParser": WARN
+  file:
+    archive: false
+
+database:
+  driverClass: org.postgresql.Driver
+  user: postgres
+  password:
+  url: jdbc:postgresql://127.0.0.1/shop
+
+files:
+  permanentDirectory: data
+  temporaryDirectory: tmp
+
+multitenancy:
+  activated: false
+  defaultTenant: shop
+
+security:
+  encryptionKey: Please change me!
+  signingKey: Me too, me too :)
+  passwordSaltLogRounds: 10
+
+# Application settings
+# --------------------
+
+platform:
+  thumbnails:
+    small:
+      name: Small
+      width: 100
+      height: 100
+
+general:
+  locales:
+    main:
+      default: en
+      configurable: false
+      visible: true
+    others:
+      default: []
+      configurable: true
+  time:
+    timeZone:
+      default: Europe/Paris
+      configurable: true
+      visible: true
+
+theme:
+  active:
+    default: default
+    configurable: true
+
+catalog:
+  currencies:
+    main:
+      default: EUR
+      visible: true
+      configurable: false
+    others:
+      default: [USD, JPY]
+      visible: true
+      configurable: true
+  products:
+    stock:
+      default: true
+    collections:
+      default: true
+      configurable: true
+      visible: true
+
+checkout:
+  defaultPaymentGateway: paypaladaptivepayments
