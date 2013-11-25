@@ -90,7 +90,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         }
 
         Integer numberOfArticlesPerPAge =
-                context.getTheme().getDefinition().getPaginationDefinitions().get("news").getItemsPerPage();
+                context.getTheme().getDefinition().getPaginationDefinition("news").getItemsPerPage();
 
         Integer offset = (page - 1) * numberOfArticlesPerPAge;
         List<Article> articles = articleStore.get().findAllPublished(offset, numberOfArticlesPerPAge);
