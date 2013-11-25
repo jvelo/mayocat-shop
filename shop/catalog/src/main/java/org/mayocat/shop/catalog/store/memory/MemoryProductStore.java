@@ -71,6 +71,11 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
                 .toList();
     }
 
+    public Integer countAllOnShelf()
+    {
+        return FluentIterable.from(all()).filter(ON_SHELF).size();
+    }
+
     public void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException
     {
         Product product = this.findById(productId);

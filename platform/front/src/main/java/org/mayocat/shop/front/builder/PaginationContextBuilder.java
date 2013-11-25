@@ -37,7 +37,7 @@ public class PaginationContextBuilder
         result.put("currentPage", currentPage);
 
         if (currentPage > 1) {
-            result.put("previous", new HashMap<String, Object>()
+            result.put("previousPage", new HashMap<String, Object>()
             {
                 {
                     put("number", currentPage - 1);
@@ -47,7 +47,7 @@ public class PaginationContextBuilder
         }
 
         if (currentPage < totalPages) {
-            result.put("next", new HashMap<String, Object>()
+            result.put("nextPage", new HashMap<String, Object>()
             {
                 {
                     put("number", currentPage + 1);

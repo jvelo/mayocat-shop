@@ -120,7 +120,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
                 {
                     public String build(int page)
                     {
-                        return MessageFormat.format("/news/page={0}", page);
+                        return MessageFormat.format("/news/?page={0}", page);
                     }
                 }));
 

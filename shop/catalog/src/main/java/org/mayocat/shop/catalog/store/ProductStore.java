@@ -26,5 +26,7 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
 
+    Integer countAllOnShelf();
+
     void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException;
 }

@@ -43,6 +43,9 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract List<Product> findAllOnShelf(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
+    @SqlQuery
+    public abstract Integer countAllOnShelf(@BindBean("tenant") Tenant tenant);
+
     public Product findBySlug(String slug, Tenant tenant)
     {
         return this.findBySlug("product", slug, tenant);
@@ -52,5 +55,4 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     {
         AddonsHelper.createOrUpdateAddons(this, entity);
     }
-
 }

@@ -226,6 +226,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
+    public Integer countAllOnShelf()
+    {
+        return this.dao.countAllOnShelf(getTenant());
+    }
+
+    @Override
     public Product findById(UUID id)
     {
         Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
