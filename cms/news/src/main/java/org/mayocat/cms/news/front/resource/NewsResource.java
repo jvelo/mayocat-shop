@@ -39,6 +39,7 @@ import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
+import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
@@ -113,40 +114,16 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         articlesContext.put("list", currentPageArticles);
 
         Integer totalPages = IntMath.divide(totalCount, numberOfArticlesPerPAge, RoundingMode.UP);
-
-        List<Map<String, Object>> pages = Lists.newArrayList();
-        for (int i = 1; i <= totalPages; i++) {
-            Map<String, Object> iPage = Maps.newHashMap();
-            iPage.put("number", i);
-            iPage.put("url", MessageFormat.format("/news/?page={0}", i));
-            if (i == currentPage) {
-                iPage.put("current", true);
-            }
-            pages.add(iPage);
-        }
-
-        articlesContext.put("pages", pages);
-        articlesContext.put("currentPage", page);
-
-        if (currentPage > 1) {
-            articlesContext.put("previous", new HashMap<String, Object>()
-            {
+        PaginationContextBuilder paginationContextBuilder = new PaginationContextBuilder();
+        articlesContext.putAll(paginationContextBuilder
+                .build(currentPage, totalPages, new PaginationContextBuilder.UrlBuilder()
                 {
-                    put("number", currentPage - 1);
-                    put("url", MessageFormat.format("/news/?page={0}", currentPage - 1));
-                }
-            });
-        }
+                    public String build(int page)
+                    {
+                        return MessageFormat.format("/news/page={0}", page);
+                    }
+                }));
 
-        if (currentPage < totalPages) {
-            articlesContext.put("next", new HashMap<String, Object>()
-            {
-                {
-                    put("number", currentPage + 1);
-                    put("url", MessageFormat.format("/news/?page={0}", currentPage + 1));
-                }
-            });
-        }
 
         context.put("articles", articlesContext);
 
