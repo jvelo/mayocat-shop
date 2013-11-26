@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -21,17 +20,14 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.context.scope.Flash;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
-import org.mayocat.context.scope.Flash;
-import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.model.Collection;
-import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
-import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.FrontContextSupplier;
 import org.mayocat.shop.front.annotation.FrontContext;
 import org.mayocat.shop.front.annotation.FrontContextContributor;
@@ -39,13 +35,12 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.front.resources.ResourceResource;
+import org.mayocat.shop.front.util.FrontContextHelper;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -74,9 +69,6 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
 
     @Inject
     private Provider<PageStore> pageStore;
-
-    @Inject
-    private Provider<ProductStore> productStore;
 
     @Inject
     private Provider<AttachmentStore> attachmentStore;
@@ -120,13 +112,14 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         if (tenant.getAddons().isLoaded()) {
             AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
             Map<String, AddonGroup> platformAddons = platformSettings.getAddons();
-            site.put("platform_addons", addonContextBuilder.build(platformAddons, tenant.getAddons().get(), "platform"));
+            site.put("platform_addons",
+                    addonContextBuilder.build(platformAddons, tenant.getAddons().get(), "platform"));
         }
 
         data.put(THEME_PATH, ResourceResource.PATH);
         data.put(SITE, site);
 
-        List<Collection> collections = this.collectionStore.get().findAll(24, 0);
+        List<Collection> collections = this.collectionStore.get().findAll();
         final List<Map<String, Object>> collectionsContext = Lists.newArrayList();
 
         for (final Collection collection : collections) {
@@ -136,36 +129,23 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
                     put(ContextConstants.URL, urlFactory.create(collection));
                     put("title", collection.getTitle());
                     put("description", collection.getDescription());
+                    //  TODO: featured image
                 }
             });
         }
 
-        data.put(COLLECTIONS, new HashMap()
-        {
-            {
-                put("all", collectionsContext);
-            }
-        });
+        data.put(COLLECTIONS, collectionsContext);
 
         // Put page title and description, mainly for the home page, this will typically get overridden by sub-pages
         data.put(PAGE_TITLE, context.getTenant().getName());
 
         // Pages
-
         PageContextBuilder pageContextBuilder = new PageContextBuilder(urlFactory, theme);
         final List<Map<String, Object>> pagesContext = Lists.newArrayList();
         List<Page> rootPages = this.pageStore.get().findAllRootPages();
 
-        java.util.Collection<UUID> featuredImageIds = Collections2.transform(rootPages,
-                new Function<Page, UUID>()
-                {
-                    @Override
-                    public UUID apply(final Page product)
-                    {
-                        return product.getFeaturedImageId();
-                    }
-                }
-        );
+        java.util.Collection<UUID> featuredImageIds =
+                Collections2.transform(rootPages, FrontContextHelper.ENTITY_FEATURED_IMAGE);
         List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
@@ -178,37 +158,27 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
         }
 
         for (final Page page : rootPages) {
-            java.util.Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
-            {
-                @Override
-                public boolean apply(@Nullable Attachment attachment)
-                {
-                    return attachment.getId().equals(page.getFeaturedImageId());
-                }
-            });
+            java.util.Collection<Attachment> attachments = Collections2.filter(allImages,
+                    FrontContextHelper.isEntityFeaturedImage(page));
             List<Image> images = new ArrayList<Image>();
             for (final Attachment attachment : attachments) {
                 java.util.Collection<Thumbnail> thumbnails =
-                        Collections2.filter(allThumbnails, new Predicate<Thumbnail>()
-                        {
-                            @Override
-                            public boolean apply(@Nullable Thumbnail thumbnail)
-                            {
-                                return thumbnail.getAttachmentId().equals(attachment.getId());
-                            }
-                        });
+                        Collections2.filter(allThumbnails, FrontContextHelper.isThumbnailOfAttachment(attachment));
                 Image image = new Image(attachment, new ArrayList<Thumbnail>(thumbnails));
                 images.add(image);
             }
-            Map<String, Object> pageContext = pageContextBuilder.build(page, images);
+            Map<String, Object> pageContext = pageContextBuilder.build(entityLocalizationService.localize(page), images);
             pagesContext.add(pageContext);
         }
 
-        data.put("pages", new HashMap(){
+        data.put("pages", new HashMap()
+        {
             {
-                put ("roots",  pagesContext);
+                put("roots", pagesContext);
             }
         });
+
+        // Flash context
 
         Flash flash = context.getFlash();
         if (!flash.isEmpty()) {

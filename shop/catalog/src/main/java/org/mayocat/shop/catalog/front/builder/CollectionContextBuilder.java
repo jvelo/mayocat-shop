@@ -34,69 +34,23 @@ public class CollectionContextBuilder implements ContextConstants
 {
     public static final String PATH = Resource.ROOT_PATH + CollectionEntity.PATH;
 
-    private ThemeDefinition theme;
-
-    private ConfigurationService configurationService;
-
-    private AttachmentStore attachmentStore;
-
-    private ThumbnailStore thumbnailStore;
-
     private ImageContextBuilder imageContextBuilder;
-
-    private EntityLocalizationService entityLocalizationService;
 
     private EntityURLFactory urlFactory;
 
-    public CollectionContextBuilder(EntityURLFactory urlFactory, EntityLocalizationService entityLocalizationService,
-            ConfigurationService configurationService, AttachmentStore attachmentStore,
-            ThumbnailStore thumbnailStore, ThemeDefinition theme)
+    public CollectionContextBuilder(EntityURLFactory urlFactory, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
-        this.theme = theme;
-        this.attachmentStore = attachmentStore;
-        this.thumbnailStore = thumbnailStore;
-        this.configurationService = configurationService;
-        this.entityLocalizationService = entityLocalizationService;
         this.imageContextBuilder = new ImageContextBuilder(theme);
     }
 
     public Map<String, Object> build(final Collection collection, List<Image> images)
-    {
-        return this.build(collection, images, null);
-    }
-
-    public Map<String, Object> build(final Collection collection, List<Image> images, List<Product> products)
     {
         Map<String, Object> collectionContext = Maps.newHashMap();
         collectionContext.put("title", collection.getTitle());
         collectionContext.put("description", collection.getDescription());
         collectionContext.put(SLUG, collection.getSlug());
         collectionContext.put(URL, "/" + urlFactory.create(collection));
-
-        List<Map<String, Object>> productsContext = Lists.newArrayList();
-
-        ProductContextBuilder productContextBuilder = new ProductContextBuilder(urlFactory, configurationService,
-                entityLocalizationService, attachmentStore, thumbnailStore, theme);
-
-        if (products != null) {
-            for (final Product product : products) {
-                List<Attachment> attachments = this.attachmentStore.findAllChildrenOf(product);
-                List<Image> productImages = new ArrayList<Image>();
-                for (Attachment attachment : attachments) {
-                    if (AbstractFrontResource.isImage(attachment)) {
-                        List<Thumbnail> thumbnails = thumbnailStore.findAll(attachment);
-                        Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
-                        productImages.add(image);
-                    }
-                }
-
-                Map<String, Object> productContext =
-                        productContextBuilder.build(entityLocalizationService.localize(product), productImages);
-                productsContext.add(productContext);
-            }
-            collectionContext.put("products", productsContext);
-        }
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();

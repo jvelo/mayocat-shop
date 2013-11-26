@@ -51,6 +51,19 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         }).toList();
     }
 
+    public Integer countAllForCollection(Collection collection)
+    {
+        return findAllForCollection(collection).size();
+    }
+
+    public List<Product> findForCollection(Collection collection, Integer number, Integer offset)
+    {
+        if (number == 0) {
+            return FluentIterable.from(findAllForCollection(collection)).skip(offset).toList();
+        }
+        return FluentIterable.from(findAllForCollection(collection)).skip(offset).limit(number).toList();
+    }
+
     public List<Product> findAllForCollection(final Collection collection)
     {
         return FluentIterable.from(all()).filter(new Predicate<Product>()

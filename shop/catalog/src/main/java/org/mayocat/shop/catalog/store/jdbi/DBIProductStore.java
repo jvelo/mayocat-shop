@@ -226,6 +226,18 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
+    public List<Product> findForCollection(Collection collection, Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.dao.findForCollection(collection, number, offset), this.dao);
+    }
+
+    @Override
+    public Integer countAllForCollection(Collection collection)
+    {
+        return this.dao.countAllForCollection(collection);
+    }
+
+    @Override
     public Integer countAllOnShelf()
     {
         return this.dao.countAllOnShelf(getTenant());

@@ -50,6 +50,27 @@ findOrphanProducts() ::= <<
     ORDER  BY product.position ASC
 >>
 
+findForCollection() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   collection_product
+           INNER JOIN entity
+                   ON entity.id = collection_product.product_id
+           INNER JOIN product
+                   ON product.entity_id = collection_product.product_id
+    WHERE  collection_product.collection_id = :collection.id
+    ORDER  BY collection_product.position
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllForCollection() ::= <<
+    SELECT count(*)
+    FROM   collection_product
+           INNER JOIN entity
+                   ON entity.id = collection_product.product_id
+    WHERE  collection_product.collection_id = :collection.id
+>>
+
 findAllForCollection() ::= <<
     SELECT entity.*, product.*, localization_data(entity_id)
     FROM   collection_product

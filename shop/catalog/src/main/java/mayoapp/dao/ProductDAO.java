@@ -37,7 +37,14 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract List<Product> findOrphanProducts(@BindBean("tenant") Tenant tenant);
 
     @SqlQuery
+    public abstract List<Product> findForCollection(@BindBean("collection") Collection collection,
+            @Bind("number") Integer number, @Bind("offset") Integer offset);
+
+    @SqlQuery
     public abstract List<Product> findAllForCollection(@BindBean("collection") Collection collection);
+
+    @SqlQuery
+    public abstract Integer countAllForCollection(@BindBean("collection") Collection collection);
 
     @SqlQuery
     public abstract List<Product> findAllOnShelf(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,

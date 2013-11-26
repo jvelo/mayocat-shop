@@ -12,7 +12,6 @@ import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
-import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
@@ -20,7 +19,6 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
-import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 
@@ -49,8 +47,7 @@ public class ProductContextBuilder implements ContextConstants
     private EntityURLFactory urlFactory;
 
     public ProductContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            EntityLocalizationService entityLocalizationService,  AttachmentStore attachmentStore,
-            ThumbnailStore thumbnailStore, ThemeDefinition theme)
+            EntityLocalizationService entityLocalizationService, ThemeDefinition theme)
     {
         this.urlFactory = urlFactory;
 
@@ -63,8 +60,7 @@ public class ProductContextBuilder implements ContextConstants
 
         imageContextBuilder = new ImageContextBuilder(theme);
         addonContextBuilder = new AddonContextBuilder();
-        collectionContextBuilder = new CollectionContextBuilder(urlFactory, entityLocalizationService,
-                configurationService, attachmentStore, thumbnailStore, theme);
+        collectionContextBuilder = new CollectionContextBuilder(urlFactory, theme);
     }
 
     public Map<String, Object> build(final Product product, List<Image> images)

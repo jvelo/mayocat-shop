@@ -22,6 +22,10 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 
     List<Product> findOrphanProducts();
 
+    Integer countAllForCollection(Collection collection);
+
+    List<Product> findForCollection(Collection collection, Integer number, Integer offset);
+
     List<Product> findAllForCollection(Collection collection);
 
     List<Product> findAllOnShelf(Integer number, Integer offset);

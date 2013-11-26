@@ -25,6 +25,7 @@ public class CollectionMapper implements ResultSetMapper<Collection>
         Collection collection = new Collection((UUID) result.getObject("id"));
         collection.setSlug(result.getString("slug"));
         collection.setTitle(result.getString("title"));
+        collection.setDescription(result.getString("description"));
         collection.setFeaturedImageId((UUID) result.getObject("featured_image_id"));
 
         if (MapperUtils.hasColumn("localization_data", result) &&
