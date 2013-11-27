@@ -62,8 +62,7 @@ public class AbstractProductListFrontResource extends AbstractFrontResource
     @Inject
     protected EntityLocalizationService entityLocalizationService;
 
-    protected Map<String, Object> createProductListContext(int currentPage, Integer totalPages,
-            List<Product> products, PaginationContextBuilder.UrlBuilder urlBuilder)
+    protected Map<String, Object> createProductListContext(List<Product> products)
     {
         final Map<String, Object> productsContext = Maps.newHashMap();
         final List<Map<String, Object>> productsListContext = Lists.newArrayList();
@@ -85,7 +84,8 @@ public class AbstractProductListFrontResource extends AbstractFrontResource
                 entityLocalizationService, this.context.getTheme().getDefinition());
 
         for (final Product product : products) {
-            java.util.Collection<Attachment> attachments = Collections2.filter(allImages, isEntityFeaturedImage(product));
+            java.util.Collection<Attachment> attachments =
+                    Collections2.filter(allImages, isEntityFeaturedImage(product));
             List<Image> images = new ArrayList<>();
             for (final Attachment attachment : attachments) {
                 java.util.Collection<Thumbnail> thumbnails =
@@ -106,6 +106,13 @@ public class AbstractProductListFrontResource extends AbstractFrontResource
         }
 
         productsContext.put("list", productsListContext);
+        return productsContext;
+    }
+
+    protected Map<String, Object> createProductListContext(int currentPage, Integer totalPages,
+            List<Product> products, PaginationContextBuilder.UrlBuilder urlBuilder)
+    {
+        Map<String, Object> productsContext = createProductListContext(products);
 
         PaginationContextBuilder paginationContextBuilder = new PaginationContextBuilder();
         productsContext.putAll(paginationContextBuilder.build(currentPage, totalPages, urlBuilder));

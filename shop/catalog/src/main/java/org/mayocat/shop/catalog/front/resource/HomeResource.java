@@ -2,7 +2,6 @@ package org.mayocat.shop.catalog.front.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,22 +18,18 @@ import javax.ws.rs.core.UriInfo;
 import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
-import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.catalog.CatalogService;
+import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
-import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -45,30 +40,15 @@ import org.xwiki.component.annotation.Component;
 @Produces(MediaType.TEXT_HTML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class HomeResource extends AbstractFrontResource implements Resource
+public class HomeResource extends AbstractProductListFrontResource implements Resource
 {
+    @Inject
+    private Provider<ProductStore> productStore;
+
     public static final String PATH = ROOT_PATH;
 
     @Inject
-    private ConfigurationService configurationService;
-
-    @Inject
-    private CatalogService catalogService;
-
-    @Inject
-    private Provider<AttachmentStore> attachmentStore;
-
-    @Inject
-    private Provider<ThumbnailStore> thumbnailStore;
-
-    @Inject
     private Provider<PageStore> pageStore;
-
-    @Inject
-    private WebContext context;
-
-    @Inject
-    private EntityURLFactory urlFactory;
 
     @GET
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
@@ -76,12 +56,11 @@ public class HomeResource extends AbstractFrontResource implements Resource
         FrontView result = new FrontView("home", breakpoint);
         Map<String, Object> context = getContext(uriInfo);
 
-        context.put("template", new HashMap<String, Object>()
-        {
-            {
-                put("home", true);
-            }
-        });
+        Integer numberOfProducts =
+                this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
+        List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
+        context.put("products", createProductListContext(products));
+        result.putContext(context);
 
         final Page page = pageStore.get().findBySlug("home");
         if (page != null) {
@@ -96,13 +75,13 @@ public class HomeResource extends AbstractFrontResource implements Resource
             for (Attachment attachment : attachments) {
                 if (AbstractFrontResource.isImage(attachment)) {
                     List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                    Image image = new Image(attachment, thumbnails);
+                    Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                     images.add(image);
                 }
             }
 
             PageContextBuilder builder = new PageContextBuilder(urlFactory, theme);
-            Map<String, Object> pageContext = builder.build(page, images);
+            Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
             context.put("home", pageContext);
         }
         result.putContext(context);

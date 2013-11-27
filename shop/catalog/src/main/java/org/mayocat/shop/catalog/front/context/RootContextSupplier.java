@@ -170,13 +170,7 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             Map<String, Object> pageContext = pageContextBuilder.build(entityLocalizationService.localize(page), images);
             pagesContext.add(pageContext);
         }
-
-        data.put("pages", new HashMap()
-        {
-            {
-                put("roots", pagesContext);
-            }
-        });
+        data.put("pages", pagesContext);
 
         // Flash context
 
