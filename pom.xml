@@ -130,6 +130,7 @@
                 <include>pom.xml</include>
               </includes>
               <excludes>
+                <exclude>**/vendor/**</exclude>
                 <exclude>**/components.txt</exclude>
                 <exclude>**/component-overrides.txt</exclude>
               </excludes>
