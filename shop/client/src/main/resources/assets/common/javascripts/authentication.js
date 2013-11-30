@@ -1,16 +1,27 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+/**
+ * HTTP Auth Interceptor Module for AngularJS
+ * (c) 2012 Witold Szczerba
+ * License: MIT
+ */
 /**
  * Authentication module for mayocat, based on Witold Szczerba's http-auth-interceptor.
  *
  * See https://github.com/witoldsz/angular-http-auth/blob/master/src/http-auth-interceptor.js
  *
  * Some adaptations to work better with Mayocat.
+ *
+ * File as a whole is under the MPL license, and portions of it are under the MIT license.
+ *
+ * Copyright for portions of the file to their respective authors (see header above and the file on GitHub for the
+ * exact portions authors.
  */
-/**
- * @license HTTP Auth Interceptor Module for AngularJS
- * (c) 2012 Witold Szczerba
- * License: MIT
- */
-
 (function () {
     'use strict';
 
