@@ -14,10 +14,12 @@
         <url>http://github.com/mayocat/</url>
     </organization>
 
+    <inceptionYear>2012</inceptionYear>
+
     <licenses>
         <license>
-            <name>LGPL, version 2.1</name>
-            <url>http://www.opensource.org/licenses/lgpl-license.php</url>
+            <name>Mozilla Public License Version 2.0</name>
+            <url>http://www.mozilla.org/MPL/2.0/</url>
         </license>
     </licenses>
 
@@ -100,9 +102,62 @@
               </dependency>
             </dependencies>
           </plugin>
+          <!-- Used to check/update license headers -->
+          <plugin>
+            <groupId>com.mycila</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>2.5</version>
+            <configuration>
+              <strictCheck>true</strictCheck>
+              <!-- When license-maven-plugin 2.6 will be released, the MPL-2 template will be available by default. Until them we provide it ourselves.
+              <header>com/mycila/maven/plugin/license/templates/MPL-2.txt</header>-->
+              <header>MPL-2.txt</header>
+              <properties>
+                <owner>Mayocat</owner>
+                <year>${project.inceptionYear}</year>
+                <email>hello@mayocat.org</email>
+              </properties>
+              <mapping>
+                <java>SLASHSTAR_STYLE</java>
+              </mapping>
+              <includes>
+                <include>src/**/*.java</include>
+                <include>src/**/*.js</include>
+                <include>src/**/*.css</include>
+                <include>src/**/*.xml</include>
+                <include>src/**/*.html</include>
+                <include>src/**/*.yml</include>
+                <include>pom.xml</include>
+              </includes>
+              <excludes>
+                <exclude>**/components.txt</exclude>
+                <exclude>**/component-overrides.txt</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.mayocat.tools</groupId>
+                <artifactId>mpl-license-header</artifactId>
+                <version>1.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
         </plugins>
       </pluginManagement>
 
+      <plugins>
+        <plugin>
+          <groupId>com.mycila</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+        </plugin>
+      </plugins>
     </build>
 
     <!-- Deploy releases and snapshots to the CloudBees maven repositories -->
