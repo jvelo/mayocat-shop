@@ -90,6 +90,41 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>2.5</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.3</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.6</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
             <version>2.4</version>
           </plugin>
@@ -169,8 +204,65 @@
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <!-- Lock down plugin version for build reproducibility -->
+          <version>1.1</version>
+          <executions>
+            <!-- Check that all Maven plugins have versions defined -->
+            <execution>
+              <id>enforce-plugins</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requirePluginVersions>
+                    <message>Best Practice is to always define plugin versions!</message>
+                    <banLatest>false</banLatest>
+                    <banRelease>false</banRelease>
+                    <banSnapshots>false</banSnapshots>
+                  </requirePluginVersions>
+                </rules>
+              </configuration>
+            </execution>
+            <!-- Check that we're using SLF4J only -->
+            <execution>
+              <id>enforce-jcl-log4j-isolation</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <bannedDependencies>
+                    <searchTransitive>true</searchTransitive>
+                    <message>
+  XWiki uses SLF4J for logging. Don't use Commons Logging or Log4J.
+                    </message>
+                    <excludes>
+                      <exclude>commons-logging:commons-logging</exclude>
+                      <exclude>commons-logging:commons-logging-api</exclude>
+                      <exclude>log4j:log4j</exclude>
+                    </excludes>
+                  </bannedDependencies>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </build>
+
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+          <version>2.5</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
 
     <!-- Deploy releases and snapshots to the CloudBees maven repositories -->
     <distributionManagement>
