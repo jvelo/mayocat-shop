@@ -51,7 +51,12 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
                 if (Product.class.isAssignableFrom(clazz)) {
                     p = productStore.findById(idAndType.getId());
                     if (p != null) {
-                        cart.addItem(p, cartInSession.getItems().get(idAndType));
+                        try {
+                            cart.addItem(p, cartInSession.getItems().get(idAndType));
+                        } catch (Exception e) {
+                            // Don't fail when a product can't be added back to the cart
+                            logger.warn("Failed to add back product [{}] from session", p.getId());
+                        }
                     }
                 } else {
                     // Purchasable not managed...
