@@ -102,7 +102,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                         0,
                         null);
 
-                // All other helpers declared as components.
+                // All other helpers declared as handlers.
                 for (String scriptName : helpers.keySet()) {
                     Reader helper = new BufferedReader(new InputStreamReader(
                             this.getClass().getResourceAsStream("/" + helpers.get(scriptName).getPath().toString()))
@@ -118,7 +118,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public void register(Template template) throws TemplateEngineException
+    public synchronized void register(Template template) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
@@ -152,7 +152,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public String render(String templateName, String json) throws TemplateEngineException
+    public synchronized String render(String templateName, String json) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
