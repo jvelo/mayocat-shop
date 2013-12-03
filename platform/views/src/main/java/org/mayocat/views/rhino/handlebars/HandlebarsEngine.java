@@ -180,8 +180,6 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
 
     private static Reader getResourceReader(String resource) throws IOException
     {
-        return Resources.newReaderSupplier(
-                Resources.getResource(resource), Charsets.UTF_8
-        ).getInput();
+        return Resources.newReaderSupplier(Resources.getResource(resource), Charsets.UTF_8).getInput();
     }
 }
