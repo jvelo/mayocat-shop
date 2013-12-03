@@ -122,7 +122,7 @@ public class AbstractProductListFrontResource extends AbstractFrontResource
         Map<String, Object> productsContext = createProductListContext(products);
 
         PaginationContextBuilder paginationContextBuilder = new PaginationContextBuilder();
-        productsContext.putAll(paginationContextBuilder.build(currentPage, totalPages, urlBuilder));
+        productsContext.put("pagination", paginationContextBuilder.build(currentPage, totalPages, urlBuilder));
 
         return productsContext;
     }

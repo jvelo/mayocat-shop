@@ -122,7 +122,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         Integer totalPages = IntMath.divide(totalCount, numberOfArticlesPerPAge, RoundingMode.UP);
         PaginationContextBuilder paginationContextBuilder = new PaginationContextBuilder();
-        articlesContext.putAll(paginationContextBuilder
+        articlesContext.put("pagination", paginationContextBuilder
                 .build(currentPage, totalPages, new PaginationContextBuilder.UrlBuilder()
                 {
                     public String build(int page)

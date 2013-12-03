@@ -40,7 +40,7 @@ public class PaginationContextBuilder
             pages.add(iPage);
         }
 
-        result.put("pages", pages);
+        result.put("allPages", pages);
         result.put("currentPage", currentPage);
 
         if (currentPage > 1) {
