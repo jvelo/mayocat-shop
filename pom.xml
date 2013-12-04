@@ -85,6 +85,21 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <!-- Mayocat repositories:
+             Needed for the MPL license holder artifact -->
+        <pluginRepository>
+          <id>mayocat-cloudbees-release</id>
+          <name>mayocat-cloudbees-release</name>
+          <url>http://repository-mayocat.forge.cloudbees.com/release/</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>mayocat-cloudbees-snapshot</id>
+          <name>mayocat-cloudbees-snapshot</name>
+          <url>http://repository-mayocat.forge.cloudbees.com/snapshot/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
       <pluginManagement>
         <plugins>
