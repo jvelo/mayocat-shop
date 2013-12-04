@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-addons</artifactId>
-        <version>0.9.0</version>
+        <version>0.10-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-addons-api</artifactId>
     <packaging>jar</packaging>
