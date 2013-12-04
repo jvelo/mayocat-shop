@@ -47,18 +47,17 @@ security:
 general:
   locales:
     main:
-      default: en_US
-      configurable: false
+      default: en-US
+      configurable: true
       visible: true
     others:
       default: []
-      configurable: false
+      configurable: true
   time:
     timeZone:
       default: Europe/Paris
       configurable: true
       visible: true
-
 
 theme:
   active:
