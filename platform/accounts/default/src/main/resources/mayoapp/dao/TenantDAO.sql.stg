@@ -21,7 +21,7 @@ create() ::= <<
                  :data,
                  :version,
                  :tenant.name,
-                 :tenant.contactEmail
+                 :tenant.contactEmail,
                  :tenant.creationDate)
 >>
 
