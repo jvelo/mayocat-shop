@@ -21,6 +21,11 @@
   margin-left: 20px;
 }
 
+thumbnail-editor img {
+  /* Make sure the "original" dimensions are its real dimensions and that it is not scaled down by max-width: 100% */
+  max-width: inherit !important;
+}
+
 thumbnail-editor > div {
   min-width: 400px;
   background-color: #eee;
@@ -32,7 +37,7 @@ thumbnail-editor > div {
   padding: 8px;
   background-color: #eeeeee;
   ul {
-    width: 400px;
+     width: 400px;
 
     .btn-primary {
       margin-left: 10px;
