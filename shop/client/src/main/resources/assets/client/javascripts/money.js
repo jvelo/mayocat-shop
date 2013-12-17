@@ -333,8 +333,10 @@
                         $scope.amount = "" + controller.$viewValue;
                         $scope.format();
                     };
-                    $scope.currencyCode = attrs.currency;
-                    $scope.currency = moneyService.getCurrency($scope.currencyCode);
+                    $scope.$watch(function() {return attrs.currency }, function(newValue){
+                        $scope.currencyCode = newValue;
+                        $scope.currency = moneyService.getCurrency($scope.currencyCode);
+                    });
                     $scope.$watch('amount', function (value) {
                         if (!isNaN(parseFloat(value))) {
                             controller.$setViewValue(parseFloat(value));

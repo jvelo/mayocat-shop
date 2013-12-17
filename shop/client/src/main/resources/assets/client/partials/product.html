@@ -159,7 +159,7 @@
             <h3>{{'product.misc.price' | translate}}</h3>
 
             <div>
-                <money-amount ng-model="product.price" currency="EUR"/>
+                <money-amount ng-model="product.price" currency="{{mainCurrency}}"/>
             </div>
         </div>
 

@@ -125,6 +125,7 @@ angular.module('product', ['ngResource'])
                 $scope.hasWeight = catalogConfiguration.products.weight;
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
                 $scope.hasStock = catalogConfiguration.products.stock;
+                $scope.mainCurrency = catalogConfiguration.currencies.main;
             });
 
             // Initialize existing product or new product
