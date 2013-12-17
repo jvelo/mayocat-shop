@@ -24,4 +24,6 @@ public interface WebScope extends Serializable
     Object getAttribute(String string);
 
     void setAttribute(String key, Serializable value);
+
+    void removeAttribute(String key);
 }

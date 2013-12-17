@@ -50,8 +50,7 @@ public class DefaultCartAccessor implements CartAccessor
                 Cart cart = cartInSessionConverter.loadFromCartInSession(cartInSession);
                 LOGGER.debug("Retrieved cart from session with {} items", cart.getItems().keySet());
                 return cart;
-            }
-            catch (ClassCastException e) {
+            } catch (ClassCastException e) {
                 // Backward compatibility : the session attribute use to contain the cart directly.
                 // We do nothing, the code below will create a new cart.
             }
@@ -67,6 +66,12 @@ public class DefaultCartAccessor implements CartAccessor
     public void setCart(Cart cart)
     {
         Session session = this.context.getSession();
-        session.setAttribute(SESSION_CART_KEY, cartInSessionConverter.convertToCartInSession(cart));
+        if (cart.isEmpty()) {
+            // We store the cart in cookies only if it's not empty... Otherwise we will create a new cart when needed
+            // (maybe the currency has change? etc.)
+            session.removeAttribute(SESSION_CART_KEY);
+        } else {
+            session.setAttribute(SESSION_CART_KEY, cartInSessionConverter.convertToCartInSession(cart));
+        }
     }
 }

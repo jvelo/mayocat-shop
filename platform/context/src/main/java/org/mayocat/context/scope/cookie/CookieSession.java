@@ -50,6 +50,12 @@ public class CookieSession implements Session
     }
 
     @Override
+    public void removeAttribute(String key)
+    {
+        this.attributes.remove(key);
+    }
+
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == null) {
