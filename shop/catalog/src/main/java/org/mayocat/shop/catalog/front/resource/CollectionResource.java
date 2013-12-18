@@ -22,8 +22,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.ConfigurationService;
@@ -69,19 +71,18 @@ public class CollectionResource extends AbstractProductListFrontResource impleme
     @Inject
     private Provider<ProductStore> productStore;
 
-    @Path("{slug}")
     @GET
-    public FrontView getCollection(@PathParam("slug") String slug, @QueryParam("page") @DefaultValue("1") Integer page,
-            @Context Breakpoint breakpoint, @Context UriInfo uriInfo)
+    @Path("{slug}")
+    @Produces("application/json")
+    public Map<String, Object> getCollectionAsJson(@PathParam("slug") String slug,
+            @QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
     {
         final int currentPage = page < 1 ? 1 : page;
 
         final Collection collection = catalogService.findCollectionBySlug(slug);
         if (collection == null) {
-            return new FrontView("404", breakpoint);
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-
-        FrontView result = new FrontView("collection", breakpoint);
 
         Map<String, Object> context = getContext(uriInfo);
 
@@ -128,9 +129,22 @@ public class CollectionResource extends AbstractProductListFrontResource impleme
         } catch (ClassCastException e) {
             // Ignore
         }
+        return context;
+    }
 
-        result.putContext(context);
+    @GET
+    @Path("{slug}")
+    @Produces("text/html;q=2")
+    public FrontView getCollection(@PathParam("slug") String slug, @QueryParam("page") @DefaultValue("1") Integer page,
+            @Context Breakpoint breakpoint, @Context UriInfo uriInfo)
+    {
+        final Collection collection = catalogService.findCollectionBySlug(slug);
+        if (collection == null) {
+            return new FrontView("404", breakpoint);
+        }
 
+        FrontView result = new FrontView("collection", breakpoint);
+        result.putContext(getCollectionAsJson(slug, page, uriInfo));
         return result;
     }
 }
