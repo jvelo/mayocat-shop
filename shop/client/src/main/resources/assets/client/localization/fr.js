@@ -342,7 +342,8 @@
 
                 carrierDestination: "{numberOfDestinations, plural, one{Destination} other{Destinations}} :",
                 deliveryTime: "Temps de livraison :",
-                deliveryDays: "{deliveryMaximumDays, plural, one{jour} other{jours}}"
+                deliveryDays: "{deliveryMaximumDays, plural, one{jour} other{jours}}",
+                costPerOrderAndPerItem: "{costPerOrder} {mainCurrency} par commande, {costPerItem} {mainCurrency} par article"
             },
 
             title: {
