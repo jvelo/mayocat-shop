@@ -29,7 +29,7 @@
                         </div>
                         <div ng-show="collection.isExpanded && collection.products.length > 0">
                             <ul class="list" ui-sortable="productsInCollectionSortableOptions" ng-model="collection.products">
-                                <li ng-repeat="product in collection.products">
+                                <li ng-repeat="product in collection.products" ng-class="{active: entity.slug == product.slug && entity.type == 'product'}">
                                     <div class="droptarget">
                                         <div>
                                             <a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a>

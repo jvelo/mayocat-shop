@@ -69,8 +69,8 @@ header .btn-group {
 
     li {
       text-align: center;
-      padding:0;
-      margin:0;
+      padding: 0;
+      margin: 0;
       width: 100%;
     }
   }
@@ -141,7 +141,6 @@ header .btn-group {
   width: 179px;
   height: 100%;
   float: left;
-  border-right: solid 1px;
   background-color: @backgroundLighter;
   border-color: @borderStrong;
 }
@@ -171,7 +170,7 @@ header .btn-group {
 }
 
 #list ul {
-  width: 175px;
+  width: 177px;
   margin-left: 2px;
 }
 
@@ -179,17 +178,24 @@ header .btn-group {
   padding: 0px;
   position: relative;
   border-bottom: none;
+  border-right: 1px solid @borderStrong;
+}
+
+#list li.hasChildren li,
+#list li.active {
+  border-right: none;
 }
 
 #list ul li.hasChildren:last-child > .droptarget {
   padding-bottom: 0;
 }
+
 #list ul li.hasChildren ul li:last-child .droptarget {
   border-bottom: none;
 }
 
 #list .droptarget {
-  padding: 11px 0px 11px 0px;
+  padding: 0px 0px 11px 0px;
   border-bottom: solid 1px  @borderList;
 }
 
@@ -202,15 +208,18 @@ header .btn-group {
   z-index: 100;
 }
 
-#list .droptarget .listItem,
-#list .listItem {
-  padding: 0px 0px 0px 7px;
+#list .droptarget > div:first-child {
+  padding: 11px 0px 0px 7px;
 }
 
-.sub-list #list li.listItem.active {
+.sub-list #list li.active {
   background: white;
   border-right: none;
   width: 177px;
+}
+
+.sub-list #list li.active .droptarget {
+  border-right: none;
 }
 
 #list ul ul li .droptarget {
@@ -221,8 +230,9 @@ header .btn-group {
 #list ul li.hasChildren > .droptarget {
   padding-bottom: 0px;
 }
+
 #list ul li.hasChildren > div > div.listItem {
-  padding-bottom:11px
+  padding-bottom: 11px
 }
 
 #list ul li.hasChildren ul li .droptarget {

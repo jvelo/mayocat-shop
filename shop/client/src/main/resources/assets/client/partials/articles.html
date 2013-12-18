@@ -17,7 +17,7 @@
     <!-- list pages -->
     <scroll>
         <ul class="list">
-            <li ng-repeat="article in articles">
+            <li ng-repeat="article in articles" ng-class="{active: entity.slug == article.slug && entity.type == 'article'}">
                 <div>
                     <div class="droptarget">
                         <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>

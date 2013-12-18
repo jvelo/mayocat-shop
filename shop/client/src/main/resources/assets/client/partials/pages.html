@@ -17,7 +17,7 @@
     <!-- list pages -->
     <scroll>
         <ul class="list">
-            <li ng-repeat="page in pages" data-handle="{{page.slug}}" class="hasChildren">
+            <li ng-repeat="page in pages" data-handle="{{page.slug}}" class="hasChildren" ng-class="{active: entity.slug == page.slug && entity.type == 'page'}">
                 <div>
                     <div class="droptarget">
                         <div><a ng-click="setRoute('/pages/' + page.slug)">{{page.title}}</a></div>
