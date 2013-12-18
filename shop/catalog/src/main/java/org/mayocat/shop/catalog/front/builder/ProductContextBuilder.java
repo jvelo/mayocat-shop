@@ -76,7 +76,7 @@ public class ProductContextBuilder implements ContextConstants
 
         productContext.put("title", ContextUtils.safeString(product.getTitle()));
         productContext.put("description", ContextUtils.safeHtml(product.getDescription()));
-        productContext.put(URL, urlFactory.create(product));
+        productContext.put(URL, urlFactory.create(product).getPath());
         productContext.put(SLUG, product.getSlug());
 
         // Prices

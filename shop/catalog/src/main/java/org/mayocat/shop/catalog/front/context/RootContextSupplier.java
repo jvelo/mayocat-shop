@@ -133,7 +133,8 @@ public class RootContextSupplier implements FrontContextSupplier, ContextConstan
             collectionsContext.add(new HashMap<String, Object>()
             {
                 {
-                    put(ContextConstants.URL, urlFactory.create(collection));
+                    put(ContextConstants.URL, urlFactory.create(collection).getPath());
+                    put("slug", collection.getSlug());
                     put("title", collection.getTitle());
                     put("description", collection.getDescription());
                     //  TODO: featured image

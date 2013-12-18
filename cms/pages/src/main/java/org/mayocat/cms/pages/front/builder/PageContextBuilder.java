@@ -52,7 +52,7 @@ public class PageContextBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
-        pageContext.put(ContextConstants.URL, urlFactory.create(page));
+        pageContext.put(ContextConstants.URL, urlFactory.create(page).getPath());
         pageContext.put(ContextConstants.SLUG, page.getSlug());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
