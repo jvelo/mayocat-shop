@@ -122,7 +122,7 @@
 
                 itemsNumber: "{numberOfItems} {numberOfItems, plural, one{article} other{articles}}",
                 itemsTotal: "Coût total (sans frais de port)",
-                shippingCalculation: "{title} (calculé par {strategy})"
+                shippingCalculation: "{title} (calculé par {strategy, select, flat{forfait} weight{poids} price{prix} other{NA}})"
             },
 
             title: {

@@ -68,8 +68,8 @@ angular.module('order', ['ngResource'])
 
                 return {
                     slug: order.slug || "",
-                    shippingTitle: shipping.title || "",
-                    shippingStrategy : shipping.strategy || ""
+                    title: shipping.title || "",
+                    strategy : shipping.strategy || ""
                 };
             };
         }]);
