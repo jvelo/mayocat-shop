@@ -105,6 +105,11 @@ public class DefaultShippingService implements ShippingService
     @Override
     public String getDestinationNames(List<String> destinationCodes)
     {
+        if (destinationCodes == null) {
+            // Garbage in, garbage out
+            return null;
+        }
+
         Collection<String> result = Collections2.transform(destinationCodes,
                 new Function<String, String>()
                 {
