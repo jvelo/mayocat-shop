@@ -206,7 +206,7 @@
 
         .factory('entityImageMixin', ['$http', '$rootScope', '$modal', 'entityLocalizationMixin',
             function ($http, $rootScope, $modal, entityLocalizationMixin) {
-            return function (entityType) {
+            return function (entityType, options) {
                 var mixin = {};
 
                 mixin.editImage = function (image) {
@@ -231,6 +231,10 @@
                     $http.get($rootScope.entity.uri + "/images")
                         .success(function (data) {
                             scope[entityType].images = data;
+
+                            // Optional callback if any
+                            typeof options.afterReloadingImages === 'function'
+                                && options.afterReloadingImages(scope[entityType].images);
                         });
                 }
 

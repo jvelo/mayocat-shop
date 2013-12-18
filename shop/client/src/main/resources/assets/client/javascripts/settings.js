@@ -78,6 +78,17 @@ angular.module('settings', ['ngResource'])
                 "base": {
                     "apiBase": "/api/tenant/",
                     "noSlug" : true
+                },
+                "image" : {
+                    /**
+                     * After an image is uploaded, preview it as the shop's logo
+                     */
+                    "afterReloadingImages": function () {
+                        $scope.updatedTenant = $scope.TenantResource.get({
+                        }, function () {
+                            $scope.tenant.featuredImage = $scope.updatedTenant.featuredImage;
+                        });
+                    }
                 }
             });
 
