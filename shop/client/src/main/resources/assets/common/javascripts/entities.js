@@ -209,6 +209,8 @@
             return function (entityType, options) {
                 var mixin = {};
 
+                options = typeof options === "undefined" ? {} : options;
+
                 mixin.editImage = function (image) {
                     var scope = this,
                         modalScope = $rootScope.$new(true);
