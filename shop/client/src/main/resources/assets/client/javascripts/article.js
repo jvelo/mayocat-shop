@@ -23,7 +23,7 @@ angular.module('article', ['ngResource'])
 
         function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, timeService, configurationService, entityMixins) {
 
-            entityMixins.extend(["base", "image"], $scope, "article", {
+            entityMixins.extend(["base", "image", "addons"], $scope, "article", {
                 "base" : {
                     "apiBase" : "/api/news/"
                 }
