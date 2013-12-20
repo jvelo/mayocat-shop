@@ -149,7 +149,7 @@
 
                 itemsNumber: "{numberOfItems} {numberOfItems, plural, one{item} other{items}}",
                 itemsTotal: "Items total (without shipping)",
-                shippingCalculation: "{shippingTitle} (calculated by {shippingStrategy})"
+                shippingCalculation: "{title} (calculated by {strategy})"
             },
 
             title: {
