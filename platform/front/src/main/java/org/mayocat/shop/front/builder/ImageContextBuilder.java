@@ -104,6 +104,19 @@ public class ImageContextBuilder
 
     private Optional<Thumbnail> findBestFit(Image image, Integer width, Integer height)
     {
+        if (width == null || height == null) {
+            // First handle the case where we have only one dimension width or height
+            for (Thumbnail thumbnail : image.getThumbnails()) {
+                if ((thumbnail.getRatio().equals("1:0") && height == null) ||
+                        (thumbnail.getRatio().equals("0:1") && width == null))
+                {
+                    return Optional.of(thumbnail);
+                }
+            }
+            return Optional.absent();
+        }
+
+        // Then handle the general case where we have both dimensions width and height
         Thumbnail foundRatio = null;
         String expectedRatio = ImageUtils.imageRatio(width, height);
 

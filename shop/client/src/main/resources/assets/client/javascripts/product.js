@@ -158,8 +158,8 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
-                $scope.modalInstance.result.then($scope.deleteProduct);
+                    $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
+                    $scope.modalInstance.result.then($scope.deleteProduct);
             }
 
             $scope.deleteProduct = function () {

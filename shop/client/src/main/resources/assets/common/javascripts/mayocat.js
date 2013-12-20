@@ -85,7 +85,7 @@ mayocat.config(function ($httpProvider) {
  *
  * TODO: handle ng-disabled
  */
-mayocat.directive('listPicker', ['$parse', function($parse){
+mayocat.directive('listPicker', ['$parse', function ($parse) {
     return {
         restrict: 'E',
         require: 'ngModel',
@@ -123,7 +123,7 @@ mayocat.directive('listPicker', ['$parse', function($parse){
             }
             $scope.getDisplayElement = function (element) {
                 $scope.elementToDisplay = element;
-                return passed ? passed($scope): element;
+                return passed ? passed($scope) : element;
             }
         }
     };
@@ -144,7 +144,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             'requestedUploadUri': '&uploadUri',
             'onUpload': '&onUpload'
         },
-        controller: function($scope, $element, $attrs) {
+        controller: function ($scope, $element, $attrs) {
             // Initialize default value for attributes
 
             // Get the upload URI the directive customer requested. It is either provided as a function,
@@ -323,10 +323,33 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
                 hasInitialized = false;
 
             var initializeLazy = function () {
-                if (($(parent).attr("style") == undefined|| $(parent).attr("style") == "") && !hasInitialized) {
-                // TODO find a better way to check if displayed
+                if (($(parent).attr("style") == undefined || $(parent).attr("style") == "") && !hasInitialized) {
+                    // TODO find a better way to check if displayed
                     var imageElement = $("<img />").load(
                         function () {
+
+                            var aspectRatio;
+
+                            if ($scope.width() != null && $scope.height() != null) {
+                                aspectRatio = $scope.width() / $scope.height();
+                            }
+                            else {
+                                aspectRatio = $(this).width() / $(this).height();
+                            }
+
+                            $(imageElement).Jcrop({
+                                boxWidth: 400,
+                                boxHeight: 600,
+                                setSelect: $scope.selection(),
+                                aspectRatio: aspectRatio,
+                                onSelect: function (coordinates) {
+                                    $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
+                                }
+                            }, function () {
+                                $scope.api = this;
+                            });
+                            hasInitialized = true;
+
                             if ($scope.selection() === undefined) {
                                 // If no initial selection was passed to the widget, we compute the largest centered box
                                 // that can fit the desired thumbnail in.
@@ -335,7 +358,15 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
                                     imageRatio = $(this).width() / $(this).height(),
                                     x, y, width, height;
 
-                                if (imageRatio < sizeRatio) {
+                                if ($scope.width() == null || $scope.height() == null) {
+                                    // We select the whole image
+                                    x = 0;
+                                    y = 0;
+                                    width = $(this).width();
+                                    height = $(this).height();
+                                }
+
+                                else if (imageRatio < sizeRatio) {
                                     // Width is limitating, calculate height
                                     x = 0;
                                     width = $(this).width();
@@ -372,19 +403,6 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
                         }
                     ).attr("src", $scope.image());
                     $(element).html($("<div/>").html(imageElement));
-
-                    $(imageElement).Jcrop({
-                        boxWidth: 400,
-                        boxHeight: 600,
-                        setSelect: $scope.selection(),
-                        aspectRatio: $scope.width() / $scope.height(),
-                        onSelect: function (coordinates) {
-                            $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
-                        }
-                    }, function () {
-                        $scope.api = this;
-                    });
-                    hasInitialized = true;
                 }
             };
 
@@ -396,7 +414,7 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
 
             observer.observe(parent, { attributes: true, childList: false, characterData: false, subtree: false });
 
-            window.setTimeout(function(){
+            window.setTimeout(function () {
                 $scope.$apply(function ($scope) {
                     initializeLazy();
                 });
@@ -437,9 +455,9 @@ mayocat.directive('ckEditor', function () {
                             border: '1px solid #ccc'
                         }
                     },
-                    { name: 'Small',			element: 'small' },
-                    { name: 'Computer Code',	element: 'code' },
-                    { name: 'Inline Quotation',	element: 'q' },
+                    { name: 'Small', element: 'small' },
+                    { name: 'Computer Code', element: 'code' },
+                    { name: 'Inline Quotation', element: 'q' },
                     /* Object Styles */
                     {
                         name: 'Styled image (left)',
@@ -464,8 +482,8 @@ mayocat.directive('ckEditor', function () {
                             'border-collapse': 'collapse'
                         }
                     },
-                    { name: 'Borderless Table',		element: 'table',	styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
-                    { name: 'Square Bulleted List',	element: 'ul',		styles: { 'list-style-type': 'square' } }
+                    { name: 'Borderless Table', element: 'table', styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
+                    { name: 'Square Bulleted List', element: 'ul', styles: { 'list-style-type': 'square' } }
                 ],
                 removePlugins: 'elementspath,horizontalrule,image',
                 removeButtons: "Subscript,Superscript",
@@ -486,7 +504,7 @@ mayocat.directive('ckEditor', function () {
 
             // Make sure that if the model changes, the values is passed backed to the ckeditor
             // Example: value comes from an AJAX request, and that creates a race condition vs. ckeditor initialization
-            scope.$watch(ngModel, function(){
+            scope.$watch(ngModel, function () {
                 ck.setData(ngModel.$viewValue);
             });
 
@@ -501,7 +519,7 @@ mayocat.directive('ckEditor', function () {
                 ck.setData(ngModel.$viewValue);
             };
 
-            scope.$on('entity:initialized', function(event, entity){
+            scope.$on('entity:initialized', function (event, entity) {
                 CKEDITOR.config.mayocat_entityUri = entity.uri;
             });
 

@@ -102,6 +102,10 @@ angular.module('mayocat.image', ['ngResource'])
                 return found;
             }
 
+            $scope.getDisplayRatio = function(size) {
+                return "" + (size.width == null ? "?" : size.width) + " x " + (size.height == null ? "?" : size.height);
+            }
+
             $scope.$on('thumbnails:edit:selection', function (event, coordinates) {
                 var x = Math.floor(coordinates.x),
                     y = Math.floor(coordinates.y),

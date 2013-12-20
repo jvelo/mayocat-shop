@@ -86,7 +86,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
                         imageOptions.get().getHeight());
 
                 Dimension dimensions = newDimension.or(
-                        new Dimension(imageOptions.get().getWidth().get(), imageOptions.get().getHeight().get()));
+                        new Dimension(imageOptions.get().getWidth().or(-1), imageOptions.get().getHeight().or(-1)));
 
                 return Response.ok(imageService.scaleImage((Image) cropped, dimensions),
                         servletContext.getMimeType(fileName))
