@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -161,48 +163,58 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
 
     public void start() throws Exception
     {
-        try {
-            final Builder settings = ImmutableSettings.settingsBuilder();
-            settings.put("path.data", filesSettings.getPermanentDirectory().toString());
-            settings.put("client.transport.sniff", true);
-            settings.build();
-
-            final NodeBuilder nb = nodeBuilder().settings(settings).local(true).client(false).data(true);
-            final Node node = nb.node();
-            client = node.client();
-
-            IndicesExistsRequest indicesExistsRequest = new IndicesExistsRequest("entities");
-
-            // we just send back a response, no need to fork a listener
-            indicesExistsRequest.listenerThreaded(false);
-            client.admin().indices().exists(indicesExistsRequest, new ActionListener<IndicesExistsResponse>()
+        Executors.newSingleThreadExecutor().submit(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
             {
-                public void onResponse(IndicesExistsResponse response)
-                {
-                    if (!response.isExists()) {
-                        try {
-                            logger.debug("Entities indice does not exists. Creating it...");
-                            CreateIndexResponse r =
-                                    client.admin().indices().create(new CreateIndexRequest("entities")).actionGet();
+                try {
+                    final Builder settings = ImmutableSettings.settingsBuilder();
+                    settings.put("path.data", filesSettings.getPermanentDirectory().toString());
+                    settings.put("client.transport.sniff", true);
+                    settings.build();
 
-                            logger.debug("Created indice with response {}", r.isAcknowledged() ? "\u2713 acknowledged"
-                                    : "\2718 not acknowledged");
-                        } catch (Exception e) {
-                            logger.error("Failed to create entities indice status ...");
+                    final NodeBuilder nb = nodeBuilder().settings(settings).local(true).client(false).data(true);
+                    final Node node = nb.node();
+                    client = node.client();
+
+                    IndicesExistsRequest indicesExistsRequest = new IndicesExistsRequest("entities");
+
+                    // we just send back a response, no need to fork a listener
+                    indicesExistsRequest.listenerThreaded(false);
+                    client.admin().indices().exists(indicesExistsRequest, new ActionListener<IndicesExistsResponse>()
+                    {
+                        public void onResponse(IndicesExistsResponse response)
+                        {
+                            if (!response.isExists()) {
+                                try {
+                                    logger.debug("Entities indice does not exists. Creating it...");
+                                    CreateIndexResponse r =
+                                            client.admin().indices().create(new CreateIndexRequest("entities"))
+                                                    .actionGet();
+
+                                    logger.debug("Created indice with response {}",
+                                            r.isAcknowledged() ? "\u2713 acknowledged"
+                                                    : "\2718 not acknowledged");
+                                } catch (Exception e) {
+                                    logger.error("Failed to create entities indice status ...");
+                                }
+                            }
+
+                            updateMappings();
                         }
-                    }
 
-                    updateMappings();
+                        public void onFailure(Throwable e)
+                        {
+                            logger.error("Failed to enquiry entities indice status ...", e);
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("Failed to initialize embedded elastic search", e);
                 }
-
-                public void onFailure(Throwable e)
-                {
-                    logger.error("Failed to enquiry entities indice status ...", e);
-                }
-            });
-        } catch (Exception e) {
-            throw new InitializationException("Failed to initialize embedded elastic search", e);
-        }
+                return null;
+            }
+        });
     }
 
     private void updateMappings()
