@@ -10,8 +10,6 @@ package org.mayocat.cms.news.front.resource;
 import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,14 +27,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.mayocat.addons.front.builder.AddonContextBuilder;
-import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.cms.news.NewsSettings;
 import org.mayocat.cms.news.meta.ArticleEntity;
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
@@ -45,15 +40,11 @@ import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -115,6 +106,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         Map<String, Object> articlesContext = Maps.newHashMap();
         List<Map<String, Object>> currentPageArticles = Lists.newArrayList();
+
         for (Article article : articles) {
             currentPageArticles.add(buildArticleContext(article));
         }
@@ -130,7 +122,6 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
                         return MessageFormat.format("/news/?page={0}", page);
                     }
                 }));
-
 
         context.put("articles", articlesContext);
 
@@ -171,24 +162,10 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
     private Map<String, Object> buildArticleContext(Article article)
     {
-        ThemeDefinition theme = this.context.getTheme().getDefinition();
-        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
-
-        Map<String, Object> context = Maps.newHashMap();
-        context.put("title", ContextUtils.safeString(article.getTitle()));
-        context.put("content", ContextUtils.safeHtml(article.getContent()));
-        context.put(ContextConstants.URL, urlFactory.create(article));
-        context.put(ContextConstants.SLUG, article.getSlug());
-
-        if (article.getPublicationDate() != null) {
-            DateContext date =
-                    new DateContext(article.getPublicationDate(),
-                            settings.getLocales().getMainLocale().getValue());
-            context.put("publicationDate", date);
-        }
+        ArticleContextBuilder articleContextBuilder = new ArticleContextBuilder(this.context.getTheme().getDefinition(),
+                this.configurationService, this.urlFactory);
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
-
         List<Image> images = new ArrayList<Image>();
         for (Attachment attachment : attachments) {
             if (AbstractFrontResource.isImage(attachment)) {
@@ -198,40 +175,6 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
             }
         }
 
-        Map<String, Object> imagesContext = Maps.newHashMap();
-        List<Map<String, String>> allImages = Lists.newArrayList();
-        ImageContextBuilder imageContextBuilder = new ImageContextBuilder(theme);
-        Image featuredImage = null;
-
-        if (images.size() > 0) {
-            for (Image image : images) {
-                if (featuredImage == null && image.getAttachment().getId().equals(article.getFeaturedImageId())) {
-                    featuredImage = image;
-                }
-                allImages.add(imageContextBuilder.createImageContext(image));
-            }
-            if (featuredImage == null) {
-                // If no featured image has been set, we use the first image in the array.
-                featuredImage = images.get(0);
-            }
-            imagesContext.put("featured", imageContextBuilder.createImageContext(featuredImage));
-        } else {
-            // Create placeholder image
-            Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext();
-            imagesContext.put("featured", placeholder);
-            allImages = Arrays.asList(placeholder);
-        }
-
-        // Addons
-        if (article.getAddons().isLoaded() && theme != null) {
-            AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> themeAddons = theme.getAddons();
-            context.put("theme_addons", addonContextBuilder.build(themeAddons, article.getAddons().get()));
-        }
-
-        imagesContext.put("all", allImages);
-        context.put("images", imagesContext);
-
-        return context;
+        return articleContextBuilder.build(article, images);
     }
 }

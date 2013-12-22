@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /**
  * Pagination element of a {@link ThemeDefinition}.
@@ -32,6 +34,12 @@ public class PaginationDefinition
     Map<String, PaginationDefinition> models = Collections.emptyMap();
 
     /**
+     * @see {@link #getOthers()}
+     */
+    @JsonProperty
+    private Map<String, Integer> others = Maps.newHashMap();
+
+    /**
      * Default value for when the pagination is not defined. We chose 24 as the default value because it can be divided
      * in 2, 3, 4 and 6
      */
@@ -46,5 +54,21 @@ public class PaginationDefinition
     public Map<String, PaginationDefinition> getModels()
     {
         return models;
+    }
+
+    /**
+     * A map of optional others pagination for this entity/page
+     */
+    public Map<String, Integer> getOthers()
+    {
+        return others;
+    }
+
+    /**
+     *
+     */
+    public Optional<Integer> getOtherDefinition(String key)
+    {
+        return this.others.containsKey(key) ? Optional.of(this.others.get(key)) : Optional.<Integer>absent();
     }
 }

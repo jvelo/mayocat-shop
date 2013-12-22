@@ -25,6 +25,11 @@
 
         <dependency>
             <groupId>org.mayocat.cms</groupId>
+            <artifactId>mayocat-cms-news</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.cms</groupId>
             <artifactId>mayocat-cms-pages</artifactId>
             <version>${project.version}</version>
         </dependency>

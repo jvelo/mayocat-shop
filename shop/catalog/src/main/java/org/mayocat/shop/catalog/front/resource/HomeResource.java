@@ -9,8 +9,11 @@ package org.mayocat.shop.catalog.front.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -22,6 +25,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.cms.news.front.resource.ArticleContextBuilder;
+import org.mayocat.cms.news.model.Article;
+import org.mayocat.cms.news.store.ArticleStore;
 import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
@@ -35,9 +41,18 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.resources.AbstractFrontResource;
+import org.mayocat.shop.front.util.FrontContextHelper;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import static org.mayocat.shop.front.util.FrontContextHelper.isEntityFeaturedImage;
+import static org.mayocat.shop.front.util.FrontContextHelper.isThumbnailOfAttachment;
 
 /**
  * @version $Id$
@@ -57,17 +72,24 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
     @Inject
     private Provider<PageStore> pageStore;
 
+    @Inject
+    private Provider<ArticleStore> articleStore;
+
     @GET
     public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
     {
         FrontView result = new FrontView("home", breakpoint);
         Map<String, Object> context = getContext(uriInfo);
 
+        // Products
+
         Integer numberOfProducts =
                 this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
         context.put("products", createProductListContext(products));
         result.putContext(context);
+
+        // Home page content
 
         final Page page = pageStore.get().findBySlug("home");
         if (page != null) {
@@ -91,6 +113,50 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
             Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
             context.put("home", pageContext);
         }
+
+        // News articles
+
+        Integer numberOfArticlesPerPAge = this.context.getTheme().getDefinition()
+                .getPaginationDefinition("home").getOtherDefinition("articles").or(6);
+
+        List<Article> articles = articleStore.get().findAllPublished(0, numberOfArticlesPerPAge);
+
+        Collection<UUID> featuredImageIds = Collections2.transform(articles,
+                FrontContextHelper.ENTITY_FEATURED_IMAGE);
+        List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        List<Attachment> allImages;
+        List<Thumbnail> allThumbnails;
+        if (ids.isEmpty()) {
+            allImages = Collections.emptyList();
+            allThumbnails = Collections.emptyList();
+        } else {
+            allImages = this.attachmentStore.get().findByIds(ids);
+            allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
+        }
+
+        Map<String, Object> articlesContext = Maps.newHashMap();
+        List<Map<String, Object>> articleListContext = Lists.newArrayList();
+        ArticleContextBuilder articleContextBuilder = new ArticleContextBuilder(this.context.getTheme().getDefinition(),
+                this.configurationService, this.urlFactory);
+
+        for (final Article article : articles) {
+            Collection<Attachment> attachments =
+                    Collections2.filter(allImages, isEntityFeaturedImage(article));
+            List<Image> images = new ArrayList<>();
+            for (final Attachment attachment : attachments) {
+                Collection<Thumbnail> thumbnails =
+                        Collections2.filter(allThumbnails, isThumbnailOfAttachment(attachment));
+                Image image = new Image(entityLocalizationService.localize(attachment), new ArrayList<>(thumbnails));
+                images.add(image);
+            }
+
+            Map<String, Object> articleContext = articleContextBuilder.build(article, images);
+            articleListContext.add(articleContext);
+        }
+
+        articlesContext.put("list", articleListContext);
+        context.put("articles", articlesContext);
+
         result.putContext(context);
         return result;
     }
