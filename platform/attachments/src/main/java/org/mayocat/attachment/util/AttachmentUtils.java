@@ -27,7 +27,7 @@ public class AttachmentUtils
     public static boolean isImage(String fileName)
     {
         for (String extension : IMAGE_EXTENSIONS) {
-            if (fileName.endsWith("." + extension)) {
+            if (fileName.toLowerCase().endsWith("." + extension)) {
                 return true;
             }
         }

@@ -45,6 +45,7 @@ import org.mayocat.rest.resources.AbstractAttachmentResource;
 import org.mayocat.rest.support.AddonsRepresentationUnmarshaller;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -77,6 +78,9 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
 
     @Inject
     private AddonsRepresentationUnmarshaller addonsRepresentationUnmarshaller;
+
+    @Inject
+    private Logger logger;
 
     @GET
     @Authorized
@@ -133,25 +137,19 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
                 Optional.of(tenant.getId()));
 
         if (isUploadOfFeaturedImage(tenant, fileDetail, featuredImage) && created != null) {
-            // If this is an image and the tenant doesn't have a featured image yet, and the attachment was
-            // successful, then we set this image as featured image.
-            // Same if the featured image is forced via the "
-            for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(tenant,
-                    Arrays.asList("png", "jpg", "jpeg", "gif")))
-            {
-                if (created.getSlug().equals(attachment.getSlug())) {
-                    tenant.setFeaturedImageId(attachment.getId());
-                    break;
-                }
-            }
+
+            // If this is an image and the product doesn't have a featured image yet, and the attachment was
+            // successful, the we set this image as featured image.
+            tenant.setFeaturedImageId(created.getId());
+
             try {
                 this.accountsService.updateTenant(tenant);
-            } catch (EntityDoesNotExistException e) {
+            } catch (EntityDoesNotExistException | InvalidEntityException e) {
                 // Fail silently. The attachment has been added successfully, that's what matter
-            } catch (InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
+                this.logger.warn("Failed to set first image as featured image for entity {} with id", tenant.getId());
             }
         }
+
         return Response.noContent().build();
     }
 

@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTimeZone;
 import org.mayocat.addons.api.representation.AddonRepresentation;
+import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.cms.news.api.representations.ArticleRepresentation;
 import org.mayocat.cms.news.meta.ArticleEntity;
@@ -56,6 +57,7 @@ import org.mayocat.rest.resources.AbstractAttachmentResource;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -85,6 +87,9 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
 
     @Inject
     private ConfigurationService configurationService;
+
+    @Inject
+    private Logger logger;
 
     @GET
     public Object listArticles(@QueryParam("number") @DefaultValue("100") Integer number,
@@ -351,8 +356,24 @@ public class NewsResource extends AbstractAttachmentResource implements Resource
             return Response.status(404).build();
         }
 
-        this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+        Attachment created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.of(article.getId()));
+
+        if (article.getFeaturedImageId() == null && AttachmentUtils.isImage(fileDetail.getFileName())
+                && created != null) {
+
+            // If this is an image and the product doesn't have a featured image yet, and the attachment was
+            // successful, the we set this image as featured image.
+            article.setFeaturedImageId(created.getId());
+
+            try {
+                this.articleStore.get().update(article);
+            } catch (EntityDoesNotExistException | InvalidEntityException e) {
+                // Fail silently. The attachment has been added successfully, that's what matter
+                this.logger.warn("Failed to set first image as featured image for entity {} with id", article.getId());
+            }
+        }
+
         return Response.noContent().build();
     }
 

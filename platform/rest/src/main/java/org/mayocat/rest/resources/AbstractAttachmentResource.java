@@ -105,8 +105,7 @@ public class AbstractAttachmentResource
         }
         try {
             try {
-                this.attachmentStore.get().create(attachment);
-                return attachment;
+                return this.attachmentStore.get().create(attachment);
             } catch (InvalidEntityException e) {
                 throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid attachment\n")

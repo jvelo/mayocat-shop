@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.addons.api.representation.AddonRepresentation;
+import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.cms.pages.meta.PageEntity;
 import org.mayocat.model.AddonFieldType;
@@ -52,6 +53,7 @@ import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -78,6 +80,9 @@ public class PageResource extends AbstractAttachmentResource implements Resource
 
     @Inject
     private Provider<PageStore> pageStore;
+
+    @Inject
+    private Logger logger;
 
     @GET
     public Object listPages(@QueryParam("number") @DefaultValue("100") Integer number,
@@ -335,7 +340,24 @@ public class PageResource extends AbstractAttachmentResource implements Resource
             return Response.status(404).build();
         }
 
-        this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description, Optional.of(page.getId()));
+        Attachment created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
+                Optional.of(page.getId()));
+
+        if (page.getFeaturedImageId() == null && AttachmentUtils.isImage(fileDetail.getFileName())
+                && created != null) {
+
+            // If this is an image and the product doesn't have a featured image yet, and the attachment was
+            // successful, the we set this image as featured image.
+            page.setFeaturedImageId(created.getId());
+
+            try {
+                this.pageStore.get().update(page);
+            } catch (EntityDoesNotExistException | InvalidEntityException e) {
+                // Fail silently. The attachment has been added successfully, that's what matter
+                this.logger.warn("Failed to set first image as featured image for entity {} with id", page.getId());
+            }
+        }
+
         return Response.noContent().build();
     }
 }

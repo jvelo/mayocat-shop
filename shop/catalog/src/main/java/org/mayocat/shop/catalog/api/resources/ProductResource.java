@@ -224,18 +224,13 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
 
             // If this is an image and the product doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
-            for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product,
-                    Arrays.asList("png", "jpg", "jpeg", "gif")))
-            {
-                product.setFeaturedImageId(attachment.getId());
-                break;
-            }
+            product.setFeaturedImageId(created.getId());
+
             try {
                 this.productStore.get().update(product);
-            } catch (EntityDoesNotExistException e) {
+            } catch (EntityDoesNotExistException | InvalidEntityException e) {
                 // Fail silently. The attachment has been added successfully, that's what matter
-            } catch (InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
+                this.logger.warn("Failed to set first image as featured image for entity {} with id", product.getId());
             }
         }
 
