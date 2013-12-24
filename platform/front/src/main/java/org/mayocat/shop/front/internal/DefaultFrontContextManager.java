@@ -31,6 +31,8 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -81,8 +83,8 @@ public class DefaultFrontContextManager implements FrontContextManager, Initiali
         GeneralSettings settings = context.getSettings(GeneralSettings.class);
         final Locale mainLocale = settings.getLocales().getMainLocale().getValue();
         locales.put(mainLocale.toLanguageTag(), buildLocale(mainLocale, uriInfo, true));
-        List<Locale> alternativeLocales = Objects.firstNonNull(
-                settings.getLocales().getOtherLocales().getValue(), ImmutableList.<Locale>of());
+        List<Locale> alternativeLocales =
+                FluentIterable.from(settings.getLocales().getOtherLocales().getValue()).filter(Predicates.notNull()).toList();
         if (!alternativeLocales.isEmpty()) {
             for (final Locale locale : alternativeLocales) {
                 locales.put(locale.toLanguageTag(), buildLocale(locale, uriInfo, false));

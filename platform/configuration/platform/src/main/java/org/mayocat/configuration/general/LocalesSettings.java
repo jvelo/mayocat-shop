@@ -30,7 +30,7 @@ public class LocalesSettings
 
     @Valid
     @JsonProperty("others")
-    private Configurable<List<Locale>> otherLocales = new Configurable<List<Locale>>(Collections.<Locale>emptyList());
+    private Configurable<List<Locale>> otherLocales = new Configurable<>(Collections.<Locale>emptyList());
 
     public Configurable<Locale> getMainLocale()
     {

@@ -24,6 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
@@ -65,8 +66,9 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
         GeneralSettings settings = context.getSettings(GeneralSettings.class);
         URI requestURI = containerRequest.getRequestUri();
 
-        List<Locale> alternativeLocales = Objects.firstNonNull(
-                settings.getLocales().getOtherLocales().getValue(), ImmutableList.<Locale>of());
+        List<Locale> alternativeLocales =
+                FluentIterable.from(settings.getLocales().getOtherLocales().getValue())
+                        .filter(Predicates.notNull()).toList();
 
         if (!alternativeLocales.isEmpty()) {
             for (Locale locale : alternativeLocales) {
