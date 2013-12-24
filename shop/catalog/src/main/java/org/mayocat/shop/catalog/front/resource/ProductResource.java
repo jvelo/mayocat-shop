@@ -22,8 +22,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.image.model.Image;
@@ -91,13 +93,13 @@ public class ProductResource extends AbstractProductListFrontResource implements
     }
 
     @Path("{slug}")
+    @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public FrontView getProduct(final @PathParam("slug") String slug, @Context Breakpoint breakpoint,
-            @Context UriInfo uriInfo)
+    public Map<String, Object> getProductAsJson(final @PathParam("slug") String slug, @Context UriInfo uriInfo)
     {
         final Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
-            return new FrontView("404", breakpoint);
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
         List<org.mayocat.shop.catalog.model.Collection> collections =
@@ -108,8 +110,6 @@ public class ProductResource extends AbstractProductListFrontResource implements
             // collection as the parent entity of this product
             product.setFeaturedCollection(collections.get(0));
         }
-
-        FrontView result = new FrontView("product", product.getModel(), breakpoint);
 
         Map<String, Object> context = getContext(uriInfo);
 
@@ -133,7 +133,23 @@ public class ProductResource extends AbstractProductListFrontResource implements
         Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
 
         context.put("product", productContext);
-        result.putContext(context);
+        return context;
+    }
+
+    @Path("{slug}")
+    @Produces("text/html;q=2")
+    @GET
+    public FrontView getProduct(final @PathParam("slug") String slug, @Context Breakpoint breakpoint,
+            @Context UriInfo uriInfo)
+    {
+        final Product product = this.productStore.get().findBySlug(slug);
+        if (product == null) {
+            return new FrontView("404", breakpoint);
+        }
+
+        FrontView result = new FrontView("product", product.getModel(), breakpoint);
+
+        result.putContext(getProductAsJson(slug, uriInfo));
 
         return result;
     }
