@@ -23,6 +23,7 @@ import org.mayocat.model.HasModel;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.LocalizedField;
+import org.mayocat.model.annotation.PluralForm;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -30,6 +31,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
+@PluralForm("news")
 public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
 {
     private UUID id;
