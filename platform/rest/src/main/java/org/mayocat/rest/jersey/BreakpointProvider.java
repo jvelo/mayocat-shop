@@ -33,6 +33,6 @@ public class BreakpointProvider extends AbstractInjectableProvider<Breakpoint> i
     @Override
     public Breakpoint getValue(HttpContext httpContext)
     {
-        return this.breakpointDetector.getBreakpoint(httpContext.getRequest().getHeaderValue("User-Agent"));
+        return this.breakpointDetector.getBreakpoint(httpContext.getRequest().getHeaderValue("User-Agent")).orNull();
     }
 }

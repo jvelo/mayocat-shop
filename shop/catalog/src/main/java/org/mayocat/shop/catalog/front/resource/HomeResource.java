@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,12 +37,12 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.front.resources.AbstractWebViewResource;
+import org.mayocat.shop.front.util.WebDataHelper;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.shop.front.util.FrontContextHelper;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
@@ -51,18 +52,18 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.mayocat.shop.front.util.FrontContextHelper.isEntityFeaturedImage;
-import static org.mayocat.shop.front.util.FrontContextHelper.isThumbnailOfAttachment;
+import static org.mayocat.shop.front.util.WebDataHelper.isEntityFeaturedImage;
+import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment;
 
 /**
  * @version $Id$
  */
 @Component(HomeResource.PATH)
 @Path(HomeResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class HomeResource extends AbstractProductListFrontResource implements Resource
+public class HomeResource extends AbstractProductListWebViewResource implements Resource
 {
     @Inject
     private Provider<ProductStore> productStore;
@@ -76,10 +77,9 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
     private Provider<ArticleStore> articleStore;
 
     @GET
-    public FrontView getHomePage(@Context Breakpoint breakpoint, @Context UriInfo uriInfo)
+    public WebView getHomePage()
     {
-        FrontView result = new FrontView("home", breakpoint);
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
 
         // Products
 
@@ -87,7 +87,6 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
                 this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
         context.put("products", createProductListContext(products));
-        result.putContext(context);
 
         // Home page content
 
@@ -102,7 +101,7 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
                     .asList("png", "jpg", "jpeg", "gif"));
             List<Image> images = new ArrayList<>();
             for (Attachment attachment : attachments) {
-                if (AbstractFrontResource.isImage(attachment)) {
+                if (AbstractWebViewResource.isImage(attachment)) {
                     List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
                     Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                     images.add(image);
@@ -122,7 +121,7 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
         List<Article> articles = articleStore.get().findAllPublished(0, numberOfArticlesPerPAge);
 
         Collection<UUID> featuredImageIds = Collections2.transform(articles,
-                FrontContextHelper.ENTITY_FEATURED_IMAGE);
+                WebDataHelper.ENTITY_FEATURED_IMAGE);
         List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
@@ -157,7 +156,6 @@ public class HomeResource extends AbstractProductListFrontResource implements Re
         articlesContext.put("list", articleListContext);
         context.put("articles", articlesContext);
 
-        result.putContext(context);
-        return result;
+        return new WebView().template("home.html").data(context);
     }
 }

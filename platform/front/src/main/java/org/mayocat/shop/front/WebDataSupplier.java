@@ -9,16 +9,15 @@ package org.mayocat.shop.front;
 
 import java.util.Map;
 
-import javax.ws.rs.core.UriInfo;
-
 import org.xwiki.component.annotation.Role;
 
 /**
+ * Doc goes here.
+ *
  * @version $Id$
  */
 @Role
-public interface FrontContextManager
+public interface WebDataSupplier
 {
-
-    Map<String, Object> getContext(UriInfo uriInfo);
+    void supply(Map<String, Object> data);
 }

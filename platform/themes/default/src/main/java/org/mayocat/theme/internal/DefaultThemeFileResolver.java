@@ -23,7 +23,6 @@ import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.ThemeResource;
-import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
 
@@ -49,13 +48,10 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     private ConfigurationService configurationService;
 
     @Inject
-    private UserAgentBreakpointDetector breakpointDetector;
-
-    @Inject
     private Logger logger;
 
     @Override
-    public Template getIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getIndexTemplate(Optional<Breakpoint> breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(INDEX_HTML, breakpoint);
@@ -67,7 +63,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     }
 
     @Override
-    public Template getTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getTemplate(String name, Optional<Breakpoint> breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(name, breakpoint);
@@ -79,7 +75,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     }
 
     @Override
-    public ThemeResource getResource(String name, Breakpoint breakpoint)
+    public ThemeResource getResource(String name, Optional<Breakpoint> breakpoint)
     {
         try {
             ThemeResource result = getResource(getActiveTheme(), name, breakpoint);
@@ -100,7 +96,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return Optional.absent();
     }
 
-    private String generateTemplateId(String layoutName, Breakpoint breakpoint)
+    private String generateTemplateId(String layoutName, Optional<Breakpoint> breakpoint)
     {
         String themeName = context.getTheme().getDefinition().getName();
         String templateId =
@@ -109,7 +105,8 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return "" + templateId.hashCode();
     }
 
-    private String getTemplateContent(String name, Breakpoint breakpoint) throws TemplateNotFoundException, IOException
+    private String getTemplateContent(String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException, IOException
     {
         String result = getTemplateContent(getActiveTheme(), name, breakpoint);
         if (result == null) {
@@ -118,11 +115,11 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return result;
     }
 
-    private ThemeResource getResource(Theme theme, String name, Breakpoint breakpoint) throws IOException
+    private ThemeResource getResource(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
         Path path = theme.getPath();
-        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
-            path = path.resolve(breakpoint.getFolder());
+        if (breakpoint.isPresent()) {
+            path = path.resolve(breakpoint.get().getFolder());
         }
         path = path.resolve(name);
 
@@ -143,9 +140,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
                 break;
         }
 
-        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
+        if (breakpoint.isPresent()) {
             // Maybe without the breakpoint
-            return getResource(theme, name, Breakpoint.DEFAULT);
+            return getResource(theme, name, Optional.<Breakpoint>absent());
         }
 
         if (theme.getParent() != null) {
@@ -171,7 +168,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
      * @return the content of the template, or null if not found
      * @throws IOException when there is an IO exception getting the content
      */
-    private String getTemplateContent(Theme theme, String name, Breakpoint breakpoint) throws IOException
+    private String getTemplateContent(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
         ThemeResource resource = this.getResource(theme, name, breakpoint);
         if (resource == null) {

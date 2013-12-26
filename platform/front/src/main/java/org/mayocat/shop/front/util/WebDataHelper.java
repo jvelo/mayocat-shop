@@ -23,7 +23,7 @@ import com.google.common.base.Predicate;
  *
  * @version $Id$
  */
-public class FrontContextHelper
+public class WebDataHelper
 {
     public static Function<HasFeaturedImage, UUID> ENTITY_FEATURED_IMAGE = new Function<HasFeaturedImage, UUID>()
     {

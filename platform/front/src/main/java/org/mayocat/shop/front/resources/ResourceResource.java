@@ -12,6 +12,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.assets.ResourceURL;
+
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeFileResolver;
@@ -25,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -46,14 +49,16 @@ public class ResourceResource implements Resource
     @Inject
     private Logger logger;
 
+    @Inject
+    private WebContext context;
+
     @GET
     @Path("{path:.+}")
-    public Response getResource(@PathParam("path") String resource, @Context Breakpoint breakpoint, @Context
-    Request request) throws Exception
+    public Response getResource(@PathParam("path") String resource, @Context Request request) throws Exception
     {
-        ThemeResource themeResource = themeFileResolver.getResource(resource, breakpoint);
+        ThemeResource themeResource = themeFileResolver.getResource(resource, context.getRequest().getBreakpoint());
         if (themeResource == null) {
-            logger.debug("Resource [{}] with breakpoint [{}] not found", resource, breakpoint);
+            logger.debug("Resource [{}] not found", resource);
             throw new WebApplicationException(404);
         }
 
@@ -69,7 +74,7 @@ public class ResourceResource implements Resource
 
                 if (uri.getScheme().equals("jar")) {
                     // Not supported for now
-                   return Response.status(Response.Status.NOT_FOUND).build();
+                    return Response.status(Response.Status.NOT_FOUND).build();
                 }
 
                 file = new File(uri);
@@ -100,7 +105,8 @@ public class ResourceResource implements Resource
         return builder.cacheControl(cacheControl).lastModified(new Date(lastModified)).build();
     }
 
-    private Optional<String> guessMimeType(File file) {
+    private Optional<String> guessMimeType(File file)
+    {
         try {
             return Optional.fromNullable(java.nio.file.Files.probeContentType(file.toPath()));
         } catch (IOException e) {

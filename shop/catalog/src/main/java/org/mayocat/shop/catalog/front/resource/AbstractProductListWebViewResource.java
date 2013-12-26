@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.catalog.front.resource;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +27,8 @@ import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.front.builder.PaginationContextBuilder;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.shop.front.util.FrontContextHelper;
+import org.mayocat.shop.front.resources.AbstractWebViewResource;
+import org.mayocat.shop.front.util.WebDataHelper;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.url.EntityURLFactory;
 
@@ -38,15 +37,15 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.mayocat.shop.front.util.FrontContextHelper.isEntityFeaturedImage;
-import static org.mayocat.shop.front.util.FrontContextHelper.isThumbnailOfAttachment;
+import static org.mayocat.shop.front.util.WebDataHelper.isEntityFeaturedImage;
+import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment;
 
 /**
  * Base class for front resources with product lists.
  *
  * @version $Id$
  */
-public class AbstractProductListFrontResource extends AbstractFrontResource
+public class AbstractProductListWebViewResource extends AbstractWebViewResource
 {
     @Inject
     protected ConfigurationService configurationService;
@@ -75,7 +74,7 @@ public class AbstractProductListFrontResource extends AbstractFrontResource
         final List<Map<String, Object>> productsListContext = Lists.newArrayList();
 
         java.util.Collection<UUID> featuredImageIds = Collections2.transform(products,
-                FrontContextHelper.ENTITY_FEATURED_IMAGE);
+                WebDataHelper.ENTITY_FEATURED_IMAGE);
         List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;

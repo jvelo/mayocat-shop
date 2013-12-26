@@ -15,17 +15,14 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.model.Attachment;
-import org.mayocat.shop.front.FrontContextManager;
+import org.mayocat.shop.front.WebViewTransformer;
 
 /**
  * @version $Id$
  */
-public class AbstractFrontResource
+public class AbstractWebViewResource
 {
     protected final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();
-
-    @Inject
-    private FrontContextManager contextManager;
 
     static {
         IMAGE_EXTENSIONS.add("jpg");
@@ -37,15 +34,5 @@ public class AbstractFrontResource
     public static boolean isImage(Attachment attachment)
     {
         return IMAGE_EXTENSIONS.contains(attachment.getExtension().toLowerCase());
-    }
-
-    protected FrontContextManager getContextManager()
-    {
-        return contextManager;
-    }
-
-    protected Map<String, Object> getContext(UriInfo uriInfo)
-    {
-        return contextManager.getContext(uriInfo);
     }
 }

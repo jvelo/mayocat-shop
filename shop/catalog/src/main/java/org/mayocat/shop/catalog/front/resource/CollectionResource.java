@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.front.resource;
 import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,17 +23,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
-import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.localization.EntityLocalizationService;
+import org.mayocat.shop.front.views.ErrorWebView;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.catalog.CatalogService;
 import org.mayocat.shop.catalog.front.builder.CollectionContextBuilder;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
@@ -43,12 +40,7 @@ import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.Resource;
-import org.mayocat.rest.views.FrontView;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.store.AttachmentStore;
-import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
-import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.math.IntMath;
@@ -58,10 +50,10 @@ import com.google.common.math.IntMath;
  */
 @Component(CollectionResource.PATH)
 @Path(CollectionResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CollectionResource extends AbstractProductListFrontResource implements Resource, ContextConstants
+public class CollectionResource extends AbstractProductListWebViewResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + CollectionEntity.PATH;
 
@@ -73,18 +65,16 @@ public class CollectionResource extends AbstractProductListFrontResource impleme
 
     @GET
     @Path("{slug}")
-    @Produces("application/json")
-    public Map<String, Object> getCollectionAsJson(@PathParam("slug") String slug,
-            @QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
+    public WebView getCollection(@PathParam("slug") String slug, @QueryParam("page") @DefaultValue("1") Integer page)
     {
-        final int currentPage = page < 1 ? 1 : page;
-
         final Collection collection = catalogService.findCollectionBySlug(slug);
         if (collection == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return new ErrorWebView().status(404);
         }
 
-        Map<String, Object> context = getContext(uriInfo);
+        final int currentPage = page < 1 ? 1 : page;
+
+        Map<String, Object> context = new HashMap<>();
 
         context.put(PAGE_TITLE, collection.getTitle());
         context.put(PAGE_DESCRIPTION, collection.getDescription());
@@ -116,35 +106,6 @@ public class CollectionResource extends AbstractProductListFrontResource impleme
         // TODO get the collection images
         context.put("collection", collectionContext);
 
-        // Sets the "current" flag on the current collection
-        try {
-            List<Map<String, Object>> collections = (List<Map<String, Object>>) context.get(COLLECTIONS);
-            for (Map<String, Object> c : collections) {
-                if (c.containsKey(ContextConstants.URL) &&
-                        c.get(ContextConstants.URL).equals(urlFactory.create(collection)))
-                {
-                    c.put("current", true);
-                }
-            }
-        } catch (ClassCastException e) {
-            // Ignore
-        }
-        return context;
-    }
-
-    @GET
-    @Path("{slug}")
-    @Produces("text/html;q=2")
-    public FrontView getCollection(@PathParam("slug") String slug, @QueryParam("page") @DefaultValue("1") Integer page,
-            @Context Breakpoint breakpoint, @Context UriInfo uriInfo)
-    {
-        final Collection collection = catalogService.findCollectionBySlug(slug);
-        if (collection == null) {
-            return new FrontView("404", breakpoint);
-        }
-
-        FrontView result = new FrontView("collection", breakpoint);
-        result.putContext(getCollectionAsJson(slug, page, uriInfo));
-        return result;
+        return new WebView().template("collection.html").data(context);
     }
 }

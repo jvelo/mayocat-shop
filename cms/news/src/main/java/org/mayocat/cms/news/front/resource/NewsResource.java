@@ -10,6 +10,7 @@ package org.mayocat.cms.news.front.resource;
 import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,10 +40,11 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.front.resources.AbstractWebViewResource;
+import org.mayocat.shop.front.views.ErrorWebView;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.url.EntityURLFactory;
@@ -57,10 +59,10 @@ import com.google.common.math.IntMath;
  */
 @Component(NewsResource.PATH)
 @Path(NewsResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class NewsResource extends AbstractFrontResource implements Resource, ContextConstants
+public class NewsResource extends AbstractWebViewResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + ArticleEntity.PATH;
 
@@ -83,8 +85,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
     private WebContext context;
 
     @GET
-    public FrontView getNews(@Context Breakpoint breakpoint, @Context UriInfo uriInfo,
-            @QueryParam("page") @DefaultValue("1") Integer page)
+    public WebView getNews(@Context UriInfo uriInfo, @QueryParam("page") @DefaultValue("1") Integer page)
     {
         final int currentPage = page < 1 ? 1 : page;
 
@@ -95,7 +96,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         List<Article> articles = articleStore.get().findAllPublished(offset, numberOfArticlesPerPAge);
         Integer totalCount = articleStore.get().countAllPublished();
 
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
 
         // Compute news page name
         Map<String, String> parameters = Maps.newHashMap();
@@ -125,24 +126,21 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         context.put("articles", articlesContext);
 
-        FrontView result = new FrontView("news", breakpoint);
-        result.putContext(context);
-
-        return result;
+        return new WebView().template("news.html").data(context);
     }
 
     @Path("{slug}")
     @GET
-    public FrontView getArticle(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
+    public WebView getArticle(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
             @Context UriInfo uriInfo)
     {
         Article article = this.articleStore.get().findBySlug(slug);
 
         if (article == null) {
-            return new FrontView("404", breakpoint);
+            return new ErrorWebView().status(404);
         }
 
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
 
         // Compute article page name
         Map<String, String> parameters = Maps.newHashMap();
@@ -154,10 +152,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
 
         context.put("article", buildArticleContext(article));
 
-        FrontView result = new FrontView("article", breakpoint);
-        result.putContext(context);
-
-        return result;
+        return new WebView().template("article.html").data(context);
     }
 
     private Map<String, Object> buildArticleContext(Article article)
@@ -168,7 +163,7 @@ public class NewsResource extends AbstractFrontResource implements Resource, Con
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
         List<Image> images = new ArrayList<Image>();
         for (Attachment attachment : attachments) {
-            if (AbstractFrontResource.isImage(attachment)) {
+            if (AbstractWebViewResource.isImage(attachment)) {
                 List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
                 Image image = new Image(attachment, thumbnails);
                 images.add(image);

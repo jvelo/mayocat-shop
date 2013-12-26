@@ -13,13 +13,14 @@ package org.mayocat.theme;
  *
  * See RESS: Responsive Design + Server Side Components http://www.lukew.com/ff/entry.asp?1392
  *
- * @see {@link UserAgentBreakpointDetector}
  * @version $Id$
+ * @see {@link UserAgentBreakpointDetector}
  */
 public enum Breakpoint
 {
-    DEFAULT (""),
-    MOBILE ("mobile");
+    MOBILE("mobile"),
+    TABLET("tablet"),
+    TV("tv");
 
     private String folder;
 

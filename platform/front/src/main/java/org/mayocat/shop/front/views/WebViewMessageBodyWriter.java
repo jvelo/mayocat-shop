@@ -5,28 +5,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.rest.views;
+package org.mayocat.shop.front.views;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.mayocat.context.WebContext;
-import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.ThemeFileResolver;
-import org.mayocat.theme.TemplateNotFoundException;
-import org.mayocat.theme.ThemeManager;
-import org.mayocat.views.Template;
-import org.mayocat.views.TemplateEngine;
-import org.mayocat.views.TemplateEngineException;
-import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -36,17 +21,33 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Map;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.mayocat.context.WebContext;
+import org.mayocat.shop.front.WebDataSupplier;
+import org.mayocat.shop.front.WebViewTransformer;
+import org.mayocat.theme.TemplateNotFoundException;
+import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
+import org.mayocat.views.Template;
+import org.mayocat.views.TemplateEngine;
+import org.mayocat.views.TemplateEngineException;
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 
 /**
  * @version $Id$
  */
-@Component("frontViewMessageBodyWriter")
-public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>, org.mayocat.rest.Provider
+@Component("webViewMessageBodyWriter")
+public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org.mayocat.rest.Provider
 {
     @Inject
     private Provider<TemplateEngine> engine;
@@ -63,21 +64,27 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
     @Inject
     private WebContext webContext;
 
+    @Inject
+    private Map<String, WebDataSupplier> dataSuppliers;
+
+    @Inject
+    private Map<String, WebViewTransformer> transformers;
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
     {
-        return FrontView.class.isAssignableFrom(type);
+        return WebView.class.isAssignableFrom(type);
     }
 
     @Override
-    public long getSize(FrontView frontView, Class<?> type, Type genericType, Annotation[] annotations,
+    public long getSize(WebView webView, Class<?> type, Type genericType, Annotation[] annotations,
             MediaType mediaType)
     {
         return -1;
     }
 
     @Override
-    public void writeTo(FrontView frontView, Class<?> type, Type genericType, Annotation[] annotations,
+    public void writeTo(WebView webView, Class<?> type, Type genericType, Annotation[] annotations,
             MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
             throws IOException, WebApplicationException
     {
@@ -89,46 +96,62 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
                 return;
             }
 
-            Template template = themeFileResolver.getIndexTemplate(frontView.getBreakpoint());
-            Template layout = null;
+            Template masterTemplate = themeFileResolver.getIndexTemplate(webContext.getRequest().getBreakpoint());
+            Template template = null;
 
-            if (frontView.getModel().isPresent()) {
-                Optional<String> path = themeFileResolver.resolveModelPath(frontView.getModel().get());
+            if (webView.model().isPresent()) {
+                Optional<String> path = themeFileResolver.resolveModelPath(webView.model().get());
                 if (path.isPresent()) {
                     try {
-                        layout = themeFileResolver.getTemplate(path.get(), frontView.getBreakpoint());
+                        template = themeFileResolver.getTemplate(path.get(), webContext.getRequest().getBreakpoint());
                     } catch (TemplateNotFoundException e) {
                         // Keep going
                     }
                 }
-                // else just fallback on the default layout
+                // else just fallback on the default model
             }
 
-            if (layout == null) {
-                layout = themeFileResolver.getTemplate(frontView.getLayout() + ".html", frontView.getBreakpoint());
+            if (template == null) {
+                template = themeFileResolver
+                        .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
             }
 
-            frontView.getContext().put("templateContent", layout.getId());
-            frontView.getContext().put("template", frontView.getLayout());
             String jsonContext = null;
+
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE) ||
+                    httpHeaders.containsKey("X-Mayocat-Full-Context"))
+            {
+                webView.data().put("templateContent", template.getId());
+                webView.data().put("template", webView.template().toString());
+
+                for (WebDataSupplier supplier : dataSuppliers.values()) {
+                    supplier.supply(webView.data());
+                }
+            }
 
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                jsonContext = mapper.writeValueAsString(frontView.getContext());
-                engine.get().register(layout);
+
+                if (mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                    mapper.writeValue(entityStream, webView.data());
+                    return;
+                }
+
+                jsonContext = mapper.writeValueAsString(webView.data());
                 engine.get().register(template);
-                String rendered = engine.get().render(template.getId(), jsonContext);
+                engine.get().register(masterTemplate);
+                String rendered = engine.get().render(masterTemplate.getId(), jsonContext);
                 entityStream.write(rendered.getBytes());
             } catch (JsonMappingException e) {
                 this.logger.warn("Failed to serialize JSON context", e);
-                writeException(frontView, e, entityStream);
+                writeException(webView, e, entityStream);
             } catch (TemplateEngineException e) {
                 this.logger.warn("Template exception", e);
-                writeException(frontView, e, entityStream);
+                writeException(webView, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Template not found : " + frontView.getLayout()).build());
+                    .entity("Template not found : " + webView.template().toString()).build());
         }
     }
 
@@ -139,7 +162,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Template error;
             try {
-                error = themeFileResolver.getTemplate("500.html", Breakpoint.DEFAULT);
+                error = themeFileResolver.getTemplate("500.html", webContext.getRequest().getBreakpoint());
             } catch (TemplateNotFoundException notFound) {
                 // Fallback on the classpath hosted error 500 file
                 error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),
@@ -156,7 +179,7 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
         }
     }
 
-    private void writeException(FrontView frontView, Exception e, OutputStream entityStream)
+    private void writeException(WebView webView, Exception e, OutputStream entityStream)
     {
         try {
             // Note:
@@ -169,11 +192,11 @@ public class FrontViewMessageBodyWriter implements MessageBodyWriter<FrontView>,
             // Re-serialize the context as json with indentation for better debugging
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            Map<String, Object> context = frontView.getContext();
+            Map<String, Object> context = webView.data();
             String jsonContext = mapper.writeValueAsString(context);
             Template error;
             try {
-                error = themeFileResolver.getTemplate("500.html", frontView.getBreakpoint());
+                error = themeFileResolver.getTemplate("500.html", webContext.getRequest().getBreakpoint());
             } catch (TemplateNotFoundException notFound) {
                 // Fallback on the classpath hosted error 500 file
                 error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),

@@ -82,11 +82,11 @@
                     {{#isPath '/'}} class="active" {{/isPath}}>
                     <a href="/products/">Products</a>
                     {{#any collections}}
-                    <ul>
-                        {{#collections}}
-                        <li><a href="{{url}}">{{title}}</a></li>
-                        {{/collections}}
-                    </ul>
+                        <ul>
+                            {{#collections}}
+                                <li {{#if current}}class="current"{{/if}}><a href="{{url}}">{{title}}</a></li>
+                            {{/collections}}
+                        </ul>
                     {{/any}}
                 </li>
                 <li{{#isPath '/news/'}} class="active" {{/isPath}}><a href="/news/">News</a></li>

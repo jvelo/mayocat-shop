@@ -11,12 +11,13 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.context.WebContext;
+import org.mayocat.context.request.WebRequest;
 import org.mayocat.context.scope.Flash;
 import org.mayocat.context.scope.Session;
 import org.mayocat.theme.Theme;
@@ -24,11 +25,11 @@ import org.xwiki.component.annotation.Component;
 
 @Component
 @Singleton
-public class ThreadLocalWebContext implements org.mayocat.context.WebContext
+public class ThreadLocalWebContext implements WebContext
 {
-    private ThreadLocal<org.mayocat.context.WebContext> context = new ThreadLocal<org.mayocat.context.WebContext>();
+    private ThreadLocal<WebContext> context = new ThreadLocal<>();
 
-    public org.mayocat.context.WebContext getContext()
+    public WebContext getContext()
     {
         return this.context.get();
     }
@@ -148,5 +149,17 @@ public class ThreadLocalWebContext implements org.mayocat.context.WebContext
     public void session(String name, Serializable value)
     {
         getContext().session(name, value);
+    }
+
+    @Override
+    public WebRequest getRequest()
+    {
+        return getContext().getRequest();
+    }
+
+    @Override
+    public void setRequest(WebRequest request)
+    {
+        this.getContext().setRequest(request);
     }
 }

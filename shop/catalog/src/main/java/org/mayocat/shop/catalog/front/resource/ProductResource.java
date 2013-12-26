@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.front.resource;
 import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +23,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.image.model.Image;
@@ -33,7 +32,8 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.front.views.ErrorWebView;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.catalog.front.builder.ProductContextBuilder;
 import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.shop.catalog.model.Product;
@@ -44,7 +44,6 @@ import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Optional;
 import com.google.common.math.IntMath;
 
 /**
@@ -52,10 +51,10 @@ import com.google.common.math.IntMath;
  */
 @Component(ProductResource.PATH)
 @Path(ProductResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class ProductResource extends AbstractProductListFrontResource implements Resource, ContextConstants
+public class ProductResource extends AbstractProductListWebViewResource implements Resource, ContextConstants
 {
     public static final String PATH = ROOT_PATH + ProductEntity.PATH;
 
@@ -63,8 +62,7 @@ public class ProductResource extends AbstractProductListFrontResource implements
     private Provider<ProductStore> productStore;
 
     @GET
-    public FrontView getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context Breakpoint breakpoint,
-            @Context UriInfo uriInfo)
+    public WebView getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
     {
         final int currentPage = page < 1 ? 1 : page;
         Integer numberOfProductsPerPage =
@@ -74,8 +72,7 @@ public class ProductResource extends AbstractProductListFrontResource implements
         Integer totalCount = this.productStore.get().countAllOnShelf();
         Integer totalPages = IntMath.divide(totalCount, numberOfProductsPerPage, RoundingMode.UP);
 
-        FrontView result = new FrontView("products", Optional.<String>absent(), breakpoint);
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProductsPerPage, offset);
@@ -87,19 +84,18 @@ public class ProductResource extends AbstractProductListFrontResource implements
                         return MessageFormat.format("/products/?page={0}", page);
                     }
                 }));
-        result.putContext(context);
 
-        return result;
+        return new WebView().template("products.html").data(context);
     }
 
     @Path("{slug}")
-    @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public Map<String, Object> getProductAsJson(final @PathParam("slug") String slug, @Context UriInfo uriInfo)
+    public WebView getProduct(final @PathParam("slug") String slug, @Context Breakpoint breakpoint,
+            @Context UriInfo uriInfo)
     {
         final Product product = this.productStore.get().findBySlug(slug);
         if (product == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return new ErrorWebView().status(404);
         }
 
         List<org.mayocat.shop.catalog.model.Collection> collections =
@@ -111,7 +107,7 @@ public class ProductResource extends AbstractProductListFrontResource implements
             product.setFeaturedCollection(collections.get(0));
         }
 
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
 
         context.put(ContextConstants.PAGE_TITLE, product.getTitle());
         context.put(ContextConstants.PAGE_DESCRIPTION, product.getDescription());
@@ -133,24 +129,7 @@ public class ProductResource extends AbstractProductListFrontResource implements
         Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
 
         context.put("product", productContext);
-        return context;
-    }
 
-    @Path("{slug}")
-    @Produces("text/html;q=2")
-    @GET
-    public FrontView getProduct(final @PathParam("slug") String slug, @Context Breakpoint breakpoint,
-            @Context UriInfo uriInfo)
-    {
-        final Product product = this.productStore.get().findBySlug(slug);
-        if (product == null) {
-            return new FrontView("404", breakpoint);
-        }
-
-        FrontView result = new FrontView("product", product.getModel(), breakpoint);
-
-        result.putContext(getProductAsJson(slug, uriInfo));
-
-        return result;
+        return new WebView().template("product.html").model(product.getModel()).data(context);
     }
 }

@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.cart.CartAccessor;
@@ -38,8 +37,7 @@ import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
-import org.mayocat.shop.front.FrontContextManager;
-import org.mayocat.theme.Breakpoint;
+import org.mayocat.shop.front.views.WebView;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -52,7 +50,7 @@ import com.google.common.collect.Maps;
  */
 @Component(CheckoutResource.PATH)
 @Path(CheckoutResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 public class CheckoutResource implements Resource
@@ -62,9 +60,6 @@ public class CheckoutResource implements Resource
     public static final String PAYMENT_RETURN_PATH = "return";
 
     public static final String PAYMENT_CANCEL_PATH = "cancel";
-
-    @Inject
-    private FrontContextManager contextManager;
 
     @Inject
     private CheckoutRegister checkoutRegister;
@@ -111,7 +106,7 @@ public class CheckoutResource implements Resource
     }
 
     @POST
-    public Object checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint, MultivaluedMap data)
+    public Object checkout(@Context UriInfo uriInfo, MultivaluedMap data)
     {
         Map<String, Error> errors = Maps.newHashMap();
         String email = null;
@@ -136,14 +131,13 @@ public class CheckoutResource implements Resource
         String country = getNonEmptyFieldValueOrAddToErrorMap("country", data, errors);
 
         if (errors.keySet().size() > 0) {
-            FrontView result = new FrontView("checkout/form", breakpoint);
-            Map<String, Object> bindings = contextManager.getContext(uriInfo);
+            Map<String, Object> bindings = new HashMap<>();
 
             bindings.put("request", data);
             bindings.put("errors", errors);
 
-            result.putContext(bindings);
-            return result;
+            return new WebView().template("checkout/form.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                    .data(bindings);
         }
 
         Customer customer = new Customer();
@@ -174,37 +168,32 @@ public class CheckoutResource implements Resource
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {
-                FrontView result = new FrontView("checkout/success", breakpoint);
-                Map<String, Object> bindings = contextManager.getContext(uriInfo);
+                Map<String, Object> bindings = new HashMap<>();
                 bindings.put("errors", errors);
-
-                result.putContext(bindings);
-                return result;
+                return new WebView().template("checkout/success.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                        .data(bindings);
             }
         } catch (final Exception e) {
             this.logger.error("Exception checking out", e);
-            FrontView result = new FrontView("checkout/exception", breakpoint);
-            Map<String, Object> bindings = contextManager.getContext(uriInfo);
+            Map<String, Object> bindings = new HashMap<>();
             bindings.put("exception", new HashMap<String, Object>()
             {
                 {
                     put("message", e.getMessage());
                 }
             });
-            result.putContext(bindings);
-            return result;
+            return new WebView().template("checkout/exception.html").with(
+                    WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
         }
     }
 
     @GET
-    public Object checkout(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    public Object checkout(@Context UriInfo uriInfo)
     {
         if (checkoutRegister.requiresForm()) {
-            FrontView result = new FrontView("checkout/form", breakpoint);
-            Map<String, Object> bindings = contextManager.getContext(uriInfo);
-
-            result.putContext(bindings);
-            return result;
+            Map<String, Object> bindings = new HashMap<>();
+            return new WebView().template("checkout/form.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                    .data(bindings);
         } else {
             try {
                 Cart cart = cartAccessor.getCart();
@@ -214,16 +203,15 @@ public class CheckoutResource implements Resource
                     return Response.seeOther(new URI(response.getRedirectURL().get())).build();
                 }
             } catch (final CheckoutException e) {
-                FrontView result = new FrontView("checkout/exception", breakpoint);
-                Map<String, Object> bindings = contextManager.getContext(uriInfo);
+                Map<String, Object> bindings = new HashMap<>();
                 bindings.put("exception", new HashMap<String, Object>()
                 {
                     {
                         put("message", e.getMessage());
                     }
                 });
-                result.putContext(bindings);
-                return result;
+                return new WebView().template("checkout/exception.html")
+                        .with(WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -233,35 +221,28 @@ public class CheckoutResource implements Resource
 
     @GET
     @Path(PAYMENT_RETURN_PATH)
-    public FrontView returnFromExternalPaymentService(@Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    public WebView returnFromExternalPaymentService(@Context UriInfo uriInfo)
     {
         for (String key : uriInfo.getQueryParameters().keySet()) {
             System.out.println(key + " : " + uriInfo.getQueryParameters().getFirst(key));
         }
-
-        FrontView result = new FrontView("checkout/success", breakpoint);
-        Map<String, Object> bindings = contextManager.getContext(uriInfo);
-
-        result.putContext(bindings);
-        return result;
+        Map<String, Object> bindings = new HashMap<>();
+        return new WebView().template("checkout/success.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                .data(bindings);
     }
 
     @GET
     @Path("{orderId}/" + PAYMENT_CANCEL_PATH)
-    public FrontView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId,
-            @Context UriInfo uriInfo, @Context Breakpoint breakpoint)
+    public WebView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId)
     {
         try {
             checkoutRegister.dropOrder(orderId);
         } catch (CheckoutException e) {
             this.logger.error("Failed to cancel order", e);
         }
-
-        FrontView result = new FrontView("checkout/cancelled", breakpoint);
-        Map<String, Object> bindings = contextManager.getContext(uriInfo);
-
-        result.putContext(bindings);
-        return result;
+        Map<String, Object> bindings = new HashMap<>();
+        return new WebView().template("checkout/cancelled.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                .data(bindings);
     }
 
     private String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, Map<String, Error> errors)

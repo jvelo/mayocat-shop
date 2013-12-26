@@ -14,13 +14,17 @@ import java.util.Map;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
+import org.mayocat.context.request.WebRequest;
 import org.mayocat.context.scope.Flash;
 import org.mayocat.context.scope.Session;
+import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Role;
 
+import com.google.common.base.Optional;
+
 /**
- * The context of a web request (API request or Front-end request indifferently).
+ * The context data relevant to a mayocat web exchange (API request or Front-end  web request indifferently)
  *
  * @version $Id$
  */
@@ -62,4 +66,8 @@ public interface WebContext
     void flash(String name, Serializable value);
 
     void session(String name, Serializable value);
+
+    WebRequest getRequest();
+
+    void setRequest(WebRequest request);
 }

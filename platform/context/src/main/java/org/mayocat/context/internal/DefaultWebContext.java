@@ -15,12 +15,21 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.context.request.WebRequest;
 import org.mayocat.context.scope.Flash;
 import org.mayocat.context.scope.Session;
 import org.mayocat.context.scope.cookie.CookieFlash;
 import org.mayocat.context.scope.cookie.CookieSession;
+import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Theme;
 
+import com.google.common.base.Optional;
+
+/**
+ * Default implementation of {@link WebContext}
+ *
+ * @version $Id$
+ */
 public class DefaultWebContext implements WebContext
 {
     private Flash flash;
@@ -38,6 +47,8 @@ public class DefaultWebContext implements WebContext
     private Boolean alternativeLocale;
 
     private Map<Class, Object> settings = null;
+
+    private WebRequest webRequest;
 
     public DefaultWebContext(Tenant tenant, User user)
     {
@@ -188,5 +199,23 @@ public class DefaultWebContext implements WebContext
     public void session(String name, Serializable value)
     {
         getSession().setAttribute(name, value);
+    }
+
+    @Override
+    public WebRequest getRequest()
+    {
+        if (webRequest == null) {
+            throw new NullPointerException("Web request has not been initialized");
+        }
+        return webRequest;
+    }
+
+    @Override
+    public void setRequest(WebRequest webRequest)
+    {
+        if (this.webRequest != null) {
+            throw new RuntimeException("Illegal attempt at modifying the web request that has already been set");
+        }
+        this.webRequest = webRequest;
     }
 }

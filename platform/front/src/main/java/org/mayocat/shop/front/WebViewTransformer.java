@@ -7,12 +7,18 @@
  */
 package org.mayocat.shop.front;
 
+import java.util.Map;
+
+import javax.ws.rs.core.UriInfo;
+
+import org.mayocat.shop.front.views.WebView;
 import org.xwiki.component.annotation.Role;
 
 /**
  * @version $Id$
  */
 @Role
-public interface FrontContextSupplier
+public interface WebViewTransformer
 {
+    void transform(WebView view);
 }

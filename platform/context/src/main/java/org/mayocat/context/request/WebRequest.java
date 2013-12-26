@@ -5,23 +5,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.theme;
+package org.mayocat.context.request;
 
-import org.xwiki.component.annotation.Role;
+import org.mayocat.theme.Breakpoint;
 
 import com.google.common.base.Optional;
 
 /**
- * Detects a {@link Breakpoint} from a User agent string
+ * Represents information about the context's request that is relevant to Mayocat
  *
  * @version $Id$
  */
-@Role
-public interface UserAgentBreakpointDetector
+public interface WebRequest
 {
-    /**
-     * @param userAgent the UA to get the breakpoint for
-     * @return
-     */
-    Optional<Breakpoint> getBreakpoint(String userAgent);
+    String getPath();
+
+    String getCanonicalPath();
+
+    Optional<Breakpoint> getBreakpoint();
 }

@@ -7,27 +7,16 @@
  */
 package org.mayocat.shop.catalog.front.builder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
-import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.image.model.Image;
-import org.mayocat.image.model.Thumbnail;
-import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.localization.EntityLocalizationService;
-import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.shop.catalog.meta.CollectionEntity;
 import org.mayocat.shop.catalog.model.Collection;
-import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
-import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 

@@ -50,9 +50,10 @@ var Mayocat = (function (global, Mayocat)
         ThemeLocalizationServiceClass = org.mayocat.localization.ThemeLocalizationService,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint,
         themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
-        themeFileResolver = getComponent(ThemeFileResolverClass);
+        themeFileResolver = getComponent(ThemeFileResolverClass),
+        webContext = getComponent(org.mayocat.context.WebContext);
 
-    // Handlears helpers -----------------------------------------------------------------------------------------------
+    // Handlebars helpers ----------------------------------------------------------------------------------------------
 
     Handlebars.registerHelper('include', function (template, options) {
         var partial = Handlebars.partials[template];
@@ -64,12 +65,12 @@ var Mayocat = (function (global, Mayocat)
     });
 
     Handlebars.registerHelper('templateSource', function (template, options) {
-        var resolved = themeFileResolver.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, webContext.getRequest().getBreakpoint());
         return String(resolved.getContent());
     });
 
     Handlebars.registerHelper('includeTemplate', function (template, options) {
-        var resolved = themeFileResolver.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, webContext.getRequest().getBreakpoint());
 
         var name = resolved.getId(),
             content = String(resolved.getContent());

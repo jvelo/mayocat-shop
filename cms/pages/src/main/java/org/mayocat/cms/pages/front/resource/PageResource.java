@@ -9,6 +9,7 @@ package org.mayocat.cms.pages.front.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +36,11 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.front.resources.AbstractWebViewResource;
+import org.mayocat.shop.front.views.ErrorWebView;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.store.AttachmentStore;
-import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
@@ -49,10 +50,10 @@ import org.xwiki.component.annotation.Component;
  */
 @Component(PageResource.PATH)
 @Path(PageResource.PATH)
-@Produces(MediaType.TEXT_HTML)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class PageResource extends AbstractFrontResource implements Resource
+public class PageResource extends AbstractWebViewResource implements Resource
 {
     public static final String PATH = ROOT_PATH + PageEntity.PATH;
 
@@ -76,17 +77,14 @@ public class PageResource extends AbstractFrontResource implements Resource
 
     @Path("{slug}")
     @GET
-    public FrontView getPage(@PathParam("slug") String slug, @Context Breakpoint breakpoint,
-            @Context UriInfo uriInfo)
+    public WebView getPage(@PathParam("slug") String slug, @Context UriInfo uriInfo)
     {
         final Page page = pageStore.get().findBySlug(slug);
         if (page == null) {
-            return new FrontView("404", breakpoint);
+            return new ErrorWebView().status(404);
         }
 
-        FrontView result = new FrontView("page", page.getModel(), breakpoint);
-
-        Map<String, Object> context = getContext(uriInfo);
+        Map<String, Object> context = new HashMap<>();
 
         context.put(ContextConstants.PAGE_TITLE, page.getTitle());
         context.put(ContextConstants.PAGE_DESCRIPTION, page.getContent());
@@ -95,9 +93,9 @@ public class PageResource extends AbstractFrontResource implements Resource
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
                 .asList("png", "jpg", "jpeg", "gif"));
-        List<Image> images = new ArrayList<Image>();
+        List<Image> images = new ArrayList<>();
         for (Attachment attachment : attachments) {
-            if (AbstractFrontResource.isImage(attachment)) {
+            if (AbstractWebViewResource.isImage(attachment)) {
                 List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
                 Image image = new Image(entityLocalizationService.localize(attachment), thumbnails);
                 images.add(image);
@@ -108,8 +106,7 @@ public class PageResource extends AbstractFrontResource implements Resource
         Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
 
         context.put("page", pageContext);
-        result.putContext(context);
 
-        return result;
+        return new WebView().template("page.html").model(page.getModel()).data(context);
     }
 }

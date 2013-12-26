@@ -9,6 +9,7 @@ package org.mayocat.shop.cart.front;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,34 +30,38 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.configuration.general.GeneralSettings;
+import org.mayocat.context.WebContext;
+import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.views.FrontView;
+import org.mayocat.shop.cart.front.builder.CartContextBuilder;
+import org.mayocat.shop.front.resources.AbstractWebViewResource;
+import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.shop.front.resources.AbstractFrontResource;
 import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.shipping.ShippingService;
-import org.mayocat.theme.Breakpoint;
+import org.mayocat.store.AttachmentStore;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
 
 /**
- * One important rule is  : every time the cart state is modified, CartAccessor#setCart MUST be called, in order
- * for the cart serialization in the session (cookies) to be updated.
+ * One important rule is  : every time the cart state is modified, CartAccessor#setCart MUST be called, in order for the
+ * cart serialization in the session (cookies) to be updated.
  *
  * @version $Id$
  */
 @Component("/cart")
 @Path("/cart")
-@Produces(MediaType.WILDCARD)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class CartResource extends AbstractFrontResource implements Resource
+public class CartResource extends AbstractWebViewResource implements Resource
 {
     @Inject
     private Provider<ProductStore> productStore;
@@ -65,7 +70,19 @@ public class CartResource extends AbstractFrontResource implements Resource
     private CartAccessor cartAccessor;
 
     @Inject
+    private Provider<AttachmentStore> attachmentStore;
+
+    @Inject
+    private Provider<ThumbnailStore> thumbnailStore;
+
+    @Inject
     private ShippingService shippingService;
+
+    @Inject
+    private GeneralSettings generalSettings;
+
+    @Inject
+    private WebContext context;
 
     @POST
     @Path("add")
@@ -192,8 +209,7 @@ public class CartResource extends AbstractFrontResource implements Resource
     }
 
     @GET
-    @Produces("application/json")
-    public Map<String, Object> getCartContext(@Context UriInfo uriInfo)
+    public WebView getCart()
     {
         Cart cart = cartAccessor.getCart();
         if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.getSelectedShippingOption() == null) {
@@ -203,17 +219,15 @@ public class CartResource extends AbstractFrontResource implements Resource
                 cartAccessor.setCart(cart);
             }
         }
-        Map<String, Object> context = getContext(uriInfo);
-        return context;
-    }
 
-    @GET
-    @Produces("text/html;q=2")
-    public FrontView getCart(@Context Breakpoint breakpoint, @Context UriInfo uriInfo, @Context Locale locale)
-    {
-        FrontView result = new FrontView("cart", breakpoint);
-        result.putContext(getCartContext(uriInfo));
-        return result;
+        Map<String, Object> data = new HashMap<String, Object>();
+        CartContextBuilder builder = new CartContextBuilder(attachmentStore.get(), thumbnailStore.get(),
+                shippingService, context.getTheme().getDefinition());
+
+        final Locale locale = generalSettings.getLocales().getMainLocale().getValue();
+        data.put("cart", builder.build(cartAccessor.getCart(), locale));
+
+        return new WebView().template("cart.html").data(data);
     }
 
     private void recalculateShipping()
