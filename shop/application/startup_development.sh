@@ -24,7 +24,7 @@ export JAVA_OPTS="-server -Xms128m -Xmx512m -XX:MaxPermSize=192m -Dfile.encoding
 
 java $JAVA_OPTS \
   $DEBUG \
-  -classpath "../client/src/main/resources/assets/:../themes/src/main/resources/:./target/$JAR_NAME" \
+  -classpath "../../platform/front/src/main/resources/:../client/src/main/resources/assets/:../themes/src/main/resources/:./target/$JAR_NAME" \
   org.mayocat.shop.application.MayocatShopService \
   server \
   mayocat.yml

@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.WebDataSupplier;
@@ -92,7 +93,7 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
 
             if (!webContext.getTheme().isValidDefinition()) {
                 // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
-                writeError("Invalid theme definition", entityStream);
+                writeHttpError("Invalid theme definition", entityStream);
                 return;
             }
 
@@ -144,9 +145,9 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                 entityStream.write(rendered.getBytes());
             } catch (JsonMappingException e) {
                 this.logger.warn("Failed to serialize JSON context", e);
-                writeException(webView, e, entityStream);
+                writeDeveloperError(webView, e, entityStream);
             } catch (TemplateEngineException e) {
-                writeException(webView, e, entityStream);
+                writeDeveloperError(webView, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -154,7 +155,7 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
         }
     }
 
-    private void writeError(String message, OutputStream entityStream)
+    private void writeHttpError(String message, OutputStream entityStream)
     {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -178,7 +179,7 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
         }
     }
 
-    private void writeException(WebView webView, Exception e, OutputStream entityStream)
+    private void writeDeveloperError(WebView webView, Exception e, OutputStream entityStream)
     {
         try {
             // Note:
@@ -193,18 +194,14 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Map<String, Object> context = webView.data();
             String jsonContext = mapper.writeValueAsString(context);
-            Template error;
-            try {
-                error = themeFileResolver.getTemplate("500.html", webContext.getRequest().getBreakpoint());
-            } catch (TemplateNotFoundException notFound) {
-                // Fallback on the classpath hosted error 500 file
-                error = new Template("500", Resources.toString(Resources.getResource("templates/500.html"),
-                        Charsets.UTF_8));
-            }
+            Template error = new Template("developerError",
+                    Resources.toString(Resources.getResource("templates/developerError.html"), Charsets.UTF_8));
             Map<String, Object> errorContext = Maps.newHashMap();
-            errorContext.put("error", e.getMessage());
+            errorContext.put("error", cleanErrorMessageForDisplay(e.getMessage()));
             errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
             errorContext.put("context", StringEscapeUtils.escapeXml(jsonContext).trim());
+            errorContext.put("rawContext", jsonContext);
+            errorContext.put("template", webView.template().toString());
 
             engine.get().register(error);
             String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
@@ -212,5 +209,12 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
         } catch (Exception e1) {
             throw new RuntimeException(e1);
         }
+    }
+
+    private String cleanErrorMessageForDisplay(String errorMessage)
+    {
+        String clean = StringUtils.substringAfter(errorMessage, "org.mozilla.javascript.JavaScriptException: Error:");
+        clean = clean.replaceAll("\\(handlebars\\.js#\\d+\\)", "");
+        return clean;
     }
 }
