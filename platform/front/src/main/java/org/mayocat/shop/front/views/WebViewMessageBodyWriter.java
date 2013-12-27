@@ -146,7 +146,6 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                 this.logger.warn("Failed to serialize JSON context", e);
                 writeException(webView, e, entityStream);
             } catch (TemplateEngineException e) {
-                this.logger.warn("Template exception", e);
                 writeException(webView, e, entityStream);
             }
         } catch (TemplateNotFoundException e) {
