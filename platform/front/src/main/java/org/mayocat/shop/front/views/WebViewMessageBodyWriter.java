@@ -21,6 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -123,7 +124,7 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                     httpHeaders.containsKey("X-Mayocat-Full-Context"))
             {
                 webView.data().put("templateContent", template.getId());
-                webView.data().put("template", webView.template().toString());
+                webView.data().put("template", FilenameUtils.getBaseName(webView.template().toString()));
 
                 for (WebDataSupplier supplier : dataSuppliers.values()) {
                     supplier.supply(webView.data());
