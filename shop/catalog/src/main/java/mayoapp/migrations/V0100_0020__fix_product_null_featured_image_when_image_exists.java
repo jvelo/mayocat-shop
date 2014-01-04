@@ -16,7 +16,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
  *
  * @version $Id$
  */
-public class V0100_0010__fix_product_null_featured_image_when_image_exists extends
+public class V0100_0020__fix_product_null_featured_image_when_image_exists extends
         AbstractFixNullFeaturedImageMigration implements JdbcMigration
 {
     @Override

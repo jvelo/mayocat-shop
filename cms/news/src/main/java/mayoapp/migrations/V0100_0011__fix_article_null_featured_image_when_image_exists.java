@@ -12,17 +12,17 @@ import org.mayocat.flyway.migrations.AbstractFixNullFeaturedImageMigration;
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 
 /**
- * Fix NULL featured image id for pages
+ * Fix NULL featured image id for articles
  *
  * @version $Id$
  */
-public class V0100_0021__fix_page_null_featured_image_when_image_exists extends AbstractFixNullFeaturedImageMigration
+public class V0100_0011__fix_article_null_featured_image_when_image_exists extends AbstractFixNullFeaturedImageMigration
         implements JdbcMigration
 {
     @Override
     public String getTableName()
     {
-        return "page";
+        return "article";
     }
 }
 
