@@ -140,46 +140,46 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         context.setUser(user.orNull());
 
-        // 4. ThemeDefinition
         if (tenant != null) {
+            // 4. ThemeDefinition
             context.setTheme(themeManager.getTheme());
-        }
 
-        // 5. Locale
-        LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
-        boolean localeSet = false;
-        List<Locale> alternativeLocales =
-                FluentIterable.from(localesSettings.getOtherLocales().getValue())
-                        .filter(Predicates.notNull()).toList();
+            // 5. Locale
+            LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
+            boolean localeSet = false;
+            List<Locale> alternativeLocales =
+                    FluentIterable.from(localesSettings.getOtherLocales().getValue())
+                            .filter(Predicates.notNull()).toList();
 
-        String path = getPath(servletRequestEvent);
-        String canonicalPath = path;
-        if (!alternativeLocales.isEmpty()) {
-            for (Locale locale : alternativeLocales) {
-                List<String> fragments = ImmutableList
-                        .copyOf(Collections2.filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
-                if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
-                    context.setLocale(locale);
-                    context.setAlternativeLocale(true);
-                    canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
-                    localeSet = true;
-                    break;
+            String path = getPath(servletRequestEvent);
+            String canonicalPath = path;
+            if (!alternativeLocales.isEmpty()) {
+                for (Locale locale : alternativeLocales) {
+                    List<String> fragments = ImmutableList
+                            .copyOf(Collections2
+                                    .filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
+                    if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
+                        context.setLocale(locale);
+                        context.setAlternativeLocale(true);
+                        canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
+                        localeSet = true;
+                        break;
+                    }
                 }
             }
-        }
-        if (!localeSet) {
-            context.setLocale(localesSettings.getMainLocale().getValue());
-            context.setAlternativeLocale(false);
-        }
+            if (!localeSet) {
+                context.setLocale(localesSettings.getMainLocale().getValue());
+                context.setAlternativeLocale(false);
+            }
 
-        if (context.isAlternativeLocale()) {
-            path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
+            if (context.isAlternativeLocale()) {
+                path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
+            }
+
+            // 6. Request
+            Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
+            context.setRequest(new DefaultWebRequest(canonicalPath, path, breakpoint));
         }
-
-        // 6. Request
-
-        Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
-        context.setRequest(new DefaultWebRequest(canonicalPath, path, breakpoint));
     }
 
     private String getPath(ServletRequestEvent event)
