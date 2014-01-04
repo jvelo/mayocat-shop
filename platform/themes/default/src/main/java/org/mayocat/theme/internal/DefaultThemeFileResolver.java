@@ -13,9 +13,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.context.WebContext;
-import org.mayocat.files.FileManager;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Model;
 import org.mayocat.theme.TemplateNotFoundException;
@@ -39,13 +37,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     private static final String INDEX_HTML = "index.html";
 
     @Inject
-    private FileManager fileManager;
-
-    @Inject
     private WebContext context;
-
-    @Inject
-    private ConfigurationService configurationService;
 
     @Inject
     private Logger logger;
@@ -94,6 +86,18 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
             return Optional.fromNullable(models.get(id).getFile());
         }
         return Optional.absent();
+    }
+
+    @Override
+    public Template getGlobalTemplate(String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException
+    {
+        try {
+            return new Template(generateTemplateId(name, breakpoint),
+                    Resources.toString(Resources.getResource("templates/" + name), Charsets.UTF_8), true);
+        } catch (IOException e) {
+            throw new TemplateNotFoundException();
+        }
     }
 
     private String generateTemplateId(String layoutName, Optional<Breakpoint> breakpoint)

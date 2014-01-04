@@ -55,4 +55,14 @@ public interface ThemeFileResolver
      * @return an option of a path, present with the model template's path if found, absent otherwise.
      */
     Optional<String> resolveModelPath(String id);
+
+    /**
+     * Returns a global template, not associated with a tenant
+     *
+     * @param name the name of the template
+     * @param breakpoint the breakpoint to get the template for
+     * @return the template if found
+     * @throws TemplateNotFoundException when the template is not found
+     */
+    Template getGlobalTemplate(String name, Optional<Breakpoint> breakpoint) throws TemplateNotFoundException;
 }

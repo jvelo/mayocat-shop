@@ -27,10 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.WebDataSupplier;
-import org.mayocat.shop.front.WebViewTransformer;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.ThemeFileResolver;
-import org.mayocat.theme.ThemeManager;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.mayocat.views.TemplateEngineException;
@@ -58,9 +56,6 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
     private ThemeFileResolver themeFileResolver;
 
     @Inject
-    private ThemeManager themeManager;
-
-    @Inject
     private Logger logger;
 
     @Inject
@@ -68,9 +63,6 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
 
     @Inject
     private Map<String, WebDataSupplier> dataSuppliers;
-
-    @Inject
-    private Map<String, WebViewTransformer> transformers;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType)
@@ -114,8 +106,17 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             }
 
             if (template == null) {
-                template = themeFileResolver
-                        .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
+                try {
+                    template = themeFileResolver
+                            .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
+                } catch (TemplateNotFoundException e) {
+                    if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
+                        template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
+                                webContext.getRequest().getBreakpoint());
+                    } else {
+                        throw e;
+                    }
+                }
             }
 
             String jsonContext = null;

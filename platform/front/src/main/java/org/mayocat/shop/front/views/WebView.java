@@ -93,4 +93,9 @@ public class WebView
         }
         return this;
     }
+
+    public boolean hasOption(Option option)
+    {
+        return this.options.contains(option);
+    }
 }
