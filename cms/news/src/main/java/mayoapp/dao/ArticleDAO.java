@@ -43,6 +43,10 @@ public abstract class ArticleDAO
             @Bind("offset") Integer offset);
 
     @SqlQuery
+    public abstract List<Article> findAllLatestFirst(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
+
+    @SqlQuery
     public abstract Integer countAllPublished(@BindBean("tenant") Tenant tenant);
 
     public void createOrUpdateAddons(Article entity)

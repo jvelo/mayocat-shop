@@ -103,7 +103,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     @Override
     public List<Article> findAll(Integer number, Integer offset)
     {
-        return AddonsHelper.withAddons(this.dao.findAll(ARTICLE_TABLE_NAME, getTenant(), number, offset), this.dao);
+        return AddonsHelper.withAddons(this.dao.findAllLatestFirst(getTenant(), number, offset), this.dao);
     }
 
     @Override

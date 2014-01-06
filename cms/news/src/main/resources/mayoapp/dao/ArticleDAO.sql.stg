@@ -32,6 +32,17 @@ findAllPublished() ::= <<
     OFFSET :offset
 >>
 
+findAllLatestFirst() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN article ON entity.id = article.entity_id
+    WHERE   entity.type = 'article'
+        AND entity.tenant_id = :tenant.id
+    ORDER BY article.publication_date DESC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
 countAllPublished() ::= <<
     SELECT count(id)
     FROM entity
