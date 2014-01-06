@@ -92,10 +92,13 @@ public class ImageContextBuilder
         ImageContext context = new ImageContext("http://placehold.it/800x800");
         if (theme != null && theme.getImageFormats().size() > 0) {
             for (String dimensionName : theme.getImageFormats().keySet()) {
-
+                // Note: if only one dimension is passed for an image format (it means the image format is supposed
+                // to respect the original image aspect ratio according to the one dimension passed), we present the
+                // placeholder image as a square.
                 ImageFormatDefinition definition = theme.getImageFormats().get(dimensionName);
-                String url = MessageFormat.format("http://placehold.it/{0,number,#}x{1,number,#}", definition.getWidth(),
-                        definition.getHeight());
+                String url = MessageFormat.format("http://placehold.it/{0,number,#}x{1,number,#}",
+                        definition.getWidth() != null ? definition.getWidth() : definition.getHeight(),
+                        definition.getHeight() != null ? definition.getHeight() : definition.getWidth());
                 context.put("theme_" + dimensionName + "_" + ContextConstants.URL, url);
             }
         }
