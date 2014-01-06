@@ -46,7 +46,7 @@ public class CollectionContextBuilder implements ContextConstants
         collectionContext.put("title", collection.getTitle());
         collectionContext.put("description", collection.getDescription());
         collectionContext.put(SLUG, collection.getSlug());
-        collectionContext.put(URL, "/" + urlFactory.create(collection));
+        collectionContext.put(URL, urlFactory.create(collection).getPath().toString());
 
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
@@ -69,7 +69,7 @@ public class CollectionContextBuilder implements ContextConstants
             // Create placeholder image
             Map<String, String> placeholder = imageContextBuilder.createPlaceholderImageContext(true);
             imagesContext.put("featured", placeholder);
-            allImages = Arrays.asList(placeholder);
+            allImages = Arrays.asList(); // Empty list
         }
 
         imagesContext.put("all", allImages);
