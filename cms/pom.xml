@@ -13,12 +13,12 @@
   <parent>
     <groupId>org.mayocat</groupId>
     <artifactId>mayocat-parent</artifactId>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.10</version>
   </parent>
   <groupId>org.mayocat.cms</groupId>
   <artifactId>mayocat-cms-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.10-SNAPSHOT</version>
+  <version>0.10</version>
 
   <name>Mayocat CMS - Parent POM</name>
   <description>Parent POM for the CMS application</description>
