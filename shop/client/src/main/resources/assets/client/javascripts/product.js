@@ -70,7 +70,6 @@ angular.module('product', ['ngResource'])
                     $scope.isSaving = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
                         $scope.isSaving = false;
-                        $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
@@ -92,7 +91,8 @@ angular.module('product', ['ngResource'])
                         }
                     }
                 }).save("product=" + $scope.product.slug, function () {
-                    });
+                        $rootScope.$broadcast('catalog:refreshCatalog');
+                });
             };
 
             $scope.ProductResource = $resource("/api/products/:slug");
