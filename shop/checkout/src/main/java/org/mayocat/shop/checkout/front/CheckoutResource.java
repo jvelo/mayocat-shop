@@ -37,6 +37,7 @@ import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
+import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.front.views.WebView;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -237,8 +238,22 @@ public class CheckoutResource implements Resource
     {
         try {
             checkoutRegister.dropOrder(orderId);
-        } catch (CheckoutException e) {
-            this.logger.error("Failed to cancel order", e);
+        } catch (final CheckoutException e) {
+            if (!RegularCheckoutException.class.isAssignableFrom(e.getClass())) {
+                // If this is not a regular checkout exception (like for example: order has already been deleted),
+                // we need to take additional measures
+                this.logger.error("Failed to cancel order", e);
+            }
+
+            Map<String, Object> bindings = new HashMap<>();
+            bindings.put("exception", new HashMap<String, Object>()
+            {
+                {
+                    put("message", e.getMessage());
+                }
+            });
+            return new WebView().template("checkout/exception.html").with(
+                    WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
         }
         Map<String, Object> bindings = new HashMap<>();
         return new WebView().template("checkout/cancelled.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)

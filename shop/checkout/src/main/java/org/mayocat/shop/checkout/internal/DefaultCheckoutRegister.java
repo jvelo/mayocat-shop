@@ -31,6 +31,7 @@ import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
+import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.payment.BaseOption;
 import org.mayocat.shop.payment.GatewayException;
@@ -249,6 +250,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     public void dropOrder(UUID orderId) throws CheckoutException
     {
         Order order = orderStore.get().findById(orderId);
+        if (order == null) {
+            throw new RegularCheckoutException("Order with id [" + orderId.toString() + "] does not exist.");
+        }
         try {
             orderStore.get().delete(order);
         } catch (EntityDoesNotExistException e) {
