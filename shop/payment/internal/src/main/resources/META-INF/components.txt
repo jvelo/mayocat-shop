@@ -1,2 +1,5 @@
 org.mayocat.shop.payment.store.jdbi.DBIPaymentOperationStore
+org.mayocat.shop.payment.store.jdbi.DBIGatewayCustomerDataStore
+org.mayocat.shop.payment.store.jdbi.MemoryPaymentOperationStore
+org.mayocat.shop.payment.store.jdbi.MemoryGatewayCustomerDataStore
 org.mayocat.shop.payment.api.resources.PaymentResource
