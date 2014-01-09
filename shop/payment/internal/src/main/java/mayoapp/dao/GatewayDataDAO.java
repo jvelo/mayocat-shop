@@ -10,6 +10,8 @@ package mayoapp.dao;
 import java.util.UUID;
 
 import org.mayocat.shop.payment.model.GatewayCustomerData;
+import org.mayocat.shop.payment.model.GatewayTenantData;
+import org.mayocat.shop.payment.store.jdbi.mapper.GatewayCustomerDataMapper;
 import org.mayocat.shop.payment.store.jdbi.mapper.PaymentOperationMapper;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -22,14 +24,14 @@ import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 /**
- * Doc goes here.
+ * DAO for {@link GatewayCustomerData}
  *
  * @version $Id$
  */
-@RegisterMapper(PaymentOperationMapper.class)
+@RegisterMapper(GatewayCustomerDataMapper.class)
 @RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
 @UseStringTemplate3StatementLocator
-public abstract class GatewayCustomerDataDAO implements Transactional<GatewayCustomerDataDAO>
+public abstract class GatewayDataDAO implements Transactional<GatewayDataDAO>
 {
     @SqlQuery
     public abstract GatewayCustomerData getCustomerData(@Bind("customerId") UUID customerId,
@@ -40,4 +42,13 @@ public abstract class GatewayCustomerDataDAO implements Transactional<GatewayCus
 
     @SqlUpdate
     public abstract void updateCustomerData(@BindBean("gatewayCustomerData") GatewayCustomerData gatewayCustomerData);
+
+    @SqlQuery
+    public abstract GatewayTenantData getTenantData(@Bind("tenantId") UUID id, @Bind("gateway") String gatewayId);
+
+    @SqlUpdate
+    public abstract void updateTenantData(@BindBean("gatewayTenantData") GatewayTenantData tenantData);
+
+    @SqlUpdate
+    public abstract void createTenantData(@BindBean("gatewayTenantData") GatewayTenantData tenantData);
 }

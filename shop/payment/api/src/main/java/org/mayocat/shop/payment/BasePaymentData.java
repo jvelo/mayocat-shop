@@ -8,18 +8,14 @@
 package org.mayocat.shop.payment;
 
 /**
- * Exception thrown when trying to store invalid gateway customer data
- *
  * @version $Id$
  */
-public class InvalidGatewayCustomerDataException extends Exception
+public enum BasePaymentData implements PaymentData
 {
-    public InvalidGatewayCustomerDataException()
-    {
-    }
-
-    public InvalidGatewayCustomerDataException(String message)
-    {
-        super(message);
-    }
+    CURRENCY,
+    CANCEL_URL,
+    RETURN_URL,
+    BASE_URL,
+    ORDER_ID,
+    CUSTOMER
 }

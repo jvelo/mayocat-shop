@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.mayocat.shop.payment.model.GatewayCustomerData;
+import org.mayocat.shop.payment.model.GatewayTenantData;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import org.slf4j.Logger;
@@ -24,28 +25,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
 /**
- * Mapper for {@link GatewayCustomerData}
+ * Mapper for {@link GatewayTenantData}
  *
  * @version $Id$
  */
-public class GatewayCustomerDataMapper implements ResultSetMapper<GatewayCustomerData>
+public class GatewayTenantDataMapper implements ResultSetMapper<GatewayTenantData>
 {
     @Override
-    public GatewayCustomerData map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
+    public GatewayTenantData map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
-        UUID customerId = (UUID) resultSet.getObject("customer_id");
+        UUID tenantId = (UUID) resultSet.getObject("tenant_id");
         String gateway = resultSet.getString("gateway");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
         try {
-            Map<String, Object> data = mapper.readValue(resultSet.getString("customer_data"),
+            Map<String, Object> data = mapper.readValue(resultSet.getString("tenant_data"),
                     new TypeReference<Map<String, Object>>() {});
 
-            return new GatewayCustomerData(customerId, gateway, data);
+            return new GatewayTenantData(tenantId, gateway, data);
         } catch (IOException e) {
-            final Logger logger = LoggerFactory.getLogger(GatewayCustomerDataMapper.class);
-            logger.error("Failed to de-serialize gateway customer data", e);
+            final Logger logger = LoggerFactory.getLogger(GatewayTenantDataMapper.class);
+            logger.error("Failed to de-serialize gateway tenant data", e);
 
             return null;
         }

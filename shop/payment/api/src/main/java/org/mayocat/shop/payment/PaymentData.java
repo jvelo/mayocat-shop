@@ -10,6 +10,6 @@ package org.mayocat.shop.payment;
 /**
  * @version $Id$
  */
-public interface Option
+public interface PaymentData
 {
 }

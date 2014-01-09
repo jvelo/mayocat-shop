@@ -7,9 +7,12 @@
  */
 package org.mayocat.shop.payment.store;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.billing.model.Customer;
-import org.mayocat.shop.payment.InvalidGatewayCustomerDataException;
+import org.mayocat.shop.payment.InvalidGatewayDataException;
 import org.mayocat.shop.payment.model.GatewayCustomerData;
+import org.mayocat.shop.payment.model.GatewayTenantData;
+import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
 
@@ -18,9 +21,14 @@ import com.google.common.base.Optional;
  *
  * @version $Id$
  */
-public interface GatewayCustomerDataStore
+@Role
+public interface GatewayDataStore
 {
     Optional<GatewayCustomerData> getCustomerData(Customer customer, String gatewayId);
 
-    void storeGatewayCustomerData(GatewayCustomerData customerData) throws InvalidGatewayCustomerDataException;
+    void storeCustomerData(GatewayCustomerData customerData) throws InvalidGatewayDataException;
+
+    Optional<GatewayTenantData> getTenantData(Tenant tenant, String gatewayId);
+
+    void storeTenantData(GatewayTenantData tenantData) throws InvalidGatewayDataException;
 }

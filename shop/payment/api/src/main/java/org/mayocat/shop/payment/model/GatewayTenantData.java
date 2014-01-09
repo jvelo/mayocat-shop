@@ -10,25 +10,23 @@ package org.mayocat.shop.payment.model;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.model.annotation.DoNotIndex;
-
 /**
- * Customer data managed by a payment gateway.
+ * Tenant data managed by a payment gateway.
  *
  * @version $Id$
  */
-public class GatewayCustomerData extends GatewayData
+public class GatewayTenantData extends GatewayData
 {
-    private UUID customerId;
+    private UUID tenantId;
 
-    public GatewayCustomerData(UUID customerId, String gateway, Map<String, Object> data)
+    public GatewayTenantData(UUID tenantId, String gateway, Map<String, Object> data)
     {
         super(data, gateway);
-        this.customerId = customerId;
+        this.tenantId = tenantId;
     }
 
-    public UUID getCustomerId()
+    public UUID getTenantId()
     {
-        return customerId;
+        return tenantId;
     }
 }

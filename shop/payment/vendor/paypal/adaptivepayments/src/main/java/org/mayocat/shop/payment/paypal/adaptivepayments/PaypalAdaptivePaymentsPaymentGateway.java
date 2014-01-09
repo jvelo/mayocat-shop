@@ -15,13 +15,12 @@ import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
-import org.mayocat.shop.payment.Option;
-import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
+import org.mayocat.shop.payment.PaymentData;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.api.resources.PaymentResource;
 import org.mayocat.shop.payment.model.PaymentOperation;
 
@@ -74,7 +73,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
     }
 
     @Override
-    public GatewayResponse purchase(BigDecimal amount, Map<Option, Object> options) throws GatewayException
+    public GatewayResponse purchase(BigDecimal amount, Map<PaymentData, Object> options) throws GatewayException
     {
         PayRequest request = new PayRequest();
 
@@ -89,13 +88,13 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setRequestEnvelope(requestEnvelope);
         ClientDetailsType clientDetails = new ClientDetailsType();
         request.setClientDetails(clientDetails);
-        request.setReturnUrl((String) options.get(BaseOption.RETURN_URL));
-        request.setCancelUrl((String) options.get(BaseOption.CANCEL_URL));
+        request.setReturnUrl((String) options.get(BasePaymentData.RETURN_URL));
+        request.setCancelUrl((String) options.get(BasePaymentData.CANCEL_URL));
         request.setActionType(ACTION_TYPE_CREATE);
-        request.setCurrencyCode(((Currency) options.get(BaseOption.CURRENCY)).getCurrencyCode());
+        request.setCurrencyCode(((Currency) options.get(BasePaymentData.CURRENCY)).getCurrencyCode());
 
-        String baseURI = (String) options.get(BaseOption.BASE_URL);
-        String orderId = options.get(BaseOption.ORDER_ID).toString();
+        String baseURI = (String) options.get(BasePaymentData.BASE_URL);
+        String orderId = options.get(BasePaymentData.ORDER_ID).toString();
 
         // -> FIXME determine if we want to set the order ID as tracking ID.
         // We need to know for sure it can only be used once
@@ -142,8 +141,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     optionsRequest.setRequestEnvelope(requestEnvelope);
                     SetPaymentOptionsResponse resp = service.setPaymentOptions(optionsRequest);
                     if (resp != null) {
-                        if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS"))
-                        {
+                        if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS")) {
                             // This means the payment needs approval on paypal site
                             String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
                                     "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
