@@ -33,12 +33,12 @@ import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
-import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
-import org.mayocat.shop.payment.Option;
-import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
+import org.mayocat.shop.payment.PaymentData;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.shop.shipping.ShippingService;
@@ -192,14 +192,15 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException("Gateway could not be created.");
         }
 
-        Map<Option, Object> options = Maps.newHashMap();
-        options.put(BaseOption.BASE_URL, uriInfo.getBaseUri().toString());
-        options.put(BaseOption.CANCEL_URL, uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + order.getId() + "/" +
+        Map<PaymentData, Object> options = Maps.newHashMap();
+        options.put(BasePaymentData.BASE_URL, uriInfo.getBaseUri().toString());
+        options.put(BasePaymentData.CANCEL_URL, uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + order.getId() + "/" +
                 CheckoutResource.PAYMENT_CANCEL_PATH);
-        options.put(BaseOption.RETURN_URL,
+        options.put(BasePaymentData.RETURN_URL,
                 uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
-        options.put(BaseOption.CURRENCY, cart.getCurrency());
-        options.put(BaseOption.ORDER_ID, order.getId());
+        options.put(BasePaymentData.CURRENCY, cart.getCurrency());
+        options.put(BasePaymentData.ORDER_ID, order.getId());
+        options.put(BasePaymentData.CUSTOMER, customer);
 
         try {
             CheckoutResponse response = new CheckoutResponse();

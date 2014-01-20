@@ -24,11 +24,11 @@ public interface PaymentGateway
      * Authorize and capture a certain amount of money against the gateway.
      *
      * @param amount the amount of money to capture
-     * @param options options associated with this transfer (like the currency, the return to URL, the order ID, etc.)
+     * @param data options associated with this transfer (like the currency, the return to URL, the order ID, etc.)
      * @return a response as a {@link GatewayResponse}
      * @throws GatewayException when an unexpected error occurs
      */
-    GatewayResponse purchase(BigDecimal amount, Map<Option, Object> options) throws GatewayException;
+    GatewayResponse purchase(BigDecimal amount, Map<PaymentData, Object> data) throws GatewayException;
 
     /**
      * Acknowledge an information from a third party server. This is typically used by gateway that have an asynchronous

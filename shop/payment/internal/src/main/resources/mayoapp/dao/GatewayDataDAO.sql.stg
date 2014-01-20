@@ -1,0 +1,33 @@
+group GatewayDataDAO;
+
+getCustomerData() ::= <<
+    SELECT * FROM gateway_customer_data WHERE customer_id = :customerId
+>>
+
+createCustomerData() ::= <<
+    INSERT INTO gateway_customer_data (customer_id, gateway, customer_data)
+           VALUES (:gatewayCustomerData.customerId, :gatewayCustomerData.gateway, :gatewayCustomerData.data)
+>>
+
+updateCustomerData() ::= <<
+    UPDATE  gateway_customer_data
+        SET customer_data = :gatewayCustomerData.data
+    WHERE   customer_id = :gatewayCustomerData.id
+        AND gateway = :gatewayCustomerData.gateway
+>>
+
+getTenantData() ::= <<
+    SELECT * FROM gateway_tenant_data WHERE tenant_id = :tenantId
+>>
+
+createTenantData() ::= <<
+    INSERT INTO gateway_tenant_data (tenant_id, gateway, tenant_data)
+           VALUES (:gatewayTenantData.tenantId, :gatewayTenantData.gateway, :gatewayTenantData.data)
+>>
+
+updateTenantData() ::= <<
+    UPDATE  gateway_tenant_data
+        SET tenant_data = :gatewayTenantData.data
+    WHERE   tenant_id = :gatewayTenantData.id
+        AND gateway = :gatewayTenantData.gateway
+>>

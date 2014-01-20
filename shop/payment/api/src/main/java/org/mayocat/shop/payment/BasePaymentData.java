@@ -10,6 +10,12 @@ package org.mayocat.shop.payment;
 /**
  * @version $Id$
  */
-public interface Option
+public enum BasePaymentData implements PaymentData
 {
+    CURRENCY,
+    CANCEL_URL,
+    RETURN_URL,
+    BASE_URL,
+    ORDER_ID,
+    CUSTOMER
 }
