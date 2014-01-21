@@ -42,6 +42,8 @@ public class OrderRepresentation
 
     private Order.Status status;
 
+    private String additionalInformation;
+
     private Map<String, Object> data;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -74,6 +76,7 @@ public class OrderRepresentation
         this.shipping = order.getShipping();
         this.grandTotal = order.getGrandTotal();
         this.status = order.getStatus();
+        this.additionalInformation = order.getAdditionalInformation();
         this.data = order.getOrderData();
 
         if (order.getBillingAddress().isLoaded()) {
@@ -180,6 +183,16 @@ public class OrderRepresentation
     public Map<String, Object> getData()
     {
         return data;
+    }
+
+    public String getAdditionalInformation()
+    {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation)
+    {
+        this.additionalInformation = additionalInformation;
     }
 
     public void setData(Map<String, Object> data)

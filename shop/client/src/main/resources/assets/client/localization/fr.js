@@ -116,6 +116,7 @@
                 unitPrice: "Prix unitaire",
                 shipping: "Frais de port",
                 deliveryAddress: "Adresse de livraison",
+                additionalInformation:  "Informations complémentaires",
 
                 orderName: "Commande \\#{slug}",
                 ordersNumber: "pour {numberOfOrders} {numberOfOrders, plural, one{commande} other{commandes}}",

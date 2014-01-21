@@ -7,6 +7,7 @@
  */
 package org.mayocat.context;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -178,7 +179,23 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
             // 6. Request
             Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
-            context.setRequest(new DefaultWebRequest(canonicalPath, path, breakpoint));
+            context.setRequest(new DefaultWebRequest(getBaseURI(servletRequestEvent), canonicalPath, path, breakpoint));
+        }
+    }
+
+    private URI getBaseURI(ServletRequestEvent event)
+    {
+        HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+        if ((request.getServerPort() == 80) ||
+                (request.getServerPort() == 443))
+        {
+            return URI.create(request.getScheme() + "://" +
+                    request.getServerName() +
+                    request.getContextPath() + '/');
+        } else {
+            return URI.create(request.getScheme() + "://" +
+                    request.getServerName() + ":" + request.getServerPort() +
+                    request.getContextPath() + '/');
         }
     }
 

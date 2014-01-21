@@ -143,6 +143,7 @@
                 unitPrice: "Unit price",
                 shipping: "Shipping",
                 deliveryAddress: "Delivery address",
+                additionalInformation:  "Additional information",
                 
                 orderName: "Order \\#{slug}",
                 ordersNumber: "for {numberOfOrders} {numberOfOrders, plural, one{order} other{orders}}",

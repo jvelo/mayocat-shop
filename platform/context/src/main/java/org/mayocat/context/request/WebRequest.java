@@ -7,6 +7,8 @@
  */
 package org.mayocat.context.request;
 
+import java.net.URI;
+
 import org.mayocat.theme.Breakpoint;
 
 import com.google.common.base.Optional;
@@ -18,6 +20,8 @@ import com.google.common.base.Optional;
  */
 public interface WebRequest
 {
+    URI getBaseUri();
+
     String getPath();
 
     String getCanonicalPath();

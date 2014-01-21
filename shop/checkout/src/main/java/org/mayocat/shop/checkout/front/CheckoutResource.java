@@ -107,7 +107,7 @@ public class CheckoutResource implements Resource
     }
 
     @POST
-    public Object checkout(@Context UriInfo uriInfo, MultivaluedMap data)
+    public Object checkout(MultivaluedMap data)
     {
         Map<String, Error> errors = Maps.newHashMap();
         String email = null;
@@ -163,9 +163,19 @@ public class CheckoutResource implements Resource
             }
         }
 
+        Map<String, Object> otherOrderData = Maps.newHashMap();
+
+        // Include additional information if the field is present and not empty
+        if (data.containsKey("additionalInformation") &&
+                !Strings.isNullOrEmpty((String) data.getFirst("additionalInformation")))
+        {
+            data.getFirst("additionalInformation");
+        }
+
         try {
             Cart cart = cartAccessor.getCart();
-            CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, customer, deliveryAddress, null);
+            CheckoutResponse response =
+                    checkoutRegister.checkout(cart, customer, deliveryAddress, null, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {
@@ -189,7 +199,7 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    public Object checkout(@Context UriInfo uriInfo)
+    public Object checkout()
     {
         if (checkoutRegister.requiresForm()) {
             Map<String, Object> bindings = new HashMap<>();
@@ -198,7 +208,8 @@ public class CheckoutResource implements Resource
         } else {
             try {
                 Cart cart = cartAccessor.getCart();
-                CheckoutResponse response = checkoutRegister.checkout(cart, uriInfo, null, null, null);
+                CheckoutResponse response =
+                        checkoutRegister.checkout(cart, null, null, null, Maps.<String, Object>newHashMap());
 
                 if (response.getRedirectURL().isPresent()) {
                     return Response.seeOther(new URI(response.getRedirectURL().get())).build();

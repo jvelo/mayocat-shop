@@ -96,6 +96,8 @@ public class Order implements Entity
 
     private Status status;
 
+    private String additionalInformation;
+
     private Map<String, Object> orderData;
 
     private Association<Customer> customer = Association.notLoaded();
@@ -211,6 +213,16 @@ public class Order implements Entity
     public Map<String, Object> getOrderData()
     {
         return orderData;
+    }
+
+    public String getAdditionalInformation()
+    {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation)
+    {
+        this.additionalInformation = additionalInformation;
     }
 
     public void setOrderData(Map<String, Object> orderData)

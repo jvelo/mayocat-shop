@@ -7,6 +7,8 @@
  */
 package org.mayocat.context.internal.request;
 
+import java.net.URI;
+
 import org.mayocat.context.request.WebRequest;
 import org.mayocat.theme.Breakpoint;
 
@@ -23,10 +25,13 @@ public class DefaultWebRequest implements WebRequest
 
     private String path;
 
+    private URI baseURI;
+
     private Optional<Breakpoint> breakpoint = Optional.<Breakpoint>absent();
 
-    public DefaultWebRequest(String canonicalPath, String path, Optional<Breakpoint> breakpoint)
+    public DefaultWebRequest(URI baseURI, String canonicalPath, String path, Optional<Breakpoint> breakpoint)
     {
+        this.baseURI = baseURI;
         this.canonicalPath = canonicalPath;
         this.path = path;
         this.breakpoint = breakpoint;
@@ -48,5 +53,11 @@ public class DefaultWebRequest implements WebRequest
     public String getPath()
     {
         return path;
+    }
+
+    @Override
+    public URI getBaseUri()
+    {
+        return baseURI;
     }
 }

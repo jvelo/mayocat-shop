@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriInfo;
 
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
@@ -87,9 +88,12 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     @Inject
     private CartAccessor cartAccessor;
 
+    @Inject
+    private WebContext webContext;
+
     @Override
-    public CheckoutResponse checkout(final Cart cart, UriInfo uriInfo, Customer customer, Address deliveryAddress,
-            Address billingAddress) throws CheckoutException
+    public CheckoutResponse checkout(final Cart cart, Customer customer, Address deliveryAddress,
+            Address billingAddress, Map<String, Object> extraOrderData) throws CheckoutException
     {
         Preconditions.checkNotNull(customer);
         Order order;
@@ -121,6 +125,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setBillingAddressId(billingAddressId);
             order.setDeliveryAddressId(deliveryAddressId);
             order.setCustomerId(customerId);
+            if (extraOrderData.containsKey("additionalInformation")) {
+                order.setAdditionalInformation((String) extraOrderData.get("additionalInformation"));
+            }
 
             // Items
             Long numberOfItems = 0l;
@@ -193,11 +200,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         }
 
         Map<PaymentData, Object> options = Maps.newHashMap();
-        options.put(BasePaymentData.BASE_URL, uriInfo.getBaseUri().toString());
-        options.put(BasePaymentData.CANCEL_URL, uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + order.getId() + "/" +
-                CheckoutResource.PAYMENT_CANCEL_PATH);
-        options.put(BasePaymentData.RETURN_URL,
-                uriInfo.getBaseUri() + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
+        options.put(BasePaymentData.BASE_URL, webContext.getRequest().getBaseUri().toString());
+        options.put(BasePaymentData.CANCEL_URL, webContext.getRequest().getBaseUri().toString()
+                + CheckoutResource.PATH + "/" + order.getId() + "/" + CheckoutResource.PAYMENT_CANCEL_PATH);
+        options.put(BasePaymentData.RETURN_URL, webContext.getRequest().getBaseUri().toString()
+                + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
         options.put(BasePaymentData.CURRENCY, cart.getCurrency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
         options.put(BasePaymentData.CUSTOMER, customer);

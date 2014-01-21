@@ -55,6 +55,7 @@ public class OrderMapper implements ResultSetMapper<Order>
         order.setGrandTotal(resultSet.getBigDecimal("grand_total"));
 
         order.setStatus(Order.Status.valueOf(resultSet.getString("status")));
+        order.setAdditionalInformation(resultSet.getString("additional_information"));
 
         try {
             resultSet.findColumn("email");
@@ -77,7 +78,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             billing.setZip(resultSet.getString("billing_address_zip"));
             billing.setCity(resultSet.getString("billing_address_city"));
             billing.setCountry(resultSet.getString("billing_address_country"));
-            order.setBillingAddress(new Association<Address>(billing));
+            order.setBillingAddress(new Association<>(billing));
         } catch (SQLException e) {
             // Nevermind
         }
@@ -91,7 +92,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             delivery.setZip(resultSet.getString("delivery_address_zip"));
             delivery.setCity(resultSet.getString("delivery_address_city"));
             delivery.setCountry(resultSet.getString("delivery_address_country"));
-            order.setDeliveryAddress(new Association<Address>(delivery));
+            order.setDeliveryAddress(new Association<>(delivery));
         } catch (SQLException e) {
             // Nevermind
         }
