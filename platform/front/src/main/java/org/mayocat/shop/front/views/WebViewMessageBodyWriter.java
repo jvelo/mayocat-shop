@@ -199,8 +199,8 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             Template error = new Template("developerError",
                     Resources.toString(Resources.getResource("templates/developerError.html"), Charsets.UTF_8));
             Map<String, Object> errorContext = Maps.newHashMap();
-            errorContext.put("error", cleanErrorMessageForDisplay(e.getMessage()));
-            errorContext.put("stackTrace", ExceptionUtils.getStackTrace(e));
+            errorContext.put("error", StringEscapeUtils.escapeXml(cleanErrorMessageForDisplay(e.getMessage())));
+            errorContext.put("stackTrace", StringEscapeUtils.escapeXml(ExceptionUtils.getStackTrace(e)));
             errorContext.put("context", StringEscapeUtils.escapeXml(jsonContext).trim());
             errorContext.put("rawContext", jsonContext);
             errorContext.put("template", webView.template().toString());
