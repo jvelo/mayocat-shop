@@ -20,6 +20,7 @@ import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.model.AddonSource;
 import org.mayocat.theme.Model;
+import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
@@ -52,12 +53,12 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             entities.put(meta.getEntityName(), data);
         }
 
-        ThemeDefinition theme = context.getTheme().getDefinition();
+        Theme theme = context.getTheme();
 
         if (theme != null) {
-            addAddons(entities, theme.getAddons(), AddonSource.THEME);
-            addModels(entities, theme.getModels());
-            addImageFormats(entities, theme.getImageFormats());
+            addAddons(entities, theme.getDefinition().getAddons(), AddonSource.THEME);
+            addModels(entities, theme.getDefinition().getModels());
+            addImageFormats(entities, theme.getDefinition().getImageFormats());
         }
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
