@@ -8,6 +8,7 @@
 package org.mayocat.cms.news.front.resource;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.context.DateContext;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -35,15 +37,18 @@ public class ArticleContextBuilder
 
     private EntityURLFactory urlFactory;
 
+    private ThemeFileResolver themeFileResolver;
+
     public ArticleContextBuilder(ThemeDefinition themeDefinition, ConfigurationService configurationService,
-            EntityURLFactory urlFactory)
+            EntityURLFactory urlFactory, ThemeFileResolver themeFileResolver)
     {
         this.theme = themeDefinition;
+        this.themeFileResolver = themeFileResolver;
         this.configurationService = configurationService;
         this.urlFactory = urlFactory;
     }
 
-    public Map<String, Object> build(Article article, List<Image> images)
+    public Map<String, Object> build(final Article article, List<Image> images)
     {
 
         GeneralSettings settings;
@@ -54,6 +59,20 @@ public class ArticleContextBuilder
         context.put("content", ContextUtils.safeHtml(article.getContent()));
         context.put(ContextConstants.URL, urlFactory.create(article).getPath());
         context.put(ContextConstants.SLUG, article.getSlug());
+        if (article.getModel().isPresent() &&
+                themeFileResolver.resolveModelPath(article.getModel().get()).isPresent())
+        {
+            context.put("model", new HashMap()
+            {
+                {
+                    put("template", themeFileResolver.resolveModelPath(article.getModel().get()).get());
+                    put("slug", article.getModel().get());
+                }
+            });
+            context.put("template", themeFileResolver.resolveModelPath(article.getModel().get()).get());
+        } else {
+            context.put("template", "article.html");
+        }
 
         if (article.getPublicationDate() != null) {
             DateContext date =

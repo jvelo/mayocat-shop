@@ -42,6 +42,7 @@ import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -75,6 +76,9 @@ public class PageResource extends AbstractWebViewResource implements Resource
     @Inject
     private EntityURLFactory entityURLFactory;
 
+    @Inject
+    private ThemeFileResolver themeFileResolver;
+
     @Path("{slug}")
     @GET
     public WebView getPage(@PathParam("slug") String slug, @Context UriInfo uriInfo)
@@ -102,7 +106,7 @@ public class PageResource extends AbstractWebViewResource implements Resource
             }
         }
 
-        PageContextBuilder builder = new PageContextBuilder(entityURLFactory, theme);
+        PageContextBuilder builder = new PageContextBuilder(themeFileResolver, entityURLFactory, theme);
         Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
 
         context.put("page", pageContext);

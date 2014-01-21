@@ -8,6 +8,7 @@
 package org.mayocat.cms.pages.front.builder;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.mayocat.image.model.Image;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -36,8 +38,11 @@ public class PageContextBuilder
 
     private EntityURLFactory urlFactory;
 
-    public PageContextBuilder(EntityURLFactory urlFactory, ThemeDefinition theme)
+    private ThemeFileResolver themeFileResolver;
+
+    public PageContextBuilder(ThemeFileResolver themeFileResolver, EntityURLFactory urlFactory, ThemeDefinition theme)
     {
+        this.themeFileResolver = themeFileResolver;
         this.urlFactory = urlFactory;
         this.theme = theme;
 
@@ -52,6 +57,20 @@ public class PageContextBuilder
         pageContext.put("title", page.getTitle());
         pageContext.put("content", page.getContent());
         pageContext.put("published", page.getPublished());
+        if (page.getModel().isPresent() && themeFileResolver.resolveModelPath(page.getModel().get()).isPresent()) {
+            pageContext.put("model", new HashMap()
+            {
+                {
+                    put("template", themeFileResolver.resolveModelPath(page.getModel().get()).get());
+                    put("slug", page.getModel().get());
+                }
+            });
+            pageContext.put("template", themeFileResolver.resolveModelPath(page.getModel().get()).get());
+        }
+        else {
+            pageContext.put("template", "page.html");
+        }
+
         pageContext.put(ContextConstants.URL, urlFactory.create(page).getPath());
         pageContext.put(ContextConstants.SLUG, page.getSlug());
 

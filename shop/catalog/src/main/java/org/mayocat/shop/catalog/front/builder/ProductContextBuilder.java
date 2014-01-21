@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.front.builder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -53,8 +55,11 @@ public class ProductContextBuilder implements ContextConstants
 
     private EntityURLFactory urlFactory;
 
+    private ThemeFileResolver themeFileResolver;
+
     public ProductContextBuilder(EntityURLFactory urlFactory, ConfigurationService configurationService,
-            EntityLocalizationService entityLocalizationService, ThemeDefinition theme)
+            EntityLocalizationService entityLocalizationService, ThemeDefinition theme,
+            ThemeFileResolver themeFileResolver)
     {
         this.urlFactory = urlFactory;
 
@@ -64,6 +69,7 @@ public class ProductContextBuilder implements ContextConstants
         this.entityLocalizationService = entityLocalizationService;
 
         this.theme = theme;
+        this.themeFileResolver = themeFileResolver;
 
         imageContextBuilder = new ImageContextBuilder(theme);
         addonContextBuilder = new AddonContextBuilder();
@@ -78,6 +84,20 @@ public class ProductContextBuilder implements ContextConstants
         productContext.put("description", ContextUtils.safeHtml(product.getDescription()));
         productContext.put(URL, urlFactory.create(product).getPath());
         productContext.put(SLUG, product.getSlug());
+        if (product.getModel().isPresent() &&
+                themeFileResolver.resolveModelPath(product.getModel().get()).isPresent())
+        {
+            productContext.put("model", new HashMap()
+            {
+                {
+                    put("template", themeFileResolver.resolveModelPath(product.getModel().get()).get());
+                    put("slug", product.getModel().get());
+                }
+            });
+            productContext.put("template", themeFileResolver.resolveModelPath(product.getModel().get()).get());
+        } else {
+            productContext.put("template", "product.html");
+        }
 
         // Prices
         if (product.getUnitPrice() != null) {

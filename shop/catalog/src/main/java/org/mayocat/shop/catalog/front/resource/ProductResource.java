@@ -42,6 +42,7 @@ import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.math.IntMath;
@@ -60,6 +61,9 @@ public class ProductResource extends AbstractProductListWebViewResource implemen
 
     @Inject
     private Provider<ProductStore> productStore;
+
+    @Inject
+    private ThemeFileResolver themeFileResolver;
 
     @GET
     public WebView getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
@@ -115,7 +119,7 @@ public class ProductResource extends AbstractProductListWebViewResource implemen
         ThemeDefinition theme = this.context.getTheme().getDefinition();
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
-        List<Image> images = new ArrayList<Image>();
+        List<Image> images = new ArrayList<>();
         for (Attachment attachment : attachments) {
             if (isImage(attachment)) {
                 List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
@@ -125,7 +129,7 @@ public class ProductResource extends AbstractProductListWebViewResource implemen
         }
 
         ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
-                entityLocalizationService, theme);
+                entityLocalizationService, theme, themeFileResolver);
         Map<String, Object> productContext = builder.build(entityLocalizationService.localize(product), images);
 
         context.put("product", productContext);

@@ -22,9 +22,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.cms.news.front.resource.ArticleContextBuilder;
 import org.mayocat.cms.news.model.Article;
@@ -43,8 +41,8 @@ import org.mayocat.shop.front.views.WebView;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Predicates;
@@ -75,6 +73,9 @@ public class HomeResource extends AbstractProductListWebViewResource implements 
 
     @Inject
     private Provider<ArticleStore> articleStore;
+
+    @Inject
+    private ThemeFileResolver themeFileResolver;
 
     @GET
     public WebView getHomePage()
@@ -108,7 +109,7 @@ public class HomeResource extends AbstractProductListWebViewResource implements 
                 }
             }
 
-            PageContextBuilder builder = new PageContextBuilder(urlFactory, theme);
+            PageContextBuilder builder = new PageContextBuilder(themeFileResolver, urlFactory, theme);
             Map<String, Object> pageContext = builder.build(entityLocalizationService.localize(page), images);
             context.put("home", pageContext);
         }
@@ -136,7 +137,7 @@ public class HomeResource extends AbstractProductListWebViewResource implements 
         Map<String, Object> articlesContext = Maps.newHashMap();
         List<Map<String, Object>> articleListContext = Lists.newArrayList();
         ArticleContextBuilder articleContextBuilder = new ArticleContextBuilder(this.context.getTheme().getDefinition(),
-                this.configurationService, this.urlFactory);
+                this.configurationService, this.urlFactory, themeFileResolver);
 
         for (final Article article : articles) {
             Collection<Attachment> attachments =

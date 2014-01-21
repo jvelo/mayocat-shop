@@ -29,6 +29,7 @@ import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.util.WebDataHelper;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -37,7 +38,11 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Doc goes here.
+ * Data supplier for the list of root pages :
+ *
+ * {{#pages}}
+ *    [[...]]
+ * {{/pages}}
  *
  * @version $Id$
  */
@@ -62,13 +67,16 @@ public class PagesWebDataSupplier implements WebDataSupplier
     @Inject
     private WebContext context;
 
+    @Inject
+    private ThemeFileResolver themeFileResolver;
+
     @Override
     public void supply(Map<String, Object> data)
     {
         ThemeDefinition theme = context.getTheme().getDefinition();
 
         // Pages
-        PageContextBuilder pageContextBuilder = new PageContextBuilder(urlFactory, theme);
+        PageContextBuilder pageContextBuilder = new PageContextBuilder(themeFileResolver, urlFactory, theme);
         final List<Map<String, Object>> pagesContext = Lists.newArrayList();
         List<Page> rootPages = this.pageStore.get().findAllRootPages();
 

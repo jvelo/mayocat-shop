@@ -47,6 +47,7 @@ import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.theme.Breakpoint;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
@@ -80,6 +81,9 @@ public class NewsResource extends AbstractWebViewResource implements Resource, C
 
     @Inject
     private ConfigurationService configurationService;
+
+    @Inject
+    private ThemeFileResolver themeFileResolver;
 
     @Inject
     private WebContext context;
@@ -158,7 +162,7 @@ public class NewsResource extends AbstractWebViewResource implements Resource, C
     private Map<String, Object> buildArticleContext(Article article)
     {
         ArticleContextBuilder articleContextBuilder = new ArticleContextBuilder(this.context.getTheme().getDefinition(),
-                this.configurationService, this.urlFactory);
+                this.configurationService, this.urlFactory, themeFileResolver);
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article);
         List<Image> images = new ArrayList<Image>();

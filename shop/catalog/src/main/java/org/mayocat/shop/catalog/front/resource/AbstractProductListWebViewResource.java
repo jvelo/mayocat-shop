@@ -30,6 +30,7 @@ import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.resources.AbstractWebViewResource;
 import org.mayocat.shop.front.util.WebDataHelper;
 import org.mayocat.store.AttachmentStore;
+import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.base.Predicates;
@@ -66,6 +67,9 @@ public class AbstractProductListWebViewResource extends AbstractWebViewResource
     protected EntityURLFactory urlFactory;
 
     @Inject
+    private ThemeFileResolver themeFileResolver;
+
+    @Inject
     protected EntityLocalizationService entityLocalizationService;
 
     protected Map<String, Object> createProductListContext(List<Product> products)
@@ -87,7 +91,7 @@ public class AbstractProductListWebViewResource extends AbstractWebViewResource
         }
 
         ProductContextBuilder builder = new ProductContextBuilder(urlFactory, configurationService,
-                entityLocalizationService, this.context.getTheme().getDefinition());
+                entityLocalizationService, this.context.getTheme().getDefinition(), themeFileResolver);
 
         for (final Product product : products) {
             java.util.Collection<Attachment> attachments =
