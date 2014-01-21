@@ -21,3 +21,6 @@ web-app/WEB-INF/classes/
 # conf
 shop/application/config-postgres.yml
 shop/application/mayocat.yml
+
+# misc
+classes
