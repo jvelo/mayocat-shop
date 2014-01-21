@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.sun.jersey.core.util.Base64;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
@@ -153,9 +154,13 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
         Cipher cipher = Utils.getComponent(Cipher.class);
         String cookieData = decode(getCookie(containerRequest, getScopeAndCookieName()));
 
-        if (null != cookieData) {
+        if (!Strings.isNullOrEmpty(cookieData)) {
             try {
                 if (encryptAndSign()) {
+                    if (cookieData.length() < 44) {
+                        LOGGER.warn("Invalid length when reading {} from cookies", getScopeAndCookieName());
+                        return null;
+                    }
                     String encryptedCookie = cookieData.substring(0, cookieData.length() - 44);
                     String signature = cookieData.substring(cookieData.length() - 44);
                     if (!signature.equals(computeSignature(encryptedCookie))) {
@@ -173,7 +178,6 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
             } catch (ClassCastException e2) {
                 // Ignore and return null -> scope will be destroyed
             }
-
         }
         return null;
     }
