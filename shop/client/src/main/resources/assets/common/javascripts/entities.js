@@ -272,10 +272,16 @@
             }
         }])
 
-        .factory('entityLocalizationService', ['$q', 'configurationService', function ($q, configurationService) {
+        .factory('entityLocalizationService', ['$q', '$rootScope', 'configurationService', function ($q, $rootScope, configurationService) {
 
             var locales,
                 promise;
+
+            $rootScope.$on("configuration:updated", function () {
+                locales = null;
+                promise = null;
+                $rootScope.$broadcast("entities:locales:changed");
+            });
 
             var getLocales = function () {
 
@@ -359,17 +365,25 @@
                         }
                     });
 
-                    localizationService.getLocales().then(function (locales) {
-                        $scope.mainLocale = locales.main;
-                        $scope.selectedLocale = $scope.mainLocale;
-                        $scope.locales = [ locales.main ];
-                        $scope.locales.push.apply($scope.locales, locales.others);
+                    function initLocales($scope) {
+                        localizationService.getLocales().then(function (locales) {
+                            $scope.mainLocale = locales.main;
+                            $scope.selectedLocale = $scope.mainLocale;
+                            $scope.locales = [ locales.main ];
+                            $scope.locales.push.apply($scope.locales, locales.others);
 
-                        if ($scope.locales.length === 1) {
-                            // If there is only one locale, we don't display a locale switcher, but the plain field
-                            $($element).removeClass("locales-wrapper input-append");
-                            $($element).find(".locales-switch").addClass("hidden");
-                        }
+                            if ($scope.locales.length === 1) {
+                                // If there is only one locale, we don't display a locale switcher, but the plain field
+                                $($element).removeClass("locales-wrapper input-append");
+                                $($element).find(".locales-switch").addClass("hidden");
+                            }
+                        });
+                    }
+
+                    initLocales($scope);
+
+                    $rootScope.$on("entities:locales:changed", function () {
+                            initLocales($scope);
                     });
                 }
             }

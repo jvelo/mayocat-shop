@@ -225,8 +225,26 @@ angular.module('mayocat.configuration', ['ngResource'])
              * @param {Function} callback the callback function
              */
             put: function (config, callback) {
-                settingsResource.update(prepareSettings(settings), callback);
-                $rootScope.$broadcast("configuration:updated");
+
+                /**
+                 * Similar to an aspect "after"
+                 */
+                var wrap = function (functionToWrap, doAfter) {
+                    return function () {
+                        var args = Array.prototype.slice.call(arguments),
+                            result = functionToWrap.apply(this, args);
+
+                        doAfter.apply(this, args);
+                        return result;
+                    };
+                };
+
+                // Here we wrap the "consumer callback" (the callback passed by client code calling this API) to inject
+                // our own behavior (firing an event) upon AJAX callback.
+                // We need to do this since angular $resource module is callback based and not promised based
+                settingsResource.update(prepareSettings(settings), wrap(callback, function () {
+                    $rootScope.$broadcast("configuration:updated");
+                }));
             },
 
             /**
