@@ -15,7 +15,7 @@ if [ -z $JAR_NAME ]; then
   exit
 fi
 
-if [ "$1" == "debug" ]
+if [ "$1" = "debug" ]
 then
   DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=$DEBUG_PORT"
 fi
