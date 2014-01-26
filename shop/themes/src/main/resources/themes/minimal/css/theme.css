@@ -1,0 +1,173 @@
+/**
+ * colors:
+ * #807d75 -> toggle
+ * #8f775e -> brown (menu, etc.)
+ * #a08972 -> light brown (buy button)
+ */
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    color: #000000;
+}
+
+a, a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 26px;
+}
+
+.clearfix {
+    clear: both;
+}
+
+header .brand {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ul.menu {
+    list-style-type: none;
+}
+
+input.button {
+    font-size: 22px;
+    background-color: #a08972;
+    color: white;
+    border: none;
+    padding: 3px 7px;
+}
+
+/* Product lists */
+.products-list .product {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+.products-list .product h2.fn {
+    font-weight: bold;
+}
+
+.product .price {
+    font-size: 26px;
+    margin-right: 10px;
+    float: right;
+}
+
+.product input[type='submit'] {
+    float:right;
+}
+
+.product .buying-options {
+    margin-bottom: 50px;
+}
+
+/* Product page */
+
+.product .description {
+    font-size: 16px;
+}
+
+/* Image gallery */
+ul.images {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+ul.images li {
+    float: left;
+    margin-right: 10px;
+}
+
+ul.images:after {
+    clear: both;
+    content: " ";
+}
+
+/* Mobiles (everything under 900px */
+@media all and (max-width: 899px) {
+
+    body div.main-content {
+        background: white;
+    }
+
+    body > div > header,
+    body > div > section,
+    body > div > footer {
+        padding: 0 10px;
+    }
+
+    body section.home .product.featured img {
+        width: 100%;
+    }
+
+    .drawers {
+        background-color: #8f775e;
+    }
+
+    header {
+        margin-top: 10px;
+        padding-bottom: 5px;
+        position: relative;
+        text-align: center;
+    }
+
+    .toggle {
+        position: absolute;
+        top: 0;
+        left: 10px;
+    }
+
+    .toggle .icon-bar {
+        background-color: #807d75;
+        display: block;
+        height: 3px;
+        width: 23px;
+        background-position: 14px 14px;
+        background-repeat: no-repeat;
+        line-height: 14px;
+        margin-top: 4px;
+        vertical-align: text-top;
+    }
+
+    .brand img {
+        width: 141px;
+        height: 141px;
+    }
+
+    /* Menu */
+    .drawer ul.menu {
+        margin-top: 100px;
+        font-size: 16px;
+        padding-left: 25px;
+    }
+
+    .drawer ul.menu li {
+        height: 30px;
+    }
+}
+
+/* Larger than 900px : desktops, tablets, etc. */
+@media all and (min-width: 900px) {
+    body {
+        margin: auto;
+    }
+
+    body section.home .product.featured img {
+        width: auto;
+    }
+
+    .toggle {
+        display: none;
+    }
+
+    .brand img {
+        width: auto;
+        height: auto;
+    }
+}

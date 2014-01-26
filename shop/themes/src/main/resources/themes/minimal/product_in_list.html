@@ -1,0 +1,11 @@
+<div class="product">
+    <a rel='product' href="{{url}}">
+        {{#images.featured}}
+            <img src="{{theme_product-list_url}}" alt="{{description}}" title="{{title}}" width="230" height="154"/>
+        {{/images.featured}}
+
+        <h2 class="fn">{{title}}</h2>
+
+        <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
+    </a>
+</div>

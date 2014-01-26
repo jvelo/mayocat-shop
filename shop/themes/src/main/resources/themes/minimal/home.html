@@ -1,0 +1,37 @@
+<div class="products-list">
+
+    <!-- Featured product -->
+    {{#withFirst products.list}}
+        <div class="product featured">
+
+            <a rel='product' href="{{url}}">
+                {{#images.featured}}
+                    <span data-picture data-alt="{{description}}" data-title="{{title}}">
+            <span data-src="{{theme_mobile-home-featured_url}}"></span>
+            <span data-src="{{theme_home-featured_url}}" data-media="(min-width: 361px)"></span>
+
+            <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+            <noscript>
+                <img src="{{theme_mobile-home-featured_url}}" alt="{{description}}" title="{{title}}" width="300"
+                     height="211"/>
+            </noscript>
+            </span>
+                {{/images.featured}}
+
+                <h2 class="fn">{{title}}</h2>
+                <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
+            </a>
+        </div>
+    {{/withFirst}}
+
+    <!-- Other products -->
+    {{#each products.list}}
+        {{#gt @index 0}}
+            {{includeTemplate 'product_in_list.html'}}
+        {{/gt}}
+    {{/each}}
+</div>
+
+
+
+

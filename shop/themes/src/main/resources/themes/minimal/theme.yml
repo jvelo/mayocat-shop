@@ -1,0 +1,85 @@
+# ---------
+# theme.yml
+# ---------
+#
+# This is the configuration file for our theme. It defines:
+# - Metadata (name and description of the theme)
+# - Images sizes for products, collections, etc.
+# - Page models (to offer different kind of layout for pages, news articles, products, etc.)
+# - Pagination (how many products we want to display per page)
+# - Data addons
+#
+# More information and tools are available online:
+# - http://www.mayocat.org/documentation for all info about creating themes for Mayocat Shop
+# - http://en.wikipedia.org/wiki/YAML for more information about the YAML format
+# - http://yamllint.com/ to validate your YAML syntax. (Copy-paste your theme.yml in the textarea and click "Go" to
+# check whether or not your file is syntaxically valid or not). One frequent mistake when getting started with the YAML
+# format is to mix tabs and spaces for indentation. We recommend to only indent using the space character, as it is
+# done in this file.
+#
+
+# The name of our theme
+name: Minimal
+
+# Its description
+description: A minimal theme, for desktop, tablets and mobiles devices.
+
+# Image sizes definitions
+images:
+
+  # The shop logo on mobile devices
+  mobile-home-logo:
+    width: 141
+    for: tenant
+
+  # The shop logo on tablets & desktops
+  home-logo:
+    width: 180
+    for: tenant
+
+  # The featured product on the home page on mobile devices
+  mobile-home-featured:
+    width: 300
+    height: 211
+    name: "Mobile home featured"
+    for: product
+
+  # The featured product on the home page on other devices
+  home-featured:
+    width: 741
+    height: 514
+    name: "Home featured"
+    for: product
+
+  # The featured product on the home page on mobile devices
+  product-list:
+    width: 230
+    height: 154
+    name: "Mobile list of products"
+    for: product
+
+  # The featured product on the home page on mobile devices
+  product-gallery-thumb:
+    width: 46
+    height: 46
+    name: "Thumbnail on product gallery"
+    for: product
+
+  # The featured product on the home page on mobile devices
+  mobile-product-gallery:
+    width: 300
+    height: 322
+    name: "Mobile product gallery"
+    for: product
+
+  # List of products on the home page for mobiles
+  mobile-home-list:
+    width: 230
+    height: 154
+    name: "Mobile home list"
+
+# Pagination definitions
+pagination:
+  home:
+    itemsPerPage: 6
+    for: product
