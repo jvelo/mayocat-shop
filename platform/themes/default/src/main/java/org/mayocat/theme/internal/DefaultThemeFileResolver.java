@@ -23,6 +23,7 @@ import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.ThemeResource;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -32,6 +33,7 @@ import com.google.common.io.Resources;
 /**
  * @version $Id$
  */
+@Component
 public class DefaultThemeFileResolver implements ThemeFileResolver
 {
     private static final String INDEX_HTML = "index.html";

@@ -74,9 +74,6 @@ public class HomeResource extends AbstractProductListWebViewResource implements 
     @Inject
     private Provider<ArticleStore> articleStore;
 
-    @Inject
-    private ThemeFileResolver themeFileResolver;
-
     @GET
     public WebView getHomePage()
     {
