@@ -33,6 +33,7 @@ import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.jackson.MayocatGroovyModule;
 import org.mayocat.rest.jackson.MayocatJodaModule;
 import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
 import org.mayocat.task.Task;
@@ -90,6 +91,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.objectMapperFactory.registerModule(new NIOModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
         this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
+        this.objectMapperFactory.registerModule(new MayocatGroovyModule());
 
         this.addModule(new AccountsModule());
     }

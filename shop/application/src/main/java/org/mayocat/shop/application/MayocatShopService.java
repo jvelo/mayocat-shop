@@ -16,6 +16,7 @@ import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopSettings;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArrayArgumentFactory;
 import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentRepositoryException;
@@ -76,6 +77,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "jdbi");
         jdbi.registerArgumentFactory(new PostgresUUIDArgumentFactory());
+        jdbi.registerArgumentFactory(new PostgresUUIDArrayArgumentFactory());
         final DBIProvider dbi = new DBIProvider()
         {
             @Override

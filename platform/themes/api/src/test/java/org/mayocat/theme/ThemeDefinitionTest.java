@@ -51,7 +51,6 @@ public class ThemeDefinitionTest
                 theme.getDescription().startsWith("Et harum quidem rerum facilis est et expedita distinctio."));
         Assert.assertEquals(2, theme.getAddons().size());
 
-
         Map<String, AddonGroup> addons = theme.getAddons();
         Assert.assertEquals(2, addons.keySet().size());
 
@@ -93,6 +92,31 @@ public class ThemeDefinitionTest
     }
 
     @Test
+    public void testParseTypes() throws Exception
+    {
+        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
+
+        String themeConfig = Resources.toString(Resources.getResource("theme-with-types.yml"), Charsets.UTF_8);
+        ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
+
+        Assert.assertTrue(theme.getProductTypes().size() > 0);
+        TypeDefinition typeShirt = theme.getProductTypes().get("shirt");
+
+        Assert.assertNotNull(typeShirt);
+        Assert.assertEquals("T-Shirt", typeShirt.getName());
+
+        FeatureDefinition colorVariant = typeShirt.getFeatures().get("color");
+        Assert.assertNotNull(colorVariant);
+        Assert.assertEquals("Color", colorVariant.getName());
+        Assert.assertEquals(0, colorVariant.getKeys().size());
+
+        FeatureDefinition sizeVariant = typeShirt.getFeatures().get("size");
+        Assert.assertNotNull(sizeVariant);
+        Assert.assertEquals("Size", sizeVariant.getName());
+        Assert.assertEquals(3, sizeVariant.getKeys().size());
+    }
+
+    @Test
     public void testParseEmptyTheme() throws Exception
     {
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
@@ -104,6 +128,7 @@ public class ThemeDefinitionTest
         Assert.assertEquals("", theme.getDescription());
         Assert.assertEquals(0, theme.getAddons().size());
         Assert.assertEquals(0, theme.getModels().size());
+        Assert.assertEquals(0, theme.getProductTypes().size());
     }
 }
 

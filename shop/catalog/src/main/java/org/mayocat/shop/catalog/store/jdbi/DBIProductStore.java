@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -23,6 +24,7 @@ import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
 import org.mayocat.model.event.EntityUpdatingEvent;
 import org.mayocat.shop.catalog.model.Collection;
+import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.store.AttachmentStore;
@@ -38,6 +40,10 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+
+import mayoapp.dao.FeatureDAO;
 import mayoapp.dao.ProductDAO;
 
 @Component(hints = { "jdbi", "default" })
@@ -47,7 +53,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     private static final String PRODUCT_TABLE_NAME = "product";
 
+    private static final String FEATURE_TABLE_NAME = "product_feature";
+
     private ProductDAO dao;
+
+    private FeatureDAO featureDao;
 
     @Inject
     private AttachmentStore attachmentStore;
@@ -69,7 +79,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         UUID entityId = UUID.randomUUID();
         product.setId(entityId);
 
-        this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        if (product.getParentId() != null) {
+            this.dao.createChildEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        } else {
+            this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
+        }
         product.setId(entityId);
         Integer lastIndex = this.dao.lastPosition(getTenant());
         if (lastIndex == null) {
@@ -262,9 +276,86 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     }
 
     @Override
+    public List<Feature> findFeatures(Product product)
+    {
+        return AddonsHelper.withAddons(this.featureDao.findAllForProduct(product), this.featureDao);
+    }
+
+    @Override
+    public List<Feature> findFeatures(Product product, final String feature)
+    {
+        return FluentIterable.from(findFeatures(product)).filter(new Predicate<Feature>()
+        {
+            public boolean apply(Feature input)
+            {
+                return input.getFeature().equals(feature);
+            }
+        }).toList();
+    }
+
+    @Override
+    public Feature findFeature(Product product, final String feature, final String featureSlug)
+    {
+        return FluentIterable.from(findFeatures(product)).filter(new Predicate<Feature>()
+        {
+            public boolean apply(Feature input)
+            {
+                return input.getFeature().equals(feature) && input.getFeatureSlug().equals(featureSlug);
+            }
+        }).first().orNull();
+    }
+
+    @Override
+    public List<Product> findVariants(Product product)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Feature createFeature(final Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
+    {
+        if (feature.getParentId() == null) {
+            throw new InvalidEntityException("Cannot create a feature without a parent product specified");
+        }
+
+        Product product = this.findById(feature.getParentId());
+        if (product == null) {
+            throw new InvalidEntityException("Specified parent product does not exist");
+        }
+
+        boolean exists = findFeature(product, feature.getFeature(), feature.getFeatureSlug()) != null;
+
+        if (exists) {
+            throw new EntityAlreadyExistsException();
+        }
+
+        if (!feature.getAddons().isLoaded()) {
+            feature.setAddons(new ArrayList<Addon>());
+        }
+
+        getObservationManager().notify(new EntityCreatingEvent(), feature);
+
+        this.featureDao.begin();
+
+        UUID entityId = UUID.randomUUID();
+        feature.setId(entityId);
+
+        this.featureDao.createChildEntity(feature, FEATURE_TABLE_NAME, getTenant());
+        this.featureDao.createFeature(feature);
+        this.featureDao.createOrUpdateAddons(feature);
+
+        this.featureDao.commit();
+
+        getObservationManager().notify(new EntityCreatedEvent(), feature);
+
+        return feature;
+    }
+
+    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(ProductDAO.class);
+        this.featureDao = this.getDbi().onDemand(FeatureDAO.class);
         super.initialize();
     }
 }

@@ -1,0 +1,18 @@
+group FeatureDAO;
+
+createFeature() ::= <<
+    INSERT INTO product_feature (entity_id, feature, feature_slug, title)
+    VALUES (:feature.id,
+            :feature.feature,
+            :feature.featureSlug,
+            :feature.title)
+>>
+
+findAllForProduct() ::= <<
+    SELECT entity.*, product_feature.*, localization_data(entity_id)
+    FROM   product_feature
+           INNER JOIN entity
+                   ON entity.id = product_feature.entity_id
+    WHERE  entity.parent_id = :product.id
+    ORDER  BY feature, feature_slug
+>>

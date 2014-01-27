@@ -37,3 +37,17 @@ images:
     height: 354
     name: Post
     for: article
+
+productTypes:
+  shirt:
+    name: Shirt
+    features:
+      size:
+        name: Size
+        keys:
+          s: Small
+          m: Medium
+          l: Large
+      color:
+        name: Color
+    definedByVariants: ["stock", "price"]

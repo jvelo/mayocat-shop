@@ -169,7 +169,13 @@ angular.module('mayocat.configuration', ['ngResource'])
                             // The configuration does not exist
                             callback && callback(undefined);
                         }
-                        callback && callback(configurationElement);
+
+                        try {
+                            callback && callback(configurationElement);
+                        }
+                        catch (error) {
+                            // Don't fail on callback error, it's not our responsibility...
+                        }
                         return;
                     }
                     catch (error) {

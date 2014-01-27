@@ -76,6 +76,14 @@
             <version>${jersey.version}</version>
         </dependency>
 
+        <!-- Groovy module -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Accounts module needed for the annotation resource method dispatcher -->
         <dependency>
             <groupId>org.mayocat.platform</groupId>

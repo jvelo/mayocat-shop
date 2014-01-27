@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.store.rdbms.dbi.mapper.MapperUtils;
 import org.skife.jdbi.v2.StatementContext;
@@ -39,6 +38,7 @@ public class ProductMapper implements ResultSetMapper<Product>
         product.setPrice(resultSet.getBigDecimal("price"));
         product.setWeight(resultSet.getBigDecimal("weight"));
         product.setStock(resultSet.getInt("stock"));
+        product.setVirtual(resultSet.getBoolean("virtual"));
         UUID featuredImageId = (UUID) resultSet.getObject("featured_image_id");
         if (featuredImageId != null) {
             product.setFeaturedImageId(featuredImageId);
@@ -64,6 +64,10 @@ public class ProductMapper implements ResultSetMapper<Product>
         String model = resultSet.getString("model");
         if (!Strings.isNullOrEmpty(model)) {
             product.setModel(model);
+        }
+        String type = resultSet.getString("product_type");
+        if (!Strings.isNullOrEmpty(type)) {
+            product.setType(type);
         }
         return product;
     }

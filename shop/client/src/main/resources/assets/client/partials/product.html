@@ -64,6 +64,7 @@
             </div>
         </div>
 
+        <!-- Addons -->
         <div ng-show="addons.length > 0 && !isNew()">
             <div class="block" ng-repeat="group in addons">
                 <h3>{{group.name}}</h3>
@@ -129,16 +130,53 @@
         </div>
         <p/>
 
+        <!-- Permalink -->
         <div class="uri" ng-show="!isNew()">
             <a href="/products/{{product.slug}}" target="_new">
                 /products/{{product.slug}}
             </a>
         </div>
 
+        <!-- Delete button -->
         <div class="block delete" ng-show="!isNew()">
             <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
         </div>
 
+        <!-- Product type selector -->
+        <div class="block" ng-show="!isNew() && hasTypes">
+            <h3>Type</h3>
+
+            <div>
+                <select ng-model="product.type" ng-options="type as types[type].name for type in keys(types)">
+                    <option value="">No type</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Variants -->
+        <div class="block" ng-show="!isNew() && keys(types[product.type].variants).length > 0">
+            <h3>Attributes</h3>
+
+            <div ng-repeat="variant in keys(types[product.type].variants)">
+                <strong>{{types[product.type].variants[variant].name}}</strong>
+
+                <!-- key is free for user-->
+                <div ng-show="keys(types[product.type].variants[variant].keys).length == 0">
+                    <button class="button">Add {{types[product.type].variants[variant].name | lowercase}}</button>
+                </div>
+
+                <!-- keys are predefined -->
+                <div ng-show="keys(types[product.type].variants[variant].keys).length > 0">
+                    <ul>
+                        <li ng-repeat="key in keys(types[product.type].variants[variant].keys)">
+                            {{key}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page model selection -->
         <div class="block" ng-show="!isNew() && models.length > 0">
             <h3>{{'entity.title.model' | translate}}</h3>
             <select ng-model="product.model" ng-options="model.id as model.name for model in models">
@@ -146,6 +184,7 @@
             </select>
         </div>
 
+        <!-- Collection selection -->
         <div class="block" ng-show="!isNew() && hasCollections && collections.length > 0">
             <h3>{{'product.title.collections' | translate}}</h3>
             <ul class="list unstyled">
@@ -155,6 +194,7 @@
             </ul>
         </div>
 
+        <!-- Price -->
         <div class="block" ng-show="!isNew()">
             <h3>{{'product.misc.price' | translate}}</h3>
 
@@ -163,6 +203,7 @@
             </div>
         </div>
 
+        <!-- Weight -->
         <div class="block" ng-show="!isNew() && hasWeight">
             <h3>{{'product.misc.weight' | translate}}</h3>
 
@@ -171,6 +212,7 @@
             </div>
         </div>
 
+        <!-- Stock -->
         <div class="block" ng-show="!isNew() && hasStock">
             <h3>{{'product.misc.stock' | translate}}</h3>
 

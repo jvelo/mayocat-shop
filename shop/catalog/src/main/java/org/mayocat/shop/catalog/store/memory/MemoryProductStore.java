@@ -13,9 +13,12 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.mayocat.shop.catalog.model.Collection;
+import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
+import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
+import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.memory.AbstractPositionedEntityMemoryStore;
 import org.mayocat.store.memory.DefaultPositionedEntity;
@@ -100,6 +103,31 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
     {
         Product product = this.findById(productId);
         product.setStock(product.getStock() + stockOffset);
+    }
+
+    @Override public List<Feature> findFeatures(Product product)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override public List<Feature> findFeatures(Product product, String feature)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override public Feature findFeature(Product product, String feature, String featureSlug)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override public List<Product> findVariants(Product product)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override public Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected DefaultPositionedEntity<Product> createForEntity(Product entity, Integer position)

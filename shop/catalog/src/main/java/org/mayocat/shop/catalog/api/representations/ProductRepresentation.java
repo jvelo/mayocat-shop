@@ -20,9 +20,7 @@ import org.mayocat.shop.catalog.meta.ProductEntity;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.Resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductRepresentation
 {
@@ -61,6 +59,9 @@ public class ProductRepresentation
 
     private String href;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String type;
+
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public ProductRepresentation()
@@ -90,6 +91,7 @@ public class ProductRepresentation
         this.weight = product.getWeight();
         this.stock = product.getStock();
         this.localizedVersions = product.getLocalizedVersions();
+        this.type = product.getType().orNull();
 
         this.href = Resource.API_ROOT_PATH + ProductEntity.PATH + "/" + this.slug;
 
@@ -187,6 +189,16 @@ public class ProductRepresentation
     public void setModel(String model)
     {
         this.model = model;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
     }
 
     public Integer getStock()

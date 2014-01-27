@@ -21,7 +21,7 @@ import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.model.AddonSource;
 import org.mayocat.theme.Model;
 import org.mayocat.theme.Theme;
-import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.TypeDefinition;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
@@ -59,11 +59,18 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             addAddons(entities, theme.getDefinition().getAddons(), AddonSource.THEME);
             addModels(entities, theme.getDefinition().getModels());
             addImageFormats(entities, theme.getDefinition().getImageFormats());
+            addTypes(entities, theme.getDefinition().getProductTypes());
         }
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
 
         return entities;
+    }
+
+    private void addTypes(Map<String, Map<String, Object>> entities, Map<String, TypeDefinition> productTypes)
+    {
+        // Right now we support only products, but ultimately, other entities could have types too.
+        entities.get("product").put("types", productTypes);
     }
 
     private void addImageFormats(Map<String, Map<String, Object>> entities,

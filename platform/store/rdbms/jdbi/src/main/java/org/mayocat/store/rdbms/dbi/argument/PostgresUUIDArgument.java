@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.mayocat.store.rdbms.dbi.argument.pg.PG_UUID;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
 
@@ -19,20 +20,6 @@ import org.skife.jdbi.v2.tweak.Argument;
  */
 public class PostgresUUIDArgument implements Argument
 {
-    public static final String UUID_TYPE = "uuid";
-
-    private class PG_UUID extends org.postgresql.util.PGobject
-    {
-        private static final long serialVersionUID = -7156483910839904635L;
-
-        public PG_UUID(String s) throws java.sql.SQLException
-        {
-            super();
-            this.setType(UUID_TYPE);
-            this.setValue(s);
-        }
-    }
-
     private UUID value = null;
 
     public PostgresUUIDArgument(UUID value)

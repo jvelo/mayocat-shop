@@ -41,7 +41,6 @@ import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
-import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.EntityReferenceRepresentation;
 import org.mayocat.rest.representations.ImageRepresentation;
 import org.mayocat.rest.resources.AbstractAttachmentResource;
@@ -58,7 +57,6 @@ import org.mayocat.store.HasOrderedCollections;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.InvalidMoveOperation;
 import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -67,11 +65,6 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 import com.yammer.metrics.annotation.Timed;
 
-@Component(ProductResource.PATH)
-@Path(ProductResource.PATH)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@ExistingTenant
 public class ProductResource extends AbstractAttachmentResource implements Resource
 {
     public static final String PATH = API_ROOT_PATH + ProductEntity.PATH;
@@ -280,6 +273,7 @@ public class ProductResource extends AbstractAttachmentResource implements Resou
                 product.setTitle(updatedProductRepresentation.getTitle());
                 product.setDescription(updatedProductRepresentation.getDescription());
                 product.setModel(updatedProductRepresentation.getModel());
+                product.setType(updatedProductRepresentation.getType());
                 product.setOnShelf(updatedProductRepresentation.getOnShelf());
                 product.setPrice(updatedProductRepresentation.getPrice());
                 product.setWeight(updatedProductRepresentation.getWeight());

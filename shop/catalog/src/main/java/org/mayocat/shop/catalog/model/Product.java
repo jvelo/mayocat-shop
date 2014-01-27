@@ -18,10 +18,12 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
+import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
+import org.mayocat.model.HasType;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.LocalizedField;
@@ -29,14 +31,18 @@ import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 @Index
-public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Purchasable, Localized
+public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Purchasable, Localized, HasType, Child
 {
     private static final long serialVersionUID = 6998229869430511994L;
 
     @DoNotIndex
     private UUID id;
+
+    @DoNotIndex
+    private UUID parentId = null;
 
     private Boolean onShelf;
 
@@ -71,6 +77,15 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
 
     @DoNotIndex
     private Optional<String> model = Optional.absent();
+
+    @DoNotIndex
+    private Optional<String> type = Optional.absent();
+
+    @DoNotIndex
+    private List<UUID> features = Lists.newArrayList();
+
+    @DoNotIndex
+    private boolean virtual = false;
 
     public Product()
     {
@@ -156,7 +171,6 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         this.weight = weight;
     }
 
-    @Override
     public Association<List<Addon>> getAddons()
     {
         return this.addons;
@@ -164,7 +178,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
 
     public void setAddons(List<Addon> addons)
     {
-        this.addons = new Association<List<Addon>>(addons);
+        this.addons = new Association<>(addons);
     }
 
     public Association<Collection> getFeaturedCollection()
@@ -174,7 +188,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
 
     public void setFeaturedCollection(Collection featuredCollection)
     {
-        this.featuredCollection = new Association<Collection>(featuredCollection);
+        this.featuredCollection = new Association<>(featuredCollection);
     }
 
     public Association<List<Collection>> getCollections()
@@ -184,7 +198,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
 
     public void setCollections(List<Collection> collections)
     {
-        this.collections = new Association<List<Collection>>(collections);
+        this.collections = new Association<>(collections);
     }
 
     public void setModel(String model)
@@ -192,13 +206,11 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         this.model = Optional.fromNullable(model);
     }
 
-    @Override
     public Optional<String> getModel()
     {
         return model;
     }
 
-    @Override
     public UUID getFeaturedImageId()
     {
         return this.featuredImageId;
@@ -224,10 +236,49 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         this.localizedVersions = versions;
     }
 
-    @Override
     public Map<Locale, Map<String, Object>> getLocalizedVersions()
     {
         return localizedVersions;
+    }
+
+    public Optional<String> getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = Optional.fromNullable(type);
+    }
+
+    public List<UUID> getFeatures()
+    {
+        return features;
+    }
+
+    public void setFeatures(List<UUID> features)
+    {
+        this.features = features;
+    }
+
+    public boolean isVirtual()
+    {
+        return virtual;
+    }
+
+    public void setVirtual(boolean virtual)
+    {
+        this.virtual = virtual;
+    }
+
+    public UUID getParentId()
+    {
+        return parentId;
+    }
+
+    public void setParentId(UUID parentId)
+    {
+        this.parentId = parentId;
     }
 
     ////////////////////////////////////////////////
@@ -243,7 +294,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         }
         final Product other = (Product) obj;
 
-        return     Objects.equal(this.id, other.id)
+        return Objects.equal(this.id, other.id)
                 && Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.onShelf, other.onShelf)

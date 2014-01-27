@@ -1,17 +1,36 @@
 group ProductDAO;
 
 createProduct() ::= <<
-    INSERT INTO product (entity_id, position, title, model, on_shelf, description, price, weight, stock, featured_image_id)
-    VALUES (:product.id,
-            :position,
-            :product.title,
-            :product.model,
-            :product.onShelf,
-            :product.description,
-            :product.price,
-            :product.weight,
-            :product.stock,
-            :product.featuredImageId)
+    INSERT INTO product (
+        entity_id,
+        position,
+        title,
+        model,
+        on_shelf,
+        description,
+        price,
+        weight,
+        stock,
+        featured_image_id,
+        product_type,
+        virtual,
+        features
+    )
+    VALUES (
+        :product.id,
+        :position,
+        :product.title,
+        :product.model,
+        :product.onShelf,
+        :product.description,
+        :product.price,
+        :product.weight,
+        :product.stock,
+        :product.featuredImageId,
+        :product.type,
+        :product.virtual,
+        :product.features
+    )
 >>
 
 updateProduct() ::= <<
@@ -23,7 +42,9 @@ updateProduct() ::= <<
            price = :product.price,
            weight = :product.weight,
            stock = :product.stock,
-           featured_image_id = :product.featuredImageId
+           featured_image_id = :product.featuredImageId,
+           product_type = :product.type,
+           virtual = :product.virtual
     WHERE  entity_id = :product.id
 >>
 
@@ -34,6 +55,7 @@ lastPosition() ::= <<
                    ON entity.id = product.entity_id
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
+           AND entity.parent_id IS NULL
     ORDER  BY position DESC
     LIMIT  1
 >>
@@ -47,6 +69,7 @@ findOrphanProducts() ::= <<
                        FROM   collection_product
                        WHERE  product_id = entity.id)
            AND entity.tenant_id = :tenant.id
+           AND entity.parent_id IS NULL
     ORDER  BY product.position ASC
 >>
 
@@ -58,6 +81,7 @@ findForCollection() ::= <<
            INNER JOIN product
                    ON product.entity_id = collection_product.product_id
     WHERE  collection_product.collection_id = :collection.id
+           AND entity.parent_id IS NULL
     ORDER  BY collection_product.position
     LIMIT  :number
     OFFSET :offset
@@ -69,6 +93,7 @@ countAllForCollection() ::= <<
            INNER JOIN entity
                    ON entity.id = collection_product.product_id
     WHERE  collection_product.collection_id = :collection.id
+           AND entity.parent_id IS NULL
 >>
 
 findAllForCollection() ::= <<
@@ -79,6 +104,7 @@ findAllForCollection() ::= <<
            INNER JOIN product
                    ON product.entity_id = collection_product.product_id
     WHERE  collection_product.collection_id = :collection.id
+           AND entity.parent_id IS NULL
     ORDER  BY collection_product.position
 >>
 
@@ -90,6 +116,7 @@ findAllOnShelf() ::= <<
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
            AND product.on_shelf = true
+           AND entity.parent_id IS NULL
     ORDER  BY product.position ASC
     LIMIT  :number
     OFFSET :offset
@@ -103,6 +130,7 @@ countAllOnShelf() ::= <<
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
            AND product.on_shelf = true
+           AND entity.parent_id IS NULL
 >>
 
 deleteProductFromCollections() ::= <<

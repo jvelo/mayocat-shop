@@ -17,37 +17,32 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.images.ImageFormatDefinition;
 
-import javax.validation.Valid;
-
 /**
  * @version $Id$
  */
 public class ThemeDefinition
 {
-    @Valid
     @NotBlank
     @JsonProperty
     private String name = "";
 
-    @Valid
     @JsonProperty
     private String description = "";
 
-    @Valid
     @JsonProperty
     private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
 
-    @Valid
     @JsonProperty
     private Map<String, Model> models = Maps.newLinkedHashMap();
 
-    @Valid
     @JsonProperty
     private Map<String, AddonGroup> addons = Collections.emptyMap();
 
-    @Valid
     @JsonProperty
     private Map<String, PaginationDefinition> pagination = Collections.emptyMap();
+
+    @JsonProperty
+    private Map<String, TypeDefinition> productTypes = Maps.newHashMap();
 
     public String getName()
     {
@@ -83,5 +78,10 @@ public class ThemeDefinition
     public PaginationDefinition getPaginationDefinition(String key)
     {
         return pagination.containsKey(key) ? pagination.get(key) : new PaginationDefinition();
+    }
+
+    public Map<String, TypeDefinition> getProductTypes()
+    {
+        return productTypes;
     }
 }

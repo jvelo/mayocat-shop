@@ -11,17 +11,20 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.shop.catalog.model.Collection;
+import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.HasOrderedCollections;
+import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.InvalidMoveOperation;
 import org.mayocat.store.Store;
 import org.xwiki.component.annotation.Role;
 
 @Role
 public interface ProductStore extends Store<Product, UUID>, HasOrderedCollections, EntityStore
-{    
+{
     Product findBySlug(String slug);
 
     void moveProduct(String productToMove, String productToMoveRelativeTo, RelativePosition relativePosition)
@@ -36,6 +39,16 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
     List<Product> findAllForCollection(Collection collection);
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
+
+    List<Feature> findFeatures(Product product);
+
+    List<Feature> findFeatures(Product product, String feature);
+
+    Feature findFeature(Product product, String feature, String featureSlug);
+
+    List<Product> findVariants(Product product);
+
+    Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException;
 
     Integer countAllOnShelf();
 

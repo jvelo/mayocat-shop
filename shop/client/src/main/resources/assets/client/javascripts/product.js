@@ -128,6 +128,29 @@ angular.module('product', ['ngResource'])
                 $scope.mainCurrency = catalogConfiguration.currencies.main;
             });
 
+            configurationService.get("entities", function (entities) {
+                if (typeof entities.product !== 'undefined') {
+                    $scope.types = entities.product.types;
+                    $scope.hasTypes = !!(Object.keys(angular.copy($scope.types)).length > 0);
+                }
+                else {
+                    $scope.types = {};
+                    $scope.hasTypes = false;
+                }
+            });
+
+            $scope.keys = function (object) {
+                var keys = [];
+                if (typeof object === "undefined") {
+                    return keys;
+                }
+                for (var key in object) {
+                    object.hasOwnProperty(key)
+                    keys.push(key);
+                }
+                return keys;
+            }
+
             // Initialize existing product or new product
 
             if (!$scope.isNew()) {
