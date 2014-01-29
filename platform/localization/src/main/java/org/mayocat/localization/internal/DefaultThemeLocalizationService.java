@@ -107,9 +107,12 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
                     }
                     break;
                 case CLASSPATH:
-                    InputStream in = getClass().getResourceAsStream(propertiesPath.toUri().toString());
-                    properties = Properties.Factory.getInstance(in);
+                    InputStream in = getClass().getResourceAsStream('/' + propertiesPath.toString());
+                    if (in != null) {
+                        properties = Properties.Factory.getInstance(in);
+                    }
                     break;
+
             }
 
             propertiesFilesCache.put(propertiesPath, Optional.fromNullable(properties));
