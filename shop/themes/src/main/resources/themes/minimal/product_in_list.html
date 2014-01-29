@@ -7,14 +7,14 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<div class="product">
-    <a rel='product' href="{{url}}">
-        {{#images.featured}}
-            <img src="{{theme_product-list_url}}" alt="{{description}}" title="{{title}}" width="230" height="154"/>
-        {{/images.featured}}
+<div class="product in-list">
+    {{#images.featured}}
+        <a rel='product' href="{{../url}}">
+            <img src="{{theme_product-list_url}}" alt="{{{description}}}" title="{{{title}}}" width="230" height="154"/>
+        </a>
+    {{/images.featured}}
 
-        <h2 class="fn">{{title}}</h2>
+    <h2 class="fn"><a rel='product' href="{{url}}">{{{title}}}</a></h2>
 
-        <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
-    </a>
+    <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
 </div>

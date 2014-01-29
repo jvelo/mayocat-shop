@@ -11,47 +11,31 @@
     {{#product}}
         <h1 class="fn">{{title}}</h1>
 
-        <div class="gallery">
-            {{#images}}
-                {{#featured}}
-                    <div class="featured">
-                        <img class="photo" src="{{theme_mobile-product-gallery_url}}" title="{{title}}" alt="{{title}}"
-                             width="300px" height="322px"/>
-                    </div>
-                {{/featured}}
-                <ul class="images">
-                    {{#all}}
-                        <li class="thumbnail">
-                            <img src="{{theme_product-gallery-thumb_url}}" data-image-src="{{theme_mobile-product-gallery_url}}"/>
-                        </li>
-                    {{/all}}
-                </ul>
-                <div class="clearfix"></div>
-            {{/images}}
-        </div>
+        {{includeTemplate 'images_gallery.html'}}
 
-        {{#description}}
-            <div class="description">
-                {{this}}
+        <!--<div class="content">-->
+            {{#description}}
+                <div class="description">
+                    {{this}}
+                </div>
+            {{/description}}
+
+            <div class="buying-options">
+                {{#unitPrice}}
+                    <form action="/cart/add" method="post" class="add">
+                        <div class="add-to-cart">
+                            <input type="hidden" name="product" value="{{../slug}}"/>
+                            <input type="submit" value="{{message 'product.addToCart'}}" class="button"/>
+                        </div>
+                    </form>
+
+                    <div class="price">{{amountCompact}}{{currency.localSymbol}}</div>
+                    <div class="clearfix"></div>
+                {{/unitPrice}}
+                {{^unitPrice}}
+                    This product is not available for sale.
+                {{/unitPrice}}
             </div>
-        {{/description}}
-
-        <div class="buying-options">
-            {{#unitPrice}}
-                <form action="/cart/add" method="post" class="add">
-                    <div class="add-to-cart">
-                        <input type="hidden" name="product" value="{{../slug}}"/>
-                        <input type="submit" value="Add to cart" class="button"/>
-                    </div>
-                </form>
-
-                <div class="price">{{amountCompact}}{{currency.localSymbol}}</div>
-                <div class="clearfix"></div>
-            {{/unitPrice}}
-            {{^unitPrice}}
-                This product is not available for sale.
-            {{/unitPrice}}
-        </div>
-
+        <!--</div>-->
     {{/product}}
 </div>

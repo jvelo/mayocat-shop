@@ -1,0 +1,105 @@
+<ul class="checkout-wizard">
+    <li class="step">{{message 'checkout.yourCart'}}</li>
+    <li class="active step">{{message 'checkout.yourInformation'}}</li>
+    <li class="step">{{message 'checkout.payment'}}</li>
+</ul>
+
+
+<form method="post" action="/checkout" name="checkout">
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.email'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.email}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.email}}
+        <input type="text" name="email" value="{{request.email}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.firstName'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.firstName}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.firstName}}
+        <input type="text" name="firstName" value="{{request.firstName}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.lastName'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.lastName}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.lastName}}
+        <input type="text" name="lastName" value="{{request.lastName}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.addressStreet'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.street}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.street}}
+        <input type="text" name="street" value="{{request.street}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.zipCode'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.zip}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.zip}}
+        <input type="text" name="zip" class="small" value="{{request.street}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.city'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.city}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.city}}
+        <input type="text" name="city" value="{{request.city}}"/>
+    </div>
+
+    <div class="controls">
+        <div class="field">
+            {{message 'checkout.info.country'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.country}}
+            <div class="error">
+                {{message 'checkout.info.thisFieldIsMandatory'}}
+            </div>
+        {{/errors.country}}
+        <input type="text" name="country" class="small" value="{{request.country}}"/>
+    </div>
+
+    <div class="controls continue">
+        <input type="submit" class="button" value="{{message 'checkout.info.validate'}}"/>
+    </div>
+
+</form>

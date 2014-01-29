@@ -7,6 +7,8 @@
  */
 package org.mayocat.shop.catalog.front.resource;
 
+import java.math.RoundingMode;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +37,7 @@ import org.mayocat.image.model.Thumbnail;
 import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.shop.front.builder.PaginationContextBuilder;
 import org.mayocat.shop.front.resources.AbstractWebViewResource;
 import org.mayocat.shop.front.util.WebDataHelper;
 import org.mayocat.shop.front.views.WebView;
@@ -49,6 +52,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.math.IntMath;
 
 import static org.mayocat.shop.front.util.WebDataHelper.isEntityFeaturedImage;
 import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment;
@@ -84,7 +88,16 @@ public class HomeResource extends AbstractProductListWebViewResource implements 
         Integer numberOfProducts =
                 this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
-        context.put("products", createProductListContext(products));
+        Integer totalCount = this.productStore.get().countAllOnShelf();
+        Integer totalPages = IntMath.divide(totalCount, numberOfProducts, RoundingMode.UP);
+        context.put("products",
+                createProductListContext(1, totalPages, products, new PaginationContextBuilder.UrlBuilder()
+                {
+                    public String build(int page)
+                    {
+                        return MessageFormat.format("/products/?page={0}", page);
+                    }
+                }));
 
         // Home page content
 

@@ -140,15 +140,24 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
     {
         String template = getMessageTemplate(key, locale);
         if (template == null) {
-            template = getMessageTemplate(key, getDefaultLocale());
+            template = getMessageTemplate(key, getTenantDefaultLocale());
         }
         if (template == null) {
-            return new String();
+            template = getMessageTemplate(key, getThemeDefaultLocale());
+        }
+        if (template == null) {
+            return null;
         }
         return MessageFormat.format(template, arguments);
     }
 
-    private Locale getDefaultLocale()
+    private Locale getThemeDefaultLocale()
+    {
+        // FIXME: let this be defined in the theme.yml file.
+        return Locale.ENGLISH;
+    }
+
+    private Locale getTenantDefaultLocale()
     {
         return context.getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue();
     }

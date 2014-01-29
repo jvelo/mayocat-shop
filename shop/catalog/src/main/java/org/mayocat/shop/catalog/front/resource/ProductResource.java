@@ -62,9 +62,6 @@ public class ProductResource extends AbstractProductListWebViewResource implemen
     @Inject
     private Provider<ProductStore> productStore;
 
-    @Inject
-    private ThemeFileResolver themeFileResolver;
-
     @GET
     public WebView getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
     {

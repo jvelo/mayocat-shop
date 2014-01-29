@@ -13,7 +13,7 @@
 # - http://www.mayocat.org/documentation for all info about creating themes for Mayocat Shop
 # - http://en.wikipedia.org/wiki/YAML for more information about the YAML format
 # - http://yamllint.com/ to validate your YAML syntax. (Copy-paste your theme.yml in the textarea and click "Go" to
-# check whether or not your file is syntaxically valid or not). One frequent mistake when getting started with the YAML
+# check whether or not your file's syntax is valid or not). One frequent mistake when getting started with the YAML
 # format is to mix tabs and spaces for indentation. We recommend to only indent using the space character, as it is
 # done in this file.
 #
@@ -44,42 +44,60 @@ images:
     name: "Mobile home featured"
     for: product
 
+  # The featured product on the home page on mobile devices
+  medium-featured:
+    width: 481
+    height: 338
+    name: "Medium sized featured image & product page"
+    for: product
+
+
   # The featured product on the home page on other devices
   home-featured:
-    width: 741
+    width: 731
     height: 514
     name: "Home featured"
     for: product
 
-  # The featured product on the home page on mobile devices
+  # A product in a list of products on mobile devices
   product-list:
     width: 230
     height: 154
     name: "Mobile list of products"
     for: product
 
-  # The featured product on the home page on mobile devices
-  product-gallery-thumb:
+  # Thumbnails of image gallery
+  gallery-thumb:
     width: 46
     height: 46
-    name: "Thumbnail on product gallery"
-    for: product
+    name: "Thumbnail on image gallery"
+    for: [product, page]
 
-  # The featured product on the home page on mobile devices
-  mobile-product-gallery:
+  # Gallery of images, mobile
+  mobile-gallery:
     width: 300
     height: 322
-    name: "Mobile product gallery"
+    name: "Mobile image gallery"
+    for: [product, page]
+
+  product-in-cart:
+    width: 147
+    height: 98
+    name: "Product in cart"
     for: product
 
-  # List of products on the home page for mobiles
-  mobile-home-list:
-    width: 230
-    height: 154
-    name: "Mobile home list"
+  mobile-product-in-cart:
+    width: 91
+    height: 61
+    name: "Product in cart for mobiles"
+    for: product
+
 
 # Pagination definitions
 pagination:
   home:
-    itemsPerPage: 6
-    for: product
+    itemsPerPage: 12
+  products:
+    itemsPerPage: 12
+  collection:
+    itemsPerPage: 24

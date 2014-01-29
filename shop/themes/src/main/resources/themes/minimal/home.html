@@ -1,13 +1,13 @@
 <!--
 
-    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+        Copyright (c) 2012, Mayocat <hello@mayocat.org>
 
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<div class="products-list">
+<div class="products-list home {{#products.pagination.nextPage}}has-more{{/products.pagination.nextPage}}">
 
     <!-- Featured product -->
     {{#withFirst products.list}}
@@ -17,7 +17,8 @@
                 {{#images.featured}}
                     <span data-picture data-alt="{{description}}" data-title="{{title}}">
             <span data-src="{{theme_mobile-home-featured_url}}"></span>
-            <span data-src="{{theme_home-featured_url}}" data-media="(min-width: 361px)"></span>
+            <span data-src="{{theme_medium-featured_url}}" data-media="(min-width: 720px)"></span>
+            <span data-src="{{theme_home-featured_url}}" data-media="(min-width: 979px)"></span>
 
             <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
             <noscript>
@@ -26,10 +27,12 @@
             </noscript>
             </span>
                 {{/images.featured}}
-
-                <h2 class="fn">{{title}}</h2>
-                <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
             </a>
+
+            <h2 class="fn"><a rel='product' href="{{url}}">{{title}}</a></h2>
+
+            <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
+
         </div>
     {{/withFirst}}
 
@@ -41,6 +44,14 @@
     {{/each}}
 </div>
 
+{{#products.pagination}}
+    {{#nextPage}}
+        <div class="load-more hidden"
+             data-next-page="{{url}}">
+        </div>
+    {{/nextPage}}
+{{/products.pagination}}
 
-
-
+<script id="product-in-list-template" type="text/x-handlebars-template">
+    {{templateSource 'product_in_list.html'}}
+</script>

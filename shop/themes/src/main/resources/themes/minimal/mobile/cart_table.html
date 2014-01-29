@@ -1,0 +1,104 @@
+{{#if items}}
+    <form method="post" action="/cart/update">
+        <table id="cart-table">
+            {{#items}}
+                <tr class="item" data-index="{{@index}}" data-quantity="{{quantity}}">
+
+                    <td class="thumbnail">
+                        <div>
+                            {{#featuredImage}}
+                            <span data-picture data-alt="{{description}}" data-title="{{title}}">
+                                <span data-src="{{theme_mobile-product-in-cart_url}}"></span>
+                                <span data-src="{{theme_product-in-cart_url}}" data-media="(min-width: 720px)"></span>
+
+                                <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+                                <noscript>
+                                <img src="{{theme_mobile-home-featured_url}}"
+                                     alt="{{description}}"
+                                     title="{{title}}"
+                                     width="300"
+                                     height="211"/>
+                                </noscript>
+                            </span>
+                            {{/featuredImage}}
+                        </div>
+                    </td>
+
+                    <td class="details" colspan="2">
+
+                        <div class="description">
+                            <h3 class="title">{{title}}</h3>
+                        </div>
+
+                        <span class="visible-when-js quantity">
+                            {{message 'cart.item.quantity'}}
+                            <span class="cart-icon minus"></span>
+                            <span class="">{{quantity}}</span>
+                            <span class="cart-icon plus"></span>
+                        </span>
+                        <span class="visible-when-no-js">
+                            <input type="text" size="3" name="quantity_{{@index}}" value="{{quantity}}"/>
+                            <input type="submit" name="update" value="Update" class="update"/>
+                        </span>
+
+                        <div class="removeItem">
+                            <input type="submit" name="remove_{{@index}}" value="Remove" class="visible-when-no-js"/>
+                        </div>
+                        <div class="price">
+                            {{itemTotal.amountCompact}}{{itemTotal.currency.localSymbol}}
+                        </div>
+                        <div class="clearfloats"></div>
+                    </td>
+                </tr>
+            {{/items}}
+
+            {{#hasShipping}}
+                <tr class="shipping item">
+
+                    <td class="no-border">
+                        {{message 'cart.shipping'}}
+                    </td>
+
+                    <td class="quantity">
+
+                        <select name="shipping_option">
+                            {{#shippingOptions}}
+                                <option value="{{id}}" {{#selected}}selected{{/selected}}>{{title}}</option>
+                            {{/shippingOptions}}
+                        </select>
+                        <input type="submit" name="shipping_option" value="Update" class="visible-when-no-js"/>
+
+                    </td>
+                    <td class="itemTotal">
+                            {{shipping.amountCompact}}{{shipping.currency.localSymbol}}
+                    </td>
+                </tr>
+            {{/hasShipping}}
+
+            <tr class="total">
+                <td class="no-border">
+                    <div class="cell-min-height"></div>
+                </td>
+
+                <td class="quantity no-border">
+                    {{message 'cart.total'}}
+                </td>
+                <td class="itemTotal no-border">
+                    <div class="total">
+                        {{#../total}} {{amountCompact}}{{currency.localSymbol}} {{/../total}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="no-border">
+                    <div class="cell-min-height"></div>
+                </td>
+                <td colspan="2" class="no-border itemTotal checkout">
+                    <a href="/checkout/" class="button order">{{message 'cart.order'}}</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+{{else}}
+    {{{message 'cart.empty'}}}
+{{/if}}

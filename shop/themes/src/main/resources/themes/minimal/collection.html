@@ -1,0 +1,43 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="collection">
+    {{#collection}}
+        <h1 class="fn">{{title}}</h1>
+
+        {{#description}}
+            <div class="description">
+                {{this}}
+            </div>
+        {{/description}}
+
+        <div class="products-list {{#products.pagination.nextPage}}has-more{{/products.pagination.nextPage}}">
+
+            <!-- Products -->
+            {{#each products.list}}
+                {{includeTemplate 'product_in_list.html'}}
+            {{/each}}
+        </div>
+
+        {{#products.pagination}}
+            {{#nextPage}}
+                <div class="load-more hidden"
+                     data-next-page="{{url}}">
+                </div>
+            {{/nextPage}}
+        {{/products.pagination}}
+
+        <script id="product-in-list-template" type="text/x-handlebars-template">
+            {{templateSource 'product_in_list.html'}}
+        </script>
+    {{/collection}}
+</div>
+
+
+
