@@ -47,7 +47,7 @@ security:
 general:
   locales:
     main:
-      default: en-US
+      default: en
       configurable: true
       visible: true
     others:
