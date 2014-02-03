@@ -22,7 +22,7 @@ public class ThemeSettings implements ExposedSettings
 {
     @Valid
     @JsonProperty
-    private Configurable<String> active = new Configurable<String>("default");
+    private Configurable<String> active = new Configurable("minimal");
 
     public Configurable<String> getActive()
     {
