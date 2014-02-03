@@ -139,6 +139,11 @@ public class DefaultThemeLocalizationService implements ThemeLocalizationService
     public String getMessage(String key, Locale locale, Map<String, Object> arguments)
     {
         String template = getMessageTemplate(key, locale);
+        if (template == null && !locale.getCountry().equals("")) {
+            // if the message has not been found and the locale is a country variant of a language, try its base
+            // language (like english for the american english variant).
+            template = getMessageTemplate(key, new Locale(locale.getLanguage()));
+        }
         if (template == null) {
             template = getMessageTemplate(key, getTenantDefaultLocale());
         }

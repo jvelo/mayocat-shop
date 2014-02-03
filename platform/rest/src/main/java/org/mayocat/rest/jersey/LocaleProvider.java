@@ -7,7 +7,6 @@
  */
 package org.mayocat.rest.jersey;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 

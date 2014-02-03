@@ -38,6 +38,7 @@ import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -82,39 +83,44 @@ public class LocalizationResource implements Resource
     }
 
     @GET
-    @Path("{locale}")
-    public Response getMessages(@PathParam("locale") Locale locale, @Context Request request)
+    @Path("{languageTag}")
+    public Response getMessages(@PathParam("languageTag") String languageTag, @Context Request request)
     {
-
-        Theme theme = context.getTheme();
-
-        java.nio.file.Path propertiesPath = theme.getPath()
-                .resolve(LOCALIZATION_DIRECTORY)
-                .resolve(locale.toLanguageTag() + PROPERTIES_FILE_EXTENSION);
-
-        File file = null;
-
         try {
-            switch (theme.getType()) {
-                case FILE_SYSTEM:
-                    file = propertiesPath.toFile();
-                    break;
-                case CLASSPATH:
-                    URI uri = Resources.getResource(propertiesPath.toString()).toURI();
+            Optional<File> file = getForLanguageTag(languageTag);
+            if (!file.isPresent()) {
+                Locale languageAsLocale = Locale.forLanguageTag(languageTag);
+                if (!languageAsLocale.getCountry().equals("")) {
+                    // Try without the country variant
+                    file = getForLanguageTag(languageAsLocale.getLanguage());
+                }
 
-                    if (uri.getScheme().equals("jar")) {
-                        // Not supported for now
-                        return Response.status(Response.Status.NOT_FOUND).build();
+                if (!file.isPresent()) {
+                    // Try for the shop's default locale
+                    Locale defaultLocale =
+                            context.getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue();
+                    file = getForLanguageTag(defaultLocale.toLanguageTag());
+                    if (!file.isPresent() && !defaultLocale.getCountry().equals("")) {
+                        file = getForLanguageTag(defaultLocale.getLanguage());
                     }
+                }
 
-                    file = new File(uri);
-                    break;
+                if (!file.isPresent()) {
+                    // Try english at last
+                    file = getForLanguageTag(Locale.ENGLISH.toLanguageTag());
+
+                    // Then surrender
+                }
             }
 
-            String tag = Files.hash(file, Hashing.murmur3_128()).toString();
+            if (!file.isPresent()) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            String tag = Files.hash(file.get(), Hashing.murmur3_128()).toString();
             EntityTag eTag = new EntityTag(tag);
 
-            URL url = file.toURI().toURL();
+            URL url = file.get().toURI().toURL();
             long lastModified = ResourceURL.getLastModified(url);
             if (lastModified < 1) {
                 // Something went wrong trying to get the last modified time: just use the current time
@@ -128,17 +134,53 @@ public class LocalizationResource implements Resource
             Response.ResponseBuilder builder = request.evaluatePreconditions(new Date(lastModified), eTag);
 
             if (builder == null) {
-                Properties properties = Properties.Factory.getInstance(file, Charsets.UTF_8);
+                Properties properties = Properties.Factory.getInstance(file.get(), Charsets.UTF_8);
                 builder = Response.ok(properties.getPropertyMap());
             }
 
             return builder.cacheControl(cacheControl).lastModified(new Date(lastModified)).build();
-        } catch (URISyntaxException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (FileNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
             return Response.serverError().build();
+        }
+    }
+
+    private Optional<File> getForLanguageTag(String languageTag)
+    {
+        File file = null;
+
+        java.nio.file.Path propertiesPath = context.getTheme().getPath()
+                .resolve(LOCALIZATION_DIRECTORY)
+                .resolve(languageTag + PROPERTIES_FILE_EXTENSION);
+
+        try {
+            switch (context.getTheme().getType()) {
+                case FILE_SYSTEM:
+                    file = propertiesPath.toFile();
+                    break;
+                case CLASSPATH:
+                    try {
+                        URI uri = Resources.getResource(propertiesPath.toString()).toURI();
+
+                        if (uri.getScheme().equals("jar")) {
+                            // Not supported for now
+                            return Optional.absent();
+                        }
+
+                        file = new File(uri);
+                    } catch (IllegalArgumentException e) {
+                        // Not found
+                    }
+                    break;
+            }
+            if (file == null || !file.isFile()) {
+                return Optional.absent();
+            }
+
+            return Optional.of(file);
+        } catch (URISyntaxException e) {
+            return Optional.absent();
         }
     }
 }
