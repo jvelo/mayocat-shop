@@ -10,6 +10,11 @@
 
     <name>Mayocat Shop - Themes</name>
     <description>Bundled themes</description>
+
+    <properties>
+      <license.skip>true</license.skip>
+    </properties>
+
     <build>
         <plugins>
             <!-- Assembly -->
@@ -31,19 +36,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-              <groupId>com.mycila</groupId>
-              <artifactId>license-maven-plugin</artifactId>
-              <configuration>
-                <excludes>
-                  <exclude>**/.idea/**</exclude>
-                  <exclude>**/vendor/**</exclude>
-                  <exclude>**/*.min.js</exclude>
-                  <exclude>**/handlebars.js</exclude>
-                  <exclude>**/normalize.css</exclude>
-                </excludes>
-              </configuration>
             </plugin>
         </plugins>
     </build>
