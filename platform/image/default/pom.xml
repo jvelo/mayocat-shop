@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-image</artifactId>
-        <version>0.11-SNAPSHOT</version>
+        <version>0.11.0</version>
     </parent>
     <artifactId>mayocat-platform-image-default</artifactId>
     <packaging>jar</packaging>
