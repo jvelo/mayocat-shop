@@ -27,6 +27,7 @@ import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.event.EventListener;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
+import org.mayocat.jersey.JERSEY920WorkaroundServletFilter;
 import org.mayocat.lifecycle.Managed;
 import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
@@ -75,6 +76,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     protected abstract void registerComponents(C configuration, Environment environment);
 
     private List<Class> requestFilters = Lists.newArrayList();
+
     private List<Class> responseFilters = Lists.newArrayList();
 
     public static Set<String> getStaticPaths()
@@ -108,7 +110,10 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         registerTasks(environment);
         registerManagedServices(environment);
 
-        // Default filters
+        // NOTE: remove this when we move to Jersey 2.0 or something other than Jersey
+        environment.addFilter(new JERSEY920WorkaroundServletFilter(), "/*");
+
+        // Default Jersey filters
         addRequestFilter(SessionScopeCookieContainerFilter.class);
         addRequestFilter(FlashScopeCookieContainerFilter.class);
         addRequestFilter(LocalizationContainerFilter.class);
