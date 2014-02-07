@@ -150,7 +150,7 @@ angular.module('mayocat.image', ['ngResource'])
                     });
                 });
                 if (data.length > 0) {
-                    $http.put($scope.image.href + "/thumbnails/", data)
+                    $http.put($scope.image._href + "/thumbnails/", data)
                         .success(function(data, status) {
 
                             if (status < 400) {

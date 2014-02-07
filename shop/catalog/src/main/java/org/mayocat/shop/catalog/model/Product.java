@@ -82,7 +82,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     private Optional<String> type = Optional.absent();
 
     @DoNotIndex
-    private List<UUID> features = Lists.newArrayList();
+    private List<UUID> features;
 
     @DoNotIndex
     private boolean virtual = false;

@@ -302,7 +302,7 @@
                 require: 'ngModel',
                 restrict: 'E',
                 template: '<div class="input-append">' +
-                    '<input ng-model="amount" class="span2" type="text">' +
+                    '<input ng-model="amount" class="span2" placeholder="{{placeholder}}" type="text">' +
                     '<span class="add-on">{{currencyCode}}</span>' +
                     '</div>',
                 controller: function ($scope) {
@@ -330,6 +330,7 @@
                         });
                     });
                     controller.$render = function () {
+                        $scope.placeholder = attrs.placeholder;
                         $scope.amount = "" + controller.$viewValue;
                         $scope.format();
                     };

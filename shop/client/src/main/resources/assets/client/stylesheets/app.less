@@ -75,6 +75,38 @@
   }
 }
 
+/* Products */
+
+ul.variants li {
+  position: relative;
+}
+
+ul.variants li.variant .title {
+  font-size: 14px;
+}
+
+ul.variants li:last-child {
+  margin-bottom: 10px;
+}
+
+ul.variants li .visible-when-hover.link {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+ul.variants li small {
+  color: @fontLightColor;
+}
+
+ul.variants li small > span:after {
+  content: " \2013 ";
+}
+
+ul.variants li small > span:last-child:after {
+  content: '';
+}
+
 /* Addons */
 
 addon-string {

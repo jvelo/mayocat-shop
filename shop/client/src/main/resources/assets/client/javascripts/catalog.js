@@ -25,7 +25,7 @@ angular.module('catalog', [])
                     }
                     else {
                         $http.get('/api/products/?filter=uncategorized').success(function (data) {
-                            callback && callback.call(this, data);
+                            callback && callback.call(this, data.products);
                         });
                     }
                 });

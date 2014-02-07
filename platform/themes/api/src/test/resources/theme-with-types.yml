@@ -3,7 +3,7 @@ name: Pagination theme
 productTypes:
   shirt:
     name: T-Shirt
-    variants:
+    features:
       size:
         name: Size
         keys:

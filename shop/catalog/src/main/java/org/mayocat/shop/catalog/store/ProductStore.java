@@ -48,6 +48,8 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 
     List<Product> findVariants(Product product);
 
+    Product findVariant(Product product, String variantSlug);
+
     Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException;
 
     Integer countAllOnShelf();

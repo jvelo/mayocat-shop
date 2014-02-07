@@ -15,8 +15,10 @@
          */
         global: {
             actions: {
-                add: "Add"
-            }
+                add: "Add",
+                close: "Close"
+            },
+            conflict: "Conflict"
         },
 
         /**
@@ -197,7 +199,7 @@
                 weight: "Weight",
                 stock: "Stock",
 
-                uncategorized: "Uncategorized",
+                uncategorized: "Not categorized",
                 description: "Description"
             },
 
@@ -241,6 +243,18 @@
             alert: {
                 confirmProductDeletion: "Please confirm you want to delete this product. There's no coming back!",
                 confirmCollectionDeletion: "Please confirm you want to delete this collection. There's no coming back!"
+            },
+
+            variants: {
+                title: "Variants",
+                price: "Price",
+                stock: "Stock",
+                add: "Add variant",
+                edit: "Edit",
+                create: "Create variant",
+                edition: "Variant: {variantTitle}",
+                update: "Update variant",
+                conflict: "This variant already exists."
             }
         },
 

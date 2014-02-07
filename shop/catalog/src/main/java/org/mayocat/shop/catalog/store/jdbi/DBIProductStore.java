@@ -64,7 +64,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     public Product create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(product.getSlug(), getTenant()) != null) {
+        if (this.dao.findBySlug(product.getSlug(), getTenant(), product.getParentId()) != null) {
             throw new EntityAlreadyExistsException();
         }
 
@@ -105,7 +105,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     {
         this.dao.begin();
 
-        Product originalProduct = this.findBySlug(product.getSlug());
+        Product originalProduct = this.findBySlug(product.getSlug(), product.getParentId());
 
         if (originalProduct == null) {
             this.dao.commit();
@@ -224,6 +224,20 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return this.dao.countAll(PRODUCT_TABLE_NAME, getTenant());
     }
 
+    public Product findBySlug(String slug, UUID parentId)
+    {
+        if (parentId == null) {
+            return findBySlug(slug);
+        }
+
+        Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant(), parentId);
+        if (product != null) {
+            List<Addon> addons = this.dao.findAddons(product);
+            product.setAddons(addons);
+        }
+        return product;
+    }
+
     public Product findBySlug(String slug)
     {
         Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant());
@@ -308,7 +322,19 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     @Override
     public List<Product> findVariants(Product product)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return AddonsHelper.withAddons(this.dao.findAllVariants(product), this.dao);
+    }
+
+    @Override
+    public Product findVariant(Product product, final String variantSlug)
+    {
+        return FluentIterable.from(findVariants(product)).filter(new Predicate<Product>()
+        {
+            @Override public boolean apply(@Nullable Product input)
+            {
+                return input.getSlug().equals(variantSlug);
+            }
+        }).first().orNull();
     }
 
     @Override

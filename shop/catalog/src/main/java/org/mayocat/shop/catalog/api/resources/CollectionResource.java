@@ -295,7 +295,7 @@ public class CollectionResource implements Resource
         List<EntityReferenceRepresentation> collectionsReferences = Lists.newArrayList();
         for (Product product : products) {
             collectionsReferences.add(new EntityReferenceRepresentation(
-                    ProductResource.PATH + ProductResource.SLASH + product.getSlug(), product.getSlug(), product.getTitle()
+                    "/api/products/" + product.getSlug(), product.getSlug(), product.getTitle()
             ));
         }
         return new CollectionRepresentation(collection, collectionsReferences);

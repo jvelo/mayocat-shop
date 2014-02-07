@@ -138,3 +138,13 @@ deleteProductFromCollections() ::= <<
     FROM   collection_product
     WHERE  collection_product.product_id = :id
 >>
+
+
+findAllVariants() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON product.entity_id = entity.id
+    WHERE  entity.parent_id = :product.id
+    ORDER  BY product.position ASC
+>>

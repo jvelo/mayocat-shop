@@ -5,6 +5,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+
+/* Hoverable list */
+
+ul li.hoverable:hover {
+  background-color: @backgroundLight;
+  cursor: pointer;
+}
+
+ul li.hoverable .visible-when-hover {
+  visibility: hidden;
+}
+
+ul li.hoverable:hover .visible-when-hover {
+  visibility: visible;
+}
+
  /* Thumbnail editor */
 
 .editImage {

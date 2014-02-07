@@ -125,6 +125,11 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override public Product findVariant(Product product, String variantSlug)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     @Override public Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.

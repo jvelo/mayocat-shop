@@ -2,19 +2,21 @@ package org.mayocat.shop.catalog.api.v1.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.google.common.base.Optional
 import groovy.transform.TypeChecked
 import org.hibernate.validator.constraints.NotEmpty
-import org.mayocat.image.model.Image
+import org.mayocat.addons.model.AddonField
+import org.mayocat.addons.model.BaseProperties
+import org.mayocat.addons.util.AddonUtils
+import org.mayocat.configuration.PlatformSettings
+import org.mayocat.model.Addon
 import org.mayocat.shop.catalog.model.Product
+import org.mayocat.theme.ThemeDefinition
 
 /**
  * API object for product APIs
  *
- * See:
- * <ul>
- * <li><code>/api/products/{slug}</code>
- * {@link org.mayocat.shop.catalog.api.v1.ProductApi#getProductV2(java.lang.String)}</li>
- * </ul>
+ * See {@link org.mayocat.shop.catalog.api.v1.ProductApi}
  *
  * @version $Id$
  */
@@ -33,20 +35,29 @@ class ProductApiObject extends BaseApiObject
 
     Boolean onShelf;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal price;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal weight;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer stock;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String type;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    List<AddonApiObject> addons
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _relationships;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<Locale, Map<String, Object>> _localized;
 
     @JsonIgnore
     def withProduct(Product product)
@@ -59,26 +70,47 @@ class ProductApiObject extends BaseApiObject
             price = product.price
             weight = product.weight
             stock = product.stock
+
             type = product.type.orNull()
             model = product.model.orNull()
+
+            _localized = product.localizedVersions
         }
     }
 
     @JsonIgnore
-    Product toProduct()
+    Product toProduct(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
     {
         def product = new Product()
         product.with {
-            slug = this.slug
             title = this.title
             description = this.description
             onShelf = this.onShelf
             price = this.price
             weight = this.weight
             stock = this.stock
-            type = this.type
-            model = this.model
+
+            setModel this.model
+            setType this.type
+
+            setLocalizedVersions this._localized
         }
+
+        if (addons) {
+            List<Addon> productAddons = []
+            addons.each({ AddonApiObject addon ->
+                Addon productAddon = addon.toAddon()
+                Optional<AddonField> definition = findAddonDefinition(productAddon, platformSettings, themeDefinition)
+                if (definition.isPresent() && !definition.get().properties.containsKey(BaseProperties.READ_ONLY)) {
+                    // - Addons for which no definition can be found are ignored
+                    // - Addons declared "Read only" are ignored : they can't be updated via this API !
+                    productAddons << productAddon
+                }
+            })
+
+            product.addons = productAddons
+        }
+
         product
     }
 
@@ -124,5 +156,52 @@ class ProductApiObject extends BaseApiObject
         if (featuredImage) {
             _embedded.featuredImage = featuredImage
         }
+    }
+
+    @JsonIgnore
+    def withEmbeddedVariants(List<Product> variants)
+    {
+        if (_embedded == null) {
+            _embedded = [:]
+        }
+
+        List<ProductApiObject> variantApiObjects = []
+
+        variants.each({ Product variant ->
+            ProductApiObject object = new ProductApiObject([
+                    _href: "/api/products/${this.slug}/variants/${variant.slug}"
+            ])
+            object.withProduct(variant)
+            variantApiObjects << object
+        })
+
+        _embedded.variants = variantApiObjects
+    }
+
+    @JsonIgnore
+    def withAddons(List<Addon> productAddons)
+    {
+        if (!addons) {
+            addons = []
+        }
+
+        productAddons.each({ Addon addon ->
+            addons << AddonApiObject.forAddon(addon)
+        })
+    }
+
+    @JsonIgnore
+    private Optional<AddonField> findAddonDefinition(Addon addonToFind, PlatformSettings platformSettings,
+            Optional<ThemeDefinition> themeDefinition)
+    {
+        // 1. Find in platform
+        def option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.addons);
+
+        if (!option.isPresent() && themeDefinition.isPresent()) {
+            // 2. Find in theme
+            option = AddonUtils.findAddonDefinition(addonToFind, themeDefinition.get().addons);
+        }
+
+        return option;
     }
 }

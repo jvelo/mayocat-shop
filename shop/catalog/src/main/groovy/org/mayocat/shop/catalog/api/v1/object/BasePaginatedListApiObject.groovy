@@ -1,0 +1,81 @@
+package org.mayocat.shop.catalog.api.v1.object
+
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import groovy.text.SimpleTemplateEngine
+import groovy.transform.TypeChecked
+
+/**
+ * Base class for paginated lists api objects : handles the creation of the proper links to pages
+ *
+ * @version $Id$
+ */
+@TypeChecked
+class BasePaginatedListApiObject
+{
+    @JsonIgnore
+    Pagination pagination;
+
+    @JsonIgnore
+    Map<String, LinkApiObject> _links
+
+    // Shortcut to ._links.self.href
+    @JsonIgnore
+    String _href
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("_href")
+    String getHref()
+    {
+        getLinks()
+        _href
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("_links")
+    Map<String, LinkApiObject> getLinks()
+    {
+        if (_links == null) {
+
+            _links = [:]
+
+            if (pagination) {
+                def templateEngine = new SimpleTemplateEngine()
+
+                if (!_href) {
+                    _href = templateEngine.createTemplate(pagination.urlTemplate as String).make([
+                            offset: pagination.offset,
+                            numberOfItems: pagination.numberOfItems
+                    ]).toString()
+                }
+
+                if (pagination.offset + pagination.numberOfItems < pagination.totalItems) {
+                    // there is a next page
+                    _links.nextPage = new LinkApiObject([
+                        href: templateEngine.createTemplate(pagination.urlTemplate as String).make([
+                                offset: pagination.offset + pagination.numberOfItems,
+                                numberOfItems: pagination.numberOfItems
+                        ]).toString()
+                    ])
+                }
+
+                if (pagination.offset > 0) {
+                    // there is a next page
+                    _links.previousPage = new LinkApiObject([
+                            href: templateEngine.createTemplate(pagination.urlTemplate as String).make([
+                                    offset: pagination.offset - pagination.numberOfItems,
+                                    numberOfItems: pagination.numberOfItems
+                            ]).toString()
+                    ])
+                }
+            }
+
+            if (_href != null) {
+                _links.self = new LinkApiObject([href: _href])
+            }
+        }
+
+        _links
+    }
+}

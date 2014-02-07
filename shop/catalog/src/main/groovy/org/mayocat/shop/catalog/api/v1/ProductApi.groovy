@@ -9,47 +9,36 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.google.common.collect.Lists
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.TypeChecked
-import org.mayocat.addons.api.representation.AddonRepresentation
+import org.mayocat.Slugifier
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
 import org.mayocat.image.store.ThumbnailStore
-import org.mayocat.model.Addon
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.representations.EntityReferenceRepresentation
-import org.mayocat.rest.representations.ImageRepresentation
-import org.mayocat.rest.resources.AbstractAttachmentResource
-import org.mayocat.rest.support.AddonsRepresentationUnmarshaller
-import org.mayocat.shop.catalog.api.representations.ProductRepresentation
-import org.mayocat.shop.catalog.api.resources.CollectionResource
-import org.mayocat.shop.catalog.api.v1.object.FeatureApiObject
-import org.mayocat.shop.catalog.api.v1.object.ImageApiObject
-import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
-import org.mayocat.shop.catalog.api.v1.object.VariantApiObject
+import org.mayocat.shop.catalog.api.v1.object.*
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
-import org.mayocat.shop.catalog.meta.ProductEntity
-import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.store.*
-import org.mayocat.theme.TypeDefinition
 import org.mayocat.theme.FeatureDefinition
+import org.mayocat.theme.ThemeDefinition
+import org.mayocat.theme.TypeDefinition
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
+import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
-import javax.validation.Valid
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -60,30 +49,44 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @TypeChecked
-public class ProductApi extends AbstractAttachmentResource implements Resource
+class ProductApi implements Resource, Initializable
 {
-    public static final String PATH = Resource.API_ROOT_PATH + ProductEntity.PATH;
+    @Inject
+    private Provider<ProductStore> productStore
 
     @Inject
-    private Provider<ProductStore> productStore;
+    private Provider<CollectionStore> collectionStore
 
     @Inject
-    private Provider<CollectionStore> collectionStore;
+    private Provider<ThumbnailStore> thumbnailStore
 
     @Inject
-    private Provider<ThumbnailStore> thumbnailStore;
+    private WebContext webContext
 
     @Inject
-    private AddonsRepresentationUnmarshaller addonsRepresentationUnmarshaller;
+    private CatalogSettings catalogSettings
 
     @Inject
-    private WebContext webContext;
+    private PlatformSettings platformSettings
 
     @Inject
-    private CatalogSettings catalogSettings;
+    private Provider<AttachmentStore> attachmentStore
 
     @Inject
-    private Logger logger;
+    private Slugifier slugifier
+
+    @Inject
+    private Logger logger
+
+    @Delegate
+    private AttachmentApiDelegate attachmentApi
+
+    void initialize() {
+        attachmentApi = new AttachmentApiDelegate([
+                attachmentStore: attachmentStore,
+                slugifier: slugifier
+        ])
+    }
 
     @GET
     @Timed
@@ -92,11 +95,43 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
                     @QueryParam("offset") @DefaultValue("0") Integer offset,
                     @QueryParam("filter") @DefaultValue("") String filter)
     {
+        List<ProductApiObject> productList = [];
+        def products;
+        def totalItems;
+
         if (filter.equals("uncategorized")) {
-            this.wrapInRepresentations(this.productStore.get().findOrphanProducts());
+            products = this.productStore.get().findOrphanProducts();
+            totalItems = products.size()
         } else {
-            this.wrapInRepresentations(this.productStore.get().findAll(number, offset));
+            products = productStore.get().findAll(number, offset)
+            totalItems = productStore.get().countAll()
         }
+
+        products.each({ Product product ->
+            def productApiObject = new ProductApiObject([
+                    _href: "/api/products/${product.slug}/"
+            ])
+            productApiObject.withProduct(product)
+
+            if (product.addons.isLoaded()) {
+                productApiObject.withAddons(product.addons.get())
+            }
+
+            productList << productApiObject
+        })
+
+        def productListResult = new ProductListApiObject([
+                pagination: new Pagination([
+                    numberOfItems: number,
+                    returnedItems: productList.size(),
+                    offset: offset,
+                    totalItems: totalItems,
+                    urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}'
+                ]),
+                products: productList
+        ])
+
+        productListResult
     }
 
     @Path("{slug}")
@@ -113,12 +148,27 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
         def images = this.getImages(slug)
 
         def productApiObject = new ProductApiObject([
-            _href: "/api/products/${slug}/"
+            _href: "/api/products/${slug}/",
+            _links: [
+                self: new LinkApiObject([ href: "/api/products/${slug}/" ]),
+                images: new LinkApiObject([ href: "/api/products/${slug}/images" ])
+            ]
         ])
 
         productApiObject.withProduct(product)
         productApiObject.withCollectionRelationships(collections)
+        // TODO: have an images link in _links
         productApiObject.withEmbeddedImages(images)
+
+        if (product.addons.isLoaded()) {
+            productApiObject.withAddons(product.addons.get())
+        }
+
+        if (product.type.isPresent()) {
+            // TODO: have a variants link in _links
+            productApiObject.withEmbeddedVariants(productStore.get().findVariants(product))
+            productApiObject._links.variants = new LinkApiObject([ href: "/api/products/${slug}/variants" ])
+        }
 
         productApiObject;
     }
@@ -133,7 +183,7 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
             throw new WebApplicationException(Response.status(404).build());
         }
 
-        for (Attachment attachment : this.getAttachmentStore().findAllChildrenOf(product,
+        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(product,
                 ["png", "jpg", "jpeg", "gif"] as List))
         {
             def thumbnails = thumbnailStore.get().findAll(attachment);
@@ -142,7 +192,7 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
             def imageApiObject = new ImageApiObject()
             imageApiObject.withImage(image)
 
-            if (product.getFeaturedImageId() != null && product.getFeaturedImageId().equals(attachment.getId())) {
+            if (product.featuredImageId != null && product.featuredImageId.equals(attachment.id)) {
                 imageApiObject.featured = true
             }
 
@@ -159,12 +209,12 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
     def detachImage(@PathParam("slug") String slug,
                     @PathParam("imageSlug") String imageSlug)
     {
-        def attachment = getAttachmentStore().findBySlug(imageSlug);
+        def attachment = attachmentStore.get().findBySlug(imageSlug);
         if (attachment == null) {
             return Response.status(404).build();
         }
         try {
-            getAttachmentStore().detach(attachment);
+            attachmentStore.get().detach(attachment);
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(404).build();
@@ -176,17 +226,19 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
     @POST
     @Consumes(MediaType.WILDCARD)
     def updateImage(@PathParam("slug") String slug,
-                    @PathParam("imageSlug") String imageSlug, ImageRepresentation image)
+                    @PathParam("imageSlug") String imageSlug, ImageApiObject image)
     {
-        def attachment = getAttachmentStore().findBySlug(imageSlug);
+        def attachment = attachmentStore.get().findBySlug(imageSlug);
         if (attachment == null) {
             return Response.status(404).build();
         }
         try {
-            attachment.setTitle(image.getTitle());
-            attachment.setDescription(image.getDescription());
-            attachment.setLocalizedVersions(image.getLocalizedVersions());
-            getAttachmentStore().update(attachment);
+            attachment.with {
+                setTitle image.title
+                setDescription image.description
+                setLocalizedVersions image._localized
+            }
+            attachmentStore.get().update(attachment);
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(404).build();
@@ -211,15 +263,14 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
             return Response.status(404).build();
         }
 
-        def created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
-                Optional.of(product.getId()));
+        def created = this.addAttachment(uploadedInputStream, fileDetail.fileName, title, description,
+                Optional.of(product.id));
 
-        if (product.getFeaturedImageId() == null && AttachmentUtils.isImage(fileDetail.getFileName())
-                && created != null) {
+        if (product.featuredImageId == null && AttachmentUtils.isImage(fileDetail.fileName) && created != null) {
 
             // If this is an image and the product doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
-            product.setFeaturedImageId(created.getId());
+            product.featuredImageId = created.id;
 
             try {
                 this.productStore.get().update(product);
@@ -262,37 +313,39 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
     @POST
     @Timed
     @Authorized
-    def updateProduct(@PathParam("slug") String slug,
-                      @Valid ProductRepresentation updatedProductRepresentation)
+    def updateProduct(@PathParam("slug") String slug, ProductApiObject productApiObject)
     {
         try {
             Product product = this.productStore.get().findBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
             } else {
-                product.with {
-                    setId(product.getId());
-                    setTitle(updatedProductRepresentation.getTitle());
-                    setDescription(updatedProductRepresentation.getDescription());
-                    setModel(updatedProductRepresentation.getModel());
-                    setOnShelf(updatedProductRepresentation.getOnShelf());
-                    setPrice(updatedProductRepresentation.getPrice());
-                    setWeight(updatedProductRepresentation.getWeight());
-                    setStock(updatedProductRepresentation.getStock());
-                    setLocalizedVersions(updatedProductRepresentation.getLocalizedVersions());
-                    setAddons(addonsRepresentationUnmarshaller.unmarshall(updatedProductRepresentation.getAddons()));
-                    setType(updatedProductRepresentation.getType());
+
+                // Check if virtual flag must be removed
+                if (!Strings.isNullOrEmpty(productApiObject.type) && product.type.isPresent()) {
+                    // It had a type but no it hasn't
+                    product.virtual = false;
                 }
 
-                // Featured image
-                if (updatedProductRepresentation.getFeaturedImage() != null) {
-                    ImageRepresentation representation = updatedProductRepresentation.getFeaturedImage();
+                def id = product.id
+                product = productApiObject.toProduct(platformSettings,
+                        Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
+                // ID and slugs are not update-able
+                product.id = id
+                product.slug = slug
+
+                if (productApiObject._embedded.get("featuredImage")) {
+
+                    // FIXME:
+                    // This should be done via the {slug}/images/ API instead
+
+                    ImageApiObject featured = productApiObject._embedded.get("featuredImage") as ImageApiObject
 
                     Attachment featuredImage =
-                        this.getAttachmentStore().findBySlugAndExtension(representation.getSlug(),
-                                representation.getFile().getExtension());
-                    if (featuredImage != null) {
-                        product.setFeaturedImageId(featuredImage.getId());
+                        this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension);
+
+                    if (featuredImage) {
+                        product.featuredImageId = featuredImage.id
                     }
                 }
 
@@ -302,9 +355,6 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
             return Response.ok().build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
@@ -315,7 +365,7 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
     def deleteProduct(@PathParam("slug") String slug)
     {
         try {
-            Product product = this.productStore.get().findBySlug(slug);
+            def product = this.productStore.get().findBySlug(slug);
 
             if (product == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -344,32 +394,24 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
     @POST
     @Timed
     @Authorized
-    def createProduct(@Valid ProductRepresentation productRepresentation)
+    def createProduct(ProductApiObject productApiObject)
     {
         try {
-            Product product = new Product();
-            product.with {
-                setSlug(productRepresentation.getSlug());
-                setTitle(productRepresentation.getTitle());
+            def product = productApiObject.toProduct(platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
 
-                if (Strings.isNullOrEmpty(getSlug())) {
-                    setSlug(this.getSlugifier().slugify(getTitle()));
-                }
-
-                setModel(productRepresentation.getModel());
-                setDescription(productRepresentation.getDescription());
-                setOnShelf(productRepresentation.getOnShelf());
-                setPrice(productRepresentation.getPrice());
-                setStock(productRepresentation.getStock());
+            if (Strings.isNullOrEmpty(product.slug)) {
+                product.slug = slugifier.slugify product.title
             }
 
-            productStore.get().create(product);
-            Product created = productStore.get().findBySlug(product.getSlug());
+            def created = productStore.get().create(product);
 
             // Respond with a created URI relative to this API URL.
             // This will add a location header like http://host/api/<version>/product/my-created-product
-            return Response.created(new URI(created.getSlug())).build();
-        } catch (InvalidEntityException e) {
+            return Response.created(new URI(created.slug)).build();
+        }
+
+        catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
@@ -377,6 +419,30 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e);
         }
+    }
+
+    @GET
+    @Path("{slug}/variants/")
+    def getProductVariants(@PathParam("slug") String slug)
+    {
+        def product = productStore.get().findBySlug(slug)
+        if (!product) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+
+        def variants = productStore.get().findVariants(product)
+
+        List<ProductApiObject> variantApiObjects = []
+
+        variants.each({ Product variant ->
+            ProductApiObject object = new ProductApiObject([
+                    _href: "/api/products/${product.slug}/variants/${variant.slug}"
+            ])
+            object.withProduct(variant)
+            variantApiObjects << object
+        })
+
+        variantApiObjects
     }
 
     @POST
@@ -391,7 +457,7 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
 
         if (!product.getType().isPresent()) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity([reason: "Cannot create a variant for a product which type not defined"]).build()
+                    .entity([reason: "Cannot create a variant for a product which type is not defined"]).build()
         }
 
         String type = product.type.get()
@@ -476,7 +542,9 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
         }
 
         try {
-            productStore.get().create(productVariant)
+            Product created = productStore.get().create(productVariant)
+
+            return Response.created(new URI(created.slug)).build();
         }
         catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT).entity([reason: "Variant already exists"]).build()
@@ -486,34 +554,36 @@ public class ProductApi extends AbstractAttachmentResource implements Resource
 
     @POST
     @Authorized
-    @Path("{slug}/features/")
-    def createFeature(FeatureApiObject featuresApiObject)
+    @Path("{slug}/variants/{variantSlug}")
+    def updateVariant(@PathParam("slug") String slug, @PathParam("variantSlug") String variantSlug,
+            VariantApiObject variantApiObject)
     {
-        System.out.println("Slug: " + featuresApiObject.slug);
-        System.out.println("Title: " + featuresApiObject.title);
-    }
+        try {
+            Product product = this.productStore.get().findBySlug(slug);
+            if (product == null) {
+                return Response.status(404).build();
+            } else {
 
-    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                Product variant = productStore.get().findVariant(product, variantSlug);
 
-    def wrapInRepresentations(List<Product> products)
-    {
-        List<ProductRepresentation> result = new ArrayList<ProductRepresentation>();
-        for (Product product : products) {
-            result.add(this.wrapInRepresentation(product));
-        }
-        return result;
-    }
+                if (variant == null) {
+                    return Response.status(404).build();
+                } else {
+                    def id = variant.id
+                    variant = variantApiObject.toProduct(platformSettings,
+                            Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
+                    // ID and slugs are not update-able
+                    variant.id = id
+                    variant.slug = variantSlug
+                    variant.parentId = product.id
 
-    def wrapInRepresentation(Product product)
-    {
-        ProductRepresentation pr = new ProductRepresentation(product);
-        if (product.getAddons().isLoaded()) {
-            List<AddonRepresentation> addons = Lists.newArrayList();
-            for (Addon a : product.getAddons().get()) {
-                addons.add(new AddonRepresentation(a));
+                    this.productStore.get().update(variant);
+                }
             }
-            pr.setAddons(addons);
+
+            return Response.ok().build();
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         }
-        return pr;
     }
 }

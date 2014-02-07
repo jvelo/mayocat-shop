@@ -12,8 +12,10 @@
 
         global: {
             actions: {
-                add: "Ajouter"
-            }
+                add: "Ajouter",
+                close: "Fermer"
+            },
+            conflict: "Conflit"
         },
         entity: {
             misc: {
@@ -210,6 +212,18 @@
             alert: {
                 confirmProductDeletion: "Veuillez confirmer la suppression de ce produit. Cette opération ne peut pas être annulée !",
                 confirmCollectionDeletion: "Veuillez confirmer la suppression de cette collection. Cette opération ne peut pas être annulée !"
+            },
+
+            variants: {
+                title: "Déclinaisons",
+                price: "Prix",
+                stock: "Stock",
+                add: "Ajouter une déclinaison",
+                edit: "Editer",
+                create: "Créer la déclinaison",
+                edition: "Déclinaison: {variantTitle}",
+                update: "Mettre à jour",
+                conflict: "Cette déclinaison existe déjà."
             }
         },
 

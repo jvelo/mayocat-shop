@@ -102,6 +102,14 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
+        "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "WHERE entity.slug = :slug AND entity.parent_id = :parent AND entity.type = '<type>' AND tenant_id = :tenant.id"
+    )
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant,
+            @Bind("parent") UUID parent);
+
+    @SqlQuery
+    (
         "SELECT entity.*, <type>.*, localization_data(entity_id) " +
         "FROM entity " +
         "INNER JOIN <type> ON entity.id = <type>.entity_id " +

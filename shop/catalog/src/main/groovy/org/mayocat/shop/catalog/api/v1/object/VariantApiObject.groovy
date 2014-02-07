@@ -1,13 +1,10 @@
 package org.mayocat.shop.catalog.api.v1.object
-
 /**
  * Represents a variant API object
  *
  * @version $Id$
  */
-class VariantApiObject
+class VariantApiObject extends ProductApiObject
 {
-    final String slug;
-
-    final Map<String, String> features;
+    Map<String, String> features;
 }

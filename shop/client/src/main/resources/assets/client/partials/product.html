@@ -30,10 +30,10 @@
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
-                    <li ng-repeat="image in product.images">
+                    <li ng-repeat="image in product._embedded.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <span class="featured-star" ng-class="{featured: image.featured}"
@@ -154,25 +154,28 @@
         </div>
 
         <!-- Variants -->
-        <div class="block" ng-show="!isNew() && keys(types[product.type].variants).length > 0">
-            <h3>Attributes</h3>
+        <div class="block" ng-show="!isNew() && hasTypes && !!product.type">
+            <h3>{{'product.variants.title'| translate}}</h3>
 
-            <div ng-repeat="variant in keys(types[product.type].variants)">
-                <strong>{{types[product.type].variants[variant].name}}</strong>
+            <ul class="variants">
+                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants | orderBy:'slug'"
+                    ng-click="editVariant(variant)">
+                    <div class="title">{{variant.title}}</div>
+                    <span class="visible-when-hover link">{{'product.variants.edit'| translate}}</span>
 
-                <!-- key is free for user-->
-                <div ng-show="keys(types[product.type].variants[variant].keys).length == 0">
-                    <button class="button">Add {{types[product.type].variants[variant].name | lowercase}}</button>
-                </div>
+                    <div>
+                        <small>
+                            <span ng-if="!!variant.price && types[product.type].variantProperties.indexOf('price') >= 0">
+                                {{'product.variants.price' | translate}}: {{variant.price}} {{mainCurrency}}</span>
+                            <span ng-if="variant.stock >= 0 && types[product.type].variantProperties.indexOf('stock') >= 0">
+                                {{'product.variants.stock' | translate}}: {{variant.stock}}</span>
+                        </small>
+                    </div>
+                </li>
+            </ul>
 
-                <!-- keys are predefined -->
-                <div ng-show="keys(types[product.type].variants[variant].keys).length > 0">
-                    <ul>
-                        <li ng-repeat="key in keys(types[product.type].variants[variant].keys)">
-                            {{key}}
-                        </li>
-                    </ul>
-                </div>
+            <div>
+                <button class="btn btn-small" ng-click="createVariant()">{{'product.variants.add'| translate}}</button>
             </div>
         </div>
 
@@ -204,7 +207,7 @@
         </div>
 
         <!-- Weight -->
-        <div class="block" ng-show="!isNew() && hasWeight">
+        <div class="block" ng-if="!isNew() && hasWeight">
             <h3>{{'product.misc.weight' | translate}}</h3>
 
             <div>
@@ -213,7 +216,7 @@
         </div>
 
         <!-- Stock -->
-        <div class="block" ng-show="!isNew() && hasStock">
+        <div class="block" ng-if="!isNew() && hasStock && (!product.type || types[product.type].variantProperties.indexOf('stock') < 0)">
             <h3>{{'product.misc.stock' | translate}}</h3>
 
             <div>
@@ -222,3 +225,98 @@
         </div>
     </aside>
 </form>
+
+<!-- Add variant modal -->
+<script type="text/ng-template" id="createVariant.html">
+
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'product.variants.add' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="newVariant" novalidate>
+            <div ng-repeat="feature in keys(types[product.type].features)" ng-form="subForm">
+                <strong>{{types[product.type].features[feature].name}}</strong>
+
+                <!-- key is free for user-->
+                <div ng-if="keys(types[product.type].features[feature].keys).length == 0">
+                    <input ng-model="variantToCreate.features[feature]"
+                           type="text"
+                           name="feature"
+                           required />
+                </div>
+
+                <!-- keys are predefined -->
+                <div ng-if="keys(types[product.type].features[feature].keys).length > 0">
+                    <select ng-model="variantToCreate.features[feature]"
+                            ng-options="key as value for (key, value) in getKeys(feature)"
+                            name="feature"
+                            required/>
+                </div>
+
+                <span ng-show="subForm.feature.$error.required && subForm.feature.$dirty">required</span>
+            </div>
+
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-danger" ng-click="$close()" ng-disabled="newVariant.$invalid">
+            {{'product.variants.create' | translate}}
+        </button>
+    </div>
+</script>
+
+<!-- Edit variant modal -->
+<script type="text/ng-template" id="editVariant.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'product.variants.edition' | translate:getTranslationProperties()}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editVariant" novalidate>
+
+            <!-- Price -->
+            <div class="block" ng-if="types[product.type].variantProperties.indexOf('price') >= 0">
+                <h3>{{'product.misc.price' | translate}}</h3>
+
+                <div>
+                    <money-amount ng-model="variant.price" placeholder="{{product.price}}" currency="{{mainCurrency}}"/>
+                </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="block" ng-if="types[product.type].variantProperties.indexOf('stock') >= 0">
+                <h3>{{'product.misc.stock' | translate}}</h3>
+
+                <div>
+                    <input type="text" placeholder="{{'product.placeholder.initialStock' | translate}}"
+                           ng-model="variant.stock"/>
+                </div>
+            </div>
+
+            <!-- Weight -->
+            <div class="block" ng-if="types[product.type].variantProperties.indexOf('weight') >= 0">
+                <h3>{{'product.misc.weight' | translate}}</h3>
+
+                <div>
+                    <input type="text" placeholder="{{product.weight}}" ng-model="variant.weight" /> {{weightUnit}}
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-danger" ng-click="$close()" ng-disabled="editVariant.$invalid">
+            {{'product.variants.update' | translate}}
+        </button>
+    </div>
+</script>

@@ -58,8 +58,8 @@
                         }
 
                         for (var i = 0; i < allMixins.length; i++) {
-                            var mixin = allMixins[i];
-                            var mixinName = mixin.substring(6);
+                            var mixin = allMixins[i],
+                                mixinName = mixin.substring(6);
                             mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
 
                             if (mixins.indexOf(mixinName) >= 0) {
@@ -178,19 +178,19 @@
                             return;
                         }
 
-                        if (typeof scope[entityType].localizedVersions === "undefined") {
-                            scope[entityType].localizedVersions = {};
+                        if (typeof scope[entityType]._localized === "undefined") {
+                            scope[entityType]._localized = {};
                         }
 
-                        if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
+                        if (typeof scope[entityType]._localized[data.locale] !== 'undefined' && !data.isMainLocale) {
                             // If there is a localized version with the new locale to be edited, then use it
-                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                            scope[localizedKey] = scope[entityType]._localized[data.locale];
 
                         }
                         else if (!data.isMainLocale) {
                             // Else if it's not the main locale to be edited, edit it
-                            scope[entityType].localizedVersions[data.locale] = {};
-                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                            scope[entityType]._localized[data.locale] = {};
+                            scope[localizedKey] = scope[entityType]._localized[data.locale];
 
                         } else {
                             // Else edit the main locale
@@ -232,7 +232,14 @@
                     var scope = this;
                     $http.get($rootScope.entity.uri + "/images")
                         .success(function (data) {
+
+                            // TODO
+                            // remove when all entities have adopted the new API model (_embedded images, see below)
                             scope[entityType].images = data;
+
+                            if (typeof scope[entityType]._embedded !== "undefined") {
+                                scope[entityType]._embedded.images = data;
+                            }
 
                             // Optional callback if any
                             typeof options.afterReloadingImages === 'function'

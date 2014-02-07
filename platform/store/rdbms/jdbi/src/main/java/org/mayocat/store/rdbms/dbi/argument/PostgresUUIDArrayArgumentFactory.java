@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.store.rdbms.dbi.argument;
 
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +65,7 @@ public class PostgresUUIDArrayArgumentFactory implements ArgumentFactory<List<UU
             public void apply(int position, PreparedStatement statement, StatementContext ctx) throws SQLException
             {
                 Integer length = value.size();
+
                 PG_UUID[] uuids = new PG_UUID[length];
 
                 for (int i = 0; i < length; i++) {

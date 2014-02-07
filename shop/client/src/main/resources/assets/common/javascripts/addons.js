@@ -205,15 +205,15 @@
                             deferred.resolve(entityAddons);
                         }
 
-                        if (typeof entity.localizedVersions === "undefined") {
-                            entity.localizedVersions = {};
+                        if (typeof entity._localized === "undefined") {
+                            entity._localized = {};
                         }
                         locales.forEach(function (locale) {
-                            if (typeof entity.localizedVersions[locale] === "undefined") {
-                                entity.localizedVersions[locale] = {};
+                            if (typeof entity._localized[locale] === "undefined") {
+                                entity._localized[locale] = {};
                             }
-                            if (typeof entity.localizedVersions[locale].addons === "undefined") {
-                                entity.localizedVersions[locale].addons = [];
+                            if (typeof entity._localized[locale].addons === "undefined") {
+                                entity._localized[locale].addons = [];
                             }
                         });
 
@@ -261,11 +261,14 @@
 
                         }
                         // Initialize localized copies
+                        if (typeof entity.addons == "undefined") {
+                            entity.addons = []
+                        }
                         for (var i = 0; i < entity.addons.length; i++) {
                             var addon = entity.addons[i];
                             locales.forEach(function (locale) {
                                 var localIndex = getAddonIndex(
-                                        entity.localizedVersions[locale].addons,
+                                        entity._localized[locale].addons,
                                         addon.group,
                                         addon.key,
                                         addon.source
@@ -274,13 +277,13 @@
 
                                 if (localIndex > 0) {
                                     // We found a value for this addon for this locale, so get it
-                                    localizedValue = entity.localizedVersions[locale].addons[localIndex].value
+                                    localizedValue = entity._localized[locale].addons[localIndex].value
                                 }
 
                                 // We always push the localized version of an addon at the exact same index as the "main"
                                 // one, effectively ignoring the local one's index
-                                entity.localizedVersions[locale].addons[i] = angular.copy(entity.addons[i]);
-                                entity.localizedVersions[locale].addons[i].value = localizedValue;
+                                entity._localized[locale].addons[i] = angular.copy(entity.addons[i]);
+                                entity._localized[locale].addons[i].value = localizedValue;
                             });
                         }
                         deferred.resolve(entityAddons);

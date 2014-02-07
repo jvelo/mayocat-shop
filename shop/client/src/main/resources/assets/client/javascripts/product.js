@@ -53,7 +53,7 @@ angular.module('product', ['ngResource'])
                             }
                             else {
                                 if (status === 409) {
-                                    $rootScope.$broadcast('event:nameConflictError');
+                                    $modal.open({ templateUrl: 'nameConflictError.html' });
                                 }
                                 else {
                                     // Generic error
@@ -62,7 +62,7 @@ angular.module('product', ['ngResource'])
                             }
                         })
                         .error(function (data, status, headers, config) {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                             $scope.isSaving = false;
                         });
                 }
@@ -81,6 +81,72 @@ angular.module('product', ['ngResource'])
                     });
                 }
             };
+
+            $scope.createVariant = function () {
+                $scope.variantToCreate = {
+                    features: {}
+                };
+                $scope.modalInstance = $modal.open({
+                    templateUrl: 'createVariant.html',
+                    controller: 'VariantController',
+                    scope: $scope
+                });
+                $scope.modalInstance.result.then(function () {
+                    $http.post($scope.product._links.variants.href, $scope.variantToCreate)
+                        .success(function (data, status, headers) {
+                            if (status < 400) {
+                                var fragments = headers("location").split('/'),
+                                    slug = fragments[fragments.length - 1];
+
+                                delete $scope.variantToCreate;
+
+                                $scope.reloadVariants(function () {
+                                    var variant = $scope.product._embedded.variants.find(function (variant) {
+                                        return variant.slug === slug;
+                                    });
+
+                                    $scope.editVariant(variant);
+                                });
+                            }
+                            else if (status == 409) {
+                                var conflictErrorScope = $scope.$new();
+                                conflictErrorScope.errorKey = 'product.variants.conflict';
+                                $scope.modalInstance = $modal.open({ templateUrl: 'conflictError.html', scope: conflictErrorScope });
+                            }
+                            else {
+                                // Generic error
+                                $scope.modalInstance = $modal.open({ templateUrl: 'serverError.html' });
+                            }
+                        });
+                });
+            }
+
+            $scope.reloadVariants = function (callback) {
+                $http.get($scope.product._links.variants.href)
+                    .success(function (data) {
+                        $scope.product._embedded.variants = data;
+
+                        callback && callback($scope.product._embedded.variants)
+                    });
+            }
+
+            $scope.editVariant = function (variant) {
+console.log("EDIT VARIANT: ", variant);
+                $scope.variant = variant;
+
+                $scope.modalInstance = $modal.open({
+                    templateUrl: 'editVariant.html',
+                    scope: $scope
+                });
+
+                $scope.modalInstance.result.then(function () {
+                    $http.post($scope.variant._href, $scope.variant).success(function (data, status) {
+                        $scope.reloadVariants();
+                    });
+
+                    delete $scope.variant;
+                });
+            }
 
             $scope.collectionOperation = function (collection, operation) {
                 $resource("/api/collections/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
@@ -105,8 +171,8 @@ angular.module('product', ['ngResource'])
                 catalogService.listCollections(function (collections) {
                     $scope.collections = collections;
                     angular.forEach($scope.collections, function (collection) {
-                        angular.forEach($scope.product.collections, function (c) {
-                            if (collection.href == c.href) {
+                        angular.forEach($scope.product._relationships.collections, function (productCollection) {
+                            if (collection.href == productCollection._href) {
                                 // hasProduct => used as model
                                 collection.hasProduct = true
                                 // hadProduct => used when saving to see if we need to update anything
@@ -128,6 +194,12 @@ angular.module('product', ['ngResource'])
                 $scope.mainCurrency = catalogConfiguration.currencies.main;
             });
 
+            // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX
+            // call to the configuration is made) is less impactful when we hide the type switch than when we display
+            // the variants block a bit late.
+            // TODO: we can remove this when we cache the configuration properly (with an server-sent event that flushes
+            // caches properly when configuraiton changes)
+            $scope.hasTypes = true;
             configurationService.get("entities", function (entities) {
                 if (typeof entities.product !== 'undefined') {
                     $scope.types = entities.product.types;
@@ -154,9 +226,7 @@ angular.module('product', ['ngResource'])
             // Initialize existing product or new product
 
             if (!$scope.isNew()) {
-                $scope.product = $scope.ProductResource.get({
-                    "slug": $scope.slug,
-                    "expand": ["collections", "images"] }, function () {
+                $scope.product = $scope.ProductResource.get({ "slug": $scope.slug }, function () {
                     $scope.reloadImages();
 
                     // Ensures the collection initialization happens after the AJAX callback
@@ -168,8 +238,8 @@ angular.module('product', ['ngResource'])
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
-                        // Thus, we convert "null"onShelf to undefined to be able to have that "high impedance" state in
-                        // angular directives.
+                        // Thus, we convert "null" onShelf to undefined to be able to have that "high impedance"
+                        // state in angular directives.
                         $scope.product.onShelf = undefined;
                     }
                 });
@@ -197,9 +267,17 @@ angular.module('product', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
-                    imagesLength: (($scope.product || {}).images || {}).length || 0
+                    imagesLength: (($scope.product || {}).images || {}).length || 0,
+                    variantTitle: ($scope.variant || {}).title
                 };
             };
 
         }])
+
+    .controller('VariantController', [ '$scope', function ($scope) {
+        $scope.getKeys = function (feature) {
+            return $scope.types[$scope.product.type].features[feature].keys
+        }
+    }])
+
 ;
