@@ -131,7 +131,6 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.editVariant = function (variant) {
-console.log("EDIT VARIANT: ", variant);
                 $scope.variant = variant;
 
                 $scope.modalInstance = $modal.open({
