@@ -24,11 +24,3 @@ CREATE INDEX product_feature_feature_slug_index ON product_feature USING btree (
 
 ALTER TABLE ONLY product_feature
     ADD CONSTRAINT product_feature_entity_fk FOREIGN KEY (entity_id) REFERENCES entity(id) ON DELETE CASCADE;
-
-
----
---- Add features column to product
----
-
-ALTER TABLE ONLY product
-    ADD CONSTRAINT product_features_fk FOREIGN KEY (features) ELEMENT REFERENCES product(entity_id) ON DELETE CASCADE;
