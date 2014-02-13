@@ -98,6 +98,9 @@ public class CartResource extends AbstractWebViewResource implements Resource
         if (product == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Product not found").build();
         }
+        if (product.getPrice() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("This product can't be added to cart").build();
+        }
 
         Cart cart = cartAccessor.getCart();
         cart.addItem(product, quantity);
