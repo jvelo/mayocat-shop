@@ -92,8 +92,8 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
 /**
  * TODO: move this in the AppController
  */
-MayocatShop.run(['$rootScope',
-    function (scope) {
+MayocatShop.run(['$rootScope', '$modal',
+    function (scope, $modal) {
 
         /**
          * Set up a default page title and update it when changing route.
@@ -102,6 +102,10 @@ MayocatShop.run(['$rootScope',
         scope.page_title = Mayocat.applicationName + ' | Home';
         scope.$on('$routeChangeSuccess', function (event, current) {
             scope.page_title = Mayocat.applicationName + ' | ' + current.$$route.title;
+        });
+
+        scope.$on('event:serverError', function () {
+            $modal.open({ templateUrl: 'serverError.html' });
         });
 
     }]);

@@ -126,8 +126,8 @@ angular.module('settings', ['ngResource'])
     // Controller for the shipping settings UI
     // See partials/settingsShipping.html
     //
-    .controller('SettingsShippingController', ['$scope', '$http', '$q', '$timeout', 'configurationService', 'shippingService',
-        function ($scope, $http, $q, $timeout, configurationService, shippingService) {
+    .controller('SettingsShippingController', ['$scope', '$http', '$q', '$timeout', '$modal', 'configurationService',
+        'shippingService',  function ($scope, $http, $q, $timeout, $modal, configurationService, shippingService) {
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -183,7 +183,7 @@ angular.module('settings', ['ngResource'])
                             $scope.loadCarriers();
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
                 else {
@@ -196,7 +196,7 @@ angular.module('settings', ['ngResource'])
 
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
             }
@@ -207,7 +207,7 @@ angular.module('settings', ['ngResource'])
                         $scope.loadCarriers();
                     })
                     .error(function () {
-                        $scope.$parent.$broadcast('event:serverError');
+                        $modal.open({ templateUrl: 'serverError.html' });
                     });
             }
 
@@ -229,7 +229,7 @@ angular.module('settings', ['ngResource'])
                             });
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 });
             }

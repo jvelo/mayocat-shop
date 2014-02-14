@@ -43,7 +43,7 @@
                             }
                             else {
                                 if (status === 409) {
-                                    $rootScope.$broadcast('event:nameConflictError');
+                                    $modal.open({ templateUrl: 'conflictError.html' });
                                 }
                                 else {
                                     // Generic error
