@@ -90,7 +90,17 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                 return;
             }
 
-            Template masterTemplate = themeFileResolver.getIndexTemplate(webContext.getRequest().getBreakpoint());
+            Template masterTemplate = null;
+            try {
+                masterTemplate = themeFileResolver.getIndexTemplate(webContext.getRequest().getBreakpoint());
+            } catch (TemplateNotFoundException e) {
+                if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                    // For JSON API calls, we don't care if the template is found or not.
+                    // For other calls, raise the exception
+                    throw e;
+                }
+            }
+
             Template template = null;
 
             if (webView.model().isPresent()) {
@@ -114,7 +124,11 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                         template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
                                 webContext.getRequest().getBreakpoint());
                     } else {
-                        throw e;
+                        if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                            // For JSON API calls, we don't care if the template is found or not.
+                            // For other calls, raise the exception
+                            throw e;
+                        }
                     }
                 }
             }
