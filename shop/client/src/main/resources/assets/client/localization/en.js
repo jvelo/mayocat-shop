@@ -18,6 +18,9 @@
                 add: "Add",
                 close: "Close"
             },
+            validation: {
+                required : "Required"
+            },
             conflict: "Conflict"
         },
 

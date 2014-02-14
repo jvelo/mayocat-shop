@@ -105,15 +105,21 @@ public class ThemeDefinitionTest
         Assert.assertNotNull(typeShirt);
         Assert.assertEquals("T-Shirt", typeShirt.getName());
 
-        FeatureDefinition colorVariant = typeShirt.getFeatures().get("color");
-        Assert.assertNotNull(colorVariant);
-        Assert.assertEquals("Color", colorVariant.getName());
-        Assert.assertEquals(0, colorVariant.getKeys().size());
+        FeatureDefinition colorFeature = typeShirt.getFeatures().get("color");
+        Assert.assertNotNull(colorFeature);
+        Assert.assertEquals("Color", colorFeature.getName());
+        Assert.assertEquals(0, colorFeature.getKeys().size());
+        Assert.assertEquals(0, colorFeature.getAddons().size());
 
-        FeatureDefinition sizeVariant = typeShirt.getFeatures().get("size");
-        Assert.assertNotNull(sizeVariant);
-        Assert.assertEquals("Size", sizeVariant.getName());
-        Assert.assertEquals(3, sizeVariant.getKeys().size());
+        FeatureDefinition sizeFeature = typeShirt.getFeatures().get("size");
+        Assert.assertNotNull(sizeFeature);
+        Assert.assertEquals("Size", sizeFeature.getName());
+        Assert.assertEquals(3, sizeFeature.getKeys().size());
+        Assert.assertEquals(1, sizeFeature.getAddons().size());
+
+        VariantsDefinition variants = typeShirt.getVariants();
+        Assert.assertEquals(3, variants.getProperties().size());
+        Assert.assertEquals(1, variants.getAddons().size());
     }
 
     @Test

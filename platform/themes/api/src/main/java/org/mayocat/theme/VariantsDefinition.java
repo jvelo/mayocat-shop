@@ -7,45 +7,34 @@
  */
 package org.mayocat.theme;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.addons.model.AddonGroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Maps;
 
 /**
- * Holds the definition of variants for an entity
+ * Definition of variants
  *
  * @version $Id$
  */
-public class FeatureDefinition
+public class VariantsDefinition
 {
-    @JsonProperty
-    @NotBlank
-    private String name;
-
-    @JsonProperty
-    private Map<String, String> keys = Maps.newHashMap();
-
     @JsonProperty
     private Map<String, AddonGroup> addons = Collections.emptyMap();
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public Map<String, String> getKeys()
-    {
-        return keys;
-    }
+    private List<String> properties = Arrays.asList("stock", "price");
 
     public Map<String, AddonGroup> getAddons()
     {
         return addons;
+    }
+
+    public List<String> getProperties()
+    {
+        return properties;
     }
 }

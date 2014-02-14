@@ -3,6 +3,8 @@ package org.mayocat.shop.catalog.api.v1.object
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
+import com.google.common.base.Strings
+import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.addons.model.AddonField
@@ -20,7 +22,7 @@ import org.mayocat.theme.ThemeDefinition
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class ProductApiObject extends BaseApiObject
 {
     String slug;
@@ -79,7 +81,8 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    Product toProduct(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
+    Product toProduct(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition,
+            Optional<Product> parent = Optional.absent())
     {
         def product = new Product()
         product.with {
@@ -100,7 +103,7 @@ class ProductApiObject extends BaseApiObject
             List<Addon> productAddons = []
             addons.each({ AddonApiObject addon ->
                 Addon productAddon = addon.toAddon()
-                Optional<AddonField> definition = findAddonDefinition(productAddon, platformSettings, themeDefinition)
+                Optional<AddonField> definition = findAddonDefinition(productAddon, platformSettings, themeDefinition, parent)
                 if (definition.isPresent() && !definition.get().properties.containsKey(BaseProperties.READ_ONLY)) {
                     // - Addons for which no definition can be found are ignored
                     // - Addons declared "Read only" are ignored : they can't be updated via this API !
@@ -172,6 +175,9 @@ class ProductApiObject extends BaseApiObject
                     _href: "/api/products/${this.slug}/variants/${variant.slug}"
             ])
             object.withProduct(variant)
+            if (variant.getAddons().isLoaded()) {
+                object.withAddons(variant.getAddons().get())
+            }
             variantApiObjects << object
         })
 
@@ -191,15 +197,23 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    private Optional<AddonField> findAddonDefinition(Addon addonToFind, PlatformSettings platformSettings,
-            Optional<ThemeDefinition> themeDefinition)
+    def Optional<AddonField> findAddonDefinition(Addon addonToFind, PlatformSettings platformSettings,
+            Optional<ThemeDefinition> themeDefinition, Optional<Product> parent)
     {
-        // 1. Find in platform
-        def option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.addons);
+        def option = Optional.absent();
+        if (!parent.isPresent()) {
+            // 1. Find in platform
+            option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.addons);
 
-        if (!option.isPresent() && themeDefinition.isPresent()) {
-            // 2. Find in theme
-            option = AddonUtils.findAddonDefinition(addonToFind, themeDefinition.get().addons);
+            if (!option.isPresent() && themeDefinition.isPresent()) {
+                // 2. Find in theme
+                option = AddonUtils.findAddonDefinition(addonToFind, themeDefinition.get().addons);
+            }
+        } else {
+            def typeAddons = themeDefinition.get().getProductTypes().get(parent.get().type.orNull())?.getVariants()?.getAddons()
+            if (typeAddons) {
+                option = AddonUtils.findAddonDefinition(addonToFind, typeAddons);
+            }
         }
 
         return option;

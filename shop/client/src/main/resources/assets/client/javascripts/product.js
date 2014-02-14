@@ -19,6 +19,7 @@ angular.module('product', ['ngResource'])
         '$modal',
         'catalogService',
         'configurationService',
+        'addonsService',
         'entityMixins',
 
         function ($scope,
@@ -30,6 +31,7 @@ angular.module('product', ['ngResource'])
                   $modal,
                   catalogService,
                   configurationService,
+                  addonsService,
                   entityMixins) {
 
             entityMixins.extendAll($scope, "product");
@@ -125,6 +127,7 @@ angular.module('product', ['ngResource'])
                 $http.get($scope.product._links.variants.href)
                     .success(function (data) {
                         $scope.product._embedded.variants = data;
+                        $scope.initializeVariants();
 
                         callback && callback($scope.product._embedded.variants)
                     });
@@ -186,6 +189,34 @@ angular.module('product', ['ngResource'])
                 });
             }
 
+            $scope.initializeVariants = function() {
+                if ($scope.hasTypes) {
+                    var variants = $scope.product._embedded.variants;
+
+                    variants.forEach(function (variant) {
+
+                        if (typeof variant.addons === "undefined") {
+                            variant.addons = [];
+                        }
+
+                        addonsService.initializeEntityAddons("product", variant, {
+                            getDefinition: function (entityDefinition) {
+                                return {
+                                    // TODO
+                                    // See how platform types can be supported and if/how we can get rid of this
+                                    // "source" parameter
+                                    theme: entityDefinition.types[$scope.product.type].variants.addons
+                                };
+                            }
+                        }).then(function (addons) {
+                            if (typeof $scope.variantAddons === "undefined") {
+                                $scope.variantAddons = addons;
+                            }
+                        });
+                    });
+                }
+            }
+
             configurationService.get("catalog", function (catalogConfiguration) {
                 $scope.hasWeight = catalogConfiguration.products.weight;
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
@@ -196,13 +227,17 @@ angular.module('product', ['ngResource'])
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX
             // call to the configuration is made) is less impactful when we hide the type switch than when we display
             // the variants block a bit late.
-            // TODO: we can remove this when we cache the configuration properly (with an server-sent event that flushes
+            // TODO: we can remove this when we cache the configuration properly (with a server-sent event that flushes
             // caches properly when configuraiton changes)
             $scope.hasTypes = true;
+
+            // Initialize types
             configurationService.get("entities", function (entities) {
                 if (typeof entities.product !== 'undefined') {
                     $scope.types = entities.product.types;
                     $scope.hasTypes = !!(Object.keys(angular.copy($scope.types)).length > 0);
+
+                    $scope.initializeVariants();
                 }
                 else {
                     $scope.types = {};

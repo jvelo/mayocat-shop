@@ -7,8 +7,6 @@
  */
 package org.mayocat.theme;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -22,9 +20,9 @@ public class TypeDefinition
 {
     private String name;
 
-    private List<String> variantProperties = Arrays.asList("stock", "price");
-
     private Map<String, FeatureDefinition> features = Maps.newHashMap();
+
+    private VariantsDefinition variants;
 
     public String getName()
     {
@@ -36,8 +34,8 @@ public class TypeDefinition
         return features;
     }
 
-    public List<String> getVariantProperties()
+    public VariantsDefinition getVariants()
     {
-        return variantProperties;
+        return variants;
     }
 }

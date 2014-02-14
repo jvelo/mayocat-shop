@@ -189,9 +189,17 @@
                  *
                  * @param entityType the type of entity to initialize. For example "page" or "product", or "user" etc.
                  * @param entity the actual entity object to initialize addons for
+                 * @param options an hash with additional options. Supported options:
+                 * <ul>
+                 *     <li><code>getDefinition</code>: an optional function to get the actual desired addons definition
+                 *     from the entity definition. This is useful for example when initializing a sub-entity addons,
+                 *     like addons for product variants or features for a product type definition.</li>
+                 * </ul>
                  * @returns {Object} the promise of this realization
                  */
-                initializeEntityAddons:function (entityType, entity) {
+                initializeEntityAddons: function (entityType, entity, options) {
+
+                    options = typeof options === "undefined" ? {} : options;
 
                     var entityAddons = [],
                         deferred = $q.defer();
@@ -217,8 +225,14 @@
                             }
                         });
 
-                        var addons = entities[entityType].addons,
-                            addonKeys = addons ? Object.keys(addons) : [];
+                        var addons;
+                        if (typeof options.getDefinition === "function") {
+                            addons = options.getDefinition.call(this, entities[entityType]);
+                        } else {
+                            addons = entities[entityType].addons
+                        }
+
+                        var addonKeys = addons ? Object.keys(addons) : [];
                         for (var i=0; i<addonKeys.length; i++) {
                             var sourceName = addonKeys[i],
                                 source = addons[sourceName],

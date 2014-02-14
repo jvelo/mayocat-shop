@@ -15,6 +15,9 @@
                 add: "Ajouter",
                 close: "Fermer"
             },
+            validation: {
+                required : "Requis"
+            },
             conflict: "Conflit"
         },
         entity: {

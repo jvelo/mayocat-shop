@@ -1,4 +1,4 @@
-name: Pagination theme
+name: Theme with product types
 
 productTypes:
   shirt:
@@ -10,5 +10,21 @@ productTypes:
           s: Small
           m: Medium
           l: Large
+        addons:
+          info:
+            name: Additional information
+            fields:
+              help:
+                name: Helper message
+                type: string
+                placeholder: Enter a message to help pick a size
       color:
           name: Color
+    variants:
+      addons:
+        info:
+          name: Additional information
+          fields:
+            madein:
+              text: Enter the country this variant is made in
+      properties: ["stock", "price", "weight"]

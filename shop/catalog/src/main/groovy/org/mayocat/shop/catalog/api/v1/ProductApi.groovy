@@ -12,7 +12,7 @@ import com.google.common.base.Strings
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
@@ -48,7 +48,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
-@TypeChecked
+@CompileStatic
 class ProductApi implements Resource, Initializable
 {
     @Inject
@@ -439,6 +439,9 @@ class ProductApi implements Resource, Initializable
                     _href: "/api/products/${product.slug}/variants/${variant.slug}"
             ])
             object.withProduct(variant)
+            if (variant.addons.isLoaded()) {
+                object.withAddons(variant.addons.get())
+            }
             variantApiObjects << object
         })
 
@@ -571,7 +574,7 @@ class ProductApi implements Resource, Initializable
                 } else {
                     def id = variant.id
                     variant = variantApiObject.toProduct(platformSettings,
-                            Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
+                            Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition), Optional.of(product))
                     // ID and slugs are not update-able
                     variant.id = id
                     variant.slug = variantSlug
