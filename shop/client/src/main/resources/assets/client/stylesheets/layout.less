@@ -158,9 +158,10 @@ header .btn-group {
 #list .scroll-wrapper {
   overflow-y: auto;
   overflow-x: hidden;
-  height: -moz-calc(~"100% - 95px");
-  height: -webkit-calc(~"100% - 95px");
-  height: -calc(~"100% - 95px");
+  height: -moz-calc(100% - 95px);
+  height: -webkit-calc(100% - 95px);
+  height: -ms-calc(100% - 95px);
+  height: calc(100% - 95px);
 }
 
 #list .collection {
@@ -273,10 +274,10 @@ header .btn-group {
   float: left;
   height: 100%;
   margin: 0px 0px 0px 239px;
-  width: -moz-calc(~"100% - 240px");
-  width: -webkit-calc(~"100% - 240px");
-  width: calc(~"100% - 240px"); // See http://stackoverflow.com/questions/11972084/less-aggressive-compilation-with-css3-calc
-// for why the tild TODO remove it when less.js 1.4+ is released
+  width: -moz-calc(100% - 240px);
+  width: -webkit-calc(100% - 240px);
+  width: -ms-calc(100% - 240px);
+  width: calc(100% - 240px);
 }
 
 #content > .sub-list {

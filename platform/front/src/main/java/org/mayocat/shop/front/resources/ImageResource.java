@@ -124,6 +124,10 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
             try {
                 Image image = imageService.readImage(file.getData());
 
+                if (image == null) {
+                    return Response.serverError().entity("Invalid image data").build();
+                }
+
                 if (imageOptions.get().getHeight().isPresent() && imageOptions.get().getWidth().isPresent()) {
                     // Both width and height set -> calculate a fitting box
 

@@ -63,7 +63,7 @@ public class CookieAuthenticator implements Authenticator
             String password = null;
             String[] cookies = value.split(";");
             for (String cookie : cookies) {
-                if (cookie.indexOf("=") > 0) {
+                if (cookie.indexOf("=") > 0 && cookie.indexOf("=") + 1 < cookie.length()) {
                     String name = cookie.split("=")[0];
                     String val = cookie.split("=")[1];
                     if (name.trim().equals("username")) {

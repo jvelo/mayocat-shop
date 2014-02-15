@@ -240,6 +240,9 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                                 if (typeof $scope.files[i].description !== 'undefined') {
                                     data["description"] = $scope.files[i].description;
                                 }
+                                if (typeof $scope.files[i].name !== 'undefined') {
+                                    data["filename"] = $scope.files[i].name;
+                                }
                                 $(element).fileupload('send', {
                                     files: $scope.files[i],
                                     formData: data
@@ -271,7 +274,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                                         index = 0;
                                     }
                                     else {
-                                        // In "multi-upload" mode, we addpend the file to the array
+                                        // In "multi-upload" mode, we append the file to the array
                                         var index = $scope.files.push(data.files[i]) - 1;
                                     }
                                     $scope.files[index].index = index;

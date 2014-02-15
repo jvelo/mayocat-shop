@@ -13,6 +13,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
+import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
@@ -255,6 +256,7 @@ class ProductApi implements Resource, Initializable
     def addAttachment(@PathParam("slug") String slug,
                       @FormDataParam("file") InputStream uploadedInputStream,
                       @FormDataParam("file") FormDataContentDisposition fileDetail,
+                      @FormDataParam("filename") String sentFilename,
                       @FormDataParam("title") String title,
                       @FormDataParam("description") String description)
     {
@@ -263,10 +265,11 @@ class ProductApi implements Resource, Initializable
             return Response.status(404).build();
         }
 
-        def created = this.addAttachment(uploadedInputStream, fileDetail.fileName, title, description,
+        def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
+        def created = this.addAttachment(uploadedInputStream, filename, title, description,
                 Optional.of(product.id));
 
-        if (product.featuredImageId == null && AttachmentUtils.isImage(fileDetail.fileName) && created != null) {
+        if (product.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
 
             // If this is an image and the product doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
