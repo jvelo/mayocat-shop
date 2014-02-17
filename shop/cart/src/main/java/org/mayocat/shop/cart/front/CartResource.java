@@ -86,12 +86,16 @@ public class CartResource extends AbstractWebViewResource implements Resource
 
     @POST
     @Path("add")
-    public Response addToCart(@FormParam("product") String productSlug,
+    public Response addToCart(@FormParam("product") String productSlug, @FormParam("product") String variantSlug,
             @FormParam("quantity") @DefaultValue("1") Long quantity)
             throws URISyntaxException
     {
         if (Strings.isNullOrEmpty(productSlug)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        if (!Strings.isNullOrEmpty(variantSlug)) {
+System.out.println("variantSlug: " + variantSlug);
         }
 
         Product product = productStore.get().findBySlug(productSlug);

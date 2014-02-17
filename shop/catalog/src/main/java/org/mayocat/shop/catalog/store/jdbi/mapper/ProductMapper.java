@@ -8,8 +8,13 @@
 package org.mayocat.shop.catalog.store.jdbi.mapper;
 
 import java.io.IOException;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -68,6 +73,20 @@ public class ProductMapper implements ResultSetMapper<Product>
         String type = resultSet.getString("product_type");
         if (!Strings.isNullOrEmpty(type)) {
             product.setType(type);
+        }
+
+        if (resultSet.getArray("features") != null) {
+            // There's no support for getting the pg uuid array as a Java UUID array (or even String array) at the time
+            // this is written, we have to iterate over the array own result set and construct the Java array ourselves
+            List<UUID> ids = new ArrayList<>();
+            Array array = resultSet.getArray("features");
+            if (array != null) {
+                ResultSet featuresResultSet = array.getResultSet();
+                while (featuresResultSet.next()) {
+                    ids.add((UUID) featuresResultSet.getObject("value"));
+                }
+                product.setFeatures(ids);
+            }
         }
         return product;
     }

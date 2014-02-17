@@ -29,6 +29,9 @@ public enum AddonFieldType
     @JsonCreator
     public static AddonFieldType fromJson(String text)
     {
+        if (text == null) {
+            return null;
+        }
         return valueOf(text.toUpperCase());
     }
 }

@@ -101,3 +101,34 @@ pagination:
     itemsPerPage: 12
   collection:
     itemsPerPage: 24
+
+productTypes:
+  shirt:
+    name: T-Shirt
+    features:
+      size:
+        name: Size
+        keys:
+          s: Small
+          m: Medium
+          l: Large
+        addons:
+          info:
+            name: Additional information
+            fields:
+              help:
+                name: Helper message
+                type: string
+                placeholder: Enter a message to help pick a size
+      color:
+          name: Color
+    variants:
+      addons:
+        info:
+          name: Additional information
+          fields:
+            madein:
+              placeholder: Enter the country this variant is made in
+              type: string
+              name: Made in
+      properties: ["stock", "price", "weight"]

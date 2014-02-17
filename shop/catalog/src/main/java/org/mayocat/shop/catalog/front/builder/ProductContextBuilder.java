@@ -106,6 +106,22 @@ public class ProductContextBuilder implements ContextConstants
             productContext.put("unitPrice", new PriceRepresentation(product.getUnitPrice(), currency, locale));
         }
 
+        // Availability
+        boolean inStock = true;
+        if (catalogSettings.getProductsSettings().getStock().getValue()) {
+            // A stock is managed, check it
+            if (product.getStock() <= 0) {
+                inStock = false;
+            }
+        }
+        if (product.getUnitPrice() != null && inStock) {
+            productContext.put("availability", "available");
+        } else if (product.getUnitPrice() != null) {
+            productContext.put("availability", "out_of_stock");
+        } else {
+            productContext.put("availability", "not_for_sale");
+        }
+
         Map<String, Object> imagesContext = Maps.newHashMap();
         List<Map<String, String>> allImages = Lists.newArrayList();
 
