@@ -7,7 +7,9 @@ package org.mayocat.shop.catalog.web.object
  */
 class FeatureWebObject {
 
+    String slug
+
     String name
 
-    List<FeatureListItemWebObject> list
+    List<FeatureListItemWebObject> options
 }

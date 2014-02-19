@@ -323,19 +323,20 @@ class ProductApi implements Resource, Initializable
             if (product == null) {
                 return Response.status(404).build();
             } else {
-
-                // Check if virtual flag must be removed
-                if (!Strings.isNullOrEmpty(productApiObject.type) && product.type.isPresent()) {
-                    // It had a type but no it hasn't
-                    product.virtual = false;
-                }
-
                 def id = product.id
                 product = productApiObject.toProduct(platformSettings,
                         Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
                 // ID and slugs are not update-able
                 product.id = id
                 product.slug = slug
+
+                // Check if virtual flag must be removed or set
+                if (Strings.isNullOrEmpty(productApiObject.type) && product.virtual) {
+                    // It had a type but no it hasn't
+                    product.virtual = false;
+                } else if (!Strings.isNullOrEmpty(productApiObject.type) && !product.virtual) {
+                    product.virtual = true;
+                }
 
                 if (productApiObject._embedded.get("featuredImage")) {
 

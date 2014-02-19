@@ -169,7 +169,9 @@ class ProductWebView extends AbstractProductListWebViewResource implements Resou
             def features = productStore.get().findFeatures(product)
             def variants = productStore.get().findVariants(product)
 
-            productWebObject.withFeaturesAndVariants(features, variants, selectedFeatures, Optional.fromNullable(theme))
+            productWebObject.withFeaturesAndVariants(features, variants, selectedFeatures,
+                    configurationService.getSettings(CatalogSettings.class),
+                    configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
         }
 
         context.put("product", productWebObject);

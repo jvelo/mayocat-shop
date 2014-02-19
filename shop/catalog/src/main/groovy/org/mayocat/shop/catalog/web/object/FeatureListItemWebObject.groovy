@@ -12,4 +12,6 @@ class FeatureListItemWebObject
     String title
 
     String url
+
+    String availability
 }
