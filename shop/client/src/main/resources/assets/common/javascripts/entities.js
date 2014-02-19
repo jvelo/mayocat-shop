@@ -250,14 +250,32 @@
                 mixin.selectFeatureImage = function (image) {
                     var scope = this,
                         entity = scope[entityType];
-                    for (var img in entity.images) {
-                        if (entity.images.hasOwnProperty(img)) {
-                            if (entity.images[img].href === image.href) {
-                                entity.images[img].featured = true;
-                                entity.featuredImage = entity.images[img];
+
+                    if (typeof entity._embedded === 'undefined') {
+                        // TODO
+                        // remove when all entities have adopted the new API model (_embedded images, see below)
+                        for (var img in entity.images) {
+                            if (entity.images.hasOwnProperty(img)) {
+                                if (entity.images[img].href === image.href) {
+                                    entity.images[img].featured = true;
+                                    entity.featuredImage = entity.images[img];
+                                }
+                                else {
+                                    entity.images[img].featured = false;
+                                }
                             }
-                            else {
-                                entity.images[img].featured = false;
+                        }
+                    }
+                    else {
+                        for (var img in entity._embedded.images) {
+                            if (entity._embedded.images.hasOwnProperty(img)) {
+                                if (entity._embedded.images[img]._href === image._href) {
+                                    entity._embedded.images[img].featured = true;
+                                    entity._embedded.featuredImage = entity.images[img];
+                                }
+                                else {
+                                    entity._embedded.images[img].featured = false;
+                                }
                             }
                         }
                     }
