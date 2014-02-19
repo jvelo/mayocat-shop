@@ -11,7 +11,12 @@
 <h1 class="small" ng-if="isNew()">{{'product.title.newProduct' | translate}}</h1>
 
 <div class="loading" ng-if="!product.slug && !isNew()"></div>
-<form name="productForm" ng-if="product.slug || isNew()">
+<form name="productForm" ng-show="product.slug || isNew()">
+    <!--
+      NOTE: We're using ng-show on the form and not ng-if because ng-if creates a new scope while ng-show does not, and
+            we want to be able to address the form easily from the controller (i.e. $scope.productForm)
+      -->
+
     <article class="entity">
 
         <div>
@@ -147,7 +152,7 @@
             <h3>Type</h3>
 
             <div>
-                <select ng-model="product.type" ng-options="type as types[type].name for type in keys(types)">
+                <select name="type" ng-model="product.type" ng-options="type as types[type].name for type in keys(types)">
                     <option value="">No type</option>
                 </select>
             </div>

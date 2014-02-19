@@ -85,6 +85,24 @@ angular.module('product', ['ngResource'])
             };
 
             $scope.createVariant = function () {
+
+                if ($scope.productForm.type.$dirty) {
+                    // NOTE:
+                    // If the product's type is dirty (has not been saved), we might try to create here a variant
+                    // for a product with no type defined (from the server-side point of view), which will be refused
+                    // (as long as variants aren't supported outside the notion of product type).
+                    // What we do here is force a save. This is not ideal since it's hidden to the user, and he could
+                    // have edited other things.
+
+                    $scope.updateProduct();
+                    if (typeof $scope.product._links.variants === 'undefined') {
+                        // The variants links might not exist as well and is going to be used so we create it lazily.
+                        $scope.product._links.variants = {
+                            href: $scope.product._href + "variants/"
+                        }
+                    }
+                }
+
                 $scope.variantToCreate = {
                     features: {}
                 };
