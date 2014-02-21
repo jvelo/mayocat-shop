@@ -18,6 +18,8 @@ import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArrayArgumentFactory;
 import org.skife.jdbi.v2.DBI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentRepositoryException;
 
@@ -27,6 +29,9 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.TimerContext;
 
 public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
@@ -39,7 +44,13 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
     public static void main(String[] args) throws Exception
     {
+        Timer timer = Metrics.newTimer(MayocatShopService.class, "startUpTimer");
+        TimerContext context = timer.time();
         new MayocatShopService().run(args);
+        context.stop();
+
+        Logger logger = LoggerFactory.getLogger(MayocatShopService.class);
+        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.min()));
     }
 
     @Override
