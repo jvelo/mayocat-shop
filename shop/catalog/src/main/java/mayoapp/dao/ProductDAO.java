@@ -61,6 +61,20 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract Integer countAllOnShelf(@BindBean("tenant") Tenant tenant);
 
     @SqlQuery
+    public abstract List<Product> findAllNotVariants(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
+
+    @SqlQuery
+    public abstract Integer countAllNotVariants(@BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    public abstract List<Product> findAllWithTitleLike(@BindBean("tenant") Tenant tenant, @Bind("title") String title,
+            @Bind("number") Integer number, @Bind("offset") Integer offset);
+
+    @SqlQuery
+    public abstract Integer countAllWithTitleLike(@BindBean("tenant") Tenant tenant, @Bind("title") String title);
+
+    @SqlQuery
     public abstract List<Product> findAllVariants(@BindBean("product") Product product);
 
     public Product findBySlug(String slug, Tenant tenant)

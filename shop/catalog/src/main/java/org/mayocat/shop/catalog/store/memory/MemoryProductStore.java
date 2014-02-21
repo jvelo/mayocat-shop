@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
@@ -44,6 +45,26 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         }
     };
 
+    private static final Predicate<Product> NOT_A_VARIANT = new Predicate<Product>()
+    {
+        public boolean apply(@Nullable Product input)
+        {
+            return input.getParentId() == null || input.isVirtual();
+        }
+    };
+
+    private static final Predicate<Product> withTitleLike(final String title)
+    {
+        return new Predicate<Product>()
+        {
+            public boolean apply(@Nullable Product input)
+            {
+                return StringUtils.stripAccents(input.getTitle()).toLowerCase()
+                        .indexOf(StringUtils.stripAccents(title).toLowerCase()) >= 0;
+            }
+        };
+    }
+
     public void moveProduct(String productToMove, String productToMoveRelativeTo,
             RelativePosition relativePosition) throws InvalidMoveOperation
     {
@@ -54,7 +75,7 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
     {
         return FluentIterable.from(all()).filter(new Predicate<Product>()
         {
-            @Override public boolean apply(@Nullable Product input)
+            public boolean apply(@Nullable Product input)
             {
                 return input.getCollections().isLoaded() && input.getCollections().get().isEmpty();
             }
@@ -99,44 +120,72 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         return FluentIterable.from(all()).filter(ON_SHELF).size();
     }
 
+    public List<Product> findAllNotVariants(Integer number, Integer offset)
+    {
+        if (number == 0) {
+            return FluentIterable.from(all()).filter(ON_SHELF).skip(offset).toList();
+        }
+        return FluentIterable.from(all()).filter(ON_SHELF).skip(offset).limit(number)
+                .toList();
+    }
+
+    public Integer countAllNotVariants()
+    {
+        return FluentIterable.from(all()).filter(ON_SHELF).size();
+    }
+
+    public List<Product> findAllWithTitleLike(String title, Integer number, Integer offset)
+    {
+        if (number == 0) {
+            return FluentIterable.from(all()).filter(withTitleLike(title)).skip(offset).toList();
+        }
+        return FluentIterable.from(all()).filter(withTitleLike(title)).skip(offset).limit(number)
+                .toList();
+    }
+
+    public Integer countAllWithTitleLike(String title)
+    {
+        return FluentIterable.from(all()).filter(withTitleLike(title)).size();
+    }
+
     public void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException
     {
         Product product = this.findById(productId);
         product.setStock(product.getStock() + stockOffset);
     }
 
-    @Override public List<Feature> findFeatures(Product product)
+    public List<Feature> findFeatures(Product product)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override public List<Feature> findFeatures(Product product, String feature)
+    public List<Feature> findFeatures(Product product, String feature)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override public Feature findFeature(Product product, String feature, String featureSlug)
+    public Feature findFeature(Product product, String feature, String featureSlug)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override public List<Product> findVariants(Product product)
+    public List<Product> findVariants(Product product)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override public Product findVariant(Product product, String variantSlug)
+    public Product findVariant(Product product, String variantSlug)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override public Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
+    public Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException("Not implemented");
     }
 
     protected DefaultPositionedEntity<Product> createForEntity(Product entity, Integer position)
     {
-        return new DefaultPositionedEntity<Product>(entity, position);
+        return new DefaultPositionedEntity<>(entity, position);
     }
 }

@@ -10,9 +10,11 @@
 <h1 class="big">{{'order.title.orders' | translate}}</h1>
 
 <div class="loading" ng-show="!orders"></div>
-<div class="orders row" ng-show="orders">
 
-    <div class="alert alert-info" ng-show="orders.length <= 0">{{'order.alert.empty' | translate}}</div>
+<div class="orders row" ng-show="typeof orders != 'undefined'">
+    <div class="span9">
+        <div class="alert alert-info" ng-show="!orders || orders.length <= 0">{{'order.alert.empty' | translate}}</div>
+    </div>
 
     <div class="span9">
         <table class="table table-hover" ng-show="orders.length > 0">

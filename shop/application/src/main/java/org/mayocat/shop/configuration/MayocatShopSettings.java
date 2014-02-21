@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 import org.mayocat.cms.news.NewsSettings;
 import org.mayocat.configuration.AbstractSettings;
+import org.mayocat.configuration.DevelopmentEnvironmentSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
@@ -26,6 +27,10 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
  */
 public class MayocatShopSettings extends AbstractSettings
 {
+    @Valid
+    @JsonProperty
+    private DevelopmentEnvironmentSettings developmentEnvironment = new DevelopmentEnvironmentSettings();
+
     @Valid
     @NotNull
     @JsonProperty
@@ -94,5 +99,10 @@ public class MayocatShopSettings extends AbstractSettings
     public NewsSettings getNewsSettings()
     {
         return news;
+    }
+
+    public DevelopmentEnvironmentSettings getDevelopmentEnvironment()
+    {
+        return developmentEnvironment;
     }
 }

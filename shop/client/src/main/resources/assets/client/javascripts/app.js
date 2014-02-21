@@ -18,6 +18,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'page',
     'articles',
     'article',
+    'homePage',
     'orders',
     'order',
     '$strap.directives', // Used for the date picker bs-datepicker directive
@@ -33,6 +34,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController', title: 'Orders'}).
         when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController', title: 'Orders'}).
         when('/customers', {templateUrl: 'partials/customers.html', title: 'Customers'}).
+        when('/home', {templateUrl: 'partials/homePage.html', controller: 'HomePageController', title: 'Home page'}).
         when('/news', {templateUrl: 'partials/news.html', title: 'News'}).
         when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController', title: 'Pages'}).
         when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController', title: 'News'}).
@@ -54,6 +56,7 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
         scope.isPages = false;
         scope.isNews = false;
         scope.isSettings = false;
+        scope.isHomePage = false;
 
         scope.$watch('location.path()', function (path) {
 
@@ -86,6 +89,10 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
                     return;
                 }
             });
+            if (path.indexOf(["/home"]) == 0) {
+                scope.isHomePage = true;
+                return;
+            }
         });
     }]);
 

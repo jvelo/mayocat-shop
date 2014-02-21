@@ -26,11 +26,11 @@ angular.module('collection', ['ngResource'])
             // Functions
 
             $scope.updateCollection = function (callback) {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 if ($scope.isNew()) {
                     $http.post("/api/collections/", $scope.collection)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             if (status < 400) {
                                 var fragments = headers("location").split('/'),
                                     slug = fragments[fragments.length - 1];
@@ -49,13 +49,13 @@ angular.module('collection', ['ngResource'])
                             }
                         })
                         .error(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             callback && callback.call();
                         });
                 }
                 else {
                     $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function () {
-                        $scope.isSaving = false;
+                        $scope.isLoading = false;
                         $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                 }

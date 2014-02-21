@@ -6,6 +6,32 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+/* Entity list selector */
+
+ul.select.entity.list {
+
+  li {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    height: 48px;
+
+    div.thumb {
+      margin-right: 10px;
+    }
+
+    div.action-button, div.entity-title {
+      line-height: 40px;
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      background-color: white;
+    }
+  }
+
+}
+
 /* Hoverable list */
 
 ul li.hoverable:hover {
@@ -20,6 +46,23 @@ ul li.hoverable .visible-when-hover {
 ul li.hoverable:hover .visible-when-hover {
   visibility: visible;
 }
+
+/* Thumbnail list */
+
+.entities.thumbnails {
+  .thumbnail.add {
+
+    opacity: 0.8;
+
+    .wrapper {
+      background-color: white;
+      background-position: center center;
+      background-image: url(/common/images/plus.png);
+      background-repeat: no-repeat;
+    }
+  }
+}
+
 
  /* Thumbnail editor */
 

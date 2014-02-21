@@ -18,6 +18,7 @@ import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArrayArgumentFactory;
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.logging.PrintStreamLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
@@ -89,6 +90,13 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "jdbi");
         jdbi.registerArgumentFactory(new PostgresUUIDArgumentFactory());
         jdbi.registerArgumentFactory(new PostgresUUIDArrayArgumentFactory());
+
+        if (configuration.getDevelopmentEnvironment().isEnabled() &&
+                configuration.getDevelopmentEnvironment().isLogDatabaseRequests())
+        {
+            jdbi.setSQLLog(new PrintStreamLog());
+        }
+
         final DBIProvider dbi = new DBIProvider()
         {
             @Override

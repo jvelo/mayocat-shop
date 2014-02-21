@@ -44,29 +44,35 @@ class BasePaginatedListApiObject
                 def templateEngine = new SimpleTemplateEngine()
 
                 if (!_href) {
-                    _href = templateEngine.createTemplate(pagination.urlTemplate as String).make([
-                            offset: pagination.offset,
-                            numberOfItems: pagination.numberOfItems
-                    ]).toString()
+                    Map<String, String> arguments = [
+                            offset: pagination.offset as String,
+                            numberOfItems: pagination.numberOfItems as String
+                    ]
+                    arguments.putAll(pagination.urlArguments)
+                    _href = templateEngine.createTemplate(pagination.urlTemplate as String).make(arguments).toString()
                 }
 
                 if (pagination.offset + pagination.numberOfItems < pagination.totalItems) {
                     // there is a next page
+                    Map<String, String> arguments = [
+                            offset: pagination.offset + pagination.numberOfItems as String,
+                            numberOfItems: pagination.numberOfItems as String
+                    ]
+                    arguments.putAll(pagination.urlArguments)
                     _links.nextPage = new LinkApiObject([
-                        href: templateEngine.createTemplate(pagination.urlTemplate as String).make([
-                                offset: pagination.offset + pagination.numberOfItems,
-                                numberOfItems: pagination.numberOfItems
-                        ]).toString()
+                        href: templateEngine.createTemplate(pagination.urlTemplate as String).make(arguments).toString()
                     ])
                 }
 
                 if (pagination.offset > 0) {
                     // there is a next page
+                    Map<String, String> arguments = [
+                            offset: (pagination.offset - pagination.numberOfItems) as String,
+                            numberOfItems: pagination.numberOfItems as String
+                    ]
+                    arguments.putAll(pagination.urlArguments)
                     _links.previousPage = new LinkApiObject([
-                            href: templateEngine.createTemplate(pagination.urlTemplate as String).make([
-                                    offset: pagination.offset - pagination.numberOfItems,
-                                    numberOfItems: pagination.numberOfItems
-                            ]).toString()
+                            href: templateEngine.createTemplate(pagination.urlTemplate as String).make(arguments).toString()
                     ])
                 }
             }

@@ -11,6 +11,7 @@ import org.mayocat.addons.model.AddonField
 import org.mayocat.addons.model.BaseProperties
 import org.mayocat.addons.util.AddonUtils
 import org.mayocat.configuration.PlatformSettings
+import org.mayocat.image.model.Image
 import org.mayocat.model.Addon
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.theme.ThemeDefinition
@@ -137,6 +138,19 @@ class ProductApiObject extends BaseApiObject
         })
 
         _relationships.collections = collectionRelationships
+    }
+
+    @JsonIgnore
+    def withEmbeddedFeaturedImage(Image featuredImage)
+    {
+        if (_embedded == null) {
+            _embedded = [:]
+        }
+
+        def imageApiObject = new ImageApiObject()
+        imageApiObject.withImage(featuredImage)
+        imageApiObject.featured = true
+        _embedded.featuredImage = imageApiObject
     }
 
     @JsonIgnore

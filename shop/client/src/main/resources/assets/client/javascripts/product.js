@@ -43,10 +43,10 @@ angular.module('product', ['ngResource'])
 
             $scope.updateProduct = function () {
                 if ($scope.isNew()) {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $http.post("/api/products/", $scope.product)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             if (status < 400) {
                                 var fragments = headers("location").split('/'),
                                     slug = fragments[fragments.length - 1];
@@ -65,13 +65,13 @@ angular.module('product', ['ngResource'])
                         })
                         .error(function (data, status, headers, config) {
                             $modal.open({ templateUrl: 'serverError.html' });
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                         });
                 }
                 else {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
-                        $scope.isSaving = false;
+                        $scope.isLoading = false;
                     });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {

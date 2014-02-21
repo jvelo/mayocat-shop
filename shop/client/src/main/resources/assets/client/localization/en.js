@@ -21,7 +21,9 @@
             validation: {
                 required : "Required"
             },
-            conflict: "Conflict"
+            conflict: "Conflict",
+            filter: "Filter",
+            select: "Select"
         },
 
         /**
@@ -297,6 +299,8 @@
             },
 
             title: {
+                homePage: "Home page",
+
                 pages: "Pages",
                 allPages: "All pages",
                 newPage: "New page",
@@ -340,6 +344,13 @@
             alert: {
                 confirmPageDeletion: "Please confirm you want to delete this page. There's no coming back!",
                 confirmArticleDeletion: "Please confirm you want to delete this article. There's no coming back!"
+            },
+
+            homePage: {
+                featuredProducts: "Featured products",
+                addFeaturedProduct: "Add product",
+                addFeaturedProductModalTitle: "Add a featured product",
+                emptyFeaturedProductsList: "Here you can manage a list of products that will be featured on the home page of your shop (if your theme supports it)."
             }
         },
 

@@ -104,7 +104,7 @@
             <div ng-if="!isNew()">
                 <div ng-if="product.onShelf == undefined">
                     <div class="hasLoading">
-                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">
+                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large">
                             {{'entity.action.save' | translate}}
                         </button>
                         <button ng-click="publishProduct()" class="btn btn-large btn-primary">

@@ -19,4 +19,6 @@ class Pagination
     Integer totalItems
 
     String urlTemplate
+
+    Map<String, String> urlArguments = [:]
 }

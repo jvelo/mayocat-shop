@@ -92,6 +92,7 @@
     <script src="javascripts/page.js"></script>
     <script src="javascripts/articles.js"></script>
     <script src="javascripts/article.js"></script>
+    <script src="javascripts/homePage.js"></script>
     <script src="javascripts/orders.js"></script>
     <script src="javascripts/order.js"></script>
     <script src="javascripts/product.js"></script>
@@ -156,10 +157,15 @@
                 </a>
             </li>
             <li active-class="active">
-                <a href="#/contents" other-active-href="#/pages/,#/news">
+                <a href="#/contents" other-active-href="#/pages/,#/news,#/home">
                     <h2>{{'content.title.contents' | translate}}</h2>
                 </a>
-                <ul ng-show="isNews || isPages" class="sub-menu">
+                <ul ng-show="isNews || isPages || isHomePage" class="sub-menu">
+                    <li active-class="active">
+                        <a href="#/home">
+                            {{'content.title.homePage' | translate}}
+                        </a>
+                    </li>
                     <li active-class="active">
                         <a href="#/contents" other-active-href="#/pages/">
                             {{'content.title.pages' | translate}}

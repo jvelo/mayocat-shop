@@ -40,6 +40,16 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
 
+    Integer countAllOnShelf();
+
+    List<Product> findAllNotVariants(Integer number, Integer offset);
+
+    Integer countAllNotVariants();
+
+    List<Product> findAllWithTitleLike(String title, Integer number, Integer offset);
+
+    Integer countAllWithTitleLike(String title);
+
     List<Feature> findFeatures(Product product);
 
     List<Feature> findFeatures(Product product, String feature);
@@ -51,8 +61,6 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
     Product findVariant(Product product, String variantSlug);
 
     Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException;
-
-    Integer countAllOnShelf();
 
     void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException;
 }

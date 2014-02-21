@@ -100,7 +100,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return product;
     }
 
-    @Override
     public void update(Product product) throws EntityDoesNotExistException, InvalidEntityException
     {
         this.dao.begin();
@@ -137,7 +136,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         getObservationManager().notify(new EntityUpdatedEvent(), product);
     }
 
-    @Override
     public void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException
     {
         this.dao.begin();
@@ -161,7 +159,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         getObservationManager().notify(new EntityUpdatedEvent(), product);
     }
 
-    @Override
     public void delete(@Valid Product entity) throws EntityDoesNotExistException
     {
         Integer updatedRows = 0;
@@ -195,7 +192,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         this.dao.commit();
     }
 
-    @Override
     public List<Product> findOrphanProducts()
     {
         return AddonsHelper.withAddons(this.dao.findOrphanProducts(getTenant()), this.dao);
@@ -212,13 +208,21 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
                 this.dao.findAll(PRODUCT_TABLE_NAME, PRODUCT_POSITION, getTenant(), number, offset), this.dao);
     }
 
-    @Override
+    public List<Product> findAllWithTitleLike(String title, Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.dao.findAllWithTitleLike(getTenant(), title, number, offset), this.dao);
+    }
+
+    public Integer countAllWithTitleLike(String title)
+    {
+        return this.dao.countAllWithTitleLike(getTenant(), title);
+    }
+
     public List<Product> findByIds(List<UUID> ids)
     {
         return AddonsHelper.withAddons(this.dao.findByIds(PRODUCT_TABLE_NAME, ids), this.dao);
     }
 
-    @Override
     public Integer countAll()
     {
         return this.dao.countAll(PRODUCT_TABLE_NAME, getTenant());
@@ -248,37 +252,41 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return product;
     }
 
-    @Override
     public List<Product> findAllForCollection(Collection collection)
     {
         return AddonsHelper.withAddons(this.dao.findAllForCollection(collection), this.dao);
     }
 
-    @Override
     public List<Product> findAllOnShelf(Integer number, Integer offset)
     {
         return AddonsHelper.withAddons(this.dao.findAllOnShelf(getTenant(), number, offset), this.dao);
     }
 
-    @Override
-    public List<Product> findForCollection(Collection collection, Integer number, Integer offset)
-    {
-        return AddonsHelper.withAddons(this.dao.findForCollection(collection, number, offset), this.dao);
-    }
-
-    @Override
-    public Integer countAllForCollection(Collection collection)
-    {
-        return this.dao.countAllForCollection(collection);
-    }
-
-    @Override
     public Integer countAllOnShelf()
     {
         return this.dao.countAllOnShelf(getTenant());
     }
 
-    @Override
+    public List<Product> findAllNotVariants(Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.dao.findAllNotVariants(getTenant(), number, offset), this.dao);
+    }
+
+    public Integer countAllNotVariants()
+    {
+        return this.dao.countAllNotVariants(getTenant());
+    }
+
+    public List<Product> findForCollection(Collection collection, Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.dao.findForCollection(collection, number, offset), this.dao);
+    }
+
+    public Integer countAllForCollection(Collection collection)
+    {
+        return this.dao.countAllForCollection(collection);
+    }
+
     public Product findById(UUID id)
     {
         Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
@@ -289,13 +297,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return product;
     }
 
-    @Override
     public List<Feature> findFeatures(Product product)
     {
         return AddonsHelper.withAddons(this.featureDao.findAllForProduct(product), this.featureDao);
     }
 
-    @Override
     public List<Feature> findFeatures(Product product, final String feature)
     {
         return FluentIterable.from(findFeatures(product)).filter(new Predicate<Feature>()
@@ -307,7 +313,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }).toList();
     }
 
-    @Override
     public Feature findFeature(Product product, final String feature, final String featureSlug)
     {
         return FluentIterable.from(findFeatures(product)).filter(new Predicate<Feature>()
@@ -319,25 +324,22 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }).first().orNull();
     }
 
-    @Override
     public List<Product> findVariants(Product product)
     {
         return AddonsHelper.withAddons(this.dao.findAllVariants(product), this.dao);
     }
 
-    @Override
     public Product findVariant(Product product, final String variantSlug)
     {
         return FluentIterable.from(findVariants(product)).filter(new Predicate<Product>()
         {
-            @Override public boolean apply(@Nullable Product input)
+            public boolean apply(@Nullable Product input)
             {
                 return input.getSlug().equals(variantSlug);
             }
         }).first().orNull();
     }
 
-    @Override
     public Feature createFeature(final Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
     {
         if (feature.getParentId() == null) {
@@ -377,7 +379,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return feature;
     }
 
-    @Override
     public void initialize() throws InitializationException
     {
         this.dao = this.getDbi().onDemand(ProductDAO.class);

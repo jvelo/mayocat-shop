@@ -21,9 +21,9 @@ angular.module('settings', ['ngResource'])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.updateSettings = function () {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 configurationService.put($scope.settings, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     $rootScope.$broadcast("catalog:refreshCatalog");
                 });
             };
@@ -103,9 +103,9 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.updateTenant = function () {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.TenantResource.save({}, $scope.tenant, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                 });
             }
 
@@ -175,10 +175,10 @@ angular.module('settings', ['ngResource'])
 
             $scope.createOrUpdateCarrier = function () {
                 if ($scope.editedCarrier.isNew) {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $http.post("/api/shipping/carrier/", $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
                         })
@@ -187,10 +187,10 @@ angular.module('settings', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $http.put("/api/shipping/carrier/" + $scope.editedCarrier.id, $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
 

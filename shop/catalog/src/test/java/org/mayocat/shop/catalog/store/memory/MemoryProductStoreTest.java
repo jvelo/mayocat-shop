@@ -173,4 +173,23 @@ public class MemoryProductStoreTest
         Assert.assertEquals(product4, forCollection.get(1));
     }
 
+    @Test
+    public void testFindWithTitleLike() throws InvalidEntityException, EntityAlreadyExistsException
+    {
+        Product product = new Product();
+        product.setTitle("Un bel été!");
+
+        Product product2 = new Product();
+        product2.setTitle("Un bel automne!");
+
+
+        productStore.create(product);
+
+        List<Product> found = productStore.findAllWithTitleLike("été", 0, 0);
+        Assert.assertEquals(1, found.size());
+
+        found = productStore.findAllWithTitleLike("hiver", 0, 0);
+        Assert.assertEquals(0, found.size());
+    }
+
 }

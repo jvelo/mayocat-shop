@@ -20,6 +20,7 @@ import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
@@ -94,7 +95,8 @@ class ProductApi implements Resource, Initializable
     @Authorized
     def getProducts(@QueryParam("number") @DefaultValue("50") Integer number,
                     @QueryParam("offset") @DefaultValue("0") Integer offset,
-                    @QueryParam("filter") @DefaultValue("") String filter)
+                    @QueryParam("filter") @DefaultValue("") String filter,
+                    @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
     {
         List<ProductApiObject> productList = [];
         def products;
@@ -103,9 +105,27 @@ class ProductApi implements Resource, Initializable
         if (filter.equals("uncategorized")) {
             products = this.productStore.get().findOrphanProducts();
             totalItems = products.size()
+        } else if (!Strings.isNullOrEmpty(titleMatches)) {
+            products = productStore.get().findAllWithTitleLike(titleMatches, number, offset)
+            totalItems = productStore.get().countAllWithTitleLike(titleMatches);
         } else {
-            products = productStore.get().findAll(number, offset)
-            totalItems = productStore.get().countAll()
+            products = productStore.get().findAllNotVariants(number, offset)
+            totalItems = productStore.get().countAllNotVariants()
+        }
+
+        def imageIds = products.collect({ Product product -> product.getFeaturedImageId() })
+                                      .findAll({ UUID id -> id != null})
+
+        List<Image> images;
+        if (imageIds.size() > 0) {
+            List<Attachment> attachments = this.attachmentStore.get().findByIds(imageIds.toList());
+            List<Thumbnail> thumbnails = this.thumbnailStore.get().findAllForIds(imageIds.toList());
+            images = attachments.collect({ Attachment attachment ->
+                def thumbs = thumbnails.findAll({ Thumbnail thumbnail -> thumbnail.attachmentId = attachment.id })
+                return new Image(attachment, thumbs.toList())
+            });
+        } else {
+            images = []
         }
 
         products.each({ Product product ->
@@ -118,6 +138,12 @@ class ProductApi implements Resource, Initializable
                 productApiObject.withAddons(product.addons.get())
             }
 
+            def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
+
+            if (featuredImage) {
+                productApiObject.withEmbeddedFeaturedImage(featuredImage)
+            }
+
             productList << productApiObject
         })
 
@@ -127,7 +153,11 @@ class ProductApi implements Resource, Initializable
                     returnedItems: productList.size(),
                     offset: offset,
                     totalItems: totalItems,
-                    urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}'
+                    urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
+                    urlArguments: [
+                            titleMatches: titleMatches,
+                            filter: filter
+                    ]
                 ]),
                 products: productList
         ])

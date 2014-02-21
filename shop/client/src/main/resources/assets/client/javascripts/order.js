@@ -23,9 +23,9 @@ angular.module('order', ['ngResource'])
             $scope.slug = $routeParams.order;
 
             $scope.updateOrder = function (callback) {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.OrderResource.save({ "slug": $scope.slug }, $scope.article, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     callback && callback.call();
                 });
 
@@ -54,10 +54,10 @@ angular.module('order', ['ngResource'])
             }
 
             $scope.setStatus = function(status, callback) {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.order.status = status;
                 $scope.OrderResource.save({ "slug": $scope.slug }, $scope.order, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     callback && callback.call();
                 });
             }

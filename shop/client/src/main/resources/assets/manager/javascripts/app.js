@@ -218,9 +218,9 @@ angular.module('TenantManager.tenants', [])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.updateTenant = function () {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.TenantResource.save({"slug": $scope.slug }, $scope.tenant, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                 });
             }
 

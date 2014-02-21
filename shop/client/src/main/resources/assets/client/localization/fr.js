@@ -18,7 +18,9 @@
             validation: {
                 required : "Requis"
             },
-            conflict: "Conflit"
+            conflict: "Conflit",
+            filter: "Filtrer",
+            select: "Selectionner"
         },
         entity: {
             misc: {
@@ -258,6 +260,8 @@
             },
 
             title: {
+                homePage: "Page d'accueil",
+
                 pages: "Pages",
                 allPages: "Toutes les pages",
                 newPage: "Nouvelle page",
@@ -301,6 +305,13 @@
             alert: {
                 confirmPageDeletion: "Veuillez confirmer la suppression de cette page. Cette opération ne peut pas être annulée !",
                 confirmArticleDeletion: "Veuillez confirmer la suppression de cette actualité. Cette opération ne peut pas être annulée !"
+            },
+
+            homePage: {
+                featuredProducts: "Produits à la une",
+                addFeaturedProduct: "Ajouter un produit",
+                addFeaturedProductModalTitle: "Ajouter un produit à la une",
+                emptyFeaturedProductsList: "Vous pouvez ici gérer une liste de produits à la une qui apparaîtront sur la page d'accueil de votre boutique (si votre thème les supportes)."
             }
         },
 
