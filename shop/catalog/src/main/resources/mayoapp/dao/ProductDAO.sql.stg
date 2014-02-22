@@ -76,7 +76,7 @@ findAllNotVariants() ::= <<
                    ON product.entity_id = entity.id
     WHERE  entity.tenant_id = :tenant.id
            AND (entity.parent_id IS NULL OR product.virtual)
-    ORDER  BY product.position ASC
+    ORDER  BY product.position DESC
     LIMIT  :number
     OFFSET :offset
 >>
@@ -91,7 +91,7 @@ findOrphanProducts() ::= <<
                        WHERE  product_id = entity.id)
            AND entity.tenant_id = :tenant.id
            AND (entity.parent_id IS NULL OR product.virtual)
-    ORDER  BY product.position ASC
+    ORDER  BY product.position DESC
 >>
 
 findForCollection() ::= <<
@@ -113,6 +113,8 @@ countAllForCollection() ::= <<
     FROM   collection_product
            INNER JOIN entity
                    ON entity.id = collection_product.product_id
+           INNER JOIN product
+                   on product.entity_id = collection_product.product_id
     WHERE  collection_product.collection_id = :collection.id
            AND (entity.parent_id IS NULL OR product.virtual)
 >>
@@ -138,7 +140,7 @@ findAllOnShelf() ::= <<
            AND entity.tenant_id = :tenant.id
            AND product.on_shelf
            AND (entity.parent_id IS NULL OR product.virtual)
-    ORDER  BY product.position ASC
+    ORDER  BY product.position DESC
     LIMIT  :number
     OFFSET :offset
 >>
@@ -167,7 +169,7 @@ findAllVariants() ::= <<
            INNER JOIN product
                    ON product.entity_id = entity.id
     WHERE  entity.parent_id = :product.id
-    ORDER  BY product.position ASC
+    ORDER  BY product.position DESC
 >>
 
 findAllWithTitleLike() ::= <<
@@ -179,7 +181,7 @@ findAllWithTitleLike() ::= <<
            AND entity.tenant_id = :tenant.id
            AND (entity.parent_id IS NULL OR product.virtual)
            AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(:title)) || '%')
-    ORDER  BY product.position ASC
+    ORDER  BY product.position DESC
     LIMIT  :number
     OFFSET :offset
 >>
