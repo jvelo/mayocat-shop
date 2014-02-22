@@ -13,12 +13,12 @@
 
     <h3>{{'content.homePage.featuredProducts' | translate}}</h3>
 
-    <div ng-if="featuredProducts.length == 0 && !isLoading">
+    <div ng-if="featuredProducts.length == 0 && !isLoading && !isDirty">
         <div class="alert alert-info">{{'content.homePage.emptyFeaturedProductsList' | translate}}</div>
     </div>
 
-    <ul class="entities thumbnails">
-        <li ng-repeat="product in featuredProducts">
+    <ul class="entities thumbnails" ui-sortable="featuredProductsSortableOptions" ng-model="featuredProducts">
+        <li class="drag-me" ng-repeat="product in featuredProducts">
             <div class="thumbnail">
                 <div class="wrapper">
                     <span ng-if="product._embedded.featuredImage">
@@ -28,6 +28,14 @@
                         <span ng-if="!product._embedded.featuredImage">
                             <img src="http://placehold.it/150/ccc/ccc" width="150" heigt="150"/>
                         </span>
+                    <div class="menu-wrapper">
+                        <ul class="menu">
+                            <li>
+                                <span class="btn btn-primary" ng-click="removeProduct(product)">
+                                    {{'global.actions.remove' | translate}}</span>
+                            </li>
+                        </ul>
+                    </div>
 
                 </div>
                 <div class="caption">
@@ -35,7 +43,9 @@
                 </div>
             </div>
         </li>
-        <li>
+    </ul>
+    <ul class="entities thumbnails">
+        <li class="no-drag">
             <div class="thumbnail add" ng-click="addProduct()">
                 <div class="wrapper">
 
@@ -47,8 +57,10 @@
         </li>
     </ul>
 
-    <div class="buttons" ng-show="isDirty || isLoading">
-        <div class="hasLoading" ng-show="isDirty">
+    <div class="clearfix"></div>
+
+    <div class="buttons" ng-show="isDirty || isLoading || featuredProducts.length > 0">
+        <div class="hasLoading" ng-show="isDirty || featuredProducts.length > 0">
             <button ng-click="save()" class="btn btn-large btn-primary">
                 {{'entity.action.save' | translate}}
             </button>

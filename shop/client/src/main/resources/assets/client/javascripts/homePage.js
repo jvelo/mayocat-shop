@@ -22,6 +22,24 @@ angular.module('homePage', [])
                 $scope.isLoading = false;
             });
 
+            $scope.featuredProductsSortableOptions = {
+                update: function(e, ui) {
+                    console.log(ui.item[0].tagName);
+                    console.log(ui.item.hasClass("no-drag"));
+                    if (ui.item.hasClass("no-drag")) {
+                        ui.item.sortable.cancel();
+                    }
+                }
+            };
+
+            $scope.removeProduct = function(product) {
+                var index = $scope.featuredProducts.findIndex(function(p){
+                    return p.slug === product.slug
+                });
+                $scope.featuredProducts.splice(index, 1);
+                $scope.isDirty = true;
+            }
+
             $scope.addProduct = function () {
                 $scope.modalInstance = $modal.open({
                     templateUrl: 'addFeaturedProduct.html',
@@ -44,6 +62,7 @@ angular.module('homePage', [])
                     featuredProducts: $scope.featuredProducts
                 }).success(function () {
                         $scope.isLoading = false;
+                        $scope.isDirty = false;
                 });
             }
 

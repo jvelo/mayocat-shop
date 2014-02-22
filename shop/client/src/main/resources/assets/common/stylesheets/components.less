@@ -29,7 +29,6 @@ ul.select.entity.list {
       background-color: white;
     }
   }
-
 }
 
 /* Hoverable list */
@@ -50,6 +49,49 @@ ul li.hoverable:hover .visible-when-hover {
 /* Thumbnail list */
 
 .entities.thumbnails {
+
+  &:after {
+    /* Entities thumbnail lists must be cleared manually */
+    clear: none;
+  }
+
+  .menu-wrapper {
+    display: none;
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: 4px;
+    text-align: center;
+  }
+
+  ul.menu {
+    display: table-cell;
+    background: white;
+    opacity: 0.9;
+    heigt: 100%;
+    vertical-align: middle;
+
+    li {
+      span.btn {
+        opacity: 1.0;
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+  }
+
+  li:not(.ui-sortable-helper) {
+    .wrapper:hover {
+      .menu-wrapper {
+        display:table;
+      }
+    }
+  }
+
+
   .thumbnail.add {
 
     opacity: 0.8;

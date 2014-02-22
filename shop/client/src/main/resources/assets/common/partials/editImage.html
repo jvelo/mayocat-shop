@@ -18,7 +18,7 @@
                 ng-show="keys(configuration[entityType].images[source]).length > 0">
                 <li ng-repeat="size in configuration[entityType].images[source]"
                     ng-class="{active: isEdited(source, size)}"
-                    ng-click="edit(source, size)" class="clickme">
+                    ng-click="edit(source, size)" class="click-me">
                     {{size.name}}
 
                 </li>

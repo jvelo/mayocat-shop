@@ -21,7 +21,7 @@
                 <li ng-repeat="collection in collections" ng-class="{hasChildren: collection.products.length > 0}">
                     <div class="droptarget">
                         <div class="listItem">
-                        <i class="icon clickme" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
+                        <i class="icon click-me" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
                            ng-click="toggleExpand(collection)"/>
                         <span class="collection">
                             <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
@@ -34,12 +34,12 @@
                                         <div>
                                             <a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a>
                                         </div>
-                                        <div><span class="dragme move-handle"></span></div>
+                                        <div><span class="drag-me move-handle"></span></div>
                                     </div>
                                 </li>
                             </ul>
                         </div>
-                        <div><span class="dragme move-handle"></i></span></div>
+                        <div><span class="drag-me move-handle"></i></span></div>
                     </div>
                 </li>
             </ul>
@@ -59,7 +59,7 @@
                             <li ng-repeat="product in products" ng-class="{active: entity.slug == product.slug && entity.type == 'product'}">
                                 <div class="droptarget">
                                     <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
-                                    <div><span class="dragme move-handle"></span></div>
+                                    <div><span class="drag-me move-handle"></span></div>
                                 </div>
                             </li>
                         </ul>

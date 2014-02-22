@@ -24,14 +24,14 @@
 
     <!-- list/table -->
     <div>
-        <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+        <ul class="list" sortable-on-change="changePosition()" handle-class="drag-me">
             <li ng-repeat="collection in collection" data-handle="{{collection.slug}}">
                 <div class="row droptarget">
                     <div class="span6">{{collection.title}}</div>
                     <div class="span1"><a ng-click="setRoute(collection.href)">
                         {{'entity.action.edit' | translate}}
                     </a></div>
-                    <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                    <div class="span1"><span class="drag-me"><i class="icon-move"></i></span></div>
                 </div>
             </li>
         </ul>

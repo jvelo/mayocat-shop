@@ -16,6 +16,7 @@
         global: {
             actions: {
                 add: "Add",
+                remove: "Remove",
                 close: "Close"
             },
             validation: {

@@ -13,6 +13,7 @@
         global: {
             actions: {
                 add: "Ajouter",
+                remove: "Retirer",
                 close: "Fermer"
             },
             validation: {
