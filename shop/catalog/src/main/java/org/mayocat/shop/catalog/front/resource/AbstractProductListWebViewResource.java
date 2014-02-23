@@ -75,6 +75,12 @@ public class AbstractProductListWebViewResource extends AbstractWebViewResource
     protected Map<String, Object> createProductListContext(List<Product> products)
     {
         final Map<String, Object> productsContext = Maps.newHashMap();
+        productsContext.put("list", createProductListContextList(products));
+        return productsContext;
+    }
+
+    protected List<Map<String, Object>> createProductListContextList(List<Product> products)
+    {
         final List<Map<String, Object>> productsListContext = Lists.newArrayList();
 
         java.util.Collection<UUID> featuredImageIds = Collections2.transform(products,
@@ -115,8 +121,7 @@ public class AbstractProductListWebViewResource extends AbstractWebViewResource
             productsListContext.add(productContext);
         }
 
-        productsContext.put("list", productsListContext);
-        return productsContext;
+        return productsListContext;
     }
 
     protected Map<String, Object> createProductListContext(int currentPage, Integer totalPages,

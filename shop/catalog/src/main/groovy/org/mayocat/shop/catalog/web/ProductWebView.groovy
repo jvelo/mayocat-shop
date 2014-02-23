@@ -56,7 +56,7 @@ class ProductWebView extends AbstractProductListWebViewResource implements Resou
     {
         final int currentPage = page < 1 ? 1 : page;
         Integer numberOfProductsPerPage =
-            context.theme.getDefinition().getPaginationDefinition("products").getItemsPerPage();
+            context.theme.definition.getPaginationDefinition("products").getItemsPerPage();
 
         Integer offset = (page - 1) * numberOfProductsPerPage;
         Integer totalCount = this.productStore.get().countAllOnShelf();

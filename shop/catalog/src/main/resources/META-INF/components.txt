@@ -8,7 +8,6 @@ org.mayocat.shop.catalog.api.resources.CollectionResource
 org.mayocat.shop.catalog.configuration.source.CatalogGestaltConfigurationSource
 org.mayocat.shop.catalog.configuration.jackson.MoneyModule
 org.mayocat.shop.catalog.front.resource.CollectionResource
-org.mayocat.shop.catalog.front.resource.HomeResource
 org.mayocat.shop.catalog.front.context.MainWebDataSupplier
 org.mayocat.shop.catalog.front.context.SiteWebDataSupplier
 org.mayocat.shop.catalog.front.context.PagesWebDataSupplier
@@ -20,3 +19,4 @@ org.mayocat.shop.catalog.search.ProductIndexDocumentPurveyor
 org.mayocat.shop.catalog.search.ProductEntityMappingGenerator
 org.mayocat.shop.catalog.search.TenantEntityMappingGenerator
 org.mayocat.shop.catalog.web.ProductWebView
+org.mayocat.shop.catalog.web.HomeWebView

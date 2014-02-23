@@ -5,94 +5,95 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.front.resource;
+package org.mayocat.shop.catalog.web
 
-import java.math.RoundingMode;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.google.common.base.Predicates
+import com.google.common.collect.Collections2
+import com.google.common.collect.Lists
+import com.google.common.collect.Maps
+import com.google.common.math.IntMath
+import org.mayocat.cms.news.front.resource.ArticleContextBuilder
+import org.mayocat.cms.news.model.Article
+import org.mayocat.cms.news.store.ArticleStore
+import org.mayocat.cms.pages.front.builder.PageContextBuilder
+import org.mayocat.cms.pages.model.Page
+import org.mayocat.cms.pages.store.PageStore
+import org.mayocat.image.model.Image
+import org.mayocat.image.model.Thumbnail
+import org.mayocat.model.Attachment
+import org.mayocat.model.EntityList
+import org.mayocat.rest.Resource
+import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.shop.catalog.front.resource.AbstractProductListWebViewResource
+import org.mayocat.shop.catalog.model.Product
+import org.mayocat.shop.catalog.store.ProductStore
+import org.mayocat.shop.front.builder.PaginationContextBuilder
+import org.mayocat.shop.front.context.ContextConstants
+import org.mayocat.shop.front.resources.AbstractWebViewResource
+import org.mayocat.shop.front.util.WebDataHelper
+import org.mayocat.shop.front.views.WebView
+import org.mayocat.store.EntityListStore
+import org.mayocat.theme.ThemeDefinition
+import org.xwiki.component.annotation.Component
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
+import javax.ws.rs.core.MediaType
+import java.math.RoundingMode
+import java.text.MessageFormat
 
-import org.mayocat.cms.news.front.resource.ArticleContextBuilder;
-import org.mayocat.cms.news.model.Article;
-import org.mayocat.cms.news.store.ArticleStore;
-import org.mayocat.cms.pages.front.builder.PageContextBuilder;
-import org.mayocat.cms.pages.model.Page;
-import org.mayocat.cms.pages.store.PageStore;
-import org.mayocat.image.model.Image;
-import org.mayocat.image.model.Thumbnail;
-import org.mayocat.model.Attachment;
-import org.mayocat.rest.Resource;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.shop.front.builder.PaginationContextBuilder;
-import org.mayocat.shop.front.resources.AbstractWebViewResource;
-import org.mayocat.shop.front.util.WebDataHelper;
-import org.mayocat.shop.front.views.WebView;
-import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.shop.front.context.ContextConstants;
-import org.mayocat.theme.ThemeDefinition;
-import org.mayocat.theme.ThemeFileResolver;
-import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.math.IntMath;
-
-import static org.mayocat.shop.front.util.WebDataHelper.isEntityFeaturedImage;
-import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment;
+import static org.mayocat.shop.front.util.WebDataHelper.isEntityFeaturedImage
+import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment
 
 /**
- * @version $Id$
+ * @version $Id: c73b626db3d0cda9da6d8f9b4b0d674667913958 $
  */
-@Component(HomeResource.PATH)
-@Path(HomeResource.PATH)
-@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+@Component("/")
+@Path("/")
+@Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-public class HomeResource extends AbstractProductListWebViewResource implements Resource
+class HomeWebView extends AbstractProductListWebViewResource implements Resource
 {
     @Inject
-    private Provider<ProductStore> productStore;
-
-    public static final String PATH = ROOT_PATH;
+    Provider<ProductStore> productStore;
 
     @Inject
-    private Provider<PageStore> pageStore;
+    Provider<PageStore> pageStore;
 
     @Inject
-    private Provider<ArticleStore> articleStore;
+    Provider<ArticleStore> articleStore;
+
+    @Inject
+    Provider<EntityListStore> entityListStore
 
     @GET
-    public WebView getHomePage()
+    def getHomePage()
     {
         Map<String, Object> context = new HashMap<>();
 
-        // Products
+        // Featured products
+
+        def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
+        if (!lists.isEmpty() && !lists.first().entities.isEmpty()) {
+            List<Product> products = productStore.get().findByIds(lists.first().entities)
+            context.put("featuredProducts", createProductListContextList(products));
+
+        }
+
+        // All products
 
         Integer numberOfProducts =
                 this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
         Integer totalCount = this.productStore.get().countAllOnShelf();
         Integer totalPages = IntMath.divide(totalCount, numberOfProducts, RoundingMode.UP);
-        context.put("products",
-                createProductListContext(1, totalPages, products, new PaginationContextBuilder.UrlBuilder()
-                {
+        context.put("products", createProductListContext(1, totalPages, products,
+                new PaginationContextBuilder.UrlBuilder() {
                     public String build(int page)
                     {
                         return MessageFormat.format("/products/?page={0}", page);
