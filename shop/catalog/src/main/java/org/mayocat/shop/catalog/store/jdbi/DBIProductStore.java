@@ -147,7 +147,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             throw new EntityDoesNotExistException();
         }
 
-        product.setStock((product == null ? 0 : product.getStock()) + stockOffset);
+        product.setStock((product.getStock() == null ? 0 : product.getStock()) + stockOffset);
         Integer updatedRows = this.dao.updateProduct(product);
 
         this.dao.commit();

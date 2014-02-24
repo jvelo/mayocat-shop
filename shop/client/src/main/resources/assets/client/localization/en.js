@@ -151,6 +151,7 @@
                 unitPrice: "Unit price",
                 shipping: "Shipping",
                 deliveryAddress: "Delivery address",
+                billingAddress: "Billing address",
                 additionalInformation:  "Additional information",
                 
                 orderName: "Order \\#{slug}",
@@ -256,11 +257,14 @@
                 price: "Price",
                 stock: "Stock",
                 add: "Add variant",
+                delete: "Delete",
                 edit: "Edit",
                 create: "Create variant",
                 edition: "Variant: {variantTitle}",
                 update: "Update variant",
-                conflict: "This variant already exists."
+                conflict: "This variant already exists.",
+                confirmVariantDeletion: "Please confirm you want to delete this variant. There's no coming back!",
+                deleteVariant: "Delete variant"
             }
         },
 

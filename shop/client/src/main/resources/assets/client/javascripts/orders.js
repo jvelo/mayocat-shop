@@ -14,6 +14,8 @@ angular.module('orders', [])
 
             $scope.ordersPerPage = 15;
 
+            $scope.isLoading = true;
+
             $scope.fetchOrders = function () {
                 $resource("/api/orders").get({
                     "offset" : $scope.currentPage * $scope.ordersPerPage,
@@ -27,6 +29,7 @@ angular.module('orders', [])
                     }
 
                     $scope.orders = orders.items;
+                    $scope.isLoading = false;
                 });
             }
 

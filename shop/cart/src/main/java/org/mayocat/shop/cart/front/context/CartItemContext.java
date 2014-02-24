@@ -21,6 +21,9 @@ public class CartItemContext
 {
     private String title;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String variant;
+
     private String description;
 
     private Long quantity;
@@ -46,6 +49,16 @@ public class CartItemContext
     public void setTitle(String title)
     {
         this.title = title;
+    }
+
+    public String getVariant()
+    {
+        return variant;
+    }
+
+    public void setVariant(String variant)
+    {
+        this.variant = variant;
     }
 
     public String getDescription()

@@ -108,12 +108,37 @@ public class CartContextBuilder
 
             LOGGER.debug("Adding purchasable {} to cart context", purchasable.getTitle());
 
+            Long quantity = items.get(purchasable);
+            final Purchasable product;
+            CartItemContext cir = new CartItemContext();
+            BigDecimal price;
+
+            if (purchasable.getParent().isPresent()) {
+                if (!purchasable.getParent().get().isLoaded()) {
+                    // This should never happen
+                    throw new RuntimeException("Can't build cart with a variant which parent product is not loaded");
+                }
+                product = purchasable.getParent().get().get();
+                cir.setVariant(purchasable.getTitle());
+
+                if (purchasable.getUnitPrice() != null) {
+                    price = purchasable.getUnitPrice();
+                }
+                else {
+                    price = product.getUnitPrice();
+                }
+            }
+            else {
+                product = purchasable;
+                price = product.getUnitPrice();
+            }
+
             Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
             {
                 @Override
                 public boolean apply(@Nullable Attachment attachment)
                 {
-                    return attachment.getId().equals(purchasable.getFeaturedImageId());
+                    return attachment.getId().equals(product.getFeaturedImageId());
                 }
             });
             List<Image> images = new ArrayList<Image>();
@@ -130,21 +155,18 @@ public class CartContextBuilder
                 images.add(image);
             }
 
-            Long quantity = items.get(purchasable);
-
-            CartItemContext cir = new CartItemContext();
-            cir.setTitle(purchasable.getTitle());
-            cir.setDescription(purchasable.getDescription());
+            cir.setTitle(product.getTitle());
+            cir.setDescription(product.getDescription());
             cir.setQuantity(quantity);
 
-            if (Product.class.isAssignableFrom(purchasable.getClass())) {
+            if (Product.class.isAssignableFrom(product.getClass())) {
                 cir.setType("product");
-                cir.setSlug(((Product) purchasable).getSlug());
+                cir.setSlug(((Product) product).getSlug());
             } else {
-                cir.setType(purchasable.getClass().getSimpleName().toLowerCase());
+                cir.setType(product.getClass().getSimpleName().toLowerCase());
             }
 
-            cir.setId(purchasable.getId());
+            cir.setId(product.getId());
 
             if (images.size() > 0) {
                 ImageContext featuredImageContext = imageContextBuilder.createImageContext(images.get(0));
@@ -152,7 +174,7 @@ public class CartContextBuilder
             }
 
             PriceRepresentation unitPrice =
-                    new PriceRepresentation(purchasable.getUnitPrice(), cart.getCurrency(), locale);
+                    new PriceRepresentation(price, cart.getCurrency(), locale);
             PriceRepresentation itemTotal =
                     new PriceRepresentation(cart.getItemTotal(purchasable), cart.getCurrency(), locale);
 

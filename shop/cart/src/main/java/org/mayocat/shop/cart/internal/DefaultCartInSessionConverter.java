@@ -44,18 +44,25 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
         for (CartInSession.IdAndType idAndType : cartInSession.getItems().keySet()) {
 
             try {
-                Purchasable p;
                 Class clazz = Class.forName(idAndType.getType());
 
                 // Poor-man's pattern matching...
                 if (Product.class.isAssignableFrom(clazz)) {
-                    p = productStore.findById(idAndType.getId());
-                    if (p != null) {
+                    Product product = productStore.findById(idAndType.getId());
+                    if (product.getParentId() != null) {
+                        Product parent = productStore.findById(product.getParentId());
+                        if (parent == null) {
+                            // parent set but not found -> ignore
+                            continue;
+                        }
+                        product.setParent(parent);
+                    }
+                    if (product != null) {
                         try {
-                            cart.addItem(p, cartInSession.getItems().get(idAndType));
+                            cart.addItem(product, cartInSession.getItems().get(idAndType));
                         } catch (Exception e) {
                             // Don't fail when a product can't be added back to the cart
-                            logger.warn("Failed to add back product [{}] from session", p.getId());
+                            logger.warn("Failed to add back product [{}] from session", product.getId());
                         }
                     }
                 } else {

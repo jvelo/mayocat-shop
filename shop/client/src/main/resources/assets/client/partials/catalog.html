@@ -39,7 +39,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div><span class="drag-me move-handle"></i></span></div>
+                        <div><span class="drag-me move-handle"></span></div>
                     </div>
                 </li>
             </ul>
@@ -105,6 +105,25 @@
         </button>
         <button class="btn btn-danger" ng-click="$close()">
             {{'product.action.deleteProduct' | translate}}
+        </button>
+    </div>
+</script>
+
+<!-- Deletion modal for variants -->
+<script type="text/ng-template" id="confirmDeletionVariant.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'product.variants.confirmVariantDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'product.variants.deleteVariant' | translate}}
         </button>
     </div>
 </script>

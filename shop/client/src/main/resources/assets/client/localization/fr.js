@@ -124,6 +124,7 @@
                 unitPrice: "Prix unitaire",
                 shipping: "Frais de port",
                 deliveryAddress: "Adresse de livraison",
+                billingAddress: "Adresse de facturation",
                 additionalInformation:  "Informations complémentaires",
 
                 orderName: "Commande \\#{slug}",
@@ -226,10 +227,13 @@
                 stock: "Stock",
                 add: "Ajouter une déclinaison",
                 edit: "Editer",
+                delete: "Supprimer",
                 create: "Créer la déclinaison",
                 edition: "Déclinaison: {variantTitle}",
                 update: "Mettre à jour",
-                conflict: "Cette déclinaison existe déjà."
+                conflict: "Cette déclinaison existe déjà.",
+                confirmVariantDeletion: "Veuillez confirmer la suppression de cette déclinaison. Cette opération ne peut pas être annulée !",
+                deleteVariant: "Supprimer la déclinaison"
             }
         },
 

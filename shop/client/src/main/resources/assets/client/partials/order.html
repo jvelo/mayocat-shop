@@ -127,8 +127,19 @@
                         <div class="street-address">{{order.deliveryAddress.street}}</div>
                         <span class="postal-code">{{order.deliveryAddress.zip}}</span>
                         <span class="locality">{{order.deliveryAddress.city}}</span>
-
                         <div class="country-name">{{order.deliveryAddress.country}}</div>
+                    </div>
+                </div>
+
+                <div ng-show="order.billingAddress">
+                    <strong>{{'order.misc.billingAddress' | translate}}</strong>
+
+                    <div class="adr">
+                        <div class="fn">{{order.billingAddress.fullName}}</div>
+                        <div class="street-address">{{order.billingAddress.street}}</div>
+                        <span class="postal-code">{{order.billingAddress.zip}}</span>
+                        <span class="locality">{{order.billingAddress.city}}</span>
+                        <div class="country-name">{{order.billingAddress.country}}</div>
                     </div>
                 </div>
 

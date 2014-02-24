@@ -141,6 +141,20 @@ angular.module('product', ['ngResource'])
                 });
             }
 
+            $scope.deleteVariant = function (variant) {
+                $http.delete(variant._href).then(function () {
+                    $scope.modalInstance.close();
+                    $scope.reloadVariants();
+                });
+            }
+
+            $scope.confirmDeletionOfVariant = function (variant) {
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionVariant.html' });
+                $scope.modalInstance.result.then(function(){
+                    $scope.deleteVariant(variant)
+                });
+            }
+
             $scope.reloadVariants = function (callback) {
                 $http.get($scope.product._links.variants.href)
                     .success(function (data) {

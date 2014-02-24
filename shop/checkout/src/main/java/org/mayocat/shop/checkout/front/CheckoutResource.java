@@ -9,10 +9,12 @@ package org.mayocat.shop.checkout.front;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -43,7 +45,9 @@ import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 /**
@@ -107,7 +111,7 @@ public class CheckoutResource implements Resource
     }
 
     @POST
-    public Object checkout(MultivaluedMap data)
+    public Object checkout(final MultivaluedMap data)
     {
         Map<String, Error> errors = Maps.newHashMap();
         String email = null;
@@ -130,6 +134,38 @@ public class CheckoutResource implements Resource
         String zip = getNonEmptyFieldValueOrAddToErrorMap("zip", data, errors);
         String city = getNonEmptyFieldValueOrAddToErrorMap("city", data, errors);
         String country = getNonEmptyFieldValueOrAddToErrorMap("country", data, errors);
+
+        Address billingAddress = null;
+        boolean hasDifferentBillingAddress =
+                FluentIterable.from(Arrays.asList("street", "zip", "city", "country")).anyMatch(new Predicate<String>()
+                {
+                    public boolean apply(@Nullable String input)
+                    {
+                        return data.containsKey("billing" + StringUtils.capitalize(input));
+                    }
+                });
+        if (hasDifferentBillingAddress) {
+            String billingStreet = getNonEmptyFieldValueOrAddToErrorMap("billingStreet", data, errors);
+            String billingZip = getNonEmptyFieldValueOrAddToErrorMap("billingZip", data, errors);
+            String billingCity = getNonEmptyFieldValueOrAddToErrorMap("billingCity", data, errors);
+            String billingCountry = getNonEmptyFieldValueOrAddToErrorMap("billingCountry", data, errors);
+            billingAddress = new Address();
+            billingAddress.setFullName(firstName + " " + lastName);
+            billingAddress.setStreet(billingStreet);
+            billingAddress.setZip(billingZip);
+            billingAddress.setCity(billingCity);
+            billingAddress.setCountry(billingCountry);
+            if (data.containsKey("billingCompany")) {
+                String company = (String) data.getFirst("billingCompany");
+                if (!Strings.isNullOrEmpty(company)) {
+                    billingAddress.setCompany(company);
+                }
+                String streetComplement = (String) data.getFirst("billingStreetComplement");
+                if (!Strings.isNullOrEmpty(streetComplement)) {
+                    billingAddress.setStreetComplement(streetComplement);
+                }
+            }
+        }
 
         if (errors.keySet().size() > 0) {
             Map<String, Object> bindings = new HashMap<>();
@@ -175,7 +211,7 @@ public class CheckoutResource implements Resource
         try {
             Cart cart = cartAccessor.getCart();
             CheckoutResponse response =
-                    checkoutRegister.checkout(cart, customer, deliveryAddress, null, otherOrderData);
+                    checkoutRegister.checkout(cart, customer, deliveryAddress, billingAddress, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {

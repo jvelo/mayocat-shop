@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -86,6 +87,9 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
 
     @DoNotIndex
     private boolean virtual = false;
+
+    @DoNotIndex
+    private Optional<Association<Purchasable>> parent = Optional.absent();
 
     public Product()
     {
@@ -161,6 +165,21 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         this.price = price;
     }
 
+    public Optional<BigDecimal> getActualUnitPrice()
+    {
+        if (this.price != null) {
+            return Optional.of(price);
+        } else if (this.getParent().isPresent() && this.getParent().get().isLoaded()) {
+            Purchasable parent = this.getParent().get().get();
+            if (!Product.class.isAssignableFrom(parent.getClass())) {
+                throw new RuntimeException("Cannot handle a parent purchasable that is not a product");
+            }
+            Product parentProduct = (Product) parent;
+            return Optional.fromNullable(parentProduct.getPrice());
+        }
+        return Optional.absent();
+    }
+
     public BigDecimal getWeight()
     {
         return weight;
@@ -169,6 +188,21 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     public void setWeight(BigDecimal weight)
     {
         this.weight = weight;
+    }
+
+    public Optional<BigDecimal> getActualWeight()
+    {
+        if (this.weight != null) {
+            return Optional.of(weight);
+        } else if (this.getParent().isPresent() && this.getParent().get().isLoaded()) {
+            Purchasable parent = this.getParent().get().get();
+            if (!Product.class.isAssignableFrom(parent.getClass())) {
+                throw new RuntimeException("Cannot handle a parent purchasable that is not a product");
+            }
+            Product parentProduct = (Product) parent;
+            return Optional.fromNullable(parentProduct.getWeight());
+        }
+        return Optional.absent();
     }
 
     public Association<List<Addon>> getAddons()
@@ -279,6 +313,23 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     public void setParentId(UUID parentId)
     {
         this.parentId = parentId;
+        if (parentId != null) {
+            Association<Purchasable> notLoaded = Association.notLoaded();
+            this.parent = Optional.of(notLoaded);
+        }
+    }
+
+    public void setParent(@Nullable Purchasable purchasable)
+    {
+        if (purchasable != null) {
+            parent = Optional.of(new Association<>(purchasable));
+        }
+    }
+
+    @Override
+    public Optional<Association<Purchasable>> getParent()
+    {
+        return this.parent;
     }
 
     ////////////////////////////////////////////////

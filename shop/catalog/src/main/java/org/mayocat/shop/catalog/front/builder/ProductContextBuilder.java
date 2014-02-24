@@ -29,6 +29,7 @@ import org.mayocat.shop.front.context.ContextConstants;
 import org.mayocat.shop.front.util.ContextUtils;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.TypeDefinition;
 import org.mayocat.url.EntityURLFactory;
 
 import com.google.common.collect.Lists;
@@ -110,16 +111,38 @@ public class ProductContextBuilder implements ContextConstants
         boolean inStock = true;
         if (catalogSettings.getProductsSettings().getStock().getValue()) {
             // A stock is managed, check it
-            if (product.getStock() <= 0) {
+            if (product.getStock() == null || product.getStock() <= 0) {
                 inStock = false;
             }
         }
-        if (product.getUnitPrice() != null && inStock) {
-            productContext.put("availability", "available");
-        } else if (product.getUnitPrice() != null) {
-            productContext.put("availability", "out_of_stock");
-        } else {
-            productContext.put("availability", "not_for_sale");
+
+        boolean stockManagedByVariant = false;
+        boolean priceManagedByVariant = false;
+
+        if (product.getType().isPresent()) {
+            TypeDefinition type = getTypeDefinition(product);
+            if (type == null) {
+                throw new RuntimeException("Product type is set but definition of type could not be found");
+            }
+            stockManagedByVariant = type.getVariants().getProperties().indexOf("stock") >= 0;
+            priceManagedByVariant = type.getVariants().getProperties().indexOf("price") >= 0;
+            if (stockManagedByVariant) {
+                if (product.getStock() != null && product.getStock() == 0) {
+                    productContext.put("availability", "out_of_stock");
+                } else {
+                    productContext.put("availability", "available");
+                }
+            }
+        }
+
+        if (!stockManagedByVariant) {
+            if ((product.getUnitPrice() != null || priceManagedByVariant) && inStock) {
+                productContext.put("availability", "available");
+            } else if (product.getUnitPrice() != null) {
+                productContext.put("availability", "out_of_stock");
+            } else {
+                productContext.put("availability", "not_for_sale");
+            }
         }
 
         Map<String, Object> imagesContext = Maps.newHashMap();
@@ -166,5 +189,19 @@ public class ProductContextBuilder implements ContextConstants
         }
 
         return productContext;
+    }
+
+    private TypeDefinition getTypeDefinition(Product product)
+    {
+        org.mayocat.theme.TypeDefinition typeDefinition = null;
+        Map<String, TypeDefinition> platformTypes = catalogSettings.getProductsSettings().getTypes();
+        Map<String, TypeDefinition> themeTypes = theme.getProductTypes();
+
+        if (platformTypes != null && platformTypes.containsKey(product.getType().get())) {
+            typeDefinition = platformTypes.get(product.getType().get());
+        } else if (themeTypes != null && themeTypes.containsKey(product.getType().get())) {
+            typeDefinition = themeTypes.get(product.getType().get());
+        }
+        return typeDefinition;
     }
 }

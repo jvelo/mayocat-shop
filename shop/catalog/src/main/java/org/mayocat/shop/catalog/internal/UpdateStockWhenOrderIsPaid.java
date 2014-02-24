@@ -74,6 +74,9 @@ public class UpdateStockWhenOrderIsPaid implements EventListener
                 Product product = productStore.get().findById(itemId);
                 if (product.getStock() != null) {
                     productStore.get().updateStock(itemId, -quantity);
+                } else if (product.getParentId() != null) {
+                    Product parent = productStore.get().findById(product.getParentId());
+                    productStore.get().updateStock(product.getParentId(), -quantity);
                 }
             } catch (EntityDoesNotExistException e) {
                 // Ignore, there is just no stock to update

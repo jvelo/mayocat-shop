@@ -133,17 +133,37 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             Long numberOfItems = 0l;
             final Map<Purchasable, Long> items = cart.getItems();
             List<Map<String, Object>> orderItems = Lists.newArrayList();
+
             for (final Purchasable p : items.keySet()) {
                 numberOfItems += items.get(p);
+                BigDecimal unitPrice = p.getUnitPrice();
+
+                if (unitPrice == null && p.getParent().isPresent() && p.getParent().get().isLoaded()) {
+                    unitPrice = p.getParent().get().get().getUnitPrice();
+                }
+                if (unitPrice == null) {
+                    throw new RuntimeException("Can't checkout this item");
+                }
+
+                String title;
+                if (p.getParent().isPresent() && p.getParent().get().isLoaded()) {
+                    title = p.getParent().get().get().getTitle() + " - " + p.getTitle();
+                } else {
+                    title = p.getTitle();
+                }
+
+                final String itemTitle = title;
+                final BigDecimal price = unitPrice;
+
                 orderItems.add(new HashMap<String, Object>()
                 {
                     {
                         put("type", "product");
                         put("id", p.getId());
-                        put("title", p.getTitle());
+                        put("title", itemTitle);
                         put("quantity", items.get(p));
-                        put("unitPrice", p.getUnitPrice());
-                        put("itemTotal", p.getUnitPrice().multiply(BigDecimal.valueOf(items.get(p))));
+                        put("unitPrice", price);
+                        put("itemTotal", price.multiply(BigDecimal.valueOf(items.get(p))));
                     }
                 });
             }

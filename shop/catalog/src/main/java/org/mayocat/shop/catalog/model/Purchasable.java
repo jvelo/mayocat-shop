@@ -10,8 +10,11 @@ package org.mayocat.shop.catalog.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.mayocat.model.Association;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Identifiable;
+
+import com.google.common.base.Optional;
 
 /**
  * @version $Id$
@@ -23,4 +26,8 @@ public interface Purchasable extends Identifiable, Serializable, HasFeaturedImag
     String getDescription();
 
     BigDecimal getUnitPrice();
+
+    Optional<BigDecimal> getActualWeight();
+
+    Optional<Association<Purchasable>> getParent();
 }

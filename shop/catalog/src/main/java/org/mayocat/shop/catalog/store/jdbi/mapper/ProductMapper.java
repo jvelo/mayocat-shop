@@ -34,6 +34,9 @@ public class ProductMapper implements ResultSetMapper<Product>
     public Product map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException
     {
         Product product = new Product((UUID) resultSet.getObject("id"));
+        if (resultSet.getObject("parent_id") != null) {
+            product.setParentId((UUID) resultSet.getObject("parent_id"));
+        }
         product.setSlug(resultSet.getString("slug"));
         product.setTitle(resultSet.getString("title"));
         product.setDescription(resultSet.getString("description"));
@@ -42,7 +45,9 @@ public class ProductMapper implements ResultSetMapper<Product>
         }
         product.setPrice(resultSet.getBigDecimal("price"));
         product.setWeight(resultSet.getBigDecimal("weight"));
-        product.setStock(resultSet.getInt("stock"));
+        if (resultSet.getObject("stock") != null) {
+            product.setStock(resultSet.getInt("stock"));
+        }
         product.setVirtual(resultSet.getBoolean("virtual"));
         UUID featuredImageId = (UUID) resultSet.getObject("featured_image_id");
         if (featuredImageId != null) {

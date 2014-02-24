@@ -26,9 +26,9 @@ public class WeightStrategyPriceCalculator extends AbstractValueBasedStrategyPri
         BigDecimal weight = BigDecimal.ZERO;
         for (Purchasable purchasable : items.keySet()) {
             try {
-                Product product = (Product) purchasable;
-                weight = weight.add(product.getWeight() != null ? product.getWeight().multiply(
-                        BigDecimal.valueOf(items.get(purchasable))) : BigDecimal.ZERO);
+                weight = weight.add(purchasable.getActualWeight().isPresent() ?
+                        purchasable.getActualWeight().get().multiply(BigDecimal.valueOf(items.get(purchasable))) :
+                        BigDecimal.ZERO);
             } catch (ClassCastException e) {
                 throw new IllegalArgumentException(
                         "Cannot calculate weight-based shipping price for something else than a product", e);

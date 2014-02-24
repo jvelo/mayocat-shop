@@ -102,11 +102,9 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
 
     protected void deleteCookie(ContainerResponse containerResponse)
     {
-        NewCookie scope = new NewCookie(getScopeAndCookieName(), "", "/", null, 1, "", 0, false);
-        Response cookieResponse =
-                Response.fromResponse(containerResponse.getResponse()).cookie(scope).build();
-
-        containerResponse.setResponse(cookieResponse);
+        // Set the cookie with an expiration date in the past
+        containerResponse.getHttpHeaders().add("Set-Cookie",
+                getScopeAndCookieName() + "=deleted;Path=/;Expires=Thu, 01-Jan-1970 00:00:01 GMT");
     }
 
     protected void storeScopeInCookies(WebContext context, ContainerResponse containerResponse)

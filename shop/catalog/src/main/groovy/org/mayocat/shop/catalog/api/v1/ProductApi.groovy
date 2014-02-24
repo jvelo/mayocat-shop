@@ -581,6 +581,18 @@ class ProductApi implements Resource, Initializable
         try {
             Product created = productStore.get().create(productVariant)
 
+            if (typeDefinition.getVariants().properties.indexOf("stock") >= 0) {
+                List<Product> products = this.productStore.get().findVariants(product);
+                if (!products.any({Product v -> v.stock && v.stock > 0 })) {
+                    product.stock = 0
+                    productStore.get().update(product)
+                }
+                else {
+                    product.stock = null
+                    productStore.get().update(product)
+                }
+            }
+
             return Response.created(new URI(created.slug)).build();
         }
         catch (EntityAlreadyExistsException e) {
@@ -597,9 +609,16 @@ class ProductApi implements Resource, Initializable
     {
         try {
             Product product = this.productStore.get().findBySlug(slug);
-            if (product == null) {
+            if (product == null || !product.type.isPresent()) {
                 return Response.status(404).build();
             } else {
+
+                TypeDefinition typeDefinition = getTypeDefinition(product)
+
+                if (!typeDefinition) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity([reason: """Type definition for [${product.type}] not found"""]).build()
+                }
 
                 Product variant = productStore.get().findVariant(product, variantSlug);
 
@@ -614,7 +633,19 @@ class ProductApi implements Resource, Initializable
                     variant.slug = variantSlug
                     variant.parentId = product.id
 
-                    this.productStore.get().update(variant);
+                    this.productStore.get().update(variant)
+
+                    if (typeDefinition.getVariants().properties.indexOf("stock") >= 0) {
+                        List<Product> products = this.productStore.get().findVariants(product);
+                        if (!products.any({Product v -> v.stock && v.stock > 0 })) {
+                            product.stock = 0
+                            productStore.get().update(product)
+                        }
+                        else {
+                            product.stock = null
+                            productStore.get().update(product)
+                        }
+                    }
                 }
             }
 
@@ -623,4 +654,44 @@ class ProductApi implements Resource, Initializable
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         }
     }
+
+    @DELETE
+    @Authorized
+    @Path("{slug}/variants/{variantSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def deleteVariant(@PathParam("slug") String slug, @PathParam("variantSlug") String variantSlug)
+    {
+        Product product = this.productStore.get().findBySlug(slug);
+        if (product == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        } else {
+
+            Product variant = productStore.get().findVariant(product, variantSlug);
+
+            if (variant == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("No variant with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+            }
+
+            this.productStore.get().delete(variant);
+
+            return Response.noContent().build();
+        }
+    }
+
+    private def TypeDefinition getTypeDefinition(Product product)
+    {
+        TypeDefinition typeDefinition
+        def platformTypes = catalogSettings.productsSettings.types
+        def themeTypes = webContext.theme?.definition?.productTypes
+
+        if (platformTypes && platformTypes.containsKey(product.type.get())) {
+            typeDefinition = platformTypes[product.type.get()]
+        } else if (themeTypes && themeTypes.containsKey(product.type.get())) {
+            typeDefinition = themeTypes[product.type.get()]
+        }
+        typeDefinition
+    }
+
 }

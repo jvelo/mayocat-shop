@@ -35,8 +35,11 @@ angular.module('order', ['ngResource'])
 
             // Initialize existing page or new page
 
+            $scope.isLoading = true;
             $scope.getOrder = function () {
-                $scope.order = $scope.OrderResource.get({"slug": $scope.slug});
+                $scope.order = $scope.OrderResource.get({"slug": $scope.slug}, function(){
+                    $scope.isLoading = false;
+                });
             };
 
             $scope.getOrder();

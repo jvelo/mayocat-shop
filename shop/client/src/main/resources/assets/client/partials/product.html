@@ -163,11 +163,12 @@
             <h3>{{'product.variants.title'| translate}}</h3>
 
             <ul class="variants">
-                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants | orderBy:'slug'"
-                    ng-click="editVariant(variant)">
+                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants | orderBy:'slug'">
                     <div class="title">{{variant.title}}</div>
-                    <span class="visible-when-hover link">{{'product.variants.edit'| translate}}</span>
-
+                    <div class="visible-when-hover">
+                        <span class="link" ng-click="editVariant(variant)">{{'product.variants.edit'| translate}}</span>
+                        <span class="link" ng-click="confirmDeletionOfVariant(variant)">{{'product.variants.delete'| translate}}</span>
+                    </div>
                     <div>
                         <small>
                             <span ng-if="!!variant.price && types[product.type].variants.properties.indexOf('price') >= 0">

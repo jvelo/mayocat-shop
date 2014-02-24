@@ -112,7 +112,7 @@ class ProductWebObject
         def inStock = true
         if (catalogSettings.productsSettings.stock.value) {
             // A stock is managed, check it
-            if (product.stock <= 0) {
+            if (!product.stock || product.stock <= 0) {
                 inStock = false
             }
         }
@@ -178,7 +178,7 @@ class ProductWebObject
         this.variants = []
         variantsWithFeaturesDefined.each({ Product variant ->
             def variantAvailability = availability
-            if (priceDefinedByVariants && variant.unitPrice == null) {
+            if (priceDefinedByVariants && variant.unitPrice == null && unitPrice == null) {
                 variantAvailability = "not_for_sale"
             } else {
                 anyVariantForSale = true
@@ -189,7 +189,7 @@ class ProductWebObject
                     minPrice = minPrice ? minPrice.min(variant.unitPrice) : variant.unitPrice
                 }
                 if (stockDefinedByVariants) {
-                    if (variant.stock > 0) {
+                    if (variant.stock && variant.stock > 0) {
                         variantAvailability = "available"
                         anyVariantAvailable = true
                     } else {
@@ -222,7 +222,7 @@ class ProductWebObject
             unitPrice = null
             unitPriceStartsAt = new PriceWebObject()
             unitPriceStartsAt.withPrice(minPrice, currency, locale)
-        } else if (priceDefinedByVariants) {
+        } else if (priceDefinedByVariants && minPrice) {
             unitPrice = new PriceWebObject()
             unitPrice.withPrice(minPrice, currency, locale)
         }
