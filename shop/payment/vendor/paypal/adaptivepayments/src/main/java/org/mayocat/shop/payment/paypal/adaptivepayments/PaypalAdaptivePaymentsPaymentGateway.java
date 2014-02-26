@@ -168,23 +168,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                 operation.setMemo(map);
                 return new GatewayResponse(false, operation);
             }
-        } catch (IOException e) {
-            throw new GatewayException(e);
-        } catch (MissingCredentialException e) {
-            throw new GatewayException(e);
-        } catch (InterruptedException e) {
-            throw new GatewayException(e);
-        } catch (ClientActionRequiredException e) {
-            throw new GatewayException(e);
-        } catch (SSLConfigurationException e) {
-            throw new GatewayException(e);
-        } catch (OAuthException e) {
-            throw new GatewayException(e);
-        } catch (HttpErrorException e) {
-            throw new GatewayException(e);
-        } catch (InvalidCredentialException e) {
-            throw new GatewayException(e);
-        } catch (InvalidResponseDataException e) {
+        } catch (Exception e) {
             throw new GatewayException(e);
         }
     }
