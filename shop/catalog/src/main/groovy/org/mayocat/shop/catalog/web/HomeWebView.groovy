@@ -81,7 +81,10 @@ class HomeWebView extends AbstractProductListWebViewResource implements Resource
         def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
         if (!lists.isEmpty() && !lists.first().entities.isEmpty()) {
             List<Product> products = productStore.get().findByIds(lists.first().entities)
-            context.put("featuredProducts", createProductListContextList(products));
+            List<Product> sorted = lists.first().entities.collect({ UUID id ->
+                products.find({ Product product -> product.id == id })
+            })
+            context.put("featuredProducts", createProductListContextList(sorted));
 
         }
 
