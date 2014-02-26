@@ -185,7 +185,10 @@ public class ProductContextBuilder implements ContextConstants
             Map<String, Object> featuredCollection = collectionContextBuilder.build(
                     entityLocalizationService.localize(product.getFeaturedCollection().get()),
                     Collections.<Image>emptyList());
+            // Backward compatibility
             productContext.put("featured_collection", featuredCollection);
+            // "Official" binding
+            productContext.put("featuredCollection", featuredCollection);
         }
 
         return productContext;
