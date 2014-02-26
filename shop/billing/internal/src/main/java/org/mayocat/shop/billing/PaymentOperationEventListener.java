@@ -83,18 +83,18 @@ public class PaymentOperationEventListener implements EventListener
         if (operation.getResult().equals(PaymentOperation.Result.CAPTURED)) {
 
             Order order = orderStore.get().findById(operation.getOrderId());
-            if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
+            //if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
 
-                this.logger.debug("Updating order paid status");
-                try {
-                    order.setStatus(Order.Status.PAID);
-                    orderStore.get().update(order);
+            this.logger.debug("Updating order paid status");
+            try {
+                order.setStatus(Order.Status.PAID);
+                orderStore.get().update(order);
 
-                    getObservationManager().notify(new OrderPaidEvent(), order, order.getOrderData());
-                } catch (Exception e) {
-                    this.logger.error("Failed to update order status", e);
-                }
+                getObservationManager().notify(new OrderPaidEvent(), order, order.getOrderData());
+            } catch (Exception e) {
+                this.logger.error("Failed to update order status", e);
             }
+            //}
         }
     }
 

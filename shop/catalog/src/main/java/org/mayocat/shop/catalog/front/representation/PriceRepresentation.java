@@ -37,8 +37,6 @@ public class PriceRepresentation
         this.amount = formatter.withLocale(locale)
                 .print(Money.of(currencyUnit, amount, RoundingMode.HALF_EVEN));
 
-        currencyUnit.getDecimalPlaces();
-
         this.currency = new CurrencyRepresentation(currency, locale);
 
         if (amount.doubleValue() == amount.intValue()) {

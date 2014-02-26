@@ -40,6 +40,7 @@ import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.PaymentData;
 import org.mayocat.shop.payment.PaymentGateway;
+import org.mayocat.shop.payment.event.PaymentOperationEvent;
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.shop.shipping.ShippingService;
@@ -49,6 +50,7 @@ import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.observation.ObservationManager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -84,6 +86,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private ShippingService shippingService;
+
+    @Inject
+    private ObservationManager observationManager;
 
     @Inject
     private CartAccessor cartAccessor;
@@ -169,6 +174,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             }
             order.setNumberOfItems(numberOfItems);
             order.setItemsTotal(cart.getItemsTotal());
+
             data.put(Order.ORDER_DATA_ITEMS, orderItems);
 
             // Shipping
@@ -198,10 +204,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setOrderData(data);
 
             order = orderStore.get().create(order);
-        } catch (EntityAlreadyExistsException e1) {
-            throw new CheckoutException(e1);
-        } catch (InvalidEntityException e2) {
-            throw new CheckoutException(e2);
+        } catch (EntityAlreadyExistsException | InvalidEntityException e) {
+            throw new CheckoutException(e);
         }
 
         String defaultGatewayFactory = checkoutSettings.getDefaultPaymentGateway();
@@ -253,13 +257,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     PaymentOperation operation = gatewayResponse.getOperation();
                     operation.setOrderId(order.getId());
                     paymentOperationStore.get().create(operation);
-                } catch (EntityDoesNotExistException e) {
-                    this.logger.error("Order error while checking out cart", e);
-                    throw new CheckoutException(e);
-                } catch (InvalidEntityException e) {
-                    this.logger.error("Order error while checking out cart", e);
-                    throw new CheckoutException(e);
-                } catch (EntityAlreadyExistsException e) {
+
+                    observationManager.notify(new PaymentOperationEvent(), gatewayResponse.getOperation());
+                } catch (EntityDoesNotExistException | InvalidEntityException | EntityAlreadyExistsException e) {
                     this.logger.error("Order error while checking out cart", e);
                     throw new CheckoutException(e);
                 }

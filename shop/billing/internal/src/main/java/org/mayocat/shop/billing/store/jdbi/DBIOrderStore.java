@@ -114,7 +114,7 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     @Override
     public Order findById(UUID id)
     {
-        return this.dao.findById(ORDER_TABLE_NAME, id);
+        return this.dao.findByIdWithCustomer(id);
     }
 
     @Override
