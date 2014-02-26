@@ -89,11 +89,17 @@ public class CartContextBuilder
                     @Override
                     public UUID apply(final Purchasable product)
                     {
-                        return product.getFeaturedImageId();
+                        if (product.getFeaturedImageId() != null) {
+                            return product.getFeaturedImageId();
+                        }
+                        if (product.getParent().isPresent() && product.getParent().get().isLoaded()) {
+                            return product.getParent().get().get().getFeaturedImageId();
+                        }
+                        return null;
                     }
                 }
         );
-        List<UUID> ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
         if (ids.isEmpty()) {
@@ -138,7 +144,13 @@ public class CartContextBuilder
                 @Override
                 public boolean apply(@Nullable Attachment attachment)
                 {
-                    return attachment.getId().equals(product.getFeaturedImageId());
+                    if (product.getFeaturedImageId() != null) {
+                        return attachment.getId().equals(product.getFeaturedImageId());
+                    }
+                    if (product.getParent().isPresent() && product.getParent().get().isLoaded()) {
+                        return attachment.getId().equals(product.getParent().get().get().getFeaturedImageId());
+                    }
+                    return false;
                 }
             });
             List<Image> images = new ArrayList<Image>();
