@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 
