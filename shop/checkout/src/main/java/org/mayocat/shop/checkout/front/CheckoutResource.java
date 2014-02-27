@@ -141,7 +141,8 @@ public class CheckoutResource implements Resource
                 {
                     public boolean apply(@Nullable String input)
                     {
-                        return data.containsKey("billing" + StringUtils.capitalize(input));
+                        return data.containsKey("billing" + StringUtils.capitalize(input)) && StringUtils.isNotBlank(
+                                (String) data.getFirst("billing" + StringUtils.capitalize(input)));
                     }
                 });
         if (hasDifferentBillingAddress) {
