@@ -48,6 +48,12 @@ updateProduct() ::= <<
     WHERE  entity_id = :product.id
 >>
 
+updatePosition() ::= <<
+    UPDATE product
+    SET    position = :position
+    WHERE  entity_id = :product.id
+>>
+
 lastPosition() ::= <<
     SELECT product.position
     FROM   entity
@@ -56,6 +62,17 @@ lastPosition() ::= <<
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
            AND (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+lastPositionForVariant() ::= <<
+    SELECT product.position
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.parent_id = :product.parentId
     ORDER  BY position DESC
     LIMIT  1
 >>
@@ -169,7 +186,7 @@ findAllVariants() ::= <<
            INNER JOIN product
                    ON product.entity_id = entity.id
     WHERE  entity.parent_id = :product.id
-    ORDER  BY product.position DESC
+    ORDER  BY product.position ASC
 >>
 
 findAllWithTitleLike() ::= <<

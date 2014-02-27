@@ -30,6 +30,8 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
     void moveProduct(String productToMove, String productToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 
+    void updatePosition(Integer position, Product product);
+
     List<Product> findOrphanProducts();
 
     Integer countAllForCollection(Collection collection);

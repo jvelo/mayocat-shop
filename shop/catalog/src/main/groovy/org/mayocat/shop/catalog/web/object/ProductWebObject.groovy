@@ -297,39 +297,53 @@ class ProductWebObject
     {
         for (feature in type.features.entrySet()) {
             if (!selected.containsKey(feature.key)) {
+
+                def options = all.findAll({ Feature feat ->
+                    feat.feature.equals(feature.key) && variants.any({ Product variant ->
+                        // At least one variant must contains this feature
+                        variant.features.any({ UUID id -> feat.id == id })
+                    })
+                })
+
+                if (type.features.size() == 1) {
+                    // If there is only one feature, sort the list of features according to the list of variants
+                    options = variants.collect({ Product variant ->
+                        options.find({ Feature feat -> variant.features.get(0) == feat.id })
+                    })
+                } else {
+                    // TODO
+                    // devise a strategy
+                }
+
+                options = options.collect({ Feature feat ->
+                    boolean isAvailable = availability == "available"
+                    if (type.variants.properties.indexOf("stock") >= 0) {
+                        // Stock varies with variants, we check the variants availability
+                        def variantsWithThisFeature = variants.findAll({ Product product ->
+                            product.features.indexOf(feat.id) >= 0
+                        })
+
+                        isAvailable = variantsWithThisFeature.any({ Product variant ->
+                            variant.stock != null && variant.stock > 0
+                        })
+                    }
+
+                    new FeatureListItemWebObject([
+                            availability: isAvailable ? "available" : "not_for_sale",
+                            slug: feat.featureSlug,
+                            title: feat.title,
+                            url: url + (selected.size() > 0 ? "/" : "")
+                                    + selected.keySet().collect { String key ->
+                                key + "/" + selected.get(key)
+                            }.join("/") + "/" + feat.feature + "/" + feat.featureSlug
+                    ])
+                })
+
                 // Add the feature object
                 availableFeatures << new FeatureWebObject([
                         slug: feature.key,
                         name: feature.value.name,
-                        options: all.findAll({ Feature feat ->
-                            feat.feature.equals(feature.key) && variants.any({ Product variant ->
-                                // At least one variant must contains this feature
-                                variant.features.any({ UUID id -> feat.id == id })
-                            })
-                        }).collect({ Feature feat ->
-
-                            boolean isAvailable = availability == "available"
-                            if (type.variants.properties.indexOf("stock") >= 0) {
-                                // Stock varies with variants, we check the variants availability
-                                def variantsWithThisFeature = variants.findAll({ Product product ->
-                                    product.features.indexOf(feat.id) >= 0
-                                })
-
-                                isAvailable = variantsWithThisFeature.any({ Product variant ->
-                                    variant.stock != null && variant.stock > 0
-                                })
-                            }
-
-                            new FeatureListItemWebObject([
-                                    availability: isAvailable ? "available" : "not_for_sale",
-                                    slug: feat.featureSlug,
-                                    title: feat.title,
-                                    url: url + (selected.size() > 0 ? "/" : "")
-                                            + selected.keySet().collect { String key ->
-                                        key + "/" + selected.get(key)
-                                    }.join("/") + "/" + feat.feature + "/" + feat.featureSlug
-                            ])
-                        })
+                        options: options
                 ])
             }
         }

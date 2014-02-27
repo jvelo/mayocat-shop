@@ -85,7 +85,12 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
             this.dao.createEntity(product, PRODUCT_TABLE_NAME, getTenant());
         }
         product.setId(entityId);
-        Integer lastIndex = this.dao.lastPosition(getTenant());
+        Integer lastIndex;
+        if (product.getParentId() == null) {
+            lastIndex = this.dao.lastPosition(getTenant());
+        } else {
+            lastIndex = this.dao.lastPositionForVariant(product);
+        }
         if (lastIndex == null) {
             lastIndex = 0;
         }
@@ -134,6 +139,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
 
         getObservationManager().notify(new EntityUpdatedEvent(), product);
+    }
+
+    public void updatePosition(Integer position, Product product)
+    {
+        this.dao.updatePosition(position, product);
     }
 
     public void updateStock(UUID productId, Integer stockOffset) throws EntityDoesNotExistException

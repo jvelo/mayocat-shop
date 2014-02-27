@@ -71,6 +71,11 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         throw new RuntimeException("Unsupported operation exception");
     }
 
+    public void updatePosition(Integer position, Product product)
+    {
+        throw new RuntimeException("Unsupported operation exception");
+    }
+
     public List<Product> findOrphanProducts()
     {
         return FluentIterable.from(all()).filter(new Predicate<Product>()

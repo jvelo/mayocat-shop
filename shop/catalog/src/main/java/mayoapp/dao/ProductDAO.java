@@ -35,10 +35,16 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract Integer updateProduct(@BindBean("product") Product product);
 
     @SqlUpdate
+    public abstract Integer updatePosition(@Bind("position") Integer position, @BindBean("product") Product product);
+
+    @SqlUpdate
     public abstract Integer deleteProductFromCollections(@Bind("id") UUID id);
 
     @SqlQuery
     public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    public abstract Integer lastPositionForVariant(@BindBean("product") Product parent);
 
     @SqlQuery
     public abstract List<Product> findOrphanProducts(@BindBean("tenant") Tenant tenant);

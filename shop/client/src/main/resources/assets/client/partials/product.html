@@ -162,8 +162,8 @@
         <div class="block" ng-if="!isNew() && hasTypes && !!product.type">
             <h3>{{'product.variants.title'| translate}}</h3>
 
-            <ul class="variants">
-                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants | orderBy:'slug'">
+            <ul class="variants" ui-sortable ng-model="product._embedded.variants">
+                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants">
                     <div class="title">{{variant.title}}</div>
                     <div class="visible-when-hover">
                         <span class="link" ng-click="editVariant(variant)">{{'product.variants.edit'| translate}}</span>

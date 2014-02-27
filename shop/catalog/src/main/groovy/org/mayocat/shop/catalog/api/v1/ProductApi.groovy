@@ -384,6 +384,24 @@ class ProductApi implements Resource, Initializable
                 }
 
                 this.productStore.get().update(product);
+
+                // Update variants order if needed
+
+                if (productApiObject._embedded?.containsKey("variants")) {
+                    List<ProductApiObject> variantApiObjects =
+                        productApiObject._embedded?.get("variants") as List<ProductApiObject>
+
+                    List<Product> existingVariants = productStore.get().findVariants(product);
+
+                    variantApiObjects.eachWithIndex({ Map<String, Object> entry, int i ->
+                        def index = existingVariants.findIndexOf ({ Product p -> p.slug == entry.slug })
+                        if (index != i) {
+                            Product variant = existingVariants.find ({ Product p -> p.slug == entry.slug })
+                            productStore.get().updatePosition(i, variant);
+                        }
+                    })
+
+                }
             }
 
             return Response.ok().build();
