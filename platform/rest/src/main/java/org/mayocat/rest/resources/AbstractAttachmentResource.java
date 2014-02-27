@@ -21,6 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mayocat.Slugifier;
 import org.mayocat.model.Attachment;
+import org.mayocat.model.AttachmentData;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
@@ -85,7 +86,7 @@ public class AbstractAttachmentResource
         }
 
         attachment.setSlug(slug);
-        attachment.setData(data);
+        attachment.setData(new AttachmentData(data));
         attachment.setTitle(title);
         attachment.setDescription(description);
 

@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.mayocat.model.Attachment;
+import org.mayocat.model.AttachmentData;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -36,7 +37,7 @@ public class AttachmentMapper implements ResultSetMapper<Attachment>
         attachment.setTitle(resultSet.getString("title"));
         attachment.setDescription(resultSet.getString("description"));
         attachment.setSlug(resultSet.getString("slug"));
-        attachment.setData(resultSet.getBinaryStream("data"));
+        attachment.setData(new AttachmentData(resultSet.getBinaryStream("data")));
         attachment.setExtension(resultSet.getString("extension"));
         attachment.setParentId((UUID) resultSet.getObject("parent_id"));
 

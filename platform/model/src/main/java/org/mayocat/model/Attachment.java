@@ -33,7 +33,7 @@ public class Attachment implements Entity, Child, Localized
 
     private String extension;
 
-    private transient InputStream data;
+    private AttachmentData data;
 
     private UUID parentId;
 
@@ -97,12 +97,12 @@ public class Attachment implements Entity, Child, Localized
         this.extension = extension;
     }
 
-    public InputStream getData()
+    public AttachmentData getData()
     {
         return data;
     }
 
-    public void setData(InputStream data)
+    public void setData(AttachmentData data)
     {
         this.data = data;
     }
@@ -142,7 +142,7 @@ public class Attachment implements Entity, Child, Localized
         }
         final Attachment other = (Attachment) obj;
 
-        return     Objects.equal(this.id, other.id)
+        return Objects.equal(this.id, other.id)
                 && Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.extension, other.extension)

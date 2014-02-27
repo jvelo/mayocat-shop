@@ -64,7 +64,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
 
         this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
 
-        InputStream data = attachment.getData();
+        InputStream data = attachment.getData().getStream();
         try {
             // It's too bad we have to load the attachment data in memory. It appears Postgres's JDBC driver requires
             // to know in advance the length of the data to write (contrary to MySQL's one that can stream the data
@@ -195,7 +195,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     @Override
     public List<Attachment> findAllChildrenOfParentIds(List<UUID> parents, List<String> extensions)
     {
-        return this.dao.findAttachmentsOfEntities(parents, extensions);
+        return this.dao.findAttachmentsOfEntitiesWithExtensions(parents, extensions);
     }
 
     @Override

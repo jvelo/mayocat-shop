@@ -31,7 +31,7 @@ public class AbstractAttachmentResource
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(file.getData(), servletContext.getMimeType(fileName))
+        return Response.ok(file.getData().getStream(), servletContext.getMimeType(fileName))
                 .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                 .build();
     }

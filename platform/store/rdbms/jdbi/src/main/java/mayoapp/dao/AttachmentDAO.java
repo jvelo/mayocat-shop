@@ -31,104 +31,31 @@ import org.skife.jdbi.v2.unstable.BindIn;
 public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<AttachmentDAO>, LocalizationDAO<Attachment>
 {
     @SqlUpdate
-    (
-        "INSERT INTO attachment " +
-        "            (entity_id, " +
-        "             extension, " +
-        "             title, " +
-        "             description, " +
-        "             data) " +
-        "VALUES      (:entity, " +
-        "             :attachment.extension, " +
-        "             :attachment.title, " +
-        "             :attachment.description, " +
-        "             :data) "
-    )
-   void createAttachment(@Bind("entity") UUID entityId, @BindBean("attachment") Attachment attachment,
+    void createAttachment(@Bind("entity") UUID entityId, @BindBean("attachment") Attachment attachment,
             @Bind("data") byte[] data);
 
     @SqlUpdate
-    (
-        " UPDATE attachment" +
-        " SET    title = :attachment.title," +
-        "        description = :attachment.description" +
-        " WHERE  entity_id = :attachment.id"
-    )
     Integer updateAttachment(@BindBean("attachment") Attachment attachment);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND entity.parent_id = :entity.id"
-    )
     List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND entity.parent_id (<ids>)"
-    )
     List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<UUID> ids);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND attachment.extension in (<extensions>)" +
-        "       AND entity.parent_id = :entity.id"
-    )
-    List<Attachment> findAttachmentsOfEntity(@BindBean("entity") Entity entity,
+    List<Attachment> findAttachmentsOfEntityWithExtensions(@BindBean("entity") Entity entity,
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND attachment.extension in (<extensions>)" +
-        "       AND entity.parent_id in (<ids>)"
-    )
-    List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<UUID> ids,
+    List<Attachment> findAttachmentsOfEntitiesWithExtensions(@BindIn("ids") List<UUID> ids,
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND entity.tenant_id = :tenant.id " +
-        "       AND entity.slug = :slug"
-    )
     Attachment findBySlug(@Bind("slug") String slug,
             @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
-    (
-        "SELECT entity.*, attachment.*, localization_data(entity_id) " +
-        "FROM   entity " +
-        "       INNER JOIN attachment" +
-        "               ON entity.id = attachment.entity_id " +
-        "WHERE  entity.type = 'attachment' " +
-        "       AND entity.tenant_id = :tenant.id" +
-        "       AND entity.slug = :filename" +
-        "       AND attachment.extension = :extension"
-   )
-   Attachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
+    Attachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
             @BindBean("tenant") Tenant tenant);
-
 }

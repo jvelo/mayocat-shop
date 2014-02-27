@@ -12,6 +12,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.mayocat.model.Attachment;
 import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
@@ -22,43 +23,22 @@ import com.google.common.base.Optional;
 @Role
 public interface ImageService
 {
-    /**
-     * Reads an image from an stream
-     *
-     * @param inputStream the input stream to read the image from
-     * @return the read image
-     * @throws IOException when the image could not be read
-     */
-    Image readImage(InputStream inputStream) throws IOException;
+    InputStream getImage(Attachment attachment, Dimension dimension) throws IOException;
 
-    /**
-     * Resizes an image to the passed dimension
-     *
-     * @param image the image to scale
-     * @param dimension the dimension (width and height to scale to)
-     * @return the scaled image as a rendered image
-     */
-    RenderedImage scaleImage(Image image, Dimension dimension);
+    InputStream getImage(Attachment attachment, Dimension dimension, Rectangle rectangle) throws IOException;
 
-    /**
-     * Crops an image in the passed rectangle boundaries
-     *
-     * @param image the image to crop
-     * @param boundaries the rectangle to crop the image in
-     * @return the cropped image as a rendered image
-     */
-    RenderedImage cropImage(Image image, Rectangle boundaries);
+    InputStream getImage(Attachment attachment, Rectangle rectangle) throws IOException;
 
     /**
      * Computes the largest rectangle of the passed image that respect the passed dimension ratio. Cropped areas are
      * divided equally at the two extremities (top/bottom or left/right).
      *
-     * @param image the image to get the bounding rectangle for
+     * @param attachment the image to get the bounding rectangle for
      * @param dimension the dimension (width vs. height ratio) to fit
      * @return the image boundaries as an optional rectangle. If the rectangle is absent, it means there is an exact
      * match between the dimension passed and the image aspect ratio, so that no cropping is necessary.
      */
-    Optional<Rectangle> getFittingRectangle(Image image, Dimension dimension);
+    Optional<Rectangle> getFittingRectangle(Attachment attachment, Dimension dimension) throws IOException;
 
     /**
      * Computes the dimension (width and height) an image will have, respecting its original aspect ratio when adapting
@@ -72,5 +52,9 @@ public interface ImageService
      * @param height an option of a height of the new image dimension
      * @return either a new dimension or an absent option if the dimensions matches exactly the original image
      */
-    Optional<Dimension> newDimension(Image image, Optional<Integer> width, Optional<Integer> height);
+    Optional<Dimension> newDimension(Attachment image, Optional<Integer> width, Optional<Integer> height)
+            throws IOException;
+
+    Optional<Dimension> newDimension(Rectangle boundaries, Optional<Integer> width, Optional<Integer> height)
+            throws IOException;
 }
