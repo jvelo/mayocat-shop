@@ -228,13 +228,14 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         options.put(BasePaymentData.CANCEL_URL, webContext.getRequest().getBaseUri().toString()
                 + CheckoutResource.PATH + "/" + order.getId() + "/" + CheckoutResource.PAYMENT_CANCEL_PATH);
         options.put(BasePaymentData.RETURN_URL, webContext.getRequest().getBaseUri().toString()
-                + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH);
+                + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
         options.put(BasePaymentData.CURRENCY, cart.getCurrency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
         options.put(BasePaymentData.CUSTOMER, customer);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
+            response.setOrder(order);
             GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
 
             if (gatewayResponse.isSuccessful()) {

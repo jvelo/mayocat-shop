@@ -7,6 +7,8 @@
  */
 package org.mayocat.shop.checkout;
 
+import org.mayocat.shop.billing.model.Order;
+
 import com.google.common.base.Optional;
 
 /**
@@ -16,6 +18,8 @@ public class CheckoutResponse
 {
     private Optional<String> redirectURL = Optional.absent();
 
+    private Order order;
+
     public Optional<String> getRedirectURL()
     {
         return redirectURL;
@@ -24,5 +28,15 @@ public class CheckoutResponse
     public void setRedirectURL(Optional<String> redirectURL)
     {
         this.redirectURL = redirectURL;
+    }
+
+    public Order getOrder()
+    {
+        return order;
+    }
+
+    public void setOrder(Order order)
+    {
+        this.order = order;
     }
 }

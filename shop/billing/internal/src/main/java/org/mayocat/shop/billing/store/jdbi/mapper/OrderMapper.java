@@ -70,29 +70,35 @@ public class OrderMapper implements ResultSetMapper<Order>
         }
 
         try {
-            resultSet.findColumn("billing_address_full_name");
-            Address billing = new Address();
-            billing.setFullName(resultSet.getString("billing_address_full_name"));
-            billing.setStreet(resultSet.getString("billing_address_street"));
-            billing.setStreetComplement(resultSet.getString("billing_address_street_complement"));
-            billing.setZip(resultSet.getString("billing_address_zip"));
-            billing.setCity(resultSet.getString("billing_address_city"));
-            billing.setCountry(resultSet.getString("billing_address_country"));
-            order.setBillingAddress(new Association<>(billing));
+            if (resultSet.getObject("billing_address_id") != null) {
+                resultSet.findColumn("billing_address_full_name");
+                Address billing = new Address();
+                billing.setId((UUID) resultSet.getObject("billing_address_id"));
+                billing.setFullName(resultSet.getString("billing_address_full_name"));
+                billing.setStreet(resultSet.getString("billing_address_street"));
+                billing.setStreetComplement(resultSet.getString("billing_address_street_complement"));
+                billing.setZip(resultSet.getString("billing_address_zip"));
+                billing.setCity(resultSet.getString("billing_address_city"));
+                billing.setCountry(resultSet.getString("billing_address_country"));
+                order.setBillingAddress(new Association<>(billing));
+            }
         } catch (SQLException e) {
             // Nevermind
         }
 
         try {
-            resultSet.findColumn("delivery_address_full_name");
-            Address delivery = new Address();
-            delivery.setFullName(resultSet.getString("delivery_address_full_name"));
-            delivery.setStreet(resultSet.getString("delivery_address_street"));
-            delivery.setStreetComplement(resultSet.getString("delivery_address_street_complement"));
-            delivery.setZip(resultSet.getString("delivery_address_zip"));
-            delivery.setCity(resultSet.getString("delivery_address_city"));
-            delivery.setCountry(resultSet.getString("delivery_address_country"));
-            order.setDeliveryAddress(new Association<>(delivery));
+            if (resultSet.getObject("delivery_address_id") != null) {
+                resultSet.findColumn("delivery_address_full_name");
+                Address delivery = new Address();
+                delivery.setId((UUID) resultSet.getObject("delivery_address_id"));
+                delivery.setFullName(resultSet.getString("delivery_address_full_name"));
+                delivery.setStreet(resultSet.getString("delivery_address_street"));
+                delivery.setStreetComplement(resultSet.getString("delivery_address_street_complement"));
+                delivery.setZip(resultSet.getString("delivery_address_zip"));
+                delivery.setCity(resultSet.getString("delivery_address_city"));
+                delivery.setCountry(resultSet.getString("delivery_address_country"));
+                order.setDeliveryAddress(new Association<>(delivery));
+            }
         } catch (SQLException e) {
             // Nevermind
         }
