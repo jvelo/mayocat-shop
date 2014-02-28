@@ -391,6 +391,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         customerMap.put("firstName", customer.getFirstName());
         customerMap.put("lastName", customer.getLastName());
         customerMap.put("email", customer.getEmail());
+        customerMap.put("phone", customer.getPhoneNumber());
         context.put("customer", customerMap);
 
         if (ba.isPresent()) {

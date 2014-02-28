@@ -20,6 +20,8 @@ public class CustomerRepresentation
 
     private String email;
 
+    private String phoneNumber;
+
     public CustomerRepresentation()
     {
 
@@ -30,6 +32,7 @@ public class CustomerRepresentation
         setEmail(customer.getEmail());
         setFirstName(customer.getFirstName());
         setLastName(customer.getLastName());
+        setPhoneNumber(customer.getPhoneNumber());
     }
 
     public String getFirstName()
@@ -60,5 +63,15 @@ public class CustomerRepresentation
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public String getPhoneNumber()
+    {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
     }
 }

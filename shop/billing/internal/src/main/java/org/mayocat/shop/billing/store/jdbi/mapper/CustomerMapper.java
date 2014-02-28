@@ -26,10 +26,12 @@ public class CustomerMapper implements ResultSetMapper<Customer>
     {
         Customer customer = new Customer();
 
+        customer.setId((UUID) resultSet.getObject("id"));
+        customer.setSlug(resultSet.getString("slug"));
         customer.setEmail(resultSet.getString("email"));
+        customer.setPhoneNumber(resultSet.getString("phone_number"));
         customer.setFirstName(resultSet.getString("first_name"));
         customer.setLastName(resultSet.getString("last_name"));
-        customer.setId((UUID) resultSet.getObject("id"));
 
         return customer;
     }

@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.checkout.front;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -219,6 +220,9 @@ public class CheckoutResource implements Resource
         customer.setEmail(email);
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
+        if (data.containsKey("phone") && !Strings.isNullOrEmpty((String) data.getFirst("phone"))) {
+            customer.setPhoneNumber((String) data.getFirst("phone"));
+        }
 
         Address deliveryAddress = new Address();
         deliveryAddress.setFullName(firstName + " " + lastName);
@@ -401,8 +405,8 @@ public class CheckoutResource implements Resource
 
         for (Map<String, Object> item : items) {
             // Replace big decimal values by formatted values
-            Double unitPrice = (Double) item.get("unitPrice");
-            Double itemTotal = (Double) item.get("itemTotal");
+            Double unitPrice = ((BigDecimal) item.get("unitPrice")).doubleValue();
+            Double itemTotal = ((BigDecimal) item.get("itemTotal")).doubleValue();
             item.put("unitPrice", formatter.withLocale(locale)
                     .print(Money.of(currencyUnit, unitPrice, RoundingMode.HALF_EVEN)));
             item.put("itemTotal", formatter.withLocale(locale)
@@ -427,6 +431,7 @@ public class CheckoutResource implements Resource
         customerMap.put("firstName", customer.getFirstName());
         customerMap.put("lastName", customer.getLastName());
         customerMap.put("email", customer.getEmail());
+        customerMap.put("phone", customer.getPhoneNumber());
         context.put("customer", customerMap);
 
         if (ba.isPresent()) {

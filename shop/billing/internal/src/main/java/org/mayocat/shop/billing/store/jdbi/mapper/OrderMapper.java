@@ -64,6 +64,7 @@ public class OrderMapper implements ResultSetMapper<Order>
             customer.setEmail(resultSet.getString("email"));
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setLastName(resultSet.getString("last_name"));
+            customer.setPhoneNumber(resultSet.getString("phone_number"));
             order.setCustomer(new Association(customer));
         } catch (SQLException e) {
             // Nevermind

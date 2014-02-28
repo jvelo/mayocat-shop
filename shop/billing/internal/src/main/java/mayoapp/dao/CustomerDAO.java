@@ -24,4 +24,7 @@ public abstract class CustomerDAO implements EntityDAO<Customer>, Transactional<
 {
     @SqlUpdate
     public abstract void create(@BindBean("customer") Customer customer);
+
+    @SqlUpdate
+    public abstract void updateCustomer(@BindBean("customer") Customer customer);
 }

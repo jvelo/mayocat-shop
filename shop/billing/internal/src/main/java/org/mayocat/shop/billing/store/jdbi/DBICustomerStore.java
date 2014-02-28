@@ -18,7 +18,9 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
+
 import mayoapp.dao.CustomerDAO;
+
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -53,9 +55,12 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     }
 
     @Override
-    public void update(@Valid Customer entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Customer customer) throws EntityDoesNotExistException, InvalidEntityException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) == null) {
+            throw new EntityDoesNotExistException();
+        }
+        this.dao.updateCustomer(customer);
     }
 
     @Override

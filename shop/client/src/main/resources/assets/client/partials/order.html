@@ -118,6 +118,9 @@
                 <div>
                     <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
                 </div>
+                <div>
+                    <a class="email"a href="tel:{{order.customer.phoneNumber}}">{{order.customer.phoneNumber}}</a>
+                </div>
 
                 <div ng-show="order.deliveryAddress">
                     <strong>{{'order.misc.deliveryAddress' | translate}}</strong>

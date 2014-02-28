@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.context.WebContext;
 import org.mayocat.shop.billing.model.Address;
@@ -102,6 +101,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     {
         Preconditions.checkNotNull(customer);
         Order order;
+        Customer actualCustomer;
 
         try {
             UUID customerId;
@@ -111,11 +111,16 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
             customer.setSlug(customer.getEmail());
             if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
-                customer = this.customerStore.get().create(customer);
+                actualCustomer = this.customerStore.get().create(customer);
             } else {
-                customer = this.customerStore.get().findBySlug(customer.getEmail());
+                Customer existingCustomer = this.customerStore.get().findBySlug(customer.getEmail());
+                boolean update = updateCustomerIfNecessary(existingCustomer, customer);
+                if (update) {
+                    this.customerStore.get().update(existingCustomer);
+                }
+                actualCustomer = existingCustomer;
             }
-            customerId = customer.getId();
+            customerId = actualCustomer.getId();
 
             if (deliveryAddress != null) {
                 deliveryAddress = this.addressStore.get().create(deliveryAddress);
@@ -204,7 +209,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             order.setOrderData(data);
 
             order = orderStore.get().create(order);
-        } catch (EntityAlreadyExistsException | InvalidEntityException e) {
+        } catch (EntityAlreadyExistsException | EntityDoesNotExistException | InvalidEntityException e) {
             throw new CheckoutException(e);
         }
 
@@ -231,7 +236,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
         options.put(BasePaymentData.CURRENCY, cart.getCurrency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
-        options.put(BasePaymentData.CUSTOMER, customer);
+        options.put(BasePaymentData.CUSTOMER, actualCustomer);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
@@ -293,5 +298,29 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     public boolean requiresForm()
     {
         return true;
+    }
+
+    private boolean updateCustomerIfNecessary(Customer existingCustomer, Customer customer)
+    {
+        boolean update = false;
+        if (existingCustomer.getFirstName() == null ||
+                !existingCustomer.getFirstName().equals(customer.getFirstName()))
+        {
+            update = true;
+            existingCustomer.setFirstName(customer.getFirstName());
+        }
+        if (existingCustomer.getLastName() == null ||
+                !existingCustomer.getLastName().equals(customer.getLastName()))
+        {
+            update = true;
+            existingCustomer.setLastName(customer.getLastName());
+        }
+        if (existingCustomer.getPhoneNumber() == null ||
+                !existingCustomer.getPhoneNumber().equals(customer.getPhoneNumber()))
+        {
+            update = true;
+            existingCustomer.setPhoneNumber(customer.getPhoneNumber());
+        }
+        return update;
     }
 }
