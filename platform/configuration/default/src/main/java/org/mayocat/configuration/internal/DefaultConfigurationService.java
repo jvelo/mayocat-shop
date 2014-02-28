@@ -10,6 +10,9 @@ package org.mayocat.configuration.internal;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,8 +20,8 @@ import javax.inject.Provider;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
-import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;
 import org.mayocat.configuration.jackson.GestaltConfigurationModule;
@@ -29,6 +32,8 @@ import org.xwiki.component.annotation.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 
@@ -57,17 +62,24 @@ public class DefaultConfigurationService implements ConfigurationService
     private Logger logger;
 
     /**
+     * Configurations cache.
+     *
+     * Keys are tenant ids, and values their configuration as JSON (here a map).
+     *
+     * An event listener flushed their entry when a tenant entity event is received.
+     */
+    private Cache<UUID, Map<String, Object>> configurations = CacheBuilder.newBuilder().maximumSize(1000).build();
+
+    /**
      * Exposed settings, as provided by the platform
      */
     private Map<String, Object> exposedPlatformSettingsAsJson;
 
-    @Override
     public Map<Class, Object> getSettings()
     {
         return this.getSettings(this.context.getTenant());
     }
 
-    @Override
     public Map<Class, Object> getSettings(Tenant tenant)
     {
         ObjectMapper mapper = getObjectMapper();
@@ -89,37 +101,44 @@ public class DefaultConfigurationService implements ConfigurationService
         return configurations;
     }
 
-    @Override
     public <T extends ExposedSettings> T getSettings(Class<T> c, Tenant tenant)
     {
         return (T) this.getSettings(tenant).get(c);
     }
 
-    @Override
     public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
         return (T) this.getSettings().get(c);
     }
 
-    @Override
-    public Map<String, Object> getSettingsAsJson(Tenant tenant)
+    public Map<String, Object> getSettingsAsJson(final Tenant tenant)
     {
-        if (context.getTenant() == null) {
+        if (tenant == null) {
             return Collections.emptyMap();
         }
-        Map<String, Object> tenantConfiguration = tenant.getConfiguration();
-        Map<String, Object> platformConfiguration = this.getExposedPlatformSettingsAsJson();
-        ConfigurationJsonMerger merger = new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
-        return merger.merge();
+        try {
+            return configurations.get(tenant.getId(), new Callable<Map<String, Object>>()
+            {
+                @Override
+                public Map<String, Object> call()
+                {
+                    Map<String, Object> tenantConfiguration = tenant.getConfiguration();
+                    Map<String, Object> platformConfiguration = getExposedPlatformSettingsAsJson();
+                    ConfigurationJsonMerger merger =
+                            new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
+                    return merger.merge();
+                }
+            });
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
     public Map<String, Object> getSettingsAsJson()
     {
         return this.getSettingsAsJson(context.getTenant());
     }
 
-    @Override
     public Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException
     {
         if (!this.exposedSettings.containsKey(moduleName)) {
@@ -134,7 +153,6 @@ public class DefaultConfigurationService implements ConfigurationService
         return Collections.emptyMap();
     }
 
-    @Override
     public void updateSettings(Map<String, Object> data)
     {
         ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(getExposedPlatformSettingsAsJson(), data);
@@ -144,11 +162,14 @@ public class DefaultConfigurationService implements ConfigurationService
                 new TenantConfiguration(TenantConfiguration.CURRENT_VERSION, result.getResult());
         this.tenantStore.get().updateConfiguration(configuration);
 
+        // Invalidates the cached configuration for the tenant updating its configuration
+        // TODO: do this from the configuration store instead
+        this.configurations.invalidate(this.context.getTenant().getId());
+
         // TODO throw an exception here when there are validation errors, so that it can be acknowledged to the
         // REST accounts consumer ? (meaning the operation has been partially successful only)
     }
 
-    @Override
     public void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException
     {
         if (!this.exposedSettings.containsKey(module)) {
@@ -163,7 +184,6 @@ public class DefaultConfigurationService implements ConfigurationService
         this.updateSettings(data);
     }
 
-    @Override
     public Map<String, Object> getGestaltConfiguration()
     {
         ObjectMapper mapper = getObjectMapper();
