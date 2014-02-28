@@ -7,8 +7,8 @@
  */
 package org.mayocat.shop.billing.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -320,7 +320,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
             String jsonContext = mapper.writeValueAsString(notificationMail.getContext());
             engine.get().register(notificationMail.getTemplate());
             String html = engine.get().render(notificationMail.getTemplate().getId(), jsonContext);
-            List<String> lines = IOUtils.readLines(new StringReader(html));
+            List<String> lines = IOUtils.readLines(new ByteArrayInputStream(html.getBytes()), Charsets.UTF_8);
             String subject = StringUtils.substringAfter(lines.remove(0), "Subject:").trim();
             String body = StringUtils.join(lines, "\n");
             Mail mail = new Mail().from(notificationMail.getFrom())
