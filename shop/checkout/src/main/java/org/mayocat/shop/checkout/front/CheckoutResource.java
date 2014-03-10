@@ -405,8 +405,16 @@ public class CheckoutResource implements Resource
 
         for (Map<String, Object> item : items) {
             // Replace big decimal values by formatted values
-            Double unitPrice = ((BigDecimal) item.get("unitPrice")).doubleValue();
-            Double itemTotal = ((BigDecimal) item.get("itemTotal")).doubleValue();
+            Double unitPrice;
+            Double itemTotal;
+            if (BigDecimal.class.isAssignableFrom(item.get("unitPrice").getClass())) {
+                unitPrice = ((BigDecimal) item.get("unitPrice")).doubleValue();
+                itemTotal = ((BigDecimal) item.get("itemTotal")).doubleValue();
+            } else {
+                unitPrice = (Double) item.get("unitPrice");
+                itemTotal = (Double) item.get("itemTotal");
+            }
+
             item.put("unitPrice", formatter.withLocale(locale)
                     .print(Money.of(currencyUnit, unitPrice, RoundingMode.HALF_EVEN)));
             item.put("itemTotal", formatter.withLocale(locale)

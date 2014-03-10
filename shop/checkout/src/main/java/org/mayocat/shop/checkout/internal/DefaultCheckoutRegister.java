@@ -288,8 +288,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new RegularCheckoutException("Order with id [" + orderId.toString() + "] does not exist.");
         }
         try {
-            orderStore.get().delete(order);
-        } catch (EntityDoesNotExistException e) {
+            order.setStatus(Order.Status.CANCELLED);
+            orderStore.get().update(order);
+        } catch (EntityDoesNotExistException | InvalidEntityException e) {
             throw new CheckoutException(e);
         }
     }
