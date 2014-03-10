@@ -3,9 +3,7 @@ package org.mayocat.shop.catalog.api.v1.object
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
-import com.google.common.base.Strings
 import groovy.transform.CompileStatic
-import groovy.transform.TypeChecked
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.addons.model.AddonField
 import org.mayocat.addons.model.BaseProperties
@@ -61,6 +59,8 @@ class ProductApiObject extends BaseApiObject
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<Locale, Map<String, Object>> _localized;
+
+    // Helper builder methods
 
     @JsonIgnore
     def withProduct(Product product)
@@ -141,16 +141,26 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage)
+    def withEmbeddedVariants(List<Product> variants)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
-        def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage)
-        imageApiObject.featured = true
-        _embedded.featuredImage = imageApiObject
+        List<ProductApiObject> variantApiObjects = []
+
+        variants.each({ Product variant ->
+            ProductApiObject object = new ProductApiObject([
+                    _href: "/api/products/${this.slug}/variants/${variant.slug}"
+            ])
+            object.withProduct(variant)
+            if (variant.getAddons().isLoaded()) {
+                object.withAddons(variant.getAddons().get())
+            }
+            variantApiObjects << object
+        })
+
+        _embedded.variants = variantApiObjects
     }
 
     @JsonIgnore
@@ -176,26 +186,16 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedVariants(List<Product> variants)
+    def withEmbeddedFeaturedImage(Image featuredImage)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
-        List<ProductApiObject> variantApiObjects = []
-
-        variants.each({ Product variant ->
-            ProductApiObject object = new ProductApiObject([
-                    _href: "/api/products/${this.slug}/variants/${variant.slug}"
-            ])
-            object.withProduct(variant)
-            if (variant.getAddons().isLoaded()) {
-                object.withAddons(variant.getAddons().get())
-            }
-            variantApiObjects << object
-        })
-
-        _embedded.variants = variantApiObjects
+        def imageApiObject = new ImageApiObject()
+        imageApiObject.withImage(featuredImage)
+        imageApiObject.featured = true
+        _embedded.featuredImage = imageApiObject
     }
 
     @JsonIgnore

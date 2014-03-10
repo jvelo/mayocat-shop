@@ -1,4 +1,4 @@
-package org.mayocat.shop.catalog.api.v1
+package org.mayocat.shop.catalog.api.v1.delegate
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings

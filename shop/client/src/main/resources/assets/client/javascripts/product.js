@@ -43,7 +43,7 @@ angular.module('product', ['ngResource'])
 
             $scope.updateProduct = function () {
                 if ($scope.isNew()) {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $http.post("/api/products/", $scope.product)
                         .success(function (data, status, headers, config) {
                             $scope.isLoading = false;
@@ -65,13 +65,13 @@ angular.module('product', ['ngResource'])
                         })
                         .error(function (data, status, headers, config) {
                             $modal.open({ templateUrl: 'serverError.html' });
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                         });
                 }
                 else {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
-                        $scope.isLoading = false;
+                        $scope.isSaving = false;
                     });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
@@ -206,7 +206,7 @@ angular.module('product', ['ngResource'])
                     $scope.collections = collections;
                     angular.forEach($scope.collections, function (collection) {
                         angular.forEach($scope.product._relationships.collections, function (productCollection) {
-                            if (collection.href == productCollection._href) {
+                            if (collection._href == productCollection._href) {
                                 // hasProduct => used as model
                                 collection.hasProduct = true
                                 // hadProduct => used when saving to see if we need to update anything

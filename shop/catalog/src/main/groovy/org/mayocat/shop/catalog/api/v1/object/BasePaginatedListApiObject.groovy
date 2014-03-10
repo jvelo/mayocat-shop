@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.text.SimpleTemplateEngine
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 
 /**
  * Base class for paginated lists api objects : handles the creation of the proper links to pages
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class BasePaginatedListApiObject
 {
     @JsonIgnore

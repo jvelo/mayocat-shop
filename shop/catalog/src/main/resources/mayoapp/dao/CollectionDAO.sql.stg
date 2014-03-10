@@ -5,17 +5,20 @@ create() ::= <<
                 (entity_id,
                  position,
                  title,
-                 description)
+                 description,
+                 featured_image_id)
     VALUES      (:collection.id,
                  :position,
                  :collection.title,
-                 :collection.description)
+                 :collection.description,
+                 :collection.featuredImageId)
 >>
 
 update() ::= <<
     UPDATE collection
     SET    title = :collection.title,
-           description = :collection.description
+           description = :collection.description,
+           featured_image_id = :collection.featuredImageId
     WHERE  entity_id = :collection.id
 >>
 

@@ -25,6 +25,7 @@ import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.shop.catalog.api.v1.delegate.AttachmentApiDelegate
 import org.mayocat.shop.catalog.api.v1.object.*
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Feature
@@ -54,34 +55,34 @@ import javax.ws.rs.core.Response
 class ProductApi implements Resource, Initializable
 {
     @Inject
-    private Provider<ProductStore> productStore
+    Provider<ProductStore> productStore
 
     @Inject
-    private Provider<CollectionStore> collectionStore
+    Provider<CollectionStore> collectionStore
 
     @Inject
-    private Provider<ThumbnailStore> thumbnailStore
+    Provider<ThumbnailStore> thumbnailStore
 
     @Inject
-    private WebContext webContext
+    WebContext webContext
 
     @Inject
-    private CatalogSettings catalogSettings
+    CatalogSettings catalogSettings
 
     @Inject
-    private PlatformSettings platformSettings
+    PlatformSettings platformSettings
 
     @Inject
-    private Provider<AttachmentStore> attachmentStore
+    Provider<AttachmentStore> attachmentStore
 
     @Inject
-    private Slugifier slugifier
+    Slugifier slugifier
 
     @Inject
-    private Logger logger
+    Logger logger
 
     @Delegate
-    private AttachmentApiDelegate attachmentApi
+    AttachmentApiDelegate attachmentApi
 
     void initialize() {
         attachmentApi = new AttachmentApiDelegate([
@@ -130,7 +131,7 @@ class ProductApi implements Resource, Initializable
 
         products.each({ Product product ->
             def productApiObject = new ProductApiObject([
-                    _href: "/api/products/${product.slug}/"
+                    _href: "/api/products/${product.slug}"
             ])
             productApiObject.withProduct(product)
 
@@ -179,16 +180,15 @@ class ProductApi implements Resource, Initializable
         def images = this.getImages(slug)
 
         def productApiObject = new ProductApiObject([
-            _href: "/api/products/${slug}/",
+            _href: "/api/products/${slug}",
             _links: [
-                self: new LinkApiObject([ href: "/api/products/${slug}/" ]),
+                self: new LinkApiObject([ href: "/api/products/${slug}" ]),
                 images: new LinkApiObject([ href: "/api/products/${slug}/images" ])
             ]
         ])
 
         productApiObject.withProduct(product)
         productApiObject.withCollectionRelationships(collections)
-        // TODO: have an images link in _links
         productApiObject.withEmbeddedImages(images)
 
         if (product.addons.isLoaded()) {
@@ -474,7 +474,7 @@ class ProductApi implements Resource, Initializable
     }
 
     @GET
-    @Path("{slug}/variants/")
+    @Path("{slug}/variants")
     def getProductVariants(@PathParam("slug") String slug)
     {
         def product = productStore.get().findBySlug(slug)
@@ -502,7 +502,7 @@ class ProductApi implements Resource, Initializable
 
     @POST
     @Authorized
-    @Path("{slug}/variants/")
+    @Path("{slug}/variants")
     def createVariant(@PathParam("slug") String slug, VariantApiObject variantApiObject)
     {
         def product = productStore.get().findBySlug(slug)

@@ -19,18 +19,18 @@ angular.module('collection', ['ngResource'])
         'entityMixins',
         function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal, entityMixins) {
 
-            entityMixins.extend(["base", "localization"], $scope, "collection");
+            entityMixins.extend(["base", "localization", "image"], $scope, "collection");
 
             $scope.CollectionResource = $resource("/api/collections/:slug");
 
             // Functions
 
             $scope.updateCollection = function (callback) {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 if ($scope.isNew()) {
                     $http.post("/api/collections/", $scope.collection)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             if (status < 400) {
                                 var fragments = headers("location").split('/'),
                                     slug = fragments[fragments.length - 1];
@@ -49,13 +49,13 @@ angular.module('collection', ['ngResource'])
                             }
                         })
                         .error(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             callback && callback.call();
                         });
                 }
                 else {
                     $scope.CollectionResource.save({ "slug": $scope.slug }, $scope.collection, function () {
-                        $scope.isLoading = false;
+                        $scope.isSaving = false;
                         $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                 }
@@ -76,11 +76,19 @@ angular.module('collection', ['ngResource'])
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                return {
+                    imagesLength: (($scope.product || {}).images || {}).length || 0
+                };
+            };
+
             // Initialize
 
             if (!$scope.isNew()) {
                 $scope.collection = $scope.CollectionResource.get({
                     "slug": $scope.slug }, function () {
+
+                    $scope.reloadImages();
 
                     $scope.initializeEntity();
                 });

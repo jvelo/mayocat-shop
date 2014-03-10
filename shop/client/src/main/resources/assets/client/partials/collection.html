@@ -26,6 +26,43 @@
                 <label>{{'product.misc.description' | translate}}</label>
                 <textarea rows="10" ng-model="localizedCollection.description" localized/>
             </div>
+
+            <!-- Images -->
+            <div class="block" ng-if="!isNew()">
+                <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
+                <ul class="thumbnails">
+                    <li ng-repeat="image in collection._embedded.images">
+                        <div class="thumbnail">
+                            <div class="wrapper">
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
+                            </div>
+                            <div class="caption">
+                                <span class="featured-star" ng-class="{featured: image.featured}"
+                                      ng-click="selectFeatureImage(image)" />
+                                <div class="btn-group pull-right">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown">
+                                        {{'image.misc.actions' | translate}}
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="editImage(image)">
+                                            {{'entity.action.editImage' | translate}}
+                                        </li>
+                                        <li ng-click="removeImage(image)">
+                                            {{'entity.action.remove' | translate}}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="alert" ng-if="product.images.length <= 0">
+                    <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
+                </div>
+                <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
+            </div>
         </div>
 
     </article>

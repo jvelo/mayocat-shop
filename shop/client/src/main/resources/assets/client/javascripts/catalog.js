@@ -33,7 +33,7 @@ angular.module('catalog', [])
 
             listProductsForCollection: function (collection, callback) {
                 $http.get('/api/collections/' + collection + "?expand=products").success(function (data) {
-                    callback && callback.call(this, data.products);
+                    callback && callback.call(this, data._relationships.products);
                 });
             },
 
@@ -43,7 +43,7 @@ angular.module('catalog', [])
                         callback && callback.call(this, []);
                     }
                     $http.get('/api/collections/?expand=productCount').success(function (data) {
-                        callback && callback.call(this, data);
+                        callback && callback.call(this, data.collections);
                     });
                 });
             },

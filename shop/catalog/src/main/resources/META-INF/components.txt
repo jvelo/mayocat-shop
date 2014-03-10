@@ -3,8 +3,8 @@ org.mayocat.shop.catalog.internal.UpdateStockWhenOrderIsPaid
 org.mayocat.shop.catalog.store.jdbi.DBICollectionStore
 org.mayocat.shop.catalog.store.jdbi.DBIProductStore
 org.mayocat.shop.catalog.api.v1.ProductApi
+org.mayocat.shop.catalog.api.v1.CollectionApi
 org.mayocat.shop.catalog.api.v1.HomePageApi
-org.mayocat.shop.catalog.api.resources.CollectionResource
 org.mayocat.shop.catalog.configuration.source.CatalogGestaltConfigurationSource
 org.mayocat.shop.catalog.configuration.jackson.MoneyModule
 org.mayocat.shop.catalog.front.resource.CollectionResource
