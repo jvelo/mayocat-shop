@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
@@ -44,6 +45,9 @@ public class TurnoverStatsResource implements Resource, Initializable
     @Inject
     private DBIProvider dbi;
 
+    @Inject
+    private WebContext webContext;
+
     private TurnoverStatsDAO statsDAO;
 
     @GET
@@ -52,10 +56,10 @@ public class TurnoverStatsResource implements Resource, Initializable
     {
         Map<String, Object> stats = Maps.newHashMap();
 
-        stats.put("daily", statsDAO.daily());
-        stats.put("weekly", statsDAO.weekly());
-        stats.put("monthly", statsDAO.monthly());
-        stats.put("forever", statsDAO.forever());
+        stats.put("daily", statsDAO.daily(webContext.getTenant()));
+        stats.put("weekly", statsDAO.weekly(webContext.getTenant()));
+        stats.put("monthly", statsDAO.monthly(webContext.getTenant()));
+        stats.put("forever", statsDAO.forever(webContext.getTenant()));
 
         return Response.ok(stats).build();
     }

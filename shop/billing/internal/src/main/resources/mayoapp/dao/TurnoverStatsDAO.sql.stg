@@ -4,29 +4,37 @@ daily() ::= <<
      SELECT coalesce(sum(grand_total), 0) AS total,
             count(*) AS orders
      FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN current_date AND localtimestamp
-       AND  status in ('SHIPPED', 'PAID')
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+       AND  tenant_id = :tenant.id
 >>
 
 weekly() ::= <<
      SELECT coalesce(sum(grand_total), 0) AS total,
             count(*) AS orders
      FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN localtimestamp - interval '7 days' AND localtimestamp
-       AND  status in ('SHIPPED', 'PAID')
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+       AND  tenant_id = :tenant.id
 >>
 
 monthly() ::= <<
      SELECT coalesce(sum(grand_total), 0) AS total,
             count(*) AS orders
      FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN localtimestamp - interval '30 days' AND localtimestamp
-       AND  status in ('SHIPPED', 'PAID')
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+       AND  tenant_id = :tenant.id
 >>
 
 forever() ::= <<
      SELECT coalesce(sum(grand_total), 0) AS total,
             count(*) AS orders
      FROM   purchase_order
-     WHERE  status in ('SHIPPED', 'PAID')
+            INNER JOIN entity on purchase_order.entity_id = entity.id
+     WHERE  status in ('SHIPPED', 'PREPARED', 'PAID')
+       AND  tenant_id = :tenant.id
 >>
