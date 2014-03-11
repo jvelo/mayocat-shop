@@ -20,6 +20,13 @@ import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 /**
+ * Localization container filter that strips out the language tag if present in the URI before its passed to jersey
+ * resources.
+ *
+ * FIXME: this should be in the localization module but there's a dependency on AbstractService that would introduce
+ * a cyclic dependency chain. The proper way to resolve this would be to introduce a component that can resolves if a
+ * certain path is an static path, or API path or Web path...
+ *
  * @version $Id$
  */
 public class LocalizationContainerFilter implements ContainerRequestFilter

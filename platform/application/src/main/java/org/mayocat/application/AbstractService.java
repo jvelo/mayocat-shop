@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.Filter;
+
 import org.mayocat.Module;
 import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
@@ -37,6 +39,7 @@ import org.mayocat.rest.Resource;
 import org.mayocat.rest.jackson.MayocatGroovyModule;
 import org.mayocat.rest.jackson.MayocatJodaModule;
 import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
+import org.mayocat.servlet.ServletFilter;
 import org.mayocat.task.Task;
 import org.mayocat.util.Utils;
 import org.slf4j.Logger;
@@ -63,7 +66,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
  */
 public abstract class AbstractService<C extends AbstractSettings> extends Service<C>
 {
-    protected static Set<String> staticPaths = new HashSet<String>();
+    protected static Set<String> staticPaths = new HashSet<>();
 
     private EmbeddableComponentManager componentManager;
 
@@ -102,7 +105,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     public void run(C configuration, Environment environment) throws Exception
     {
         this.initializeComponentManager(configuration, environment);
-
+        registerServletFilters(environment);
         registerProviders(environment);
         registerResources(environment);
         registerEventListeners(environment);
@@ -188,6 +191,18 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         componentManager.initialize(this.getClass().getClassLoader());
 
         Utils.setComponentManager(componentManager);
+    }
+
+    private void registerServletFilters(Environment environment) throws ComponentLookupException
+    {
+        Map<String, ServletFilter> servletFilters = componentManager.getInstanceMap(ServletFilter.class);
+        for (Map.Entry<String, ServletFilter> filter : servletFilters.entrySet()) {
+            if (!Filter.class.isAssignableFrom(filter.getValue().getClass())) {
+                LOGGER.warn("Ignoring servlet filter of class {} which does not implement Filter");
+            } else {
+                environment.addFilter((Filter) filter.getValue(), filter.getValue().urlPattern());
+            }
+        }
     }
 
     private void registerManagedServices(Environment environment) throws ComponentLookupException

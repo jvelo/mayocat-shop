@@ -57,6 +57,10 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private SmtpSettings smtp = new SmtpSettings();
 
+    @Valid
+    @JsonProperty
+    private LocalizationFilterSettings localizationFilter = new LocalizationFilterSettings();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -90,5 +94,10 @@ public class AbstractSettings extends Configuration
     public SmtpSettings getSmtpSettings()
     {
         return smtp;
+    }
+
+    public LocalizationFilterSettings getLocalizationFilterSettings()
+    {
+        return localizationFilter;
     }
 }

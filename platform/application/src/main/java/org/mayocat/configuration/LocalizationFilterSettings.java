@@ -7,32 +7,23 @@
  */
 package org.mayocat.configuration;
 
-import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Settings for the development environment
+ * Settings for the localization filter. See {@link org.mayocat.localization.RequestLocalizationFilter}.
  *
  * @version $Id$
  */
-public class DevelopmentEnvironmentSettings
+public class LocalizationFilterSettings
 {
-    @Valid
     @JsonProperty
-    private boolean enabled = false;
+    private List<String> excludePaths = Arrays.asList("/api");
 
-    @Valid
-    @JsonProperty
-    private boolean logDatabaseRequests = false;
-
-    public boolean isEnabled()
+    public List<String> getExcludePaths()
     {
-        return enabled;
-    }
-
-    public boolean isLogDatabaseRequests()
-    {
-        return logDatabaseRequests;
+        return excludePaths;
     }
 }
