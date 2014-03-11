@@ -10,7 +10,8 @@ import org.joda.money.format.MoneyFormatterBuilder
 import java.math.RoundingMode
 
 /**
- * Doc goes here.
+ * Web object for a price representation. Contains the amount formatted according to a passed locale and a currency
+ * representation.
  *
  * @version $Id$
  */

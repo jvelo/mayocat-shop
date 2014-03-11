@@ -10,7 +10,8 @@ package org.mayocat.shop.front.views;
 import java.nio.file.Paths;
 
 /**
- * Doc goes here.
+ * Web views for errors. Templates names correspond to the HTTP status code for that error, example : 500.html for
+ * 500 errors, 404.html for 400 errors, etc.
  *
  * @version $Id$
  */

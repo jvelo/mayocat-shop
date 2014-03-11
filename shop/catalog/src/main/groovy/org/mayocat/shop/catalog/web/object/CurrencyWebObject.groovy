@@ -10,7 +10,7 @@ import org.mayocat.shop.catalog.util.MoneyUtil
 import java.math.RoundingMode
 
 /**
- * Doc goes here.
+ * Web object that holds the representation of a currency.
  *
  * @version $Id$
  */

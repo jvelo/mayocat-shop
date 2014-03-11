@@ -24,7 +24,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 /**
- * Doc goes here.
+ * Data supplier that adds locale-related information in the data map (current locale, available locales, the locale
+ * path, the url,
  *
  * @version $Id$
  */

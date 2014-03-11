@@ -15,7 +15,7 @@ import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.store.memory.DefaultPositionedEntity;
 
 /**
- * Doc goes here.
+ * Collection entity for memory store.
  *
  * @version $Id$
  */

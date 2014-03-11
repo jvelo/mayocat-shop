@@ -33,7 +33,7 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.collect.Maps;
 
 /**
- * Doc goes here.
+ * Data supplier that brings site related data into the map (site title, site logo, addons, etc.)
  *
  * @version $Id$
  */

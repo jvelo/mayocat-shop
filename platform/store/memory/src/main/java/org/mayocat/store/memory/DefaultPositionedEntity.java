@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.mayocat.model.Identifiable;
 
 /**
- * Doc goes here.
+ * Default positioned entity for memory stores.
  *
  * @version $Id$
  */

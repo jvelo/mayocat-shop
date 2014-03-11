@@ -21,7 +21,7 @@ import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 /**
- * Doc goes here.
+ * DAO for product features. See {@link Feature}
  *
  * @version $Id$
  */

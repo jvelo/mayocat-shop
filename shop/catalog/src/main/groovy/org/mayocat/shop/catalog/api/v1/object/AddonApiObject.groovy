@@ -1,14 +1,16 @@
 package org.mayocat.shop.catalog.api.v1.object
 
+import groovy.transform.CompileStatic
 import org.mayocat.model.Addon
 import org.mayocat.model.AddonFieldType
 import org.mayocat.model.AddonSource
 
 /**
- * Doc goes here.
+ * API object representing an addon. See {@link Addon)
  *
  * @version $Id$
  */
+@CompileStatic
 class AddonApiObject
 {
     Object value;

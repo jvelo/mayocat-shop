@@ -12,12 +12,18 @@ import java.util.Map;
 import org.xwiki.component.annotation.Role;
 
 /**
- * Doc goes here.
+ * A web data supplier is a component that can add (supply) data to the global data map context that will be used to
+ * render a web view (either as a HTML page or a JSON response, etc.).
  *
  * @version $Id$
  */
 @Role
 public interface WebDataSupplier
 {
+    /**
+     * Supplies data to the passed data map.
+     *
+     * @param data the global data map to supply data into
+     */
     void supply(Map<String, Object> data);
 }
