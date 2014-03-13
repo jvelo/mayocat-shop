@@ -1,7 +1,14 @@
 package org.mayocat.shop.catalog.web.object
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.google.common.base.Optional
+import org.mayocat.image.model.Image
+import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.front.util.ContextUtils
+import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
+
+import java.text.MessageFormat
 
 /**
  * Web view for a {@link org.mayocat.shop.catalog.model.Collection}
@@ -10,13 +17,24 @@ import org.mayocat.url.EntityURLFactory
  */
 class CollectionWebObject
 {
-    String title;
+    String title
 
-    String description;
+    String description
 
-    String url;
+    String url
 
-    String slug;
+    String slug
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    EntityModelWebObject model
+
+    String template
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    EntityImagesWebObject images
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    ProductListWebObject products
 
     def withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)
     {
@@ -24,5 +42,49 @@ class CollectionWebObject
         description = ContextUtils.safeHtml(collection.description)
         url = urlFactory.create(collection).path
         slug = collection.slug
+    }
+
+    def withProducts(List<ProductWebObject> productList, Integer currentPage, Integer totalPages)
+    {
+        PaginationWebObject pagination = new PaginationWebObject()
+        pagination.withPages(currentPage, totalPages, { Integer page ->
+            MessageFormat.format("/collections/{0}/?page={1}", slug, page);
+        })
+
+        products = new ProductListWebObject([
+                list: productList,
+                pagination: pagination
+        ])
+    }
+
+    def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)
+    {
+        List<ImageWebObject> all = [];
+        ImageWebObject featuredImage;
+
+        if (imagesList.size() > 0) {
+            for (Image image : imagesList) {
+                def featured = image.attachment.id.equals(featuredImageId)
+                ImageWebObject imageWebObject = new ImageWebObject();
+                imageWebObject.withImage(image, featured, theme)
+                if (featuredImage == null && featured) {
+                    featuredImage = imageWebObject;
+                }
+                all << imageWebObject
+            }
+            if (featuredImage == null) {
+                // If no featured image has been set, we use the first image in the array.
+                featuredImage = all.get(0)
+            }
+        } else {
+            // Create placeholder image
+            featuredImage = new ImageWebObject()
+            featuredImage.withPlaceholderImage(true, theme)
+            all = [ featuredImage ]
+        }
+        images = new EntityImagesWebObject([
+                all: all,
+                featured: featuredImage
+        ])
     }
 }

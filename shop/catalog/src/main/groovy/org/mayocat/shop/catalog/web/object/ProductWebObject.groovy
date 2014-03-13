@@ -66,6 +66,13 @@ class ProductWebObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     CollectionWebObject featuredCollection
 
+    /**
+     * @deprecated use #featuredCollection instead
+     */
+    @Deprecated
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    CollectionWebObject featured_collection
+
     Boolean hasVariants = false
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -135,6 +142,9 @@ class ProductWebObject
     {
         featuredCollection = new CollectionWebObject()
         featuredCollection.withCollection(collection, urlFactory)
+
+        // For backward compatibility
+        featured_collection = featuredCollection
     }
 
     def withFeaturesAndVariants(List<Feature> allFeatures, List<Product> variants, Map<String, String> selectedFeaturesList,

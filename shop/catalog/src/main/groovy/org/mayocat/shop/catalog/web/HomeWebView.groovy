@@ -24,10 +24,8 @@ import org.mayocat.model.Attachment
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.shop.catalog.front.resource.AbstractProductListWebViewResource
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
-import org.mayocat.shop.front.builder.PaginationContextBuilder
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.resources.AbstractWebViewResource
 import org.mayocat.shop.front.util.WebDataHelper
@@ -57,7 +55,7 @@ import static org.mayocat.shop.front.util.WebDataHelper.isThumbnailOfAttachment
 @Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
-class HomeWebView extends AbstractProductListWebViewResource implements Resource
+class HomeWebView extends AbstractProductListWebView implements Resource
 {
     @Inject
     Provider<ProductStore> productStore;
@@ -95,13 +93,9 @@ class HomeWebView extends AbstractProductListWebViewResource implements Resource
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
         Integer totalCount = this.productStore.get().countAllOnShelf();
         Integer totalPages = IntMath.divide(totalCount, numberOfProducts, RoundingMode.UP);
-        context.put("products", createProductListContext(1, totalPages, products,
-                new PaginationContextBuilder.UrlBuilder() {
-                    public String build(int page)
-                    {
-                        return MessageFormat.format("/products/?page={0}", page);
-                    }
-                }));
+        context.put("products", createProductListContext(1, totalPages, products, {
+            Integer page -> MessageFormat.format("/products/?page={0}", page);
+        }))
 
         // Home page content
 

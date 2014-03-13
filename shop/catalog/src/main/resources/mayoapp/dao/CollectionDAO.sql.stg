@@ -44,6 +44,23 @@ findAllForProduct() ::= <<
                                       WHERE  product_id = :product.id)
 >>
 
+findAllForProductIds(ids) ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                      FROM   collection_product
+                                      WHERE  product_id in (<ids>))
+>>
+
+findAllProductsCollectionsForIds(ids) ::= <<
+    SELECT collection_id, product_id
+    FROM   collection_product
+    WHERE  product_id in (<ids>)
+>>
+
 lastProductPosition() ::= <<
     SELECT position
     FROM   collection_product

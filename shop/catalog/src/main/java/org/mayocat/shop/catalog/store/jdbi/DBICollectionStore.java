@@ -20,6 +20,7 @@ import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.model.ProductCollection;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -178,6 +179,16 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public List<Collection> findAllForProduct(Product product)
     {
         return this.dao.findAllForProduct(product);
+    }
+
+    public List<Collection> findAllForProductIds(List<UUID> ids)
+    {
+        return this.dao.findAllForProductIds(ids);
+    }
+
+    public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
+    {
+        return this.dao.findAllProductsCollectionsForIds(ids);
     }
 
     public List<Collection> findAll()

@@ -16,12 +16,11 @@ import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
-import org.mayocat.shop.catalog.front.resource.AbstractProductListWebViewResource
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
+import org.mayocat.shop.catalog.model.ProductCollection
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.catalog.web.object.ProductWebObject
-import org.mayocat.shop.front.builder.PaginationContextBuilder
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
@@ -46,7 +45,7 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class ProductWebView extends AbstractProductListWebViewResource implements Resource
+class ProductWebView extends AbstractProductListWebView implements Resource
 {
     @Inject
     private Provider<ProductStore> productStore;
@@ -66,14 +65,24 @@ class ProductWebView extends AbstractProductListWebViewResource implements Resou
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProductsPerPage, offset);
-        def builder = new PaginationContextBuilder.UrlBuilder() {
-            public String build(int p)
-            {
-                return MessageFormat.format("/products/?page={0}", p);
+        List<UUID> productIds = products.collect { Product product -> product.id }
+
+        List<Collection> collections = collectionStore.get().findAllForProductIds(productIds)
+        List<ProductCollection> productsCollections = collectionStore.get().findAllProductsCollectionsForIds(productIds)
+
+        products.each({ Product product ->
+            def productCollections = productsCollections.findAll { ProductCollection productCollection ->
+                productCollection.productId == product.id
             }
-        };
-        context.put("products",
-                createProductListContext(currentPage, totalPages, products, builder));
+            productCollections = productCollections.collect({ ProductCollection pc ->
+                collections.find({ Collection c -> pc.collectionId == c.id })
+            })
+            product.setCollections(productCollections)
+        })
+
+        context.put("products", createProductListContext(currentPage, totalPages, products, {
+            Integer p -> MessageFormat.format("/products/?page={0}", p);
+        }));
 
         return new WebView().template("products.html").data(context);
     }
@@ -120,7 +129,7 @@ class ProductWebView extends AbstractProductListWebViewResource implements Resou
 
     def getProduct(final @PathParam("slug") String slug, Map<String, String> selectedFeatures)
     {
-        final Product product = this.productStore.get().findBySlug(slug);
+        def product = this.productStore.get().findBySlug(slug);
         if (product == null) {
             return new ErrorWebView().status(404);
         }
