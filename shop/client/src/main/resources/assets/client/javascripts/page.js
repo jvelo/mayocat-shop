@@ -81,6 +81,12 @@
                         // state in angular directives.
                         $scope.page.published = undefined;
                     }
+
+                    // Backward compat.
+                    // FIXME
+                    // Remove this when the page entity is moved towards the new style of API
+                    $scope.page._localized = $scope.page.localizedVersions;
+
                 });
             }
             else {
