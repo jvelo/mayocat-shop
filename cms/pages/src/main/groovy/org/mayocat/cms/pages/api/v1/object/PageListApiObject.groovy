@@ -5,19 +5,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.cms.pages.api.v1.object
 
 import groovy.transform.CompileStatic
+import org.mayocat.rest.api.object.BasePaginatedListApiObject
 
 /**
- * Web object for an entity model : contains the template applied by the model as well as its slug.
+ * API object for a list of pages
  *
  * @version $Id$
  */
 @CompileStatic
-class EntityModelWebObject
+class PageListApiObject extends BasePaginatedListApiObject
 {
-    String template
-
-    String slug
+    List<PageApiObject> pages;
 }

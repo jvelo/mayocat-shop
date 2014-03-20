@@ -29,10 +29,10 @@
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
-                    <li ng-repeat="image in page.images">
+                    <li ng-repeat="image in page._embedded.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <span class="featured-star" ng-class="{featured: image.featured}"

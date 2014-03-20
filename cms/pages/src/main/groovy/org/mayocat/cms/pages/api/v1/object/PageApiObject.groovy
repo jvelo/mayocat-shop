@@ -5,18 +5,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.cms.news.api.v1.object
+package org.mayocat.cms.pages.api.v1.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
-import groovy.transform.CompileStatic
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
+import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.addons.model.AddonField
 import org.mayocat.addons.model.BaseProperties
 import org.mayocat.addons.util.AddonUtils
-import org.mayocat.cms.news.model.Article
+import org.mayocat.cms.pages.model.Page
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
 import org.mayocat.model.Addon
@@ -26,12 +24,11 @@ import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.theme.ThemeDefinition
 
 /**
- * Api object for an {@link Article}
+ * API object for a {@link Page}
  *
  * @version $Id$
  */
-@CompileStatic
-class ArticleApiObject extends BaseApiObject
+class PageApiObject extends BaseApiObject
 {
     String slug;
 
@@ -40,11 +37,10 @@ class ArticleApiObject extends BaseApiObject
 
     Boolean published;
 
+    @NotEmpty
     String title;
 
     String content;
-
-    DateTime publicationDate;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     List<AddonApiObject> addons
@@ -52,28 +48,30 @@ class ArticleApiObject extends BaseApiObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
 
-    @JsonIgnore
-    def withArticle(Article article, DateTimeZone tenantZone)
-    {
-        slug = article.slug
-        title = article.title
-        content = article.content
-        published = article.published
-        model = article.model.orNull()
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<Locale, Map<String, Object>> _localized;
 
-        if (article.publicationDate != null) {
-            publicationDate = new DateTime(article.publicationDate.time, tenantZone);
-        }
+    def withPage(Page page)
+    {
+        slug = page.slug
+        title = page.title
+        content = page.content
+        published = page.published
+
+        model = page.model.orNull()
+
+        _localized = page.localizedVersions
     }
 
     @JsonIgnore
-    Article toArticle(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
+    def Page toPage(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
     {
-        def article = new Article()
-        article.with {
+        def page = new Page()
+        page.with {
             slug = this.slug
             title = this.title
             content = this.content
+            published = this.published
         }
 
         if (addons) {
@@ -88,20 +86,20 @@ class ArticleApiObject extends BaseApiObject
                 }
             })
 
-            article.addons = articleAddons
+            page.addons = articleAddons
         }
 
-        article
+        page
     }
 
     @JsonIgnore
-    def withAddons(List<Addon> articleAddons)
+    def withAddons(List<Addon> pageAddons)
     {
         if (!addons) {
             addons = []
         }
 
-        articleAddons.each({ Addon addon ->
+        pageAddons.each({ Addon addon ->
             addons << AddonApiObject.forAddon(addon)
         })
     }

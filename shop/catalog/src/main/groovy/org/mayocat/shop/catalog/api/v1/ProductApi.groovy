@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012, Mayocat <hello@mayocat.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -371,7 +371,7 @@ class ProductApi implements Resource, Initializable
                     product.virtual = true;
                 }
 
-                if (productApiObject._embedded.get("featuredImage")) {
+                if (productApiObject._embedded && productApiObject._embedded.get("featuredImage")) {
 
                     // FIXME:
                     // This should be done via the {slug}/images/ API instead

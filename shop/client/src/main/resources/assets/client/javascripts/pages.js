@@ -13,8 +13,8 @@ angular.module('pages', [])
         function ($scope, $resource) {
 
             $scope.refreshPages = function () {
-                $resource("/api/pages").get({}, function (pages) {
-                    $scope.pages = pages.items;
+                $resource("/api/pages").get({}, function (data) {
+                    $scope.pages = data.pages;
                 });
             }
 

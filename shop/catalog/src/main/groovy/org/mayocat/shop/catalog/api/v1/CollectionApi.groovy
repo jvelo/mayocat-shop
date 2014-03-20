@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
@@ -264,7 +271,7 @@ class CollectionApi implements Resource, Initializable
                 collection.id = id
                 collection.slug = slug
 
-                if (collectionApiObject._embedded.get("featuredImage")) {
+                if (collectionApiObject._embedded && collectionApiObject._embedded.get("featuredImage")) {
                     // FIXME:
                     // This should be done via the {slug}/images/ API instead
 

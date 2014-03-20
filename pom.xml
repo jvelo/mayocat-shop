@@ -196,6 +196,7 @@
               </mapping>
               <includes>
                 <include>src/**/*.java</include>
+                <include>src/**/*.groovy</include>
                 <include>src/**/*.js</include>
                 <include>src/**/*.css</include>
                 <include>src/**/*.less</include>

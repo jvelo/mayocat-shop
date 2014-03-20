@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012, Mayocat <hello@mayocat.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public

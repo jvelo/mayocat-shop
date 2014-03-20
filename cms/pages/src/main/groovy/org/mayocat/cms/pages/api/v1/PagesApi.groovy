@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.cms.news.api
+package org.mayocat.cms.pages.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
@@ -14,17 +14,15 @@ import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
-import org.joda.time.DateTimeZone
 import org.mayocat.Slugifier
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
-import org.mayocat.cms.news.api.v1.object.ArticleApiObject
-import org.mayocat.cms.news.api.v1.object.ArticleListApiObject
-import org.mayocat.cms.news.model.Article
-import org.mayocat.cms.news.store.ArticleStore
+import org.mayocat.cms.pages.api.v1.object.PageApiObject
+import org.mayocat.cms.pages.api.v1.object.PageListApiObject
+import org.mayocat.cms.pages.model.Page
+import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
-import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
@@ -52,26 +50,23 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 /**
- * API for {@link Article} news
+ * Doc goes here.
  *
  * @version $Id$
  */
-@Component("/api/news")
-@Path("/api/news")
+@Component("/api/pages")
+@Path("/api/pages")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class NewsApi implements Resource, Initializable
+class PagesApi implements Resource, Initializable
 {
     @Inject
     Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
-    Provider<ArticleStore> articleStore;
-
-    @Inject
-    ConfigurationService configurationService;
+    Provider<PageStore> pageStore;
 
     @Inject
     PlatformSettings platformSettings
@@ -99,14 +94,14 @@ class NewsApi implements Resource, Initializable
     }
 
     @GET
-    def listArticles(@QueryParam("number") @DefaultValue("100") Integer number,
+    public Object listPages(@QueryParam("number") @DefaultValue("100") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset)
     {
-        List<ArticleApiObject> articleList = [];
-        def articles = articleStore.get().findAll(number, offset);
-        def totalItems = this.articleStore.get().countAll();
+        List<PageApiObject> pageList = [];
+        def pages = pageStore.get().findAll(number, offset);
+        def totalItems = this.pageStore.get().countAll();
 
-        def imageIds = articles.collect({ Article article -> article.featuredImageId })
+        def imageIds = pages.collect({ Page page -> page.featuredImageId })
                 .findAll({ UUID id -> id != null })
 
         List<Image> images;
@@ -121,57 +116,51 @@ class NewsApi implements Resource, Initializable
             images = []
         }
 
-        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
-        DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
-
-        articles.each({ Article article ->
-            def articleApiObject = new ArticleApiObject([
-                    _href: "/api/news/${article.slug}"
+        pages.each({ Page page ->
+            def articleApiObject = new PageApiObject([
+                    _href: "/api/pages/${page.slug}"
             ])
-            articleApiObject.withArticle(article, tenantTz)
+            articleApiObject.withPage(page)
 
-            if (article.addons.isLoaded()) {
-                articleApiObject.withAddons(article.addons.get())
+            if (page.addons.isLoaded()) {
+                articleApiObject.withAddons(page.addons.get())
             }
 
-            def featuredImage = images.find({ Image image -> image.attachment.id == article.featuredImageId })
+            def featuredImage = images.find({ Image image -> image.attachment.id == page.featuredImageId })
 
             if (featuredImage) {
                 articleApiObject.withEmbeddedFeaturedImage(featuredImage)
             }
 
-            articleList << articleApiObject
+            pageList << articleApiObject
         })
 
-        def articleListApiObject = new ArticleListApiObject([
+        def pageListApiObject = new PageListApiObject([
                 pagination: new Pagination([
                         numberOfItems: number,
-                        returnedItems: articleList.size(),
+                        returnedItems: pageList.size(),
                         offset: offset,
                         totalItems: totalItems,
-                        urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}&',
+                        urlTemplate: '/api/pages?number=${numberOfItems}&offset=${offset}&',
                 ]),
-                articles: articleList
+                pages: pageList
         ])
 
-        articleListApiObject
+        pageListApiObject
     }
 
     @GET
     @Path("{slug}")
-    def getArticle(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
+    public Object getPage(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
-        Article article = articleStore.get().findBySlug(slug);
-        if (article == null) {
+        Page page = pageStore.get().findBySlug(slug);
+        if (page == null) {
             return Response.status(404).build();
         }
 
-        List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : expand.split(",") as List<String>;
+        List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : Arrays.asList(expand.split(","));
 
-        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class);
-        DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue());
-
-        def articleApiObject = new ArticleApiObject([
+        def pageApiObject = new PageApiObject([
                 _href: "/api/news/${slug}",
                 _links: [
                         self: new LinkApiObject([ href: "/api/news/${slug}" ]),
@@ -179,45 +168,43 @@ class NewsApi implements Resource, Initializable
                 ]
         ])
 
-        articleApiObject.withArticle(article, tenantTz);
+        pageApiObject.withPage(page);
 
         if (expansions.contains("images")) {
             def images = this.getImages(slug)
-            articleApiObject.withEmbeddedImages(images)
+            pageApiObject.withEmbeddedImages(images)
         }
 
-        if (article.addons.isLoaded()) {
-            articleApiObject.withAddons(article.addons.get())
+        if (page.addons.isLoaded()) {
+            pageApiObject.withAddons(page.addons.get())
         }
 
-        articleApiObject
+        pageApiObject
     }
 
     @POST
     @Timed
     @Authorized
-    def createArticle(ArticleApiObject articleApiObject)
+    public Object createPage(PageApiObject page)
     {
         try {
-            def article = articleApiObject.toArticle(platformSettings,
-                    Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
-
-            if (Strings.isNullOrEmpty(article.slug)) {
-                article.setSlug(this.getSlugifier().slugify(article.title));
+            if (Strings.isNullOrEmpty(page.slug)) {
+                page.setSlug(this.slugifier.slugify(page.title));
             }
 
-            this.articleStore.get().create(article);
+            this.pageStore.get().create(page.toPage(platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(context.theme?.definition)))
 
-            Article created = articleStore.get().findBySlug(article.slug);
+            Page created = pageStore.get().findBySlug(page.slug);
 
             // Respond with a created URI relative to this API URL.
-            // This will add a location header like http://host/api/<version>/news/my-article
+            // This will add a location header like http://host/api/<version>/page/my-created-product
             return Response.created(new URI(created.slug)).build();
         } catch (InvalidEntityException e) {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
-                    .entity("An article with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+                    .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e);
         }
@@ -228,48 +215,37 @@ class NewsApi implements Resource, Initializable
     @Timed
     @Authorized
     // Partial update : NOT idempotent
-    def updateArticle(@PathParam("slug") String slug,
-            ArticleApiObject articleApiObject)
+    public Response updatePage(@PathParam("slug") String slug, PageApiObject pageApiObject)
     {
         try {
-            Article article = this.articleStore.get().findBySlug(slug);
-            if (article == null) {
+            Page page = this.pageStore.get().findBySlug(slug);
+            if (page == null) {
                 return Response.status(404).build();
             } else {
 
-                article = articleApiObject.toArticle(platformSettings, Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
+                page = pageApiObject.toPage(platformSettings,
+                        Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
                 // Slug can't be update this way no matter what
-                article.slug = slug
-
-                if (isJustBeingPublished(article, articleApiObject) &&
-                        articleApiObject.getPublicationDate() == null)
-                {
-                    // If the article is being published and has no publication date, set it to right now
-                    article.setPublicationDate(new Date());
-                } else if (articleApiObject.getPublicationDate() != null) {
-                    article.setPublicationDate(articleApiObject.getPublicationDate().toDate());
-                }
-
-                article.setPublished(articleApiObject.published);
+                page.slug = slug
 
                 // Featured image
-                if (articleApiObject._embedded && articleApiObject._embedded.get("featuredImage")) {
+                if (pageApiObject._embedded && pageApiObject._embedded.get("featuredImage")) {
 
                     // FIXME:
                     // This should be done via the {slug}/images/ API instead
 
-                    ImageApiObject featured = articleApiObject._embedded.get("featuredImage") as ImageApiObject
+                    ImageApiObject featured = pageApiObject._embedded.get("featuredImage") as ImageApiObject
 
                     Attachment featuredImage =
                         this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension);
 
                     if (featuredImage) {
-                        article.featuredImageId = featuredImage.id
+                        page.featuredImageId = featuredImage.id
                     }
                 }
 
-                this.articleStore.get().update(article);
+                this.pageStore.get().update(page);
             }
 
             return Response.ok().build();
@@ -277,29 +253,30 @@ class NewsApi implements Resource, Initializable
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No Article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+                    .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
     @Path("{slug}")
     @DELETE
-    @Consumes(MediaType.WILDCARD)
     @Authorized
-    def deleteArticle(@PathParam("slug") String slug)
+    @Consumes(MediaType.WILDCARD)
+    public Response deletePage(@PathParam("slug") String slug)
     {
-        Article page = this.articleStore.get().findBySlug(slug);
+        Page page = this.pageStore.get().findBySlug(slug);
 
         if (page == null) {
             return Response.status(404).build();
         }
 
         try {
-            this.articleStore.get().delete(page);
+            this.pageStore.get().delete(page);
 
             return Response.noContent().build();
+
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+                    .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
     }
 
@@ -308,12 +285,12 @@ class NewsApi implements Resource, Initializable
     def getImages(@PathParam("slug") String slug)
     {
         def images = [];
-        def article = this.articleStore.get().findBySlug(slug);
-        if (article == null) {
+        def pages = this.pageStore.get().findBySlug(slug);
+        if (pages == null) {
             throw new WebApplicationException(Response.status(404).build());
         }
 
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(article,
+        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(pages,
                 ["png", "jpg", "jpeg", "gif"] as List))
         {
             def thumbnails = thumbnailStore.get().findAll(attachment);
@@ -322,7 +299,7 @@ class NewsApi implements Resource, Initializable
             def imageApiObject = new ImageApiObject()
             imageApiObject.withImage(image)
 
-            if (article.featuredImageId != null && article.featuredImageId.equals(attachment.id)) {
+            if (pages.featuredImageId != null && pages.featuredImageId.equals(attachment.id)) {
                 imageApiObject.featured = true
             }
 
@@ -389,36 +366,29 @@ class NewsApi implements Resource, Initializable
             @FormDataParam("title") String title,
             @FormDataParam("description") String description)
     {
-        def article = this.articleStore.get().findBySlug(slug);
-        if (article == null) {
+        def page = this.pageStore.get().findBySlug(slug);
+        if (page == null) {
             return Response.status(404).build();
         }
 
         def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
         def created = this.addAttachment(uploadedInputStream, filename, title, description,
-                Optional.of(article.id));
+                Optional.of(page.id));
 
-        if (article.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
+        if (page.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
 
-            // If this is an image and the article doesn't have a featured image yet, and the attachment was
+            // If this is an image and the page doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
-            article.featuredImageId = created.id;
+            page.featuredImageId = created.id;
 
             try {
-                this.articleStore.get().update(article);
+                this.pageStore.get().update(page);
             } catch (EntityDoesNotExistException | InvalidEntityException e) {
                 // Fail silently. The attachment has been added successfully, that's what matter
-                this.logger.warn("Failed to set first image as featured image for entity {} with id", article.id);
+                this.logger.warn("Failed to set first image as featured image for entity {} with id", page.id);
             }
         }
 
         return Response.noContent().build();
     }
-
-    static boolean isJustBeingPublished(Article originalArticle, ArticleApiObject updatedArticle)
-    {
-        return (originalArticle.published == null || !originalArticle.published) &&
-                (updatedArticle.published != null && updatedArticle.published);
-    }
-
 }
