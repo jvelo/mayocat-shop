@@ -10,6 +10,7 @@ package org.mayocat.shop.payment;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Gateway to execute payment-related operations, like authorizing or capturing funds transfers. A gateway represents an
@@ -38,5 +39,5 @@ public interface PaymentGateway
      * @param data the POST data associated with this acknowledgement request.
      * @throws GatewayException when an un-expected exception occurs.
      */
-    GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException;
+    GatewayResponse acknowledge(UUID orderId, Map<String, List<String>> data) throws GatewayException;
 }

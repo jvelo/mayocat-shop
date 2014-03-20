@@ -15,6 +15,7 @@ import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
@@ -173,7 +174,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         }
     }
 
-    public GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException
+    public GatewayResponse acknowledge(UUID orderId, Map<String, List<String>> data) throws GatewayException
     {
 
         IPNMessage ipnListener = new IPNMessage(convertDataMap(data));

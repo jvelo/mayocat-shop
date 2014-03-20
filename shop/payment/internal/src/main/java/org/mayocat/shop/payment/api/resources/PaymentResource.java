@@ -70,7 +70,7 @@ public class PaymentResource implements Resource
         GatewayResponse response;
 
         try {
-            response = gateway.acknowledge(data);
+            response = gateway.acknowledge(orderId, data);
             PaymentOperation op = response.getOperation();
             op.setOrderId(orderId);
             paymentOperationStore.get().create(op);

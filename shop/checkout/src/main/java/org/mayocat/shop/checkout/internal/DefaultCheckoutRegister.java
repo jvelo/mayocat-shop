@@ -228,12 +228,18 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException("Gateway could not be created.");
         }
 
+        String localePath = "";
+        if (webContext.isAlternativeLocale()) {
+            localePath += webContext.getLocale() + "/";
+        }
+
         Map<PaymentData, Object> options = Maps.newHashMap();
-        options.put(BasePaymentData.BASE_URL, webContext.getRequest().getBaseUri().toString());
-        options.put(BasePaymentData.CANCEL_URL, webContext.getRequest().getBaseUri().toString()
-                + CheckoutResource.PATH + "/" + order.getId() + "/" + CheckoutResource.PAYMENT_CANCEL_PATH);
-        options.put(BasePaymentData.RETURN_URL, webContext.getRequest().getBaseUri().toString()
-                + CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
+        String baseUri = webContext.getRequest().getBaseUri().toString() + localePath;
+        options.put(BasePaymentData.BASE_URL, baseUri);
+        options.put(BasePaymentData.CANCEL_URL, baseUri + CheckoutResource.PATH + "/" + order.getId() + "/"
+                + CheckoutResource.PAYMENT_CANCEL_PATH);
+        options.put(BasePaymentData.RETURN_URL, baseUri + CheckoutResource.PATH + "/"
+                + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
         options.put(BasePaymentData.CURRENCY, cart.getCurrency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
         options.put(BasePaymentData.CUSTOMER, actualCustomer);
