@@ -1,12 +1,14 @@
 package org.mayocat.shop.catalog.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import groovy.transform.CompileStatic
 
 /**
  * Web object for a product variant (a {@link org.mayocat.shop.catalog.model.Product} with a parent set
  *
  * @version $Id$
  */
+@CompileStatic
 class ProductVariantWebObject
 {
     String title;

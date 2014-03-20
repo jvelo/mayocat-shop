@@ -1,7 +1,8 @@
-package org.mayocat.shop.catalog.api.v1.delegate
+package org.mayocat.rest.api.delegate
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
+import groovy.transform.CompileStatic
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
@@ -21,6 +22,7 @@ import javax.ws.rs.core.Response
  *
  * @version $Id$
  */
+@CompileStatic
 class AttachmentApiDelegate
 {
     private Provider<AttachmentStore> attachmentStore;

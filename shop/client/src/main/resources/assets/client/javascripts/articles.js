@@ -13,8 +13,8 @@ angular.module('articles', [])
         function ($scope, $resource) {
 
             $scope.refreshArticles = function () {
-                $resource("/api/news").get({}, function (articles) {
-                    $scope.articles = articles.items;
+                $resource("/api/news").get({}, function (data) {
+                    $scope.articles = data.articles;
                 });
             }
 

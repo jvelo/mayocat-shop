@@ -1,9 +1,8 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 
@@ -12,7 +11,7 @@ import org.mayocat.image.model.Thumbnail
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class ImageApiObject extends BaseApiObject
 {
     @JsonInclude(JsonInclude.Include.NON_NULL)

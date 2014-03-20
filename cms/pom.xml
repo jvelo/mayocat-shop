@@ -8,38 +8,77 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.mayocat</groupId>
-    <artifactId>mayocat-parent</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mayocat</groupId>
+        <artifactId>mayocat-parent</artifactId>
+        <version>0.12-SNAPSHOT</version>
+    </parent>
+    <groupId>org.mayocat.cms</groupId>
+    <artifactId>mayocat-cms-parent</artifactId>
+    <packaging>pom</packaging>
     <version>0.12-SNAPSHOT</version>
-  </parent>
-  <groupId>org.mayocat.cms</groupId>
-  <artifactId>mayocat-cms-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>0.12-SNAPSHOT</version>
 
-  <name>Mayocat CMS - Parent POM</name>
-  <description>Parent POM for the CMS application</description>
+    <name>Mayocat CMS - Parent POM</name>
+    <description>Parent POM for the CMS application</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.mayocat.platform</groupId>
-      <artifactId>mayocat-platform-image-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-      <dependency>
-          <groupId>org.mayocat.platform</groupId>
-          <artifactId>mayocat-platform-localization</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-image-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-localization</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Groovy module -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-  <modules>
-    <module>pages</module>
-    <module>news</module>
-    <module>contact</module>
-  </modules>
+    <modules>
+        <module>pages</module>
+        <module>news</module>
+        <module>contact</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
+                <version>3.1</version>
+                <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                    <!-- set verbose to be true if you want lots of uninteresting messages -->
+                    <!-- <verbose>true</verbose> -->
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.8.0-01</version>
+                    </dependency>
+                    <!-- for 2.8.0-01 and later you must have an explicit dependency on groovy-eclipse-batch -->
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.1.8-01</version>
+                        <!-- or choose a different compiler version -->
+                        <!-- <version>1.8.6-01</version> -->
+                        <!-- <version>1.7.10-06</version> -->
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

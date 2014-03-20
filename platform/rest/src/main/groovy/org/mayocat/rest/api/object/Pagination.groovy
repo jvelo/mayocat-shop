@@ -1,13 +1,13 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 
 /**
  * Holds pagination information
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class Pagination
 {
     Integer numberOfItems

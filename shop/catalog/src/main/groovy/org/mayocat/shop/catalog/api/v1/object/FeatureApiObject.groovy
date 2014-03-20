@@ -1,6 +1,6 @@
 package org.mayocat.shop.catalog.api.v1.object
 
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotBlank
 
 /**
@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class FeatureApiObject
 {
     final String title;

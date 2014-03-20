@@ -1,4 +1,4 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude

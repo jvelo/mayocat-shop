@@ -1,4 +1,4 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
 import groovy.transform.CompileStatic
 import org.mayocat.model.Addon

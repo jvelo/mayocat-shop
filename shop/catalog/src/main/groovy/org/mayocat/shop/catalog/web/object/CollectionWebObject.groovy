@@ -2,6 +2,7 @@ package org.mayocat.shop.catalog.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
+import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.front.util.ContextUtils
@@ -15,6 +16,7 @@ import java.text.MessageFormat
  *
  * @version $Id$
  */
+@CompileStatic
 class CollectionWebObject
 {
     String title

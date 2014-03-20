@@ -1,3 +1,3 @@
 org.mayocat.cms.news.store.jdbi.DBIArticleStore
-org.mayocat.cms.news.api.resources.NewsResource
+org.mayocat.cms.news.api.NewsApi
 org.mayocat.cms.news.front.resource.NewsResource

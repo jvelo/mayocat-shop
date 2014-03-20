@@ -1,6 +1,6 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 
 import javax.validation.constraints.NotNull
 
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class ImageThumbnailApiObject
 {
     @NotNull

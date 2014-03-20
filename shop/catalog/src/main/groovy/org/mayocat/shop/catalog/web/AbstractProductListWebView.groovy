@@ -57,6 +57,11 @@ class AbstractProductListWebView extends AbstractWebView
     @Inject
     EntityLocalizationService entityLocalizationService
 
+    List<ProductWebObject> createProductListContextList(List<Product> products)
+    {
+        createProductListContextList(products, null)
+    }
+
     List<ProductWebObject> createProductListContextList(List<Product> products,
             org.mayocat.shop.catalog.model.Collection collection)
     {

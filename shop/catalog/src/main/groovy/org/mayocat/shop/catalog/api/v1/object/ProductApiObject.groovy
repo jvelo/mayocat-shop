@@ -11,6 +11,9 @@ import org.mayocat.addons.util.AddonUtils
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
 import org.mayocat.model.Addon
+import org.mayocat.rest.api.object.AddonApiObject
+import org.mayocat.rest.api.object.BaseApiObject
+import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.theme.ThemeDefinition
 

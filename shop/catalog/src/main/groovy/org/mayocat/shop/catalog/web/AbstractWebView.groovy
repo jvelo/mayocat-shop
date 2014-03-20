@@ -1,5 +1,6 @@
 package org.mayocat.shop.catalog.web
 
+import groovy.transform.CompileStatic
 import org.mayocat.model.Attachment
 
 /**
@@ -8,6 +9,7 @@ import org.mayocat.model.Attachment
  *
  * @version $Id$
  */
+@CompileStatic
 class AbstractWebView
 {
     protected final static Set<String> IMAGE_EXTENSIONS = new HashSet<String>();

@@ -162,7 +162,8 @@ angular.module('article', ['ngResource'])
 
                 return {
                     articleDate: timeService.convertISO8601toLocalDate(article.publicationDate || '', 'LLL'),
-                    imagesLength: (article.images || {}).length || 0
+                    imagesLength: typeof article._embedded !== 'undefined' ?
+                        (article._embedded.images || {}).length || 0 : 0
                 };
             };
 

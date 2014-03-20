@@ -25,7 +25,10 @@ import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.shop.catalog.api.v1.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.object.ImageApiObject
+import org.mayocat.rest.api.object.LinkApiObject
+import org.mayocat.rest.api.object.Pagination
+import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.shop.catalog.api.v1.object.*
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Feature

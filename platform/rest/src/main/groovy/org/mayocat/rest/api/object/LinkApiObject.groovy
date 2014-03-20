@@ -1,13 +1,13 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 
 /**
  * Represents a link to an entity.
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class LinkApiObject
 {
     String href;

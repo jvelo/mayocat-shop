@@ -5,6 +5,7 @@ import com.google.common.base.Strings
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
+import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
 import org.mayocat.attachment.util.AttachmentUtils
@@ -15,8 +16,11 @@ import org.mayocat.model.Attachment
 import org.mayocat.model.EntityAndCount
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.rest.api.object.ImageApiObject
+import org.mayocat.rest.api.object.LinkApiObject
+import org.mayocat.rest.api.object.Pagination
 import org.mayocat.shop.catalog.CatalogService
-import org.mayocat.shop.catalog.api.v1.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.shop.catalog.api.v1.object.*
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.store.*
@@ -40,6 +44,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
+@CompileStatic
 class CollectionApi implements Resource, Initializable
 {
     @Inject

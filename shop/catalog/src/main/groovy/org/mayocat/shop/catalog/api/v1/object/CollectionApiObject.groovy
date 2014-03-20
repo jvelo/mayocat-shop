@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.image.model.Image
+import org.mayocat.rest.api.object.AddonApiObject
+import org.mayocat.rest.api.object.BaseApiObject
+import org.mayocat.rest.api.object.ImageApiObject
 
 /**
  * API object for a {@link org.mayocat.shop.catalog.model.Collection}

@@ -1,16 +1,16 @@
-package org.mayocat.shop.catalog.api.v1.object
+package org.mayocat.rest.api.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import groovy.transform.TypeChecked
+import groovy.transform.CompileStatic
 
 /**
  * Attributes that are common to all API objects
  *
  * @version $Id$
  */
-@TypeChecked
+@CompileStatic
 class BaseApiObject
 {
     @JsonIgnore
