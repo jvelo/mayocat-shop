@@ -9,6 +9,7 @@ package org.mayocat.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import org.apache.commons.io.IOUtils;
 
@@ -19,7 +20,7 @@ import com.google.common.base.Function;
  *
  * @version $Id$
  */
-public class AttachmentData
+public class AttachmentData implements Serializable
 {
     private transient InputStream stream;
 
