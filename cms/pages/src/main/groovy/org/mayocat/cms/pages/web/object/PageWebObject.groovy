@@ -5,33 +5,31 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.cms.pages.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.cms.pages.model.Page
 import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.EntityImagesWebObject
 import org.mayocat.rest.web.object.EntityModelWebObject
 import org.mayocat.rest.web.object.ImageWebObject
-import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.util.ContextUtils
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
 
-import java.text.MessageFormat
-
 /**
- * Web view for a {@link org.mayocat.shop.catalog.model.Collection}
+ * Web object for a {@link Page}
  *
  * @version $Id$
  */
 @CompileStatic
-class CollectionWebObject
-{
+class PageWebObject {
+
     String title
 
-    String description
+    String content
 
     String url
 
@@ -40,33 +38,15 @@ class CollectionWebObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityModelWebObject model
 
-    String template
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityImagesWebObject images
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    ProductListWebObject products
-
-    def withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)
+    def withPage(Page page, EntityURLFactory urlFactory)
     {
-        title = ContextUtils.safeString(collection.title)
-        description = ContextUtils.safeHtml(collection.description)
-        url = urlFactory.create(collection).path
-        slug = collection.slug
-    }
-
-    def withProducts(List<ProductWebObject> productList, Integer currentPage, Integer totalPages)
-    {
-        PaginationWebObject pagination = new PaginationWebObject()
-        pagination.withPages(currentPage, totalPages, { Integer page ->
-            MessageFormat.format("/collections/{0}/?page={1}", slug, page);
-        })
-
-        products = new ProductListWebObject([
-                list: productList,
-                pagination: pagination
-        ])
+        title = ContextUtils.safeString(page.title)
+        content = ContextUtils.safeHtml(page.content)
+        url = urlFactory.create(page).path
+        slug = page.slug
     }
 
     def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)

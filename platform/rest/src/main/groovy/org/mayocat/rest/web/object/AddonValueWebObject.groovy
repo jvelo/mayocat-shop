@@ -5,21 +5,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.rest.web.object
 
 import groovy.transform.CompileStatic
 
 /**
- * Web object for a single page. See {@link PaginationWebObject}
+ * Web object for an {@link org.mayocat.model.Addon} value
  *
  * @version $Id$
  */
 @CompileStatic
-class PaginationPageWebObject
+class AddonValueWebObject
 {
-    Boolean current = false
+    Object raw;
 
-    Integer number
-
-    String url
+    Object display;
 }

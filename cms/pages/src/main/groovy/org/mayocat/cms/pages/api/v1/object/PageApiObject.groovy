@@ -10,6 +10,7 @@ package org.mayocat.cms.pages.api.v1.object
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
+import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.addons.model.AddonField
 import org.mayocat.addons.model.BaseProperties
@@ -28,6 +29,7 @@ import org.mayocat.theme.ThemeDefinition
  *
  * @version $Id$
  */
+@CompileStatic
 class PageApiObject extends BaseApiObject
 {
     String slug;

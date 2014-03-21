@@ -5,33 +5,34 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.cms.news.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.addons.front.builder.AddonContextBuilder
+import org.mayocat.addons.model.AddonGroup
+import org.mayocat.cms.news.model.Article
 import org.mayocat.image.model.Image
+import org.mayocat.rest.api.object.DateWebObject
 import org.mayocat.rest.web.object.EntityImagesWebObject
 import org.mayocat.rest.web.object.EntityModelWebObject
 import org.mayocat.rest.web.object.ImageWebObject
-import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.util.ContextUtils
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
 
-import java.text.MessageFormat
-
 /**
- * Web view for a {@link org.mayocat.shop.catalog.model.Collection}
+ * Web object for an {@link Article}
  *
  * @version $Id$
  */
 @CompileStatic
-class CollectionWebObject
-{
+class ArticleWebObject {
+
     String title
 
-    String description
+    String content
 
     String url
 
@@ -40,33 +41,30 @@ class CollectionWebObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityModelWebObject model
 
-    String template
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityImagesWebObject images
 
+    DateWebObject publicationDate
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    ProductListWebObject products
+    Map theme_addons
 
-    def withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)
+    def withArticle(Article article, EntityURLFactory urlFactory, Locale locale,  Optional<ThemeDefinition> theme)
     {
-        title = ContextUtils.safeString(collection.title)
-        description = ContextUtils.safeHtml(collection.description)
-        url = urlFactory.create(collection).path
-        slug = collection.slug
-    }
+        title = ContextUtils.safeString(article.title)
+        content = ContextUtils.safeHtml(article.content)
+        url = urlFactory.create(article).path
+        slug = article.slug
 
-    def withProducts(List<ProductWebObject> productList, Integer currentPage, Integer totalPages)
-    {
-        PaginationWebObject pagination = new PaginationWebObject()
-        pagination.withPages(currentPage, totalPages, { Integer page ->
-            MessageFormat.format("/collections/{0}/?page={1}", slug, page);
-        })
+        publicationDate = new DateWebObject()
+        publicationDate.withDate(article.publicationDate, locale)
 
-        products = new ProductListWebObject([
-                list: productList,
-                pagination: pagination
-        ])
+        // Addons
+        if (article.addons.isLoaded() && theme.isPresent()) {
+            def addonContextBuilder = new AddonContextBuilder();
+            Map<String, AddonGroup> themeAddons = theme.get().addons
+            theme_addons = addonContextBuilder.build(themeAddons, article.addons.get());
+        }
     }
 
     def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)

@@ -16,9 +16,9 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.cms.pages.front.builder.PageContextBuilder;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
+import org.mayocat.cms.pages.web.object.PageWebObject;
 import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
@@ -33,9 +33,9 @@ import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Data supplier for the list of root pages :
@@ -76,8 +76,6 @@ public class PagesWebDataSupplier implements WebDataSupplier
         ThemeDefinition theme = context.getTheme().getDefinition();
 
         // Pages
-        PageContextBuilder pageContextBuilder = new PageContextBuilder(themeFileResolver, urlFactory, theme);
-        final List<Map<String, Object>> pagesContext = Lists.newArrayList();
         List<Page> rootPages = this.pageStore.get().findAllRootPages();
 
         java.util.Collection<UUID> featuredImageIds =
@@ -93,7 +91,11 @@ public class PagesWebDataSupplier implements WebDataSupplier
             allThumbnails = this.thumbnailStore.get().findAllForIds(ids);
         }
 
+        List<PageWebObject> pageWebObjectList = new ArrayList<>();
+
         for (final Page page : rootPages) {
+            PageWebObject pageWebObject = new PageWebObject();
+            pageWebObject.withPage(entityLocalizationService.localize(page), urlFactory);
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages,
                     WebDataHelper.isEntityFeaturedImage(page));
             List<Image> images = new ArrayList<>();
@@ -103,10 +105,11 @@ public class PagesWebDataSupplier implements WebDataSupplier
                 Image image = new Image(attachment, new ArrayList<>(thumbnails));
                 images.add(image);
             }
-            Map<String, Object> pageContext =
-                    pageContextBuilder.build(entityLocalizationService.localize(page), images);
-            pagesContext.add(pageContext);
+            pageWebObject.withImages(images, page.getFeaturedImageId(),
+                    Optional.fromNullable(context.getTheme() != null ? context.getTheme().getDefinition() : null));
+
+            pageWebObjectList.add(pageWebObject);
         }
-        data.put("pages", pagesContext);
+        data.put("pages", pageWebObjectList);
     }
 }

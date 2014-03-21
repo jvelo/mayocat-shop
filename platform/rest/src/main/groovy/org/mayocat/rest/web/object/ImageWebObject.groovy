@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.rest.web.object
 
 import com.google.common.base.Optional
 import groovy.text.SimpleTemplateEngine
@@ -14,7 +14,7 @@ import org.mayocat.configuration.images.ImageFormatDefinition
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.util.ImageUtils
-import org.mayocat.shop.front.util.ContextUtils
+import org.mayocat.rest.util.RestUtils
 import org.mayocat.theme.ThemeDefinition
 
 import java.text.MessageFormat
@@ -29,8 +29,8 @@ class ImageWebObject extends HashMap<String, Object>
 {
     def withImage(Image image, boolean isFeatured, Optional<ThemeDefinition> theme)
     {
-        put "title", ContextUtils.safeString(image.attachment.title) as String;
-        put "description", ContextUtils.safeString(image.attachment.description) as String;
+        put "title", RestUtils.safeString(image.attachment.title) as String;
+        put "description", RestUtils.safeString(image.attachment.description) as String;
         put "featured", isFeatured
 
         def templateEngine = new SimpleTemplateEngine()

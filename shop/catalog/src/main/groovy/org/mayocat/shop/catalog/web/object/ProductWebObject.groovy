@@ -14,6 +14,9 @@ import org.mayocat.addons.front.builder.AddonContextBuilder
 import org.mayocat.addons.model.AddonGroup
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.image.model.Image
+import org.mayocat.rest.web.object.EntityImagesWebObject
+import org.mayocat.rest.web.object.EntityModelWebObject
+import org.mayocat.rest.web.object.ImageWebObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
@@ -106,8 +109,8 @@ class ProductWebObject
         // Addons
         if (product.addons.isLoaded() && theme.isPresent()) {
             def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> themeAddons = theme.get().getAddons();
-            theme_addons = addonContextBuilder.build(themeAddons, product.getAddons().get());
+            Map<String, AddonGroup> themeAddons = theme.get().addons;
+            theme_addons = addonContextBuilder.build(themeAddons, product.addons.get());
         }
 
         if (product.type.isPresent()) {

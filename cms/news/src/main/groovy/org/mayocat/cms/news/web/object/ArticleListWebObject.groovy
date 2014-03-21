@@ -5,21 +5,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.cms.news.web.object
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.CompileStatic
+import org.mayocat.rest.web.object.PaginationWebObject
 
 /**
- * Web object holding an entity images. Contains a mapping for "all" images and for the "featured" image.
+ * Web object for an article list
  *
  * @version $Id$
  */
 @CompileStatic
-class EntityImagesWebObject
+class ArticleListWebObject
 {
-    ImageWebObject featured
+    List<ArticleWebObject> list
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<ImageWebObject> all
+    PaginationWebObject pagination
 }

@@ -17,10 +17,12 @@ import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
+import org.mayocat.rest.web.AbstractWebView
+import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
+import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
-import org.mayocat.shop.catalog.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.web.object.ProductListWebObject
 import org.mayocat.shop.catalog.web.object.ProductWebObject
 import org.mayocat.store.AttachmentStore
@@ -70,7 +72,7 @@ class AbstractProductListWebView extends AbstractWebView
     }
 
     List<ProductWebObject> createProductListContextList(List<Product> products,
-            org.mayocat.shop.catalog.model.Collection collection)
+            Collection collection)
     {
         List<UUID> featuredImageIds = products.collect({ Product p -> p.featuredImageId })
                                               .findAll({ UUID id -> id != null }) as List<UUID>

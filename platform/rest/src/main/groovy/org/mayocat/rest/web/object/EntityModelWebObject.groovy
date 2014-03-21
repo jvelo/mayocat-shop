@@ -5,19 +5,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.catalog.web.object
+package org.mayocat.rest.web.object
 
 import groovy.transform.CompileStatic
 
 /**
- * Web object for an {@link org.mayocat.model.Addon} value
+ * Web object for an entity model : contains the template applied by the model as well as its slug.
  *
  * @version $Id$
  */
 @CompileStatic
-class AddonValueWebObject
+class EntityModelWebObject
 {
-    Object raw;
+    String template
 
-    Object display;
+    String slug
 }
