@@ -24,6 +24,7 @@ import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.store.AttachmentStore
 import org.mayocat.theme.ThemeDefinition
+import org.mayocat.theme.ThemeFileResolver
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
@@ -46,22 +47,25 @@ import javax.ws.rs.core.MediaType
 class PageWebView extends AbstractWebView implements Resource
 {
     @Inject
-    Provider<PageStore> pageStore;
+    Provider<PageStore> pageStore
 
     @Inject
-    Provider<AttachmentStore> attachmentStore;
+    Provider<AttachmentStore> attachmentStore
 
     @Inject
-    Provider<ThumbnailStore> thumbnailStore;
+    Provider<ThumbnailStore> thumbnailStore
 
     @Inject
-    WebContext context;
+    WebContext context
 
     @Inject
-    EntityLocalizationService entityLocalizationService;
+    EntityLocalizationService entityLocalizationService
 
     @Inject
     EntityURLFactory urlFactory
+
+    @Inject
+    ThemeFileResolver themeFileResolver
 
     @Path("{slug}")
     @GET
@@ -90,7 +94,8 @@ class PageWebView extends AbstractWebView implements Resource
             }
         })
         PageWebObject pageWebObject = new PageWebObject()
-        pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory)
+        pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
+                Optional.fromNullable(theme), themeFileResolver)
         pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
 
         context.put("page", pageWebObject);

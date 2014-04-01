@@ -27,6 +27,7 @@ import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.model.Product
+import org.mayocat.shop.catalog.model.ProductCollection
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.resources.AbstractWebViewResource
@@ -91,8 +92,22 @@ class HomeWebView extends AbstractProductListWebView implements Resource
         // All products
 
         Integer numberOfProducts =
-                this.context.getTheme().getDefinition().getPaginationDefinition("home").getItemsPerPage();
-        List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0);
+                this.context.getTheme().definition.getPaginationDefinition("home").itemsPerPage;
+        List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0)
+        List<UUID> productIds = products.collect { Product product -> product.id }
+        List<org.mayocat.shop.catalog.model.Collection> collections = collectionStore.get().findAllForProductIds(productIds)
+        List<ProductCollection> productsCollections = collectionStore.get().findAllProductsCollectionsForIds(productIds)
+
+        products.each({ Product product ->
+            def productCollections = productsCollections.findAll { ProductCollection productCollection ->
+                productCollection.productId == product.id
+            }
+            productCollections = productCollections.collect({ ProductCollection pc ->
+                collections.find({ org.mayocat.shop.catalog.model.Collection c -> pc.collectionId == c.id })
+            })
+            product.setCollections(productCollections)
+        })
+
         Integer totalCount = this.productStore.get().countAllOnShelf();
         Integer totalPages = IntMath.divide(totalCount, numberOfProducts, RoundingMode.UP);
         context.put("products", createProductListContext(1, totalPages, products, {
@@ -119,7 +134,8 @@ class HomeWebView extends AbstractProductListWebView implements Resource
             })
 
             PageWebObject pageWebObject = new PageWebObject()
-            pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory)
+            pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
+                    Optional.fromNullable(webContext.theme?.definition), themeFileResolver)
             pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(webContext.theme?.definition))
             context.put("home", pageWebObject);
         }

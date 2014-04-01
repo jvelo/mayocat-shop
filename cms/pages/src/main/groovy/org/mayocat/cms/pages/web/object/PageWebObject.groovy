@@ -10,6 +10,8 @@ package org.mayocat.cms.pages.web.object
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.addons.front.builder.AddonContextBuilder
+import org.mayocat.addons.model.AddonGroup
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.EntityImagesWebObject
@@ -17,6 +19,7 @@ import org.mayocat.rest.web.object.EntityModelWebObject
 import org.mayocat.rest.web.object.ImageWebObject
 import org.mayocat.shop.front.util.ContextUtils
 import org.mayocat.theme.ThemeDefinition
+import org.mayocat.theme.ThemeFileResolver
 import org.mayocat.url.EntityURLFactory
 
 /**
@@ -39,14 +42,36 @@ class PageWebObject {
     EntityModelWebObject model
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    String template
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityImagesWebObject images
 
-    def withPage(Page page, EntityURLFactory urlFactory)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map theme_addons
+
+    def withPage(Page page, EntityURLFactory urlFactory, Optional<ThemeDefinition> theme, ThemeFileResolver themeFileResolver)
     {
         title = ContextUtils.safeString(page.title)
         content = ContextUtils.safeHtml(page.content)
         url = urlFactory.create(page).path
         slug = page.slug
+        if (page.model.isPresent() && themeFileResolver.resolveModelPath(page.model.get()).isPresent()) {
+            model = new EntityModelWebObject([
+                    template: themeFileResolver.resolveModelPath(page.model.get()).get(),
+                    slug: page.model.get()
+            ])
+            template = themeFileResolver.resolveModelPath(page.model.get()).get();
+        } else {
+            template = "page.html";
+        }
+
+        // Addons
+        if (page.addons.isLoaded() && theme.isPresent()) {
+            def addonContextBuilder = new AddonContextBuilder();
+            Map<String, AddonGroup> themeAddons = theme.get().addons
+            theme_addons = addonContextBuilder.build(themeAddons, page.addons.get());
+        }
     }
 
     def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)

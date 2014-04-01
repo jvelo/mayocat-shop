@@ -95,7 +95,8 @@ public class PagesWebDataSupplier implements WebDataSupplier
 
         for (final Page page : rootPages) {
             PageWebObject pageWebObject = new PageWebObject();
-            pageWebObject.withPage(entityLocalizationService.localize(page), urlFactory);
+            pageWebObject.withPage(entityLocalizationService.localize(page), urlFactory,
+                    Optional.fromNullable(context.getTheme() != null ? context.getTheme().getDefinition() : null), themeFileResolver);
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages,
                     WebDataHelper.isEntityFeaturedImage(page));
             List<Image> images = new ArrayList<>();

@@ -150,6 +150,9 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
                                 .build();
                     }
 
+                        // data stream has been consumed, load it again
+                    file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
+
                     return Response.ok(file.getData().getStream(), servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();

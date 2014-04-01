@@ -81,7 +81,8 @@ public class DefaultWebContext implements WebContext
     public void setTenant(Tenant tenant)
     {
         if (this.tenant != null) {
-            throw new RuntimeException("Illegal attempt at replacing already initialized tenant");
+            // FIXME check how we can handle tenant + user creation with this restriction
+            //throw new RuntimeException("Illegal attempt at replacing already initialized tenant");
         }
         this.tenant = tenant;
     }
