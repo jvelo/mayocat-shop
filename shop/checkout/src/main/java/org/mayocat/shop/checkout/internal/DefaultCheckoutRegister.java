@@ -17,7 +17,11 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.addons.model.AddonField;
+import org.mayocat.addons.util.AddonUtils;
+import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.model.Addon;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
@@ -26,6 +30,7 @@ import org.mayocat.shop.billing.store.CustomerStore;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
@@ -34,8 +39,7 @@ import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.payment.BasePaymentData;
-import org.mayocat.shop.payment.GatewayException;
-import org.mayocat.shop.payment.GatewayFactory;
+import org.mayocat.shop.payment.GatewayException;import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.PaymentData;
 import org.mayocat.shop.payment.PaymentGateway;
@@ -64,6 +68,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 {
     @Inject
     private Logger logger;
+
+    @Inject
+    private PlatformSettings platformSettings;
 
     @Inject
     private CheckoutSettings checkoutSettings;
@@ -165,7 +172,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 final String itemTitle = title;
                 final BigDecimal price = unitPrice;
 
-                orderItems.add(new HashMap<String, Object>()
+                Map<String, Object> itemData = new HashMap<String, Object>()
                 {
                     {
                         put("type", "product");
@@ -175,7 +182,35 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                         put("unitPrice", price);
                         put("itemTotal", price.multiply(BigDecimal.valueOf(items.get(p))));
                     }
-                });
+                };
+
+                if (Product.class.isAssignableFrom(p.getClass())) {
+                    Product product = (Product) p;
+
+                    if (product.getAddons().isLoaded()) {
+                        List<Map<String, Object>> itemAddons = Lists.newArrayList();
+
+                        List<Addon> addons = product.getAddons().get();
+                        for (Addon addon : addons) {
+                            Optional<AddonField> definition = findAddonDefinition(addon);
+                            if (definition.isPresent()) {
+                                if (definition.get().getProperties().containsKey("checkout.includeInOrder")) {
+                                    Map<String, Object> addonMap = Maps.newHashMap();
+                                    addonMap.put("value", addon.getValue());
+                                    addonMap.put("name", definition.get().getName());
+                                    addonMap.put("group", addon.getGroup());
+                                    itemAddons.add(addonMap);
+                                }
+                            }
+                        }
+
+                        if (!itemAddons.isEmpty()) {
+                            itemData.put("addons", itemAddons);
+                        }
+                    }
+                }
+
+                orderItems.add(itemData);
             }
             order.setNumberOfItems(numberOfItems);
             order.setItemsTotal(cart.getItemsTotal());
@@ -329,5 +364,21 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
         return update;
+    }
+
+    private Optional<AddonField> findAddonDefinition(Addon addonToFind)
+    {
+        Optional option;
+
+        // 1. Find in platform
+        option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.getAddons());
+
+        if (!option.isPresent() && webContext.getTheme() != null) {
+            // 2. Find in theme
+            option = AddonUtils
+                    .findAddonDefinition(addonToFind, webContext.getTheme().getDefinition().getAddons());
+        }
+
+        return option;
     }
 }

@@ -76,6 +76,11 @@
                         <small>
                             {{item.description}}
                         </small>
+                        <dl ng-repeat="addon in item.addons"><!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
+                            <dt>{{addon.name}}</dt>
+                            <dd>{{addon.value}}</dd>
+                        </dl>
+
                     </td>
                     <td>{{item.unitPrice| money:'EUR'}} {{order.currency}}</td>
                     <td>{{item.quantity}}</td>
