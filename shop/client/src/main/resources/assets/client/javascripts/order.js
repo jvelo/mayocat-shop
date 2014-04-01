@@ -16,9 +16,9 @@ angular.module('order', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location) {
-
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal) {
 
             $scope.slug = $routeParams.order;
 
@@ -54,6 +54,16 @@ angular.module('order', ['ngResource'])
 
             $scope.shipped = function() {
                 $scope.setStatus('SHIPPED');
+            }
+
+            $scope.changeStatus = function() {
+                $scope.modalInstance = $modal.open({
+                    templateUrl: 'changeStatus.html',
+                    scope: $scope
+                });
+                $scope.modalInstance.result.then(function () {
+                    $scope.setStatus($scope.order.status);
+                });
             }
 
             $scope.setStatus = function(status, callback) {

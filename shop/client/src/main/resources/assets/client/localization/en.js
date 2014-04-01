@@ -153,6 +153,7 @@
                 deliveryAddress: "Delivery address",
                 billingAddress: "Billing address",
                 additionalInformation:  "Additional information",
+                changeStatus: "Change status",
                 
                 orderName: "Order \\#{slug}",
                 ordersNumber: "for {numberOfOrders} {numberOfOrders, plural, one{order} other{orders}}",

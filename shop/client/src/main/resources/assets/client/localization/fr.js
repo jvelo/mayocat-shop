@@ -126,6 +126,7 @@
                 deliveryAddress: "Adresse de livraison",
                 billingAddress: "Adresse de facturation",
                 additionalInformation:  "Informations complémentaires",
+                changeStatus: "Changer l'état",
 
                 orderName: "Commande \\#{slug}",
                 ordersNumber: "pour {numberOfOrders} {numberOfOrders, plural, one{commande} other{commandes}}",
