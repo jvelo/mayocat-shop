@@ -35,7 +35,7 @@ class ImageWebObject extends HashMap<String, Object>
 
         def templateEngine = new SimpleTemplateEngine()
 
-        put "url", templateEngine.createTemplate("/images/{0}.{1}").make([
+        put "url", templateEngine.createTemplate('/images/${slug}.${extension}').make([
                 slug: image.attachment.slug,
                 extension: image.attachment.extension
         ]).toString();
