@@ -247,7 +247,7 @@ public class CheckoutResource implements Resource
         if (data.containsKey("additionalInformation") &&
                 !Strings.isNullOrEmpty((String) data.getFirst("additionalInformation")))
         {
-            data.getFirst("additionalInformation");
+            otherOrderData.put("additionalInformation", data.getFirst("additionalInformation"));
         }
 
         try {
