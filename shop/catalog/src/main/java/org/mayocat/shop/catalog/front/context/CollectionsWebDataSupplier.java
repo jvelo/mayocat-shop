@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.context.WebContext;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.shop.front.WebDataSupplier;
@@ -41,6 +42,9 @@ public class CollectionsWebDataSupplier implements WebDataSupplier, ContextConst
     @Inject
     private WebContext webContext;
 
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
+
     @Override
     public void supply(Map<String, Object> data)
     {
@@ -48,7 +52,8 @@ public class CollectionsWebDataSupplier implements WebDataSupplier, ContextConst
         final List<Map<String, Object>> collectionsContext = Lists.newArrayList();
 
         for (final Collection collection : collections) {
-            final String collectionPath = urlFactory.create(collection).getPath();
+            final Collection localized = entityLocalizationService.localize(collection);
+            final String collectionPath = urlFactory.create(localized).getPath();
             // Determine if this is the currently browsed collection by compoaring its path to the current request path.
             // We don't use the canonical path for the comparison since the URL we got for the collection is localized.
             final boolean current = collectionPath.equals(webContext.getRequest().getPath());
@@ -56,9 +61,9 @@ public class CollectionsWebDataSupplier implements WebDataSupplier, ContextConst
             {
                 {
                     put(ContextConstants.URL, collectionPath);
-                    put("slug", collection.getSlug());
-                    put("title", collection.getTitle());
-                    put("description", collection.getDescription());
+                    put("slug", localized.getSlug());
+                    put("title", localized.getTitle());
+                    put("description", localized.getDescription());
                     put("current", current);
                     //  TODO: featured image
                 }

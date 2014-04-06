@@ -11,6 +11,7 @@ import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
+import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
@@ -43,28 +44,30 @@ import java.math.RoundingMode
 class CollectionWebView extends AbstractProductListWebView implements Resource
 {
     @Inject
-    CatalogService catalogService;
+    CatalogService catalogService
 
     @Inject
-    Provider<ProductStore> productStore;
+    Provider<ProductStore> productStore
 
     @GET
     @Path("{slug}")
     def getCollection(@PathParam("slug") String slug, @QueryParam("page") @DefaultValue("1") Integer page)
     {
         final org.mayocat.shop.catalog.model.Collection collection = catalogService.findCollectionBySlug(slug);
+
         if (collection == null) {
             return new ErrorWebView().status(404);
         }
 
+        final org.mayocat.shop.catalog.model.Collection localized = entityLocalizationService.localize(collection) as org.mayocat.shop.catalog.model.Collection;
         final int currentPage = page < 1 ? 1 : page;
 
         def context = new HashMap<String, Object>([
-                "title": collection.title,
-                "description": collection.description
+                "title": localized.title,
+                "description": localized.description
         ])
 
-        ThemeDefinition theme = this.context.getTheme().getDefinition();
+        ThemeDefinition theme = this.context.theme.definition
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(collection);
         List<Image> images = []
@@ -78,7 +81,7 @@ class CollectionWebView extends AbstractProductListWebView implements Resource
         })
 
         Integer numberOfProductsPerPage =
-            this.context.getTheme().getDefinition().getPaginationDefinition("collection").getItemsPerPage();
+            this.context.theme.definition.getPaginationDefinition("collection").getItemsPerPage();
 
         Integer offset = (page - 1) * numberOfProductsPerPage;
         Integer totalCount = this.productStore.get().countAllForCollection(collection);
