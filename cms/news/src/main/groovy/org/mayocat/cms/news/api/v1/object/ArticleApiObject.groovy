@@ -74,6 +74,8 @@ class ArticleApiObject extends BaseApiObject
             slug = this.slug
             title = this.title
             content = this.content
+
+            setModel this.model
         }
 
         if (addons) {

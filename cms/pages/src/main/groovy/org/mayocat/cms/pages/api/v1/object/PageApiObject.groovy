@@ -74,6 +74,10 @@ class PageApiObject extends BaseApiObject
             title = this.title
             content = this.content
             published = this.published
+
+            setModel this.model
+
+            setLocalizedVersions this._localized
         }
 
         if (addons) {
