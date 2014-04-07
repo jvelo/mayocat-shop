@@ -351,6 +351,17 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
                             }, function () {
                                 $scope.api = this;
                             });
+
+                            // Ensure the modal save button is always visible, even on devices with a small viewport
+                            // height. For this we check the modal height (+ top margin) is bigger than the viewport
+                            // height, and cap it's body content height accordingly when that's the case
+                            var viewportHeight = $(window).height(),
+                                modalHeight = $(".modal.editImage").height();
+
+                            if (modalHeight + 50 /* (top margin) */ >= viewportHeight) {
+                                $(".modal.editImage .modal-body").css("max-height", viewportHeight - 200);
+                            }
+
                             hasInitialized = true;
 
                             if ($scope.selection() === undefined) {
