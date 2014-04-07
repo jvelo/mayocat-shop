@@ -437,7 +437,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
-
+            CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
             var ckOptions = {
                 language: localStorage.locale || Mayocat.defaultLocale,
                 toolbarGroups: [

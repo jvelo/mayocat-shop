@@ -43,6 +43,7 @@
                             mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
                             var mixinOptions = options[mixinName];
                             angular.extend($scope, args[i](entityType, mixinOptions));
+<<<<<<< HEAD
                         }
                     },
 
