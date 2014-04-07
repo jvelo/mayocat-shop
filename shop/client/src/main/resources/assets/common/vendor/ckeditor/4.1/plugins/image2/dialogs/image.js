@@ -414,65 +414,65 @@
 						{
 						type: 'vbox',
 						padding: 0,
-						children: [
-                            {
-                                id: 'mayoUrl',
-                                type: 'html',
-                                html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images du produit</div></div>',
-                                onLoad: function() {
-                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
-                                    $.get(CKEDITOR.config.mayocat_entityUri + 'images', function(data) {
-                                        $imgsDiv.children('div:hidden').show();
-                                        $.each(data, function(i, v) {
-                                            var $el = $('<div>')
-                                                .css({'float': 'left','margin': '2px'})
-                                                .append(
-                                                    $('<img>')
-                                                        .attr({
-                                                            src: v.file.href + '?width=90&height=90',
-                                                            rel: 'attachment',
-                                                            title: v.title
-                                                        })
-                                                        .css('border', '2px solid white')
-                                                        .data('href', v.file.href)
-                                                );
-                                            $imgsDiv.append($el);
-                                        });
-                                        $imgsDiv
-                                        .on('click', 'img', function() {
-                                            $imgsDiv.find('img').each(function(i, e) {
-                                                $(this).css('border', '2px solid white');
-                                            })
-                                            $(this).css('border', '2px solid blue');
-                                            $imgsDiv.data('selectedHref', $(this).data('href'));
+                children: [
+                    {
+                        id: 'mayoUrl',
+                        type: 'html',
+                        html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images du produit</div></div>',
+                        onLoad: function () {
+                            var $imgsDiv = $(document.getElementById(mayoProductImgsId));
+                            $.get(CKEDITOR.config.mayocat_entityUri + 'images', function (data) {
+                                $imgsDiv.children('div:hidden').show();
+                                $.each(data, function (i, v) {
+                                    var $el = $('<div>')
+                                        .css({'float': 'left', 'margin': '2px'})
+                                        .append(
+                                            $('<img>')
+                                                .attr({
+                                                    src: v.file._href + '?width=90&height=90',
+                                                    rel: 'attachment',
+                                                    title: v.title
+                                                })
+                                                .css('border', '2px solid white')
+                                                .data('href', v.file._href)
+                                        );
+                                    $imgsDiv.append($el);
+                                });
+                                $imgsDiv
+                                    .on('click', 'img', function () {
+                                        $imgsDiv.find('img').each(function (i, e) {
+                                            $(this).css('border', '2px solid white');
                                         })
-                                        .on('mouseenter', 'img', function() {
-                                            $(this).css('cursor', 'pointer');
-                                        });
+                                        $(this).css('border', '2px solid blue');
+                                        $imgsDiv.data('selectedHref', $(this).data('href'));
+                                    })
+                                    .on('mouseenter', 'img', function () {
+                                        $(this).css('cursor', 'pointer');
                                     });
-                                },
-                                setup: function( type, element ) {
-                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
-                                    if ( type == IMAGE ) {
-                                        var href = element.data( 'cke-saved-src' ) || element.getAttribute( 'src' );
-                                        $imgsDiv.find('img').each(function(i, e) {
-                                            if ($(this).data('href') == href) $(this).css('border', '2px solid blue');
-                                        })
-                                    }
-                                },
-                                commit: function( type, element ) {
-                                    var $imgsDiv = $(document.getElementById(mayoProductImgsId));
-                                    if ( type == IMAGE ) {
-                                        element.data( 'cke-saved-src', $imgsDiv.data('selectedHref') );
-                                        element.setAttribute( 'src', $imgsDiv.data('selectedHref') );
-                                    } else if ( type == CLEANUP ) {
-                                        element.setAttribute( 'src', '' ); // If removeAttribute doesn't work.
-                                        element.removeAttribute( 'src' );
-                                    }
-                                }
+                            });
+                        },
+                        setup: function (type, element) {
+                            var $imgsDiv = $(document.getElementById(mayoProductImgsId));
+                            if (type == IMAGE) {
+                                var href = element.data('cke-saved-src') || element.getAttribute('src');
+                                $imgsDiv.find('img').each(function (i, e) {
+                                    if ($(this).data('href') == href) $(this).css('border', '2px solid blue');
+                                })
                             }
-						]
-					},
+                        },
+                        commit: function (type, element) {
+                            var $imgsDiv = $(document.getElementById(mayoProductImgsId));
+                            if (type == IMAGE) {
+                                element.data('cke-saved-src', $imgsDiv.data('selectedHref'));
+                                element.setAttribute('src', $imgsDiv.data('selectedHref'));
+                            } else if (type == CLEANUP) {
+                                element.setAttribute('src', ''); // If removeAttribute doesn't work.
+                                element.removeAttribute('src');
+                            }
+                        }
+                    }
+                ]
+            },
 						{
 						id: 'txtAlt',
 						type: 'text',
