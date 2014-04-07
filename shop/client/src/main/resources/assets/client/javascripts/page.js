@@ -30,11 +30,11 @@
             }
 
             $scope.updatePage = function () {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 if ($scope.isNew()) {
                     $http.post("/api/pages/", $scope.page)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             if (status < 400) {
                                 var fragments = headers("location").split('/'),
                                     slug = fragments[fragments.length - 1];
@@ -52,12 +52,12 @@
                             }
                         })
                         .error(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                         });
                 }
                 else {
                     $scope.PageResource.save({ "slug":$scope.slug }, $scope.page, function () {
-                        $scope.isLoading = false;
+                        $scope.isSaving = false;
                         $rootScope.$broadcast('pages:refreshList');
                     });
                 }

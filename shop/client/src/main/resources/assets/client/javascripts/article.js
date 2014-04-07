@@ -52,11 +52,11 @@ angular.module('article', ['ngResource'])
             };
 
             $scope.updateArticle = function (callback) {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 if ($scope.isNew()) {
                     $http.post("/api/news/", $scope.article)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             if (status < 400) {
                                 var fragments = headers("location").split('/'),
                                     slug = fragments[fragments.length - 1];
@@ -75,13 +75,13 @@ angular.module('article', ['ngResource'])
                             }
                         })
                         .error(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             callback && callback.call();
                         });
                 }
                 else {
                     $scope.ArticleResource.save({ "slug": $scope.slug }, $scope.article, function () {
-                        $scope.isLoading = false;
+                        $scope.isSaving = false;
                         $rootScope.$broadcast("news:articles:refreshList");
                         callback && callback.call();
                     });
