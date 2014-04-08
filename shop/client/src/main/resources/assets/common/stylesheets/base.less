@@ -366,6 +366,164 @@ form .input-append .validation {
   font-size: 12px;
 }
 
+/* Login form */
+
+@-webkit-keyframes login-bounce {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  40% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  60% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  80% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes login-bounce {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  40% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  60% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  80% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+#login-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fffce9;
+  text-align: center;
+
+  .login-form {
+    position: absolute;
+    top: 50%; left: 50%;
+    margin: -151px 0 0 -180px;
+    border: 1px solid #ece9d8;
+    width: 360px;
+    padding-top: 25px;
+    background: #fffef8;
+
+    &:before {
+      position: absolute;
+      top: -126px; left: 0;
+      width: 100%; height: 125px;
+      background: url('../images/login-cat.png') center center no-repeat;
+      content: '';
+    }
+
+    &.login-error {
+      .text-error {
+        display: block;
+      }
+
+      .field {
+        border-color: #d40000 !important;
+      }
+    }
+
+    &.login-animate {
+      -webkit-animation: login-bounce 400ms ease-in-out;
+      animation: login-bounce 400ms ease-in-out;
+    }
+  }
+
+  .text-error {
+    display: none;
+    margin: -10px auto 15px auto;
+    width: 250px;
+    font-size: 14px;
+    color: #d40000;
+  }
+
+  .title {
+    margin: 0 0 15px 0;
+    font-family: 'latolight', sans-serif;
+    font-size: 24px;
+  }
+
+  .field {
+    display: block;
+    margin: 0 auto 15px auto;
+    border: 1px solid #ccc !important;
+    border-radius: 4px;
+    width: 218px; height: 38px !important;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
+    &::-webkit-input-placeholder { color: #ccc; opacity: 1; }
+    &::-moz-placeholder { color: #ccc; opacity: 1; }
+    &:-ms-input-placeholder { color: #ccc; opacity: 1; }
+    &:-moz-placeholder { color: #ccc; opacity: 1; }
+  }
+
+  .checkbox-container {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 218px;
+    text-align: left;
+    font-size: 14px;
+
+    input {
+      display: none;
+    }
+
+    .checkbox-icon {
+      vertical-align: middle;
+      display: inline-block;
+      margin: -2px 4px 0 0;
+      width: 12px; height: 13px;
+      background: url('../images/checkbox-unchecked.png') left top;
+    }
+
+    input:checked + .checkbox-icon {
+      background-image: url('../images/checkbox-checked.png');
+    }
+  }
+
+  .btn {
+    margin-bottom: 30px;
+  }
+}
+
 /* Icons */
 
 .icon-collapse {

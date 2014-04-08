@@ -221,36 +221,29 @@
 <div class="loader" ng-show="tenant != undefined && authenticated == undefined"></div>
 
 <!-- Login modal -->
-<div class="modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated" id="loginModal">
-    <form class="" ng-controller="LoginController">
-        <div class="modal-header">
-            <div class="btn-group">
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('fr')">FR</button>
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('en')">EN</button>
-            </div>
-            <h3>{{'authentication.misc.title' | translate}}</h3>
-        </div>
-        <div class="modal-body">
-            <p>
-            <fieldset>
-                <label>{{'authentication.misc.username' | translate}}</label>
-                <input type="text" class="span3" ng-model="username"/>
-                <label>{{'authentication.misc.password' | translate}}</label>
-                <input type="password" class="span3" ng-model="password"/>
-                <label>{{'authentication.misc.remember' | translate}}</label>
-                <input type="checkbox" ng-model="remember"/>
-            </fieldset>
-            </p>
-            <div class="alert" ng-show="authenticationFailed">
-                {{'authentication.alert.failure' | translate}}
-            </div>
-        </div>
-        <div class="modal-footer">
-            <input type="submit" value="{{'authentication.action.login' | translate}}" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
-        </div>
+<section id="login-modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated">
+    <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
+        <h1 class="title">{{'authentication.misc.title' | translate}}</h1>
+
+        <p class="text-error" ng-show="authenticationFailed">
+            {{'authentication.alert.failure' | translate}}
+        </p>
+
+        <input class="field" type="text" ng-model="username"
+               placeholder="{{'authentication.misc.username' | translate}}">
+        <input class="field" type="password" ng-model="password"
+               placeholder="{{'authentication.misc.password' | translate}}">
+
+        <label class="checkbox-container">
+            <input type="checkbox" ng-model="remember">
+            <span class="checkbox-icon"></span>
+            {{'authentication.misc.remember' | translate}}
+        </label>
+
+        <input class="btn btn-large btn-primary" type="submit" value="{{'authentication.action.login' | translate}}"
+               ng-click="requestLogin()">
     </form>
-</div>
-<div class="modal-backdrop" ng-show="tenant != undefined && authenticated != undefined && !authenticated"></div>
+</section>
 
 <!-- Error modals -->
 
