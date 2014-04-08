@@ -17,6 +17,10 @@
 
   &:not(.btn-primary) {
     background: #e6e6e6;
+
+    &:hover {
+      background: #d8d8d8 !important;
+    }
   }
 }
 
@@ -206,6 +210,10 @@ image-upload .well {
 image-upload .fileinput-button {
   float: left;
   margin-top: 5px;
+}
+
+image-upload .fileinput-button input[type=file] {
+  height: 42px;
 }
 
 image-upload .editor ul li {
