@@ -738,14 +738,26 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
         $scope.requestLogin = function () {
             $rootScope.$broadcast("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
         };
+
         $scope.$on("event:authenticationFailure", function () {
             $scope.authenticationFailed = true;
         });
-        $scope.$on("event:authenticationSuccessful", function (event, data) {
-            $scope.authenticationFailed = false;
-        });
     }]);
 
+mayocat.directive('loginAnimate', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            scope.$on("event:authenticationFailure", function () {
+                $(element).addClass('login-animate');
+            });
+
+            $(element).on('animationend webkitAnimationEnd', function () {
+                $(this).removeClass('login-animate');
+            });
+        }
+    };
+});
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',
