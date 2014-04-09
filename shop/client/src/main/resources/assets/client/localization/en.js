@@ -77,8 +77,8 @@
 
         authentication: {
             misc: {
-                title: "Authentication required",
-                username: "User name or email",
+                title: "Welcome on Mayocat Shop",
+                username: "Username",
                 password: "Password",
                 remember: "Remember me"
             },
