@@ -6,22 +6,56 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-/* Primary buttons */
+/* Buttons */
 
 .btn {
   font-family: Arial;
   font-size: 16px;
-  border: none !important;
+  border: none;
   box-shadow: none;
   text-shadow: none;
+}
 
-  &:not(.btn-primary) {
-    background: #e6e6e6;
+input.btn {
+  border: none !important;
+}
 
-    &:hover {
-      background: #d8d8d8 !important;
-    }
+.btn-colors(@color) {
+  background: @color;
+
+  &:hover {
+    background: darken(@color, 10%);
   }
+}
+
+.btn {
+  .btn-colors(#e6e6e6);
+}
+
+.btn-primary {
+  .btn-colors(#6ac2bf);
+}
+
+// The following colors are the default button colors of Boostrap (v2.3) but a bit lightened up.
+
+.btn-info {
+  .btn-colors(lighten(#2f96b4, 10%));
+}
+
+.btn-success {
+  .btn-colors(lighten(#51a351, 10%));
+}
+
+.btn-warning {
+  .btn-colors(lighten(#f89406, 10%));
+}
+
+.btn-danger {
+  .btn-colors(lighten(#bd362f, 10%));
+}
+
+.btn-inverse {
+  .btn-colors(lighten(#222222, 10%));
 }
 
 /* Entity list selector */
