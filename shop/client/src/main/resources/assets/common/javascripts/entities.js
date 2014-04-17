@@ -410,6 +410,20 @@
                     $rootScope.$on("entities:locales:changed", function () {
                             initLocales($scope);
                     });
+
+                    // Add a class to the wrapper when the dropdown is displayed.
+                    var $btnGroup = $element.find('.locales-switch .btn-group'),
+                        observer = new MutationObserver(function() {
+                            $element.toggleClass('locales-active', $btnGroup.hasClass('open'));
+                        });
+
+                    observer.observe($btnGroup.get(0), {
+                        attributes: true,
+                        childList: false,
+                        characterData: false,
+                        subtree: false,
+                        attributeFilter: ['class']
+                    });
                 }
             }
         }])
