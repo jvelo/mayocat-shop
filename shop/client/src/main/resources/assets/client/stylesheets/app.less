@@ -238,6 +238,10 @@ list-picker select {
   position: relative;
   width: 100%;
 
+  &.locales-active {
+    z-index: 30;
+  }
+
   .caret {
     margin-left: 5px;
   }
@@ -263,6 +267,7 @@ list-picker select {
   }
 
   .btn, .dropdown-menu {
+    border: 1px solid;
     background: #eee !important;
   }
 
@@ -389,6 +394,7 @@ list-picker select {
 
     .dropdown-menu {
       left: 0px;
+      border-color: #ababab;
       padding-top: 1px;
 
       li {
