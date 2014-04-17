@@ -83,8 +83,9 @@
             if (options.hash.hasOwnProperty(attribute)) {
                 var value;
                 if (attribute === "placeholder") {
+                    value = options.hash[attribute];
                     // Placeholder is localizable
-                    value = themeLocalizationService.getMessage(options.hash[attribute], {});
+                    value = themeLocalizationService.getMessage(value, {}) || value;
                 }
                 else {
                     value = options.hash[attribute];
