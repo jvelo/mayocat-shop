@@ -209,6 +209,15 @@ header .btn-group {
   z-index: 100;
 }
 
+#list .droptarget.disable-hover {
+  background-color: transparent;
+  z-index: auto;
+
+  > div > .move-handle {
+    display: none;
+  }
+}
+
 #list .droptarget > div:first-child {
   padding: 11px 0px 0px 7px;
 }
