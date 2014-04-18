@@ -385,6 +385,8 @@
                 defaultLanguage: "Default language",
                 otherLanguages: "Other languages",
                 selectALanguage: "-- Select a language --",
+                languagesGroup: "Languages",
+                variantsGroup: "Variants",
                 theme: "Theme",
 
                 byWeight: "By weight",

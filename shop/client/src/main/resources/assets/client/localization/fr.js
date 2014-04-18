@@ -342,6 +342,8 @@
                 defaultLanguage: "Langage par défaut",
                 otherLanguages: "Autres langages",
                 selectALanguage: "-- Choisir un langage --",
+                languagesGroup: "Langages",
+                variantsGroup: "Variantes",
                 theme: "Thème",
 
                 byWeight: "Selon le poids",

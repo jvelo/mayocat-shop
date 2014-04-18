@@ -48,11 +48,22 @@
                                id="defaultLocale"
                                ng-disabled="!isConfigurable('general.locales.main')">
                             <option value="">{{'settings.misc.selectALanguage' | translate}}</option>
-                            <option ng-repeat="locale in locales"
+
+                            <optgroup label="{{'settings.misc.languagesGroup' | translate}}">
+                                <option ng-repeat="locale in localesData.locales"
                                         value="{{ locale.tag }}"
                                         ng-selected="locale.tag == settings.general.locales.main.value">
                                     {{ locale.name }}
-                            </option>
+                                </option>
+                            </optgroup>
+
+                            <optgroup label="{{'settings.misc.variantsGroup' | translate}}">
+                                <option ng-repeat="variant in localesData.variants"
+                                        value="{{ variant.tag }}"
+                                        ng-selected="variant.tag == settings.general.locales.main.value">
+                                    {{ variant.name }}
+                                </option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -65,10 +76,22 @@
                                      display="displayLocale()">
                             <select class="input-xlarge" id="otherLocales">
                                 <option value="">{{'settings.misc.selectALanguage' | translate}}</option>
-                                <option ng-repeat="locale in locales"
-                                        value="{{ locale.tag }}">
-                                    {{ locale.name }}
-                                </option>
+                                
+                                <optgroup label="{{'settings.misc.languagesGroup' | translate}}">
+                                    <option ng-repeat="locale in localesData.locales"
+                                            value="{{ locale.tag }}"
+                                            ng-selected="locale.tag == settings.general.locales.main.value">
+                                        {{ locale.name }}
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="{{'settings.misc.variantsGroup' | translate}}">
+                                    <option ng-repeat="variant in localesData.variants"
+                                            value="{{ variant.tag }}"
+                                            ng-selected="variant.tag == settings.general.locales.main.value">
+                                        {{ variant.name }}
+                                    </option>
+                                </optgroup>
                             </select>
                         </list-picker>
                     </div>
