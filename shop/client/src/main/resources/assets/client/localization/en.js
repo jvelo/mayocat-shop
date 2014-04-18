@@ -367,11 +367,12 @@
         settings: {
 
             tenant: {
-                contactEmail : "Contact email",
-                contactEmailPlaceholder : "Email at which notifications will be sent",
                 shopName: "Shop name",
-                shopLogo: "Shop logo",
-                shopNamePlaceholder: "Enter the shop name"
+                shopNamePlaceholder: "Enter the shop name",
+                shopDescription: "Shop description",
+                contactEmail: "Contact email",
+                contactEmailPlaceholder: "Email at which notifications will be sent",
+                shopLogo: "Shop logo"
             },
 
             misc: {

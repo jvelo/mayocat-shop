@@ -34,6 +34,8 @@ public class TenantRepresentation
 
     private String name;
 
+    private String description;
+
     private String contactEmail;
 
     @JsonIgnore
@@ -75,6 +77,7 @@ public class TenantRepresentation
 
         this.slug = tenant.getSlug();
         this.name = tenant.getName();
+        this.description = tenant.getDescription();
         this.contactEmail = tenant.getContactEmail();
         this.defaultHost = tenant.getDefaultHost();
 
@@ -114,6 +117,10 @@ public class TenantRepresentation
     public String getName()
     {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @JsonProperty("creationDate")
