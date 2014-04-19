@@ -42,15 +42,14 @@
         var redirectsTo = options.hash['redirectsTo'] || this.page ? this.page.url : '/';
 
         var output = "<form action='/contact' method='post'> \
-                        <fieldset> \
-                          <input type='hidden' name='redirectTo' value='" + redirectsTo + "'>";
+                        <input type='hidden' name='redirectTo' value='" + redirectsTo + "'>";
 
         if (typeof options.hash['subject'] !== 'undefined') {
             output += "<input type='hidden' name='subject' value='" + options.hash['subject'] + "'>"
         }
 
         output += options.fn(this);
-        output += "</fieldset></form>";
+        output += "</form>";
 
         return output;
     });
@@ -84,8 +83,9 @@
             if (options.hash.hasOwnProperty(attribute)) {
                 var value;
                 if (attribute === "placeholder") {
+                    value = options.hash[attribute];
                     // Placeholder is localizable
-                    value = themeLocalizationService.getMessage(options.hash[attribute], {});
+                    value = themeLocalizationService.getMessage(value, {}) || value;
                 }
                 else {
                     value = options.hash[attribute];
