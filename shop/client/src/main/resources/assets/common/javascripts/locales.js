@@ -36,15 +36,32 @@
                 } else {
                     $http.get('/api/locales')
                         .success(function (result) {
-                            data = result;
-                            deferred.resolve(result);
+                            data = processData(result);
+                            deferred.resolve(data);
                         })
                         .error(function () {
                             deferred.reject('Failed to load data');
                         })
                 }
+
                 return dataPromise;
-            }
+            };
+
+            // Dissociates the locales from their variants.
+            var processData = function(data) {
+                var locales = data.filter(function(value, index) {
+                    return !~value.tag.indexOf('-');
+                });
+
+                var variants = data.filter(function(value, index) {
+                    return ~value.tag.indexOf('-');
+                });
+
+                return {
+                    locales: locales,
+                    variants: variants
+                };
+            };
 
             return {
                 getData: loadData
