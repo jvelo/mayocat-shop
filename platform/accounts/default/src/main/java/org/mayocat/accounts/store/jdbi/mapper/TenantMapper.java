@@ -57,6 +57,7 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         tenant.setDefaultHost(defaultHost);
         tenant.setCreationDate(result.getTimestamp("creation_date"));
         tenant.setName(result.getString("name"));
+        tenant.setDescription(result.getString("description"));
         tenant.setContactEmail(result.getString("contact_email"));
 
         return tenant;

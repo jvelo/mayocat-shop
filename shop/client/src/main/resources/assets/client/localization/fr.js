@@ -324,11 +324,12 @@
         settings: {
 
             tenant: {
-                contactEmail : "Email de contact",
-                contactEmailPlaceholder : "L'email auquel seront envoyées les notifications",
                 shopName: "Nom de la boutique",
-                shopLogo: "Logo de la boutique",
-                shopNamePlaceholder: "Entrez le nom de la boutique"
+                shopNamePlaceholder: "Entrez le nom de la boutique",
+                shopDescription: "Description de la boutique",
+                contactEmail: "Email de contact",
+                contactEmailPlaceholder: "L'email auquel seront envoyées les notifications",
+                shopLogo: "Logo de la boutique"
             },
 
             misc: {

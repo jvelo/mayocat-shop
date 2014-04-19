@@ -168,6 +168,7 @@ public class TenantResource extends AbstractAttachmentResource implements Resour
         Tenant tenant = this.context.getTenant();
 
         tenant.setName(tenantRepresentation.getName());
+        tenant.setDescription(tenantRepresentation.getDescription());
         tenant.setContactEmail(tenantRepresentation.getContactEmail());
         tenant.setAddons(addonsRepresentationUnmarshaller.unmarshall(tenantRepresentation.getAddons()));
 
