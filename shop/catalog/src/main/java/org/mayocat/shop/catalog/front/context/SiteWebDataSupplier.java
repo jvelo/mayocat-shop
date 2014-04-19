@@ -44,6 +44,8 @@ public class SiteWebDataSupplier implements WebDataSupplier
 
     public final static String SITE_TITLE = "title";
 
+    public final static String SITE_DESCRIPTION = "description";
+
     @Inject
     private WebContext context;
 
@@ -64,6 +66,7 @@ public class SiteWebDataSupplier implements WebDataSupplier
 
         Map site = Maps.newHashMap();
         site.put(SITE_TITLE, tenant.getName());
+        site.put(SITE_DESCRIPTION, tenant.getDescription());
         ImageContextBuilder imageContextBuilder = new ImageContextBuilder(theme);
 
         List<Attachment> siteAttachments = this.attachmentStore.get().findAllChildrenOf(tenant);

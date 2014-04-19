@@ -17,6 +17,14 @@
     <h1 class=""><span class="pull-right" ng-style="{'color': stringToHexColor(tenant.slug)}">&#9632;</span> {{tenant.name}}</h1>
 </div>
 
+<div class="page-description">
+    <div ng-bind-html-unsafe="tenant.description"></div>
+
+    <p ng-show="tenant.description == undefined">
+        <em>No description available.</em>
+    </p>
+</div>
+
 <form>
     <article class="entity" ng-class="{'loading': tenant.name == undefined}">
 
