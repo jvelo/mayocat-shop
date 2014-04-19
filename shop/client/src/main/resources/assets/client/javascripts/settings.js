@@ -115,9 +115,9 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.updateTenant = function () {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 $scope.TenantResource.save({}, $scope.tenant, function () {
-                    $scope.isLoading = false;
+                    $scope.isSaving = false;
                 });
             }
 
