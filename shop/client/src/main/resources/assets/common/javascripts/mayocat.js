@@ -13,6 +13,7 @@ var mayocat = angular.module('mayocat', [
     'mayocat.image',
     'mayocat.configuration',
     'mayocat.time',
+    'mayocat.mixins',
     'mayocat.entities',
     'mayocat.locales',
     'pascalprecht.translate'
@@ -721,11 +722,6 @@ mayocat.directive('validateOnBlur', function () {
         }
     };
 });
-
-mayocat.controller('HomeCtrl', ['$scope', '$resource',
-    function ($scope, $resource) {
-
-    }]);
 
 mayocat.controller('LoginController', ['$rootScope', '$scope',
     function ($rootScope, $scope) {

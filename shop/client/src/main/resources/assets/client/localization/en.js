@@ -58,17 +58,14 @@
         },
 
         /**
-         * Translations linked to the homepage
+         * Translations linked to the homepage / dashboard
          */
 
-        home: {
-            title: {
-                welcome: "Welcome"
-            },
-
-            explanation: {
-                home: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products."
-            }
+        dashboard: {
+            title: "Welcome",
+            introduction: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products.",
+            latestOrders: "Latest orders",
+            seeAllOrders: "See all orders"
         },
 
         /**

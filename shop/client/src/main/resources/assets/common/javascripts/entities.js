@@ -16,59 +16,20 @@
     angular.module('mayocat.entities', [])
 
         .factory('entityMixins', [
+            'mixins',
             'entityBaseMixin',
             'entityModelMixin',
             'entityAddonsMixin',
             'entityLocalizationMixin',
             'entityImageMixin',
-            function () {
-                var allMixins = [
-                        'entityBaseMixin',
-                        'entityModelMixin',
-                        'entityAddonsMixin',
-                        'entityLocalizationMixin',
-                        'entityImageMixin'
-                    ],
-                    args = arguments;
-                return {
-                    extendAll: function ($scope, entityType, options) {
-                        // Make sure the options hash exists.
-                        options = typeof options === "undefined" ? {} : options;
-
-                        // Iterate over all mixins, find its option object in the global option hash, and then extend
-                        // the passed scope with it.
-                        for (var i = 0; i < allMixins.length; i++) {
-                            var mixin = allMixins[i];
-                            var mixinName = mixin.substring(6);
-                            mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
-                            var mixinOptions = options[mixinName];
-                            angular.extend($scope, args[i](entityType, mixinOptions));
-                        }
-                    },
-
-                    extend: function(mixins, $scope, entityType, options) {
-                        options = typeof options === "undefined" ? {} : options;
-
-                        // Support for "just one mixin"
-                        if (typeof mixins == "string") {
-                            options = {
-                                mixins: options
-                            };
-                            mixins = [ mixins ];
-                        }
-
-                        for (var i = 0; i < allMixins.length; i++) {
-                            var mixin = allMixins[i],
-                                mixinName = mixin.substring(6);
-                            mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
-
-                            if (mixins.indexOf(mixinName) >= 0) {
-                                var mixinOptions = options[mixinName];
-                                angular.extend($scope, args[i](entityType, mixinOptions));
-                            }
-                        }
-                    }
-                }
+            function (mixins, base, model, addons, localization, image) {
+                return mixins({
+                    base: base,
+                    model: model,
+                    addons: addons,
+                    localization: localization,
+                    image: image
+                });
             }
         ])
 

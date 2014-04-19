@@ -1,0 +1,57 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div id="home">
+    <div class="hero-unit">
+        <h2>
+            {{'dashboard.title' | translate}}
+        </h2>
+        <p>
+            {{'dashboard.introduction' | translate}}
+        </p>
+
+    </div>
+    <article>
+        <div class="spa">
+            <h3>{{'dashboard.latestOrders' | translate}}</h3>
+            <div class="alert alert-info" ng-if="!orders || orders.length <= 0">{{'order.alert.empty' | translate}}</div>
+            <div ng-if="orders.length > 0">
+                <table class="table table-hover orders">
+                    <tbody>
+                    <tr ng-repeat="order in orders"
+                        ng-click="setRoute('/orders/' + order.slug)"
+                        ng-class="getClass(order.status)">
+                        <td>
+                            <div class="date">
+                                {{order.creationDate | iso8601toLocalDate:'LLL'}}
+                            </div>
+                            <div>
+                                <small>
+                                    {{order.slug}}
+                                </small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="amount">{{order.grandTotal | money:'EUR'}} {{order.currency}}</div>
+                            <div>
+                                <small>
+                                    {{'order.misc.itemsNumber' | translate:getTranslationProperties({ order:order }) }}
+                                </small>
+                            </div>
+                        </td>
+                        <td class="status" ng-bind="getStatus(order.status)"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <a href="#/orders">{{'dashboard.seeAllOrders' | translate}}</a>
+            </div>
+        </div>
+    </article>
+
+</div>

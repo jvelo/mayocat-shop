@@ -50,14 +50,11 @@
             }
         },
 
-        home: {
-            title: {
-                welcome: "Bienvenue"
-            },
-
-            explanation: {
-                home: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits."
-            }
+        dashboard: {
+            title: "Bienvenue",
+            introduction: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits.",
+            latestOrders: "Dernières commandes",
+            seeAllOrders: "Voir toutes les commandes"
         },
 
         authentication: {
