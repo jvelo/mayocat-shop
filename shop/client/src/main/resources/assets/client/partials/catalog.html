@@ -19,13 +19,13 @@
         <div ng-show="hasCollections">
             <ul ui-sortable="collectionSortableOptions" ng-model="collections">
                 <li ng-repeat="collection in collections" ng-class="{hasChildren: collection.products.length > 0}">
-                    <div class="droptarget">
+                    <div class="droptarget" catalog-collection>
                         <div class="listItem">
-                        <i class="icon click-me" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
-                           ng-click="toggleExpand(collection)"/>
-                        <span class="collection">
-                            <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
-                        </span>
+                            <i class="icon click-me" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
+                               ng-click="toggleExpand()"/>
+                            <span class="collection">
+                                <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
+                            </span>
                         </div>
                         <div ng-show="collection.isExpanded && collection.products.length > 0">
                             <ul class="list" ui-sortable="productsInCollectionSortableOptions" ng-model="collection.products">
