@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <!-- list -->
 <div id="list" ng-controller="ArticlesController">
 
@@ -8,7 +17,7 @@
     <!-- list pages -->
     <scroll>
         <ul class="list">
-            <li ng-repeat="article in articles">
+            <li ng-repeat="article in articles" ng-class="{active: entity.slug == article.slug && entity.type == 'article'}">
                 <div>
                     <div class="droptarget">
                         <div><a ng-click="setRoute('/news/' + article.slug)">{{article.title}}</a></div>

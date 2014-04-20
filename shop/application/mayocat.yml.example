@@ -52,7 +52,7 @@ general:
   locales:
     main:
       default: en
-      configurable: false
+      configurable: true
       visible: true
     others:
       default: []

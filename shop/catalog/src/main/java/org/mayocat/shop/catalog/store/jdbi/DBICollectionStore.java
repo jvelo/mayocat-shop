@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.store.jdbi;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -11,6 +20,7 @@ import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.model.ProductCollection;
 import org.mayocat.shop.catalog.store.CollectionStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -74,6 +84,13 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         }
         collection.setId(originalCollection.getId());
         Integer updatedRows = this.dao.update(collection);
+
+        if (collection.getLocalizedVersions() != null && !collection.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = collection.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(collection.getId(), locale, localizedVersions.get(locale));
+            }
+        }
 
         this.dao.commit();
 
@@ -162,6 +179,16 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public List<Collection> findAllForProduct(Product product)
     {
         return this.dao.findAllForProduct(product);
+    }
+
+    public List<Collection> findAllForProductIds(List<UUID> ids)
+    {
+        return this.dao.findAllForProductIds(ids);
+    }
+
+    public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
+    {
+        return this.dao.findAllProductsCollectionsForIds(ids);
     }
 
     public List<Collection> findAll()

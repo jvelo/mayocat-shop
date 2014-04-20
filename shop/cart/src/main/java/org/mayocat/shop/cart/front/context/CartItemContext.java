@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.cart.front.context;
+
+import java.util.UUID;
 
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
 import org.mayocat.shop.front.context.ImageContext;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * @version $Id$
@@ -10,9 +21,19 @@ public class CartItemContext
 {
     private String title;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String variant;
+
     private String description;
 
     private Long quantity;
+
+    private String type;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String slug;
+
+    private UUID id;
 
     private PriceRepresentation unitPrice;
 
@@ -28,6 +49,16 @@ public class CartItemContext
     public void setTitle(String title)
     {
         this.title = title;
+    }
+
+    public String getVariant()
+    {
+        return variant;
+    }
+
+    public void setVariant(String variant)
+    {
+        this.variant = variant;
     }
 
     public String getDescription()
@@ -78,5 +109,35 @@ public class CartItemContext
     public void setFeaturedImage(ImageContext featuredImage)
     {
         this.featuredImage = featuredImage;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+    public String getSlug()
+    {
+        return slug;
+    }
+
+    public void setSlug(String slug)
+    {
+        this.slug = slug;
+    }
+
+    public UUID getId()
+    {
+        return id;
+    }
+
+    public void setId(UUID id)
+    {
+        this.id = id;
     }
 }

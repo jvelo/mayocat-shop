@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package mayoapp.dao;
 
 import java.util.List;
@@ -92,6 +99,14 @@ public interface EntityDAO< E extends Entity >
         "WHERE entity.slug = :slug AND entity.type = '<type>' AND entity.tenant_id = :tenant.id"
     )
     E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    (
+        "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
+        "WHERE entity.slug = :slug AND entity.parent_id = :parent AND entity.type = '<type>' AND tenant_id = :tenant.id"
+    )
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant,
+            @Bind("parent") UUID parent);
 
     @SqlQuery
     (

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 var MayocatShop = angular.module('MayocatShop', [
     'mayocat',
     'settings',
@@ -12,6 +19,8 @@ var MayocatShop = angular.module('MayocatShop', [
     'page',
     'articles',
     'article',
+    'homePage',
+    'dashboard',
     'orders',
     'order',
     '$strap.directives', // Used for the date picker bs-datepicker directive
@@ -22,11 +31,12 @@ var MayocatShop = angular.module('MayocatShop', [
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
-        when('/', {templateUrl: 'partials/home.html', controller: 'HomeCtrl', title: 'Home'}).
+        when('/', {templateUrl: 'partials/dashboard.html', controller: 'DashboardController', title: 'Home'}).
         when('/contents', {templateUrl: 'partials/contents.html', title: 'Contents'}).
         when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController', title: 'Orders'}).
         when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController', title: 'Orders'}).
         when('/customers', {templateUrl: 'partials/customers.html', title: 'Customers'}).
+        when('/home', {templateUrl: 'partials/homePage.html', controller: 'HomePageController', title: 'Home page'}).
         when('/news', {templateUrl: 'partials/news.html', title: 'News'}).
         when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController', title: 'Pages'}).
         when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController', title: 'News'}).
@@ -49,6 +59,7 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
         scope.isPages = false;
         scope.isNews = false;
         scope.isSettings = false;
+        scope.isHomePage = false;
 
         scope.$watch('location.path()', function (path) {
 
@@ -81,14 +92,18 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
                     return;
                 }
             });
+            if (path.indexOf(["/home"]) == 0) {
+                scope.isHomePage = true;
+                return;
+            }
         });
     }]);
 
 /**
  * TODO: move this in the AppController
  */
-MayocatShop.run(['$rootScope',
-    function (scope) {
+MayocatShop.run(['$rootScope', '$modal',
+    function (scope, $modal) {
 
         /**
          * Set up a default page title and update it when changing route.
@@ -97,6 +112,10 @@ MayocatShop.run(['$rootScope',
         scope.page_title = Mayocat.applicationName + ' | Home';
         scope.$on('$routeChangeSuccess', function (event, current) {
             scope.page_title = Mayocat.applicationName + ' | ' + current.$$route.title;
+        });
+
+        scope.$on('event:serverError', function () {
+            $modal.open({ templateUrl: 'serverError.html' });
         });
 
     }]);

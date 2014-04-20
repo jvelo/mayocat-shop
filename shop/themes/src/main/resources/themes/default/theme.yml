@@ -6,7 +6,7 @@ pagination:
     itemsPerPage: 6
     for: product
 
-thumbnails:
+images:
   carousel:
     width: 960
     height: 460

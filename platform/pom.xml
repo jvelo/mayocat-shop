@@ -1,14 +1,23 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat</groupId>
         <artifactId>mayocat-parent</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.12-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.platform</groupId>
     <artifactId>mayocat-platform-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.12-SNAPSHOT</version>
 
     <name>Mayocat Platform - Parent POM</name>
     <description>The platform to build applications upon</description>
@@ -19,9 +28,9 @@
         <module>base</module>
         <module>store</module>
         <module>context</module>
-        <module>session</module>
         <module>url</module>
         <module>files</module>
+        <module>mail</module>
         <module>search</module>
         <module>accounts</module>
         <module>multitenancy</module>

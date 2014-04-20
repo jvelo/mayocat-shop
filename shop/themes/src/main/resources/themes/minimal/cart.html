@@ -1,0 +1,15 @@
+<ul class="checkout-wizard">
+    <li class="active step">{{message 'checkout.yourCart'}}</li>
+    <li class="step">{{message 'checkout.yourInformation'}}</li>
+    <li class="step">{{message 'checkout.payment'}}</li>
+</ul>
+
+{{#cart}}
+    <div id="cart">
+        {{includeTemplate 'cart_table.html'}}
+    </div>
+{{/cart}}
+
+<script id="cart-table-template" type="text/x-handlebars-template">
+    {{templateSource 'cart_table.html'}}
+</script>

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.accounts.store.jdbi;
 
 import java.util.List;
@@ -10,7 +17,8 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
 import mayoapp.dao.TenantDAO;
-import org.mayocat.context.Execution;
+
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Addon;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -30,7 +38,7 @@ public class DBITenantStore implements TenantStore, Initializable
     private static final String TENANT_TABLE_NAME = "tenant";
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private DBIProvider dbi;
@@ -157,7 +165,7 @@ public class DBITenantStore implements TenantStore, Initializable
 
     private Tenant getTenant()
     {
-        return this.execution.getContext().getTenant();
+        return this.context.getTenant();
     }
 
     private String convertConfigurationToJSON(TenantConfiguration configuration) throws JsonProcessingException

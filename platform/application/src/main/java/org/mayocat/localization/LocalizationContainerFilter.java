@@ -1,22 +1,32 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.localization;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
 
 import javax.ws.rs.core.UriBuilder;
 
 import org.mayocat.application.AbstractService;
-import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.util.Utils;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 /**
+ * Localization container filter that strips out the language tag if present in the URI before its passed to jersey
+ * resources.
+ *
+ * FIXME: this should be in the localization module but there's a dependency on AbstractService that would introduce
+ * a cyclic dependency chain. The proper way to resolve this would be to introduce a component that can resolves if a
+ * certain path is an static path, or API path or Web path...
+ *
  * @version $Id$
  */
 public class LocalizationContainerFilter implements ContainerRequestFilter
@@ -28,37 +38,18 @@ public class LocalizationContainerFilter implements ContainerRequestFilter
             return containerRequest;
         }
 
-        Execution execution = Utils.getComponent(Execution.class);
+        WebContext context = Utils.getComponent(WebContext.class);
 
-        if (execution.getContext().getTenant() == null) {
+        if (context.getTenant() == null) {
             return containerRequest;
         }
 
-        boolean localeSet = false;
-        GeneralSettings settings = execution.getContext().getSettings(GeneralSettings.class);
-        URI requestURI = containerRequest.getRequestUri();
-
-        List<Locale> alternativeLocales = Objects.firstNonNull(
-                settings.getLocales().getOtherLocales().getValue(), ImmutableList.<Locale>of());
-
-        if (!alternativeLocales.isEmpty()) {
-            for (Locale locale : alternativeLocales) {
-                if (requestURI.getPath().startsWith("/" + locale.toLanguageTag())) {
-                    UriBuilder builder = UriBuilder.fromUri(requestURI);
-                    builder.replacePath(requestURI.getPath().substring(locale.toString().length() + 1));
-                    containerRequest.setUris(containerRequest.getBaseUri(), builder.build());
-
-                    execution.getContext().setLocale(locale);
-                    execution.getContext().setAlternativeLocale(true);
-                    localeSet = true;
-                    break;
-                }
-            }
-        }
-
-        if (!localeSet) {
-            execution.getContext().setLocale(settings.getLocales().getMainLocale().getValue());
-            execution.getContext().setAlternativeLocale(false);
+        if (context.isAlternativeLocale()) {
+            URI requestURI = containerRequest.getRequestUri();
+            Locale locale = context.getLocale();
+            UriBuilder builder = UriBuilder.fromUri(requestURI);
+            builder.replacePath(requestURI.getPath().substring(locale.toString().length() + 1));
+            containerRequest.setUris(containerRequest.getBaseUri(), builder.build());
         }
 
         return containerRequest;

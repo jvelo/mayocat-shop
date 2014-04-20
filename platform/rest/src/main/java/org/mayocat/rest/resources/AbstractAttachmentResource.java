@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.rest.resources;
 
 import java.io.InputStream;
@@ -14,6 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mayocat.Slugifier;
 import org.mayocat.model.Attachment;
+import org.mayocat.model.AttachmentData;
 import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
@@ -78,7 +86,7 @@ public class AbstractAttachmentResource
         }
 
         attachment.setSlug(slug);
-        attachment.setData(data);
+        attachment.setData(new AttachmentData(data));
         attachment.setTitle(title);
         attachment.setDescription(description);
 
@@ -98,8 +106,7 @@ public class AbstractAttachmentResource
         }
         try {
             try {
-                this.attachmentStore.get().create(attachment);
-                return attachment;
+                return this.attachmentStore.get().create(attachment);
             } catch (InvalidEntityException e) {
                 throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid attachment\n")

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.configuration.gestalt;
 
 import java.util.Map;
@@ -8,7 +15,7 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.SiteSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
@@ -28,7 +35,7 @@ public class SiteGestaltConfigurationSource implements GestaltConfigurationSourc
     private SiteSettings siteSettings;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private ObjectMapperFactory objectMapperFactory;
@@ -36,7 +43,7 @@ public class SiteGestaltConfigurationSource implements GestaltConfigurationSourc
     @Override
     public Object get()
     {
-        Tenant tenant = execution.getContext().getTenant();
+        Tenant tenant = context.getTenant();
         Map<String, Object> result = Maps.newHashMap();
         String domain = null;
         if (multitenancySettings.isActivated()) {

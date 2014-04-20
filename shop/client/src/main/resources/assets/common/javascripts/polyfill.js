@@ -47,6 +47,31 @@ if ('function' !== typeof Array.prototype.reduce) {
     };
 }
 
+// Array filter from MDN
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function (fn, context) {
+        var i,
+            value,
+            result = [],
+            length;
+
+        if (!this || typeof fn !== 'function' || (fn instanceof RegExp)) {
+            throw new TypeError();
+        }
+
+        length = this.length;
+
+        for (i = 0; i < length; i++) {
+            if (this.hasOwnProperty(i)) {
+                value = this[i];
+                if (fn.call(context, value, i, this)) {
+                    result.push(value);
+                }
+            }
+        }
+        return result;
+    };
+}
 // Object.keys
 if (!Object.keys) {
     Object.keys = (function () {
@@ -158,6 +183,35 @@ if (!Array.prototype.map) {
         return A;
     };
 }
+
+// Array#find and Array#findIndex polyfill (ECMAScript 6 draft spec)
+// Credits: https://gist.github.com/dcherman/5167353
+(function() {
+    function polyfill( fnName ) {
+        if ( !Array.prototype[fnName] ) {
+            Array.prototype[fnName] = function( predicate /*, thisArg */ ) {
+                var i, len, test, thisArg = arguments[ 1 ];
+                if ( typeof predicate !== "function" ) {
+                    throw new TypeError();
+                }
+                test = !thisArg ? predicate : function() {
+                    return predicate.apply( thisArg, arguments );
+                };
+                for( i = 0, len = this.length; i < len; i++ ) {
+                    if ( test(this[i], i, this) === true ) {
+                        return fnName === "find" ? this[ i ] : i;
+                    }
+                }
+                if ( fnName !== "find" ) {
+                    return -1;
+                }
+            };
+        }
+    }
+    for( var i in { find: 1, findIndex: 1 }) {
+        polyfill( i );
+    }
+}());
 
 /*
  * Copyright 2012 The Polymer Authors. All rights reserved.

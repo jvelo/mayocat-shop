@@ -1,14 +1,25 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.model;
 
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import org.mayocat.model.annotation.LocalizedField;
 
+import com.google.common.base.Objects;
+
 /**
  * @version $Id$
  */
-public class Attachment implements Entity, Child
+public class Attachment implements Entity, Child, Localized
 {
     private UUID id;
 
@@ -17,13 +28,16 @@ public class Attachment implements Entity, Child
     @LocalizedField
     private String title;
 
+    @LocalizedField
     private String description;
 
     private String extension;
 
-    private InputStream data;
+    private AttachmentData data;
 
     private UUID parentId;
+
+    private Map<Locale, Map<String, Object>> localizedVersions;
 
     public Attachment()
     {
@@ -83,12 +97,12 @@ public class Attachment implements Entity, Child
         this.extension = extension;
     }
 
-    public InputStream getData()
+    public AttachmentData getData()
     {
         return data;
     }
 
-    public void setData(InputStream data)
+    public void setData(AttachmentData data)
     {
         this.data = data;
     }
@@ -104,4 +118,59 @@ public class Attachment implements Entity, Child
         this.parentId = parentId;
     }
 
+    @Override
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
+    }
+
+    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
+    {
+        this.localizedVersions = versions;
+    }
+
+    ////////////////////////////////////////////////
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Attachment other = (Attachment) obj;
+
+        return Objects.equal(this.id, other.id)
+                && Objects.equal(this.title, other.title)
+                && Objects.equal(this.slug, other.slug)
+                && Objects.equal(this.extension, other.extension)
+                && Objects.equal(this.description, other.description)
+                && Objects.equal(this.parentId, other.parentId)
+                && Objects.equal(this.data, other.data);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(
+                this.id,
+                this.slug,
+                this.title,
+                this.extension,
+                this.description,
+                this.parentId,
+                this.data
+        );
+    }
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this)
+                .addValue(this.title)
+                .addValue(this.slug)
+                .toString();
+    }
 }

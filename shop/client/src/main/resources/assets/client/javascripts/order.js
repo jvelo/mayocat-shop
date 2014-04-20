@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict';
 
 angular.module('order', ['ngResource'])
@@ -9,16 +16,16 @@ angular.module('order', ['ngResource'])
         '$resource',
         '$http',
         '$location',
+        '$modal',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location) {
-
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal) {
 
             $scope.slug = $routeParams.order;
 
             $scope.updateOrder = function (callback) {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.OrderResource.save({ "slug": $scope.slug }, $scope.article, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     callback && callback.call();
                 });
 
@@ -28,8 +35,11 @@ angular.module('order', ['ngResource'])
 
             // Initialize existing page or new page
 
+            $scope.isLoading = true;
             $scope.getOrder = function () {
-                $scope.order = $scope.OrderResource.get({"slug": $scope.slug});
+                $scope.order = $scope.OrderResource.get({"slug": $scope.slug}, function(){
+                    $scope.isLoading = false;
+                });
             };
 
             $scope.getOrder();
@@ -46,11 +56,21 @@ angular.module('order', ['ngResource'])
                 $scope.setStatus('SHIPPED');
             }
 
+            $scope.changeStatus = function() {
+                $scope.modalInstance = $modal.open({
+                    templateUrl: 'changeStatus.html',
+                    scope: $scope
+                });
+                $scope.modalInstance.result.then(function () {
+                    $scope.setStatus($scope.order.status);
+                });
+            }
+
             $scope.setStatus = function(status, callback) {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 $scope.order.status = status;
                 $scope.OrderResource.save({ "slug": $scope.slug }, $scope.order, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     callback && callback.call();
                 });
             }
@@ -61,8 +81,8 @@ angular.module('order', ['ngResource'])
 
                 return {
                     slug: order.slug || "",
-                    shippingTitle: shipping.title || "",
-                    shippingStrategy : shipping.strategy || ""
+                    title: shipping.title || "",
+                    strategy : shipping.strategy || ""
                 };
             };
         }]);

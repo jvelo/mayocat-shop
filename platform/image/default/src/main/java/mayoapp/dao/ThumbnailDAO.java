@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package mayoapp.dao;
 
 import java.util.List;
@@ -74,6 +81,22 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
     )
     Thumbnail findThumbnail(@Bind("id") UUID id, @Bind("source") String source, @Bind("hint") String hint,
             @Bind("ratio") String ratio);
+
+    @SqlQuery(
+            "SELECT attachment_id, " +
+                    "       source, " +
+                    "       hint, " +
+                    "       ratio, " +
+                    "       x, " +
+                    "       y, " +
+                    "       width, " +
+                    "       height " +
+                    "FROM   thumbnail " +
+                    "WHERE  attachment_id = :id" +
+                    "       AND source = :source " +
+                    "       AND hint = :hint"
+    )
+    Thumbnail findThumbnail(@Bind("id") UUID id, @Bind("source") String source, @Bind("hint") String hint);
 
     @SqlQuery
     (

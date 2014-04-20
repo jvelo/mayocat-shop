@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict';
 
 angular.module('mayocat.configuration', ['ngResource'])
@@ -162,7 +169,13 @@ angular.module('mayocat.configuration', ['ngResource'])
                             // The configuration does not exist
                             callback && callback(undefined);
                         }
-                        callback && callback(configurationElement);
+
+                        try {
+                            callback && callback(configurationElement);
+                        }
+                        catch (error) {
+                            // Don't fail on callback error, it's not our responsibility...
+                        }
                         return;
                     }
                     catch (error) {
@@ -218,8 +231,26 @@ angular.module('mayocat.configuration', ['ngResource'])
              * @param {Function} callback the callback function
              */
             put: function (config, callback) {
-                settingsResource.update(prepareSettings(settings), callback);
-                $rootScope.$broadcast("configuration:updated");
+
+                /**
+                 * Similar to an aspect "after"
+                 */
+                var wrap = function (functionToWrap, doAfter) {
+                    return function () {
+                        var args = Array.prototype.slice.call(arguments),
+                            result = functionToWrap.apply(this, args);
+
+                        doAfter.apply(this, args);
+                        return result;
+                    };
+                };
+
+                // Here we wrap the "consumer callback" (the callback passed by client code calling this API) to inject
+                // our own behavior (firing an event) upon AJAX callback.
+                // We need to do this since angular $resource module is callback based and not promised based
+                settingsResource.update(prepareSettings(settings), wrap(callback, function () {
+                    $rootScope.$broadcast("configuration:updated");
+                }));
             },
 
             /**

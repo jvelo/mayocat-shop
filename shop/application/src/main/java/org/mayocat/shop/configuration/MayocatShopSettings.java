@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.configuration;
 
 import javax.validation.Valid;
@@ -5,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 import org.mayocat.cms.news.NewsSettings;
 import org.mayocat.configuration.AbstractSettings;
+import org.mayocat.configuration.DevelopmentEnvironmentSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
@@ -19,6 +27,10 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
  */
 public class MayocatShopSettings extends AbstractSettings
 {
+    @Valid
+    @JsonProperty
+    private DevelopmentEnvironmentSettings developmentEnvironment = new DevelopmentEnvironmentSettings();
+
     @Valid
     @NotNull
     @JsonProperty
@@ -87,5 +99,10 @@ public class MayocatShopSettings extends AbstractSettings
     public NewsSettings getNewsSettings()
     {
         return news;
+    }
+
+    public DevelopmentEnvironmentSettings getDevelopmentEnvironment()
+    {
+        return developmentEnvironment;
     }
 }

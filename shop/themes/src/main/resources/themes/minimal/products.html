@@ -1,0 +1,17 @@
+<div class="products-list {{#products.pagination.nextPage}}has-more{{/products.pagination.nextPage}}">
+    {{#each products.list}}
+        {{includeTemplate "product_in_list.html"}}
+    {{/each}}
+</div>
+
+{{#products.pagination}}
+    {{#nextPage}}
+        <div class="load-more hidden"
+             data-next-page="{{url}}">
+        </div>
+    {{/nextPage}}
+{{/products.pagination}}
+
+<script id="product-in-list-template" type="text/x-handlebars-template">
+    {{templateSource 'product_in_list.html'}}
+</script>

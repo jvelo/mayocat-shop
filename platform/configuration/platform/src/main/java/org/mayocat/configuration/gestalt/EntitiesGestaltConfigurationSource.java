@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.configuration.gestalt;
 
 import java.util.Map;
@@ -7,13 +14,14 @@ import javax.inject.Inject;
 import org.mayocat.addons.model.AddonGroup;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.PlatformSettings;
-import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
-import org.mayocat.context.Execution;
+import org.mayocat.configuration.images.ImageFormatDefinition;
+import org.mayocat.context.WebContext;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.model.AddonSource;
 import org.mayocat.theme.Model;
-import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.Theme;
+import org.mayocat.theme.TypeDefinition;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
@@ -34,7 +42,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     private EntityMetaRegistry entityMetaRegistry;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public Object get()
@@ -45,12 +53,13 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             entities.put(meta.getEntityName(), data);
         }
 
-        ThemeDefinition theme = execution.getContext().getTheme().getDefinition();
+        Theme theme = context.getTheme();
 
         if (theme != null) {
-            addAddons(entities, theme.getAddons(), AddonSource.THEME);
-            addModels(entities, theme.getModels());
-            addThumbnails(entities, theme.getThumbnails());
+            addAddons(entities, theme.getDefinition().getAddons(), AddonSource.THEME);
+            addModels(entities, theme.getDefinition().getModels());
+            addImageFormats(entities, theme.getDefinition().getImageFormats());
+            addTypes(entities, theme.getDefinition().getProductTypes());
         }
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
@@ -58,23 +67,30 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         return entities;
     }
 
-    private void addThumbnails(Map<String, Map<String, Object>> entities, Map<String, ThumbnailDefinition> thumbnails)
+    private void addTypes(Map<String, Map<String, Object>> entities, Map<String, TypeDefinition> productTypes)
     {
-        // Step 1 : add thumbnails defined explicitly for some entities
-        for (String thumbnailKey : thumbnails.keySet()) {
-            ThumbnailDefinition thumbnailDefinition = thumbnails.get(thumbnailKey);
-            if (thumbnailDefinition.getEntities().isPresent()) {
-                for (String entity : thumbnailDefinition.getEntities().get()) {
-                    addThumbnailDefinitionToEntity(entities, entity, "theme", thumbnailKey, thumbnailDefinition);
+        // Right now we support only products, but ultimately, other entities could have types too.
+        entities.get("product").put("types", productTypes);
+    }
+
+    private void addImageFormats(Map<String, Map<String, Object>> entities,
+            Map<String, ImageFormatDefinition> formats)
+    {
+        // Step 1 : add image formats defined explicitly for some entities
+        for (String formatKey : formats.keySet()) {
+            ImageFormatDefinition imageFormatDefinition = formats.get(formatKey);
+            if (imageFormatDefinition.getEntities().isPresent()) {
+                for (String entity : imageFormatDefinition.getEntities().get()) {
+                    addImageFormatDefinitionToEntity(entities, entity, "theme", formatKey, imageFormatDefinition);
                 }
             }
         }
-        // Step 2 add thumbnails groups for all entities
-        for (String modelId : thumbnails.keySet()) {
-            ThumbnailDefinition thumbnailDefinition = thumbnails.get(modelId);
-            if (!thumbnailDefinition.getEntities().isPresent()) {
+        // Step 2 add image formats defined for all entities
+        for (String modelId : formats.keySet()) {
+            ImageFormatDefinition imageFormatDefinition = formats.get(modelId);
+            if (!imageFormatDefinition.getEntities().isPresent()) {
                 for (String entity : entities.keySet()) {
-                    addThumbnailDefinitionToEntity(entities, entity, "theme", modelId, thumbnailDefinition);
+                    addImageFormatDefinitionToEntity(entities, entity, "theme", modelId, imageFormatDefinition);
                 }
             }
         }
@@ -131,8 +147,8 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         void apply(Map<String, Object> entity, Object... arguments);
     }
 
-    private void addThumbnailDefinitionToEntity(Map<String, Map<String, Object>> entities, String entity,
-            final String source, String modelId, ThumbnailDefinition thumbnailDefinition)
+    private void addImageFormatDefinitionToEntity(Map<String, Map<String, Object>> entities, String entity,
+            final String source, String modelId, ImageFormatDefinition imageFormatDefinition)
     {
         this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
         {
@@ -140,8 +156,8 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
             public void apply(Map<String, Object> entity, Object... arguments)
             {
                 Map map;
-                if (entity.containsKey("thumbnails")) {
-                    map = (Map) entity.get("thumbnails");
+                if (entity.containsKey("images")) {
+                    map = (Map) entity.get("images");
                 } else {
                     map = Maps.newHashMap();
                 }
@@ -149,9 +165,9 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
                     map.put(source, Maps.newHashMap());
                 }
                 ((Map) map.get(source)).put(arguments[0], arguments[1]);
-                entity.put("thumbnails", map);
+                entity.put("images", map);
             }
-        }, modelId, thumbnailDefinition);
+        }, modelId, imageFormatDefinition);
     }
 
     private void addModelsToEntity(Map<String, Map<String, Object>> entities, String entity, String modelId,

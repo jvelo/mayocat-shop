@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <!-- list -->
 <div id="list" ng-controller="PagesController">
 
@@ -8,11 +17,11 @@
     <!-- list pages -->
     <scroll>
         <ul class="list">
-            <li ng-repeat="page in pages" data-handle="{{page.slug}}" class="hasChildren">
+            <li ng-repeat="page in pages" data-handle="{{page.slug}}" class="hasChildren" ng-class="{active: entity.slug == page.slug && entity.type == 'page'}">
                 <div>
                     <div class="droptarget">
                         <div><a ng-click="setRoute('/pages/' + page.slug)">{{page.title}}</a></div>
-                        <div><span class="dragme move-handle"></span></div>
+                        <div><span class="drag-me move-handle"></span></div>
                     </div>
                 </div>
             </li>

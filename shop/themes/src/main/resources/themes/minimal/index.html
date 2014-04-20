@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+
+    <!--
+      -- Some metas
+      -->
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta property="mayocat:locale" content="{{locale.tag}}"/>
+
+
+    <title>{{page_title}}</title>
+
+    <!--
+      -- Stylesheets
+      -->
+    <!-- Lato regular typeface -->
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <!-- normalize.css : A modern, HTML5-ready alternative to CSS resets -->
+    <link rel="stylesheet" type="text/css" href="{{resource 'css/normalize.css'}}"/>
+    <!-- snap.css for the drawer mobile menu -->
+    <link rel="stylesheet" type="text/css" href="{{resource 'css/snap.css'}}"/>
+    <!-- theme.css : our own theme stylesheet -->
+    <link rel="stylesheet" type="text/css" href="{{resource 'css/theme.css'}}"/>
+
+
+    <!--[if IE]>
+    <!-- HTML5Shiv to enable styling of HTML5 elements in versions of Internet Explorer prior to version 9,-->
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div class="drawers">
+        <div class="drawer mobile left">
+            <!-- Left drawer used for menu on mobile devices -->
+
+            {{includeTemplate 'menu.html'}}
+
+        </div>
+    </div>
+
+    <div class="main-content" id="content">
+        <div>
+            <header>
+
+                <!-- toggle button for mobiles -->
+                <div class="toggle mobile" data-toggle="left-drawer">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </div>
+
+                <div class="brand">
+                    {{#site}}
+                        <a href="/">
+                            {{#logo}}
+                                <span data-picture data-alt="{{description}}" data-title="{{title}}">
+                            <span data-src="{{theme_mobile-home-logo_url}}"></span>
+                            <span data-src="{{theme_home-logo_url}}" data-media="(min-width: 321px)"></span>
+
+                            <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+                            <noscript>
+                                <img src="{{theme_mobile-home-logo_url}}" alt="{{description}}" title="{{title}}"
+                                     width="141" height="141"/>
+                            </noscript>
+                        </span>
+                            {{/logo}}
+                            {{^logo}}
+                                <span data-picture data-alt="{{description}}" data-title="{{title}}">
+                            <span data-src="{{resource 'images/logo.png'}}"></span>
+                            <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+                            <noscript>
+                                <img src="{{resource 'images/logo.png'}}" alt="{{description}}" title="{{title}}"
+                                     width="141" height="141"/>
+                            </noscript>
+                        </span>
+                            {{/logo}}
+                        </a>
+                    {{/site}}
+                </div>
+
+                <div class="cart mobile">
+                    {{#cart}}
+                        {{#gt numberOfItems 0}}
+                            <a href="/cart">
+                                <span class="mobile basket">
+                                    <img src="{{resource 'images/basket.png'}}"/>
+                                </span>
+                            </a>
+                        {{/gt}}
+                    {{/cart}}
+                </div>
+
+                <div class="menu-container large-layout">
+                    {{includeTemplate 'menu.html'}}
+                </div>
+
+                <div class="cart large-layout">
+                    <span class="large">
+                        {{numberOfItems}} {{inflect numberOfItems "item" "items"}} |
+                        {{#total}}
+                            {{amountCompact}} {{currency.localSymbol}}
+                        {{/total}}
+                    </span>
+                </div>
+
+
+            </header>
+
+            <section role="main" class="{{template}}">
+                {{include templateContent}}
+
+                <div class="large-layout cart-info">
+                    {{#cart}}
+                        {{#gt numberOfItems 0}}
+                            <a href="/cart">
+                                {{message 'header.cart' PRODUCTS=numberOfItems
+                                                        PRICE=itemsTotal.amountCompact
+                                                        CURRENCY=itemsTotal.currency.localSymbol}}
+                                </a>
+                            </a>
+                        {{/gt}}
+                    {{/cart}}
+                </div>
+            </section>
+
+            <div class="clearfix"></div>
+
+            <footer>
+
+            </footer>
+        </div>
+    </div>
+
+    <!--
+      -- JavaScripts placed at the end of the body
+      -- See http://developer.yahoo.com/performance/rules.html#js_bottom
+      -->
+    <!-- Include jquery from CDN -->
+    <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    <!-- Snap.js for the mobile menu. From CDN -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/snap.js/1.9.2/snap.min.js"></script>
+    <!-- enquire.js for hooking JavaScript to media queries. From CDN -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/enquire.js/2.0.0/enquire.min.js"></script>
+    <!-- Swipe for swipe gallery on product page. From CDN -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/swipe/2.0/swipe.min.js"></script>
+    <!-- Picturefill for responsive images -->
+    <script src="{{resource 'js/picturefill.js'}}" type="text/javascript"></script>
+    <!-- Include mayocat.js -->
+    <script src="{{resource 'js/mayocat.js'}}" type="text/javascript"></script>
+    <!-- Finally, includes our own theme.js -->
+    <script src="{{resource 'js/theme.js'}}" type="text/javascript"></script>
+</body>
+

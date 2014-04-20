@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.front.representation;
 
 import java.math.BigDecimal;
@@ -9,6 +16,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.money.format.MoneyFormatter;
 import org.joda.money.format.MoneyFormatterBuilder;
+import org.mayocat.shop.catalog.util.MoneyUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,7 +39,7 @@ public class CurrencyRepresentation
         this.symbol = CURRENCY_FORMATTER.withLocale(locale).print(
                 Money.of(CurrencyUnit.of(currency), BigDecimal.TEN, RoundingMode.HALF_EVEN));
 
-        this.localSymbol = symbol;
+        this.localSymbol = MoneyUtil.getLocalSymbol(currency);
     }
 
     public String getLocalSymbol()

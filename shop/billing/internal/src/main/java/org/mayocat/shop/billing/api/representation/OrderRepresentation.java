@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.billing.api.representation;
 
 import java.math.BigDecimal;
@@ -35,6 +42,8 @@ public class OrderRepresentation
 
     private Order.Status status;
 
+    private String additionalInformation;
+
     private Map<String, Object> data;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -67,6 +76,7 @@ public class OrderRepresentation
         this.shipping = order.getShipping();
         this.grandTotal = order.getGrandTotal();
         this.status = order.getStatus();
+        this.additionalInformation = order.getAdditionalInformation();
         this.data = order.getOrderData();
 
         if (order.getBillingAddress().isLoaded()) {
@@ -173,6 +183,16 @@ public class OrderRepresentation
     public Map<String, Object> getData()
     {
         return data;
+    }
+
+    public String getAdditionalInformation()
+    {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation)
+    {
+        this.additionalInformation = additionalInformation;
     }
 
     public void setData(Map<String, Object> data)

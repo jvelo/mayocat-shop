@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.localization.internal;
 
 import java.lang.reflect.Field;
@@ -10,9 +17,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Addon;
+import org.mayocat.model.Attachment;
+import org.mayocat.model.AttachmentData;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.Localized;
@@ -32,16 +41,16 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
     private org.slf4j.Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Override
     public <T extends Localized> T localize(T entity)
     {
-        if (this.execution.getContext() == null || !this.execution.getContext().isAlternativeLocale()) {
+        if (this.context == null || !this.context.isAlternativeLocale()) {
             return entity;
         }
         else {
-            return localize(entity, this.execution.getContext().getLocale());
+            return localize(entity, this.context.getLocale());
         }
     }
 
@@ -58,6 +67,11 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
 
         if (copiedEntity == null) {
             return entity;
+        }
+
+        // Special I/O case for attachment : set back the input stream manually
+        if (copiedEntity instanceof Attachment) {
+            ((Attachment) copiedEntity).setData(new AttachmentData(((Attachment)entity).getData().getStream()));
         }
 
         // Handle entity fields :

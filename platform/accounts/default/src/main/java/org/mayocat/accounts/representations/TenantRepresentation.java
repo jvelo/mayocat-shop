@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.accounts.representations;
 
 import java.util.List;
@@ -26,6 +33,10 @@ public class TenantRepresentation
     private String slug;
 
     private String name;
+
+    private String description;
+
+    private String contactEmail;
 
     @JsonIgnore
     // Ignored on de-serialization only. See getter and setter
@@ -66,6 +77,8 @@ public class TenantRepresentation
 
         this.slug = tenant.getSlug();
         this.name = tenant.getName();
+        this.description = tenant.getDescription();
+        this.contactEmail = tenant.getContactEmail();
         this.defaultHost = tenant.getDefaultHost();
 
         if (tenant.getAddons().isLoaded()) {
@@ -104,6 +117,10 @@ public class TenantRepresentation
     public String getName()
     {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @JsonProperty("creationDate")
@@ -151,5 +168,10 @@ public class TenantRepresentation
     public void setImages(List<ImageRepresentation> images)
     {
         this.images = images;
+    }
+
+    public String getContactEmail()
+    {
+        return contactEmail;
     }
 }

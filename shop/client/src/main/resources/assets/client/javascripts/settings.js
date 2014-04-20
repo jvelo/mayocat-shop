@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict';
 
 angular.module('settings', ['ngResource'])
@@ -14,9 +21,9 @@ angular.module('settings', ['ngResource'])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.updateSettings = function () {
-                $scope.isSaving = true;
+                $scope.isLoading = true;
                 configurationService.put($scope.settings, function () {
-                    $scope.isSaving = false;
+                    $scope.isLoading = false;
                     $rootScope.$broadcast("catalog:refreshCatalog");
                 });
             };
@@ -37,12 +44,24 @@ angular.module('settings', ['ngResource'])
              * Function passed to the list-picker to handle the display of locale tags
              */
             $scope.displayLocale = function () {
-                var locales = $scope.locales.$$v; // this is morally wrong
-                for (var i = 0; i < locales.length; i++) {
-                    if (locales[i].tag === $scope.elementToDisplay) {
-                        return locales[i].name;
+                var localesData = $scope.localesData.$$v || {}, // this is morally wrong
+                    locales = localesData.locales || [],
+                    variants = localesData.variants || [];
+
+                // Check in locales
+                for (var i = 0, locale; locale = locales[i++];) {
+                    if (locale.tag === $scope.elementToDisplay) {
+                        return locale.name;
                     }
                 }
+
+                // Check in variants
+                for (var j = 0, variant; variant = variants[j++];) {
+                    if (variant.tag === $scope.elementToDisplay) {
+                        return variant.name;
+                    }
+                }
+
                 return $scope.elementToDisplay;
             }
 
@@ -50,7 +69,7 @@ angular.module('settings', ['ngResource'])
 
             $scope.timeZoneRegions = timeService.getTimeZoneData();
 
-            $scope.locales = localesService.getData();
+            $scope.localesData = localesService.getData();
 
             configurationService.getSettings(function (settings) {
                 $scope.settings = settings;
@@ -64,8 +83,28 @@ angular.module('settings', ['ngResource'])
     // Controller for the tenant (shop information) settings UI
     // See partials/settingsTenant.html
     //
-    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'imageService',
-        function ($scope, $resource, $http, addonsService, imageService) {
+    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'entityMixins',
+        function ($scope, $resource, $http, addonsService, entityMixins) {
+
+            entityMixins.extend(["base", "addons", "image"], $scope, "tenant", {
+                "base": {
+                    "apiBase": "/api/tenant/",
+                    "noSlug" : true
+                },
+                "image" : {
+                    /**
+                     * After an image is uploaded, preview it as the shop's logo
+                     */
+                    "afterReloadingImages": function () {
+                        $scope.updatedTenant = $scope.TenantResource.get({
+                        }, function () {
+                            $scope.tenant.featuredImage = $scope.updatedTenant.featuredImage;
+                        });
+                    }
+                }
+            });
+
+            $scope.TenantResource = $resource("/api/tenant/");
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -82,31 +121,13 @@ angular.module('settings', ['ngResource'])
                 });
             }
 
-            $scope.reloadImages = function (file) {
-                // Reload list of images
-                $scope.tenant.images = $http.get("/api/tenant/images").success(function (data) {
-                    $scope.tenant.images = data;
-                });
-                // Reload featured image
-                var tenant = $scope.TenantResource.get({
-                }, function () {
-                    $scope.tenant.featuredImage = tenant.featuredImage;
-                });
-            }
-
-            $scope.selectFeatureImage = function (image) {
-                imageService.selectFeatured($scope.product, image);
-            }
-
             // Initialization ------------------------------------------------------------------------------------------
 
             $scope.addons = [];
 
-            $scope.TenantResource = $resource("/api/tenant/");
-
             $scope.tenant = $scope.TenantResource.get({
             }, function () {
-                $scope.initializeAddons();
+                $scope.initializeEntity();
             });
 
         }
@@ -117,8 +138,8 @@ angular.module('settings', ['ngResource'])
     // Controller for the shipping settings UI
     // See partials/settingsShipping.html
     //
-    .controller('SettingsShippingController', ['$scope', '$http', '$q', '$timeout', 'configurationService', 'shippingService',
-        function ($scope, $http, $q, $timeout, configurationService, shippingService) {
+    .controller('SettingsShippingController', ['$scope', '$http', '$q', '$timeout', '$modal', 'configurationService',
+        'shippingService',  function ($scope, $http, $q, $timeout, $modal, configurationService, shippingService) {
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -166,28 +187,28 @@ angular.module('settings', ['ngResource'])
 
             $scope.createOrUpdateCarrier = function () {
                 if ($scope.editedCarrier.isNew) {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $http.post("/api/shipping/carrier/", $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
                 else {
-                    $scope.isSaving = true;
+                    $scope.isLoading = true;
                     $http.put("/api/shipping/carrier/" + $scope.editedCarrier.id, $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isSaving = false;
+                            $scope.isLoading = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
 
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 }
             }
@@ -198,7 +219,7 @@ angular.module('settings', ['ngResource'])
                         $scope.loadCarriers();
                     })
                     .error(function () {
-                        $scope.$parent.$broadcast('event:serverError');
+                        $modal.open({ templateUrl: 'serverError.html' });
                     });
             }
 
@@ -220,7 +241,7 @@ angular.module('settings', ['ngResource'])
                             });
                         })
                         .error(function () {
-                            $scope.$parent.$broadcast('event:serverError');
+                            $modal.open({ templateUrl: 'serverError.html' });
                         });
                 });
             }

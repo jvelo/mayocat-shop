@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict';
 
 angular.module('article', ['ngResource'])
@@ -16,7 +23,7 @@ angular.module('article', ['ngResource'])
 
         function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, timeService, configurationService, entityMixins) {
 
-            entityMixins.extend(["base", "image"], $scope, "article", {
+            entityMixins.extend(["base", "image", "addons"], $scope, "article", {
                 "base" : {
                     "apiBase" : "/api/news/"
                 }
@@ -59,7 +66,7 @@ angular.module('article', ['ngResource'])
                             }
                             else {
                                 if (status === 409) {
-                                    $rootScope.$broadcast('event:nameConflictError');
+                                    $modal.open({ templateUrl: 'conflictError.html' });
                                 }
                                 else {
                                     // Generic error
@@ -155,7 +162,8 @@ angular.module('article', ['ngResource'])
 
                 return {
                     articleDate: timeService.convertISO8601toLocalDate(article.publicationDate || '', 'LLL'),
-                    imagesLength: (article.images || {}).length || 0
+                    imagesLength: typeof article._embedded !== 'undefined' ?
+                        (article._embedded.images || {}).length || 0 : 0
                 };
             };
 

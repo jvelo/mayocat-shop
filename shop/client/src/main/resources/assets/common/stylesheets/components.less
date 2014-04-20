@@ -1,60 +1,238 @@
-/* Thumbnail editor */
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
-.editThumbnails {
-  width: 900px;
-  margin: 0px 0 0 -450px;
+/* Buttons */
+
+.btn {
+  font-family: Arial;
+  font-size: 16px;
+  border: none;
+  box-shadow: none;
+  text-shadow: none;
 }
 
-.editThumbnails .modal-body {
+input.btn {
+  border: none !important;
+}
+
+.btn-colors(@color) {
+  background: @color;
+
+  &:hover {
+    background: darken(@color, 10%);
+  }
+}
+
+.btn {
+  .btn-colors(#e6e6e6);
+}
+
+.btn-primary {
+  .btn-colors(@linkColor);
+}
+
+// The following colors are the default button colors of Boostrap (v2.3) but a bit lightened up.
+
+.btn-info {
+  .btn-colors(lighten(#2f96b4, 10%));
+}
+
+.btn-success {
+  .btn-colors(lighten(#51a351, 10%));
+}
+
+.btn-warning {
+  .btn-colors(lighten(#f89406, 10%));
+}
+
+.btn-danger {
+  .btn-colors(lighten(#bd362f, 10%));
+}
+
+.btn-inverse {
+  .btn-colors(lighten(#222222, 10%));
+}
+
+/* Entity list selector */
+
+ul.select.entity.list {
+
+  li {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    height: 48px;
+
+    div.thumb {
+      margin-right: 10px;
+    }
+
+    div.action-button, div.entity-title {
+      line-height: 40px;
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      background-color: white;
+    }
+  }
+}
+
+/* Hoverable list */
+
+ul li.hoverable:hover {
+  background-color: @backgroundLight;
+  cursor: pointer;
+}
+
+ul li.hoverable .visible-when-hover {
+  visibility: hidden;
+}
+
+ul li.hoverable:hover .visible-when-hover {
+  visibility: visible;
+}
+
+/* Thumbnail list */
+
+.entities.thumbnails {
+
+  div.caption {
+    text-overflow: ellipsis;
+     height: 38px;
+     line-height: 15px;
+     line-height: 15px;
+  }
+
+  &:after {
+    /* Entities thumbnail lists must be cleared manually */
+    clear: none;
+  }
+
+  .menu-wrapper {
+    display: none;
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: 4px;
+    text-align: center;
+  }
+
+  ul.menu {
+    display: table-cell;
+    background: white;
+    opacity: 0.9;
+    vertical-align: middle;
+
+    li {
+      span.btn {
+        opacity: 1.0;
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+  }
+
+  li:not(.ui-sortable-helper) {
+    .wrapper:hover {
+      .menu-wrapper {
+        display:table;
+      }
+    }
+  }
+
+
+  .thumbnail.add {
+
+    opacity: 0.8;
+
+    .wrapper {
+      background-color: white;
+      background-position: center center;
+      background-image: url(/common/images/plus.png);
+      background-repeat: no-repeat;
+    }
+  }
+}
+
+
+ /* Thumbnail editor */
+
+.editImage {
+  width: 850px;
+  margin: 0px 0 0 -425px;
+  top: 50px !important;
+}
+
+.editImage .modal-body {
   max-height: 550px;
 }
 
-.editThumbnails .modal-body .preview {
+.editImage .modal-body .preview {
   display: inline-block;
   margin-left: 20px;
 }
 
+thumbnail-editor img {
+  /* Make sure the "original" dimensions are its real dimensions and that it is not scaled down by max-width: 100% */
+  max-width: inherit !important;
+}
+
 thumbnail-editor > div {
-  min-width: 500px;
+  min-width: 400px;
   background-color: #eee;
   margin-bottom: 8px;
 }
 
-.editThumbnails .crop-zone ul {
-    width: 500px;
+.editImage .crop-zone {
+  margin-right: 10px;
+  padding: 8px;
+  background-color: #eeeeee;
+  ul {
+     width: 400px;
 
     .btn-primary {
       margin-left: 10px;
     }
+  }
+}
+
+.editImage .metadata {
+  input {
+    width: 220px;
+    margin-bottom: 50px;
+  }
+
+  textarea {
+    width: 275px;
+  }
 }
 
 div.thumbnails-list {
-  padding-left: 20px;
-  width: -moz-calc(~"100% - 500px");
-  width: -webkit-calc(~"100% - 500px");
-  width: calc(~"100% - 500px");
-}
-
-div.thumbnails-list h3 {
-  line-height: 20px;
-}
-
-div.thumbnails-list h3 i {
-  opacity: 0.2;
-  margin-left: 10px;
+  width: 100px;
 }
 
 div.thumbnails-list span.dimensions {
   padding-top:10px;
 }
 
-div.thumbnails-list ul li a {
+div.thumbnails-list ul li {
   color: @fontColor;
+  font-size: 11px;
+  padding:2px;
 }
 
-div.thumbnails-list ul li.active a,
-div.thumbnails-list ul li.active a:hover {
-  background: lightgrey;
+div.thumbnails-list ul li.active,
+div.thumbnails-list ul li.active {
+  background-color: #eeeeee;
 }
 
 /* File upload widget */
@@ -66,6 +244,10 @@ image-upload .well {
 image-upload .fileinput-button {
   float: left;
   margin-top: 5px;
+}
+
+image-upload .fileinput-button input[type=file] {
+  height: 42px;
 }
 
 image-upload .editor ul li {

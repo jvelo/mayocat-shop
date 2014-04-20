@@ -1,41 +1,48 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.theme;
 
 import java.util.Collections;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.configuration.thumbnails.ThumbnailDefinition;
-
-import javax.validation.Valid;
+import org.mayocat.configuration.images.ImageFormatDefinition;
 
 /**
  * @version $Id$
  */
 public class ThemeDefinition
 {
-    @Valid
     @NotBlank
     @JsonProperty
-    private String name;
+    private String name = "";
 
-    @Valid
     @JsonProperty
     private String description = "";
 
-    @Valid
     @JsonProperty
-    private Map<String, ThumbnailDefinition> thumbnails = Maps.newHashMap();
+    private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
 
-    @Valid
     @JsonProperty
     private Map<String, Model> models = Maps.newLinkedHashMap();
 
-    @Valid
     @JsonProperty
     private Map<String, AddonGroup> addons = Collections.emptyMap();
+
+    @JsonProperty
+    private Map<String, PaginationDefinition> pagination = Collections.emptyMap();
+
+    @JsonProperty
+    private Map<String, TypeDefinition> productTypes = Maps.newHashMap();
 
     public String getName()
     {
@@ -47,9 +54,9 @@ public class ThemeDefinition
         return description;
     }
 
-    public Map<String, ThumbnailDefinition> getThumbnails()
+    public Map<String, ImageFormatDefinition> getImageFormats()
     {
-        return thumbnails;
+        return images;
     }
 
     public Map<String, Model> getModels()
@@ -60,5 +67,21 @@ public class ThemeDefinition
     public Map<String, AddonGroup> getAddons()
     {
         return this.addons;
+    }
+
+    @JsonIgnore
+    public Map<String, PaginationDefinition> getPaginationDefinitions()
+    {
+        return pagination;
+    }
+
+    public PaginationDefinition getPaginationDefinition(String key)
+    {
+        return pagination.containsKey(key) ? pagination.get(key) : new PaginationDefinition();
+    }
+
+    public Map<String, TypeDefinition> getProductTypes()
+    {
+        return productTypes;
     }
 }

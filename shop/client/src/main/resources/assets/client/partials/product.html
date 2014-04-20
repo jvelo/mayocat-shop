@@ -1,7 +1,22 @@
-<h1 class="small" ng-show="!isNew()">{{'product.title.editProduct' | translate}}</h1>
-<h1 class="small" ng-show="isNew()">{{'product.title.newProduct' | translate}}</h1>
+<!--
 
-<form name="productForm">
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<h1 class="small" ng-if="!isNew()">{{'product.title.editProduct' | translate}}</h1>
+<h1 class="small" ng-if="isNew()">{{'product.title.newProduct' | translate}}</h1>
+
+<div class="loading" ng-if="!product.slug && !isNew()"></div>
+<form name="productForm" ng-show="product.slug || isNew()">
+    <!--
+      NOTE: We're using ng-show on the form and not ng-if because ng-if creates a new scope while ng-show does not, and
+            we want to be able to address the form easily from the controller (i.e. $scope.productForm)
+      -->
+
     <article class="entity">
 
         <div>
@@ -12,18 +27,18 @@
             </h1>
 
             <!-- Description -->
-            <div ng-show="!isNew()">
+            <div ng-if="!isNew()">
                 <label>{{'product.misc.description' | translate}}</label>
                 <textarea class="" rows="10" ng-model="localizedProduct.description" ck-editor localized />
             </div>
 
-            <div class="block" ng-show="!isNew()">
+            <div class="block" ng-if="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
-                    <li ng-repeat="image in product.images">
+                    <li ng-repeat="image in product._embedded.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <span class="featured-star" ng-class="{featured: image.featured}"
@@ -34,11 +49,8 @@
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li ng-click="editThumbnails(image)">
-                                            {{'entity.action.editThumbnails' | translate}}
-                                        </li>
-                                        <li ng-click="image.editMeta = true">
-                                            {{'image.action.editMetadata' | translate}}
+                                        <li ng-click="editImage(image)">
+                                            {{'entity.action.editImage' | translate}}
                                         </li>
                                         <li ng-click="removeImage(image)">
                                             {{'entity.action.remove' | translate}}
@@ -47,37 +59,21 @@
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
-                            <div ng-show="image.editMeta" class="metadata">
-                                <div>
-                                    <input type="text" ng-model="image.title"
-                                           placeholder="{{'upload.placeholder.title' | translate}}"/>
-                                </div>
-                                <div>
-                                    <textarea rows="5" ng-model="image.description"
-                                              placeholder="{{'upload.placeholder.description' | translate}}"></textarea>
-                                </div>
-                                <span ng-class="{'loading': image.isSaving}"></span>
-                                <button type="button" class="btn" ng-click="image.editMeta = false">
-                                    {{'entity.action.cancel' | translate}}
-                                </button>
-                                <button type="button" class="btn btn-primary" ng-click="updateImageMeta(image)">
-                                    {{'entity.action.update' | translate}}
-                                </button>
-                            </div>
                         </div>
                     </li>
                 </ul>
-                <div class="alert" ng-show="product.images.length <= 0">
+                <div class="alert" ng-if="product.images.length <= 0">
                     <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
                 </div>
                 <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()"></image-upload>
             </div>
         </div>
 
-        <div ng-show="addons.length > 0 && !isNew()">
+        <!-- Addons -->
+        <div ng-if="addons.length > 0 && !isNew()">
             <div class="block" ng-repeat="group in addons">
                 <h3>{{group.name}}</h3>
-                <p ng-show="group.text && group.text != ''">
+                <p ng-if="group.text && group.text != ''">
                 {{group.text}}
                 </p>
                 <ul>
@@ -96,7 +92,7 @@
     </div>
     <aside>
         <div class="buttons">
-            <div ng-show="isNew()">
+            <div ng-if="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
                     <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn-primary">
@@ -105,10 +101,10 @@
                     <span ng-class="{'loading': isSaving}"></span>
                 </div>
             </div>
-            <div ng-show="!isNew()">
-                <div ng-show="product.onShelf == undefined">
+            <div ng-if="!isNew()">
+                <div ng-if="product.onShelf == undefined">
                     <div class="hasLoading">
-                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn">
+                        <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large">
                             {{'entity.action.save' | translate}}
                         </button>
                         <button ng-click="publishProduct()" class="btn btn-large btn-primary">
@@ -117,7 +113,7 @@
                         <span ng-class="{'loading': isSaving}"></span>
                     </div>
                 </div>
-                <div ng-show="product.onShelf != undefined">
+                <div ng-if="product.onShelf != undefined">
                     <div class="hasLoading">
                         <button ng-click="updateProduct()" class="btn btn-large btn-primary">
                             {{'entity.action.update' | translate}}
@@ -139,24 +135,66 @@
         </div>
         <p/>
 
-        <div class="uri" ng-show="!isNew()">
+        <!-- Permalink -->
+        <div class="uri" ng-if="!isNew()">
             <a href="/products/{{product.slug}}" target="_new">
                 /products/{{product.slug}}
             </a>
         </div>
 
-        <div class="block delete" ng-show="!isNew()">
-            <small class="clickme" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
+        <!-- Delete button -->
+        <div class="block delete" ng-if="!isNew()">
+            <small class="click-me" ng-click="confirmDeletion()">{{'product.action.deleteProduct' | translate}}</small>
         </div>
 
-        <div class="block" ng-show="!isNew() && models.length > 0">
+        <!-- Product type selector -->
+        <div class="block" ng-if="!isNew() && hasTypes">
+            <h3>Type</h3>
+
+            <div>
+                <select name="type" ng-model="product.type" ng-options="type as types[type].name for type in keys(types)">
+                    <option value="">No type</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Variants -->
+        <div class="block" ng-if="!isNew() && hasTypes && !!product.type">
+            <h3>{{'product.variants.title'| translate}}</h3>
+
+            <ul class="variants" ui-sortable ng-model="product._embedded.variants">
+                <li class="hoverable variant" ng-repeat="variant in product._embedded.variants">
+                    <div class="title">{{variant.title}}</div>
+                    <div class="visible-when-hover">
+                        <span class="link" ng-click="editVariant(variant)">{{'product.variants.edit'| translate}}</span>
+                        <span class="link" ng-click="confirmDeletionOfVariant(variant)">{{'product.variants.delete'| translate}}</span>
+                    </div>
+                    <div>
+                        <small>
+                            <span ng-if="!!variant.price && types[product.type].variants.properties.indexOf('price') >= 0">
+                                {{'product.variants.price' | translate}}: {{variant.price}} {{mainCurrency}}</span>
+                            <span ng-if="variant.stock >= 0 && types[product.type].variants.properties.indexOf('stock') >= 0">
+                                {{'product.variants.stock' | translate}}: {{variant.stock}}</span>
+                        </small>
+                    </div>
+                </li>
+            </ul>
+
+            <div>
+                <button class="btn btn-small" ng-click="createVariant()">{{'product.variants.add'| translate}}</button>
+            </div>
+        </div>
+
+        <!-- Page model selection -->
+        <div class="block" ng-if="!isNew() && models.length > 0">
             <h3>{{'entity.title.model' | translate}}</h3>
             <select ng-model="product.model" ng-options="model.id as model.name for model in models">
                 <option value="">{{'entity.misc.defaultModel' | translate}}</option>
             </select>
         </div>
 
-        <div class="block" ng-show="!isNew() && hasCollections && collections.length > 0">
+        <!-- Collection selection -->
+        <div class="block" ng-if="!isNew() && hasCollections && collections.length > 0">
             <h3>{{'product.title.collections' | translate}}</h3>
             <ul class="list unstyled">
                 <li ng-repeat="collection in collections">
@@ -165,15 +203,17 @@
             </ul>
         </div>
 
-        <div class="block" ng-show="!isNew()">
+        <!-- Price -->
+        <div class="block" ng-if="!isNew()">
             <h3>{{'product.misc.price' | translate}}</h3>
 
             <div>
-                <money-amount ng-model="product.price" currency="EUR"/>
+                <money-amount ng-model="product.price" currency="{{mainCurrency}}"/>
             </div>
         </div>
 
-        <div class="block" ng-show="!isNew() && hasWeight">
+        <!-- Weight -->
+        <div class="block" ng-if="!isNew() && hasWeight">
             <h3>{{'product.misc.weight' | translate}}</h3>
 
             <div>
@@ -181,7 +221,8 @@
             </div>
         </div>
 
-        <div class="block" ng-show="!isNew() && hasStock">
+        <!-- Stock -->
+        <div class="block" ng-if="!isNew() && hasStock && (!product.type || types[product.type].variants.properties.indexOf('stock') < 0)">
             <h3>{{'product.misc.stock' | translate}}</h3>
 
             <div>
@@ -190,3 +231,119 @@
         </div>
     </aside>
 </form>
+
+<!-- Add variant modal -->
+<script type="text/ng-template" id="createVariant.html">
+
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'product.variants.add' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="newVariant" novalidate>
+            <div ng-repeat="feature in keys(types[product.type].features)" ng-form="subForm">
+                <strong>{{types[product.type].features[feature].name}}</strong>
+
+                <!-- key is free for user-->
+                <div ng-if="keys(types[product.type].features[feature].keys).length == 0">
+                    <input ng-model="variantToCreate.features[feature]"
+                           type="text"
+                           name="feature"
+                           required />
+                </div>
+
+                <!-- keys are predefined -->
+                <div ng-if="keys(types[product.type].features[feature].keys).length > 0">
+                    <select ng-model="variantToCreate.features[feature]"
+                            ng-options="key as value for (key, value) in getKeys(feature)"
+                            name="feature"
+                            required/>
+                </div>
+
+                <span ng-if="subForm.feature.$error.required && subForm.feature.$dirty">
+                    {{'global.validation.required' | translate}}
+                </span>
+            </div>
+
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-primary" ng-click="$close()" ng-disabled="newVariant.$invalid">
+            {{'product.variants.create' | translate}}
+        </button>
+    </div>
+</script>
+
+<!-- Edit variant modal -->
+<script type="text/ng-template" id="editVariant.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'product.variants.edition' | translate:getTranslationProperties()}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editVariant" novalidate>
+
+            <!-- Price -->
+            <div class="block" ng-if="types[product.type].variants.properties.indexOf('price') >= 0">
+                <h3>{{'product.misc.price' | translate}}</h3>
+
+                <div>
+                    <money-amount ng-model="variant.price" placeholder="{{product.price}}" currency="{{mainCurrency}}"/>
+                </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="block" ng-if="types[product.type].variants.properties.indexOf('stock') >= 0">
+                <h3>{{'product.misc.stock' | translate}}</h3>
+
+                <div>
+                    <input type="text" placeholder="{{'product.placeholder.initialStock' | translate}}"
+                           ng-model="variant.stock"/>
+                </div>
+            </div>
+
+            <!-- Weight -->
+            <div class="block" ng-if="types[product.type].variants.properties.indexOf('weight') >= 0">
+                <h3>{{'product.misc.weight' | translate}}</h3>
+
+                <div>
+                    <input type="text" placeholder="{{product.weight}}" ng-model="variant.weight" /> {{weightUnit}}
+                </div>
+            </div>
+
+            <!-- Addons -->
+            <div class="entity" ng-if="variantAddons.length > 0">
+                <div class="block" ng-repeat="group in variantAddons">
+                    <h3>{{group.name}}</h3>
+
+                    <p ng-if="group.text && group.text != ''">
+                        {{group.text}}
+                    </p>
+                    <ul>
+                        <li ng-repeat="addon in group.fields">
+                            {{addon.definition.name}}
+
+                            <addon definition="addon.definition"
+                                   object="variant.addons[addon.index]"></addon>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-primary" ng-click="$close()" ng-disabled="editVariant.$invalid">
+            {{'product.variants.update' | translate}}
+        </button>
+    </div>
+</script>

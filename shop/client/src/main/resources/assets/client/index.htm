@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <!DOCTYPE html>
 
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
@@ -14,7 +23,7 @@
     <title ng-bind="$root.page_title"></title>
 
     <!-- Included CSS Files -->
-    <link rel="stylesheet/less" href="/common/vendor/bootstrap/2.3.1/less/bootstrap-mayocat.less">
+    <link rel="stylesheet" href="/common/vendor/bootstrap/2.3.1/bootstrap-mayocat.css">
     <link rel="stylesheet/less" href="/common/stylesheets/common.less"/>
     <link rel="stylesheet/less" href="stylesheets/mayocat.less"/>
     <link rel="stylesheet" href="/common/vendor/blueimp/jquery.fileupload-ui.css"/>
@@ -52,18 +61,25 @@
 
     <script src="/common/vendor/ckeditor/4.1/ckeditor.js"></script>
 
-    <script src="/common/vendor/lesscss/less-1.3.3.min.js"></script>
+    <script>
+        // <![CDATA[
+        less = {
+            strictMath: true
+        }
+        // ]]>
+    </script>
+    <script src="/common/vendor/lesscss/less-1.4.2.min.js"></script>
 
     <!-- Application scripts -->
     <script src="/common/javascripts/polyfill.js"></script>
     <script src="/common/javascripts/mayocat.js"></script>
     <script src="/common/javascripts/authentication.js"></script>
     <script src="/common/javascripts/addons.js"></script>
-    <script src="/common/javascripts/image.js"></script>
     <script src="/common/javascripts/time.js"></script>
     <script src="/common/javascripts/locales.js"></script>
-    <script src="/common/javascripts/thumbnail.js"></script>
+    <script src="/common/javascripts/image.js"></script>
     <script src="/common/javascripts/configuration.js"></script>
+    <script src="/common/javascripts/mixins.js"></script>
     <script src="/common/javascripts/entities.js"></script>
 
     <script src="javascripts/appsettings.js"></script>
@@ -77,6 +93,8 @@
     <script src="javascripts/page.js"></script>
     <script src="javascripts/articles.js"></script>
     <script src="javascripts/article.js"></script>
+    <script src="javascripts/homePage.js"></script>
+    <script src="javascripts/dashboard.js"></script>
     <script src="javascripts/orders.js"></script>
     <script src="javascripts/order.js"></script>
     <script src="javascripts/product.js"></script>
@@ -142,10 +160,15 @@
                 </a>
             </li>
             <li active-class="active">
-                <a href="#/contents" other-active-href="#/pages/,#/news">
+                <a href="#/contents" other-active-href="#/pages/,#/news,#/home">
                     <h2>{{'content.title.contents' | translate}}</h2>
                 </a>
-                <ul ng-show="isNews || isPages" class="sub-menu">
+                <ul ng-show="isNews || isPages || isHomePage" class="sub-menu">
+                    <li active-class="active">
+                        <a href="#/home">
+                            {{'content.title.homePage' | translate}}
+                        </a>
+                    </li>
                     <li active-class="active">
                         <a href="#/contents" other-active-href="#/pages/">
                             {{'content.title.pages' | translate}}
@@ -206,36 +229,29 @@
 <div class="loader" ng-show="tenant != undefined && authenticated == undefined"></div>
 
 <!-- Login modal -->
-<div class="modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated" id="loginModal">
-    <form class="" ng-controller="LoginController">
-        <div class="modal-header">
-            <div class="btn-group">
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('fr')">FR</button>
-                <button class="btn btn-mini btn-primary" ng-click="changeLocale('en')">EN</button>
-            </div>
-            <h3>{{'authentication.misc.title' | translate}}</h3>
-        </div>
-        <div class="modal-body">
-            <p>
-            <fieldset>
-                <label>{{'authentication.misc.username' | translate}}</label>
-                <input type="text" class="span3" ng-model="username"/>
-                <label>{{'authentication.misc.password' | translate}}</label>
-                <input type="password" class="span3" ng-model="password"/>
-                <label>{{'authentication.misc.remember' | translate}}</label>
-                <input type="checkbox" ng-model="remember"/>
-            </fieldset>
-            </p>
-            <div class="alert" ng-show="authenticationFailed">
-                {{'authentication.alert.failure' | translate}}
-            </div>
-        </div>
-        <div class="modal-footer">
-            <input type="submit" value="{{'authentication.action.login' | translate}}" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
-        </div>
+<section id="login-modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated">
+    <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
+        <h1 class="title">{{'authentication.misc.title' | translate}}</h1>
+
+        <p class="text-error" ng-show="authenticationFailed">
+            {{'authentication.alert.failure' | translate}}
+        </p>
+
+        <input class="field" type="text" ng-model="username"
+               placeholder="{{'authentication.misc.username' | translate}}">
+        <input class="field" type="password" ng-model="password"
+               placeholder="{{'authentication.misc.password' | translate}}">
+
+        <label class="checkbox-container">
+            <input type="checkbox" ng-model="remember">
+            <span class="checkbox-icon"></span>
+            {{'authentication.misc.remember' | translate}}
+        </label>
+
+        <input class="btn btn-large btn-primary" type="submit" value="{{'authentication.action.login' | translate}}"
+               ng-click="requestLogin()">
     </form>
-</div>
-<div class="modal-backdrop" ng-show="tenant != undefined && authenticated != undefined && !authenticated"></div>
+</section>
 
 <!-- Error modals -->
 
@@ -243,8 +259,8 @@
     <ng-include src="'/common/partials/serverError.html'"></ng-include>
 </script>
 
-<script type="text/ng-template" id="nameConflictError.html">
-    <ng-include src="'/common/partials/nameConflictError.html'"></ng-include>
+<script type="text/ng-template" id="conflictError.html">
+    <ng-include src="'/common/partials/nameConflictError.html?v=2'"></ng-include>
 </script>
 
 </body>

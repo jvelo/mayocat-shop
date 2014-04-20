@@ -1,8 +1,17 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.store.rdbms.dbi;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -55,7 +64,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
 
         this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
 
-        InputStream data = attachment.getData();
+        InputStream data = attachment.getData().getStream();
         try {
             // It's too bad we have to load the attachment data in memory. It appears Postgres's JDBC driver requires
             // to know in advance the length of the data to write (contrary to MySQL's one that can stream the data
@@ -87,19 +96,26 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
-    public void update(@Valid Attachment entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Attachment attachment) throws EntityDoesNotExistException, InvalidEntityException
     {
         this.dao.begin();
 
-        Attachment originalAttachment = this.findBySlug(entity.getSlug());
+        Attachment originalAttachment = this.findBySlug(attachment.getSlug());
 
         if (originalAttachment == null) {
             this.dao.commit();
             throw new EntityDoesNotExistException();
         }
 
-        entity.setId(originalAttachment.getId());
-        Integer updatedRows = this.dao.updateAttachment(entity);
+        attachment.setId(originalAttachment.getId());
+        Integer updatedRows = this.dao.updateAttachment(attachment);
+
+        if (attachment.getLocalizedVersions() != null && !attachment.getLocalizedVersions().isEmpty()) {
+            Map<Locale, Map<String, Object>> localizedVersions = attachment.getLocalizedVersions();
+            for (Locale locale : localizedVersions.keySet()) {
+                this.dao.createOrUpdateTranslation(attachment.getId(), locale, localizedVersions.get(locale));
+            }
+        }
 
         this.dao.commit();
 
@@ -179,7 +195,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     @Override
     public List<Attachment> findAllChildrenOfParentIds(List<UUID> parents, List<String> extensions)
     {
-        return this.dao.findAttachmentsOfEntities(parents, extensions);
+        return this.dao.findAttachmentsOfEntitiesWithExtensions(parents, extensions);
     }
 
     @Override

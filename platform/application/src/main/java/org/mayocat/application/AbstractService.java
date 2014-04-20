@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.application;
 
 import java.lang.reflect.Field;
@@ -8,26 +15,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.Filter;
+
 import org.mayocat.Module;
 import org.mayocat.accounts.AccountsModule;
 import org.mayocat.configuration.AbstractSettings;
 import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.jackson.NIOModule;
 import org.mayocat.configuration.jackson.TimeZoneModule;
-import org.mayocat.context.CookieSessionContainerFilter;
+import org.mayocat.context.FlashScopeCookieContainerFilter;
+import org.mayocat.context.SessionScopeCookieContainerFilter;
 import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.event.EventListener;
-import org.mayocat.files.FileWatcherManager;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
+import org.mayocat.jersey.JERSEY920WorkaroundServletFilter;
 import org.mayocat.lifecycle.Managed;
 import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.jackson.MayocatGroovyModule;
 import org.mayocat.rest.jackson.MayocatJodaModule;
 import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
+import org.mayocat.servlet.ServletFilter;
 import org.mayocat.task.Task;
 import org.mayocat.util.Utils;
 import org.slf4j.Logger;
@@ -54,7 +66,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
  */
 public abstract class AbstractService<C extends AbstractSettings> extends Service<C>
 {
-    protected static Set<String> staticPaths = new HashSet<String>();
+    protected static Set<String> staticPaths = new HashSet<>();
 
     private EmbeddableComponentManager componentManager;
 
@@ -67,6 +79,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     protected abstract void registerComponents(C configuration, Environment environment);
 
     private List<Class> requestFilters = Lists.newArrayList();
+
     private List<Class> responseFilters = Lists.newArrayList();
 
     public static Set<String> getStaticPaths()
@@ -83,6 +96,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         this.objectMapperFactory.registerModule(new NIOModule());
         this.objectMapperFactory.registerModule(new MayocatJodaModule());
         this.objectMapperFactory.registerModule(new MayocatLocaleBCP47LanguageTagModule());
+        this.objectMapperFactory.registerModule(new MayocatGroovyModule());
 
         this.addModule(new AccountsModule());
     }
@@ -91,7 +105,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
     public void run(C configuration, Environment environment) throws Exception
     {
         this.initializeComponentManager(configuration, environment);
-
+        registerServletFilters(environment);
         registerProviders(environment);
         registerResources(environment);
         registerEventListeners(environment);
@@ -99,14 +113,15 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         registerTasks(environment);
         registerManagedServices(environment);
 
-        environment.setJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
-                CookieSessionContainerFilter.class.getCanonicalName());
-        environment.getJerseyProperty(ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS);
+        // NOTE: remove this when we move to Jersey 2.0 or something other than Jersey
+        environment.addFilter(new JERSEY920WorkaroundServletFilter(), "/*");
 
-        // Default filters
-        addRequestFilter(CookieSessionContainerFilter.class);
+        // Default Jersey filters
+        addRequestFilter(SessionScopeCookieContainerFilter.class);
+        addRequestFilter(FlashScopeCookieContainerFilter.class);
         addRequestFilter(LocalizationContainerFilter.class);
-        addResponseFilter(CookieSessionContainerFilter.class);
+        addResponseFilter(SessionScopeCookieContainerFilter.class);
+        addResponseFilter(FlashScopeCookieContainerFilter.class);
 
         // Register Jersey container request filters
         environment.setJerseyProperty(
@@ -176,6 +191,18 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         componentManager.initialize(this.getClass().getClassLoader());
 
         Utils.setComponentManager(componentManager);
+    }
+
+    private void registerServletFilters(Environment environment) throws ComponentLookupException
+    {
+        Map<String, ServletFilter> servletFilters = componentManager.getInstanceMap(ServletFilter.class);
+        for (Map.Entry<String, ServletFilter> filter : servletFilters.entrySet()) {
+            if (!Filter.class.isAssignableFrom(filter.getValue().getClass())) {
+                LOGGER.warn("Ignoring servlet filter of class {} which does not implement Filter");
+            } else {
+                environment.addFilter((Filter) filter.getValue(), filter.getValue().urlPattern());
+            }
+        }
     }
 
     private void registerManagedServices(Environment environment) throws ComponentLookupException

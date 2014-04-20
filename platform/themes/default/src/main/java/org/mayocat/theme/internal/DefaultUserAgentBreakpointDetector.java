@@ -1,22 +1,33 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.theme.internal;
 
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.UserAgentBreakpointDetector;
+
+import com.google.common.base.Optional;
 
 /**
  * {@inheritDoc}
  *
  * Based on http://detectmobilebrowsers.com/
  *
+ * TODO: look forward the usage of UADetector instead: http://uadetector.sourceforge.net/
+ *
  * @version $Id$
  */
 public class DefaultUserAgentBreakpointDetector implements UserAgentBreakpointDetector
 {
     @Override
-    public Breakpoint getBreakpoint(String userAgent)
+    public Optional<Breakpoint> getBreakpoint(String userAgent)
     {
         if (userAgent == null) {
-            return Breakpoint.DEFAULT;
+            return Optional.absent();
         }
         if (userAgent.matches(
                 "(?i).*((android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec|hiptop" +
@@ -46,9 +57,9 @@ public class DefaultUserAgentBreakpointDetector implements UserAgentBreakpointDe
                                 "|vk(40|5[0-3]|\\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\\-| )" +
                                 "|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\\-|your|zeto|zte\\-"))
         {
-            return Breakpoint.MOBILE;
-        } else {
-            return Breakpoint.DEFAULT;
+            return Optional.of(Breakpoint.MOBILE);
         }
+
+        return Optional.absent();
     }
 }

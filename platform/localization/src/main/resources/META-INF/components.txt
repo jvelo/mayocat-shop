@@ -1,1 +1,3 @@
 org.mayocat.localization.internal.DefaultEntityLocalizationService
+org.mayocat.localization.internal.DefaultThemeLocalizationService
+org.mayocat.localization.rest.resources.LocalizationResource

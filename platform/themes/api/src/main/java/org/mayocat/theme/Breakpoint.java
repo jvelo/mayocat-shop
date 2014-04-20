@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.theme;
 
 /**
@@ -6,13 +13,14 @@ package org.mayocat.theme;
  *
  * See RESS: Responsive Design + Server Side Components http://www.lukew.com/ff/entry.asp?1392
  *
- * @see {@link UserAgentBreakpointDetector}
  * @version $Id$
+ * @see {@link UserAgentBreakpointDetector}
  */
 public enum Breakpoint
 {
-    DEFAULT (""),
-    MOBILE ("mobile");
+    MOBILE("mobile"),
+    TABLET("tablet"),
+    TV("tv");
 
     private String folder;
 

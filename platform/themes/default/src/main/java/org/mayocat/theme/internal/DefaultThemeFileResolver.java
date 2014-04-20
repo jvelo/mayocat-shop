@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.theme.internal;
 
 import java.io.IOException;
@@ -6,9 +13,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.Execution;
-import org.mayocat.files.FileManager;
+import org.mayocat.context.WebContext;
 import org.mayocat.theme.Breakpoint;
 import org.mayocat.theme.Model;
 import org.mayocat.theme.TemplateNotFoundException;
@@ -16,9 +21,9 @@ import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.theme.ThemeResource;
-import org.mayocat.theme.UserAgentBreakpointDetector;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -28,27 +33,19 @@ import com.google.common.io.Resources;
 /**
  * @version $Id$
  */
+@Component
 public class DefaultThemeFileResolver implements ThemeFileResolver
 {
     private static final String INDEX_HTML = "index.html";
 
     @Inject
-    private FileManager fileManager;
-
-    @Inject
-    private Execution execution;
-
-    @Inject
-    private ConfigurationService configurationService;
-
-    @Inject
-    private UserAgentBreakpointDetector breakpointDetector;
+    private WebContext context;
 
     @Inject
     private Logger logger;
 
     @Override
-    public Template getIndexTemplate(Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getIndexTemplate(Optional<Breakpoint> breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(INDEX_HTML, breakpoint);
@@ -60,7 +57,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     }
 
     @Override
-    public Template getTemplate(String name, Breakpoint breakpoint) throws TemplateNotFoundException
+    public Template getTemplate(String name, Optional<Breakpoint> breakpoint) throws TemplateNotFoundException
     {
         try {
             String content = this.getTemplateContent(name, breakpoint);
@@ -72,7 +69,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     }
 
     @Override
-    public ThemeResource getResource(String name, Breakpoint breakpoint)
+    public ThemeResource getResource(String name, Optional<Breakpoint> breakpoint)
     {
         try {
             ThemeResource result = getResource(getActiveTheme(), name, breakpoint);
@@ -93,16 +90,29 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return Optional.absent();
     }
 
-    private String generateTemplateId(String layoutName, Breakpoint breakpoint)
+    @Override
+    public Template getGlobalTemplate(String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException
     {
-        String themeName = execution.getContext().getTheme().getDefinition().getName();
+        try {
+            return new Template(generateTemplateId(name, breakpoint),
+                    Resources.toString(Resources.getResource("templates/" + name), Charsets.UTF_8), true);
+        } catch (IOException e) {
+            throw new TemplateNotFoundException();
+        }
+    }
+
+    private String generateTemplateId(String layoutName, Optional<Breakpoint> breakpoint)
+    {
+        String themeName = context.getTheme().getDefinition().getName();
         String templateId =
                 themeName.length() + themeName + "_" + breakpoint.toString().length() + breakpoint.toString()
                         + "_" + layoutName.length() + layoutName;
         return "" + templateId.hashCode();
     }
 
-    private String getTemplateContent(String name, Breakpoint breakpoint) throws TemplateNotFoundException, IOException
+    private String getTemplateContent(String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException, IOException
     {
         String result = getTemplateContent(getActiveTheme(), name, breakpoint);
         if (result == null) {
@@ -111,11 +121,11 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
         return result;
     }
 
-    private ThemeResource getResource(Theme theme, String name, Breakpoint breakpoint) throws IOException
+    private ThemeResource getResource(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
         Path path = theme.getPath();
-        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
-            path = path.resolve(breakpoint.getFolder());
+        if (breakpoint.isPresent()) {
+            path = path.resolve(breakpoint.get().getFolder());
         }
         path = path.resolve(name);
 
@@ -136,9 +146,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
                 break;
         }
 
-        if (breakpoint != null && breakpoint != Breakpoint.DEFAULT) {
+        if (breakpoint.isPresent()) {
             // Maybe without the breakpoint
-            return getResource(theme, name, Breakpoint.DEFAULT);
+            return getResource(theme, name, Optional.<Breakpoint>absent());
         }
 
         if (theme.getParent() != null) {
@@ -164,7 +174,7 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
      * @return the content of the template, or null if not found
      * @throws IOException when there is an IO exception getting the content
      */
-    private String getTemplateContent(Theme theme, String name, Breakpoint breakpoint) throws IOException
+    private String getTemplateContent(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
         ThemeResource resource = this.getResource(theme, name, breakpoint);
         if (resource == null) {
@@ -182,12 +192,12 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeDefinition getThemeDefinition()
     {
-        return execution.getContext().getTheme().getDefinition();
+        return context.getTheme().getDefinition();
     }
 
     private Theme getActiveTheme()
     {
-        return this.execution.getContext().getTheme();
+        return this.context.getTheme();
     }
 }
 

@@ -4,3 +4,4 @@ org.mayocat.shop.billing.store.jdbi.DBIOrderStore
 org.mayocat.shop.billing.api.resource.OrderResource
 org.mayocat.shop.billing.api.resource.TurnoverStatsResource
 org.mayocat.shop.billing.PaymentOperationEventListener
+org.mayocat.shop.billing.internal.SendEmailsWhenOrderIsPaid

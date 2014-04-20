@@ -2,3 +2,4 @@ org.mayocat.multitenancy.DefaultHostAndSubdomainSlugTenantResolver
 org.mayocat.multitenancy.TenantResolverProvider
 org.mayocat.multitenancy.DefaultHostAndSubdomainSlugTenantResolverServletEventListener
 org.mayocat.context.RequestContextInitializer
+org.mayocat.localization.RequestLocalizationFilter

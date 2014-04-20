@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.front.representation;
 
 import java.math.BigDecimal;
@@ -29,8 +36,6 @@ public class PriceRepresentation
         CurrencyUnit currencyUnit = CurrencyUnit.of(currency);
         this.amount = formatter.withLocale(locale)
                 .print(Money.of(currencyUnit, amount, RoundingMode.HALF_EVEN));
-
-        currencyUnit.getDecimalPlaces();
 
         this.currency = new CurrencyRepresentation(currency, locale);
 

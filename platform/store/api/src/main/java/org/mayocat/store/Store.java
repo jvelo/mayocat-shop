@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.store;
 
 import java.io.Serializable;
@@ -23,4 +30,6 @@ public interface Store<T extends Identifiable, K extends Serializable>
     List<T> findByIds(List<UUID> ids);
 
     T findById(UUID id);
+
+    // boolean exists(UUID id);
 }

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.billing.api.representation;
 
 import org.mayocat.shop.billing.model.Customer;
@@ -13,6 +20,8 @@ public class CustomerRepresentation
 
     private String email;
 
+    private String phoneNumber;
+
     public CustomerRepresentation()
     {
 
@@ -23,6 +32,7 @@ public class CustomerRepresentation
         setEmail(customer.getEmail());
         setFirstName(customer.getFirstName());
         setLastName(customer.getLastName());
+        setPhoneNumber(customer.getPhoneNumber());
     }
 
     public String getFirstName()
@@ -53,5 +63,15 @@ public class CustomerRepresentation
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public String getPhoneNumber()
+    {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
     }
 }

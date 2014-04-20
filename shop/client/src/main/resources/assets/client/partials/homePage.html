@@ -1,0 +1,120 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<h1 class="big">{{'content.title.homePage' | translate}}</h1>
+
+<article class="entity large">
+
+    <h3>{{'content.homePage.featuredProducts' | translate}}</h3>
+
+    <div ng-if="featuredProducts.length == 0 && !isLoading && !isDirty">
+        <div class="alert alert-info">{{'content.homePage.emptyFeaturedProductsList' | translate}}</div>
+    </div>
+
+    <ul class="entities thumbnails" ui-sortable="featuredProductsSortableOptions" ng-model="featuredProducts">
+        <li class="drag-me" ng-repeat="product in featuredProducts">
+            <div class="thumbnail">
+                <div class="wrapper">
+                    <span ng-if="product._embedded.featuredImage">
+                        <img ng-src="{{product._embedded.featuredImage.file._href}}?width=150&height=150"
+                             width="150" height="150"/>
+                        </span>
+                        <span ng-if="!product._embedded.featuredImage">
+                            <img src="http://placehold.it/150/ccc/ccc" width="150" heigt="150"/>
+                        </span>
+                    <div class="menu-wrapper">
+                        <ul class="menu">
+                            <li>
+                                <span class="btn btn-primary" ng-click="removeProduct(product)">
+                                    {{'global.actions.remove' | translate}}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="caption">
+                    {{product.title}}
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="entities thumbnails">
+        <li class="no-drag">
+            <div class="thumbnail add" ng-click="addProduct()">
+                <div class="wrapper">
+
+                </div>
+                <div class="caption">
+                    {{'content.homePage.addFeaturedProduct' | translate}}
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <div class="clearfix"></div>
+
+    <div class="buttons" ng-show="isDirty || isLoading || featuredProducts.length > 0">
+        <div class="hasLoading" ng-show="isDirty || featuredProducts.length > 0">
+            <button ng-click="save()" class="btn btn-large btn-primary">
+                {{'entity.action.save' | translate}}
+            </button>
+        </div>
+        <span ng-class="{'loading': isLoading}"></span>
+    </div>
+
+
+</article>
+
+<aside>
+
+
+
+</aside>
+
+<!-- Add variant modal -->
+<script type="text/ng-template" id="addFeaturedProduct.html">
+
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'content.homePage.addFeaturedProductModalTitle' | translate}}</h3>
+    </div>
+    <div class="modal-body entity">
+        <form>
+            <input type="text" ng-model="filter.title" placeholder="{{'global.filter' | translate}}"/>
+
+            <ul class='select entity list'>
+                <li ng-repeat="product in products" ng-class="{'disabled': isFeaturedAlready(product)}">
+                    <div class="thumb pull-left">
+                        <span ng-if="product._embedded.featuredImage">
+                            <img ng-src="{{product._embedded.featuredImage.file._href}}?width=40&height=40"
+                                 width="40" heigt="40"/>
+                        </span>
+                        <span ng-if="!product._embedded.featuredImage">
+                            <img src="http://placehold.it/40/ccc/ccc" width="40" heigt="40"/>
+                        </span>
+                    </div>
+                    <div class="pull-left entity-title">
+                        <span>{{product.title}}</span>
+                    </div>
+                    <div class="pull-right action-button">
+                        <button class="btn-small btn-primary"
+                                ng-click="selectProduct(product)">{{'global.select' | translate}}</button>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </li>
+            </ul>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+    </div>
+</script>

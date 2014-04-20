@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.cart.front.builder;
 
 import java.math.BigDecimal;
@@ -21,6 +28,7 @@ import org.mayocat.shop.cart.front.context.DeliveryTimeContext;
 import org.mayocat.shop.cart.front.context.ShippingOptionContext;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.catalog.front.representation.PriceRepresentation;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.context.ImageContext;
@@ -81,11 +89,17 @@ public class CartContextBuilder
                     @Override
                     public UUID apply(final Purchasable product)
                     {
-                        return product.getFeaturedImageId();
+                        if (product.getFeaturedImageId() != null) {
+                            return product.getFeaturedImageId();
+                        }
+                        if (product.getParent().isPresent() && product.getParent().get().isLoaded()) {
+                            return product.getParent().get().get().getFeaturedImageId();
+                        }
+                        return null;
                     }
                 }
         );
-        List<UUID> ids = new ArrayList<UUID>(Collections2.filter(featuredImageIds, Predicates.notNull()));
+        List<UUID> ids = new ArrayList<>(Collections2.filter(featuredImageIds, Predicates.notNull()));
         List<Attachment> allImages;
         List<Thumbnail> allThumbnails;
         if (ids.isEmpty()) {
@@ -100,12 +114,43 @@ public class CartContextBuilder
 
             LOGGER.debug("Adding purchasable {} to cart context", purchasable.getTitle());
 
+            Long quantity = items.get(purchasable);
+            final Purchasable product;
+            CartItemContext cir = new CartItemContext();
+            BigDecimal price;
+
+            if (purchasable.getParent().isPresent()) {
+                if (!purchasable.getParent().get().isLoaded()) {
+                    // This should never happen
+                    throw new RuntimeException("Can't build cart with a variant which parent product is not loaded");
+                }
+                product = purchasable.getParent().get().get();
+                cir.setVariant(purchasable.getTitle());
+
+                if (purchasable.getUnitPrice() != null) {
+                    price = purchasable.getUnitPrice();
+                }
+                else {
+                    price = product.getUnitPrice();
+                }
+            }
+            else {
+                product = purchasable;
+                price = product.getUnitPrice();
+            }
+
             Collection<Attachment> attachments = Collections2.filter(allImages, new Predicate<Attachment>()
             {
                 @Override
                 public boolean apply(@Nullable Attachment attachment)
                 {
-                    return attachment.getId().equals(purchasable.getFeaturedImageId());
+                    if (product.getFeaturedImageId() != null) {
+                        return attachment.getId().equals(product.getFeaturedImageId());
+                    }
+                    if (product.getParent().isPresent() && product.getParent().get().isLoaded()) {
+                        return attachment.getId().equals(product.getParent().get().get().getFeaturedImageId());
+                    }
+                    return false;
                 }
             });
             List<Image> images = new ArrayList<Image>();
@@ -122,19 +167,26 @@ public class CartContextBuilder
                 images.add(image);
             }
 
-            Long quantity = items.get(purchasable);
-
-            CartItemContext cir = new CartItemContext();
-            cir.setTitle(purchasable.getTitle());
-            cir.setDescription(purchasable.getDescription());
+            cir.setTitle(product.getTitle());
+            cir.setDescription(product.getDescription());
             cir.setQuantity(quantity);
+
+            if (Product.class.isAssignableFrom(product.getClass())) {
+                cir.setType("product");
+                cir.setSlug(((Product) product).getSlug());
+            } else {
+                cir.setType(product.getClass().getSimpleName().toLowerCase());
+            }
+
+            cir.setId(product.getId());
+
             if (images.size() > 0) {
                 ImageContext featuredImageContext = imageContextBuilder.createImageContext(images.get(0));
                 cir.setFeaturedImage(featuredImageContext);
             }
 
             PriceRepresentation unitPrice =
-                    new PriceRepresentation(purchasable.getUnitPrice(), cart.getCurrency(), locale);
+                    new PriceRepresentation(price, cart.getCurrency(), locale);
             PriceRepresentation itemTotal =
                     new PriceRepresentation(cart.getItemTotal(purchasable), cart.getCurrency(), locale);
 

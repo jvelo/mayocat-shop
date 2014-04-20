@@ -1,8 +1,20 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <h1 class="big">{{'order.title.orders' | translate}}</h1>
 
-<div class="orders row">
+<div class="loading" ng-show="isLoading"></div>
 
-    <div class="alert alert-info" ng-show="orders.length <= 0">{{'order.alert.empty' | translate}}</div>
+<div class="orders row" ng-show="!isLoading">
+    <div class="span9">
+        <div class="alert alert-info" ng-show="!orders || orders.length <= 0">{{'order.alert.empty' | translate}}</div>
+    </div>
 
     <div class="span9">
         <table class="table table-hover" ng-show="orders.length > 0">

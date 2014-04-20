@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
     'use strict'
@@ -9,59 +16,20 @@
     angular.module('mayocat.entities', [])
 
         .factory('entityMixins', [
+            'mixins',
             'entityBaseMixin',
             'entityModelMixin',
             'entityAddonsMixin',
             'entityLocalizationMixin',
             'entityImageMixin',
-            function () {
-                var allMixins = [
-                        'entityBaseMixin',
-                        'entityModelMixin',
-                        'entityAddonsMixin',
-                        'entityLocalizationMixin',
-                        'entityImageMixin'
-                    ],
-                    args = arguments;
-                return {
-                    extendAll: function ($scope, entityType, options) {
-                        // Make sure the options hash exists.
-                        options = typeof options === "undefined" ? {} : options;
-
-                        // Iterate over all mixins, find its option object in the global option hash, and then extend
-                        // the passed scope with it.
-                        for (var i = 0; i < allMixins.length; i++) {
-                            var mixin = allMixins[i];
-                            var mixinName = mixin.substring(6);
-                            mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
-                            var mixinOptions = options[mixinName];
-                            angular.extend($scope, args[i](entityType, mixinOptions));
-                        }
-                    },
-
-                    extend: function(mixins, $scope, entityType, options) {
-                        options = typeof options === "undefined" ? {} : options;
-
-                        // Support for "just one mixin"
-                        if (typeof mixins == "string") {
-                            options = {
-                                mixins: options
-                            };
-                            mixins = [ mixins ];
-                        }
-
-                        for (var i = 0; i < allMixins.length; i++) {
-                            var mixin = allMixins[i];
-                            var mixinName = mixin.substring(6);
-                            mixinName = mixinName.substring(0, mixinName.indexOf('Mixin')).toLowerCase();
-
-                            if (mixins.indexOf(mixinName) >= 0) {
-                                var mixinOptions = options[mixinName];
-                                angular.extend($scope, args[i](entityType, mixinOptions));
-                            }
-                        }
-                    }
-                }
+            function (mixins, base, model, addons, localization, image) {
+                return mixins({
+                    base: base,
+                    model: model,
+                    addons: addons,
+                    localization: localization,
+                    image: image
+                });
             }
         ])
 
@@ -97,7 +65,7 @@
 
                 $rootScope.entity = {
                     type: entityType,
-                    uri: (options.apiBase || "/api/" + entityType + "s/") + slug,
+                    uri: (options.apiBase || "/api/" + entityType + "s/") + (options.noSlug ? "" : slug),
                     slug: slug
                 };
                 $rootScope.$broadcast("entity:initialized", $rootScope.entity);
@@ -165,24 +133,25 @@
                     scope.$on("entity:editedLocaleChanged", function (event, data) {
                         // Save edited version if necessary
 
-                        if (typeof scope[entityType] === "undefined" || !scope[entityType].$resolved) {
+                        if (typeof scope[entityType] === "undefined" ||
+                            (typeof scope[entityType].$resolved !== 'undefined' && !scope[entityType].$resolved)) {
                             // We are not ready
                             return;
                         }
 
-                        if (typeof scope[entityType].localizedVersions === "undefined") {
-                            scope[entityType].localizedVersions = {};
+                        if (typeof scope[entityType]._localized === "undefined") {
+                            scope[entityType]._localized = {};
                         }
 
-                        if (typeof scope[entityType].localizedVersions[data.locale] !== 'undefined' && !data.isMainLocale) {
+                        if (typeof scope[entityType]._localized[data.locale] !== 'undefined' && !data.isMainLocale) {
                             // If there is a localized version with the new locale to be edited, then use it
-                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                            scope[localizedKey] = scope[entityType]._localized[data.locale];
 
                         }
                         else if (!data.isMainLocale) {
                             // Else if it's not the main locale to be edited, edit it
-                            scope[entityType].localizedVersions[data.locale] = {};
-                            scope[localizedKey] = scope[entityType].localizedVersions[data.locale];
+                            scope[entityType]._localized[data.locale] = {};
+                            scope[localizedKey] = scope[entityType]._localized[data.locale];
 
                         } else {
                             // Else edit the main locale
@@ -196,57 +165,81 @@
             }
         }])
 
-        .factory('entityImageMixin', ['imageService', '$http', '$rootScope', '$modal', function (imageService, $http, $rootScope, $modal) {
-            return function (entityType) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', 'entityLocalizationMixin',
+            function ($http, $rootScope, $modal, entityLocalizationMixin) {
+            return function (entityType, options) {
                 var mixin = {};
 
-                mixin.editThumbnails = function (image) {
-                    var scope = $rootScope.$new(true);
-                    scope.entityType = entityType;
-                    scope.image = image;
+                options = typeof options === "undefined" ? {} : options;
 
-                    $modal.open({
-                        templateUrl: '/common/partials/editThumbnails.html',
-                        windowClass: 'editThumbnails',
-                        controller: 'ThumbnailsEditorController',
-                        scope: scope
+                mixin.editImage = function (image) {
+                    var scope = this,
+                        modalScope = $rootScope.$new(true);
+                    modalScope.entityType = entityType;
+                    modalScope.image = image;
+
+                    scope.modalInstance = $modal.open({
+                        templateUrl: '/common/partials/editImage.html?3',
+                        windowClass: 'editImage',
+                        controller: 'ImageEditorController',
+                        scope: modalScope
                     });
-                }
-
-                mixin.updateImageMeta = function (image) {
-                    image.isSaving = true;
-
-                    var scope = this;
-
-                    $http.post($rootScope.entity.uri +  "/images/" + image.slug, image)
-                        .success(function(data, status) {
-                            image.isSaving = false;
-
-                            if(status < 400) {
-                                image.editMeta = false;
-                            } else {
-                                // Generic error
-                                $modal.open({ templateUrl: 'serverError.html' });
-                            }
-                        })
-                        .error(function() {
-                            image.isSaving = false;
-                            // Generic error
-                            $modal.open({ templateUrl: 'serverError.html' });
-                        });
+                    scope.modalInstance.result.then(function () {
+                        scope.reloadImages();
+                    });
                 }
 
                 mixin.reloadImages = function () {
                     var scope = this;
                     $http.get($rootScope.entity.uri + "/images")
                         .success(function (data) {
+
+                            // TODO
+                            // remove when all entities have adopted the new API model (_embedded images, see below)
                             scope[entityType].images = data;
+
+                            if (typeof scope[entityType]._embedded !== "undefined") {
+                                scope[entityType]._embedded.images = data;
+                            }
+
+                            // Optional callback if any
+                            typeof options.afterReloadingImages === 'function'
+                                && options.afterReloadingImages(scope[entityType].images);
                         });
                 }
 
                 mixin.selectFeatureImage = function (image) {
-                    var scope = this;
-                    imageService.selectFeatured(scope[entityType], image);
+                    var scope = this,
+                        entity = scope[entityType];
+
+                    if (typeof entity._embedded === 'undefined') {
+                        // TODO
+                        // remove when all entities have adopted the new API model (_embedded images, see below)
+                        for (var img in entity.images) {
+                            if (entity.images.hasOwnProperty(img)) {
+                                if (entity.images[img].href === image.href) {
+                                    entity.images[img].featured = true;
+                                    entity.featuredImage = entity.images[img];
+                                }
+                                else {
+                                    entity.images[img].featured = false;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        for (var img in entity._embedded.images) {
+                            if (entity._embedded.images.hasOwnProperty(img)) {
+                                if (entity._embedded.images[img]._href === image._href) {
+                                    entity._embedded.images[img].featured = true;
+                                    entity._embedded.featuredImage = entity.images[img];
+                                }
+                                else {
+                                    entity._embedded.images[img].featured = false;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 mixin.removeImage = function (image) {
@@ -265,10 +258,16 @@
             }
         }])
 
-        .factory('entityLocalizationService', ['$q', 'configurationService', function ($q, configurationService) {
+        .factory('entityLocalizationService', ['$q', '$rootScope', 'configurationService', function ($q, $rootScope, configurationService) {
 
             var locales,
                 promise;
+
+            $rootScope.$on("configuration:updated", function () {
+                locales = null;
+                promise = null;
+                $rootScope.$broadcast("entities:locales:changed");
+            });
 
             var getLocales = function () {
 
@@ -352,17 +351,39 @@
                         }
                     });
 
-                    localizationService.getLocales().then(function (locales) {
-                        $scope.mainLocale = locales.main;
-                        $scope.selectedLocale = $scope.mainLocale;
-                        $scope.locales = [ locales.main ];
-                        $scope.locales.push.apply($scope.locales, locales.others);
+                    function initLocales($scope) {
+                        localizationService.getLocales().then(function (locales) {
+                            $scope.mainLocale = locales.main;
+                            $scope.selectedLocale = $scope.mainLocale;
+                            $scope.locales = [ locales.main ];
+                            $scope.locales.push.apply($scope.locales, locales.others);
 
-                        if ($scope.locales.length === 1) {
-                            // If there is only one locale, we don't display a locale switcher, but the plain field
-                            $($element).removeClass("locales-wrapper input-append");
-                            $($element).find(".locales-switch").addClass("hidden");
-                        }
+                            if ($scope.locales.length === 1) {
+                                // If there is only one locale, we don't display a locale switcher, but the plain field
+                                $($element).removeClass("locales-wrapper input-append");
+                                $($element).find(".locales-switch").addClass("hidden");
+                            }
+                        });
+                    }
+
+                    initLocales($scope);
+
+                    $rootScope.$on("entities:locales:changed", function () {
+                            initLocales($scope);
+                    });
+
+                    // Add a class to the wrapper when the dropdown is displayed.
+                    var $btnGroup = $element.find('.locales-switch .btn-group'),
+                        observer = new MutationObserver(function() {
+                            $element.toggleClass('locales-active', $btnGroup.hasClass('open'));
+                        });
+
+                    observer.observe($btnGroup.get(0), {
+                        attributes: true,
+                        childList: false,
+                        characterData: false,
+                        subtree: false,
+                        attributeFilter: ['class']
                     });
                 }
             }

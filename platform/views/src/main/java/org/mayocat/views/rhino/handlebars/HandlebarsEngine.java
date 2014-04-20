@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.views.rhino.handlebars;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.util.Map;
 
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
@@ -31,25 +42,33 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     @Inject
     private Logger logger;
 
-    private enum JSFile {
+    @Inject
+    private Map<String, HelpersScript> helpers;
 
-        HANDLEBARS("handlebars.js", "javascripts/vendor/"),
-        SWAG_HELPERS("swag.min.js", "javascripts/vendor/"),
-        MAYO_HELPERS("helpers.js", "javascripts/handlebars/");
+    private enum JSFile
+    {
+
+        HANDLEBARS("handlebars.js", "javascripts/vendor"),
+        SWAG_HELPERS("swag.min.js", "javascripts/vendor"),
+        MAYO_HELPERS("helpers.js", "javascripts/handlebars");
 
         private String fileName;
+
         private String path;
+
         JSFile(String fileName, String path)
         {
             this.fileName = fileName;
             this.path = path;
         }
 
-        private String getFileName() {
+        private String getFileName()
+        {
             return fileName;
         }
 
-        private String getFilePath() {
+        private String getFilePath()
+        {
             return path + "/" + getFileName();
         }
     }
@@ -60,7 +79,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    protected void initialize()
+    protected void initializeEngine()
     {
         try {
             Reader helpersReader = getResourceReader(JSFile.MAYO_HELPERS.getFilePath());
@@ -76,12 +95,20 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
                         null);
                 // Export the global object as "window" otherwise swag.js doesn't know in which environment it runs
                 // and fails to initialize
-                engineContext.evaluateString(globalScope, "var window = this;", "fixswag.js", 0 , null);
+                engineContext.evaluateString(globalScope, "var window = this;", "fixswag.js", 0, null);
                 engineContext.evaluateReader(globalScope,
                         swagHelpersReader,
                         JSFile.SWAG_HELPERS.getFileName(),
                         0,
                         null);
+
+                // All other helpers declared as handlers.
+                for (String scriptName : helpers.keySet()) {
+                    Reader helper = new BufferedReader(new InputStreamReader(
+                            this.getClass().getResourceAsStream("/" + helpers.get(scriptName).getPath().toString()))
+                    );
+                    engineContext.evaluateReader(globalScope, helper, scriptName, 0, null);
+                }
             } finally {
                 Context.exit();
             }
@@ -91,7 +118,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public void register(Template template) throws TemplateEngineException
+    public synchronized void register(Template template) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
@@ -125,7 +152,7 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
     }
 
     @Override
-    public String render(String templateName, String json) throws TemplateEngineException
+    public synchronized String render(String templateName, String json) throws TemplateEngineException
     {
         Context context = Context.enter();
         try {
@@ -153,8 +180,6 @@ public class HandlebarsEngine extends AbstractRhinoEngine implements TemplateEng
 
     private static Reader getResourceReader(String resource) throws IOException
     {
-        return Resources.newReaderSupplier(
-                Resources.getResource(resource), Charsets.UTF_8
-        ).getInput();
+        return Resources.newReaderSupplier(Resources.getResource(resource), Charsets.UTF_8).getInput();
     }
 }

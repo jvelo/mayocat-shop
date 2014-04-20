@@ -1,0 +1,26 @@
+group EntityListDAO;
+
+createEntityList() ::= <<
+    INSERT INTO entity_list (entity_id, entity_type, hint, entities)
+    VALUES (:list.id,
+            :list.type,
+            :list.hint,
+            :list.entities)
+>>
+
+updateEntityList() ::= <<
+    UPDATE entity_list
+    SET    entity_type = :list.type,
+           hint = :list.hint,
+           entities = :list.entities
+    WHERE  entity_id = :list.id
+>>
+
+findByHint() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN entity_list ON entity.id = entity_list.entity_id
+    WHERE   entity.type = 'entity_list'
+        AND entity.tenant_id = :tenant.id
+        AND entity_list.hint = :hint
+>>

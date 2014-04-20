@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.application;
 
 import org.mayocat.application.AbstractService;
@@ -9,7 +16,11 @@ import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopSettings;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArrayArgumentFactory;
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.logging.PrintStreamLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentRepositoryException;
 
@@ -19,6 +30,9 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.TimerContext;
 
 public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
@@ -31,7 +45,13 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
     public static void main(String[] args) throws Exception
     {
+        Timer timer = Metrics.newTimer(MayocatShopService.class, "startUpTimer");
+        TimerContext context = timer.time();
         new MayocatShopService().run(args);
+        context.stop();
+
+        Logger logger = LoggerFactory.getLogger(MayocatShopService.class);
+        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.min()));
     }
 
     @Override
@@ -69,6 +89,14 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "jdbi");
         jdbi.registerArgumentFactory(new PostgresUUIDArgumentFactory());
+        jdbi.registerArgumentFactory(new PostgresUUIDArrayArgumentFactory());
+
+        if (configuration.getDevelopmentEnvironment().isEnabled() &&
+                configuration.getDevelopmentEnvironment().isLogDatabaseRequests())
+        {
+            jdbi.setSQLLog(new PrintStreamLog());
+        }
+
         final DBIProvider dbi = new DBIProvider()
         {
             @Override

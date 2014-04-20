@@ -1,0 +1,12 @@
+name: Pagination theme
+
+pagination:
+  products:
+    itemsPerPage: 10
+  collection:
+    itemsPerPage: 25
+    models:
+      custom-model:
+        itemsPerPage: 12
+  news:
+    itemsPerPage: 10

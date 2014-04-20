@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
     'use strict'
 
@@ -29,15 +36,32 @@
                 } else {
                     $http.get('/api/locales')
                         .success(function (result) {
-                            data = result;
-                            deferred.resolve(result);
+                            data = processData(result);
+                            deferred.resolve(data);
                         })
                         .error(function () {
                             deferred.reject('Failed to load data');
                         })
                 }
+
                 return dataPromise;
-            }
+            };
+
+            // Dissociates the locales from their variants.
+            var processData = function(data) {
+                var locales = data.filter(function(value, index) {
+                    return !~value.tag.indexOf('-');
+                });
+
+                var variants = data.filter(function(value, index) {
+                    return ~value.tag.indexOf('-');
+                });
+
+                return {
+                    locales: locales,
+                    variants: variants
+                };
+            };
 
             return {
                 getData: loadData

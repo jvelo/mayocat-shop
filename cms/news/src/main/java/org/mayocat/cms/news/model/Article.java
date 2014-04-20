@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.cms.news.model;
 
 import java.util.Date;
@@ -16,6 +23,7 @@ import org.mayocat.model.HasModel;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.LocalizedField;
+import org.mayocat.model.annotation.PluralForm;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -23,6 +31,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
+@PluralForm("news")
 public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
 {
     private UUID id;
@@ -32,7 +41,7 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
     @Size(min = 1)
     private String slug;
 
-    @LocalizedField(type = LocalizationFieldType.SMALL)
+    @LocalizedField
     @Index
     @NotNull
     public String title;
@@ -163,7 +172,9 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
         }
         final Article other = (Article) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
+        return     Objects.equal(this.id, other.id)
+                && Objects.equal(this.title, other.title)
+                && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.content, other.content);
     }
 

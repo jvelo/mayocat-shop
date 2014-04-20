@@ -1,5 +1,14 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.model;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -7,13 +16,14 @@ import javax.validation.constraints.Size;
 
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
+import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 
-public class Collection implements Entity, HasFeaturedImage
+public class Collection implements Entity, HasFeaturedImage, Localized
 {
     private UUID id;
 
@@ -22,16 +32,18 @@ public class Collection implements Entity, HasFeaturedImage
     @Size(min = 1)
     private String slug;
 
-    @LocalizedField(type = LocalizationFieldType.SMALL)
+    @LocalizedField
     @Index
     @NotNull
     private String title;
 
-    @LocalizedField(type = LocalizationFieldType.MEDIUM)
+    @LocalizedField
     @Index
     private String description;
 
     private UUID featuredImageId;
+
+    private Map<Locale, Map<String, Object>> localizedVersions;
 
     public Collection()
     {
@@ -95,6 +107,19 @@ public class Collection implements Entity, HasFeaturedImage
         this.featuredImageId = featuredImageId;
     }
 
+
+    public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)
+    {
+        this.localizedVersions = versions;
+    }
+
+
+    @Override
+    public Map<Locale, Map<String, Object>> getLocalizedVersions()
+    {
+        return localizedVersions;
+    }
+
     // //////////////////////////////////////////////
 
     @Override
@@ -108,7 +133,9 @@ public class Collection implements Entity, HasFeaturedImage
         }
         final Collection other = (Collection) obj;
 
-        return Objects.equal(this.title, other.title) && Objects.equal(this.slug, other.slug)
+        return Objects.equal(this.id, other.id)
+            && Objects.equal(this.title, other.title)
+            && Objects.equal(this.slug, other.slug)
             && Objects.equal(this.description, other.description);
     }
 
@@ -123,5 +150,4 @@ public class Collection implements Entity, HasFeaturedImage
     {
         return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
     }
-
 }

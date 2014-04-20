@@ -1,0 +1,16 @@
+<div class="page">
+    {{#page}}
+        <h1 class="fn">{{title}}</h1>
+
+        {{#content}}
+            <div class="content">
+                {{this}}
+            </div>
+        {{/content}}
+
+        {{!-- There shouldn't be any placeholders in pages.
+        {{includeTemplate 'images_gallery.html'}}
+          --}}
+
+    {{/page}}
+</div>

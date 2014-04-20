@@ -1,10 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.12-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-client</artifactId>
@@ -51,6 +59,7 @@
                         <include>assets/common/javascripts/time.js</include>
                         <include>assets/common/javascripts/locales.js</include>
                         <include>assets/common/javascripts/configuration.js</include>
+                        <include>assets/common/javascripts/mixins.js</include>
                         <include>assets/common/javascripts/entities.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
                         <include>assets/client/javascripts/settings.js</include>
@@ -64,6 +73,7 @@
                         <include>assets/client/javascripts/page.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/money.js</include>
+                        <include>assets/client/javascripts/dashboard.js</include>
                         <include>assets/client/javascripts/orders.js</include>
                         <include>assets/client/javascripts/order.js</include>
                         <include>assets/client/javascripts/app.js</include>
@@ -93,6 +103,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+              <groupId>com.mycila</groupId>
+              <artifactId>license-maven-plugin</artifactId>
+              <configuration>
+                <excludes>
+                  <exclude>**/.idea/**</exclude>
+                  <exclude>**/vendor/**</exclude>
+                  <exclude>**/polyfill.js</exclude>
+                </excludes>
+              </configuration>
             </plugin>
         </plugins>
     </build>

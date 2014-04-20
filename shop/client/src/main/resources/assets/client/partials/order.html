@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <h1 class="small" ng-show="!isNew()">{{'order.title.order' | translate}}</h1>
 <span class="pull-right">
     <a ng-click="setRoute('/orders/')">{{'entity.action.back' | translate}}</a>
@@ -15,6 +24,12 @@
         <div class="block">
             <h3>
                 {{'order.misc.statusLong' | translate}}
+
+                <small class="link pull-right">
+                    <a ng-click="changeStatus()">
+                        {{'order.misc.changeStatus' | translate}}
+                    </a>
+                </small>
             </h3>
 
             <div class="wizard">
@@ -67,6 +82,11 @@
                         <small>
                             {{item.description}}
                         </small>
+                        <dl ng-repeat="addon in item.addons"><!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
+                            <dt>{{addon.name}}</dt>
+                            <dd>{{addon.value}}</dd>
+                        </dl>
+
                     </td>
                     <td>{{item.unitPrice| money:'EUR'}} {{order.currency}}</td>
                     <td>{{item.quantity}}</td>
@@ -109,6 +129,9 @@
                 <div>
                     <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
                 </div>
+                <div>
+                    <a class="email"a href="tel:{{order.customer.phoneNumber}}">{{order.customer.phoneNumber}}</a>
+                </div>
 
                 <div ng-show="order.deliveryAddress">
                     <strong>{{'order.misc.deliveryAddress' | translate}}</strong>
@@ -118,11 +141,29 @@
                         <div class="street-address">{{order.deliveryAddress.street}}</div>
                         <span class="postal-code">{{order.deliveryAddress.zip}}</span>
                         <span class="locality">{{order.deliveryAddress.city}}</span>
-
                         <div class="country-name">{{order.deliveryAddress.country}}</div>
                     </div>
                 </div>
+
+                <div ng-show="order.billingAddress">
+                    <strong>{{'order.misc.billingAddress' | translate}}</strong>
+
+                    <div class="adr">
+                        <div class="fn">{{order.billingAddress.fullName}}</div>
+                        <div class="street-address">{{order.billingAddress.street}}</div>
+                        <span class="postal-code">{{order.billingAddress.zip}}</span>
+                        <span class="locality">{{order.billingAddress.city}}</span>
+                        <div class="country-name">{{order.billingAddress.country}}</div>
+                    </div>
+                </div>
+
             </div>
+        </div>
+
+        <div class="block" ng-show="order.additionalInformation">
+            <h3>{{'order.misc.additionalInformation' | translate}}</h3>
+
+            <div>{{order.additionalInformation}}</div>
         </div>
 
         <aside>
@@ -132,3 +173,39 @@
     </div>
 </div>
 
+
+<!-- Change status modal -->
+<script type="text/ng-template" id="changeStatus.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'order.misc.changeStatus' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+
+            <!-- Status -->
+            <div class="block">
+                <h3>{{'order.misc.statusLong' | translate}}</h3>
+
+                <div>
+                    <select ng-model="order.status">
+                        <option value="WAITING_FOR_PAYMENT">{{'order.status.waitingForPayment' | translate}}</option>
+                        <option value="PAID">{{'order.status.paid' | translate}}</option>
+                        <option value="PREPARED">{{'order.status.prepared' | translate}}</option>
+                        <option value="SHIPPED">{{'order.status.shipped' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-primary" ng-click="$close()">
+            {{'entity.action.update' | translate}}
+        </button>
+    </div>
+</script>

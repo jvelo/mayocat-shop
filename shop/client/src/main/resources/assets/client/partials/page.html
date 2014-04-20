@@ -1,11 +1,20 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <h1 class="small" ng-show="!isNew()">{{'content.title.editPage' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newPage' | translate}}</h1>
 
-<form name="pageForm">
+<div class="loading" ng-show="!page.slug && !isNew()"></div>
+<form name="pageForm" ng-show="page.slug || isNew()">
+
     <article class="entity">
-
         <div>
-
             <!-- Title -->
             <h1>
                 <input type="text" class="title" ng-model="localizedPage.title" localized placeholder="{{'content.placeholder.pageTitle' | translate}}" required />
@@ -20,10 +29,10 @@
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
-                    <li ng-repeat="image in page.images">
+                    <li ng-repeat="image in page._embedded.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <span class="featured-star" ng-class="{featured: image.featured}"
@@ -34,11 +43,8 @@
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li ng-click="editThumbnails(image)">
-                                            {{'entity.action.editThumbnails' | translate}}
-                                        </li>
-                                        <li ng-click="image.editMeta = true">
-                                            {{'image.action.editMetadata' | translate}}
+                                        <li ng-click="editImage(image)">
+                                            {{'entity.action.editImage' | translate}}
                                         </li>
                                         <li ng-click="removeImage(image)">
                                             {{'entity.action.remove' | translate}}
@@ -137,7 +143,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small class="clickme" ng-click="confirmDeletion()">
+            <small class="click-me" ng-click="confirmDeletion()">
                 {{'content.action.deletePage' | translate}}
             </small>
         </div>

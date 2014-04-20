@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.internal;
 
 import java.util.Arrays;
@@ -67,6 +74,9 @@ public class UpdateStockWhenOrderIsPaid implements EventListener
                 Product product = productStore.get().findById(itemId);
                 if (product.getStock() != null) {
                     productStore.get().updateStock(itemId, -quantity);
+                } else if (product.getParentId() != null) {
+                    Product parent = productStore.get().findById(product.getParentId());
+                    productStore.get().updateStock(product.getParentId(), -quantity);
                 }
             } catch (EntityDoesNotExistException e) {
                 // Ignore, there is just no stock to update

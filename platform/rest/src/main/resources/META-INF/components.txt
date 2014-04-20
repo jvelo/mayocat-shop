@@ -1,7 +1,6 @@
 org.mayocat.rest.jersey.BreakpointProvider
 org.mayocat.rest.jersey.ImageOptionsProvider
 org.mayocat.rest.jersey.LocaleProvider
-org.mayocat.rest.views.FrontViewMessageBodyWriter
 org.mayocat.rest.resources.AttachmentResource
 org.mayocat.rest.resources.ImageResource
 org.mayocat.rest.resources.LocalesResource

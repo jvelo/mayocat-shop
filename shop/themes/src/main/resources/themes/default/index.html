@@ -29,7 +29,16 @@
 <header>
     <div id="top-bar">
         <div class="content">
-            <div class="cart">
+            <div>
+                <span class="locales">
+                {{#eachProperty locales}}
+                    {{#if value.current}}
+                        {{key}}
+                    {{else}}
+                        <a href="{{value.url}}">{{key}}</a>
+                    {{/if}}
+                {{/eachProperty}}
+                </span>
                 <a href="/cart">
                     {{#cart}}
                         {{numberOfItems}} {{inflect numberOfItems "item" "items"}} |
@@ -50,7 +59,7 @@
                 <img src="{{theme_site_logo_url}}" alt='{{title}}'/>
                 {{/logo}}
                 {{^logo}}
-                <img src="{{resources 'images/logo.png'}}" alt='{{site.title}}'/>
+                <img src="{{resource 'images/logo.png'}}" alt='{{site.title}}'/>
                 {{/logo}}
             </a>
             {{/site}}
@@ -64,11 +73,11 @@
                     {{#isPath '/'}} class="active" {{/isPath}}>
                     <a href="/products/">Products</a>
                     {{#any collections}}
-                    <ul>
-                        {{#collections}}
-                        <li><a href="{{url}}">{{title}}</a></li>
-                        {{/collections}}
-                    </ul>
+                        <ul>
+                            {{#collections}}
+                                <li {{#if current}}class="current"{{/if}}><a href="{{url}}">{{title}}</a></li>
+                            {{/collections}}
+                        </ul>
                     {{/any}}
                 </li>
                 <li{{#isPath '/news/'}} class="active" {{/isPath}}><a href="/news/">News</a></li>
@@ -82,7 +91,7 @@
 
 <section id="content" role="main" class="{{template}} ">
 
-    {{include layout}}
+    {{include templateContent}}
 
 </section>
 

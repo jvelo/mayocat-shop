@@ -1,4 +1,11 @@
-(function () {
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+(function (Mayocat) {
     'use strict';
 
     var frLocalization = {
@@ -6,9 +13,15 @@
         global: {
             actions: {
                 add: "Ajouter",
-                confirm: "Confirmer",
-                cancel: "Annuler"
-            }
+                remove: "Retirer",
+                close: "Fermer"
+            },
+            validation: {
+                required : "Requis"
+            },
+            conflict: "Conflit",
+            filter: "Filtrer",
+            select: "Selectionner"
         },
         entity: {
             misc: {
@@ -29,8 +42,7 @@
                 cancel: "Annuler",
                 remove: "Retirer",
                 back: "Retour",
-
-                editThumbnails: "Modifier les miniatures"
+                editImage: "Modifier l'image"
             },
 
             alert: {
@@ -38,20 +50,17 @@
             }
         },
 
-        home: {
-            title: {
-                welcome: "Bienvenue"
-            },
-
-            explanation: {
-                home: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits."
-            }
+        dashboard: {
+            title: "Bienvenue",
+            introduction: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits.",
+            latestOrders: "Dernières commandes",
+            seeAllOrders: "Voir toutes les commandes"
         },
 
         authentication: {
             misc: {
-                title: "Authentification requise",
-                username: "Nom d'utilisateur ou adresse email",
+                title: "Bienvenue sur Mayocat Shop",
+                username: "Nom d'utilisateur",
                 password: "Mot de passe",
                 remember: "Se souvenir de moi"
             },
@@ -90,17 +99,13 @@
             }
         },
 
-        thumbnailEditor: {
-            misc: {
-                editing: "Modification de :",
-            },
-
+        imageEditor: {
             title: {
-                editThumbnails: "Modification des miniatures"
+                editImage: "Editer l'image"
             },
 
             action: {
-                saveAndNext: "Sauvegarder et continuer",
+                save: "Sauvegarder",
                 close: "Fermer"
             }
         },
@@ -116,13 +121,16 @@
                 unitPrice: "Prix unitaire",
                 shipping: "Frais de port",
                 deliveryAddress: "Adresse de livraison",
+                billingAddress: "Adresse de facturation",
+                additionalInformation:  "Informations complémentaires",
+                changeStatus: "Changer l'état",
 
                 orderName: "Commande \\#{slug}",
                 ordersNumber: "pour {numberOfOrders} {numberOfOrders, plural, one{commande} other{commandes}}",
 
                 itemsNumber: "{numberOfItems} {numberOfItems, plural, one{article} other{articles}}",
                 itemsTotal: "Coût total (sans frais de port)",
-                shippingCalculation: "{title} (calculé par {strategy})"
+                shippingCalculation: "{title} (calculé par {strategy, select, flat{forfait} weight{poids} price{prix} other{NA}})"
             },
 
             title: {
@@ -209,6 +217,21 @@
             alert: {
                 confirmProductDeletion: "Veuillez confirmer la suppression de ce produit. Cette opération ne peut pas être annulée !",
                 confirmCollectionDeletion: "Veuillez confirmer la suppression de cette collection. Cette opération ne peut pas être annulée !"
+            },
+
+            variants: {
+                title: "Déclinaisons",
+                price: "Prix",
+                stock: "Stock",
+                add: "Ajouter une déclinaison",
+                edit: "Editer",
+                delete: "Supprimer",
+                create: "Créer la déclinaison",
+                edition: "Déclinaison: {variantTitle}",
+                update: "Mettre à jour",
+                conflict: "Cette déclinaison existe déjà.",
+                confirmVariantDeletion: "Veuillez confirmer la suppression de cette déclinaison. Cette opération ne peut pas être annulée !",
+                deleteVariant: "Supprimer la déclinaison"
             }
         },
 
@@ -240,6 +263,8 @@
             },
 
             title: {
+                homePage: "Page d'accueil",
+
                 pages: "Pages",
                 allPages: "Toutes les pages",
                 newPage: "Nouvelle page",
@@ -283,10 +308,27 @@
             alert: {
                 confirmPageDeletion: "Veuillez confirmer la suppression de cette page. Cette opération ne peut pas être annulée !",
                 confirmArticleDeletion: "Veuillez confirmer la suppression de cette actualité. Cette opération ne peut pas être annulée !"
+            },
+
+            homePage: {
+                featuredProducts: "Produits à la une",
+                addFeaturedProduct: "Ajouter un produit",
+                addFeaturedProductModalTitle: "Ajouter un produit à la une",
+                emptyFeaturedProductsList: "Vous pouvez ici gérer une liste de produits à la une qui apparaîtront sur la page d'accueil de votre boutique (si votre thème les supportes)."
             }
         },
 
         settings: {
+
+            tenant: {
+                shopName: "Nom de la boutique",
+                shopNamePlaceholder: "Entrez le nom de la boutique",
+                shopDescription: "Description de la boutique",
+                contactEmail: "Email de contact",
+                contactEmailPlaceholder: "L'email auquel seront envoyées les notifications",
+                shopLogo: "Logo de la boutique"
+            },
+
             misc: {
                 general: "Général",
                 shop: "Boutique",
@@ -298,10 +340,9 @@
                 defaultLanguage: "Langage par défaut",
                 otherLanguages: "Autres langages",
                 selectALanguage: "-- Choisir un langage --",
+                languagesGroup: "Langages",
+                variantsGroup: "Variantes",
                 theme: "Thème",
-
-                shopName: "Nom de la boutique",
-                shopLogo: "Logo de la boutique",
 
                 byWeight: "Selon le poids",
                 byPrice: "Selon le prix",
@@ -336,7 +377,8 @@
 
                 carrierDestination: "{numberOfDestinations, plural, one{Destination} other{Destinations}} :",
                 deliveryTime: "Temps de livraison :",
-                deliveryDays: "{deliveryMaximumDays, plural, one{jour} other{jours}}"
+                deliveryDays: "{deliveryMaximumDays, plural, one{jour} other{jours}}",
+                costPerOrderAndPerItem: "{costPerOrder} {mainCurrency} par commande, {costPerItem} {mainCurrency} par article"
             },
 
             title: {
@@ -362,10 +404,6 @@
                 flatRate: "La stratégie de facturation des frais de port selon un coût forfaitaire n'est pas activée. Activez-la si vous souhaitez facturer les frais de port à vos clients en fonction du nombre d'articles en plus d'un coût forfaitaire.",
                 none: "Utilisez cette section si vous souhaitez désactiver toute facturation des frais de ports.",
                 costsDisabled: "La facturation des frais de port est actuellement désactivée. Si vous souhaitez facturer les frais de ports à vos clients, choisissez d'abord une stratégie de facturation disponible ci-dessus : en fonction du poids, du prix ou bien selon un coût forfaitaire."
-            },
-
-            placeholder: {
-                shopName: "Entrez le nom de la boutique"
             },
 
             action: {
@@ -397,7 +435,9 @@
         }
     };
 
+    Mayocat.localization = Mayocat.localization || {};
+
     // Expose the localization to the Mayocat settings
     Mayocat.localization.fr = frLocalization;
 
-})();
+})(Mayocat);

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
     'use strict'
 
@@ -295,7 +302,7 @@
                 require: 'ngModel',
                 restrict: 'E',
                 template: '<div class="input-append">' +
-                    '<input ng-model="amount" class="span2" type="text">' +
+                    '<input ng-model="amount" class="span2" placeholder="{{placeholder}}" type="text">' +
                     '<span class="add-on">{{currencyCode}}</span>' +
                     '</div>',
                 controller: function ($scope) {
@@ -323,11 +330,14 @@
                         });
                     });
                     controller.$render = function () {
+                        $scope.placeholder = attrs.placeholder;
                         $scope.amount = "" + controller.$viewValue;
                         $scope.format();
                     };
-                    $scope.currencyCode = attrs.currency;
-                    $scope.currency = moneyService.getCurrency($scope.currencyCode);
+                    $scope.$watch(function() {return attrs.currency }, function(newValue){
+                        $scope.currencyCode = newValue;
+                        $scope.currency = moneyService.getCurrency($scope.currencyCode);
+                    });
                     $scope.$watch('amount', function (value) {
                         if (!isNaN(parseFloat(value))) {
                             controller.$setViewValue(parseFloat(value));

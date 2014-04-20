@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <div id="catalog">
     <!-- header -->
     <div class="page-header">
@@ -15,14 +24,14 @@
 
     <!-- list/table -->
     <div>
-        <ul class="list" sortable-on-change="changePosition()" handle-class="dragme">
+        <ul class="list" sortable-on-change="changePosition()" handle-class="drag-me">
             <li ng-repeat="collection in collection" data-handle="{{collection.slug}}">
                 <div class="row droptarget">
                     <div class="span6">{{collection.title}}</div>
                     <div class="span1"><a ng-click="setRoute(collection.href)">
                         {{'entity.action.edit' | translate}}
                     </a></div>
-                    <div class="span1"><span class="dragme"><i class="icon-move"></i></span></div>
+                    <div class="span1"><span class="drag-me"><i class="icon-move"></i></span></div>
                 </div>
             </li>
         </ul>

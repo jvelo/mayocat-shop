@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.accounts.resources;
 
 import java.util.Map;
@@ -14,11 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.authorization.annotation.Authorized;
-import org.mayocat.context.Execution;
-import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.rest.Resource;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.NoSuchModuleException;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -38,9 +44,6 @@ public class ConfigurationResource implements Resource
 
     @Inject
     private ConfigurationService configurationService;
-
-    @Inject
-    private Execution execution;
 
     @GET
     @Timed

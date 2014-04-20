@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.shipping.store.jdbi;
 
 import java.math.BigDecimal;
@@ -9,7 +16,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.shipping.Strategy;
 import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.shop.shipping.model.CarrierRule;
@@ -31,7 +38,7 @@ import mayoapp.dao.CarrierDAO;
 public class DBICarrierStore implements CarrierStore, Initializable
 {
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private DBIProvider dbi;
@@ -102,7 +109,7 @@ public class DBICarrierStore implements CarrierStore, Initializable
 
     protected Tenant getTenant()
     {
-        return this.execution.getContext().getTenant();
+        return this.context.getTenant();
     }
 
     @Override

@@ -8,9 +8,9 @@
     </p>
     {{/description}}
 
-    {{#any products}}
+    {{#any products.list}}
     <ul class="products">
-        {{#each products}}
+        {{#each products.list}}
         {{includeTemplate "grid_single_product.html"}}
         {{/each}}
     </ul>

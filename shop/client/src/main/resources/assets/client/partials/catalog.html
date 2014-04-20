@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <!-- list -->
 <div id="list" ng-controller="CatalogController">
 
@@ -10,27 +19,27 @@
         <div ng-show="hasCollections">
             <ul ui-sortable="collectionSortableOptions" ng-model="collections">
                 <li ng-repeat="collection in collections" ng-class="{hasChildren: collection.products.length > 0}">
-                    <div class="droptarget">
+                    <div class="droptarget" catalog-collection>
                         <div class="listItem">
-                        <i class="icon clickme" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
-                           ng-click="toggleExpand(collection)"/>
-                        <span class="collection">
-                            <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
-                        </span>
+                            <i class="icon click-me" ng-class="{'icon-expand': !collection.isExpanded, 'icon-collapse': collection.isExpanded}"
+                               ng-click="toggleExpand()"/>
+                            <span class="collection">
+                                <a ng-click="setRoute('/collections/' + collection.slug)">{{collection.title}}</a>
+                            </span>
                         </div>
                         <div ng-show="collection.isExpanded && collection.products.length > 0">
                             <ul class="list" ui-sortable="productsInCollectionSortableOptions" ng-model="collection.products">
-                                <li ng-repeat="product in collection.products">
+                                <li ng-repeat="product in collection.products" ng-class="{active: entity.slug == product.slug && entity.type == 'product'}">
                                     <div class="droptarget">
                                         <div>
                                             <a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a>
                                         </div>
-                                        <div><span class="dragme move-handle"></span></div>
+                                        <div><span class="drag-me move-handle"></span></div>
                                     </div>
                                 </li>
                             </ul>
                         </div>
-                        <div><span class="dragme move-handle"></i></span></div>
+                        <div><span class="drag-me move-handle"></span></div>
                     </div>
                 </li>
             </ul>
@@ -41,16 +50,16 @@
             <ul>
                 <li ng-class="{hasChildren: hasCollections}">
                     <div class="uncategorized">
-                        <div class="listItem" ng-show="hasCollections">
-                        <span class="collection">
-                            {{'product.misc.uncategorized' | translate:getTranslationProperties()}}
-                        </span>
+                        <div class="listItem" ng-show="hasCollections && products.length > 0">
+                            <span class="collection">
+                                {{'product.misc.uncategorized' | translate:getTranslationProperties()}}
+                            </span>
                         </div>
                         <ul class="list" ui-sortable="uncategorizedProductsSortableOptions" ng-model="products">
-                            <li ng-repeat="product in products">
+                            <li ng-repeat="product in products" ng-class="{active: entity.slug == product.slug && entity.type == 'product'}">
                                 <div class="droptarget">
                                     <div><a ng-click="setRoute('/products/' + product.slug)">{{product.title}}</a></div>
-                                    <div><span class="dragme move-handle"></span></div>
+                                    <div><span class="drag-me move-handle"></span></div>
                                 </div>
                             </li>
                         </ul>
@@ -59,5 +68,62 @@
             </ul>
         </div>
     </scroll>
-
 </div>
+
+
+<!-- Deletion modal for collections -->
+<script type="text/ng-template" id="confirmDeletionCollection.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'product.alert.confirmCollectionDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'product.action.deleteCollection' | translate}}
+        </button>
+    </div>
+</script>
+
+<!-- Deletion modal for products -->
+<script type="text/ng-template" id="confirmDeletionProduct.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'product.alert.confirmProductDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'product.action.deleteProduct' | translate}}
+        </button>
+    </div>
+</script>
+
+<!-- Deletion modal for variants -->
+<script type="text/ng-template" id="confirmDeletionVariant.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'product.variants.confirmVariantDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'product.variants.deleteVariant' | translate}}
+        </button>
+    </div>
+</script>

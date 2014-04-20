@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.cart.internal;
 
 import javax.inject.Inject;
@@ -37,14 +44,26 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
         for (CartInSession.IdAndType idAndType : cartInSession.getItems().keySet()) {
 
             try {
-                Purchasable p;
                 Class clazz = Class.forName(idAndType.getType());
 
                 // Poor-man's pattern matching...
                 if (Product.class.isAssignableFrom(clazz)) {
-                    p = productStore.findById(idAndType.getId());
-                    if (p != null) {
-                        cart.addItem(p, cartInSession.getItems().get(idAndType));
+                    Product product = productStore.findById(idAndType.getId());
+                    if (product.getParentId() != null) {
+                        Product parent = productStore.findById(product.getParentId());
+                        if (parent == null) {
+                            // parent set but not found -> ignore
+                            continue;
+                        }
+                        product.setParent(parent);
+                    }
+                    if (product != null) {
+                        try {
+                            cart.addItem(product, cartInSession.getItems().get(idAndType));
+                        } catch (Exception e) {
+                            // Don't fail when a product can't be added back to the cart
+                            logger.warn("Failed to add back product [{}] from session", product.getId());
+                        }
                     }
                 } else {
                     // Purchasable not managed...

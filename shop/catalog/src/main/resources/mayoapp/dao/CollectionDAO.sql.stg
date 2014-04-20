@@ -5,17 +5,20 @@ create() ::= <<
                 (entity_id,
                  position,
                  title,
-                 description)
+                 description,
+                 featured_image_id)
     VALUES      (:collection.id,
                  :position,
                  :collection.title,
-                 :collection.description)
+                 :collection.description,
+                 :collection.featuredImageId)
 >>
 
 update() ::= <<
     UPDATE collection
     SET    title = :collection.title,
-           description = :collection.description
+           description = :collection.description,
+           featured_image_id = :collection.featuredImageId
     WHERE  entity_id = :collection.id
 >>
 
@@ -31,7 +34,7 @@ lastPosition() ::= <<
 >>
 
 findAllForProduct() ::= <<
-    SELECT *
+    SELECT entity.*, collection.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN collection
                    ON entity.id = collection.entity_id
@@ -39,6 +42,23 @@ findAllForProduct() ::= <<
            AND collection.entity_id IN (SELECT collection_id
                                       FROM   collection_product
                                       WHERE  product_id = :product.id)
+>>
+
+findAllForProductIds(ids) ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                      FROM   collection_product
+                                      WHERE  product_id in (<ids>))
+>>
+
+findAllProductsCollectionsForIds(ids) ::= <<
+    SELECT collection_id, product_id
+    FROM   collection_product
+    WHERE  product_id in (<ids>)
 >>
 
 lastProductPosition() ::= <<
@@ -66,7 +86,7 @@ removeProduct() ::= <<
 >>
 
 findWithProductCountRows() ::= <<
-    SELECT *,
+    SELECT entity.*, collection.*, localization_data(entity_id),
            COALESCE(_count_collections.count, 0) AS _count
     FROM   entity
            INNER JOIN collection

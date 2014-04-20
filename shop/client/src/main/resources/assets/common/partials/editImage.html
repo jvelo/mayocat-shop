@@ -1,0 +1,73 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="modal-header">
+    <button type="button" class="close" ng-click="$close()">&times;</button>
+    <h3>{{'imageEditor.title.editImage'| translate}}</h3>
+</div>
+<form class="form-horizontal">
+    <div class="modal-body">
+        <div class="pull-left thumbnails-list">
+            <ul class="nav nav-tabs nav-stacked" ng-repeat="source in ['platform', 'theme']"
+                ng-show="keys(configuration[entityType].images[source]).length > 0">
+                <li ng-repeat="size in configuration[entityType].images[source]"
+                    ng-class="{active: isEdited(source, size)}"
+                    ng-click="edit(source, size)" class="click-me">
+                    {{size.name}}
+
+                </li>
+            </ul>
+        </div>
+        <div class="pull-left crop-zone">
+            <ul class="unstyled">
+                <li ng-repeat="source in ['platform', 'theme']">
+                    <ul class="unstyled">
+                        <li ng-repeat="size in configuration[entityType].images[source]"
+                            ng-show="isEdited(source, size)">
+                            <thumbnail-editor
+                                    width="size.width"
+                                    height="size.height"
+                                    image="image.file._href"
+                                    selection="getSelection(source, size)">
+                            </thumbnail-editor>
+                            <p>
+                                <small>
+                                    <strong>{{currentSize.name}}</strong>
+                                    ({{currentSource}})
+                                    {{getDisplayRatio(currentSize)}}
+                                </small>
+                            </p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="pull-left metadata">
+            <div>
+                <input type="text" ng-model="localizedImage.title"
+                       placeholder="{{'upload.placeholder.title' | translate}}" localized/>
+            </div>
+            <div>
+                <textarea rows="5" ng-model="localizedImage.description"
+                          placeholder="{{'upload.placeholder.description' | translate}}" localized></textarea>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</form>
+<div class="modal-footer">
+    <button class="btn" ng-click="$close()">
+        {{'imageEditor.action.close'| translate}}
+    </button>
+    <button class="btn btn-primary" ng-click="save()">
+        {{'imageEditor.action.save'| translate}}
+    </button>
+</div>

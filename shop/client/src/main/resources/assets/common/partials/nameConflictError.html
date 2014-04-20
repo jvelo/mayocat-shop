@@ -1,11 +1,34 @@
-<div class="modal-header">
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="modal-header" ng-if="!!errorKey">
+    <h3>{{'global.conflict' | translate}}</h3>
+</div>
+<div class="modal-header" ng-if="!errorKey">
     <h3>Conflict error</h3>
 </div>
-<div class="modal-body" >
+<div class="modal-body">
     <p>
-        An entity with this name already exists. Please choose a different name.
+
+    <div ng-if="!!errorKey">
+        {{errorKey | translate}}
+    </div>
+    <div ng-if="!errorKey">
+        This entity already exists.
+    </div>
     </p>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-danger" ng-click="$close()">Close</button>
+    <button class="btn btn-danger" ng-click="$close()" ng-if="!errorKey">
+        Close
+    </button>
+    <button class="btn btn-danger" ng-click="$close()" ng-if="!!errorKey">
+        {{'global.actions.close' | translate }}
+    </button>
 </div>

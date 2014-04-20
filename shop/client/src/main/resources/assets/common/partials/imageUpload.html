@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <div class="control-group">
     <div class="controls">
         <div class="row-fluid">
@@ -8,7 +17,7 @@
                         <i class="icon-download-alt"/>
                         {{'upload.explanation.dropHere' | translate}}
                     </p>
-                    <span class="btn fileinput-button">
+                    <span class="btn btn-large fileinput-button">
                         <span>{{'upload.action.browse' | translate}}</span>
                         <input type="file" name="file" ng-multiple="multiple">
                      </span>
@@ -65,7 +74,7 @@
                                     <div class="pull-right">
                                         <button ng-show="!file.loaded" type="button" class="btn btn-primary"
                                                 ng-click="remove($index)">
-                                            {{'entity.action.editThumbnails' | translate}}
+                                            {{'entity.action.editImage' | translate}}
                                         </button>
                                         <button ng-show="!file.loaded" type="button" class="btn"
                                                 ng-click="remove($index)">

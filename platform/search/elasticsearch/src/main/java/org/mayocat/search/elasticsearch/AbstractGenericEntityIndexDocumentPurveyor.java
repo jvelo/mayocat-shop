@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.search.elasticsearch;
 
 import java.io.IOException;
@@ -12,7 +19,7 @@ import javax.inject.Inject;
 
 import org.elasticsearch.common.collect.Maps;
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.model.Addon;
 import org.mayocat.model.Association;
 import org.mayocat.model.Attachment;
@@ -46,7 +53,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
     private Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private AttachmentStore attachmentStore;
@@ -57,7 +64,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
     @Override
     public Map<String, Object> purveyDocument(E entity)
     {
-        return this.purveyDocument(entity, execution.getContext().getTenant());
+        return this.purveyDocument(entity, context.getTenant());
     }
 
     @Override

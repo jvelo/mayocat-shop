@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.payment.api.resources;
 
 import com.google.common.base.Strings;
@@ -63,7 +70,7 @@ public class PaymentResource implements Resource
         GatewayResponse response;
 
         try {
-            response = gateway.acknowledge(data);
+            response = gateway.acknowledge(orderId, data);
             PaymentOperation op = response.getOperation();
             op.setOrderId(orderId);
             paymentOperationStore.get().create(op);

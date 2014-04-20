@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.accounts.resources;
 
 import javax.inject.Inject;
@@ -18,8 +25,7 @@ import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.accounts.representations.UserAndTenantRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.configuration.general.GeneralSettings;
-import org.mayocat.context.Context;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.security.Cipher;
 import org.mayocat.security.EncryptionException;
@@ -68,7 +74,7 @@ public class MeResource implements Resource
     private AccountsService accountsService;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private GeneralSettings generalSettings;
@@ -87,11 +93,10 @@ public class MeResource implements Resource
     {
         UserAndTenantRepresentation userAndTenant = new UserAndTenantRepresentation();
 
-        if (this.execution.getContext().getTenant() != null) {
+        if (this.context.getTenant() != null) {
             userAndTenant
-                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.execution.getContext().getTenant()));
+                    .setTenant(new TenantRepresentation(getGlobalTimeZone(), this.context.getTenant()));
         }
-        Context context = execution.getContext();
         userAndTenant.setUser(context.getUser());
 
         return userAndTenant;

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.billing;
 
 import java.util.Arrays;
@@ -76,18 +83,18 @@ public class PaymentOperationEventListener implements EventListener
         if (operation.getResult().equals(PaymentOperation.Result.CAPTURED)) {
 
             Order order = orderStore.get().findById(operation.getOrderId());
-            if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
+            //if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
 
-                this.logger.debug("Updating order paid status");
-                try {
-                    order.setStatus(Order.Status.PAID);
-                    orderStore.get().update(order);
+            this.logger.debug("Updating order paid status");
+            try {
+                order.setStatus(Order.Status.PAID);
+                orderStore.get().update(order);
 
-                    getObservationManager().notify(new OrderPaidEvent(), order, order.getOrderData());
-                } catch (Exception e) {
-                    this.logger.error("Failed to update order status", e);
-                }
+                getObservationManager().notify(new OrderPaidEvent(), order, order.getOrderData());
+            } catch (Exception e) {
+                this.logger.error("Failed to update order status", e);
             }
+            //}
         }
     }
 

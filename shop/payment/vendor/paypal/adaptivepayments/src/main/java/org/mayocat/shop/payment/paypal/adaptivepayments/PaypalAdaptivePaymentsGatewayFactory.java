@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.payment.paypal.adaptivepayments;
 
 import java.io.File;
@@ -9,7 +16,7 @@ import java.io.InputStream;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.context.Execution;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.PaymentGateway;
 import org.slf4j.Logger;
@@ -47,7 +54,7 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
     private Logger logger;
 
     @Inject
-    private Execution execution;
+    private WebContext context;
 
     @Inject
     private ObjectMapperFactory objectMapperFactory;
@@ -67,7 +74,7 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
 
         File tenantConfigurationFile =
                 new File(filesSettings.getPermanentDirectory() + SLASH + TENANTS_DIRECTORY + SLASH
-                        + this.execution.getContext().getTenant().getSlug() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
+                        + this.context.getTenant().getSlug() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
                         SLASH + TENANT_CONFIGURATION_FILENAME);
 
         ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());

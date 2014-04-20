@@ -1,7 +1,17 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <h1 class="small" ng-show="!isNew()">{{'content.title.editArticle' | translate}}</h1>
 <h1 class="small" ng-show="isNew()">{{'content.title.newArticle' | translate}}</h1>
 
-<form name="articleForm">
+<div class="loading" ng-show="!article.slug && !isNew()"></div>
+<form name="articleForm" ng-show="article.slug || isNew()">
     <article class="entity">
 
         <div>
@@ -20,10 +30,10 @@
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
                 <ul class="thumbnails">
-                    <li ng-repeat="image in article.images">
+                    <li ng-repeat="image in article._embedded.images">
                         <div class="thumbnail">
                             <div class="wrapper">
-                                <img ng-src="{{image.file.href}}?width=150&height=150"/>
+                                <img ng-src="{{image.file._href}}?width=150&height=150"/>
                             </div>
                             <div class="caption">
                                 <span class="featured-star" ng-class="{featured: image.featured}"
@@ -34,11 +44,8 @@
                                         <span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li ng-click="editThumbnails(image)">
-                                            {{'entity.action.editThumbnails' | translate}}
-                                        </li>
-                                        <li ng-click="image.editMeta = true">
-                                            {{'image.action.editMetadata' | translate}}
+                                        <li ng-click="editImage(image)">
+                                            {{'entity.action.editImage' | translate}}
                                         </li>
                                         <li ng-click="removeImage(image)">
                                             {{'entity.action.remove' | translate}}
@@ -85,8 +92,8 @@
                         {{addon.definition.name}}
 
                         <addon definition="addon.definition"
-                               value="article.addons[addon.index].value"
-                               type="article.addons[addon.index].type"></addon>
+                               object="article.addons[addon.index]"
+                               localized-object="localizedArticle.addons[addon.index]"></addon>
                     </li>
                 </ul>
             </div>
@@ -137,7 +144,7 @@
         </div>
 
         <div class="block delete" ng-show="!isNew()">
-            <small class="clickme" ng-click="confirmDeletion()">
+            <small class="click-me" ng-click="confirmDeletion()">
                 {{'content.action.deleteArticle' | translate}}
             </small>
         </div>

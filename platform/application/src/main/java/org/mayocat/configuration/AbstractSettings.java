@@ -1,9 +1,17 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.configuration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.mayocat.configuration.general.FilesSettings;
+import org.mayocat.mail.SmtpSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
@@ -44,6 +52,15 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private SearchEngineSettings searchEngine = new SearchEngineSettings();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SmtpSettings smtp = new SmtpSettings();
+
+    @Valid
+    @JsonProperty
+    private LocalizationFilterSettings localizationFilter = new LocalizationFilterSettings();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -69,8 +86,18 @@ public class AbstractSettings extends Configuration
         return files;
     }
 
-    public SiteSettings getSite()
+    public SiteSettings getSiteSettings()
     {
         return site;
+    }
+
+    public SmtpSettings getSmtpSettings()
+    {
+        return smtp;
+    }
+
+    public LocalizationFilterSettings getLocalizationFilterSettings()
+    {
+        return localizationFilter;
     }
 }

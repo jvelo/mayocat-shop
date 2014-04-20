@@ -1,0 +1,30 @@
+name: Theme with product types
+
+productTypes:
+  shirt:
+    name: T-Shirt
+    features:
+      size:
+        name: Size
+        keys:
+          s: Small
+          m: Medium
+          l: Large
+        addons:
+          info:
+            name: Additional information
+            fields:
+              help:
+                name: Helper message
+                type: string
+                placeholder: Enter a message to help pick a size
+      color:
+          name: Color
+    variants:
+      addons:
+        info:
+          name: Additional information
+          fields:
+            madein:
+              text: Enter the country this variant is made in
+      properties: ["stock", "price", "weight"]

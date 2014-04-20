@@ -1,9 +1,18 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mayocat</groupId>
     <artifactId>mayocat-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.12-SNAPSHOT</version>
 
     <name>Mayocat - Parent POM</name>
     <description>Modern e-commerce and marketplace management on the JVM</description>
@@ -14,10 +23,12 @@
         <url>http://github.com/mayocat/</url>
     </organization>
 
+    <inceptionYear>2012</inceptionYear>
+
     <licenses>
         <license>
-            <name>LGPL, version 2.1</name>
-            <url>http://www.opensource.org/licenses/lgpl-license.php</url>
+            <name>Mozilla Public License Version 2.0</name>
+            <url>http://www.mozilla.org/MPL/2.0/</url>
         </license>
     </licenses>
 
@@ -25,7 +36,8 @@
         <connection>scm:git:git://github.com/mayocat/mayocat-shop.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/mayocat/mayocat-shop.git</developerConnection>
         <url>http://github.com/mayocat/mayocat-shop</url>
-    </scm>
+    <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
@@ -51,7 +63,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependencies versions -->
-        <postgresql.driver.version>9.2-1003-jdbc4</postgresql.driver.version>
+        <!--
+        <postgresql.driver.version>9.3-1100-jdbc41</postgresql.driver.version>
+        -->
+        <postgresql.driver.version>9.2-1004-jdbc4</postgresql.driver.version>
         <dropwizard.version>0.6.2</dropwizard.version>
         <jersey.version>1.17.1</jersey.version> <!-- Used for multipart contrib module. Needs to be the same as the dropwizard's jersey version -->
         <flyway.version>2.2.1</flyway.version>
@@ -59,6 +74,7 @@
         <guava.version>14.0.1</guava.version>
         <elasticsearch.version>0.90.0</elasticsearch.version>
         <joda-money.version>0.8</joda-money.version>
+        <groovy.version>2.1.8</groovy.version>
     </properties>
 
     <repositories>
@@ -74,9 +90,59 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <!-- Mayocat repositories:
+             Needed for the MPL license holder artifact -->
+        <pluginRepository>
+          <id>mayocat-cloudbees-release</id>
+          <name>mayocat-cloudbees-release</name>
+          <url>http://repository-mayocat.forge.cloudbees.com/release/</url>
+        </pluginRepository>
+        <pluginRepository>
+          <id>mayocat-cloudbees-snapshot</id>
+          <name>mayocat-cloudbees-snapshot</name>
+          <url>http://repository-mayocat.forge.cloudbees.com/snapshot/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
       <pluginManagement>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>2.5</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.3</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.6</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -86,6 +152,16 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>cobertura-maven-plugin</artifactId>
             <version>2.5.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -100,10 +176,137 @@
               </dependency>
             </dependencies>
           </plugin>
+          <!-- Used to check/update license headers -->
+          <plugin>
+            <groupId>com.mycila</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>2.5</version>
+            <configuration>
+              <strictCheck>true</strictCheck>
+              <!-- When license-maven-plugin 2.6 will be released, the MPL-2 template will be available by default. Until them we provide it ourselves.
+              <header>com/mycila/maven/plugin/license/templates/MPL-2.txt</header>-->
+              <header>MPL-2.txt</header>
+              <properties>
+                <owner>Mayocat</owner>
+                <year>${project.inceptionYear}</year>
+                <email>hello@mayocat.org</email>
+              </properties>
+              <mapping>
+                <java>SLASHSTAR_STYLE</java>
+              </mapping>
+              <includes>
+                <include>src/**/*.java</include>
+                <include>src/**/*.groovy</include>
+                <include>src/**/*.js</include>
+                <include>src/**/*.css</include>
+                <include>src/**/*.less</include>
+                <include>src/**/*.xml</include>
+                <include>src/**/*.html</include>
+                <include>src/**/*.yml</include>
+                <include>pom.xml</include>
+              </includes>
+              <excludes>
+                <exclude>**/.idea/**</exclude>
+                <exclude>**/vendor/**</exclude>
+                <exclude>**/components.txt</exclude>
+                <exclude>**/component-overrides.txt</exclude>
+              </excludes>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.mayocat.tools</groupId>
+                <artifactId>mpl-license-header</artifactId>
+                <version>1.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
         </plugins>
       </pluginManagement>
 
+      <plugins>
+        <plugin>
+          <groupId>com.mycila</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <!-- Lock down plugin version for build reproducibility -->
+          <version>1.1</version>
+          <executions>
+            <!-- Check that all Maven plugins have versions defined -->
+            <execution>
+              <id>enforce-plugins</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requirePluginVersions>
+                    <message>Best Practice is to always define plugin versions!</message>
+                    <banLatest>false</banLatest>
+                    <banRelease>false</banRelease>
+                    <banSnapshots>false</banSnapshots>
+                  </requirePluginVersions>
+                </rules>
+              </configuration>
+            </execution>
+            <!-- Check that we're using SLF4J only -->
+            <execution>
+              <id>enforce-jcl-log4j-isolation</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <bannedDependencies>
+                    <searchTransitive>true</searchTransitive>
+                    <message>
+  XWiki uses SLF4J for logging. Don't use Commons Logging or Log4J.
+                    </message>
+                    <excludes>
+                      <exclude>commons-logging:commons-logging</exclude>
+                      <exclude>commons-logging:commons-logging-api</exclude>
+                      <exclude>log4j:log4j</exclude>
+                    </excludes>
+                  </bannedDependencies>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-release-plugin</artifactId>
+           <version>2.4.2</version>
+           <dependencies>
+              <dependency>
+                 <groupId>org.apache.maven.scm</groupId>
+                 <artifactId>maven-scm-provider-gitexe</artifactId>
+                 <!-- This version is necessary for use with git version 1.8.5 -->
+                 <version>1.8.1</version>
+              </dependency>
+           </dependencies>
+          </plugin>
+      </plugins>
     </build>
+
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+          <version>2.5</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
 
     <!-- Deploy releases and snapshots to the CloudBees maven repositories -->
     <distributionManagement>

@@ -1,0 +1,1 @@
+ALTER TABLE customer ADD COLUMN phone_number character varying(255);

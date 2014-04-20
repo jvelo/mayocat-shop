@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict'
 
 angular.module('catalog', [])
@@ -18,7 +25,7 @@ angular.module('catalog', [])
                     }
                     else {
                         $http.get('/api/products/?filter=uncategorized').success(function (data) {
-                            callback && callback.call(this, data);
+                            callback && callback.call(this, data.products);
                         });
                     }
                 });
@@ -26,7 +33,7 @@ angular.module('catalog', [])
 
             listProductsForCollection: function (collection, callback) {
                 $http.get('/api/collections/' + collection + "?expand=products").success(function (data) {
-                    callback && callback.call(this, data.products);
+                    callback && callback.call(this, data._relationships.products);
                 });
             },
 
@@ -36,7 +43,7 @@ angular.module('catalog', [])
                         callback && callback.call(this, []);
                     }
                     $http.get('/api/collections/?expand=productCount').success(function (data) {
-                        callback && callback.call(this, data);
+                        callback && callback.call(this, data.collections);
                     });
                 });
             },
@@ -84,22 +91,7 @@ angular.module('catalog', [])
 
                 catalogService.listCollections(function (collections) {
                     $scope.collections = collections;
-                    angular.forEach($scope.collections, function (collection) {
-                        $scope.toggleExpand(collection);
-                    });
                 });
-            }
-
-            $scope.toggleExpand = function (collection) {
-                if (typeof collection.products === "undefined") {
-                    catalogService.listProductsForCollection(collection.slug, function (products) {
-                        collection.products = products;
-                        collection.isExpanded = true;
-                    });
-                }
-                else {
-                    collection.isExpanded = !collection.isExpanded;
-                }
             }
 
             $scope.collectionSortableOptions = {
@@ -196,4 +188,62 @@ angular.module('catalog', [])
                 };
             };
 
-        }]);
+        }])
+    
+    // Manages the expanded status of a collection and some visual behaviours.
+    .directive('catalogCollection', ['catalogService', function(catalogService) {
+
+        function setStatus(slug, isExpanded) {
+            var storage = JSON.parse(localStorage['collectionsStatus'] || '{}');
+            storage[slug] = isExpanded;
+            localStorage['collectionsStatus'] = JSON.stringify(storage);
+            return isExpanded;
+        }
+
+        function getStatus(slug) {
+            var storage = JSON.parse(localStorage['collectionsStatus'] || '{}');
+            return (typeof storage[slug] != 'undefined') ? storage[slug] : true;
+        }
+
+        function link(scope, element) {
+            var collection = scope.collection;
+
+            collection.isExpanded = getStatus(collection.slug);
+
+            scope.toggleExpand = function(applyInsteadOfToggle) {
+                var emptyProducts = (typeof collection.products == 'undefined');
+
+                if (applyInsteadOfToggle) {
+                    // If we just want to apply the value (ie. load the products if necessary), just inverse the value
+                    // and it'll be we inversed again just below.
+                    collection.isExpanded = !collection.isExpanded;
+                }
+
+                if (!emptyProducts || emptyProducts && collection.isExpanded) {
+                    collection.isExpanded = setStatus(collection.slug, !collection.isExpanded);
+                } else {
+                    catalogService.listProductsForCollection(collection.slug, function(products) {
+                        collection.products = products;
+                        collection.isExpanded = setStatus(collection.slug, true);
+                    });
+                }
+            };
+
+            // When the collection is added to the DOM, execute the toggleExpand()
+            // method to load the products if necessary.
+            scope.toggleExpand(true);
+
+            // Solves some visual behaviours which can't be done in CSS.
+            var $collection = $(element);
+
+            $collection.find('> div > ul.list')
+                .on('mouseover mouseout', function(event) {
+                    $collection.toggleClass('disable-hover', event.type == 'mouseover');
+                });
+        }
+
+        return {
+            restrict: 'A',
+            link: link
+        };
+    }]);

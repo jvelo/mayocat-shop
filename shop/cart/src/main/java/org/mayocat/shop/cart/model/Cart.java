@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.cart.model;
 
 import java.io.Serializable;
@@ -50,7 +57,15 @@ public class Cart implements Serializable
 
         Preconditions.checkNotNull(quantity);
         Preconditions.checkArgument(quantity > 0);
-        Preconditions.checkArgument(item.getUnitPrice().compareTo(BigDecimal.ZERO) > 0);
+
+        BigDecimal unitPrice = null;
+        if (item.getUnitPrice() != null && !item.getParent().isPresent()) {
+            unitPrice = item.getUnitPrice();
+        } else if (item.getParent().isPresent() && item.getParent().get().isLoaded()) {
+            unitPrice = item.getParent().get().get().getUnitPrice();
+        }
+
+        Preconditions.checkArgument(unitPrice.compareTo(BigDecimal.ZERO) > 0);
 
         items.put(item, quantity);
     }
@@ -65,7 +80,16 @@ public class Cart implements Serializable
 
         Preconditions.checkNotNull(quantity);
         Preconditions.checkArgument(quantity > 0);
-        Preconditions.checkArgument(item.getUnitPrice().compareTo(BigDecimal.ZERO) > 0);
+
+        BigDecimal unitPrice = null;
+        if (item.getUnitPrice() != null && !item.getParent().isPresent()) {
+            unitPrice = item.getUnitPrice();
+        } else if (item.getParent().isPresent() && item.getParent().get().isLoaded()) {
+            unitPrice = item.getParent().get().get().getUnitPrice();
+        }
+
+        Preconditions.checkNotNull(unitPrice);
+        Preconditions.checkArgument(unitPrice.compareTo(BigDecimal.ZERO) > 0);
 
         if (items.containsKey(item)) {
             Long newQuantity = items.get(item) + quantity;
@@ -90,8 +114,12 @@ public class Cart implements Serializable
     public BigDecimal getItemTotal(Purchasable item)
     {
         BigDecimal total = BigDecimal.ZERO;
-        if (items.containsKey(item) && item.getUnitPrice() != null && items.get(item) > 0) {
-            total = total.add(item.getUnitPrice().multiply(BigDecimal.valueOf(items.get(item))));
+        BigDecimal unitPrice = item.getUnitPrice();
+        if (unitPrice == null && item.getParent().isPresent() && item.getParent().get().isLoaded()) {
+            unitPrice = item.getParent().get().get().getUnitPrice();
+        }
+        if (items.containsKey(item) && unitPrice != null && items.get(item) > 0) {
+            total = total.add(unitPrice.multiply(BigDecimal.valueOf(items.get(item))));
         }
         return total;
     }

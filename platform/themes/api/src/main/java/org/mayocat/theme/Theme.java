@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.theme;
 
 import java.nio.file.Path;
@@ -30,6 +37,8 @@ public class Theme
     // Is this a tenant "own" theme (a theme in the tenant theme directory)
     private boolean isTenantOwnTheme = false;
 
+    private boolean isValidDefinition = true;
+
     public Theme(Path path, ThemeDefinition definition)
     {
         this(path, definition, null, Type.FILE_SYSTEM);
@@ -53,6 +62,15 @@ public class Theme
         this.type = type;
     }
 
+    public Theme(Path path, ThemeDefinition definition, Theme parent, Type type, boolean isValidDefinition)
+    {
+        this.path = path;
+        this.definition = definition;
+        this.parent = parent;
+        this.type = type;
+        this.isValidDefinition = isValidDefinition;
+    }
+
     public Path getPath()
     {
         return path;
@@ -66,7 +84,7 @@ public class Theme
         if (parent != null) {
             return parent.getDefinition();
         }
-        return null;
+        return new ThemeDefinition();
     }
 
     public Theme getParent()
@@ -87,6 +105,11 @@ public class Theme
     public Type getType()
     {
         return type;
+    }
+
+    public boolean isValidDefinition()
+    {
+        return isValidDefinition;
     }
 
     @Override

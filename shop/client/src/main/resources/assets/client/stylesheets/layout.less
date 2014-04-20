@@ -1,4 +1,11 @@
-/* Modal */
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+ /* Modal */
 
 .modal-header .btn-group {
   float: right;
@@ -50,7 +57,7 @@ header .btn-group {
   float: right;
   margin: 26px 10px;
 
-  a {
+  .btn {
     background: none;
     border: none;
     box-shadow: none;
@@ -62,8 +69,8 @@ header .btn-group {
 
     li {
       text-align: center;
-      padding:0;
-      margin:0;
+      padding: 0;
+      margin: 0;
       width: 100%;
     }
   }
@@ -134,7 +141,6 @@ header .btn-group {
   width: 179px;
   height: 100%;
   float: left;
-  border-right: solid 1px;
   background-color: @backgroundLighter;
   border-color: @borderStrong;
 }
@@ -152,9 +158,10 @@ header .btn-group {
 #list .scroll-wrapper {
   overflow-y: auto;
   overflow-x: hidden;
-  height: -moz-calc(~"100% - 95px");
-  height: -webkit-calc(~"100% - 95px");
-  height: -calc(~"100% - 95px");
+  height: -moz-calc(100% - 95px);
+  height: -webkit-calc(100% - 95px);
+  height: -ms-calc(100% - 95px);
+  height: calc(100% - 95px);
 }
 
 #list .collection {
@@ -164,7 +171,7 @@ header .btn-group {
 }
 
 #list ul {
-  width: 175px;
+  width: 177px;
   margin-left: 2px;
 }
 
@@ -172,17 +179,24 @@ header .btn-group {
   padding: 0px;
   position: relative;
   border-bottom: none;
+  border-right: 1px solid @borderStrong;
+}
+
+#list li.hasChildren li,
+#list li.active {
+  border-right: none;
 }
 
 #list ul li.hasChildren:last-child > .droptarget {
   padding-bottom: 0;
 }
+
 #list ul li.hasChildren ul li:last-child .droptarget {
   border-bottom: none;
 }
 
 #list .droptarget {
-  padding: 11px 0px 11px 0px;
+  padding: 0px 0px 11px 0px;
   border-bottom: solid 1px  @borderList;
 }
 
@@ -195,15 +209,27 @@ header .btn-group {
   z-index: 100;
 }
 
-#list .droptarget .listItem,
-#list .listItem {
-  padding: 0px 0px 0px 7px;
+#list .droptarget.disable-hover {
+  background-color: transparent;
+  z-index: auto;
+
+  > div > .move-handle {
+    display: none;
+  }
 }
 
-.sub-list #list li.listItem.active {
+#list .droptarget > div:first-child {
+  padding: 11px 0px 0px 7px;
+}
+
+.sub-list #list li.active {
   background: white;
   border-right: none;
   width: 177px;
+}
+
+.sub-list #list li.active .droptarget {
+  border-right: none;
 }
 
 #list ul ul li .droptarget {
@@ -214,8 +240,9 @@ header .btn-group {
 #list ul li.hasChildren > .droptarget {
   padding-bottom: 0px;
 }
+
 #list ul li.hasChildren > div > div.listItem {
-  padding-bottom:11px
+  padding-bottom: 11px
 }
 
 #list ul li.hasChildren ul li .droptarget {
@@ -245,16 +272,21 @@ header .btn-group {
   display: block;
 }
 
+#list .uncategorized .listItem {
+  padding-left: 10px;
+}
+
+
 /* General Layout <o */
 
 #content {
   float: left;
   height: 100%;
   margin: 0px 0px 0px 239px;
-  width: -moz-calc(~"100% - 240px");
-  width: -webkit-calc(~"100% - 240px");
-  width: calc(~"100% - 240px"); // See http://stackoverflow.com/questions/11972084/less-aggressive-compilation-with-css3-calc
-// for why the tild TODO remove it when less.js 1.4+ is released
+  width: -moz-calc(100% - 240px);
+  width: -webkit-calc(100% - 240px);
+  width: -ms-calc(100% - 240px);
+  width: calc(100% - 240px);
 }
 
 #content > .sub-list {

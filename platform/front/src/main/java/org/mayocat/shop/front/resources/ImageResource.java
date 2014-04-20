@@ -1,8 +1,15 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.front.resources;
 
 import java.awt.*;
-import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +22,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.model.Attachment;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.parameters.ImageOptions;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -69,24 +76,23 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
         }
 
         try {
-            Image image = imageService.readImage(file.getData());
             Rectangle boundaries = new Rectangle(x, y, width, height);
-            RenderedImage cropped = imageService.cropImage(image, boundaries);
 
             if (imageOptions.isPresent()) {
-                Optional<Dimension> newDimension = imageService.newDimension((Image) cropped,
+                Optional<Dimension> newDimension = imageService.newDimension(boundaries,
                         imageOptions.get().getWidth(),
                         imageOptions.get().getHeight());
 
                 Dimension dimensions = newDimension.or(
-                        new Dimension(imageOptions.get().getWidth().get(), imageOptions.get().getHeight().get()));
+                        new Dimension(imageOptions.get().getWidth().or(-1), imageOptions.get().getHeight().or(-1)));
 
-                return Response.ok(imageService.scaleImage((Image) cropped, dimensions),
+                return Response.ok(imageService.getImage(file, dimensions, boundaries),
                         servletContext.getMimeType(fileName))
                         .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                         .build();
             } else {
-                return Response.ok(cropped, servletContext.getMimeType(fileName))
+                return Response.ok(imageService.getImage(file, boundaries),
+                        servletContext.getMimeType(fileName))
                         .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                         .build();
             }
@@ -115,40 +121,39 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
             }
 
             try {
-                Image image = imageService.readImage(file.getData());
-
                 if (imageOptions.get().getHeight().isPresent() && imageOptions.get().getWidth().isPresent()) {
                     // Both width and height set -> calculate a fitting box
 
                     Dimension dimension =
                             new Dimension(imageOptions.get().getWidth().get(), imageOptions.get().getHeight().get());
-                    Optional<Rectangle> fittingBox = imageService.getFittingRectangle(image, dimension);
+                    Optional<Rectangle> fittingBox = imageService.getFittingRectangle(file, dimension);
 
-                    RenderedImage scaled;
-
+                    InputStream image;
                     if (fittingBox.isPresent()) {
-                        RenderedImage cropped = imageService.cropImage(image, fittingBox.get());
-                        scaled = imageService.scaleImage((Image) cropped, dimension);
+                        image = imageService.getImage(file, dimension, fittingBox.get());
                     } else {
-                        scaled = imageService.scaleImage(image, dimension);
+                        image = imageService.getImage(file, dimension);
                     }
-
-                    return Response.ok(scaled, servletContext.getMimeType(fileName))
+                    return Response.ok(image, servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();
                 } else {
-                    Optional<Dimension> newDimension = imageService.newDimension(image,
+
+                    Optional<Dimension> newDimension = imageService.newDimension(file,
                             imageOptions.get().getWidth(),
                             imageOptions.get().getHeight());
 
                     if (newDimension.isPresent()) {
-                        return Response.ok(imageService.scaleImage(image, newDimension.get()),
+                        return Response.ok(imageService.getImage(file, newDimension.get()),
                                 servletContext.getMimeType(fileName))
                                 .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                                 .build();
                     }
 
-                    return Response.ok(image, servletContext.getMimeType(fileName))
+                        // data stream has been consumed, load it again
+                    file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
+
+                    return Response.ok(file.getData().getStream(), servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();
                 }

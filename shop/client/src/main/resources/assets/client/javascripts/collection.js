@@ -1,24 +1,29 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict'
 
 angular.module('collection', ['ngResource'])
-    .controller('CollectionController', ['$scope', '$rootScope', '$routeParams', '$resource', '$location', '$http', '$modal',
-        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal) {
+    .controller('CollectionController', [
+        '$scope',
+        '$rootScope',
+        '$routeParams',
+        '$resource',
+        '$location',
+        '$http',
+        '$modal',
+        'entityMixins',
+        function ($scope, $rootScope, $routeParams, $resource, $location, $http, $modal, entityMixins) {
 
-            $scope.slug = $routeParams.collection;
+            entityMixins.extend(["base", "localization", "image"], $scope, "collection");
+
             $scope.CollectionResource = $resource("/api/collections/:slug");
 
             // Functions
-
-            $scope.isNew = function () {
-                return $scope.slug == "_new";
-            };
-
-            $scope.newCollection = function () {
-                return {
-                    slug: "",
-                    title: ""
-                };
-            };
 
             $scope.updateCollection = function (callback) {
                 $scope.isSaving = true;
@@ -35,7 +40,7 @@ angular.module('collection', ['ngResource'])
                             }
                             else {
                                 if (status === 409) {
-                                    $rootScope.$broadcast('event:nameConflictError');
+                                    $modal.open({ templateUrl: 'conflictError.html' });
                                 }
                                 else {
                                     // Generic error
@@ -71,13 +76,27 @@ angular.module('collection', ['ngResource'])
                 });
             }
 
+            $scope.getTranslationProperties = function () {
+                return {
+                    imagesLength: (($scope.product || {}).images || {}).length || 0
+                };
+            };
+
             // Initialize
 
             if (!$scope.isNew()) {
-                $scope.collection = $scope.CollectionResource.get({ "slug": $scope.slug });
+                $scope.collection = $scope.CollectionResource.get({
+                    "slug": $scope.slug }, function () {
+
+                    $scope.reloadImages();
+
+                    $scope.initializeEntity();
+                });
             }
             else {
                 $scope.collection = $scope.newCollection();
+
+                $scope.initializeEntity();
             }
 
         }]);

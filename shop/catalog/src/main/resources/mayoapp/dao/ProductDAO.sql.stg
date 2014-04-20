@@ -1,17 +1,36 @@
 group ProductDAO;
 
 createProduct() ::= <<
-    INSERT INTO product (entity_id, position, title, model, on_shelf, description, price, weight, stock, featured_image_id)
-    VALUES (:product.id,
-            :position,
-            :product.title,
-            :product.model,
-            :product.onShelf,
-            :product.description,
-            :product.price,
-            :product.weight,
-            :product.stock,
-            :product.featuredImageId)
+    INSERT INTO product (
+        entity_id,
+        position,
+        title,
+        model,
+        on_shelf,
+        description,
+        price,
+        weight,
+        stock,
+        featured_image_id,
+        product_type,
+        virtual,
+        features
+    )
+    VALUES (
+        :product.id,
+        :position,
+        :product.title,
+        :product.model,
+        :product.onShelf,
+        :product.description,
+        :product.price,
+        :product.weight,
+        :product.stock,
+        :product.featuredImageId,
+        :product.type,
+        :product.virtual,
+        :product.features
+    )
 >>
 
 updateProduct() ::= <<
@@ -23,7 +42,15 @@ updateProduct() ::= <<
            price = :product.price,
            weight = :product.weight,
            stock = :product.stock,
-           featured_image_id = :product.featuredImageId
+           featured_image_id = :product.featuredImageId,
+           product_type = :product.type,
+           virtual = :product.virtual
+    WHERE  entity_id = :product.id
+>>
+
+updatePosition() ::= <<
+    UPDATE product
+    SET    position = :position
     WHERE  entity_id = :product.id
 >>
 
@@ -34,8 +61,41 @@ lastPosition() ::= <<
                    ON entity.id = product.entity_id
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
+           AND (entity.parent_id IS NULL OR product.virtual)
     ORDER  BY position DESC
     LIMIT  1
+>>
+
+lastPositionForVariant() ::= <<
+    SELECT product.position
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.parent_id = :product.parentId
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+countAllNotVariants() ::= <<
+    SELECT count(*)
+    FROM   entity
+           INNER JOIN product
+                   ON product.entity_id = entity.id
+    WHERE  entity.tenant_id = :tenant.id
+           AND (entity.parent_id IS NULL OR product.virtual)
+>>
+
+findAllNotVariants() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON product.entity_id = entity.id
+    WHERE  entity.tenant_id = :tenant.id
+           AND (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY product.position DESC
+    LIMIT  :number
+    OFFSET :offset
 >>
 
 findOrphanProducts() ::= <<
@@ -47,7 +107,33 @@ findOrphanProducts() ::= <<
                        FROM   collection_product
                        WHERE  product_id = entity.id)
            AND entity.tenant_id = :tenant.id
-    ORDER  BY product.position ASC
+           AND (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY product.position DESC
+>>
+
+findForCollection() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   collection_product
+           INNER JOIN entity
+                   ON entity.id = collection_product.product_id
+           INNER JOIN product
+                   ON product.entity_id = collection_product.product_id
+    WHERE  collection_product.collection_id = :collection.id
+           AND (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY collection_product.position
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllForCollection() ::= <<
+    SELECT count(*)
+    FROM   collection_product
+           INNER JOIN entity
+                   ON entity.id = collection_product.product_id
+           INNER JOIN product
+                   on product.entity_id = collection_product.product_id
+    WHERE  collection_product.collection_id = :collection.id
+           AND (entity.parent_id IS NULL OR product.virtual)
 >>
 
 findAllForCollection() ::= <<
@@ -58,6 +144,7 @@ findAllForCollection() ::= <<
            INNER JOIN product
                    ON product.entity_id = collection_product.product_id
     WHERE  collection_product.collection_id = :collection.id
+           AND (entity.parent_id IS NULL OR product.virtual)
     ORDER  BY collection_product.position
 >>
 
@@ -68,14 +155,61 @@ findAllOnShelf() ::= <<
                    ON entity.id = product.entity_id
     WHERE  entity.type = 'product'
            AND entity.tenant_id = :tenant.id
-           AND product.on_shelf = true
-    ORDER  BY product.position ASC
+           AND product.on_shelf
+           AND (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY product.position DESC
     LIMIT  :number
     OFFSET :offset
+>>
+
+countAllOnShelf() ::= <<
+    SELECT count(*)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.tenant_id = :tenant.id
+           AND product.on_shelf
+           AND (entity.parent_id IS NULL OR product.virtual)
 >>
 
 deleteProductFromCollections() ::= <<
     DELETE
     FROM   collection_product
     WHERE  collection_product.product_id = :id
+>>
+
+
+findAllVariants() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON product.entity_id = entity.id
+    WHERE  entity.parent_id = :product.id
+    ORDER  BY product.position ASC
+>>
+
+findAllWithTitleLike() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.tenant_id = :tenant.id
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(:title)) || '%')
+    ORDER  BY product.position DESC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllWithTitleLike() ::= <<
+    SELECT count(*)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND entity.tenant_id = :tenant.id
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(':title')) || '%')
 >>

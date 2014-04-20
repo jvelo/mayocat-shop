@@ -1,0 +1,54 @@
+<div class="product">
+    {{#product}}
+        <h1 class="fn">{{title}}</h1>
+
+        {{includeTemplate 'images_gallery.html'}}
+
+            {{#description}}
+                <div class="description">
+                    {{this}}
+                </div>
+            {{/description}}
+
+            <div class="buying-options">
+
+                {{#if hasVariants}}
+                    {{#selectedFeatures}}
+                        <div>
+                            {{featureName}} ({{featureSlug}}) : {{title}} ({{slug}})
+                        </div>
+                    {{/selectedFeatures}}
+                    {{#availableFeatures}}
+                        <div>
+                            {{name}}
+                            <ul class="feature list">
+                            {{#list}}
+                                <li><a href="{{url}}">{{title}}</a></li>
+                             {{/list}}
+                            </ul>
+                        </div>
+                    {{/availableFeatures}}
+
+                    <div class="visible-when-js">
+                        <!-- -->
+                    </div>
+                {{else}}
+                    {{#unitPrice}}
+                        <form action="/cart/add" method="post" class="add">
+                            <div class="add-to-cart">
+                                <input type="hidden" name="product" value="{{../slug}}"/>
+                                <input type="submit" value="{{message 'product.addToCart'}}" class="button"/>
+                            </div>
+                        </form>
+
+                        <div class="price">{{amountCompact}}{{currency.localSymbol}}</div>
+                        <div class="clearfix"></div>
+                    {{/unitPrice}}
+                    {{^unitPrice}}
+                        This product is not available for sale.
+                    {{/unitPrice}}
+                {{/if}}
+            </div>
+        <!--</div>-->
+    {{/product}}
+</div>

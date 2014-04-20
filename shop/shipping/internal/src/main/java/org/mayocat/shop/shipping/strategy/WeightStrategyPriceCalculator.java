@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.shipping.strategy;
 
 import java.math.BigDecimal;
@@ -19,9 +26,9 @@ public class WeightStrategyPriceCalculator extends AbstractValueBasedStrategyPri
         BigDecimal weight = BigDecimal.ZERO;
         for (Purchasable purchasable : items.keySet()) {
             try {
-                Product product = (Product) purchasable;
-                weight = weight.add(product.getWeight() != null ? product.getWeight().multiply(
-                        BigDecimal.valueOf(items.get(purchasable))) : BigDecimal.ZERO);
+                weight = weight.add(purchasable.getActualWeight().isPresent() ?
+                        purchasable.getActualWeight().get().multiply(BigDecimal.valueOf(items.get(purchasable))) :
+                        BigDecimal.ZERO);
             } catch (ClassCastException e) {
                 throw new IllegalArgumentException(
                         "Cannot calculate weight-based shipping price for something else than a product", e);

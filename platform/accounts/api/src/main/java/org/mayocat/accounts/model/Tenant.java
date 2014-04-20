@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.accounts.model;
 
 import java.util.Date;
@@ -34,6 +41,10 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     @Index
     @NotBlank
     private String name;
+
+    private String description;
+
+    private String contactEmail;
 
     private Date creationDate;
 
@@ -116,6 +127,24 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getContactEmail()
+    {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail)
+    {
+        this.contactEmail = contactEmail;
     }
 
     public Date getCreationDate()

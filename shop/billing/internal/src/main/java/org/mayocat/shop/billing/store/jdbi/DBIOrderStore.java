@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
@@ -107,7 +114,7 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     @Override
     public Order findById(UUID id)
     {
-        return this.dao.findById(ORDER_TABLE_NAME, id);
+        return this.dao.findByIdWithCustomer(id);
     }
 
     @Override

@@ -1,7 +1,7 @@
 <header>
     <div class="carousel content">
         <ul class="notransition">
-            {{#each __unsupported__products}}
+            {{#each products.list}}
             {{#is @index 5}}
             <li class="product image">
                 <a rel='product' href="{{url}}">
@@ -11,7 +11,7 @@
             </li>
             {{/is}}
             {{/each}}
-            {{#each __unsupported__products}}
+            {{#each products.list}}
             {{#lt @index 5}}
             <li class="product image">
                 <a rel='product' href="{{url}}">
@@ -41,7 +41,7 @@
 <div class="content">
     <ul class="products">
 
-        {{#each __unsupported__products}}
+        {{#each products.list}}
         {{#lt @index 6}}
         <li class="product column image">
             <a rel='product' href="{{url}}">

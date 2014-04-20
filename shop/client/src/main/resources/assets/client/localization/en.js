@@ -1,4 +1,11 @@
-(function () {
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+(function (Mayocat) {
     'use strict';
 
     var enLocalization = {
@@ -9,9 +16,15 @@
         global: {
             actions: {
                 add: "Add",
-                confirm: "Confirm",
-                cancel: "Cancel"
-            }
+                remove: "Remove",
+                close: "Close"
+            },
+            validation: {
+                required : "Required"
+            },
+            conflict: "Conflict",
+            filter: "Filter",
+            select: "Select"
         },
 
         /**
@@ -36,8 +49,7 @@
                 cancel: "Cancel",
                 remove: "Remove",
                 back: "Back",
-
-                editThumbnails: "Edit thumbnails"
+                editImage: "Edit image"
             },
 
             alert: {
@@ -46,17 +58,14 @@
         },
 
         /**
-         * Translations linked to the homepage
+         * Translations linked to the homepage / dashboard
          */
 
-        home: {
-            title: {
-                welcome: "Welcome"
-            },
-
-            explanation: {
-                home: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products."
-            }
+        dashboard: {
+            title: "Welcome",
+            introduction: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products.",
+            latestOrders: "Latest orders",
+            seeAllOrders: "See all orders"
         },
 
         /**
@@ -65,8 +74,8 @@
 
         authentication: {
             misc: {
-                title: "Authentication required",
-                username: "User name or email",
+                title: "Welcome on Mayocat Shop",
+                username: "Username",
                 password: "Password",
                 remember: "Remember me"
             },
@@ -113,17 +122,13 @@
          * Translations linked to the thumbnail editor
          */
 
-        thumbnailEditor: {
-            misc: {
-                editing: "Editing:"
-            },
-
+        imageEditor: {
             title: {
-                editThumbnails: "Edit image thumbnails"
+                editImage: "Edit image"
             },
 
             action: {
-                saveAndNext: "Save and next",
+                save: "Save",
                 close: "Close"
             }
         },
@@ -143,13 +148,16 @@
                 unitPrice: "Unit price",
                 shipping: "Shipping",
                 deliveryAddress: "Delivery address",
-                
+                billingAddress: "Billing address",
+                additionalInformation:  "Additional information",
+                changeStatus: "Change status",
+
                 orderName: "Order \\#{slug}",
                 ordersNumber: "for {numberOfOrders} {numberOfOrders, plural, one{order} other{orders}}",
 
                 itemsNumber: "{numberOfItems} {numberOfItems, plural, one{item} other{items}}",
                 itemsTotal: "Items total (without shipping)",
-                shippingCalculation: "{shippingTitle} (calculated by {shippingStrategy})"
+                shippingCalculation: "{title} (calculated by {strategy})"
             },
 
             title: {
@@ -196,7 +204,7 @@
                 weight: "Weight",
                 stock: "Stock",
 
-                uncategorized: "Uncategorized",
+                uncategorized: "Not categorized",
                 description: "Description"
             },
 
@@ -240,6 +248,21 @@
             alert: {
                 confirmProductDeletion: "Please confirm you want to delete this product. There's no coming back!",
                 confirmCollectionDeletion: "Please confirm you want to delete this collection. There's no coming back!"
+            },
+
+            variants: {
+                title: "Variants",
+                price: "Price",
+                stock: "Stock",
+                add: "Add variant",
+                delete: "Delete",
+                edit: "Edit",
+                create: "Create variant",
+                edition: "Variant: {variantTitle}",
+                update: "Update variant",
+                conflict: "This variant already exists.",
+                confirmVariantDeletion: "Please confirm you want to delete this variant. There's no coming back!",
+                deleteVariant: "Delete variant"
             }
         },
 
@@ -279,6 +302,8 @@
             },
 
             title: {
+                homePage: "Home page",
+
                 pages: "Pages",
                 allPages: "All pages",
                 newPage: "New page",
@@ -322,6 +347,13 @@
             alert: {
                 confirmPageDeletion: "Please confirm you want to delete this page. There's no coming back!",
                 confirmArticleDeletion: "Please confirm you want to delete this article. There's no coming back!"
+            },
+
+            homePage: {
+                featuredProducts: "Featured products",
+                addFeaturedProduct: "Add product",
+                addFeaturedProductModalTitle: "Add a featured product",
+                emptyFeaturedProductsList: "Here you can manage a list of products that will be featured on the home page of your shop (if your theme supports it)."
             }
         },
 
@@ -330,6 +362,16 @@
          */
 
         settings: {
+
+            tenant: {
+                shopName: "Shop name",
+                shopNamePlaceholder: "Enter the shop name",
+                shopDescription: "Shop description",
+                contactEmail: "Contact email",
+                contactEmailPlaceholder: "Email at which notifications will be sent",
+                shopLogo: "Shop logo"
+            },
+
             misc: {
                 general: "General",
                 shop: "Shop information",
@@ -341,10 +383,9 @@
                 defaultLanguage: "Default language",
                 otherLanguages: "Other languages",
                 selectALanguage: "-- Select a language --",
+                languagesGroup: "Languages",
+                variantsGroup: "Variants",
                 theme: "Theme",
-
-                shopName: "Shop name",
-                shopLogo: "Shop logo",
 
                 byWeight: "By weight",
                 byPrice: "By price",
@@ -408,10 +449,6 @@
                 costsDisabled: "Shipping costs are currently disabled. If you wish to charge customers for shipping costs, first pick up a pricing strategy from the strategies available above: per weight, per price, or flat rate."
             },
 
-            placeholder: {
-                shopName: "Enter the shop name"
-            },
-
             action: {
                 addZone: "Add new zone",
                 editZone: "Edit zone",
@@ -445,7 +482,9 @@
 
     };
 
+    Mayocat.localization = Mayocat.localization || {};
+
     // Expose the localization to the Mayocat settings
     Mayocat.localization.en = enLocalization;
 
-})();
+})(Mayocat);

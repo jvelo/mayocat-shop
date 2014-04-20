@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.billing.store.jdbi;
 
 import java.util.List;
@@ -11,7 +18,9 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
+
 import mayoapp.dao.CustomerDAO;
+
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -46,9 +55,12 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     }
 
     @Override
-    public void update(@Valid Customer entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Customer customer) throws EntityDoesNotExistException, InvalidEntityException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) == null) {
+            throw new EntityDoesNotExistException();
+        }
+        this.dao.updateCustomer(customer);
     }
 
     @Override

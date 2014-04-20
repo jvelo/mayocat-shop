@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.cms.pages.model;
 
 import java.util.List;
@@ -186,7 +193,9 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
         }
         final Page other = (Page) obj;
 
-        return Objects.equal(this.title, other.title)
+        return     Objects.equal(this.id, other.id)
+                && Objects.equal(this.parentId, other.parentId)
+                && Objects.equal(this.title, other.title)
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.content, other.content)
                 && Objects.equal(this.published, other.published)
@@ -197,6 +206,8 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     public int hashCode()
     {
         return Objects.hashCode(
+                this.id,
+                this.parentId,
                 this.slug,
                 this.title,
                 this.content,
@@ -208,6 +219,9 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this).addValue(this.title).addValue(this.slug).toString();
+        return Objects.toStringHelper(this)
+                .addValue(this.id)
+                .addValue(this.title)
+                .addValue(this.slug).toString();
     }
 }

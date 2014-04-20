@@ -1,12 +1,19 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 'use strict';
 
 var mayocat = angular.module('mayocat', [
     'mayocat.authentication',
     'mayocat.addons',
     'mayocat.image',
-    'mayocat.thumbnail',
     'mayocat.configuration',
     'mayocat.time',
+    'mayocat.mixins',
     'mayocat.entities',
     'mayocat.locales',
     'pascalprecht.translate'
@@ -79,7 +86,7 @@ mayocat.config(function ($httpProvider) {
  *
  * TODO: handle ng-disabled
  */
-mayocat.directive('listPicker', ['$parse', function($parse){
+mayocat.directive('listPicker', ['$parse', function ($parse) {
     return {
         restrict: 'E',
         require: 'ngModel',
@@ -117,7 +124,7 @@ mayocat.directive('listPicker', ['$parse', function($parse){
             }
             $scope.getDisplayElement = function (element) {
                 $scope.elementToDisplay = element;
-                return passed ? passed($scope): element;
+                return passed ? passed($scope) : element;
             }
         }
     };
@@ -138,7 +145,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             'requestedUploadUri': '&uploadUri',
             'onUpload': '&onUpload'
         },
-        controller: function($scope, $element, $attrs) {
+        controller: function ($scope, $element, $attrs) {
             // Initialize default value for attributes
 
             // Get the upload URI the directive customer requested. It is either provided as a function,
@@ -234,6 +241,9 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                                 if (typeof $scope.files[i].description !== 'undefined') {
                                     data["description"] = $scope.files[i].description;
                                 }
+                                if (typeof $scope.files[i].name !== 'undefined') {
+                                    data["filename"] = $scope.files[i].name;
+                                }
                                 $(element).fileupload('send', {
                                     files: $scope.files[i],
                                     formData: data
@@ -265,7 +275,7 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                                         index = 0;
                                     }
                                     else {
-                                        // In "multi-upload" mode, we addpend the file to the array
+                                        // In "multi-upload" mode, we append the file to the array
                                         var index = $scope.files.push(data.files[i]) - 1;
                                     }
                                     $scope.files[index].index = index;
@@ -312,56 +322,118 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
             'selection': '&'
         },
         link: function postLink($scope, element, attrs) {
-            var imageElement = $("<img />").load(
-                function () {
-                    if ($scope.selection() === undefined) {
 
-                        // If no initial selection was passed to the widget, we compute the largest box
-                        // that can fit the desired thumbnail in.
+            var parent = element.parent()[0],
+                hasInitialized = false;
 
-                        var sizeRatio = $scope.width() / $scope.height(),
-                            imageRatio = $(this).width() / $(this).height(),
-                            width,
-                            height;
+            var initializeLazy = function () {
+                if (($(parent).attr("style") == undefined || $(parent).attr("style") == "") && !hasInitialized) {
+                    // TODO find a better way to check if displayed
+                    var imageElement = $("<img />").load(
+                        function () {
 
-                        // FIXME sometimes the image width and height are still 0, even though we are in the
-                        // load callback.
+                            var aspectRatio;
 
-                        width = sizeRatio > imageRatio ? $(this).height() * sizeRatio : $(this).width();
-                        height = sizeRatio > imageRatio ? $(this).height() : $(this).width() * sizeRatio;
-
-                        var i = 0;
-                        var setSelection = function () {
-                            if (typeof $scope.api !== "undefined") {
-                                $scope.api.setSelect([ 0, 0, width, height ]);
+                            if ($scope.width() != null && $scope.height() != null) {
+                                aspectRatio = $scope.width() / $scope.height();
                             }
                             else {
-                                // The image is loaded before the Jcrop API has been initialized fully.
-                                // Wait 0.1 s
-                                i++;
-                                if (i < 10) {
-                                    setTimeout(setSelection, 100);
+                                aspectRatio = $(this).width() / $(this).height();
+                            }
+
+                            $(imageElement).Jcrop({
+                                boxWidth: 400,
+                                boxHeight: 600,
+                                setSelect: $scope.selection(),
+                                aspectRatio: aspectRatio,
+                                onSelect: function (coordinates) {
+                                    $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
                                 }
-                                // Give up after 10 tries
+                            }, function () {
+                                $scope.api = this;
+                            });
+
+                            // Ensure the modal save button is always visible, even on devices with a small viewport
+                            // height. For this we check the modal height (+ top margin) is bigger than the viewport
+                            // height, and cap it's body content height accordingly when that's the case
+                            var viewportHeight = $(window).height(),
+                                modalHeight = $(".modal.editImage").height();
+
+                            if (modalHeight + 50 /* (top margin) */ >= viewportHeight) {
+                                $(".modal.editImage .modal-body").css("max-height", viewportHeight - 200);
+                            }
+
+                            hasInitialized = true;
+
+                            if ($scope.selection() === undefined) {
+                                // If no initial selection was passed to the widget, we compute the largest centered box
+                                // that can fit the desired thumbnail in.
+
+                                var sizeRatio = $scope.width() / $scope.height(),
+                                    imageRatio = $(this).width() / $(this).height(),
+                                    x, y, width, height;
+
+                                if ($scope.width() == null || $scope.height() == null) {
+                                    // We select the whole image
+                                    x = 0;
+                                    y = 0;
+                                    width = $(this).width();
+                                    height = $(this).height();
+                                }
+
+                                else if (imageRatio < sizeRatio) {
+                                    // Width is limitating, calculate height
+                                    x = 0;
+                                    width = $(this).width();
+                                    height = width / sizeRatio;
+                                    y = ($(this).height() - height) / 2;
+                                }
+                                else {
+                                    // Height is limitating, calculate width
+                                    y = 0;
+                                    height = $(this).height();
+                                    width = height * sizeRatio;
+                                    x = ($(this).width() - width) / 2;
+                                }
+
+                                if (width > 0 && height > 0) {
+                                    var i = 0;
+                                    var setSelection = function () {
+                                        if (typeof $scope.api !== "undefined") {
+                                            $scope.api.setSelect([ x, y, width, height ]);
+                                        }
+                                        else {
+                                            // The image is loaded before the Jcrop API has been initialized fully.
+                                            // Wait 0.1 s
+                                            i++;
+                                            if (i < 10) {
+                                                setTimeout(setSelection, 100);
+                                            }
+                                            // Give up after 10 tries
+                                        }
+                                    }
+                                    setSelection();
+                                }
                             }
                         }
-                        setSelection();
-                    }
+                    ).attr("src", $scope.image());
+                    $(element).html($("<div/>").html(imageElement));
                 }
-            ).attr("src", $scope.image());
-            $(element).html($("<div/>").html(imageElement));
+            };
 
-            $(imageElement).Jcrop({
-                boxWidth: 500,
-                boxHeight: 500,
-                setSelect: $scope.selection(),
-                aspectRatio: $scope.width() / $scope.height(),
-                onSelect: function (coordinates) {
-                    $rootScope.$broadcast('thumbnails:edit:selection', coordinates);
-                }
-            }, function () {
-                $scope.api = this;
+            var observer = new MutationObserver(function (mutations) {
+                $scope.$apply(function ($scope) {
+                    initializeLazy();
+                });
             });
+
+            observer.observe(parent, { attributes: true, childList: false, characterData: false, subtree: false });
+
+            window.setTimeout(function () {
+                $scope.$apply(function ($scope) {
+                    initializeLazy();
+                });
+            }, 0);
 
         }
     }
@@ -398,9 +470,9 @@ mayocat.directive('ckEditor', function () {
                             border: '1px solid #ccc'
                         }
                     },
-                    { name: 'Small',			element: 'small' },
-                    { name: 'Computer Code',	element: 'code' },
-                    { name: 'Inline Quotation',	element: 'q' },
+                    { name: 'Small', element: 'small' },
+                    { name: 'Computer Code', element: 'code' },
+                    { name: 'Inline Quotation', element: 'q' },
                     /* Object Styles */
                     {
                         name: 'Styled image (left)',
@@ -425,8 +497,8 @@ mayocat.directive('ckEditor', function () {
                             'border-collapse': 'collapse'
                         }
                     },
-                    { name: 'Borderless Table',		element: 'table',	styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
-                    { name: 'Square Bulleted List',	element: 'ul',		styles: { 'list-style-type': 'square' } }
+                    { name: 'Borderless Table', element: 'table', styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
+                    { name: 'Square Bulleted List', element: 'ul', styles: { 'list-style-type': 'square' } }
                 ],
                 removePlugins: 'elementspath,horizontalrule,image',
                 removeButtons: "Subscript,Superscript",
@@ -447,7 +519,7 @@ mayocat.directive('ckEditor', function () {
 
             // Make sure that if the model changes, the values is passed backed to the ckeditor
             // Example: value comes from an AJAX request, and that creates a race condition vs. ckeditor initialization
-            scope.$watch(ngModel, function(){
+            scope.$watch(ngModel, function () {
                 ck.setData(ngModel.$viewValue);
             });
 
@@ -462,7 +534,7 @@ mayocat.directive('ckEditor', function () {
                 ck.setData(ngModel.$viewValue);
             };
 
-            scope.$on('entity:initialized', function(event, entity){
+            scope.$on('entity:initialized', function (event, entity) {
                 CKEDITOR.config.mayocat_entityUri = entity.uri;
             });
 
@@ -651,11 +723,6 @@ mayocat.directive('validateOnBlur', function () {
     };
 });
 
-mayocat.controller('HomeCtrl', ['$scope', '$resource',
-    function ($scope, $resource) {
-
-    }]);
-
 mayocat.controller('LoginController', ['$rootScope', '$scope',
     function ($rootScope, $scope) {
 
@@ -667,14 +734,26 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
         $scope.requestLogin = function () {
             $rootScope.$broadcast("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
         };
+
         $scope.$on("event:authenticationFailure", function () {
             $scope.authenticationFailed = true;
         });
-        $scope.$on("event:authenticationSuccessful", function (event, data) {
-            $scope.authenticationFailed = false;
-        });
     }]);
 
+mayocat.directive('loginAnimate', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            scope.$on("event:authenticationFailure", function () {
+                $(element).addClass('login-animate');
+            });
+
+            $(element).on('animationend webkitAnimationEnd', function () {
+                $(this).removeClass('login-animate');
+            });
+        }
+    };
+});
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',

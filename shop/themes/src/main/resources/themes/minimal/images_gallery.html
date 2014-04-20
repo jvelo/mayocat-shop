@@ -1,0 +1,63 @@
+<div class="gallery">
+    {{#images}}
+        <div id='slider' class='swipe' data-snap-ignore="true">
+            <div class="featured swipe-wrap">
+                {{#featured}}
+                <div>
+                    <span data-picture data-alt="{{description}}" data-title="{{title}}">
+                        <span data-src="{{theme_mobile-gallery_url}}"></span>
+                        <span data-src="{{theme_medium-featured_url}}" data-media="(min-width: 720px)"></span>
+                        <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+                        <noscript>
+                            <img src="{{theme_mobile-gallery_url}}" alt="{{description}}" title="{{title}}"
+                                 width="300"
+                                 height="322"/>
+                        </noscript>
+                    </span>
+                </div>
+                {{/featured}}
+                {{#all}}
+                    {{^featured}}
+                    <div>
+                        <span data-picture data-alt="{{description}}" data-title="{{title}}">
+                            <span data-src="{{theme_mobile-gallery_url}}"></span>
+                            <span data-src="{{theme_medium-featured_url}}" data-media="(min-width: 720px)"></span>
+                            <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+                            <noscript>
+                                <img src="{{theme_mobile-gallery_url}}" alt="{{description}}" title="{{title}}"
+                                     width="300"
+                                     height="322"/>
+                            </noscript>
+                        </span>
+                    </div>
+                    {{/featured}}
+                {{/all}}
+            </div>
+        </div>
+        {{#lengthEqual all 1}}
+            <!-- there is just one featured image : don't display thumbnails -->
+        {{else}}
+            <ul class="images">
+                {{#featured}}
+                    <li class="thumbnail active">
+                        <div class="container">
+                            <img src="{{theme_gallery-thumb_url}}"
+                                 data-image-src="{{theme_product-gallery_url}}"/>
+                        </div>
+                    </li>
+                {{/featured}}
+                {{#all}}
+                    {{^featured}}
+                        <li class="thumbnail">
+                            <div class="container">
+                                <img src="{{theme_gallery-thumb_url}}"
+                                     data-image-src="{{theme_product-gallery_url}}"/>
+                            </div>
+                        </li>
+                    {{/featured}}
+                {{/all}}
+            </ul>
+        {{/lengthEqual}}
+        <div class="clearfix"></div>
+    {{/images}}
+</div>

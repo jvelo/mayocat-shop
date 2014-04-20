@@ -1,5 +1,13 @@
-(function (global)
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+var Mayocat = (function (global, Mayocat)
 {
+
     if (typeof out === "undefined") {
         // Can be useful for Q&D debugging
         // usage: out['println(java.lang.String)']("Hello " + something);
@@ -31,21 +39,21 @@
         }, obj);
     };
 
-    var getComponent = function (clazz, hint) {
+    var getComponent = Mayocat.getComponent = function (clazz, hint) {
         hint = typeof hint === "undefined" ? "default" : hint;
         return org.mayocat.util.Utils.getComponent(clazz, hint);
     };
 
     // Java bindings ---------------------------------------------------------------------------------------------------
 
-    var ThemeManager = org.mayocat.theme.ThemeManager,
-        ThemeLocalizationServiceClass = org.mayocat.theme.ThemeLocalizationService,
+    var ThemeFileResolverClass = org.mayocat.theme.ThemeFileResolver,
+        ThemeLocalizationServiceClass = org.mayocat.localization.ThemeLocalizationService,
         Breakpoint = Packages.org.mayocat.theme.Breakpoint,
         themeLocalizationService = getComponent(ThemeLocalizationServiceClass),
-        themeManager = getComponent(ThemeManager),
-        execution = getComponent(org.mayocat.context.Execution);
+        themeFileResolver = getComponent(ThemeFileResolverClass),
+        webContext = getComponent(org.mayocat.context.WebContext);
 
-    // Handlears helpers -----------------------------------------------------------------------------------------------
+    // Handlebars helpers ----------------------------------------------------------------------------------------------
 
     Handlebars.registerHelper('include', function (template, options) {
         var partial = Handlebars.partials[template];
@@ -57,12 +65,12 @@
     });
 
     Handlebars.registerHelper('templateSource', function (template, options) {
-        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, webContext.getRequest().getBreakpoint());
         return String(resolved.getContent());
     });
 
     Handlebars.registerHelper('includeTemplate', function (template, options) {
-        var resolved = themeManager.getTemplate(template, Breakpoint.DEFAULT);
+        var resolved = themeFileResolver.getTemplate(template, webContext.getRequest().getBreakpoint());
 
         var name = resolved.getId(),
             content = String(resolved.getContent());
@@ -83,10 +91,8 @@
     });
 
     Handlebars.registerHelper('isPath', function (path, options) {
-        if (typeof this.location !== "undefined") {
-            if (path === this.location.path) {
+        if (path === this.canonicalUrl) {
                 return options.fn(this);
-            }
         }
         return options.inverse(this);
     });
@@ -118,7 +124,9 @@
     });
 
     Handlebars.registerHelper('message', function(key, options){
-        return String(themeLocalizationService.getMessage(key, options.hash));
+        return new Handlebars.SafeString(themeLocalizationService.getMessage(key, options.hash));
     });
 
-})(this);
+    return Mayocat;
+
+})(this, Mayocat || {});

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 describe('Configuration', function () {
 
     describe('Service', function () {
@@ -91,7 +98,7 @@ describe('Configuration', function () {
 
         beforeEach(inject(function ($injector, $rootScope, $controller) {
             httpBackend = $injector.get('$httpBackend');
-            httpBackend.when('GET', '/api/locales').respond({});
+            httpBackend.when('GET', '/api/locales').respond([]);
             httpBackend.when('GET', '/api/configuration/settings').respond({
                 "module":{
                     "propertySet":{

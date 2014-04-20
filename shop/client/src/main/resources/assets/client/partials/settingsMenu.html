@@ -1,3 +1,12 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <div id="list" ng-controller="SettingsMenuController">
 
     <div class="header">
@@ -8,30 +17,32 @@
         <li ng-class="{'active': isGeneral}">
             <div>
                 <div class="droptarget">
-                    <a ng-click="setRoute('/settings/')">{{'settings.misc.general' | translate}}</a>
+                    <div><a ng-click="setRoute('/settings/')">{{'settings.misc.general' | translate}}</a></div>
                 </div>
             </div>
         </li>
         <li ng-class="{'active': isTenant}">
             <div>
                 <div class="droptarget">
-                    <a ng-click="setRoute('/settings/tenant')">{{'settings.misc.shop' | translate}}</a>
+                    <div><a ng-click="setRoute('/settings/tenant')">{{'settings.misc.shop' | translate}}</a></div>
                 </div>
             </div>
         </li>
         <li ng-class="{'active': isCatalog}">
             <div>
                 <div class="droptarget">
-                    <a ng-click="setRoute('/settings/catalog')">{{'settings.misc.catalog' | translate}}</a>
+                    <div><a ng-click="setRoute('/settings/catalog')">{{'settings.misc.catalog' | translate}}</a></div>
                 </div>
             </div>
         </li>
         <li ng-class="{'active': isShipping}">
             <div>
                 <div class="droptarget">
-                    <a ng-click="setRoute('/settings/shipping')">
-                        {{'settings.misc.shipping' | translate}}
-                    </a>
+                    <div>
+                        <a ng-click="setRoute('/settings/shipping')">
+                            {{'settings.misc.shipping' | translate}}
+                        </a>
+                    </div>
                 </div>
             </div>
         </li>

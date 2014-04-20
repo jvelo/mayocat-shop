@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.cms.news.store.jdbi;
 
 import java.util.List;
@@ -96,7 +103,7 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     @Override
     public List<Article> findAll(Integer number, Integer offset)
     {
-        return AddonsHelper.withAddons(this.dao.findAll(ARTICLE_TABLE_NAME, getTenant(), number, offset), this.dao);
+        return AddonsHelper.withAddons(this.dao.findAllLatestFirst(getTenant(), number, offset), this.dao);
     }
 
     @Override

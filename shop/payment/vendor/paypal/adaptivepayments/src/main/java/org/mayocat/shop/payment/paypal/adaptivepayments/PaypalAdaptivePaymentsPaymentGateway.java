@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.payment.paypal.adaptivepayments;
 
 import java.io.IOException;
@@ -10,11 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.shop.payment.BaseOption;
+import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
-import org.mayocat.shop.payment.Option;
-import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.GatewayResponse;
+import org.mayocat.shop.payment.PaymentData;
+import org.mayocat.shop.payment.PaymentGateway;
 import org.mayocat.shop.payment.api.resources.PaymentResource;
 import org.mayocat.shop.payment.model.PaymentOperation;
 
@@ -67,7 +74,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
     }
 
     @Override
-    public GatewayResponse purchase(BigDecimal amount, Map<Option, Object> options) throws GatewayException
+    public GatewayResponse purchase(BigDecimal amount, Map<PaymentData, Object> options) throws GatewayException
     {
         PayRequest request = new PayRequest();
 
@@ -82,13 +89,13 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setRequestEnvelope(requestEnvelope);
         ClientDetailsType clientDetails = new ClientDetailsType();
         request.setClientDetails(clientDetails);
-        request.setReturnUrl((String) options.get(BaseOption.RETURN_URL));
-        request.setCancelUrl((String) options.get(BaseOption.CANCEL_URL));
+        request.setReturnUrl((String) options.get(BasePaymentData.RETURN_URL));
+        request.setCancelUrl((String) options.get(BasePaymentData.CANCEL_URL));
         request.setActionType(ACTION_TYPE_CREATE);
-        request.setCurrencyCode(((Currency) options.get(BaseOption.CURRENCY)).getCurrencyCode());
+        request.setCurrencyCode(((Currency) options.get(BasePaymentData.CURRENCY)).getCurrencyCode());
 
-        String baseURI = (String) options.get(BaseOption.BASE_URL);
-        String orderId = options.get(BaseOption.ORDER_ID).toString();
+        String baseURI = (String) options.get(BasePaymentData.BASE_URL);
+        String orderId = options.get(BasePaymentData.ORDER_ID).toString();
 
         // -> FIXME determine if we want to set the order ID as tracking ID.
         // We need to know for sure it can only be used once
@@ -135,8 +142,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     optionsRequest.setRequestEnvelope(requestEnvelope);
                     SetPaymentOptionsResponse resp = service.setPaymentOptions(optionsRequest);
                     if (resp != null) {
-                        if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS"))
-                        {
+                        if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS")) {
                             // This means the payment needs approval on paypal site
                             String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
                                     "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
@@ -163,28 +169,12 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                 operation.setMemo(map);
                 return new GatewayResponse(false, operation);
             }
-        } catch (IOException e) {
-            throw new GatewayException(e);
-        } catch (MissingCredentialException e) {
-            throw new GatewayException(e);
-        } catch (InterruptedException e) {
-            throw new GatewayException(e);
-        } catch (ClientActionRequiredException e) {
-            throw new GatewayException(e);
-        } catch (SSLConfigurationException e) {
-            throw new GatewayException(e);
-        } catch (OAuthException e) {
-            throw new GatewayException(e);
-        } catch (HttpErrorException e) {
-            throw new GatewayException(e);
-        } catch (InvalidCredentialException e) {
-            throw new GatewayException(e);
-        } catch (InvalidResponseDataException e) {
+        } catch (Exception e) {
             throw new GatewayException(e);
         }
     }
 
-    public GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException
+    public GatewayResponse acknowledge(UUID orderId, Map<String, List<String>> data) throws GatewayException
     {
 
         IPNMessage ipnListener = new IPNMessage(convertDataMap(data));

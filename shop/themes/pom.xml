@@ -3,13 +3,18 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.12-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-shop-themes</artifactId>
     <packaging>pom</packaging>
 
     <name>Mayocat Shop - Themes</name>
     <description>Bundled themes</description>
+
+    <properties>
+      <license.skip>true</license.skip>
+    </properties>
+
     <build>
         <plugins>
             <!-- Assembly -->
