@@ -28,6 +28,7 @@ import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.LocalizationFilterSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.general.LocalesSettings;
+import org.mayocat.context.WebContext;
 import org.mayocat.servlet.ServletFilter;
 import org.xwiki.component.annotation.Component;
 
@@ -59,6 +60,9 @@ public class RequestLocalizationFilter implements Filter, ServletFilter
     @Inject
     private LocalizationFilterSettings settings;
 
+    @Inject
+    private WebContext webContext;
+
     public void init(FilterConfig filterConfig) throws ServletException
     {
         // Nothing
@@ -67,11 +71,13 @@ public class RequestLocalizationFilter implements Filter, ServletFilter
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException
     {
+
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         if (isStaticPath(request.getRequestURI())
-                || FluentIterable.from(settings.getExcludePaths()).anyMatch(startsWithPath(request)))
+                || FluentIterable.from(settings.getExcludePaths()).anyMatch(startsWithPath(request))
+                || webContext.getTenant() == null)
         {
             // Ignore static paths or paths configured as excluded
             chain.doFilter(servletRequest, servletResponse);

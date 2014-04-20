@@ -96,7 +96,7 @@
     <div class="loader" ng-show="authenticated == undefined"></div>
 
     <!-- Login modal -->
-    <section id="login-modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated">
+    <section id="login-modal" ng-show="authenticated != undefined && !authenticated">
         <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
             <h1 class="title">Welcome on Mayocat Shop</h1>
 
