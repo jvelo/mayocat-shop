@@ -506,8 +506,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
                 height: '290px',
                 width: '99%',
                 removeDialogTabs: '',
-                extraPlugins: 'image2',
-                imageBrowser_listUrl: "/path/to/images_list.json"
+                extraPlugins: 'mayoimage'
             };
 
             CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');

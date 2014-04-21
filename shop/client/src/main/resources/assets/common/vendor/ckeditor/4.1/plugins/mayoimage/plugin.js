@@ -9,12 +9,12 @@
 
 (function() {
 
-	CKEDITOR.plugins.add( 'image2', {
+	CKEDITOR.plugins.add( 'mayoimage', {
 		requires: 'dialog',
 		lang: 'en', // %REMOVE_LINE_CORE%
-		icons: 'image2', // %REMOVE_LINE_CORE%
+		icons: 'mayoimage', // %REMOVE_LINE_CORE%
 		init: function( editor ) {
-			var pluginName = 'image2';
+			var pluginName = 'mayoimage';
 
 			// Register the dialog.
 			CKEDITOR.dialog.add( pluginName, this.path + 'dialogs/image.js' );
@@ -38,7 +38,7 @@
 			// Register the toolbar button.
 			editor.ui.addButton && editor.ui.addButton( 'Image 2', {
                 label: 'Mayocat Image',
-                command: 'image2',
+                command: 'mayoimage',
                 icon: this.path + 'icons/image.png',
 				toolbar: 'insert,10'
 			});
@@ -47,16 +47,16 @@
 				var element = evt.data.element;
 
 				if ( element.is( 'img' ) && !element.data( 'cke-realelement' ) && !element.isReadOnly() )
-					evt.data.dialog = 'image2';
+					evt.data.dialog = 'mayoimage';
 			});
 
 			// If the "menu" plugin is loaded, register the menu items.
 			if ( editor.addMenuItems ) {
 				editor.addMenuItems({
-					image2: {
+					mayoimage: {
 						label: editor.lang.image.menu,
-						command: 'image2',
-						group: 'image2'
+						command: 'mayoimage',
+						group: 'mayoimage'
 					}
 				});
 			}

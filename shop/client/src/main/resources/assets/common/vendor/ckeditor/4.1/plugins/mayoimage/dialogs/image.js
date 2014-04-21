@@ -278,7 +278,7 @@
                         }
                     }
                     // Fill out all fields.
-                    if (dialogType == 'image2')
+                    if (dialogType == 'mayoimage')
                         this.setupContent(LINK, link);
                 }
 
@@ -308,7 +308,7 @@
                     var imgTagName = this.imageEditMode;
 
                     // Image dialog and Input element.
-                    if (dialogType == 'image2' && imgTagName == 'input' && confirm(editor.lang.image.button2Img)) {
+                    if (dialogType == 'mayoimage' && imgTagName == 'input' && confirm(editor.lang.image.button2Img)) {
                         // Replace INPUT-> IMG
                         imgTagName = 'img';
                         this.imageElement = editor.document.createElement('img');
@@ -316,7 +316,7 @@
                         editor.insertElement(this.imageElement);
                     }
                     // ImageButton dialog and Image element.
-                    else if (dialogType != 'image2' && imgTagName == 'img' && confirm(editor.lang.image.img2Button)) {
+                    else if (dialogType != 'mayoimage' && imgTagName == 'img' && confirm(editor.lang.image.img2Button)) {
                         // Replace IMG -> INPUT
                         imgTagName = 'input';
                         this.imageElement = editor.document.createElement('input');
@@ -333,7 +333,7 @@
                 } else // Create a new image.
                 {
                     // Image dialog -> create IMG element.
-                    if (dialogType == 'image2')
+                    if (dialogType == 'mayoimage')
                         this.imageElement = editor.document.createElement('img');
                     else {
                         this.imageElement = editor.document.createElement('input');
@@ -380,7 +380,7 @@
                 }
             },
             onLoad: function () {
-                if (dialogType != 'image2')
+                if (dialogType != 'mayoimage')
                     this.hidePage('Link'); //Hide Link tab.
                 var doc = this._.element.getDocument();
 
@@ -1112,8 +1112,8 @@
         };
     };
 
-    CKEDITOR.dialog.add('image2', function (editor) {
-        return imageDialog(editor, 'image2');
+    CKEDITOR.dialog.add('mayoimage', function (editor) {
+        return imageDialog(editor, 'mayoimage');
     });
 
     CKEDITOR.dialog.add('imagebutton2', function (editor) {

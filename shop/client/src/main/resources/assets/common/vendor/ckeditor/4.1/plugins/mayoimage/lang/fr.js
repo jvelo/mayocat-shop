@@ -2,7 +2,7 @@
 Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang( 'image', 'fr', {
+CKEDITOR.plugins.setLang( 'mayoimage', 'fr', {
 	alertUrl: 'Veuillez entrer l\'adresse de l\'image',
 	alt: 'Texte de remplacement',
 	border: 'Bordure',
