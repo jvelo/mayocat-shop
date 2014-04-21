@@ -513,7 +513,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
 
-            CKEDITOR.config.mayocat_entity_uri = "/api/products/texas/";
+            CKEDITOR.config.mayocat_entity_uri = $rootScope.entity.uri;
             var ck = CKEDITOR.replace(elm[0], ckOptions);
 
             if (!ngModel) return;

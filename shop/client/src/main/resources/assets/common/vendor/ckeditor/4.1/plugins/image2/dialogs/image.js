@@ -233,7 +233,7 @@
             mayoProductImgsId = numbering('mayoProductImgs');
 
         return {
-            title: "Insérer une image",
+            title: "Insert image",
             minWidth: 620,
             minHeight: 260,
             onShow: function () {
@@ -418,7 +418,7 @@
                                 {
                                     id: 'mayoUrl',
                                     type: 'html',
-                                    html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images du produit</div></div>',
+                                    html: '<div id="' + mayoProductImgsId + '"><div style="display:none;">Images</div></div>',
                                     onLoad: function () {
                                         var $imgsDiv = $(document.getElementById(mayoProductImgsId));
                                         $.get(CKEDITOR.config.mayocat_entityUri + 'images', function (data) {
@@ -443,7 +443,7 @@
                                                     $imgsDiv.find('img').each(function (i, e) {
                                                         $(this).css('border', '2px solid white');
                                                     })
-                                                    $(this).css('border', '2px solid blue');
+                                                    $(this).css('border', '2px solid #6ac2bf');
                                                     $imgsDiv.data('selectedHref', $(this).data('href'));
                                                 })
                                                 .on('mouseenter', 'img', function () {
@@ -456,7 +456,7 @@
                                         if (type == IMAGE) {
                                             var href = element.data('cke-saved-src') || element.getAttribute('src');
                                             $imgsDiv.find('img').each(function (i, e) {
-                                                if ($(this).data('href') == href) $(this).css('border', '2px solid blue');
+                                                if ($(this).data('href') == href) $(this).css('border', '2px solid #6ac2bf');
                                             })
                                         }
                                     },

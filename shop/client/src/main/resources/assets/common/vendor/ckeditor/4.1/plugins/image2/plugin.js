@@ -37,7 +37,7 @@
 
 			// Register the toolbar button.
 			editor.ui.addButton && editor.ui.addButton( 'Image 2', {
-                label: 'Your Plugin Label',
+                label: 'Mayocat Image',
                 command: 'image2',
                 icon: this.path + 'icons/image.png',
 				toolbar: 'insert,10'
