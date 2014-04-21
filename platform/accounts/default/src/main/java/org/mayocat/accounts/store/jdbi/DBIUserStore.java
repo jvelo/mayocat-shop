@@ -69,6 +69,14 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         this.dao.update(user, tenant);
     }
 
+    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        if (this.dao.findGlobalUserByEmailOrUserName(user.getSlug()) == null) {
+            throw new EntityDoesNotExistException();
+        }
+        this.dao.updateGlobalUser(user);
+    }
+
     public User findById(UUID id)
     {
         return this.dao.findById(id);

@@ -11,19 +11,31 @@
         <h3>{{'account.passwordChange.title' | translate}}</h3>
     </div>
     <div class="modal-body">
-        <form>
+        <form name="changePassword" novalidate validate-on-blur>
             <fieldset>
                 <!-- Current password -->
                 <label>{{'account.passwordChange.currentPassword' | translate}}</label>
-                <input type="password" class="span3" ng-model="currentPassword" />
+                <input type="password" class="span3" ng-model="$parent.currentPassword" required />
 
                 <!-- New password -->
                 <label>{{'account.passwordChange.newPassword' | translate}}</label>
-                <input type="password" class="span3" ng-model="newPassword"/>
+                <input type="password" class="span3" ng-model="$parent.newPassword" name="newPassword" required minlength="10"/>
+                <!-- When we upgrade the angular version:
+                       ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }" -->
+
+                <div class="alert alert-error" ng-show="changePassword.newPassword.$dirty && changePassword.newPassword.$error.required">
+                    {{'global.validation.required' | translate}}</div>
 
                 <!-- Type it again -->
                 <label>{{'account.passwordChange.newPasswordAgain' | translate}}</label>
-                <input type="password" class="span3" ng-model="newPassword2"/>
+                <input type="password" class="span3" ng-model="newPasswordCheck" name="newPasswordCheck"
+                       data-password-verify="newPassword" required />
+
+                <div class="alert alert-error" ng-show="changePassword.newPasswordCheck.$error.passwordVerify && changePassword.newPasswordCheck.$dirty">
+                    {{'account.passwordChange.passwordsDoNotMatch' | translate}}</div>
+
+                <div class="alert alert-error" ng-show="isWrongPassword">
+                    {{'account.passwordChange.wrongPassword' | translate}}</div>
             </fieldset>
         </form>
     </div>
@@ -31,7 +43,7 @@
         <button class="btn" ng-click="$dismiss()">
             {{'global.actions.cancel' | translate}}
         </button>
-        <button class="btn btn-danger" ng-click="$close()">
+        <button class="btn btn-danger" ng-click="updatePassword()" ng-disabled="changePassword.$invalid">
             {{'account.passwordChange.title' | translate}}
         </button>
     </div>

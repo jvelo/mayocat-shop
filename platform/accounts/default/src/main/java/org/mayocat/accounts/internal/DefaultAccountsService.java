@@ -128,6 +128,15 @@ public class DefaultAccountsService implements AccountsService
     }
 
     @Override
+    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        if (!user.isGlobal()) {
+            throw new InvalidEntityException("User is not global");
+        }
+        this.userStore.get().updateGlobalUser(user);
+    }
+
+    @Override
     public List<Role> findRolesForUser(User user)
     {
         return this.userStore.get().findRolesForUser(user);

@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response;
 import org.joda.time.DateTimeZone;
 import org.mayocat.accounts.AccountsService;
 import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.passwords.PasswordStrengthChecker;
+import org.mayocat.accounts.representations.PasswordChangeRepresentation;
 import org.mayocat.accounts.representations.TenantRepresentation;
 import org.mayocat.accounts.representations.UserAndTenantRepresentation;
 import org.mayocat.authorization.annotation.Authorized;
@@ -47,29 +49,6 @@ public class MeResource implements Resource
 {
     public static final String PATH = API_ROOT_PATH + "me";
 
-    public final static class ChangePasswordRequest
-    {
-        private final String currentPassword;
-
-        private final String newPassword;
-
-        public ChangePasswordRequest(String currentPassword, String newPassword)
-        {
-            this.currentPassword = currentPassword;
-            this.newPassword = newPassword;
-        }
-
-        public String getCurrentPassword()
-        {
-            return currentPassword;
-        }
-
-        public String getNewPassword()
-        {
-            return newPassword;
-        }
-    }
-
     @Inject
     private AccountsService accountsService;
 
@@ -81,6 +60,9 @@ public class MeResource implements Resource
 
     @Inject
     private PasswordManager passwordManager;
+
+    @Inject
+    private PasswordStrengthChecker strengthChecker;
 
     @Inject
     private Cipher crypter;
@@ -103,32 +85,41 @@ public class MeResource implements Resource
     }
 
     @POST
-    public Response changeMyPassword(@CookieParam("remember") Boolean remember, ChangePasswordRequest request)
+    @Path("password")
+    public Response changeMyPassword(@CookieParam("remember") Boolean remember, PasswordChangeRepresentation request)
     {
-        User user = execution.getContext().getUser();
+        User user = context.getUser();
 
         if (!passwordManager.verifyPassword(request.getCurrentPassword(), user.getPassword())) {
             return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
         }
 
+        if (!strengthChecker.isStrongEnough(request.getNewPassword())) {
+            return Response.status(Response.Status.FORBIDDEN).entity(
+                    new org.mayocat.rest.error.Error(Response.Status.FORBIDDEN,
+                            AccountErrors.PASSWORD_NOT_STRONG_ENOUGH, "Password not strong enough")).build();
+        }
+
         user.setPassword(this.passwordManager.hashPassword(request.getNewPassword()));
 
         try {
-            accountsService.updateUser(user);
+            if (user.isGlobal()) {
+                // Update global user
+                accountsService.updateGlobalUser(user);
+            } else {
+                accountsService.updateUser(user);
+            }
 
             // Update cookies so that the user doesn't have to log in again
 
             // Find out some cookie parameters we will need
             int ageWhenRemember = 60 * 60 * 24 * 15; // TODO make configurable
-            // String domain = uri.geBaseUri().getHost();
-            // TODO set domain when at least two dots ? Or config ?
-            // See http://curl.haxx.se/rfc/cookie_spec.html
 
             // Create the new cookies to be sent with the response
             NewCookie newUserCookie = new NewCookie("username", crypter.encrypt(user.getSlug()), "/", null, null,
                     remember ? ageWhenRemember : -1, false);
-            NewCookie newPassCookie = new NewCookie("password", crypter.encrypt(user.getPassword()), "/", null, null,
-                    remember ? ageWhenRemember : -1, true);
+            NewCookie newPassCookie = new NewCookie("password", crypter.encrypt(request.getNewPassword()), "/", null, null,
+                    remember ? ageWhenRemember : -1, false);
             NewCookie newRememberMe = new NewCookie("remember", remember.toString(), "/", null, null,
                     remember ? ageWhenRemember : -1, false);
 

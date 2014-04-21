@@ -14,7 +14,8 @@
             actions: {
                 add: "Ajouter",
                 remove: "Retirer",
-                close: "Fermer"
+                close: "Fermer",
+                cancel: "Annuler"
             },
             validation: {
                 required : "Requis"
@@ -430,7 +431,9 @@
                 title : "Changer mon mot de passe",
                 currentPassword: "Mot de passe actuel",
                 newPassword: "Nouveau mot de passe",
-                newPasswordAgain: "Entrez-le à nouveau"
+                newPasswordAgain: "Entrez-le à nouveau",
+                passwordsDoNotMatch: "Les mots de passes diffèrent",
+                wrongPassword: "Mot de passe actuel non valide"
             }
         }
     };

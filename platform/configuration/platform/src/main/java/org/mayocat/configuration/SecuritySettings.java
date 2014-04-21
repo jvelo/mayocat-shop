@@ -28,6 +28,11 @@ public class SecuritySettings
     @JsonProperty
     Integer passwordSaltLogRounds = 10;
 
+    @Valid
+    @JsonProperty
+    Integer minimumZxcvbnPasswordEntroy = 10;
+
+
     public String getEncryptionKey()
     {
         return encryptionKey;
@@ -41,5 +46,10 @@ public class SecuritySettings
     public Integer getPasswordSaltLogRounds()
     {
         return passwordSaltLogRounds;
+    }
+
+    public Integer getMinimumZxcvbnPasswordEntroy()
+    {
+        return minimumZxcvbnPasswordEntroy;
     }
 }

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.EntityStore;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.Store;
@@ -23,6 +24,8 @@ import org.mayocat.store.Store;
 public interface UserStore extends Store<User, UUID>, EntityStore
 {
     User create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
+
+    void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException;
 
     User findUserByEmailOrUserName(String userNameOrEmail);
 

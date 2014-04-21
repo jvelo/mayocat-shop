@@ -56,7 +56,7 @@
 
                 function error(response) {
                     if (response.status === 401 && !response.config.ignoreAuthModule
-                        && response.config.url != '/api/login/') {
+                        && response.config.url != '/api/login/' && response.config.url != '/api/me/password/') {
                         var deferred = $q.defer();
                         httpBuffer.append(response.config, deferred);
                         $rootScope.$broadcast('event:authenticationRequired');

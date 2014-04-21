@@ -12,9 +12,14 @@ create() ::= <<
 
 update() ::= <<
     UPDATE agent
-    SET    email = :u.email,
-           password = :u.password
-    WHERE  id = :u.id
+    SET    password = :u.password
+    WHERE  entity_id = :u.id
+>>
+
+updateGlobalUser() ::= <<
+    UPDATE agent
+    SET    password = :user.password
+    WHERE  entity_id = :user.id
 >>
 
 addRoleToUser() ::= <<

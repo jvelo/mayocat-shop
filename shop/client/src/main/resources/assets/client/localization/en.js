@@ -17,7 +17,8 @@
             actions: {
                 add: "Add",
                 remove: "Remove",
-                close: "Close"
+                close: "Close",
+                cancel: "Cancel"
             },
             validation: {
                 required : "Required"
@@ -476,7 +477,9 @@
                 title : "Change my password",
                 currentPassword: "Current password",
                 newPassword: "New password",
-                newPasswordAgain: "Type it again"
+                newPasswordAgain: "Type it again",
+                passwordsDoNotMatch: "Passwords do not match",
+                wrongPassword: "Current password not valid"
             }
         }
 

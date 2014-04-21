@@ -9,3 +9,4 @@ org.mayocat.accounts.resources.TenantResource
 org.mayocat.accounts.resources.UserResource
 org.mayocat.accounts.resources.MeResource
 org.mayocat.accounts.url.TenantURLFactory
+org.mayocat.accounts.passwords.zxcvbn.ZxcvbnPasswordStrengthChecker

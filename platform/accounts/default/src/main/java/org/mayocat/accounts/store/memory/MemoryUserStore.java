@@ -20,6 +20,7 @@ import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.store.UserStore;
 import org.mayocat.store.EntityAlreadyExistsException;
+import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.memory.BaseEntityMemoryStore;
 import org.xwiki.component.annotation.Component;
@@ -69,5 +70,10 @@ public class MemoryUserStore extends BaseEntityMemoryStore<User> implements User
     public List<Role> findRolesForUser(User user)
     {
         return userRoles.containsKey(user) ? userRoles.get(user) : new ArrayList<Role>();
+    }
+
+    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        throw new RuntimeException("Not implemented");
     }
 }

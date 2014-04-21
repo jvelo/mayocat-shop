@@ -39,6 +39,9 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     @SqlUpdate
     public abstract void update(@BindBean("u") User user, @BindBean("tenant") Tenant tenant);
 
+    @SqlUpdate
+    public abstract void updateGlobalUser(@BindBean("user") User user);
+
     @SqlQuery
     public abstract User findByEmailOrUserNameAndTenant(@Bind("userNameOrEmail") String userNameOrEmail,
             @BindBean("t") Tenant tenant);
