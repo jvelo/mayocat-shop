@@ -21,9 +21,9 @@ angular.module('settings', ['ngResource'])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.updateSettings = function () {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 configurationService.put($scope.settings, function () {
-                    $scope.isLoading = false;
+                    $scope.isSaving = false;
                     $rootScope.$broadcast("catalog:refreshCatalog");
                 });
             };
@@ -187,10 +187,10 @@ angular.module('settings', ['ngResource'])
 
             $scope.createOrUpdateCarrier = function () {
                 if ($scope.editedCarrier.isNew) {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $http.post("/api/shipping/carrier/", $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
                         })
@@ -199,10 +199,10 @@ angular.module('settings', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $http.put("/api/shipping/carrier/" + $scope.editedCarrier.id, $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
 
