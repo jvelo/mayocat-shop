@@ -6,6 +6,58 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+/* Buttons */
+
+.btn {
+  font-family: Arial;
+  font-size: 16px;
+  border: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+input.btn {
+  border: none !important;
+}
+
+.btn-colors(@color) {
+  background: @color;
+
+  &:hover {
+    background: darken(@color, 10%);
+  }
+}
+
+.btn {
+  .btn-colors(#e6e6e6);
+}
+
+.btn-primary {
+  .btn-colors(@linkColor);
+}
+
+// The following colors are the default button colors of Boostrap (v2.3) but a bit lightened up.
+
+.btn-info {
+  .btn-colors(lighten(#2f96b4, 10%));
+}
+
+.btn-success {
+  .btn-colors(lighten(#51a351, 10%));
+}
+
+.btn-warning {
+  .btn-colors(lighten(#f89406, 10%));
+}
+
+.btn-danger {
+  .btn-colors(lighten(#bd362f, 10%));
+}
+
+.btn-inverse {
+  .btn-colors(lighten(#222222, 10%));
+}
+
 /* Entity list selector */
 
 ul.select.entity.list {
@@ -75,7 +127,6 @@ ul li.hoverable:hover .visible-when-hover {
     display: table-cell;
     background: white;
     opacity: 0.9;
-    heigt: 100%;
     vertical-align: middle;
 
     li {
@@ -118,6 +169,7 @@ ul li.hoverable:hover .visible-when-hover {
 .editImage {
   width: 850px;
   margin: 0px 0 0 -425px;
+  top: 50px !important;
 }
 
 .editImage .modal-body {
@@ -192,6 +244,10 @@ image-upload .well {
 image-upload .fileinput-button {
   float: left;
   margin-top: 5px;
+}
+
+image-upload .fileinput-button input[type=file] {
+  height: 42px;
 }
 
 image-upload .editor ul li {

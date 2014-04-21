@@ -57,7 +57,7 @@ header .btn-group {
   float: right;
   margin: 26px 10px;
 
-  a {
+  .btn {
     background: none;
     border: none;
     box-shadow: none;
@@ -207,6 +207,15 @@ header .btn-group {
 #list .droptarget:hover {
   background-color: #FFF;
   z-index: 100;
+}
+
+#list .droptarget.disable-hover {
+  background-color: transparent;
+  z-index: auto;
+
+  > div > .move-handle {
+    display: none;
+  }
 }
 
 #list .droptarget > div:first-child {

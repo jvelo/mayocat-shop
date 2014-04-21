@@ -51,7 +51,7 @@
     <script src="/common/vendor/blueimp/jquery.fileupload-fp.js"></script>
     <script src="/common/vendor/ckeditor/4.1/ckeditor.js"></script>
 
-    <script src="/common/vendor/lesscss/less-1.3.3.min.js"></script>
+    <script src="/common/vendor/lesscss/less-1.4.2.min.js"></script>
     <!-- Always clear local storage when running with less.js -->
     <script>localStorage.clear();</script>
 
@@ -63,6 +63,7 @@
     <script src="/common/javascripts/image.js"></script>
     <script src="/common/javascripts/locales.js"></script>
     <script src="/common/javascripts/configuration.js"></script>
+    <script src="/common/javascripts/mixins.js"></script>
     <script src="/common/javascripts/entities.js"></script>
 
     <script src="javascripts/app.js"></script>
@@ -95,32 +96,26 @@
     <div class="loader" ng-show="authenticated == undefined"></div>
 
     <!-- Login modal -->
-    <div class="modal" ng-show="authenticated != undefined && !authenticated" id="loginModal">
-        <form class="" ng-controller="LoginController">
-            <div class="modal-header">
-                <h3>Authentication required</h3>
-            </div>
-            <div class="modal-body">
-                <p>
-                <fieldset>
-                    <label>User name or email</label>
-                    <input type="text" class="span3" ng-model="username"/>
-                    <label>Password</label>
-                    <input type="password" class="span3" ng-model="password"/>
-                    <label>Remember me</label>
-                    <input type="checkbox" ng-model="remember"/>
-                </fieldset>
-                </p>
-                <div class="alert" ng-show="authenticationFailed">
-                    We could not authenticate you with these credentials.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="submit" value="Login" href="#" class="btn btn-primary" ng-click="requestLogin()"/>
-            </div>
+    <section id="login-modal" ng-show="authenticated != undefined && !authenticated">
+        <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
+            <h1 class="title">Welcome on Mayocat Shop</h1>
+
+            <p class="text-error" ng-show="authenticationFailed">
+                We could not authenticate you with these credentials.
+            </p>
+
+            <input class="field" type="text" ng-model="username" placeholder="Username">
+            <input class="field" type="password" ng-model="password" placeholder="Password">
+
+            <label class="checkbox-container">
+                <input type="checkbox" ng-model="remember">
+                <span class="checkbox-icon"></span>
+                Remember me
+            </label>
+
+            <input class="btn btn-large btn-primary" type="submit" value="Login" ng-click="requestLogin()">
         </form>
-    </div>
-    <div class="modal-backdrop" ng-show="authenticated != undefined && !authenticated"></div>
+    </section>
 
     <!-- Error modal -->
 

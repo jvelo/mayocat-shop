@@ -44,12 +44,24 @@ angular.module('settings', ['ngResource'])
              * Function passed to the list-picker to handle the display of locale tags
              */
             $scope.displayLocale = function () {
-                var locales = $scope.locales.$$v; // this is morally wrong
-                for (var i = 0; i < locales.length; i++) {
-                    if (locales[i].tag === $scope.elementToDisplay) {
-                        return locales[i].name;
+                var localesData = $scope.localesData.$$v || {}, // this is morally wrong
+                    locales = localesData.locales || [],
+                    variants = localesData.variants || [];
+
+                // Check in locales
+                for (var i = 0, locale; locale = locales[i++];) {
+                    if (locale.tag === $scope.elementToDisplay) {
+                        return locale.name;
                     }
                 }
+
+                // Check in variants
+                for (var j = 0, variant; variant = variants[j++];) {
+                    if (variant.tag === $scope.elementToDisplay) {
+                        return variant.name;
+                    }
+                }
+
                 return $scope.elementToDisplay;
             }
 
@@ -57,7 +69,7 @@ angular.module('settings', ['ngResource'])
 
             $scope.timeZoneRegions = timeService.getTimeZoneData();
 
-            $scope.locales = localesService.getData();
+            $scope.localesData = localesService.getData();
 
             configurationService.getSettings(function (settings) {
                 $scope.settings = settings;
@@ -103,9 +115,9 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.updateTenant = function () {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 $scope.TenantResource.save({}, $scope.tenant, function () {
-                    $scope.isLoading = false;
+                    $scope.isSaving = false;
                 });
             }
 

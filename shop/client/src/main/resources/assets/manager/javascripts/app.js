@@ -223,7 +223,6 @@ angular.module('TenantManager.tenants', [])
                     $scope.isLoading = false;
                 });
             }
-
         }]);
 
 

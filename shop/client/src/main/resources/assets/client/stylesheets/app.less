@@ -6,7 +6,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 #home {
-  padding: 90px 70px;
+  padding: 50px 0px;
+}
+
+#home .hero-unit {
+  margin-right: 10px;
+  background: #f5f5f5;
+  font-size: 16px;
+  padding: 30px;
+
 }
 
 #catalog ul.list {
@@ -33,6 +41,16 @@
 
 #catalog ul li div.row {
   margin-left: 0;
+}
+
+#settings {
+  margin-bottom: 20px;
+
+  &:after {
+    display: block;
+    content: '';
+    clear: both;
+  }
 }
 
 .thumbnails {
@@ -136,6 +154,13 @@ addon-string {
 .order .shipped {
 }
 
+table.orders tr.paid td div.amount,
+table.orders tr.paid td div.date,
+table.orders tr.paid td.status {
+  font-weight: bolder;
+}
+
+
 /* Order */
 #main .order .block {
   border: none !important;
@@ -201,25 +226,25 @@ destination-picker span.arrow.open:after {
 
 span.tristate.checkbox {
   display:inline;
-  background: url(../images/checkbox-unchecked.png) no-repeat;
+  background: url(../../common/images/checkbox-unchecked.png) no-repeat;
   width: 20px;
   height: 20px;
   padding-left: 12px;
   margin-left: 13px;
 
   &.checked {
-    background: url(../images/checkbox-checked.png) no-repeat;
+    background: url(../../common/images/checkbox-checked.png) no-repeat;
   }
 
   &.indeterminate {
-    background: url(../images/checkbox-indeterminate.png) no-repeat;
+    background: url(../../common/images/checkbox-indeterminate.png) no-repeat;
   }
 }
 
 /* Shipping location-picker */
 
 destination-picker .checked .checkbox {
-  background: url(../images/checkbox-checked.png) no-repeat !important;
+  background: url(../../common/images/checkbox-checked.png) no-repeat !important;
 }
 
 destination-picker p.destination {
@@ -237,6 +262,10 @@ list-picker select {
 .locales-wrapper {
   position: relative;
   width: 100%;
+
+  &.locales-active {
+    z-index: 30;
+  }
 
   .caret {
     margin-left: 5px;
@@ -263,6 +292,7 @@ list-picker select {
   }
 
   .btn, .dropdown-menu {
+    border: 1px solid;
     background: #eee !important;
   }
 
@@ -389,6 +419,7 @@ list-picker select {
 
     .dropdown-menu {
       left: 0px;
+      border-color: #ababab;
       padding-top: 1px;
 
       li {

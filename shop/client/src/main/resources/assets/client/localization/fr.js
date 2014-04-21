@@ -50,20 +50,17 @@
             }
         },
 
-        home: {
-            title: {
-                welcome: "Bienvenue"
-            },
-
-            explanation: {
-                home: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits."
-            }
+        dashboard: {
+            title: "Bienvenue",
+            introduction: "Gérez vos commandes quotidiennes avec cette interface d'administration. Vous pouvez aussi modifier les contenus de vos pages et de vos produits.",
+            latestOrders: "Dernières commandes",
+            seeAllOrders: "Voir toutes les commandes"
         },
 
         authentication: {
             misc: {
-                title: "Authentification requise",
-                username: "Nom d'utilisateur ou adresse email",
+                title: "Bienvenue sur Mayocat Shop",
+                username: "Nom d'utilisateur",
                 password: "Mot de passe",
                 remember: "Se souvenir de moi"
             },
@@ -324,11 +321,12 @@
         settings: {
 
             tenant: {
-                contactEmail : "Email de contact",
-                contactEmailPlaceholder : "L'email auquel seront envoyées les notifications",
                 shopName: "Nom de la boutique",
-                shopLogo: "Logo de la boutique",
-                shopNamePlaceholder: "Entrez le nom de la boutique"
+                shopNamePlaceholder: "Entrez le nom de la boutique",
+                shopDescription: "Description de la boutique",
+                contactEmail: "Email de contact",
+                contactEmailPlaceholder: "L'email auquel seront envoyées les notifications",
+                shopLogo: "Logo de la boutique"
             },
 
             misc: {
@@ -342,6 +340,8 @@
                 defaultLanguage: "Langage par défaut",
                 otherLanguages: "Autres langages",
                 selectALanguage: "-- Choisir un langage --",
+                languagesGroup: "Langages",
+                variantsGroup: "Variantes",
                 theme: "Thème",
 
                 byWeight: "Selon le poids",

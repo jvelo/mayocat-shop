@@ -58,17 +58,14 @@
         },
 
         /**
-         * Translations linked to the homepage
+         * Translations linked to the homepage / dashboard
          */
 
-        home: {
-            title: {
-                welcome: "Welcome"
-            },
-
-            explanation: {
-                home: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products."
-            }
+        dashboard: {
+            title: "Welcome",
+            introduction: "Handle your daily purchase orders in this administration panel. You can also modify the contents of your pages and products.",
+            latestOrders: "Latest orders",
+            seeAllOrders: "See all orders"
         },
 
         /**
@@ -77,8 +74,8 @@
 
         authentication: {
             misc: {
-                title: "Authentication required",
-                username: "User name or email",
+                title: "Welcome on Mayocat Shop",
+                username: "Username",
                 password: "Password",
                 remember: "Remember me"
             },
@@ -367,11 +364,12 @@
         settings: {
 
             tenant: {
-                contactEmail : "Contact email",
-                contactEmailPlaceholder : "Email at which notifications will be sent",
                 shopName: "Shop name",
-                shopLogo: "Shop logo",
-                shopNamePlaceholder: "Enter the shop name"
+                shopNamePlaceholder: "Enter the shop name",
+                shopDescription: "Shop description",
+                contactEmail: "Contact email",
+                contactEmailPlaceholder: "Email at which notifications will be sent",
+                shopLogo: "Shop logo"
             },
 
             misc: {
@@ -385,6 +383,8 @@
                 defaultLanguage: "Default language",
                 otherLanguages: "Other languages",
                 selectALanguage: "-- Select a language --",
+                languagesGroup: "Languages",
+                variantsGroup: "Variants",
                 theme: "Theme",
 
                 byWeight: "By weight",

@@ -19,6 +19,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'articles',
     'article',
     'homePage',
+    'dashboard',
     'orders',
     'order',
     '$strap.directives', // Used for the date picker bs-datepicker directive
@@ -29,7 +30,7 @@ var MayocatShop = angular.module('MayocatShop', [
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
-        when('/', {templateUrl: 'partials/home.html', controller: 'HomeCtrl', title: 'Home'}).
+        when('/', {templateUrl: 'partials/dashboard.html', controller: 'DashboardController', title: 'Home'}).
         when('/contents', {templateUrl: 'partials/contents.html', title: 'Contents'}).
         when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController', title: 'Orders'}).
         when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController', title: 'Orders'}).

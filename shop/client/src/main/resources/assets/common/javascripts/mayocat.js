@@ -13,6 +13,7 @@ var mayocat = angular.module('mayocat', [
     'mayocat.image',
     'mayocat.configuration',
     'mayocat.time',
+    'mayocat.mixins',
     'mayocat.entities',
     'mayocat.locales',
     'pascalprecht.translate'
@@ -351,6 +352,17 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
                             }, function () {
                                 $scope.api = this;
                             });
+
+                            // Ensure the modal save button is always visible, even on devices with a small viewport
+                            // height. For this we check the modal height (+ top margin) is bigger than the viewport
+                            // height, and cap it's body content height accordingly when that's the case
+                            var viewportHeight = $(window).height(),
+                                modalHeight = $(".modal.editImage").height();
+
+                            if (modalHeight + 50 /* (top margin) */ >= viewportHeight) {
+                                $(".modal.editImage .modal-body").css("max-height", viewportHeight - 200);
+                            }
+
                             hasInitialized = true;
 
                             if ($scope.selection() === undefined) {
@@ -718,11 +730,6 @@ mayocat.directive('validateOnBlur', function () {
     };
 });
 
-mayocat.controller('HomeCtrl', ['$scope', '$resource',
-    function ($scope, $resource) {
-
-    }]);
-
 mayocat.controller('LoginController', ['$rootScope', '$scope',
     function ($rootScope, $scope) {
 
@@ -734,14 +741,26 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
         $scope.requestLogin = function () {
             $rootScope.$broadcast("event:authenticationRequest", $scope.username, $scope.password, $scope.remember);
         };
+
         $scope.$on("event:authenticationFailure", function () {
             $scope.authenticationFailed = true;
         });
-        $scope.$on("event:authenticationSuccessful", function (event, data) {
-            $scope.authenticationFailed = false;
-        });
     }]);
 
+mayocat.directive('loginAnimate', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            scope.$on("event:authenticationFailure", function () {
+                $(element).addClass('login-animate');
+            });
+
+            $(element).on('animationend webkitAnimationEnd', function () {
+                $(this).removeClass('login-animate');
+            });
+        }
+    };
+});
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',

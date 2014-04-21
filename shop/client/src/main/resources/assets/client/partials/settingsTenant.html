@@ -24,6 +24,10 @@
                         <p>{{'settings.tenant.shopName' | translate}}</p>
                         <input type="text" ng-model="tenant.name" placeholder="{{'settings.tenant.shopNamePlaceholder' | translate}}" />
 
+                        <!-- Shop description -->
+                        <p>{{'settings.tenant.shopDescription' | translate}}</p>
+                        <textarea ng-model="tenant.description" ck-editor />
+
                         <!-- Contact email -->
                         <p>{{'settings.tenant.contactEmail' | translate}}</p>
                         <input type="text" ng-model="tenant.contactEmail" placeholder="{{'settings.tenant.contactEmailPlaceholder' | translate}}" />
