@@ -136,7 +136,6 @@
                     scope[localizedKey] = scope[entityType];
                     scope.$on("entity:editedLocaleChanged", function (event, data) {
                         // Save edited version if necessary
-
                         if (typeof scope[entityType] === "undefined" ||
                             (typeof scope[entityType].$resolved !== 'undefined' && !scope[entityType].$resolved)) {
                             // We are not ready
@@ -150,16 +149,18 @@
                         if (typeof scope[entityType]._localized[data.locale] !== 'undefined' && !data.isMainLocale) {
                             // If there is a localized version with the new locale to be edited, then use it
                             scope[localizedKey] = scope[entityType]._localized[data.locale];
-
+                            scope.editedLocalePrefix = '/' + data.locale;
                         }
                         else if (!data.isMainLocale) {
                             // Else if it's not the main locale to be edited, edit it
                             scope[entityType]._localized[data.locale] = {};
                             scope[localizedKey] = scope[entityType]._localized[data.locale];
+                            scope.editedLocalePrefix = '/' + data.locale;
 
                         } else {
                             // Else edit the main locale
                             scope[localizedKey] = scope[entityType];
+                            scope.editedLocalePrefix = ''
                         }
                     });
 
