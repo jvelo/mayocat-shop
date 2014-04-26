@@ -7,6 +7,7 @@
  */
 package org.mayocat.configuration.internal;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -22,18 +23,18 @@ public class AbstractJsonConfigurationHandler
 
     public static final String VALUE_KEY = "value";
 
-    protected final Map<String, Object> platform;
+    protected final Map<String, Serializable> platform;
 
-    protected final Map<String, Object> tenant;
+    protected final Map<String, Serializable> tenant;
 
     public AbstractJsonConfigurationHandler(
-            final Map<String, Object> platform, final Map<String, Object> tenant)
+            final Map<String, Serializable> platform, final Map<String, Serializable> tenant)
     {
         this.platform = platform;
         this.tenant = tenant;
     }
 
-    protected boolean isConfigurableEntry(Map<String, Object> entry)
+    protected boolean isConfigurableEntry(Map<String, Serializable> entry)
     {
         return entry.containsKey(CONFIGURABLE_KEY)
                 && Boolean.class.isAssignableFrom(entry.get(CONFIGURABLE_KEY).getClass())

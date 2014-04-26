@@ -7,10 +7,14 @@
  */
 package org.mayocat.configuration.internal;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import com.google.common.collect.Maps;
 
@@ -19,26 +23,28 @@ import com.google.common.collect.Maps;
  */
 public class ConfigurationJsonMerger extends AbstractJsonConfigurationHandler
 {
-    public ConfigurationJsonMerger(final Map<String, Object> platform, final Map<String, Object> tenant)
+    public ConfigurationJsonMerger(final Map<String, Serializable> platform, final Map<String, Serializable> tenant)
     {
         super(platform, tenant);
     }
 
-    public Map<String, Object> merge()
+    public Map<String, Serializable> merge()
     {
-        return merge(platform, tenant);
+        return SerializationUtils.clone(merge(platform, tenant));
     }
 
-    private Map<String, Object> merge(@NotNull final Map<String, Object> global,
-            @Nullable final Map<String, Object> local)
+    private HashMap<String, Serializable> merge(@NotNull final Map<String, Serializable> global,
+            @Nullable final Map<String, Serializable> local)
     {
         // Copy the global object
-        Map<String, Object> result = Maps.newHashMap(global);
+        HashMap<String, Serializable> result = Maps.newHashMap(global);
+
+        // Iterate over all configuration keys, and merge with tenant configuration
         for (String key : result.keySet()) {
             Object value = global.get(key);
             if (value != null) {
                 try {
-                    Map<String, Object> valueAsMap = (Map<String, Object>) value;
+                    Map<String, Serializable> valueAsMap = (Map<String, Serializable>) value;
                     if (isConfigurableEntry(valueAsMap)) {
                         // We have a configurable
                         Boolean isConfigurable = (Boolean) valueAsMap.get(CONFIGURABLE_KEY);
@@ -51,14 +57,14 @@ public class ConfigurationJsonMerger extends AbstractJsonConfigurationHandler
                         }
                     } else {
                         // We need to go deeper
-                        Map<String, Object> localSubMap = null;
+                        Map<String, Serializable> localSubMap = null;
                         if (local != null && local.get(key) != null) {
                             try {
-                                localSubMap = (Map<String, Object>) local.get(key);
+                                localSubMap = (Map<String, Serializable>) local.get(key);
                             } catch (ClassCastException e) {
                             }
                         }
-                        Object mergedValue = this.merge(valueAsMap, localSubMap);
+                        HashMap<String, Serializable> mergedValue = this.merge(valueAsMap, localSubMap);
                         result.put(key, mergedValue);
                     }
                 } catch (ClassCastException e) {

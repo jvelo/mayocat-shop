@@ -7,6 +7,8 @@
  */
 package org.mayocat.configuration.internal;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -16,24 +18,23 @@ import com.google.common.collect.Maps;
  */
 public class ValidConfigurationEnforcer extends AbstractJsonConfigurationHandler
 {
-    public ValidConfigurationEnforcer(Map<String, Object> platform,
-            Map<String, Object> tenant)
+    public ValidConfigurationEnforcer(Map<String, Serializable> platform, Map<String, Serializable> tenant)
     {
         super(platform, tenant);
     }
 
     public class ValidationResult
     {
-        private Map<String, Object> result;
+        private HashMap<String, Serializable> result;
 
         private boolean hasErrors = false;
 
-        public Map<String, Object> getResult()
+        public HashMap<String, Serializable> getResult()
         {
             return result;
         }
 
-        public void setResult(Map<String, Object> result)
+        public void setResult(HashMap<String, Serializable> result)
         {
             this.result = result;
         }
@@ -54,21 +55,21 @@ public class ValidConfigurationEnforcer extends AbstractJsonConfigurationHandler
         return enforce(platform, tenant);
     }
 
-    private ValidationResult enforce(Map<String, Object> global, Map<String, Object> local)
+    private ValidationResult enforce(Map<String, Serializable> global, Map<String, Serializable> local)
     {
         ValidationResult validationResult = new ValidationResult();
-        Map<String, Object> result = Maps.newHashMap();
+        HashMap<String, Serializable> result = Maps.newHashMap();
         for (String key : local.keySet()) {
             if (!global.containsKey(key)) {
                 // Ignore configuration key : it does not exist
                 validationResult.setHasErrors(true);
             } else {
-                Object value = local.get(key);
-                Object globalValue = global.get(key);
+                Serializable value = local.get(key);
+                Serializable globalValue = global.get(key);
                 try {
-                    Map<String, Object> valueAsMap = (Map<String, Object>) value;
+                    Map<String, Serializable> valueAsMap = (Map<String, Serializable>) value;
                     try {
-                        Map<String, Object> globalValueAsMap = (Map<String, Object>) globalValue;
+                        Map<String, Serializable> globalValueAsMap = (Map<String, Serializable>) globalValue;
                         ValidationResult childResult = this.enforce(globalValueAsMap, valueAsMap);
                         validationResult.setHasErrors(validationResult.isHasErrors() || childResult.isHasErrors());
                         result.put(key, childResult.getResult());
@@ -79,7 +80,7 @@ public class ValidConfigurationEnforcer extends AbstractJsonConfigurationHandler
                 } catch (ClassCastException e) {
                     // Not a map
                     try {
-                        Map<String, Object> globalValueAsMap = (Map<String, Object>) globalValue;
+                        Map<String, Serializable> globalValueAsMap = (Map<String, Serializable>) globalValue;
                         if (isConfigurableEntry(globalValueAsMap)) {
                             if (!(Boolean) globalValueAsMap.get(CONFIGURABLE_KEY)) {
                                 validationResult.setHasErrors(true);

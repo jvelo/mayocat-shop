@@ -8,12 +8,18 @@
 package org.mayocat.accounts.store.jdbi.mapper;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Strings;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
@@ -38,10 +44,10 @@ public class TenantMapper implements ResultSetMapper<Tenant>
         Integer configurationVersion = result.getInt("configuration_version");
         TenantConfiguration configuration;
         if (Strings.isNullOrEmpty(result.getString("configuration"))) {
-            configuration = new TenantConfiguration(configurationVersion, Collections.<String, Object>emptyMap());
+            configuration = new TenantConfiguration(configurationVersion, Collections.<String, Serializable>emptyMap());
         } else {
             try {
-                Map<String, Object> data = mapper.readValue(result.getString("configuration"),
+                Map<String, Serializable> data = mapper.readValue(result.getString("configuration"),
                         new TypeReference<Map<String, Object>>() {});
                 configuration = new TenantConfiguration(configurationVersion, data);
             } catch (IOException e) {

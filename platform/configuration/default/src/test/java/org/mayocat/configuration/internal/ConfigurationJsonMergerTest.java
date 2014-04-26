@@ -8,9 +8,11 @@
 package org.mayocat.configuration.internal;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mayocat.configuration.general.GeneralSettings;
@@ -18,8 +20,6 @@ import org.mayocat.configuration.general.GeneralSettings;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.validation.Validator;
-
-import junit.framework.Assert;
 
 /**
  * @version $Id$
@@ -47,10 +47,10 @@ public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
     @Test
     public void testConfigurationMerge() throws Exception
     {
-        Map<String, Object> generalConfiguration = getConfiguration(defaultConfiguration);
-        Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
+        Map<String, Serializable> generalConfiguration = getConfiguration(defaultConfiguration);
+        Map<String, Serializable> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(generalConfiguration, tenantConfiguration);
-        Map<String, Object> merged = merger.merge();
+        Map<String, Serializable> merged = merger.merge();
         Assert.assertEquals(Locale.FRANCE.toString(),
                 ((Map<String, Object>) ((Map<String, Object>) merged.get("locales")).get("main")).get("value")
         );
@@ -59,11 +59,11 @@ public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
     @Test
     public void testConfigurationMergeWhenPropertyIsNotConfigurable() throws Exception
     {
-        Map<String, Object> generalConfiguration = getConfiguration(localesNotConfigurableConfiguration);
-        Map<String, Object> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
+        Map<String, Serializable> generalConfiguration = getConfiguration(localesNotConfigurableConfiguration);
+        Map<String, Serializable> tenantConfiguration = loadConfiguration("configuration/tenant1.json");
 
         ConfigurationJsonMerger merger = new ConfigurationJsonMerger(generalConfiguration, tenantConfiguration);
-        Map<String, Object> merged = merger.merge();
+        Map<String, Serializable> merged = merger.merge();
         Assert.assertEquals(Locale.ENGLISH.toString(),
                 ((Map<String, Object>) ((Map<String, Object>) merged.get("locales")).get("main")).get("value")
         );

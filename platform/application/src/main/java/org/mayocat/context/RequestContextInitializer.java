@@ -7,6 +7,7 @@
  */
 package org.mayocat.context;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -122,7 +123,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         // 2. Configurations
 
         if (tenant != null) {
-            Map<Class, Object> configurations = configurationService.getSettings();
+            Map<Class, Serializable> configurations = configurationService.getSettings();
             context.setSettings(configurations);
         }
 

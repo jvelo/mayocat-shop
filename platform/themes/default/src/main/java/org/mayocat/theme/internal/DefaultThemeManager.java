@@ -129,9 +129,11 @@ public class DefaultThemeManager implements ThemeManager
                     Theme theme = new Theme(path.get(), null, null, Theme.Type.CLASSPATH, false);
                 } catch (IOException e) {
                     // Surrender
+                    logger.error("Could not resolve theme", e);
                     return null;
                 }
             } else {
+                logger.error("Failed to resolve theme");
                 // Here there is nothing more we can do ; surrender
                 return null;
             }
@@ -140,6 +142,7 @@ public class DefaultThemeManager implements ThemeManager
         ThemeDefinition definition = null;
         Theme parent = null;
         boolean definitionValid = true;
+        logger.debug("Theme directory resolved to [{}]", themeDirectory.toString());
         try {
             node = mapper.readTree(themeDirectory.resolve("theme.yml").toFile());
             definition = mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
@@ -147,6 +150,7 @@ public class DefaultThemeManager implements ThemeManager
             definition = null;
             definitionValid = false;
         } catch (IOException e) {
+            logger.error("I/O exception parsing theme", e);
             // theme.yml file not found -> theme might have a parent
             if (tenant.isPresent()) {
                 parent = getTheme(themeId, Optional.<Tenant>absent(), Arrays.asList(level));
@@ -192,6 +196,7 @@ public class DefaultThemeManager implements ThemeManager
     private String getActiveThemeId(Tenant tenant)
     {
         ThemeSettings settings = configurationService.getSettings(ThemeSettings.class, tenant);
+        logger.debug("Get active theme id, {}, {}", tenant, settings.getActive().getValue());
         return settings.getActive().getValue();
     }
 }

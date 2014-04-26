@@ -7,12 +7,14 @@
  */
 package org.mayocat.configuration;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @version $Id$
  */
-public interface ExposedSettings
+public interface ExposedSettings extends Serializable
 {
     @JsonIgnore
     String getKey();

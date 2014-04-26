@@ -7,6 +7,8 @@
  */
 package org.mayocat.accounts.resources;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -28,6 +30,11 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.yammer.metrics.annotation.Timed;
 
 @Component(ConfigurationResource.PATH)
@@ -49,7 +56,7 @@ public class ConfigurationResource implements Resource
     @Timed
     @Path("settings")
     @ExistingTenant
-    public Map<String, Object> getConfiguration()
+    public Map<String, Serializable> getConfiguration()
     {
         return configurationService.getSettingsAsJson();
     }
@@ -58,7 +65,7 @@ public class ConfigurationResource implements Resource
     @Timed
     @Path("settings/{module}")
     @ExistingTenant
-    public Map<String, Object> getModuleConfiguration(@PathParam("module") String module)
+    public Map<String, Serializable> getModuleConfiguration(@PathParam("module") String module)
     {
         try {
             return configurationService.getSettingsAsJson(module);
@@ -73,15 +80,22 @@ public class ConfigurationResource implements Resource
     @Path("settings/{module}")
     @Authorized //(roles = Role.ADMIN)
     @ExistingTenant
-    public Response updateModuleConfiguration(@PathParam("module") String module, Map<String, Object> configuration)
+    public Response updateModuleConfiguration(@PathParam("module") String module, String configurationAsString)
     {
         try {
-            configurationService.updateSettings(module, configuration);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Serializable> data = mapper.readValue(configurationAsString,
+                    new TypeReference<Map<String, Object>>()
+                    {
+                    });
+            configurationService.updateSettings(module, data);
             return Response.noContent().build();
         }
         catch (NoSuchModuleException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No such module could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        } catch (IOException e) {
+            throw new WebApplicationException(e);
         }
     }
 
@@ -90,16 +104,24 @@ public class ConfigurationResource implements Resource
     @Authorized //(roles = Role.ADMIN)
     @Path("settings")
     @ExistingTenant
-    public Response updateModuleConfiguration(Map<String, Object> configuration)
+    public Response updateModuleConfiguration(String configurationAsString)
     {
-        configurationService.updateSettings(configuration);
-        return Response.noContent().build();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Serializable> data = mapper.readValue(configurationAsString,
+                    new TypeReference<Map<String, Object>>(){});
+            configurationService.updateSettings(data);
+            return Response.noContent().build();
+        } catch (IOException e) {
+            throw new WebApplicationException(e);
+        }
+
     }
 
     @GET
     @Timed
     @Path("gestalt")
-    public Map<String, Object> getGestaltConfiguration()
+    public Map<String, Serializable> getGestaltConfiguration()
     {
         return configurationService.getGestaltConfiguration();
     }
