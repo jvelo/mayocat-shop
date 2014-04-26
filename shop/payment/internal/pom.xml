@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-payment</artifactId>
-        <version>0.20.1</version>
+        <version>0.20.2-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-payment-internal</artifactId>

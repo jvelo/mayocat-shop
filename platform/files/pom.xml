@@ -12,11 +12,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.20.1</version>
+        <version>0.20.2-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-files</artifactId>
     <packaging>jar</packaging>
-    <version>0.20.1</version>
+    <version>0.20.2-SNAPSHOT</version>
 
     <name>Mayocat Platform - Files</name>
     <description>Files management</description>
