@@ -1,7 +1,17 @@
+<!--
+
+        Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
 <div class="products-list home {{#products.pagination.nextPage}}has-more{{/products.pagination.nextPage}}">
 
     <!-- Featured product -->
-    {{#withFirst products.list}}
+    {{#any products.list}}
+        {{#withFirst products.list}}
         <div class="product featured">
 
             <a rel='product' href="{{url}}">
@@ -25,7 +35,8 @@
             <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
 
         </div>
-    {{/withFirst}}
+        {{/withFirst}}
+    {{/any}}
 
     <!-- Other products -->
     {{#each products.list}}

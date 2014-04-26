@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.catalog.store.jdbi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -183,11 +184,17 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public List<Collection> findAllForProductIds(List<UUID> ids)
     {
+        if (ids == null || ids.size() <= 0) {
+            return Collections.emptyList();
+        }
         return this.dao.findAllForProductIds(ids);
     }
 
     public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
     {
+        if (ids == null || ids.size() <= 0) {
+            return Collections.emptyList();
+        }
         return this.dao.findAllProductsCollectionsForIds(ids);
     }
 
