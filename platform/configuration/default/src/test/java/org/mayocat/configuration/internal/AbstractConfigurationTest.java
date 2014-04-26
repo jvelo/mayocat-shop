@@ -26,7 +26,7 @@ public class AbstractConfigurationTest
     protected Map<String, Serializable> loadConfiguration(String uri) throws Exception
     {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(loadJSON(uri), new TypeReference<Map<String, Serializable>>(){});
+        return mapper.readValue(loadJSON(uri), new TypeReference<Map<String, Object>>(){});
     }
 
     private String loadJSON(String uri) throws IOException
@@ -38,7 +38,7 @@ public class AbstractConfigurationTest
     {
         ObjectMapper mapper = new ObjectMapper();
         String asJson = mapper.writeValueAsString(configuration);
-        Map<String, Serializable> configurationAsJson = mapper.readValue(asJson, new TypeReference<Map<String, Serializable>>(){});
+        Map<String, Serializable> configurationAsJson = mapper.readValue(asJson, new TypeReference<Map<String, Object>>(){});
         return configurationAsJson;
     }
 }
