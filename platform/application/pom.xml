@@ -12,11 +12,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.30-SNAPSHOT</version>
+        <version>0.20.1</version>
     </parent>
     <artifactId>mayocat-platform-application</artifactId>
     <packaging>jar</packaging>
-    <version>0.30-SNAPSHOT</version>
+    <version>0.20.1</version>
 
     <name>Mayocat Platform - Application</name>
     <description>Abstract application module</description>
