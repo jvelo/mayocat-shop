@@ -89,7 +89,7 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
                 this.logger.warn("Failed attempt at creating a tenant that already exists for host {}", host);
             }
         }
-        logger.debug("Resolved: " + this.resolved.get().get(host));
+        logger.debug("Resolved tenant [{}] ", this.resolved.get().get(host));
         return this.resolved.get().get(host);
     }
 
