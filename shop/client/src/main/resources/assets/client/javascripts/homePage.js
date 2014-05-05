@@ -24,8 +24,6 @@ angular.module('homePage', [])
 
             $scope.featuredProductsSortableOptions = {
                 update: function(e, ui) {
-                    console.log(ui.item[0].tagName);
-                    console.log(ui.item.hasClass("no-drag"));
                     if (ui.item.hasClass("no-drag")) {
                         ui.item.sortable.cancel();
                     }
@@ -49,7 +47,6 @@ angular.module('homePage', [])
 
                 $scope.modalInstance.result.then(function (product) {
                     if (typeof product !== 'undefined') {
-                        console.log("SCOPE:",$scope);
                         $scope.featuredProducts.push(product);
                         $scope.isDirty = true;
                     }
