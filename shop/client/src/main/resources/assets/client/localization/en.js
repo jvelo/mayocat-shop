@@ -74,7 +74,7 @@
 
         authentication: {
             misc: {
-                title: "Welcome on Mayocat Shop",
+                title: "Welcome to Mayocat Shop",
                 username: "Username",
                 password: "Password",
                 remember: "Remember me"
@@ -151,7 +151,7 @@
                 billingAddress: "Billing address",
                 additionalInformation:  "Additional information",
                 changeStatus: "Change status",
-                
+
                 orderName: "Order \\#{slug}",
                 ordersNumber: "for {numberOfOrders} {numberOfOrders, plural, one{order} other{orders}}",
 
