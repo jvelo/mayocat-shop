@@ -143,7 +143,8 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             'multiple': '&',
             'requestedDropZone': '&dropZone',
             'requestedUploadUri': '&uploadUri',
-            'onUpload': '&onUpload'
+            'onUpload': '&onUpload',
+            'target' : '@'
         },
         controller: function ($scope, $element, $attrs) {
             // Initialize default value for attributes
@@ -235,6 +236,9 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                             if ($scope.files[i] !== null) {
                                 $scope.files[i].progress = 0;
                                 var data = {};
+                                if (typeof $scope.target !== 'undefined') {
+                                    data["target"] = $scope.target;
+                                }
                                 if (typeof $scope.files[i].title !== 'undefined') {
                                     data["title"] = $scope.files[i].title;
                                 }

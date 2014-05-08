@@ -99,18 +99,12 @@ class HomePageApi implements Resource
     @POST
     def updateHomePage(HomePageApiObject homePageApiObject)
     {
-        def homeFeaturedList;
-        def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
-        if (lists.size() == 0) {
-            homeFeaturedList = entityListStore.get().create(new EntityList([
-                    slug: "home-featured-products",
-                    hint: "home_featured_products",
-                    type: "product",
-                    entities: []
-            ]))
-        } else {
-            homeFeaturedList = lists.get(0);
-        }
+        def homeFeaturedList = entityListStore.get().getOrCreate(new EntityList([
+                slug: "home-featured-products",
+                hint: "home_featured_products",
+                type: "product",
+                entities: []
+        ]))
 
         Collection<UUID> ids = homePageApiObject.featuredProducts.collect({ProductApiObject product ->
             // Not very efficient since we are doing 1 query per product but this is a write operation not so frequent

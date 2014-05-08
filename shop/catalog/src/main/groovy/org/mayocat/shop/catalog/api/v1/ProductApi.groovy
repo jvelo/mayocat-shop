@@ -9,13 +9,9 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.sun.jersey.core.header.FormDataContentDisposition
-import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
-import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
-import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
@@ -23,13 +19,17 @@ import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
+import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.api.object.ImageApiObject
+import org.mayocat.rest.api.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
+import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
-import org.mayocat.rest.api.delegate.AttachmentApiDelegate
-import org.mayocat.shop.catalog.api.v1.object.*
+import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
+import org.mayocat.shop.catalog.api.v1.object.ProductListApiObject
+import org.mayocat.shop.catalog.api.v1.object.VariantApiObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
@@ -67,6 +67,9 @@ class ProductApi implements Resource, Initializable
     Provider<ThumbnailStore> thumbnailStore
 
     @Inject
+    Provider<EntityListStore> entityListStore
+
+    @Inject
     WebContext webContext
 
     @Inject
@@ -84,13 +87,50 @@ class ProductApi implements Resource, Initializable
     @Inject
     Logger logger
 
-    @Delegate
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
     AttachmentApiDelegate attachmentApi
 
-    void initialize() {
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
+    ImageGalleryApiDelegate imageGalleryApi
+
+    // Entity handler for delegates
+
+    EntityApiDelegateHandler productHandler = new EntityApiDelegateHandler() {
+        Entity getEntity(String slug)
+        {
+            return productStore.get().findBySlug(slug)
+        }
+
+        void updateEntity(Entity entity)
+        {
+            productStore.get().update(entity)
+        }
+
+        String type()
+        {
+            "product"
+        }
+    }
+
+    void initialize()
+    {
         attachmentApi = new AttachmentApiDelegate([
                 attachmentStore: attachmentStore,
-                slugifier: slugifier
+                slugifier: slugifier,
+                handler: productHandler,
+                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
+                    switch (target) {
+                        case "image-gallery":
+                            afterImageAddedToGallery(entity as Product, fileName, created)
+                            break;
+                    }
+                }
+        ])
+        imageGalleryApi = new ImageGalleryApiDelegate([
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                thumbnailStore: thumbnailStore.get(),
+                handler: productHandler
         ])
     }
 
@@ -207,118 +247,6 @@ class ProductApi implements Resource, Initializable
         productApiObject;
     }
 
-    @Path("{slug}/images")
-    @GET
-    def getImages(@PathParam("slug") String slug)
-    {
-        def images = [];
-        def product = this.productStore.get().findBySlug(slug);
-        if (product == null) {
-            throw new WebApplicationException(Response.status(404).build());
-        }
-
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(product,
-                ["png", "jpg", "jpeg", "gif"] as List))
-        {
-            def thumbnails = thumbnailStore.get().findAll(attachment);
-            def image = new Image(attachment, thumbnails);
-
-            def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
-
-            if (product.featuredImageId != null && product.featuredImageId.equals(attachment.id)) {
-                imageApiObject.featured = true
-            }
-
-            images << imageApiObject
-        }
-
-        images;
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @DELETE
-    @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
-                    @PathParam("imageSlug") String imageSlug)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachmentStore.get().detach(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        }
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("slug") String slug,
-                    @PathParam("imageSlug") String imageSlug, ImageApiObject image)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachment.with {
-                setTitle image.title
-                setDescription image.description
-                setLocalizedVersions image._localized
-            }
-            attachmentStore.get().update(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        } catch (InvalidEntityException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-
-    @Path("{slug}/attachments")
-    @Authorized
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    def addAttachment(@PathParam("slug") String slug,
-                      @FormDataParam("file") InputStream uploadedInputStream,
-                      @FormDataParam("file") FormDataContentDisposition fileDetail,
-                      @FormDataParam("filename") String sentFilename,
-                      @FormDataParam("title") String title,
-                      @FormDataParam("description") String description)
-    {
-        def product = this.productStore.get().findBySlug(slug);
-        if (product == null) {
-            return Response.status(404).build();
-        }
-
-        def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
-        def created = this.addAttachment(uploadedInputStream, filename, title, description,
-                Optional.of(product.id));
-
-        if (product.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
-
-            // If this is an image and the product doesn't have a featured image yet, and the attachment was
-            // successful, the we set this image as featured image.
-            product.featuredImageId = created.id;
-
-            try {
-                this.productStore.get().update(product);
-            } catch (EntityDoesNotExistException | InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
-                this.logger.warn("Failed to set first image as featured image for entity {} with id", product.getId());
-            }
-        }
-
-        return Response.noContent().build();
-    }
-
     @Path("{slug}/move")
     @POST
     @Timed
@@ -369,21 +297,6 @@ class ProductApi implements Resource, Initializable
                     product.virtual = false;
                 } else if (!Strings.isNullOrEmpty(productApiObject.type) && !product.virtual) {
                     product.virtual = true;
-                }
-
-                if (productApiObject._embedded && productApiObject._embedded.get("featuredImage")) {
-
-                    // FIXME:
-                    // This should be done via the {slug}/images/ API instead
-
-                    ImageApiObject featured = productApiObject._embedded.get("featuredImage") as ImageApiObject
-
-                    Attachment featuredImage =
-                        this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension);
-
-                    if (featuredImage) {
-                        product.featuredImageId = featuredImage.id
-                    }
                 }
 
                 this.productStore.get().update(product);

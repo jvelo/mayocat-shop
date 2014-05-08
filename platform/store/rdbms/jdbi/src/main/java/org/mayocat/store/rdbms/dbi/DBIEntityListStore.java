@@ -50,20 +50,34 @@ public class DBIEntityListStore extends DBIEntityStore implements EntityListStor
         return this.dao.findByHint(hint, getTenant());
     }
 
+    public EntityList findListByHintAndParentId(String hint, UUID parentId)
+    {
+        return this.dao.findByHintAndParentId(hint, parentId);
+    }
+
     public EntityList create(@Valid EntityList list) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(ENTITY_LIST_TABLE_NAME, list.getSlug(), getTenant()) != null) {
+        EntityList originalList;
+
+        this.dao.begin();
+
+        originalList = getStoredEntityList(list);
+
+        if (originalList != null) {
+            this.dao.commit();
             throw new EntityAlreadyExistsException();
         }
 
         getObservationManager().notify(new EntityCreatingEvent(), list);
 
-        this.dao.begin();
-
         UUID entityId = UUID.randomUUID();
         list.setId(entityId);
 
-        this.dao.createEntity(list, ENTITY_LIST_TABLE_NAME, getTenant());
+        if (list.getParentId() != null) {
+            this.dao.createChildEntity(list, ENTITY_LIST_TABLE_NAME, getTenant());
+        } else {
+            this.dao.createEntity(list, ENTITY_LIST_TABLE_NAME, getTenant());
+        }
         this.dao.createEntityList(list);
         this.dao.commit();
 
@@ -72,11 +86,49 @@ public class DBIEntityListStore extends DBIEntityStore implements EntityListStor
         return list;
     }
 
-    public void update(@Valid EntityList list) throws EntityDoesNotExistException, InvalidEntityException
+    public EntityList getOrCreate(EntityList list) throws InvalidEntityException
     {
+        EntityList originalList;
+
         this.dao.begin();
 
-        EntityList originalList = this.dao.findBySlug(ENTITY_LIST_TABLE_NAME, list.getSlug(), getTenant());
+        originalList = getStoredEntityList(list);
+
+        if (originalList != null) {
+            this.dao.commit();
+            return originalList;
+        }
+
+        getObservationManager().notify(new EntityCreatingEvent(), list);
+
+        UUID entityId = UUID.randomUUID();
+        list.setId(entityId);
+
+        Integer created;
+
+        if (list.getParentId() != null) {
+            created = this.dao.createChildEntityIfItDoesNotExist(list, ENTITY_LIST_TABLE_NAME, getTenant());
+        } else {
+            created = this.dao.createEntityIfItDoesNotExist(list, ENTITY_LIST_TABLE_NAME, getTenant());
+        }
+        if (created > 0) {
+            this.dao.createEntityList(list);
+        }
+
+        this.dao.commit();
+
+        getObservationManager().notify(new EntityCreatedEvent(), list);
+
+        return getStoredEntityList(list);
+    }
+
+    public void update(@Valid EntityList list) throws EntityDoesNotExistException, InvalidEntityException
+    {
+        EntityList originalList;
+
+        this.dao.begin();
+
+        originalList = getStoredEntityList(list);
 
         if (originalList == null) {
             this.dao.commit();
@@ -95,6 +147,42 @@ public class DBIEntityListStore extends DBIEntityStore implements EntityListStor
         }
 
         getObservationManager().notify(new EntityUpdatedEvent(), list);
+    }
+
+    public void addEntityToList(EntityList list, UUID entity) throws EntityDoesNotExistException
+    {
+        EntityList originalList;
+
+        originalList = getStoredEntityList(list);
+
+        if (originalList == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+
+        getObservationManager().notify(new EntityUpdatingEvent(), originalList);
+
+        this.dao.addEntityToList(list.getId(), entity);
+
+        getObservationManager().notify(new EntityUpdatedEvent(), originalList);
+    }
+
+    public void removeEntityFromList(EntityList list, UUID entity) throws EntityDoesNotExistException
+    {
+        EntityList originalList;
+
+        originalList = getStoredEntityList(list);
+
+        if (originalList == null) {
+            this.dao.commit();
+            throw new EntityDoesNotExistException();
+        }
+
+        getObservationManager().notify(new EntityUpdatingEvent(), originalList);
+
+        this.dao.removeEntityFromList(list.getId(), entity);
+
+        getObservationManager().notify(new EntityUpdatedEvent(), originalList);
     }
 
     public void delete(@Valid EntityList entity) throws EntityDoesNotExistException
@@ -127,5 +215,14 @@ public class DBIEntityListStore extends DBIEntityStore implements EntityListStor
     {
         this.dao = this.getDbi().onDemand(EntityListDAO.class);
         super.initialize();
+    }
+
+    private EntityList getStoredEntityList(EntityList list)
+    {
+        if (list.getParentId() != null) {
+            return this.dao.findBySlug(ENTITY_LIST_TABLE_NAME, list.getSlug(), getTenant(), list.getParentId());
+        } else {
+            return this.dao.findBySlug(ENTITY_LIST_TABLE_NAME, list.getSlug(), getTenant());
+        }
     }
 }

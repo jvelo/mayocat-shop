@@ -22,7 +22,7 @@ import java.util.UUID;
  *
  * @version $Id$
  */
-public abstract class AbstractFixNullFeaturedImageMigration extends AbstractJdbcMigration
+public abstract class AbstractFixNullFeaturedImageMigration
 {
     public void migrate(Connection connection) throws Exception
     {

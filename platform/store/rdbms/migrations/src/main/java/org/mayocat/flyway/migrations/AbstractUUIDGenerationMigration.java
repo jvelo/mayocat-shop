@@ -20,7 +20,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 /**
  * @version $Id$
  */
-public abstract class AbstractUUIDGenerationMigration extends AbstractJdbcMigration implements JdbcMigration
+public abstract class AbstractUUIDGenerationMigration implements JdbcMigration
 {
     public void migrate(Connection connection) throws Exception
     {

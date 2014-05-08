@@ -14,7 +14,9 @@
             actions: {
                 add: "Ajouter",
                 remove: "Retirer",
-                close: "Fermer"
+                edit: "Modifier",
+                close: "Fermer",
+                save: "Sauvegarder"
             },
             validation: {
                 required : "Requis"
@@ -42,7 +44,7 @@
                 cancel: "Annuler",
                 remove: "Retirer",
                 back: "Retour",
-                editImage: "Modifier l'image"
+                editImage: "Modifier"
             },
 
             alert: {

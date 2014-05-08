@@ -177,6 +177,22 @@
 
                 options = typeof options === "undefined" ? {} : options;
 
+                mixin.getImagesSortableOptions = function () {
+                    var $scope = this;
+                    return {
+                        update: function (e, ui) {
+                            $scope.saveImagesGallery();
+                        }
+                    }
+                };
+
+                mixin.saveImagesGallery = function () {
+                    var $scope = this;
+                    $http.post($scope[entityType]._links.images.href, { images: $scope[entityType]._embedded.images }).success(function () {
+                        $scope.imagesDirty = false;
+                    });
+                }
+
                 mixin.editImage = function (image) {
                     var scope = this,
                         modalScope = $rootScope.$new(true);
@@ -214,37 +230,23 @@
                 }
 
                 mixin.selectFeatureImage = function (image) {
-                    var scope = this,
+                    // The scope we are called in here is the loop scope of the image list, so we need to climb up
+                    // one scope to get the actual mixin scope.
+                    var scope = this.$parent,
                         entity = scope[entityType];
 
-                    if (typeof entity._embedded === 'undefined') {
-                        // TODO
-                        // remove when all entities have adopted the new API model (_embedded images, see below)
-                        for (var img in entity.images) {
-                            if (entity.images.hasOwnProperty(img)) {
-                                if (entity.images[img].href === image.href) {
-                                    entity.images[img].featured = true;
-                                    entity.featuredImage = entity.images[img];
-                                }
-                                else {
-                                    entity.images[img].featured = false;
-                                }
+                    for (var img in entity._embedded.images) {
+                        if (entity._embedded.images.hasOwnProperty(img)) {
+                            if (entity._embedded.images[img]._href === image._href) {
+                                entity._embedded.images[img].featured = true;
+                            }
+                            else {
+                                entity._embedded.images[img].featured = false;
                             }
                         }
                     }
-                    else {
-                        for (var img in entity._embedded.images) {
-                            if (entity._embedded.images.hasOwnProperty(img)) {
-                                if (entity._embedded.images[img]._href === image._href) {
-                                    entity._embedded.images[img].featured = true;
-                                    entity._embedded.featuredImage = entity.images[img];
-                                }
-                                else {
-                                    entity._embedded.images[img].featured = false;
-                                }
-                            }
-                        }
-                    }
+
+                    scope.saveImagesGallery();
                 }
 
                 mixin.removeImage = function (image) {

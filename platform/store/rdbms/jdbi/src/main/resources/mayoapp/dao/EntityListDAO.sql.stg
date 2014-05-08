@@ -24,3 +24,20 @@ findByHint() ::= <<
         AND entity.tenant_id = :tenant.id
         AND entity_list.hint = :hint
 >>
+
+findByHintAndParentId() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN entity_list ON entity.id = entity_list.entity_id
+    WHERE   entity.type = 'entity_list'
+        AND entity_list.hint = :hint
+        AND entity.parent_id = :parent
+>>
+
+addEntityToList() ::= <<
+    UPDATE entity_list SET entities = entities || :entityId WHERE entity_id = :listId
+>>
+
+removeEntityFromList() ::= <<
+    UPDATE entity_list SET entities = array_remove(entities, :entityId) WHERE entity_id = :listId
+>>

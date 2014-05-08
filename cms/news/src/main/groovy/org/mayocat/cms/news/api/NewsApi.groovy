@@ -30,15 +30,19 @@ import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
+import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
+import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
 import org.mayocat.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.EntityDoesNotExistException
+import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
 import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
@@ -71,6 +75,9 @@ class NewsApi implements Resource, Initializable
     Provider<ArticleStore> articleStore;
 
     @Inject
+    Provider<EntityListStore> entityListStore
+
+    @Inject
     ConfigurationService configurationService;
 
     @Inject
@@ -88,13 +95,48 @@ class NewsApi implements Resource, Initializable
     @Inject
     Logger logger
 
-    @Delegate
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
     AttachmentApiDelegate attachmentApi
 
-    void initialize() {
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
+    ImageGalleryApiDelegate imageGalleryApi
+
+    EntityApiDelegateHandler articleHandler = new EntityApiDelegateHandler() {
+        Entity getEntity(String slug)
+        {
+            return articleStore.get().findBySlug(slug)
+        }
+
+        void updateEntity(Entity entity)
+        {
+            articleStore.get().update(entity)
+        }
+
+        String type()
+        {
+            "article"
+        }
+    }
+
+    void initialize()
+    {
         attachmentApi = new AttachmentApiDelegate([
                 attachmentStore: attachmentStore,
-                slugifier: slugifier
+                slugifier: slugifier,
+                handler: articleHandler,
+                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
+                    switch (target) {
+                        case "image-gallery":
+                            afterImageAddedToGallery(entity as Article, fileName, created)
+                            break;
+                    }
+                }
+        ])
+        imageGalleryApi = new ImageGalleryApiDelegate([
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                thumbnailStore: thumbnailStore.get(),
+                handler: articleHandler
         ])
     }
 
@@ -301,118 +343,6 @@ class NewsApi implements Resource, Initializable
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
-    }
-
-    @Path("{slug}/images")
-    @GET
-    def getImages(@PathParam("slug") String slug)
-    {
-        def images = [];
-        def article = this.articleStore.get().findBySlug(slug);
-        if (article == null) {
-            throw new WebApplicationException(Response.status(404).build());
-        }
-
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(article,
-                ["png", "jpg", "jpeg", "gif"] as List))
-        {
-            def thumbnails = thumbnailStore.get().findAll(attachment);
-            def image = new Image(attachment, thumbnails);
-
-            def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
-
-            if (article.featuredImageId != null && article.featuredImageId.equals(attachment.id)) {
-                imageApiObject.featured = true
-            }
-
-            images << imageApiObject
-        }
-
-        images;
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @DELETE
-    @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachmentStore.get().detach(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        }
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug, ImageApiObject image)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachment.with {
-                setTitle image.title
-                setDescription image.description
-                setLocalizedVersions image._localized
-            }
-            attachmentStore.get().update(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        } catch (InvalidEntityException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-
-    @Path("{slug}/attachments")
-    @Authorized
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    def addAttachment(@PathParam("slug") String slug,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("filename") String sentFilename,
-            @FormDataParam("title") String title,
-            @FormDataParam("description") String description)
-    {
-        def article = this.articleStore.get().findBySlug(slug);
-        if (article == null) {
-            return Response.status(404).build();
-        }
-
-        def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
-        def created = this.addAttachment(uploadedInputStream, filename, title, description,
-                Optional.of(article.id));
-
-        if (article.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
-
-            // If this is an image and the article doesn't have a featured image yet, and the attachment was
-            // successful, the we set this image as featured image.
-            article.featuredImageId = created.id;
-
-            try {
-                this.articleStore.get().update(article);
-            } catch (EntityDoesNotExistException | InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
-                this.logger.warn("Failed to set first image as featured image for entity {} with id", article.id);
-            }
-        }
-
-        return Response.noContent().build();
     }
 
     static boolean isJustBeingPublished(Article originalArticle, ArticleApiObject updatedArticle)

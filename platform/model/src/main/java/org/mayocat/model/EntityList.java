@@ -7,6 +7,8 @@
  */
 package org.mayocat.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,10 +24,13 @@ import com.google.common.base.Objects;
  *
  * @version $Id$
  */
-public class EntityList implements Entity
+public class EntityList implements Entity, Child
 {
     @DoNotIndex
     private UUID id;
+
+    @DoNotIndex
+    private UUID parentId;
 
     @NotNull
     @Size(min = 1)
@@ -33,7 +38,7 @@ public class EntityList implements Entity
 
     private String type;
 
-    private List<UUID> entities;
+    private List<UUID> entities = new ArrayList<>();
 
     // FUTURE:
     // if we want to implement a "mixed" type (where entities in the list are of heterogeneous types), this list would
@@ -124,5 +129,15 @@ public class EntityList implements Entity
                 .addValue(this.slug)
                 .addValue(this.hint)
                 .toString();
+    }
+
+    public UUID getParentId()
+    {
+        return parentId;
+    }
+
+    public void setParentId(UUID id)
+    {
+        this.parentId = id;
     }
 }

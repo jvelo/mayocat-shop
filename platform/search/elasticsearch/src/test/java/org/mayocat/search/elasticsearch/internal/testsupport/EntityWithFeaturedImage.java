@@ -16,7 +16,8 @@ import org.mayocat.model.annotation.Index;
 /**
 * @version $Id$
 */
-@Index public class EntityWithFeaturedImage implements Entity, HasFeaturedImage
+@Index
+public class EntityWithFeaturedImage implements Entity, HasFeaturedImage
 {
     private UUID id;
 
@@ -34,6 +35,11 @@ import org.mayocat.model.annotation.Index;
     public UUID getFeaturedImageId()
     {
         return this.featuredImageId;
+    }
+
+    public void setFeaturedImageId(UUID id)
+    {
+        this.featuredImageId = id;
     }
 
     public UUID getId()

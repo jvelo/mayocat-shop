@@ -17,7 +17,9 @@
             actions: {
                 add: "Add",
                 remove: "Remove",
-                close: "Close"
+                edit: "Edit",
+                close: "Close",
+                save: "Save"
             },
             validation: {
                 required : "Required"

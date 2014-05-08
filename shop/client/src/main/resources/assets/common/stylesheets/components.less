@@ -117,9 +117,9 @@ ul li.hoverable:hover .visible-when-hover {
   .menu-wrapper {
     display: none;
     position: absolute;
+    top: 0;
     width: 150px;
     height: 150px;
-    top: 4px;
     text-align: center;
   }
 
@@ -139,6 +139,12 @@ ul li.hoverable:hover .visible-when-hover {
 
   .wrapper {
     position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    height: 150px;
+    width: 150px;
+    background-color: #eee;
+    z-index: 100;
   }
 
   li:not(.ui-sortable-helper) {
@@ -149,9 +155,7 @@ ul li.hoverable:hover .visible-when-hover {
     }
   }
 
-
   .thumbnail.add {
-
     opacity: 0.8;
 
     .wrapper {
@@ -163,6 +167,25 @@ ul li.hoverable:hover .visible-when-hover {
   }
 }
 
+.entities.thumbnails.thumbnails-small {
+
+  .wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .menu-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .featured-star {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 500;
+  }
+}
 
  /* Thumbnail editor */
 
@@ -228,6 +251,12 @@ div.thumbnails-list ul li {
   color: @fontColor;
   font-size: 11px;
   padding:2px;
+  position: relative;
+}
+
+div.thumbnails-list ul li div.caption {
+  position: absolute;
+  top: 0;
 }
 
 div.thumbnails-list ul li.active,

@@ -21,22 +21,25 @@ import org.mayocat.cms.pages.api.v1.object.PageApiObject
 import org.mayocat.cms.pages.api.v1.object.PageListApiObject
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
-import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
+import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
+import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
 import org.mayocat.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.EntityDoesNotExistException
+import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
 import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
@@ -50,7 +53,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 /**
- * Doc goes here.
+ * API for the pages module
  *
  * @version $Id$
  */
@@ -60,13 +63,16 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class PagesApi implements Resource, Initializable
+class PageApi implements Resource, Initializable
 {
     @Inject
     Provider<ThumbnailStore> thumbnailStore;
 
     @Inject
     Provider<PageStore> pageStore;
+
+    @Inject
+    Provider<EntityListStore> entityListStore
 
     @Inject
     PlatformSettings platformSettings
@@ -83,13 +89,50 @@ class PagesApi implements Resource, Initializable
     @Inject
     Logger logger
 
-    @Delegate
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
     AttachmentApiDelegate attachmentApi
 
-    void initialize() {
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
+    ImageGalleryApiDelegate imageGalleryApi
+
+    // Entity handler for delegates
+
+    EntityApiDelegateHandler pageHandler = new EntityApiDelegateHandler() {
+        Entity getEntity(String slug)
+        {
+            return pageStore.get().findBySlug(slug)
+        }
+
+        void updateEntity(Entity entity)
+        {
+            pageStore.get().update(entity)
+        }
+
+        String type()
+        {
+            "page"
+        }
+    }
+
+    void initialize()
+    {
         attachmentApi = new AttachmentApiDelegate([
                 attachmentStore: attachmentStore,
-                slugifier: slugifier
+                slugifier: slugifier,
+                handler: pageHandler,
+                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
+                    switch (target) {
+                        case "image-gallery":
+                            afterImageAddedToGallery(entity as Page, fileName, created)
+                            break;
+                    }
+                }
+        ])
+        imageGalleryApi = new ImageGalleryApiDelegate([
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                thumbnailStore: thumbnailStore.get(),
+                handler: pageHandler
         ])
     }
 
@@ -161,10 +204,10 @@ class PagesApi implements Resource, Initializable
         List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : Arrays.asList(expand.split(","));
 
         def pageApiObject = new PageApiObject([
-                _href: "/api/news/${slug}",
+                _href: "/api/pages/${slug}",
                 _links: [
-                        self: new LinkApiObject([ href: "/api/news/${slug}" ]),
-                        images: new LinkApiObject([ href: "/api/news/${slug}/images" ])
+                        self: new LinkApiObject([ href: "/api/pages/${slug}" ]),
+                        images: new LinkApiObject([ href: "/api/pages/${slug}/images" ])
                 ]
         ])
 
@@ -278,117 +321,5 @@ class PagesApi implements Resource, Initializable
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         }
-    }
-
-    @Path("{slug}/images")
-    @GET
-    def getImages(@PathParam("slug") String slug)
-    {
-        def images = [];
-        def pages = this.pageStore.get().findBySlug(slug);
-        if (pages == null) {
-            throw new WebApplicationException(Response.status(404).build());
-        }
-
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(pages,
-                ["png", "jpg", "jpeg", "gif"] as List))
-        {
-            def thumbnails = thumbnailStore.get().findAll(attachment);
-            def image = new Image(attachment, thumbnails);
-
-            def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
-
-            if (pages.featuredImageId != null && pages.featuredImageId.equals(attachment.id)) {
-                imageApiObject.featured = true
-            }
-
-            images << imageApiObject
-        }
-
-        images;
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @DELETE
-    @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachmentStore.get().detach(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        }
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug, ImageApiObject image)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachment.with {
-                setTitle image.title
-                setDescription image.description
-                setLocalizedVersions image._localized
-            }
-            attachmentStore.get().update(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        } catch (InvalidEntityException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-
-    @Path("{slug}/attachments")
-    @Authorized
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    def addAttachment(@PathParam("slug") String slug,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("filename") String sentFilename,
-            @FormDataParam("title") String title,
-            @FormDataParam("description") String description)
-    {
-        def page = this.pageStore.get().findBySlug(slug);
-        if (page == null) {
-            return Response.status(404).build();
-        }
-
-        def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
-        def created = this.addAttachment(uploadedInputStream, filename, title, description,
-                Optional.of(page.id));
-
-        if (page.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
-
-            // If this is an image and the page doesn't have a featured image yet, and the attachment was
-            // successful, the we set this image as featured image.
-            page.featuredImageId = created.id;
-
-            try {
-                this.pageStore.get().update(page);
-            } catch (EntityDoesNotExistException | InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
-                this.logger.warn("Failed to set first image as featured image for entity {} with id", page.id);
-            }
-        }
-
-        return Response.noContent().build();
     }
 }

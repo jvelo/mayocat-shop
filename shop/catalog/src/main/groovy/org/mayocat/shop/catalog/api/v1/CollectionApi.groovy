@@ -20,9 +20,12 @@ import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.image.model.Image
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
+import org.mayocat.model.Entity
 import org.mayocat.model.EntityAndCount
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
+import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
@@ -58,6 +61,9 @@ class CollectionApi implements Resource, Initializable
     Provider<CollectionStore> collectionStore
 
     @Inject
+    Provider<EntityListStore> entityListStore
+
+    @Inject
     CatalogService catalogService
 
     @Inject
@@ -72,15 +78,53 @@ class CollectionApi implements Resource, Initializable
     @Inject
     Logger logger
 
-    @Delegate
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
     AttachmentApiDelegate attachmentApi
 
-    void initialize() {
+    @Delegate(methodAnnotations = true, parameterAnnotations = true)
+    ImageGalleryApiDelegate imageGalleryApi
+
+    // Entity handler for delegates
+
+    EntityApiDelegateHandler collectionHandler = new EntityApiDelegateHandler() {
+        Entity getEntity(String slug)
+        {
+            return collectionStore.get().findBySlug(slug)
+        }
+
+        void updateEntity(Entity entity)
+        {
+            collectionStore.get().update(entity)
+        }
+
+        String type()
+        {
+            "collection"
+        }
+    }
+
+    void initialize()
+    {
         attachmentApi = new AttachmentApiDelegate([
                 attachmentStore: attachmentStore,
-                slugifier: slugifier
+                slugifier: slugifier,
+                handler: collectionHandler,
+                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
+                    switch (target) {
+                        case "image-gallery":
+                            afterImageAddedToGallery(entity as org.mayocat.shop.catalog.model.Collection, fileName, created)
+                            break;
+                    }
+                }
+        ])
+        imageGalleryApi = new ImageGalleryApiDelegate([
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                thumbnailStore: thumbnailStore.get(),
+                handler: collectionHandler
         ])
     }
+
 
     @GET
     @Timed
@@ -344,117 +388,5 @@ class CollectionApi implements Resource, Initializable
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e);
         }
-    }
-
-    @Path("{slug}/images")
-    @GET
-    def getImages(@PathParam("slug") String slug)
-    {
-        def images = [];
-        def collection = this.collectionStore.get().findBySlug(slug);
-        if (collection == null) {
-            throw new WebApplicationException(Response.status(404).build());
-        }
-
-        for (Attachment attachment : this.attachmentStore.get().findAllChildrenOf(collection,
-                ["png", "jpg", "jpeg", "gif"] as List))
-        {
-            def thumbnails = thumbnailStore.get().findAll(attachment);
-            def image = new Image(attachment, thumbnails);
-
-            def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
-
-            if (collection.featuredImageId != null && collection.featuredImageId.equals(attachment.id)) {
-                imageApiObject.featured = true
-            }
-
-            images << imageApiObject
-        }
-
-        images;
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @DELETE
-    @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachmentStore.get().detach(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        }
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug, ImageApiObject image)
-    {
-        def attachment = attachmentStore.get().findBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachment.with {
-                setTitle image.title
-                setDescription image.description
-                setLocalizedVersions image._localized
-            }
-            attachmentStore.get().update(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        } catch (InvalidEntityException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-
-    @Path("{slug}/attachments")
-    @Authorized
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    def addAttachment(@PathParam("slug") String slug,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("filename") String sentFilename,
-            @FormDataParam("title") String title,
-            @FormDataParam("description") String description)
-    {
-        def collection = this.collectionStore.get().findBySlug(slug);
-        if (collection == null) {
-            return Response.status(404).build();
-        }
-
-        def filename = StringUtils.defaultIfBlank(fileDetail.fileName, sentFilename) as String;
-        def created = this.addAttachment(uploadedInputStream, filename, title, description,
-                Optional.of(collection.id));
-
-        if (collection.featuredImageId == null && AttachmentUtils.isImage(filename) && created != null) {
-
-            // If this is an image and the product doesn't have a featured image yet, and the attachment was
-            // successful, the we set this image as featured image.
-            collection.featuredImageId = created.id;
-
-            try {
-                this.collectionStore.get().update(collection);
-            } catch (EntityDoesNotExistException | InvalidEntityException e) {
-                // Fail silently. The attachment has been added successfully, that's what matter
-                this.logger.warn("Failed to set first image as featured image for entity {} with id", collection.getId());
-            }
-        }
-
-        return Response.noContent().build();
     }
 }

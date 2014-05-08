@@ -22,17 +22,7 @@ angular.module('product', ['ngResource'])
         'addonsService',
         'entityMixins',
 
-        function ($scope,
-                  $rootScope,
-                  $routeParams,
-                  $resource,
-                  $http,
-                  $location,
-                  $modal,
-                  catalogService,
-                  configurationService,
-                  addonsService,
-                  entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, catalogService, configurationService, addonsService, entityMixins) {
 
             entityMixins.extendAll($scope, "product");
 
@@ -150,7 +140,7 @@ angular.module('product', ['ngResource'])
 
             $scope.confirmDeletionOfVariant = function (variant) {
                 $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionVariant.html' });
-                $scope.modalInstance.result.then(function(){
+                $scope.modalInstance.result.then(function () {
                     $scope.deleteVariant(variant)
                 });
             }
@@ -221,7 +211,7 @@ angular.module('product', ['ngResource'])
                 });
             }
 
-            $scope.initializeVariants = function() {
+            $scope.initializeVariants = function () {
                 if ($scope.hasTypes) {
                     var variants = $scope.product._embedded.variants;
 
@@ -241,10 +231,10 @@ angular.module('product', ['ngResource'])
                                 };
                             }
                         }).then(function (addons) {
-                            if (typeof $scope.variantAddons === "undefined") {
-                                $scope.variantAddons = addons;
-                            }
-                        });
+                                if (typeof $scope.variantAddons === "undefined") {
+                                    $scope.variantAddons = addons;
+                                }
+                            });
                     });
                 }
             }
@@ -317,8 +307,8 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                    $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
-                    $scope.modalInstance.result.then($scope.deleteProduct);
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
+                $scope.modalInstance.result.then($scope.deleteProduct);
             }
 
             $scope.deleteProduct = function () {
