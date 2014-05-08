@@ -79,16 +79,16 @@
                                 
                                 <optgroup label="{{'settings.misc.languagesGroup' | translate}}">
                                     <option ng-repeat="locale in localesData.locales"
-                                            value="{{ locale.tag }}"
-                                            ng-selected="locale.tag == settings.general.locales.main.value">
+                                            ng-disabled="locale.tag == settings.general.locales.main.value"
+                                            value="{{ locale.tag }}">
                                         {{ locale.name }}
                                     </option>
                                 </optgroup>
 
                                 <optgroup label="{{'settings.misc.variantsGroup' | translate}}">
                                     <option ng-repeat="variant in localesData.variants"
-                                            value="{{ variant.tag }}"
-                                            ng-selected="variant.tag == settings.general.locales.main.value">
+                                            ng-disabled="variant.tag == settings.general.locales.main.value"
+                                            value="{{ variant.tag }}">
                                         {{ variant.name }}
                                     </option>
                                 </optgroup>
