@@ -95,8 +95,8 @@ class HomeWebView extends AbstractProductListWebView implements Resource
                 this.context.getTheme().definition.getPaginationDefinition("home").itemsPerPage;
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0)
         List<UUID> productIds = products.collect { Product product -> product.id }
-        List<org.mayocat.shop.catalog.model.Collection> collections = collectionStore.get().findAllForProductIds(productIds)
-        List<ProductCollection> productsCollections = collectionStore.get().findAllProductsCollectionsForIds(productIds)
+        List<org.mayocat.shop.catalog.model.Collection> collections = collectionStoreProvider.get().findAllForProductIds(productIds)
+        List<ProductCollection> productsCollections = collectionStoreProvider.get().findAllProductsCollectionsForIds(productIds)
 
         products.each({ Product product ->
             def productCollections = productsCollections.findAll { ProductCollection productCollection ->
@@ -123,12 +123,12 @@ class HomeWebView extends AbstractProductListWebView implements Resource
 
             ThemeDefinition theme = this.context.getTheme().getDefinition();
 
-            List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page, Arrays
+            List<Attachment> attachments = this.attachmentStoreProvider.get().findAllChildrenOf(page, Arrays
                     .asList("png", "jpg", "jpeg", "gif"));
             List<Image> images = new ArrayList<>();
             attachments.each({ Attachment attachment ->
                 if (AbstractWebViewResource.isImage(attachment)) {
-                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
+                    List<Thumbnail> thumbnails = thumbnailStoreProvider.get().findAll(attachment);
                     images << new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails);
                 }
             })
@@ -157,8 +157,8 @@ class HomeWebView extends AbstractProductListWebView implements Resource
             allImages = [];
             allThumbnails = [];
         } else {
-            allImages = this.attachmentStore.get().findByIds(featuredImageIds);
-            allThumbnails = this.thumbnailStore.get().findAllForIds(featuredImageIds);
+            allImages = this.attachmentStoreProvider.get().findByIds(featuredImageIds);
+            allThumbnails = this.thumbnailStoreProvider.get().findAllForIds(featuredImageIds);
         }
 
         List<ArticleWebObject> articleList = []

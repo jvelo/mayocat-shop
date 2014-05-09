@@ -28,15 +28,17 @@ import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.AbstractWebView
+import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.store.AttachmentStore
+import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
+import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -56,7 +58,7 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class NewsWebView extends AbstractWebView implements Resource
+class NewsWebView implements Resource, Initializable
 {
     @Inject
     Provider<ArticleStore> articleStore
@@ -78,6 +80,22 @@ class NewsWebView extends AbstractWebView implements Resource
 
     @Inject
     ConfigurationService configurationService
+
+    @Inject
+    Provider<EntityListStore> entityListStore;
+
+    @Delegate
+    ImageGalleryWebViewDelegate imageGalleryDelegate
+
+    void initialize()
+    {
+        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
+                thumbnailStore: thumbnailStore.get(),
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                localizationService: entityLocalizationService,
+        ])
+    }
 
     @GET
     def getNews(@QueryParam("page") @DefaultValue("1") Integer page)
@@ -176,22 +194,14 @@ class NewsWebView extends AbstractWebView implements Resource
         ThemeDefinition theme = this.context.theme?.definition
 
         List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article)
-        List<Image> images = []
-
-        attachments.each({ Attachment attachment ->
-            if (isImage(attachment)) {
-                def thumbnails = thumbnailStore.get().findAll(attachment)
-                Image image = new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails)
-                images.add(image)
-            }
-        })
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class)
 
         ArticleWebObject articleWebObject = new ArticleWebObject()
         articleWebObject.withArticle(article, urlFactory, settings.locales.mainLocale.getValue(),
                 Optional.fromNullable(this.context.theme?.definition))
-        articleWebObject.withImages(images, article.featuredImageId, Optional.fromNullable(theme))
+        articleWebObject.withImages(getImagesForImageGallery(article, attachments),
+                article.featuredImageId, Optional.fromNullable(theme))
 
         context.put("article", articleWebObject)
 

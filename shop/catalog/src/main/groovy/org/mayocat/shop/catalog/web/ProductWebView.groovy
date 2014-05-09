@@ -11,10 +11,10 @@ import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
 import org.mayocat.configuration.general.GeneralSettings
-import org.mayocat.image.model.Image
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
@@ -24,8 +24,10 @@ import org.mayocat.shop.catalog.web.object.ProductWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
+import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.xwiki.component.annotation.Component
+import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -45,10 +47,26 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class ProductWebView extends AbstractProductListWebView implements Resource
+class ProductWebView extends AbstractProductListWebView implements Resource, Initializable
 {
     @Inject
-    private Provider<ProductStore> productStore;
+    Provider<ProductStore> productStore;
+
+    @Inject
+    Provider<EntityListStore> entityListStore;
+
+    @Delegate
+    ImageGalleryWebViewDelegate imageGalleryDelegate
+
+    void initialize()
+    {
+        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
+                thumbnailStore: thumbnailStoreProvider.get(),
+                attachmentStore: attachmentStoreProvider.get(),
+                entityListStore: entityListStore.get(),
+                localizationService: entityLocalizationService,
+        ])
+    }
 
     @GET
     def getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
@@ -67,8 +85,8 @@ class ProductWebView extends AbstractProductListWebView implements Resource
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProductsPerPage, offset);
         List<UUID> productIds = products.collect { Product product -> product.id }
 
-        List<Collection> collections = collectionStore.get().findAllForProductIds(productIds)
-        List<ProductCollection> productsCollections = collectionStore.get().findAllProductsCollectionsForIds(productIds)
+        List<Collection> collections = collectionStoreProvider.get().findAllForProductIds(productIds)
+        List<ProductCollection> productsCollections = collectionStoreProvider.get().findAllProductsCollectionsForIds(productIds)
 
         products.each({ Product product ->
             def productCollections = productsCollections.findAll { ProductCollection productCollection ->
@@ -134,7 +152,7 @@ class ProductWebView extends AbstractProductListWebView implements Resource
             return new ErrorWebView().status(404);
         }
 
-        List<Collection> collections = collectionStore.get().findAllForProduct(product);
+        List<Collection> collections = collectionStoreProvider.get().findAllForProduct(product);
 
         product.setCollections(collections);
         if (collections.size() > 0) {
@@ -150,23 +168,15 @@ class ProductWebView extends AbstractProductListWebView implements Resource
 
         ThemeDefinition theme = this.context.theme?.definition;
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(product);
-        List<Image> images = []
-        
-        attachments.each({ Attachment attachment ->
-            if (isImage(attachment)) {
-                def thumbnails = thumbnailStore.get().findAll(attachment);
-                Image image = new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails);
-                images.add(image);
-            }
-        })
+        List<Attachment> attachments = this.attachmentStoreProvider.get().findAllChildrenOf(product);
 
         ProductWebObject productWebObject = new ProductWebObject()
         productWebObject.withProduct(entityLocalizationService.localize(product) as Product, urlFactory,
                 themeFileResolver, configurationService.getSettings(CatalogSettings.class),
                 configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
 
-        productWebObject.withImages(images, product.featuredImageId, Optional.fromNullable(theme))
+        productWebObject.withImages(getImagesForImageGallery(product, attachments),
+                product.featuredImageId, Optional.fromNullable(theme))
 
         // Collections / featured collection
         if (product.featuredCollection.isLoaded()) {

@@ -12,6 +12,9 @@ import org.xwiki.component.annotation.Role;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * @version $Id$
+ */
 @Role
 public interface ThemeLocalizationService {
 

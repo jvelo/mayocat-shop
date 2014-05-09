@@ -13,20 +13,21 @@ import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.cms.pages.web.object.PageWebObject
 import org.mayocat.context.WebContext
-import org.mayocat.image.model.Image
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.AbstractWebView
+import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.store.AttachmentStore
+import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.ThemeFileResolver
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
+import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -44,7 +45,7 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class PageWebView extends AbstractWebView implements Resource
+class PageWebView implements Resource, Initializable
 {
     @Inject
     Provider<PageStore> pageStore
@@ -67,13 +68,29 @@ class PageWebView extends AbstractWebView implements Resource
     @Inject
     ThemeFileResolver themeFileResolver
 
+    @Inject
+    Provider<EntityListStore> entityListStore
+
+    @Delegate
+    ImageGalleryWebViewDelegate imageGalleryDelegate
+
+    void initialize()
+    {
+        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
+                thumbnailStore: thumbnailStore.get(),
+                attachmentStore: attachmentStore.get(),
+                entityListStore: entityListStore.get(),
+                localizationService: entityLocalizationService,
+        ])
+    }
+
     @Path("{slug}")
     @GET
     def getPage(@PathParam("slug") String slug)
     {
-        Page page = pageStore.get().findBySlug(slug);
+        Page page = pageStore.get().findBySlug(slug)
         if (page == null) {
-            return new ErrorWebView().status(404);
+            return new ErrorWebView().status(404)
         }
 
         def context = new HashMap<String, Object>([
@@ -81,25 +98,18 @@ class PageWebView extends AbstractWebView implements Resource
                 "content": page.content
         ])
 
-        ThemeDefinition theme = this.context.theme?.definition;
+        ThemeDefinition theme = this.context.theme?.definition
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page);
-        List<Image> images = []
+        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page)
 
-        attachments.each({ Attachment attachment ->
-            if (isImage(attachment)) {
-                def thumbnails = thumbnailStore.get().findAll(attachment);
-                Image image = new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails);
-                images.add(image);
-            }
-        })
         PageWebObject pageWebObject = new PageWebObject()
         pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
                 Optional.fromNullable(theme), themeFileResolver)
-        pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
+        pageWebObject.withImages(getImagesForImageGallery(page, attachments),
+                page.featuredImageId, Optional.fromNullable(theme))
 
-        context.put("page", pageWebObject);
+        context.put("page", pageWebObject)
 
-        return new WebView().template("page.html").model(page.model).data(context);
+        return new WebView().template("page.html").model(page.model).data(context)
     }
 }

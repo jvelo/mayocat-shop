@@ -323,7 +323,7 @@ angular.module('product', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
-                    imagesLength: (($scope.product || {}).images || {}).length || 0,
+                    imagesLength: $scope.getNumberOfImages(),
                     variantTitle: ($scope.variant || {}).title
                 };
             };

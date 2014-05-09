@@ -17,7 +17,6 @@ import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
-import org.mayocat.rest.web.AbstractWebView
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Collection
@@ -40,19 +39,19 @@ import javax.inject.Provider
  * @version $Id$
  */
 @CompileStatic
-class AbstractProductListWebView extends AbstractWebView
+class AbstractProductListWebView
 {
     @Inject
     ConfigurationService configurationService
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
+    Provider<AttachmentStore> attachmentStoreProvider
 
     @Inject
-    Provider<ThumbnailStore> thumbnailStore
+    Provider<ThumbnailStore> thumbnailStoreProvider
 
     @Inject
-    Provider<CollectionStore> collectionStore
+    Provider<CollectionStore> collectionStoreProvider
 
     @Inject
     WebContext context
@@ -84,8 +83,8 @@ class AbstractProductListWebView extends AbstractWebView
             allImages = [];
             allThumbnails = [];
         } else {
-            allImages = this.attachmentStore.get().findByIds(featuredImageIds);
-            allThumbnails = this.thumbnailStore.get().findAllForIds(featuredImageIds);
+            allImages = this.attachmentStoreProvider.get().findByIds(featuredImageIds);
+            allThumbnails = this.thumbnailStoreProvider.get().findAllForIds(featuredImageIds);
         }
 
         List<ProductWebObject> list = []

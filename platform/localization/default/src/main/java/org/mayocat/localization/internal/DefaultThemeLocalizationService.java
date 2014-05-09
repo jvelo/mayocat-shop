@@ -36,6 +36,9 @@ import com.ibm.icu.text.MessageFormat;
 
 import asia.redact.bracket.properties.Properties;
 
+/**
+ * @version $Id$
+ */
 @Component
 public class DefaultThemeLocalizationService implements ThemeLocalizationService, Initializable
 {

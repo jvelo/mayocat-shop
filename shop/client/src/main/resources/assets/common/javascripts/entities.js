@@ -193,6 +193,17 @@
                     });
                 }
 
+                mixin.getNumberOfImages = function () {
+                    var $scope = this;
+                    if (typeof $scope[entityType] !== 'undefined' &&
+                        typeof $scope[entityType]._embedded !== 'undefined' &&
+                        typeof $scope[entityType]._embedded.images !== 'undefined') {
+console.log("Images", $scope[entityType]._embedded.images);
+                        return $scope[entityType]._embedded.images.length;
+                    }
+                    return 0;
+                }
+
                 mixin.editImage = function (image) {
                     var scope = this,
                         modalScope = $rootScope.$new(true);
