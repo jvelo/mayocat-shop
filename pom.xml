@@ -74,7 +74,7 @@
         <guava.version>14.0.1</guava.version>
         <elasticsearch.version>0.90.0</elasticsearch.version>
         <joda-money.version>0.8</joda-money.version>
-        <groovy.version>2.1.8</groovy.version>
+        <groovy.version>2.2.2</groovy.version>
     </properties>
 
     <repositories>
