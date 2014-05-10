@@ -7,11 +7,14 @@
  */
 package org.mayocat.rest.api.object
 
+import groovy.transform.CompileStatic
+
 /**
  * API object for an entity image gallery
  *
  * @version $Id$
  */
+@CompileStatic
 class ImageGalleryApiObject
 {
     List<ImageApiObject> images;

@@ -8,6 +8,7 @@
 package mayoapp.migrations
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration
+import groovy.transform.CompileStatic
 import org.mayocat.flyway.migrations.AbstractImageGalleryEntityListsMigration
 
 /**
@@ -15,6 +16,7 @@ import org.mayocat.flyway.migrations.AbstractImageGalleryEntityListsMigration
  *
  * @version $Id$
  */
+@CompileStatic
 class V0300_0011__create_page_image_gallery_entity_lists extends AbstractImageGalleryEntityListsMigration implements JdbcMigration
 {
     String getTable()
