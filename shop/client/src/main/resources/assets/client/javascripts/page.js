@@ -106,7 +106,7 @@
 
             $scope.getTranslationProperties = function () {
                 return {
-                    imagesLength: (($scope.page || {}).images || {}).length || 0
+                    imagesLength: $scope.getNumberOfImages()
                 };
             };
 
