@@ -1,0 +1,16 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="drop-zones-container" ng-class="{active: visible}">
+    <div drop-zone ng-repeat="dropZone in dropZones" ng-class="{active: highlighted}" class="drop-zone">
+        <p class="text">
+            {{dropZone.message}}
+        </p>
+    </div>
+</div>
