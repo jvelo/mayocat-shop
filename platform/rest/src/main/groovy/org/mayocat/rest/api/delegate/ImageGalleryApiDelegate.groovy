@@ -8,7 +8,6 @@
 package org.mayocat.rest.api.delegate
 
 import groovy.transform.CompileStatic
-import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.image.model.Image
 import org.mayocat.image.store.ThumbnailStore
@@ -32,6 +31,8 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+
+import static org.mayocat.attachment.util.AttachmentUtils.isImage
 
 /**
  * Delegate used to implement API for entities that have a standard image gallery
@@ -199,15 +200,15 @@ class ImageGalleryApiDelegate
         def EntityList list = entityListStore.getOrCreate(new EntityList([
                 slug: "image-gallery",
                 hint: "image_gallery",
-                type: "product",
+                type: handler.type(),
                 parentId: entity.id
         ]))
 
         entityListStore.addEntityToList(list, attachment.id)
 
-        if (entity.featuredImageId == null && AttachmentUtils.isImage(filename)) {
+        if (entity.featuredImageId == null && isImage(filename)) {
 
-            // If this is an image and the product doesn't have a featured image yet, and the attachment was
+            // If this is an image and the entity doesn't have a featured image yet, and the attachment was
             // successful, the we set this image as featured image.
             entity.featuredImageId = attachment.id;
 
