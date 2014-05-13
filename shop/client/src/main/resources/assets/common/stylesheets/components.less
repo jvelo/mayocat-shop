@@ -264,59 +264,82 @@ div.thumbnails-list ul li.active {
   background-color: #eeeeee;
 }
 
-/* File upload widget */
+/* Drop zone animations **/
 
-image-upload .well {
-  min-height:120px;
+@-webkit-keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
 }
 
-image-upload .fileinput-button {
-  float: left;
-  margin-top: 5px;
-}
+/* Drop zone directive **/
 
-image-upload .fileinput-button input[type=file] {
-  height: 42px;
-}
+.drop-zones-container {
+  position: fixed;
+  top: 0; left: 0;
+  display: none;
+  width: 100%; height: 100%;
+  background: fade(#001110, 93%);
+  z-index: 1100;
 
-image-upload .editor ul li {
-  min-height: 185px;
-}
+  &.active {
+    display: block;
+  }
 
-image-upload .editor ul li span.preview .meta .name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100px;
-}
+  .drop-zone {
+    position: relative;
 
-image-upload .editor ul li span.preview > span {
-  height: 100px;
-  width: 100px;
-  display: table-cell;
-  border: 1px solid lightgray;
-  text-align: center;
-  vertical-align: middle;
-}
+    &:after {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        url('/common/images/drop-border-h.png') center top repeat-x,
+        url('/common/images/drop-border-h.png') center bottom repeat-x,
+        url('/common/images/drop-border-v.png') left center repeat-y,
+        url('/common/images/drop-border-v.png') right center repeat-y;
+      content: '';
+    }
 
-image-upload .editor ul li span.preview > div {
-  font-size: 10px;
-  text-align: center;
-}
+    &.active:after {
+      background:
+        url('/common/images/drop-border-h-hover.png') center top repeat-x,
+        url('/common/images/drop-border-h-hover.png') center bottom repeat-x,
+        url('/common/images/drop-border-v-hover.png') left center repeat-y,
+        url('/common/images/drop-border-v-hover.png') right center repeat-y;
 
-image-upload span.preview {
-  float: left;
-}
+      -webkit-animation: drop-zone-bounce 200ms ease-in-out;
+      animation: drop-zone-bounce 200ms ease-in-out;
+    }
+  }
 
-image-upload .editor ul li .progress {
-  height: 6px;
-}
+  .text {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'latolight', sans-serif;
+    color: #fff;
 
-image-upload .size input, image-upload .size textarea {
-  width: -webkit-calc(~"100% - 120px") !important;
-  width: -moz-calc(~"100% - 120px") !important;
-  width: calc(~"100% - 120px") !important;
-  margin-left: 10px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  /* Main drop zone */
+  & > .drop-zone {
+    @margin: 100px;
+
+    position: absolute;
+    top: @margin; right: @margin; bottom: @margin; left: @margin;
+    padding: 38px;
+    font-size: 28px;
+  }
 }
 
 /* Featured image selector */
