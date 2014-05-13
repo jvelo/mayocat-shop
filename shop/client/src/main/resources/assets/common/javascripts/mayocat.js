@@ -131,6 +131,121 @@ mayocat.directive('listPicker', ['$parse', function ($parse) {
 }]);
 
 /**
+ * Drop zone directives.
+ */
+mayocat.directive('dropZonesContainer', ['$rootScope', function($rootScope) {
+
+    function controller($scope) {
+        var leaveTimeouts = [];
+
+        $scope.visible = false; // The drop zones are hidden by default.
+        $scope.dropZones = [];
+
+        /**
+         * Show/Hide process for the container: Since Webkit is bugged (https://bugs.webkit.org/show_bug.cgi?id=66547),
+         * we must handle the dragenter/dragleave events in a crappy way. When the cursor leaves the drop zones
+         * container (or one of its children) a timeout is registered to hide the container. However, if the cursor
+         * stays in the container, the dragenter event will cancel the previously registered timeout.
+         */
+
+        // Shows the container and cancels the timeouts used to hide the container.
+        this.showContainer = function() {
+            // Cancel the dragleave timeouts. This timeout is required since the dragenter event is triggered before the
+            // dragleave event.
+            setTimeout(function() {
+                leaveTimeouts.forEach(function(timeout) {
+                    clearTimeout(timeout);
+                });
+
+                leaveTimeouts = [];
+            }, 0);
+            
+            // Display the container if there's a least one drop zone.
+            $scope.$apply(function() {
+                $scope.visible = !!$scope.dropZones.length;
+            });
+        };
+
+        // Hides the drop zones with a delay.
+        this.hideContainer = function() {
+            var timeout = setTimeout(function() {
+                $scope.$apply(function() {
+                    $scope.visible = false;
+                });
+            }, 0);
+
+            // Save a reference to the timeout.
+            leaveTimeouts.push(timeout);
+        };
+
+        // Adds a new drop zone.
+        function addDropZone(form, message, relatedScope) {
+            // Create a new drop zone.
+            var dropZone = {
+                form: form,
+                message: message
+            };
+
+            // Remove the drop zone when the associated scope is destroyed.
+            relatedScope.$on('$destroy', function() {
+                var index = $scope.dropZones.indexOf(dropZone);
+                $scope.dropZones.splice(index, 1);
+            });
+
+            // Register the drop zone.
+            $scope.dropZones.push(dropZone);
+        }
+
+        $rootScope.$on('upload:addDropZone', function(event, form, message) {
+            addDropZone(form, message, event.targetScope);
+        });
+    }
+
+    function link(scope, element, attrs, dropZonesCtrl) {
+        $(document.body).on('dragenter', dropZonesCtrl.showContainer);
+        $(element).on('dragleave', dropZonesCtrl.hideContainer);
+    }
+
+    return {
+        restrict: 'EA',
+        scope: {},
+        controller: controller,
+        link: link,
+        templateUrl: '/common/partials/dropZone.html'
+    };
+
+}]);
+
+mayocat.directive('dropZone', function() {
+
+    function link(scope, element, attrs, dropZonesCtrl) {
+        scope.highlighted = false;
+
+        $(element)
+            .on('dragenter', function() {
+                // See the explanations in the "dropZoneContainer" directive.
+                dropZonesCtrl.showContainer();
+
+                scope.$apply(function() {
+                    scope.highlighted = true;
+                });
+            })
+            .on('dragleave', function() {
+                scope.$apply(function() {
+                    scope.highlighted = false;
+                });
+            });
+    }
+
+    return {
+        require: '^dropZonesContainer',
+        restrict: 'A',
+        link: link
+    };
+
+});
+
+/**
  * Image upload directive.
  */
 mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
@@ -141,7 +256,6 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
             'headerText': "@",
             'dragAndDrop': '&',
             'multiple': '&',
-            'requestedDropZone': '&dropZone',
             'requestedUploadUri': '&uploadUri',
             'onUpload': '&onUpload',
             'target' : '@'
@@ -307,6 +421,8 @@ mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factor
                             }
                         }
                     });
+
+                    $scope.$emit('upload:addDropZone', element, 'Hey o/');
                 }
             }
         }
