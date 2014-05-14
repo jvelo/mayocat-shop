@@ -88,7 +88,7 @@ angular.module('settings', ['ngResource'])
 
             entityMixins.extend(["base", "addons", "image"], $scope, "tenant", {
                 "base": {
-                    "apiBase": "/api/tenant/",
+                    "apiBase": "/api/tenant",
                     "noSlug" : true
                 },
                 "image" : {
@@ -98,13 +98,13 @@ angular.module('settings', ['ngResource'])
                     "afterReloadingImages": function () {
                         $scope.updatedTenant = $scope.TenantResource.get({
                         }, function () {
-                            $scope.tenant.featuredImage = $scope.updatedTenant.featuredImage;
+                            $scope.tenant._embedded.featuredImage = $scope.updatedTenant._embedded.featuredImage;
                         });
                     }
                 }
             });
 
-            $scope.TenantResource = $resource("/api/tenant/");
+            $scope.TenantResource = $resource("/api/tenant");
 
             // Scope functions -----------------------------------------------------------------------------------------
 

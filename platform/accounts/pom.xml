@@ -23,6 +23,7 @@
     <modules>
         <module>api</module>
         <module>default</module>
+        <module>security</module>
     </modules>
 
 </project>

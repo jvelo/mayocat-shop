@@ -4,4 +4,3 @@ org.mayocat.rest.jersey.LocaleProvider
 org.mayocat.rest.resources.AttachmentResource
 org.mayocat.rest.resources.ImageResource
 org.mayocat.rest.resources.LocalesResource
-org.mayocat.rest.support.DefaultAddonsRepresentationUnmarshaller

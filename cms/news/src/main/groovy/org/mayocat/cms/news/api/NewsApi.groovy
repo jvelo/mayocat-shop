@@ -186,7 +186,7 @@ class NewsApi implements Resource, Initializable
         })
 
         def articleListApiObject = new ArticleListApiObject([
-                pagination: new Pagination([
+                _pagination: new Pagination([
                         numberOfItems: number,
                         returnedItems: articleList.size(),
                         offset: offset,

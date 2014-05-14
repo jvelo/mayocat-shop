@@ -41,10 +41,10 @@ angular.module('TenantManager.tenants', [])
                 $scope.tenants = [];
                 $scope.loading = true;
 
-                $http.get("/management/api/tenants?number=" + number + "&offset=" + offset).success(function (tenants) {
-                    var number = tenants.number,
-                        numberOfPages = Math.floor(tenants.total / number);
-                    numberOfPages += (tenants.total % number === 0 ? 0 : 1);
+                $http.get("/management/api/tenants?number=" + number + "&offset=" + offset).success(function (result) {
+                    var number = result._pagination.numberOfItems,
+                        numberOfPages = Math.floor(result._pagination.totalItems / number);
+                    numberOfPages += (result._pagination.totalItems % number === 0 ? 0 : 1);
 
                     $scope.totalPages = numberOfPages;
                     for (var i = 0; i < numberOfPages; i++) {
@@ -54,7 +54,7 @@ angular.module('TenantManager.tenants', [])
                         };
                     }
 
-                    $scope.tenants = tenants.items;
+                    $scope.tenants = result.tenants;
                     $scope.loading = false;
                 });
             }

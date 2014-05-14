@@ -158,7 +158,7 @@ class CollectionApi implements Resource, Initializable
         }
 
         def collectionListResult = new CollectionListApiObject([
-                pagination: new Pagination([
+                _pagination: new Pagination([
                         numberOfItems: number,
                         returnedItems: collectionList.size(),
                         offset: offset,

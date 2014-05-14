@@ -179,7 +179,7 @@ class PageApi implements Resource, Initializable
         })
 
         def pageListApiObject = new PageListApiObject([
-                pagination: new Pagination([
+                _pagination: new Pagination([
                         numberOfItems: number,
                         returnedItems: pageList.size(),
                         offset: offset,

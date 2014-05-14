@@ -192,7 +192,7 @@ class ProductApi implements Resource, Initializable
         })
 
         def productListResult = new ProductListApiObject([
-                pagination: new Pagination([
+                _pagination: new Pagination([
                     numberOfItems: number,
                     returnedItems: productList.size(),
                     offset: offset,

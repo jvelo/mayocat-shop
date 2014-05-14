@@ -198,7 +198,6 @@
                     if (typeof $scope[entityType] !== 'undefined' &&
                         typeof $scope[entityType]._embedded !== 'undefined' &&
                         typeof $scope[entityType]._embedded.images !== 'undefined') {
-console.log("Images", $scope[entityType]._embedded.images);
                         return $scope[entityType]._embedded.images.length;
                     }
                     return 0;
