@@ -97,26 +97,16 @@
          */
 
         upload: {
-            misc: {
-                uploading: "Uploading...",
-                uploaded: "Uploaded!",
-                failed: "Failed"
-            },
-
             explanation: {
-                dropHere: "Drag images from your computer and drop them in this area",
-            },
-
-            placeholder: {
-                title: "Image's title (alternative text)",
-                description: "Description (optional)"
+                dropCollection: "Drop your files to add theme to “{collectionTitle}” collection",
+                dropProduct: "Drop your files to add theme to “{productTitle}” product",
+                dropPage: "Drop your files to add theme to “{pageTitle}” page",
+                dropArticle: "Drop your files to add theme to “{articleTitle}” article",
+                dropLogo: "Drop your logo"
             },
 
             action: {
-                browse: "Browse...",
-                dismiss: "Dismiss",
-                upload: "Upload",
-                uploadAll: "Upload all"
+                add: "Add an image"
             }
         },
 
@@ -127,6 +117,11 @@
         imageEditor: {
             title: {
                 editImage: "Edit image"
+            },
+
+            placeholder: {
+                title: "Image's title (alternative text)",
+                description: "Description (optional)"
             },
 
             action: {

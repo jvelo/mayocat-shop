@@ -161,6 +161,7 @@ angular.module('article', ['ngResource'])
                 var article = $scope.article || {};
 
                 return {
+                    articleTitle: $scope.article.title,
                     articleDate: timeService.convertISO8601toLocalDate(article.publicationDate || '', 'LLL'),
                     imagesLength: $scope.getNumberOfImages()
                 };

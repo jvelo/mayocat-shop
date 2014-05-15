@@ -25,6 +25,7 @@
             filter: "Filtrer",
             select: "Selectionner"
         },
+
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
@@ -78,32 +79,27 @@
         },
 
         upload: {
-            misc: {
-                uploading: "En cours de téléchargement...",
-                uploaded: "Téléchargement terminé !",
-                failed: "Échec"
-            },
-
             explanation: {
-                dropHere: "Déplacez des images de votre ordinateur et déposez-les dans cette zone"
-            },
-
-            placeholder: {
-                title: "Titre de l'image (texte alternatif)",
-                description: "Description (facultatif)"
+                dropCollection: "Déposez vos fichiers pour les ajouter à la collection « {collectionTitle} »",
+                dropProduct: "Déposez vos fichiers pour les ajouter au produit « {productTitle} »",
+                dropPage: "Déposez vos fichiers pour les ajouter à la page « {pageTitle} »",
+                dropArticle: "Déposez vos fichiers pour les ajouter à l'actualité « {articleTitle} »",
+                dropLogo: "Déposez votre logo"
             },
 
             action: {
-                browse: "Parcourir...",
-                dismiss: "Abandonner",
-                upload: "Envoyer",
-                uploadAll: "Tout envoyer"
+                add: "Ajouter une image"
             }
         },
 
         imageEditor: {
             title: {
                 editImage: "Editer l'image"
+            },
+
+            placeholder: {
+                title: "Titre de l'image (texte alternatif)",
+                description: "Description (facultatif)"
             },
 
             action: {

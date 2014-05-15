@@ -58,7 +58,11 @@
                 <div class="alert" ng-if="product.images.length <= 0">
                     <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
                 </div>
-                <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()" target="image-gallery"></image-upload>
+                <image-upload ng-if="!isNew()"
+                              upload-uri="{{getImageUploadUri()}}"
+                              drop-text="'upload.explanation.dropCollection' | translate:getTranslationProperties()"
+                              target="image-gallery">
+                </image-upload>
             </div>
         </div>
 
