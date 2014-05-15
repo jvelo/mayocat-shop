@@ -7,6 +7,7 @@
  */
 package org.mayocat.accounts.api.v1
 
+import groovy.transform.CompileStatic
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.model.User
 import org.mayocat.rest.Resource
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response
  */
 @Component("/api/login")
 @Path("/api/login")
+@CompileStatic
 class LoginApi implements Resource 
 {
     @Inject

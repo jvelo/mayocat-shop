@@ -8,6 +8,7 @@
 package org.mayocat.accounts.api.v1
 
 import com.yammer.metrics.annotation.Timed
+import groovy.transform.CompileStatic
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.UserApiObject
 import org.mayocat.accounts.model.Role
@@ -40,6 +41,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
+@CompileStatic
 class UserApi implements Resource {
 
     @Inject

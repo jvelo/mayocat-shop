@@ -7,6 +7,7 @@
  */
 package org.mayocat.accounts.api.v1
 
+import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.TenantApiObject
@@ -33,6 +34,7 @@ import javax.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
+@CompileStatic
 class MeApi implements Resource {
     
     @Inject

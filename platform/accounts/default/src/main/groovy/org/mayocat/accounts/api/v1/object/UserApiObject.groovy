@@ -7,12 +7,14 @@
  */
 package org.mayocat.accounts.api.v1.object
 
+import groovy.transform.CompileStatic
 import org.mayocat.accounts.model.User
 import org.mayocat.rest.api.object.BaseApiObject
 
 /**
  * @version $Id$
  */
+@CompileStatic
 class UserApiObject extends BaseApiObject {
 
     String slug;
@@ -26,10 +28,11 @@ class UserApiObject extends BaseApiObject {
         email = user.email
     }
 
-    def toUser() {
+    User toUser() {
         User user = new User();
         user.slug = slug
         user.email = email
         user.password = password
+        user
     }
 }

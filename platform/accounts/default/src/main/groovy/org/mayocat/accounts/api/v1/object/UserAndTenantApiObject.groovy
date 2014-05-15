@@ -7,9 +7,12 @@
  */
 package org.mayocat.accounts.api.v1.object
 
+import groovy.transform.CompileStatic
+
 /**
  * @version $Id$
  */
+@CompileStatic
 class UserAndTenantApiObject {
 
     UserApiObject user

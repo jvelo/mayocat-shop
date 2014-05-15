@@ -45,7 +45,7 @@ public class LocalesResource implements Resource
 
         private String name;
 
-        private LocaleRepresentation(String tag, String name)
+        public LocaleRepresentation(String tag, String name)
         {
             this.tag = tag;
             this.name = name;

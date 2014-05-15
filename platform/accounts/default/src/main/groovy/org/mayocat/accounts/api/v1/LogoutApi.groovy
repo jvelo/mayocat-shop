@@ -7,6 +7,7 @@
  */
 package org.mayocat.accounts.api.v1
 
+import groovy.transform.CompileStatic
 import org.mayocat.rest.Resource
 import org.xwiki.component.annotation.Component
 
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Response
  */
 @Component("/api/logout")
 @Path("/api/logout")
+@CompileStatic
 class LogoutApi implements Resource
 {
     @POST

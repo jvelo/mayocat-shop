@@ -8,6 +8,7 @@
 package org.mayocat.manager.api.v1
 
 import com.google.common.base.Optional
+import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.TenantApiObject
@@ -42,6 +43,7 @@ import javax.ws.rs.core.Response
 @Path("/management/api/tenants")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@CompileStatic
 class TenantManagerApi implements Resource
 {
     @Inject

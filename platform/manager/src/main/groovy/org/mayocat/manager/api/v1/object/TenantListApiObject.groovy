@@ -7,12 +7,14 @@
  */
 package org.mayocat.manager.api.v1.object
 
+import groovy.transform.CompileStatic
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.rest.api.object.BasePaginatedListApiObject
 
 /**
  * @version $Id$
  */
+@CompileStatic
 class TenantListApiObject extends BasePaginatedListApiObject
 {
     List<TenantApiObject> tenants

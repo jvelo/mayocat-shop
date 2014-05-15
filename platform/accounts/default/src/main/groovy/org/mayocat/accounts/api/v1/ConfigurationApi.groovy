@@ -10,6 +10,7 @@ package org.mayocat.accounts.api.v1
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.yammer.metrics.annotation.Timed
+import groovy.transform.CompileStatic
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.NoSuchModuleException
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
+@CompileStatic
 class ConfigurationApi implements Resource
 {
     @Inject
@@ -68,7 +70,7 @@ class ConfigurationApi implements Resource
         try {
             ObjectMapper mapper = new ObjectMapper()
             Map<String, Serializable> data = mapper.readValue(configurationAsString,
-                    new TypeReference<Map<String, Object>>(){})
+                    new TypeReference<Map<String, Object>>(){}) as Map<String, Serializable>
             configurationService.updateSettings(module, data)
             return Response.noContent().build()
         }
@@ -90,7 +92,7 @@ class ConfigurationApi implements Resource
         try {
             ObjectMapper mapper = new ObjectMapper()
             Map<String, Serializable> data = mapper.readValue(configurationAsString,
-                    new TypeReference<Map<String, Object>>(){})
+                    new TypeReference<Map<String, Object>>(){}) as Map<String, Serializable>
             configurationService.updateSettings(data)
             return Response.noContent().build()
         } catch (IOException e) {
