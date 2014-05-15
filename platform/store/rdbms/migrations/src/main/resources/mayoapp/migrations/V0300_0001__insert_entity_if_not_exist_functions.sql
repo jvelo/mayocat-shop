@@ -1,7 +1,7 @@
 --
 -- Insert entity if it does not exist, see EntityDAO#createEntityIfItDoesNotExist
 --
-CREATE OR REPLACE FUNCTION insert_entity_if_not_exist( in_entity_id uuid, in_slug character varying, in_type character varying, in_entity_tenant uuid) RETURNS void
+CREATE OR REPLACE FUNCTION insert_entity_if_not_exist( in_entity_id uuid, in_slug character varying, in_type character varying, in_entity_tenant uuid) RETURNS integer
   LANGUAGE plpgsql
   AS $$
 BEGIN
@@ -31,4 +31,3 @@ BEGIN
   END;
 END;
 $$;
-
