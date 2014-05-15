@@ -119,9 +119,11 @@ class TenantApi implements Resource, Initializable {
                 handler               : tenantHandler,
                 doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
                     switch (target) {
-                        case "image-gallery":
-                            imageGalleryApi.afterImageAddedToGallery(entity as Tenant, fileName, created)
-                            break;
+                        case "logo":
+                            def tenant = entity as Tenant
+                            imageGalleryApi.afterImageAddedToGallery(tenant, fileName, created)
+                            tenant.featuredImageId = created.id;
+                            tenantHandler.updateEntity(entity);
                     }
                 }
         ])
