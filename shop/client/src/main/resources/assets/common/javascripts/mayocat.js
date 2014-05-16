@@ -17,6 +17,7 @@ var mayocat = angular.module('mayocat', [
     'mayocat.entities',
     'mayocat.locales',
     'mayocat.upload',
+    'mayocat.notifications',
     'pascalprecht.translate'
 ]);
 
@@ -80,7 +81,6 @@ mayocat.config(function ($httpProvider) {
     }];
     $httpProvider.responseInterceptors.push(interceptor);
 });
-
 
 /**
  * Simple list picker directive to manage a list of elements
