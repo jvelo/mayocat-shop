@@ -12,9 +12,9 @@
     angular.module('mayocat.upload', [])
 
         /**
-         * Upload factory
+         * Upload service
          */
-        mayocat.factory('uploadFactory', function() {
+        .factory('uploadService', function() {
 
             var filesQueue = [];
 
@@ -64,12 +64,12 @@
                 fail: fail
             };
 
-        });
+        })
 
         /**
          * Drop zone directives.
          */
-        mayocat.directive('dropZonesContainer', ['$rootScope', function($rootScope) {
+        .directive('dropZonesContainer', ['$rootScope', function($rootScope) {
 
             function controller($scope) {
                 var leaveTimeouts = [];
@@ -140,16 +140,16 @@
             }
 
             return {
-                restrict: 'EA',
+                restrict: 'E',
                 scope: {},
                 controller: controller,
                 link: link,
                 templateUrl: '/common/partials/dropZone.html'
             };
 
-        }]);
+        }])
 
-        mayocat.directive('dropZone', ['uploadFactory', function(uploadFactory) {
+        .directive('dropZone', ['uploadService', function(uploadService) {
 
             function link(scope, element, attrs, dropZonesCtrl) {
                 var $form = $(scope.dropZone.form);
@@ -179,14 +179,14 @@
                     singleFileUploads: false,
                     url: scope.dropZone.uploadUri,
 
-                    progressall: uploadFactory.progressall,
-                    progress: uploadFactory.progress,
-                    done: uploadFactory.done,
-                    fail: uploadFactory.fail,
+                    progressall: uploadService.progressall,
+                    progress: uploadService.progress,
+                    done: uploadService.done,
+                    fail: uploadService.fail,
 
                     add: function(event, data) {
                         dropZonesCtrl.hideContainer(true);
-                        uploadFactory.uploadFiles($form, scope.dropZone.multiple, data, scope.dropZone.target);
+                        uploadService.uploadFiles($form, scope.dropZone.multiple, data, scope.dropZone.target);
                     }
                 });
             }
@@ -197,12 +197,12 @@
                 link: link
             };
 
-        }]);
+        }])
 
         /**
          * Image upload directive.
          */
-        mayocat.directive('imageUpload', function factory() {
+        .directive('imageUpload', function factory() {
 
             function controller($scope) {
                 // Convert multiple to a boolean.
