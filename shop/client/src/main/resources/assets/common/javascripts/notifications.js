@@ -36,7 +36,7 @@
                  * to handle the progression status or to dismiss the notification. Only executed with a progress
                  * notification.
                  */
-                function add(message, options, controlsProvider) {
+                function add(message, options) {
                     var validTypes = ['basic', 'progress'],
                         validLevels = ['info', 'error'],
                         options = options || {};

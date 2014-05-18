@@ -91,6 +91,11 @@
                 dropLogo: "Déposez votre logo"
             },
 
+            status: {
+                progress: "Téléchargement des {filesNumber} images en cours",
+                success: "Vos images ont été téléchargées avec succès"
+            },
+
             action: {
                 add: "Ajouter une image"
             }
