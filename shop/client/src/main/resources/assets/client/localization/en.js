@@ -105,6 +105,11 @@
                 dropLogo: "Drop your logo"
             },
 
+            status: {
+                progress: "Upload of the {filesNumber} images in progress",
+                success: "Your images have been successfully uploaded"
+            },
+
             action: {
                 add: "Add an image"
             }
