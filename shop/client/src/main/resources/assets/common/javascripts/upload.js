@@ -9,23 +9,43 @@
 
     'use strict';
 
-    angular.module('mayocat.upload', [])
+    angular.module('mayocat.upload', [
+        'pascalprecht.translate'
+    ])
 
         /**
          * Upload service
          */
-        .factory('uploadService', function() {
+        .factory('uploadService', ['$translate', 'notificationService', function($translate, notificationService) {
 
-            var filesQueue = [];
+            var uploadQueue = [];
 
             // Processes and uploads files.
-            function uploadFiles($form, multiple, data, target) {
+            function uploadFiles($form, uploadUri, multiple, data, target) {
                 // In "multiple mode", we send all the files. In "mono mode", we send only the first one.
-                var files = multiple ? data.files : [data.files[0]];
-                filesQueue.push.apply(filesQueue, files);
+                var upload = {
+                    uri: uploadUri,
+                    files: multiple ? data.files : [data.files[0]]
+                };
 
-                for (var i = 0, file; file = files[i++];) {
+                // Add a progress bar to the notifications.
+                var status = $translate('upload.status.progress', {filesNumber: upload.files.length});
+
+                notificationService.notify(status, {
+                    type: 'progress',
+                    controls: function(setProgress) {
+                        upload.setProgress = setProgress;
+                    }
+                });
+
+                // Save the upload object to the queue.
+                uploadQueue.push(upload);
+
+                // Send all the files with their associated data.
+                for (var i = 0, file; file = upload.files[i++];) {
                     var data = {};
+
+                    data.uploadId = upload.id;
 
                     if (typeof target !== 'undefined') {
                         data.target = target;
@@ -40,31 +60,26 @@
                 }
             }
 
-            function progressall(event, data) {
-                console.log('Total progress: '+ Math.round(data.loaded / data.total * 100) +'%');
-            }
+            function progressall(event, data, uploadUri) {
+                var upload = uploadQueue.filter(function(upload) {
+                    return upload.uri == uploadUri;
+                })[0];
 
-            function progress(event, data) {
-                console.log('Progress for "'+ data.formData.filename +'": '+ Math.round(data.loaded / data.total * 100) +'%');
-            }
+                var progress = Math.round(data.loaded / data.total * 100);
 
-            function done(event, data) {
-                console.log('Done', event, data);
-            }
+                upload.setProgress(progress);
 
-            function fail(event, data) {
-                console.log('Fail', event, data);
+                if (progress >= 100) {
+                    notificationService.notify($translate('upload.status.success'));
+                }
             }
 
             return {
                 uploadFiles: uploadFiles,
-                progressall: progressall,
-                progress: progress,
-                done: done,
-                fail: fail
+                progressall: progressall
             };
 
-        })
+        }])
 
         /**
          * Drop zone directives.
@@ -179,14 +194,13 @@
                     singleFileUploads: false,
                     url: scope.dropZone.uploadUri,
 
-                    progressall: uploadService.progressall,
-                    progress: uploadService.progress,
-                    done: uploadService.done,
-                    fail: uploadService.fail,
+                    progressall: function(event, data) {
+                        uploadService.progressall(event, data, scope.dropZone.uploadUri);
+                    },
 
                     add: function(event, data) {
                         dropZonesCtrl.hideContainer(true);
-                        uploadService.uploadFiles($form, scope.dropZone.multiple, data, scope.dropZone.target);
+                        uploadService.uploadFiles($form, scope.dropZone.uploadUri, scope.dropZone.multiple, data, scope.dropZone.target);
                     }
                 });
             }
@@ -206,7 +220,7 @@
 
             function controller($scope) {
                 // Convert multiple to a boolean.
-                $scope.multiple = ($scope.multiple === 'false') ? false : true;
+                $scope.multiple = ($scope.multipleAttr === 'false') ? false : true;
             }
 
             function link(scope, element) {
@@ -226,7 +240,7 @@
                 templateUrl: '/common/partials/imageUpload.html',
                 scope: {
                     'uploadUri': '@',
-                    'multiple': '@',
+                    'multipleAttr': '@multiple',
                     'dropText': '=',
                     'target': '@'
                 },
