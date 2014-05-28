@@ -34,6 +34,9 @@
 
             <div class="block entity" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
+
+                <upload-list></upload-list>
+
                 <ul class="thumbnails thumbnails-small entities movable" ui-sortable="getImagesSortableOptions()" ng-model="product._embedded.images">
                     <li class="drag-me" ng-repeat="image in product._embedded.images">
                         <div class="wrapper">
@@ -59,10 +62,9 @@
                         </div>
                     </li>
                 </ul>
+
                 <div class="clearfix"></div>
-                <div class="alert" ng-if="product.images.length <= 0">
-                    <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
-                </div>
+
                 <image-upload ng-if="!isNew()"
                               upload-uri="{{getImageUploadUri()}}"
                               drop-text="'upload.explanation.dropProduct' | translate:getTranslationProperties()"

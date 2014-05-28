@@ -296,6 +296,11 @@
                     return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
                 }
 
+                mixin.bindUploadQueue = function () {
+                    var scope = this;
+                    scope.$emit('upload:bindUploadQueue');
+                };
+
                 return mixin;
             }
         }])

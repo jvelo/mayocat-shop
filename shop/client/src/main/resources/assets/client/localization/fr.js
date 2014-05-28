@@ -247,16 +247,8 @@
                 images: "Images ({imagesLength})"
             },
 
-            explanation: {
-                noImage: "- utiliser la section ci-dessous pour ajouter de nouvelles images à ce produit."
-            },
-
             action: {
                 editMetadata: "Éditer les métadonnées"
-            },
-
-            alert: {
-                noImage: "Aucune image"
             }
         },
 
