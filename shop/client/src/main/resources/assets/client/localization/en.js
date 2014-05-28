@@ -285,16 +285,8 @@
                 images: "Images ({imagesLength})"
             },
 
-            explanation: {
-                noImage: "- use the area below to add images to this product."
-            },
-
             action: {
                 editMetadata: "Edit metadata"
-            },
-
-            alert: {
-                noImage: "No image yet"
             }
         },
 
