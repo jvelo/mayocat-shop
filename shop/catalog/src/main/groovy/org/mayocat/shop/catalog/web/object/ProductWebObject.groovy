@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.mayocat.addons.front.builder.AddonContextBuilder
-import org.mayocat.addons.model.AddonGroup
+import org.mayocat.addons.model.AddonGroupDefinition
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.EntityImagesWebObject
@@ -109,7 +109,7 @@ class ProductWebObject
         // Addons
         if (product.addons.isLoaded() && theme.isPresent()) {
             def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> themeAddons = theme.get().addons;
+            Map<String, AddonGroupDefinition> themeAddons = theme.get().addons;
             theme_addons = addonContextBuilder.build(themeAddons, product.addons.get());
         }
 

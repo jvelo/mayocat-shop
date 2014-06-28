@@ -14,12 +14,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.mayocat.context.WebContext;
 import org.mayocat.localization.EntityLocalizationService;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.AttachmentData;
 import org.mayocat.model.Entity;
@@ -29,7 +30,9 @@ import org.mayocat.model.annotation.LocalizedField;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
@@ -132,23 +135,61 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
         // - if found, and its value is not null or empty string, replace the addon value by the localized one
 
         if (hasLoadedAddons(copiedEntity) && copiedEntity.getLocalizedVersions().get(locale).containsKey("addons")) {
-            List<Addon> entityAddons = ((HasAddons) copiedEntity).getAddons().get();
-            List<Map<String, Object>> localizedAddons =
-                    (List<Map<String, Object>>) copiedEntity.getLocalizedVersions().get(locale).get("addons");
+            Map<String, AddonGroup> entityAddons = ((HasAddons) copiedEntity).getAddons().get();
+                final Map<String, Object> localizedAddons =
+                    (Map<String, Object>) copiedEntity.getLocalizedVersions().get(locale).get("addons");
 
-            for (Addon addon : entityAddons) {
-                Optional<Map<String, Object>> localized = findLocalizedAddon(addon, localizedAddons);
-                if (localized.isPresent()) {
-                    Object value = localized.get().get("value");
+            for (AddonGroup addon : entityAddons.values()) {
+                if (localizedAddons.containsKey(addon.getGroup())) {
+                    Map<String, Object> localizedGroup = (Map<String, Object>) localizedAddons.get(addon.getGroup());
 
-                    if (value == null ||
-                            (String.class.isAssignableFrom(value.getClass()) && Strings.isNullOrEmpty((String) value)))
-                    {
-                        // Ignore empty strings, consider them as nulls
-                        continue;
+                    if (Map.class.isAssignableFrom(addon.getValue().getClass())) {
+
+                        // Non-sequence addons
+
+                        Map<String, Object> value = (Map<String, Object>) addon.getValue();
+                        Map<String, Object> localizedGroupValue = (Map<String, Object>) localizedGroup.get("value");
+
+                        for (String field : value.keySet()) {
+                            Object localizedValue = localizedGroupValue.get(field);
+
+                            if (localizedValue == null ||
+                                    (String.class.isAssignableFrom(localizedValue.getClass()) &&
+                                            Strings.isNullOrEmpty((String) localizedValue)))
+                            {
+                                // Ignore empty strings, consider them as nulls
+                                continue;
+                            }
+
+                            ((Map<String, Object>) addon.getValue()).put(field, localizedValue);
+                        }
+                    } else if (List.class.isAssignableFrom(addon.getValue().getClass())) {
+
+                        // Sequence addons
+
+                        List<Map<String, Object>> values = (List<Map<String, Object>>) addon.getValue();
+                        List<Map<String, Object>> localizedGroupValue =
+                                (List<Map<String, Object>>) localizedGroup.get("value");
+
+                        Integer i = 0;
+                        for (Map<String, Object> value : values) {
+                            Map<String, Object> localizedGroupValueItem = localizedGroupValue.get(i);
+
+                            for (String field : value.keySet()) {
+                                Object localizedValue = localizedGroupValueItem.get(field);
+
+                                if (localizedValue == null ||
+                                        (String.class.isAssignableFrom(localizedValue.getClass()) &&
+                                                Strings.isNullOrEmpty((String) localizedValue)))
+                                {
+                                    // Ignore empty strings, consider them as nulls
+                                    continue;
+                                }
+
+                                ((List<Map<String, Object>>) addon.getValue()).get(i).put(field, localizedValue);
+                            }
+                        }
                     }
-
-                    addon.setValue(value);
                 }
             }
         }
@@ -159,20 +200,6 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
     private boolean hasLoadedAddons(Entity entity)
     {
         return HasAddons.class.isAssignableFrom(entity.getClass()) && ((HasAddons) entity).getAddons().isLoaded();
-    }
-
-    private Optional<Map<String, Object>> findLocalizedAddon(Addon addon, List<Map<String, Object>> localizedAddons)
-    {
-        for (Map<String, Object> localized : localizedAddons) {
-            if (addon.getSource().toJson().equals(localized.get("source"))
-                    && addon.getGroup().equals(localized.get("group"))
-                    && addon.getKey().equals(localized.get("key")))
-            {
-
-                return Optional.of(localized);
-            }
-        }
-        return Optional.absent();
     }
 
 }

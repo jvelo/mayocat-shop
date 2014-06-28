@@ -72,8 +72,10 @@
                         {{addon.definition.name}}
 
                         <addon definition="addon.definition"
-                               object="article.addons[addon.index]"
-                               localized-object="localizedArticle.addons[addon.index]"></addon>
+                               type="article.addons[group.key].model[addon.key]"
+                               object="article.addons[group.key].value"
+                               localized-object="localizedArticle.addons[group.key].value"
+                               key="addon.key"></addon>
                     </li>
                 </ul>
             </div>

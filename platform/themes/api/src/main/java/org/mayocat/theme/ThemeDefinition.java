@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import org.hibernate.validator.constraints.NotBlank;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.images.ImageFormatDefinition;
 
 /**
@@ -36,7 +36,7 @@ public class ThemeDefinition
     private Map<String, Model> models = Maps.newLinkedHashMap();
 
     @JsonProperty
-    private Map<String, AddonGroup> addons = Collections.emptyMap();
+    private Map<String, AddonGroupDefinition> addons = Collections.emptyMap();
 
     @JsonProperty
     private Map<String, PaginationDefinition> pagination = Collections.emptyMap();
@@ -64,7 +64,7 @@ public class ThemeDefinition
         return models;
     }
 
-    public Map<String, AddonGroup> getAddons()
+    public Map<String, AddonGroupDefinition> getAddons()
     {
         return this.addons;
     }

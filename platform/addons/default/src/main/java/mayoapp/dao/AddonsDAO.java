@@ -8,13 +8,11 @@
 package mayoapp.dao;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.addons.binder.BindAddon;
-import org.mayocat.addons.mapper.AddonMapper;
-import org.mayocat.addons.store.dbi.AddonsHelper;
-import org.mayocat.model.Addon;
+import org.mayocat.addons.binder.BindAddonGroup;
+import org.mayocat.addons.mapper.AddonGroupMapper;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.HasAddons;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -27,20 +25,20 @@ import org.skife.jdbi.v2.unstable.BindIn;
  */
 public interface AddonsDAO<T extends HasAddons>
 {
-    @RegisterMapper(AddonMapper.class)
+    @RegisterMapper(AddonGroupMapper.class)
     @SqlQuery
     (
         "SELECT * FROM addon WHERE entity_id = :entity.id"
     )
-    List<Addon> findAddons(@BindBean("entity") T entity);
+    List<AddonGroup> findAddons(@BindBean("entity") T entity);
 
-    @RegisterMapper(AddonMapper.class)
+    @RegisterMapper(AddonGroupMapper.class)
     @SqlQuery
     (
         "SELECT * FROM addon " +
         "WHERE    entity_id in ( <ids> )"
     )
-    List<Addon> findAllAddonsForIds(@BindIn("ids") List<UUID> ids);
+    List<AddonGroup> findAllAddonsForIds(@BindIn("ids") List<UUID> ids);
 
     @SqlUpdate
     (
@@ -48,29 +46,26 @@ public interface AddonsDAO<T extends HasAddons>
         "            (entity_id, " +
         "             source, " +
         "             addon_group, " +
-        "             addon_key," +
-        "             type," +
+        "             model," +
         "             value) " +
         "VALUES      (:entity.id, " +
         "             :addon.source, " +
         "             :addon.group, " +
-        "             :addon.key," +
-        "             :addon.type," +
-        "             :addon.value) "
+        "             CAST (:addon.model AS json)," +
+        "             CAST (:addon.value AS json)) "
     )
-    void createAddon(@BindBean("entity") T entity, @BindAddon("addon") Addon addon);
+    void createAddonGroup(@BindBean("entity") T entity, @BindAddonGroup("addon") AddonGroup addon);
 
     @SqlUpdate
     (
         "UPDATE addon " +
-        "SET type= :addon.type, " +
-        "    value = :addon.value " +
+        "SET value = CAST (:addon.value AS json), " +
+        "    model = CAST (:addon.model AS json) " +
         "WHERE entity_id = :entity.id " +
         "AND   source = :addon.source " +
-        "AND   addon_key = :addon.key " +
         "AND   addon_group = :addon.group "
     )
-    void updateAddon(@BindBean("entity") T entity, @BindAddon("addon")Addon addon);
+    void updateAddonGroup(@BindBean("entity") T entity, @BindAddonGroup("addon") AddonGroup addon);
 
     @SqlUpdate
     (

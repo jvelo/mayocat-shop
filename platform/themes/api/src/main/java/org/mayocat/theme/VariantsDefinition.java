@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,11 +24,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class VariantsDefinition
 {
     @JsonProperty
-    private Map<String, AddonGroup> addons = Collections.emptyMap();
+    private Map<String, AddonGroupDefinition> addons = Collections.emptyMap();
 
     private List<String> properties = Arrays.asList("stock", "price");
 
-    public Map<String, AddonGroup> getAddons()
+    public Map<String, AddonGroupDefinition> getAddons()
     {
         return addons;
     }

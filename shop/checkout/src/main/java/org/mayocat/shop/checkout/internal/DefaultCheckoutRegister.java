@@ -17,11 +17,11 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.addons.model.AddonField;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
@@ -190,16 +190,32 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     if (product.getAddons().isLoaded()) {
                         List<Map<String, Object>> itemAddons = Lists.newArrayList();
 
-                        List<Addon> addons = product.getAddons().get();
-                        for (Addon addon : addons) {
-                            Optional<AddonField> definition = findAddonDefinition(addon);
-                            if (definition.isPresent()) {
-                                if (definition.get().getProperties().containsKey("checkout.includeInOrder")) {
-                                    Map<String, Object> addonMap = Maps.newHashMap();
-                                    addonMap.put("value", addon.getValue());
-                                    addonMap.put("name", definition.get().getName());
-                                    addonMap.put("group", addon.getGroup());
-                                    itemAddons.add(addonMap);
+                        Map<String, AddonGroup> addons = product.getAddons().get();
+                        for (String groupName : addons.keySet()) {
+                            AddonGroup addonGroup = addons.get(groupName);
+                            Optional<AddonGroupDefinition> definition = AddonUtils
+                                    .findAddonGroupDefinition(addonGroup.getGroup(), platformSettings.getAddons(),
+                                            webContext.getTheme().getDefinition().getAddons());
+
+                            if (definition.isPresent() &&
+                                    definition.get().getProperties().containsKey("checkout.includeInOrder"))
+                            {
+
+                                Object value = addonGroup.getValue();
+                                if (Map.class.isAssignableFrom(value.getClass())) {
+
+                                    // For now only treat non-repeatable groups
+
+                                    Map<String, Object> valueMap = (Map<String, Object>) value;
+
+                                    for (String key : definition.get().getFields().keySet()) {
+                                        String fieldValue = valueMap.get(key).toString();
+                                        Map<String, Object> addonMap = Maps.newHashMap();
+                                        addonMap.put("value", fieldValue);
+                                        addonMap.put("name", key);
+                                        addonMap.put("group", addonGroup.getGroup());
+                                        itemAddons.add(addonMap);
+                                    }
                                 }
                             }
                         }
@@ -209,9 +225,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                         }
                     }
                 }
-
                 orderItems.add(itemData);
             }
+
             order.setNumberOfItems(numberOfItems);
             order.setItemsTotal(cart.getItemsTotal());
 
@@ -364,21 +380,5 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
         return update;
-    }
-
-    private Optional<AddonField> findAddonDefinition(Addon addonToFind)
-    {
-        Optional option;
-
-        // 1. Find in platform
-        option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.getAddons());
-
-        if (!option.isPresent() && webContext.getTheme() != null) {
-            // 2. Find in theme
-            option = AddonUtils
-                    .findAddonDefinition(addonToFind, webContext.getTheme().getDefinition().getAddons());
-        }
-
-        return option;
     }
 }

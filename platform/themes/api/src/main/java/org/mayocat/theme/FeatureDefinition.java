@@ -8,11 +8,10 @@
 package org.mayocat.theme;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
@@ -32,7 +31,7 @@ public class FeatureDefinition
     private Map<String, String> keys = Maps.newHashMap();
 
     @JsonProperty
-    private Map<String, AddonGroup> addons = Collections.emptyMap();
+    private Map<String, AddonGroupDefinition> addons = Collections.emptyMap();
 
     public String getName()
     {
@@ -44,7 +43,7 @@ public class FeatureDefinition
         return keys;
     }
 
-    public Map<String, AddonGroup> getAddons()
+    public Map<String, AddonGroupDefinition> getAddons()
     {
         return addons;
     }

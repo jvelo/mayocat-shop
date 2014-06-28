@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
@@ -27,12 +27,11 @@ import org.mayocat.model.HasModel;
 import org.mayocat.model.HasType;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.DoNotIndex;
-import org.mayocat.model.annotation.LocalizedField;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 @Index
 public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Purchasable, Localized, HasType, Child
@@ -68,7 +67,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
     @DoNotIndex
     private UUID featuredImageId;
 
-    private Association<List<Addon>> addons = Association.notLoaded();
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     private Association<Collection> featuredCollection = Association.notLoaded();
 
@@ -205,14 +204,16 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, P
         return Optional.absent();
     }
 
-    public Association<List<Addon>> getAddons()
+    @Override
+    public Association<Map<String, AddonGroup>> getAddons()
     {
-        return this.addons;
+        return addons;
     }
 
-    public void setAddons(List<Addon> addons)
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
     {
-        this.addons = new Association<>(addons);
+        this.addons = new Association(addons);
     }
 
     public Association<Collection> getFeaturedCollection()

@@ -115,6 +115,31 @@
                     });
                 }
 
+                mixin.removeSequenceAddonItem = function (group, index) {
+                    var $scope = this,
+                        localizedKey = "localized" + capitalize(entityType);
+                    $scope[entityType].addons[group.key].value.splice(index, 1);
+
+                    if (typeof $scope[entityType]._localized !== 'undefined') {
+                        Object.keys($scope[entityType]._localized).forEach(function (locale) {
+                            $scope[entityType]._localized[locale].addons[group.key].value.splice(index, 1);
+                        });
+                    }
+                }
+
+                mixin.addSequenceAddonItem = function (group) {
+                    var $scope = this,
+                        localizedKey = "localized" + capitalize(entityType);
+                    $scope[entityType].addons[group.key].value.push(group.getValueShell());
+
+                    if (typeof $scope[entityType]._localized !== 'undefined') {
+                        Object.keys($scope[entityType]._localized).forEach(function (locale) {
+                            $scope[entityType]._localized[locale].addons[group.key].value.push(group.getValueShell());
+                        });
+                    }
+                }
+
+
                 return mixin;
             }
         }])
@@ -329,9 +354,9 @@
                     '<div class="locales-wrapper input-append"><div ng-transclude></div>' +
                     '<span class="locales-switch add-on">' +
                     '<div class="btn-group"><a class="btn dropdown-toggle" data-toggle="dropdown">' +
-                    '<img src="/common/images/flags/{{selectedLocale}}.png"/> <span class="caret"></span></a>' +
+                    '<img ng-src="/common/images/flags/{{selectedLocale}}.png"/> <span class="caret"></span></a>' +
                     '<ul class="dropdown-menu">' +
-                    '<li ng-repeat="locale in locales" ng-click="select(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>' +
+                    '<li ng-repeat="locale in locales" ng-click="select(locale)"><img ng-src="/common/images/flags/{{locale}}.png" /></li>' +
                     '</ul>' +
                     '</div>',
                 compile:function (element, attrs, transclude) {

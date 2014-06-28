@@ -7,28 +7,27 @@
  */
 package org.mayocat.model;
 
-import java.io.Serializable;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @version $Id$
  */
-public class Addon<T> implements Serializable
+public class AddonGroup implements Serializable
 {
     @JsonIgnore
     private UUID entityId;
-
-    private T value;
 
     private AddonSource source;
 
     private String group;
 
-    private String key;
+    private Map<String, Object> model;
 
-    private AddonFieldType type;
+    private Object value;
 
     public UUID getEntityId()
     {
@@ -40,34 +39,9 @@ public class Addon<T> implements Serializable
         this.entityId = entityId;
     }
 
-    public T getValue()
-    {
-        return value;
-    }
-
     public AddonSource getSource()
     {
         return source;
-    }
-
-    public String getGroup()
-    {
-        return group;
-    }
-
-    public String getKey()
-    {
-        return key;
-    }
-
-    public AddonFieldType getType()
-    {
-        return type;
-    }
-
-    public void setValue(T value)
-    {
-        this.value = value;
     }
 
     public void setSource(AddonSource source)
@@ -75,18 +49,33 @@ public class Addon<T> implements Serializable
         this.source = source;
     }
 
+    public String getGroup()
+    {
+        return group;
+    }
+
     public void setGroup(String group)
     {
         this.group = group;
     }
 
-    public void setKey(String key)
+    public Map<String, Object> getModel()
     {
-        this.key = key;
+        return model;
     }
 
-    public void setType(AddonFieldType type)
+    public void setModel(Map<String, Object> model)
     {
-        this.type = type;
+        this.model = model;
+    }
+
+    public Object getValue()
+    {
+        return value;
+    }
+
+    public void setValue(Object value)
+    {
+        this.value = value;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.mayocat.addons.front.builder.AddonContextBuilder;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.image.model.Image;
@@ -175,7 +175,7 @@ public class ProductContextBuilder implements ContextConstants
         // Addons
 
         if (product.getAddons().isLoaded()) {
-            Map<String, AddonGroup> themeAddons = theme.getAddons();
+            Map<String, AddonGroupDefinition> themeAddons = theme.getAddons();
             productContext.put("theme_addons", addonContextBuilder.build(themeAddons, product.getAddons().get()));
         }
 

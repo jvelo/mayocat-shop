@@ -10,9 +10,8 @@ package org.mayocat.search.elasticsearch;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -20,7 +19,7 @@ import javax.inject.Inject;
 import org.elasticsearch.common.collect.Maps;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
@@ -113,7 +112,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
                             // They're not located in the "properties" object like the other entity properties,
                             // but they're stored in their own "addon" object
 
-                            Association<List<Addon>> addons = (Association<List<Addon>>) field.get(entity);
+                            Association<Map<String, AddonGroup>> addons = (Association<Map<String, AddonGroup>>) field.get(entity);
                             if (addons.isLoaded()) {
                                 source.put("addons", extractAddons(addons.get()));
                             }
@@ -170,44 +169,15 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
         return source;
     }
 
-    private Map<String, Object> extractAddons(List<Addon> addons) throws IOException
+    private Map<String, Object> extractAddons(Map<String, AddonGroup> addons) throws IOException
     {
-        Map<String, Object> addonsSource = Maps.newHashMap();
-        for (Addon addon : addons) {
-            Map<String, Object> source;
-            Map<String, Object> group;
-            if (!addonsSource.containsKey(addon.getSource().toJson())) {
-                source = Maps.newHashMap();
-                addonsSource.put(addon.getSource().toJson(), source);
-            }
-            source = (Map<String, Object>) addonsSource.get(addon.getSource().toJson());
-            if (!source.containsKey(addon.getGroup())) {
-                group = Maps.newHashMap();
-                source.put(addon.getGroup(), group);
-            }
-            group = (Map<String, Object>) source.get(addon.getGroup());
-            group.put(addon.getKey(), addon.getValue());
-        }
-        return addonsSource;
+        //TODO
+        return new HashMap<>();
     }
 
     private boolean isAddonField(Class fieldClass, Field field)
     {
-        try {
-            if (Association.class.isAssignableFrom(fieldClass)) {
-                ParameterizedType type = (ParameterizedType) field.getGenericType();
-                if (type.getActualTypeArguments().length > 0) {
-                    ParameterizedType listType = (ParameterizedType) type.getActualTypeArguments()[0];
-                    if (listType.getRawType().equals(List.class) && listType.getActualTypeArguments().length > 0) {
-                        if (listType.getActualTypeArguments()[0].equals(Addon.class)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        } catch (ClassCastException e) {
-            return false;
-        }
+        // TODO
+        return false;
     }
 }

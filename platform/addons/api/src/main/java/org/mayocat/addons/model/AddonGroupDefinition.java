@@ -16,24 +16,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
  */
-public class AddonGroup
+public class AddonGroupDefinition
 {
     private String name;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String text;
 
-    private Map<String, AddonField> fields;
+    private Map<String, AddonFieldDefinition> fields;
 
-    private Map<String, Object> properties;
+    private Map<String, Object> properties = Maps.newHashMap();
 
     @JsonDeserialize(using = OptionalStringListDeserializer.class)
     @JsonProperty("for")
     private Optional<List<String>> entities = Optional.absent();
+
+    private boolean sequence;
 
     public Optional<List<String>> getEntities()
     {
@@ -50,7 +53,7 @@ public class AddonGroup
         return text;
     }
 
-    public Map<String, AddonField> getFields()
+    public Map<String, AddonFieldDefinition> getFields()
     {
         return fields;
     }
@@ -58,5 +61,10 @@ public class AddonGroup
     public Map<String, Object> getProperties()
     {
         return properties;
+    }
+
+    public boolean isSequence()
+    {
+        return sequence;
     }
 }

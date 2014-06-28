@@ -12,8 +12,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mayocat.addons.model.AddonField;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonFieldDefinition;
+import org.mayocat.addons.model.AddonGroupDefinition;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -51,23 +51,23 @@ public class ThemeDefinitionTest
                 theme.getDescription().startsWith("Et harum quidem rerum facilis est et expedita distinctio."));
         Assert.assertEquals(2, theme.getAddons().size());
 
-        Map<String, AddonGroup> addons = theme.getAddons();
+        Map<String, AddonGroupDefinition> addons = theme.getAddons();
         Assert.assertEquals(2, addons.keySet().size());
 
-        AddonGroup group1 = addons.get("group1");
+        AddonGroupDefinition group1 = addons.get("group1");
         Assert.assertEquals("Addon group 1", group1.getName());
         Assert.assertEquals("Short help text that is displayed under the addon group", group1.getText());
         List<String> entities = Lists.newArrayList("product", "page");
         Assert.assertEquals(Optional.of(entities), group1.getEntities());
-        Map<String, AddonField> fields = group1.getFields();
-        AddonField brand = fields.get("brand");
+        Map<String, AddonFieldDefinition> fields = group1.getFields();
+        AddonFieldDefinition brand = fields.get("brand");
         Assert.assertEquals("Brand", brand.getName());
         Assert.assertEquals("string", brand.getType());
 
-        AddonGroup group2 = addons.get("group2");
-        Map<String, AddonField> fields2 = group2.getFields();
+        AddonGroupDefinition group2 = addons.get("group2");
+        Map<String, AddonFieldDefinition> fields2 = group2.getFields();
         Assert.assertEquals(2, fields2.keySet().size());
-        AddonField field1 = fields2.get("field1");
+        AddonFieldDefinition field1 = fields2.get("field1");
         Assert.assertEquals("Field 1", field1.getName());
     }
 

@@ -16,7 +16,7 @@ import javax.inject.Provider;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.front.builder.AddonContextBuilder;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.image.model.Image;
@@ -84,7 +84,7 @@ public class SiteWebDataSupplier implements WebDataSupplier
 
         if (tenant.getAddons().isLoaded()) {
             AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> platformAddons = platformSettings.getAddons();
+            Map<String, AddonGroupDefinition> platformAddons = platformSettings.getAddons();
             site.put("platform_addons",
                     addonContextBuilder.build(platformAddons, tenant.getAddons().get(), "platform"));
         }

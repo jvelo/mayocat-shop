@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -30,7 +30,7 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
-import com.google.common.collect.Lists;
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 /**
  * @version $Id$
@@ -142,8 +142,8 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     {
         Page page = this.dao.findBySlug(PAGE_TABLE_NAME, slug, getTenant());
         if (page != null) {
-            List<Addon> addons = this.dao.findAddons(page);
-            page.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(page);
+            page.setAddons(asMap(addons));
         }
         return page;
     }
@@ -152,8 +152,8 @@ public class DBIPageStore extends DBIEntityStore implements PageStore, Initializ
     public Page findById(UUID id)
     {
         Page page = this.dao.findById(PAGE_TABLE_NAME, id);
-        List<Addon> addons = this.dao.findAddons(page);
-        page.setAddons(addons);
+        List<AddonGroup> addons = this.dao.findAddons(page);
+        page.setAddons(asMap(addons));
         return page;
     }
 

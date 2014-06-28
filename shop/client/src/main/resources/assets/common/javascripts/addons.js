@@ -9,6 +9,32 @@
 
     'use strict'
 
+    /**
+     * Helper function that creates an "extended" group definition from an actual server provided group definition.
+     * This extended definition is used when listing groups on entity pages.
+     *
+     * @param group the group definition to get the extended group definition for
+     * @param groupKey the key of the group
+     * @param sourceName the name of the source for this group definition (for example "platform" or "theme"
+     * @returns {Object} the extended group definition
+     */
+    function getExtendedGroupDefinition(group, groupKey, sourceName) {
+        var definition = angular.copy(group);
+        definition.key = groupKey;
+        definition.source = sourceName;
+        definition.fields = [];
+        definition.getValueShell = function() {
+            // Used for sequence addons, to get a "shell" value with all fields having a
+            // null value when adding a new item in the sequence
+            var object = {};
+            Object.keys(group.fields).forEach(function(key){
+                object[key] = null;
+            });
+            return object;
+        }
+        return definition
+    }
+
     angular.module('mayocat.addons', ['ngResource'])
 
         .factory('addonsService', function ($resource, $q, configurationService) {
@@ -59,30 +85,6 @@
                     return "<div>" + string + "</div>"
                 }
             });
-
-            /**
-             * Finds the index of an addon with a certain group+field+source in an array of addons.
-             *
-             * @param {array} addons the array of addons to find the addon in
-             * @param {string} group the group of the addon to find
-             * @param {string} field the field of the addon to find
-             * @param {string} source the source of the addon to find. E.g. "platform" or "theme"
-             * @returns {number} the index at which the addon has been found, -1 if not found.
-             */
-            var getAddonIndex = function (addons, group, field, source) {
-                if (typeof addons === "undefined") {
-                    return -1;
-                }
-                for (var i = 0; i < addons.length; i++) {
-                    var addon = addons[i];
-                    if (addon.key == field
-                        && addon.source == source
-                        && addon.group == group) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
 
             return {
 
@@ -140,10 +142,10 @@
                     output += "<" + tagName;
 
                     if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
-                        output += " ng-model=localizedObject.value ";
+                        output += " ng-model=localizedObject[key] ";
                     }
                     else {
-                        output += " ng-model=object.value ";
+                        output += " ng-model=object[key] ";
                     }
 
                     if (typeof editors[editor].extraAttributes !== "undefined") {
@@ -208,7 +210,6 @@
                         var entities = configuration.entities,
                             locales = configuration.general.locales.others || [];
 
-
                         if (typeof entities === 'undefined' || typeof entities[entityType] === 'undefined') {
                             deferred.resolve(entityAddons);
                         }
@@ -221,7 +222,7 @@
                                 entity._localized[locale] = {};
                             }
                             if (typeof entity._localized[locale].addons === "undefined") {
-                                entity._localized[locale].addons = [];
+                                entity._localized[locale].addons = {};
                             }
                         });
 
@@ -232,74 +233,120 @@
                             addons = entities[entityType].addons
                         }
 
-                        var addonKeys = addons ? Object.keys(addons) : [];
-                        for (var i=0; i<addonKeys.length; i++) {
-                            var sourceName = addonKeys[i],
-                                source = addons[sourceName],
-                                groupKeys = Object.keys(source);
-                            for (var j=0; j<groupKeys.length; j++) {
-                                var groupKey = groupKeys[j],
-                                    group = source[groupKey],
+                        addons && Object.keys(addons).forEach(function(sourceName) {
+                            var source = addons[sourceName];
+                            Object.keys(source).forEach(function(groupKey){
+                                var group = source[groupKey],
                                     definitions = group.fields,
+                                    sequence = group.sequence,
                                     definitionKeys = Object.keys(definitions),
-                                    currentGroupIndex = entityAddons.push({
-                                        key:groupKey,
-                                        source:sourceName,
-                                        name:group.name,
-                                        text:group.text,
-                                        properties:group.properties,
-                                        fields:[]
-                                    }) - 1;
-                                for (var k = 0; k < definitionKeys.length; k++) {
-                                    var key = definitionKeys[k],
-                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName),
-                                        definition = definitions[key];
-                                    if (index < 0) {
-                                        // Create addon container lazily
-                                        entity.addons.push({
-                                            key:key,
-                                            group:groupKey,
-                                            source:sourceName,
-                                            type:definition.type,
-                                            value:null
-                                        });
-                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName);
+                                    addonGroupDefinition = getExtendedGroupDefinition(group, groupKey, sourceName);
+
+                                entityAddons.push(addonGroupDefinition);
+
+                                if (typeof entity.addons[groupKey] === "undefined") {
+                                    entity.addons[groupKey] = {
+                                        group: groupKey,
+                                        source: sourceName,
+                                        value: sequence ? [] : {},
+                                        model: {}
                                     }
-                                    entityAddons[currentGroupIndex].fields.push({
-                                        key:key,
-                                        definition:definition,
-                                        index:index
+                                }
+                                else if (sequence && !entity.addons[groupKey].value.length) {
+                                    // If the addon definition says it's a sequence and the value is not a list, put
+                                    // it as a first item of the list.
+                                    // (This could happen if the theme developer changes the definition after setting a
+                                    // value).
+
+                                    entity.addons[groupKey].value = [ entity.addons[groupKey].value ];
+                                }
+                                else if (!sequence && entity.addons[groupKey].value.length) {
+                                    // Same: if the addon definition says it's a not sequence and the value is a list,
+                                    // take the first object in the list if there's one, or put an empty object.
+
+                                    if (entity.addons[groupKey].value.length > 0) {
+                                        entity.addons[groupKey].value = entity.addons[groupKey].value[0];
+                                    }
+                                    else {
+                                        entity.addons[groupKey].value = {};
+                                    }
+                                }
+
+                                var fieldSequence = sequence ?
+                                    entity.addons[groupKey].value : [ entity.addons[groupKey].value ];
+
+                                fieldSequence.forEach(function (sequence) {
+                                    // Initialize all field values with "null" if not present
+
+                                    definitionKeys.forEach(function (key) {
+                                        if (typeof sequence[key] === 'undefined') {
+                                            sequence[key] = null;
+                                        }
+                                    });
+                                });
+
+                                definitionKeys.forEach(function (key) {
+                                    var definition = definitions[key];
+
+                                    if (typeof entity.addons[groupKey].model === 'undefined') {
+                                        entity.addons[groupKey].model = {}
+                                    }
+
+                                    entity.addons[groupKey].model[key] = definition.type;
+
+                                    addonGroupDefinition.fields.push({
+                                        key: key,
+                                        definition: definition
+                                    });
+                                });
+                            });
+                        });
+
+                        // Initialize localized copies
+
+                        if (typeof entity.addons === "undefined") {
+                            entity.addons = {};
+                        }
+
+                        Object.keys(entity.addons).forEach(function (groupKey) {
+
+                            var group = entity.addons[groupKey];
+                            locales.forEach(function (locale) {
+                                if (typeof entity._localized[locale].addons === 'undefined') {
+                                    entity._localized[locale].addons = {};
+                                }
+
+                                if (typeof entity._localized[locale].addons[groupKey] === 'undefined') {
+                                    entity._localized[locale].addons[groupKey] = angular.copy(group);
+                                    var localizedGroup = entity._localized[locale].addons[groupKey];
+
+                                    if (!localizedGroup.value.length) {
+                                        // Non-sequence
+                                        Object.keys(localizedGroup.value).forEach(function (key) {
+                                            localizedGroup.value[key] = null;
+                                        });
+                                    }
+                                    else {
+                                        // Sequence
+                                        localizedGroup.value = [];
+                                    }
+                                }
+
+                                var localizedGroup = entity._localized[locale].addons[groupKey];
+                                if (typeof localizedGroup.value === 'undefined') {
+                                    localizedGroup.value = {};
+                                }
+                                if (!group.value instanceof Array) {
+                                    Object.keys(group.value).forEach(function (key) {
+                                        if (typeof localizedGroup.value[key] === 'undefined') {
+                                            localizedGroup.value[key] = null;
+                                        }
                                     });
                                 }
-                            }
 
-                        }
-                        // Initialize localized copies
-                        if (typeof entity.addons == "undefined") {
-                            entity.addons = []
-                        }
-                        for (var i = 0; i < entity.addons.length; i++) {
-                            var addon = entity.addons[i];
-                            locales.forEach(function (locale) {
-                                var localIndex = getAddonIndex(
-                                        entity._localized[locale].addons,
-                                        addon.group,
-                                        addon.key,
-                                        addon.source
-                                    ),
-                                    localizedValue = null
-
-                                if (localIndex > 0) {
-                                    // We found a value for this addon for this locale, so get it
-                                    localizedValue = entity._localized[locale].addons[localIndex].value
-                                }
-
-                                // We always push the localized version of an addon at the exact same index as the "main"
-                                // one, effectively ignoring the local one's index
-                                entity._localized[locale].addons[i] = angular.copy(entity.addons[i]);
-                                entity._localized[locale].addons[i].value = localizedValue;
                             });
-                        }
+                        });
+
                         deferred.resolve(entityAddons);
                     });
                     return deferred.promise;
@@ -313,7 +360,8 @@
             scope:{
                 addon:'=definition',
                 object:'=',
-                localizedObject:"="
+                localizedObject:"=",
+                key: '='
             },
             restrict:"E",
             link:function (scope, element, attrs) {
@@ -323,16 +371,16 @@
                     function (definition) {
                         scope.type = addonsService.type(definition.type, definition.editor);
 
-                        var editor = addonsService.editor(scope.object.type, definition, {
+                        var editor = addonsService.editor(definition.type, definition, {
                             "ignoreReadOnly":typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
                         });
-
                         // The "template" option allow to override default behavior
                         if (typeof definition.template !== 'undefined') {
                             editor = definition.template;
                         }
 
                         element.html(editor);
+
                         $compile(element.contents())(scope);
                     }
                 );

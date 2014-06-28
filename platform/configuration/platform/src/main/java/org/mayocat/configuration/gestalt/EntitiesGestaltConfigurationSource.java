@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.images.ImageFormatDefinition;
@@ -119,12 +119,12 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         }
     }
 
-    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroup> addons,
+    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroupDefinition> addons,
             AddonSource source)
     {
         // Step 1 : add addon groups defined explicitly for some entities
         for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
+            AddonGroupDefinition group = addons.get(groupKey);
             if (group.getEntities().isPresent()) {
                 for (String entity : group.getEntities().get()) {
                     addAddonGroupToEntity(entities, entity, groupKey, group, source);
@@ -133,7 +133,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         }
         // Step 2 add addon groups for all entities
         for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
+            AddonGroupDefinition group = addons.get(groupKey);
             if (!group.getEntities().isPresent()) {
                 for (String entity : entities.keySet()) {
                     addAddonGroupToEntity(entities, entity, groupKey, group, source);
@@ -190,7 +190,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     }
 
     private void addAddonGroupToEntity(Map<String, Map<String, Object>> entities, String entity, String groupKey,
-            AddonGroup group, AddonSource source)
+            AddonGroupDefinition group, AddonSource source)
     {
         this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
         {

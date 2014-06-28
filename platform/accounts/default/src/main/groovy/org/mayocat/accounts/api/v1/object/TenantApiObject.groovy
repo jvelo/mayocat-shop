@@ -15,18 +15,16 @@ import groovy.transform.CompileStatic
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.model.Tenant
-import org.mayocat.addons.api.representation.AddonRepresentation
-import org.mayocat.addons.model.AddonField
-import org.mayocat.addons.model.BaseProperties
-import org.mayocat.addons.util.AddonUtils
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
-import org.mayocat.model.Addon
-import org.mayocat.rest.api.object.AddonApiObject
+import org.mayocat.model.AddonGroup
+import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
-import org.mayocat.rest.representations.ImageRepresentation
 import org.mayocat.theme.ThemeDefinition
+
+import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
+import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
  * API object for tenant
@@ -53,7 +51,7 @@ class TenantApiObject extends BaseApiObject {
     String defaultHost;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<AddonApiObject> addons
+    Map<String, AddonGroupApiObject> addons
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
@@ -74,21 +72,21 @@ class TenantApiObject extends BaseApiObject {
         name = tenant.name
         description = tenant.description
         contactEmail = tenant.contactEmail
+        defaultHost = tenant.defaultHost
 
         if (tenant.creationDate != null) {
             creationDate = new DateTime(tenant.creationDate.time, timeZone);
         }
-
     }
 
     @JsonIgnore
-    def withAddons(List<Addon> productAddons) {
+    def withAddons(Map<String, AddonGroup> entityAddons) {
         if (!addons) {
-            addons = []
+            addons = [:]
         }
 
-        productAddons.each({ Addon addon ->
-            addons << AddonApiObject.forAddon(addon)
+        entityAddons.values().each({ AddonGroup addon ->
+            addons.put(addon.group, forAddonGroup(addon))
         })
     }
 
@@ -126,7 +124,8 @@ class TenantApiObject extends BaseApiObject {
     }
 
     @JsonIgnore
-    Tenant toTenant(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition) {
+    Tenant toTenant(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
+    {
         def tenant = new Tenant()
         tenant.with {
             name = this.name
@@ -136,18 +135,7 @@ class TenantApiObject extends BaseApiObject {
         }
 
         if (addons) {
-            List<Addon> tenantAddons = []
-            addons.each({ AddonApiObject addon ->
-                Addon productAddon = addon.toAddon()
-                Optional<AddonField> definition = AddonUtils.findAddonDefinition(productAddon, platformSettings.addons)
-                if (definition.isPresent() && !definition.get().properties.containsKey(BaseProperties.READ_ONLY)) {
-                    // - Addons for which no definition can be found are ignored
-                    // - Addons declared "Read only" are ignored : they can't be updated via this API !
-                    tenantAddons << productAddon
-                }
-            })
-
-            tenant.addons = tenantAddons
+            tenant.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
         }
 
         tenant

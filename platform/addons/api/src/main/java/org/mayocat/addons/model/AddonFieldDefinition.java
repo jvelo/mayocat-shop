@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class AddonField
+public class AddonFieldDefinition
 {
     private String name;
 

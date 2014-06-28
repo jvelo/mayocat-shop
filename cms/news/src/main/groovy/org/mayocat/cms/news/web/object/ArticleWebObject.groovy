@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.mayocat.addons.front.builder.AddonContextBuilder
-import org.mayocat.addons.model.AddonGroup
+import org.mayocat.addons.model.AddonGroupDefinition
 import org.mayocat.cms.news.model.Article
 import org.mayocat.image.model.Image
 import org.mayocat.rest.api.object.DateWebObject
@@ -62,7 +62,7 @@ class ArticleWebObject {
         // Addons
         if (article.addons.isLoaded() && theme.isPresent()) {
             def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> themeAddons = theme.get().addons
+            Map<String, AddonGroupDefinition> themeAddons = theme.get().addons
             theme_addons = addonContextBuilder.build(themeAddons, article.addons.get());
         }
     }

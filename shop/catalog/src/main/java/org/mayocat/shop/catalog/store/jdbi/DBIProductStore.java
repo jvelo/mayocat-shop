@@ -7,18 +7,17 @@
  */
 package org.mayocat.shop.catalog.store.jdbi;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.mayocat.addons.store.dbi.AddonsHelper;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
@@ -27,7 +26,6 @@ import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.HasOrderedCollections;
@@ -46,6 +44,8 @@ import com.google.common.collect.FluentIterable;
 import mayoapp.dao.FeatureDAO;
 import mayoapp.dao.ProductDAO;
 
+import static org.mayocat.addons.util.AddonUtils.asMap;
+
 @Component(hints = { "jdbi", "default" })
 public class DBIProductStore extends DBIEntityStore implements ProductStore, Initializable
 {
@@ -59,9 +59,6 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
     private FeatureDAO featureDao;
 
-    @Inject
-    private AttachmentStore attachmentStore;
-
     public Product create(Product product) throws EntityAlreadyExistsException, InvalidEntityException
     {
         if (this.dao.findBySlug(product.getSlug(), getTenant(), product.getParentId()) != null) {
@@ -69,7 +66,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
 
         if (!product.getAddons().isLoaded()) {
-            product.setAddons(new ArrayList<Addon>());
+            product.setAddons(new HashMap<String, AddonGroup>());
         }
 
         getObservationManager().notify(new EntityCreatingEvent(), product);
@@ -246,8 +243,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
         Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant(), parentId);
         if (product != null) {
-            List<Addon> addons = this.dao.findAddons(product);
-            product.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(product);
+            product.setAddons(asMap(addons));
         }
         return product;
     }
@@ -256,8 +253,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     {
         Product product = this.dao.findBySlug(PRODUCT_TABLE_NAME, slug, getTenant());
         if (product != null) {
-            List<Addon> addons = this.dao.findAddons(product);
-            product.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(product);
+            product.setAddons(asMap(addons));
         }
         return product;
     }
@@ -301,8 +298,8 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     {
         Product product = this.dao.findById(PRODUCT_TABLE_NAME, id);
         if (product != null) {
-            List<Addon> addons = this.dao.findAddons(product);
-            product.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(product);
+            product.setAddons(asMap(addons));
         }
         return product;
     }
@@ -368,7 +365,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         }
 
         if (!feature.getAddons().isLoaded()) {
-            feature.setAddons(new ArrayList<Addon>());
+            feature.setAddons(new HashMap<String, AddonGroup>());
         }
 
         getObservationManager().notify(new EntityCreatingEvent(), feature);

@@ -10,7 +10,7 @@ package org.mayocat.rest.web.object
 import groovy.transform.CompileStatic
 
 /**
- * Web object for an {@link org.mayocat.model.Addon} value
+ * Web object for an {@link org.mayocat.model.AddonGroup} addon value
  *
  * @version $Id$
  */

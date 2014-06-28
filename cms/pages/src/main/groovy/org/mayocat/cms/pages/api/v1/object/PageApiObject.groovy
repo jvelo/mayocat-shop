@@ -12,17 +12,17 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
-import org.mayocat.addons.model.AddonField
-import org.mayocat.addons.model.BaseProperties
-import org.mayocat.addons.util.AddonUtils
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
-import org.mayocat.model.Addon
-import org.mayocat.rest.api.object.AddonApiObject
+import org.mayocat.model.AddonGroup
+import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.theme.ThemeDefinition
+
+import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
+import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
  * API object for a {@link Page}
@@ -45,7 +45,7 @@ class PageApiObject extends BaseApiObject
     String content;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<AddonApiObject> addons
+    Map<String, AddonGroupApiObject> addons
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
@@ -81,32 +81,20 @@ class PageApiObject extends BaseApiObject
         }
 
         if (addons) {
-            List<Addon> articleAddons = []
-            addons.each({ AddonApiObject addon ->
-                Addon articleAddon = addon.toAddon()
-                Optional<AddonField> definition = findAddonDefinition(articleAddon, platformSettings, themeDefinition)
-                if (definition.isPresent() && !definition.get().properties.containsKey(BaseProperties.READ_ONLY)) {
-                    // - Addons for which no definition can be found are ignored
-                    // - Addons declared "Read only" are ignored : they can't be updated via this API !
-                    articleAddons << articleAddon
-                }
-            })
-
-            page.addons = articleAddons
+            page.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
         }
 
         page
     }
 
     @JsonIgnore
-    def withAddons(List<Addon> pageAddons)
-    {
+    def withAddons(Map<String, AddonGroup> entityAddons) {
         if (!addons) {
-            addons = []
+            addons = [:]
         }
 
-        pageAddons.each({ Addon addon ->
-            addons << AddonApiObject.forAddon(addon)
+        entityAddons.values().each({ AddonGroup addon ->
+            addons.put(addon.group, forAddonGroup(addon))
         })
     }
 
@@ -143,18 +131,5 @@ class PageApiObject extends BaseApiObject
         imageApiObject.withImage(featuredImage)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
-    }
-
-    private def Optional<AddonField> findAddonDefinition(Addon addonToFind, PlatformSettings platformSettings,
-            Optional<ThemeDefinition> themeDefinition)
-    {
-        def option = Optional.absent();
-        // 1. Find in platform
-        option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.addons);
-
-        if (!option.isPresent() && themeDefinition.isPresent()) {
-            // 2. Find in theme
-            option = AddonUtils.findAddonDefinition(addonToFind, themeDefinition.get().addons);
-        }
     }
 }

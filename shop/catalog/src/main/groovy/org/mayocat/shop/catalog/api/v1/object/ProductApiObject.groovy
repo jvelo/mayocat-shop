@@ -12,17 +12,17 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
-import org.mayocat.addons.model.AddonField
-import org.mayocat.addons.model.BaseProperties
-import org.mayocat.addons.util.AddonUtils
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
-import org.mayocat.model.Addon
-import org.mayocat.rest.api.object.AddonApiObject
+import org.mayocat.model.AddonGroup
+import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.theme.ThemeDefinition
+
+import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
+import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
  * API object for product APIs
@@ -59,7 +59,7 @@ class ProductApiObject extends BaseApiObject
     String type;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<AddonApiObject> addons
+    Map<String, AddonGroupApiObject> addons
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
@@ -111,18 +111,7 @@ class ProductApiObject extends BaseApiObject
         }
 
         if (addons) {
-            List<Addon> productAddons = []
-            addons.each({ AddonApiObject addon ->
-                Addon productAddon = addon.toAddon()
-                Optional<AddonField> definition = findAddonDefinition(productAddon, platformSettings, themeDefinition, parent)
-                if (definition.isPresent() && !definition.get().properties.containsKey(BaseProperties.READ_ONLY)) {
-                    // - Addons for which no definition can be found are ignored
-                    // - Addons declared "Read only" are ignored : they can't be updated via this API !
-                    productAddons << productAddon
-                }
-            })
-
-            product.addons = productAddons
+            product.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
         }
 
         product
@@ -209,37 +198,13 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withAddons(List<Addon> productAddons)
-    {
+    def withAddons(Map<String, AddonGroup> entityAddons) {
         if (!addons) {
-            addons = []
+            addons = [:]
         }
 
-        productAddons.each({ Addon addon ->
-            addons << AddonApiObject.forAddon(addon)
+        entityAddons.values().each({ AddonGroup addon ->
+            addons.put(addon.group, forAddonGroup(addon))
         })
-    }
-
-    @JsonIgnore
-    def Optional<AddonField> findAddonDefinition(Addon addonToFind, PlatformSettings platformSettings,
-            Optional<ThemeDefinition> themeDefinition, Optional<Product> parent)
-    {
-        def option = Optional.absent();
-        if (!parent.isPresent()) {
-            // 1. Find in platform
-            option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.addons);
-
-            if (!option.isPresent() && themeDefinition.isPresent()) {
-                // 2. Find in theme
-                option = AddonUtils.findAddonDefinition(addonToFind, themeDefinition.get().addons);
-            }
-        } else {
-            def typeAddons = themeDefinition.get().getProductTypes().get(parent.get().type.orNull())?.getVariants()?.getAddons()
-            if (typeAddons) {
-                option = AddonUtils.findAddonDefinition(addonToFind, typeAddons);
-            }
-        }
-
-        return option;
     }
 }

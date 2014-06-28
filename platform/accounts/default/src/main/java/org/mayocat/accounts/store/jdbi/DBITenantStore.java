@@ -19,7 +19,7 @@ import org.mayocat.accounts.store.TenantStore;
 import mayoapp.dao.TenantDAO;
 
 import org.mayocat.context.WebContext;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -31,6 +31,8 @@ import org.xwiki.component.phase.InitializationException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 @Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
@@ -140,8 +142,8 @@ public class DBITenantStore implements TenantStore, Initializable
     {
         Tenant tenant = this.dao.findBySlug("tenant", slug);
         if (tenant != null) {
-            List<Addon> addons = this.dao.findAddons(tenant);
-            tenant.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
         }
         return tenant;
     }
@@ -151,8 +153,8 @@ public class DBITenantStore implements TenantStore, Initializable
     {
         Tenant tenant = this.dao.findByDefaultHost(host);
         if (tenant != null) {
-            List<Addon> addons = this.dao.findAddons(tenant);
-            tenant.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
         }
         return tenant;
     }

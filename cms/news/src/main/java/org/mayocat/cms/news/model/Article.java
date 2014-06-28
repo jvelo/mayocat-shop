@@ -8,20 +8,19 @@
 package org.mayocat.cms.news.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.annotation.Index;
-import org.mayocat.model.annotation.LocalizationFieldType;
 import org.mayocat.model.annotation.LocalizedField;
 import org.mayocat.model.annotation.PluralForm;
 
@@ -53,7 +52,7 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
 
     private Date publicationDate;
 
-    private Association<List<Addon>> addons = Association.notLoaded();
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     private Optional<String> model = Optional.absent();
 
@@ -68,9 +67,15 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
     }
 
     @Override
-    public Association<List<Addon>> getAddons()
+    public Association<Map<String, AddonGroup>> getAddons()
     {
         return addons;
+    }
+
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
+    {
+        this.addons = new Association(addons);
     }
 
     @Override
@@ -101,11 +106,6 @@ public class Article implements Entity, HasAddons, HasModel, HasFeaturedImage
     public void setSlug(String slug)
     {
         this.slug = slug;
-    }
-
-    public void setAddons(List<Addon> addons)
-    {
-        this.addons = new Association(addons);
     }
 
     public String getTitle()

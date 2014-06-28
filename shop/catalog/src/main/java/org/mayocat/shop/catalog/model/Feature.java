@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.catalog.model;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -16,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
@@ -55,7 +54,7 @@ public class Feature implements Entity, HasAddons, Localized, Child
     @Size(min = 1)
     private String title;
 
-    private Association<List<Addon>> addons = Association.notLoaded();
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     private Map<Locale, Map<String, Object>> localizedVersions;
 
@@ -134,14 +133,16 @@ public class Feature implements Entity, HasAddons, Localized, Child
         this.featureSlug = featureSlug;
     }
 
-    public Association<List<Addon>> getAddons()
+    @Override
+    public Association<Map<String, AddonGroup>> getAddons()
     {
-        return this.addons;
+        return addons;
     }
 
-    public void setAddons(List<Addon> addons)
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
     {
-        this.addons = new Association<>(addons);
+        this.addons = new Association(addons);
     }
 
     //

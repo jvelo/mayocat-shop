@@ -16,29 +16,31 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.skife.jdbi.v2.SQLStatement;
 import org.skife.jdbi.v2.sqlobject.Binder;
 import org.skife.jdbi.v2.sqlobject.BinderFactory;
 import org.skife.jdbi.v2.sqlobject.BindingAnnotation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * @version $Id$
  */
-@BindingAnnotation(BindAddon.AddonBinderFactory.class)
+@BindingAnnotation(BindAddonGroup.AddonGroupBinderFactory.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.PARAMETER })
-public @interface BindAddon
+public @interface BindAddonGroup
 {
     String value();
 
-    public static class AddonBinderFactory implements BinderFactory
+    public static class AddonGroupBinderFactory implements BinderFactory
     {
         public Binder build(Annotation annotation)
         {
-            return new Binder<BindAddon, Addon>()
+            return new Binder<BindAddonGroup, AddonGroup>()
             {
-                public void bind(SQLStatement q, BindAddon bind, Addon arg)
+                public void bind(SQLStatement q, BindAddonGroup bind, AddonGroup arg)
                 {
                     final String prefix;
                     if ("___jdbi_bare___".equals(bind.value())) {
@@ -50,15 +52,21 @@ public @interface BindAddon
                     try {
                         BeanInfo infos = Introspector.getBeanInfo(arg.getClass());
                         PropertyDescriptor[] props = infos.getPropertyDescriptors();
+
+                        ObjectMapper mapper = new ObjectMapper();
+
                         for (PropertyDescriptor prop : props) {
 
                             // Handle enum special cases (force a "toString + toLower" call on the enum value)
                             // See https://groups.google.com/forum/?fromgroups=#!topic/jdbi/PPqQZf7LU1k
-                            if (prop.getName().equals("source") || prop.getName().equals("type")) {
+                            if (prop.getName().equals("source")) {
                                 q.bind(prefix + prop.getName(),
                                         prop.getReadMethod().invoke(arg).toString().toLowerCase());
-                            }
-                            else {
+                            } else if (prop.getName().equals("value") || prop.getName().equals("model")) {
+                                // JSON serialization for value and model
+                                q.bind(prefix + prop.getName(),
+                                        mapper.writeValueAsString(prop.getReadMethod().invoke(arg)));
+                            } else {
                                 q.bind(prefix + prop.getName(), prop.getReadMethod().invoke(arg));
                             }
                         }
