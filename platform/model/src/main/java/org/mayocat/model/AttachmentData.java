@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
@@ -22,6 +24,8 @@ import com.google.common.base.Function;
  */
 public class AttachmentData implements Serializable
 {
+    private Logger logger = LoggerFactory.getLogger(AttachmentData.class);
+
     private transient InputStream stream;
 
     private transient byte[] bytes;
@@ -68,6 +72,12 @@ public class AttachmentData implements Serializable
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                logger.error("Failed to close attachment data stream", e);
+            }
         }
     }
 }

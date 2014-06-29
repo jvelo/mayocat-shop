@@ -15,7 +15,7 @@ import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.jdbi.mapper.OrderMapper;
 import org.mayocat.shop.billing.store.jdbi.argument.CurrencyAsCurrencyCodeArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.DateAsTimestampArgumentFactory;
-import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.MapAsJsonStringArgumentFactory;
 import org.mayocat.shop.billing.store.jdbi.argument.OrderStatusArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
@@ -31,7 +31,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  */
 @RegisterMapper(OrderMapper.class)
 @RegisterArgumentFactory({ DateAsTimestampArgumentFactory.class, CurrencyAsCurrencyCodeArgumentFactory.class,
-        OrderStatusArgumentFactory.class, MapAsJsonArgumentFactory.class })
+        OrderStatusArgumentFactory.class, MapAsJsonStringArgumentFactory.class })
 @UseStringTemplate3StatementLocator
 public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderDAO>
 {

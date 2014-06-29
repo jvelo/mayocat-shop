@@ -8,6 +8,7 @@
 package org.mayocat.model;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +37,8 @@ public class Attachment implements Entity, Child, Localized
     private AttachmentData data;
 
     private UUID parentId;
+
+    private Map<String, Map<String, Object>> metadata = new HashMap<>();
 
     private Map<Locale, Map<String, Object>> localizedVersions;
 
@@ -107,6 +110,16 @@ public class Attachment implements Entity, Child, Localized
         this.data = data;
     }
 
+    public Map<String, Map<String, Object>> getMetadata()
+    {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, Map<String, Object>> metadata)
+    {
+        this.metadata = metadata;
+    }
+
     @Override
     public UUID getParentId()
     {
@@ -131,6 +144,13 @@ public class Attachment implements Entity, Child, Localized
 
     ////////////////////////////////////////////////
 
+    public String getFilename()
+    {
+        return getSlug() + "." + getExtension();
+    }
+
+    ////////////////////////////////////////////////
+
     @Override
     public boolean equals(Object obj)
     {
@@ -148,7 +168,8 @@ public class Attachment implements Entity, Child, Localized
                 && Objects.equal(this.extension, other.extension)
                 && Objects.equal(this.description, other.description)
                 && Objects.equal(this.parentId, other.parentId)
-                && Objects.equal(this.data, other.data);
+                && Objects.equal(this.data, other.data)
+                && Objects.equal(this.metadata, other.metadata);
     }
 
     @Override
@@ -161,7 +182,8 @@ public class Attachment implements Entity, Child, Localized
                 this.extension,
                 this.description,
                 this.parentId,
-                this.data
+                this.data,
+                this.metadata
         );
     }
 

@@ -12,6 +12,7 @@ import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
+import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
@@ -82,6 +83,9 @@ class ProductApi implements Resource, Initializable
     Provider<AttachmentStore> attachmentStore
 
     @Inject
+    Map<String, MetadataExtractor> extractors
+
+    @Inject
     Slugifier slugifier
 
     @Inject
@@ -115,6 +119,7 @@ class ProductApi implements Resource, Initializable
     void initialize()
     {
         attachmentApi = new AttachmentApiDelegate([
+                extractors: extractors,
                 attachmentStore: attachmentStore,
                 slugifier: slugifier,
                 handler: productHandler,

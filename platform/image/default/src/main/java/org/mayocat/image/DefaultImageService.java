@@ -46,20 +46,11 @@ public class DefaultImageService implements ImageService, Initializable
 
     private Path imageFileCache;
 
-    private Function<InputStream, Image> loadImage = new Function<InputStream, Image>()
-    {
-        public Image apply(InputStream input)
-        {
-            try {
-                return imageProcessor.readImage(input);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    };
+    private Function<InputStream, Image> loadImage;
 
     public void initialize() throws InitializationException
     {
+        loadImage = new LoadImageFunction(imageProcessor);
         imageFileCache = fileManager.resolvePermanentFilePath(Paths.get("imagecache"));
         if (!imageFileCache.toFile().isDirectory()) {
             // The image cache directory for this image does not exist, create it

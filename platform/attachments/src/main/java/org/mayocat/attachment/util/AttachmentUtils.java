@@ -10,6 +10,8 @@ package org.mayocat.attachment.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.mayocat.model.Attachment;
+
 /**
  * @version $Id$
  */
@@ -22,6 +24,10 @@ public class AttachmentUtils
         IMAGE_EXTENSIONS.add("jpeg");
         IMAGE_EXTENSIONS.add("png");
         IMAGE_EXTENSIONS.add("gif");
+    }
+
+    public static boolean isImage(Attachment attachment) {
+        return isImage(attachment.getFilename());
     }
 
     public static boolean isImage(String fileName)

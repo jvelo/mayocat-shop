@@ -6,18 +6,21 @@ createAttachment() ::= <<
              extension,
              title,
              description,
-             data)
+             data,
+             metadata)
     VALUES   (:entity,
              :attachment.extension,
              :attachment.title,
              :attachment.description,
-             :data)
+             :data,
+             :attachment.metadata)
 >>
 
 updateAttachment() ::= <<
     UPDATE attachment
     SET    title = :attachment.title,
-           description = :attachment.description
+           description = :attachment.description,
+           metadata = :attachment.metadata
     WHERE  entity_id = :attachment.id
 >>
 
