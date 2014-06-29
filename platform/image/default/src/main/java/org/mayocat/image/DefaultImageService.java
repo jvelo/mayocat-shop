@@ -135,10 +135,26 @@ public class DefaultImageService implements ImageService, Initializable
 
     public Optional<Rectangle> getFittingRectangle(Attachment attachment, Dimension dimension) throws IOException
     {
-        Image image = attachment.getData().getObject(loadImage, Image.class);
+        int imageWidth = -1;
+        int imageHeight = -1;
 
-        int imageWidth = image.getWidth(null);
-        int imageHeight = image.getHeight(null);
+        if (attachment.getMetadata().containsKey("imageDimensions")) {
+            // First, try to exploit stored metadata
+
+            imageWidth = (int) attachment.getMetadata().get("imageDimensions").get("width");
+            imageHeight = (int) attachment.getMetadata().get("imageDimensions").get("height");
+        }
+        else {
+            // Fallback on loading the image
+            Image image = attachment.getData().getObject(loadImage, Image.class);
+
+            imageWidth = image.getWidth(null);
+            imageHeight = image.getHeight(null);
+        }
+
+        if (imageWidth < 0 || imageHeight < 0) {
+            return Optional.absent();
+        }
 
         double aspectRatio = (double) imageWidth / (double) imageHeight;
         double dimensionRatio = dimension.getWidth() / dimension.getHeight();
