@@ -373,9 +373,8 @@ class ProductApi implements Resource, Initializable
             def product = productApiObject.toProduct(platformSettings,
                     Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
 
-            if (Strings.isNullOrEmpty(product.slug)) {
-                product.slug = slugifier.slugify product.title
-            }
+            // Set slug TODO: verify if provided slug is conform
+            product.slug = Strings.isNullOrEmpty(productApiObject.slug) ? slugifier.slugify(product.title) : productApiObject.slug
 
             def created = productStore.get().create(product);
 
