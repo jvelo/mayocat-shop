@@ -7,7 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<div class="notifications">
+<div class="notifications" ng-class="{reduce: reduce}">
     <div ng-repeat="notification in progressNotifications"
          ng-class="{minified: allMinified || notification.minified}"
          class="notification notification-progress">

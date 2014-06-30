@@ -169,7 +169,7 @@
                     if (file.id == data.formData.fileId) {
                         // Math.min() avoids the circle to be fully complete (and so, invisible).
                         var degrees = 360 / 100 * Math.min(progress, 99.99) - 90;
-                        
+
                         var radians = (degrees % 360) * Math.PI / 180;
 
                         // Define the points of the SVG progression.
@@ -244,7 +244,7 @@
 
                         leaveTimeouts = [];
                     }, 0);
-                    
+
                     // Display the container if there's a least one drop zone.
                     $scope.$apply(function() {
                         $scope.visible = !!$scope.dropZones.length;
