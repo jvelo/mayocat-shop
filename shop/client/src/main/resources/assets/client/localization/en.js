@@ -56,6 +56,10 @@
 
             alert: {
                 notFound: "Nothing to see here."
+            },
+
+            addons: {
+                sequenceAddElementText: "Add element"
             }
         },
 

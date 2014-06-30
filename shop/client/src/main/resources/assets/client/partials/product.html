@@ -95,6 +95,8 @@
                     </ul>
 
                     <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
+                    <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
+                    <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
                 </div>
 
                 <!-- Non sequence addons -->

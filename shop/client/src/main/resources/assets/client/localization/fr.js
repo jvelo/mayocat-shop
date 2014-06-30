@@ -49,6 +49,10 @@
 
             alert: {
                 notFound: "Il n'y a rien à voir ici."
+            },
+
+            addons: {
+                sequenceAddElementText: "Ajouter un element"
             }
         },
 
