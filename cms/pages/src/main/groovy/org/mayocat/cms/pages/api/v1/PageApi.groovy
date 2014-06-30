@@ -15,6 +15,7 @@ import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
+import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.cms.pages.api.v1.object.PageApiObject
@@ -81,6 +82,9 @@ class PageApi implements Resource, Initializable
     Provider<AttachmentStore> attachmentStore
 
     @Inject
+    Map<String, MetadataExtractor> extractors
+
+    @Inject
     WebContext context;
 
     @Inject
@@ -117,6 +121,7 @@ class PageApi implements Resource, Initializable
     void initialize()
     {
         attachmentApi = new AttachmentApiDelegate([
+                extractors: extractors,
                 attachmentStore: attachmentStore,
                 slugifier: slugifier,
                 handler: pageHandler,

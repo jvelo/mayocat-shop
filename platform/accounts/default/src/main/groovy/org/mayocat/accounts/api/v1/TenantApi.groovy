@@ -16,6 +16,7 @@ import org.mayocat.Slugifier
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.model.Tenant
+import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
@@ -82,6 +83,9 @@ class TenantApi implements Resource, Initializable {
     Provider<EntityListStore> entityListStore
 
     @Inject
+    Map<String, MetadataExtractor> extractors
+
+    @Inject
     PlatformSettings platformSettings
 
     @Inject
@@ -114,6 +118,7 @@ class TenantApi implements Resource, Initializable {
     void initialize()
     {
         attachmentApi = new AttachmentApiDelegate([
+                extractors            : extractors,
                 attachmentStore       : attachmentStore,
                 slugifier             : slugifier,
                 handler               : tenantHandler,

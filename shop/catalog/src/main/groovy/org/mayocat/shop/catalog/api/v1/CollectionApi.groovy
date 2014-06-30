@@ -15,6 +15,7 @@ import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
+import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.image.model.Image
@@ -73,6 +74,9 @@ class CollectionApi implements Resource, Initializable
     Provider<ThumbnailStore> thumbnailStore
 
     @Inject
+    Map<String, MetadataExtractor> extractors
+
+    @Inject
     Slugifier slugifier
 
     @Inject
@@ -106,6 +110,7 @@ class CollectionApi implements Resource, Initializable
     void initialize()
     {
         attachmentApi = new AttachmentApiDelegate([
+                extractors: extractors,
                 attachmentStore: attachmentStore,
                 slugifier: slugifier,
                 handler: collectionHandler,
@@ -373,8 +378,14 @@ class CollectionApi implements Resource, Initializable
     public Response createCollection(CollectionApiObject collection)
     {
         try {
+            def coll = collection.toCollection();
+
+            // Set slug TODO: verify if provided slug is conform
+            coll.slug = Strings.isNullOrEmpty(collection.slug) ? slugifier.slugify(coll.title) : collection.slug
+
             org.mayocat.shop.catalog.model.Collection created =
-                this.catalogService.createCollection(collection.toCollection());
+                this.catalogService.createCollection(coll);
+
 
             // Respond with a created URI relative to this API URL.
             // This will add a location header like http://host/api/<version>/collection/my-created-collection
