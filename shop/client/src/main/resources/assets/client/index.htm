@@ -204,12 +204,15 @@
     <!-- Main container-->
     <div id="content" ng-show="authenticated && tenant != undefined">
 
+        <!-- Notifications -->
+        <notifications reduce="isCatalog || isPages || isNews || isSettings"></notifications>
+
         <!--
-          Since there is no notion of "sub-view" or "multiple views" per route, we are include *all* sub-menus here
-          and we display them conditionally at the app controller level.
-          This has the advantage of pre-loading all subviews controllers/resources, but we have to be careful as the
+          Since there is no notion of "sub-view" or "multiple views" per route, we include *all* the sub-menus here
+          and display them conditionally at the app controller level.
+          This has the advantage of pre-loading all the subviews controllers/resources, but we have to be careful as the
           number of sub-views grows that is scales properly and doesn't introduce performance issues (at the UI level,
-          or by making too much AJAX calls at once when the app loads, etc.
+          or by making too much AJAX calls at once when the app loads, etc).
           -->
         <div ng-include class="sub-list" src="'partials/catalog.html'" ng-show="isCatalog"></div>
         <div ng-include class="sub-list" src="'partials/pages.html'" ng-show="isPages"></div>
@@ -221,9 +224,6 @@
     <div class="clearfix"></div>
 
 </div>
-
-<!-- Notifications -->
-<notifications></notifications>
 
 <!-- Drop zones for the uploads -->
 <drop-zones-container></drop-zones-container>
