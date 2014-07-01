@@ -98,6 +98,22 @@
                     filesUploaded: 0
                 };
 
+                // Check the file sizes.
+                var filesLengthBeforefilter = upload.files.length;
+
+                upload.files = upload.files.filter(function(file) {
+                    return file.size <= 20971520; // A file can't be bigger than 20MB.
+                });
+
+                if (upload.files.length < filesLengthBeforefilter) {
+                    notificationService.notify($translate('upload.alert.fileTooBig'), {level: 'error'});
+
+                    // Cancel the upload if there's no file left after filtering.
+                    if (upload.files.length <= 0) {
+                        return;
+                    }
+                }
+
                 // Add a progress bar to the notifications.
                 var status = $translate('upload.status.progress', {filesNumber: upload.files.length});
 

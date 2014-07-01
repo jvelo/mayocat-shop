@@ -111,6 +111,10 @@
 
             action: {
                 add: "Add an image"
+            },
+
+            alert: {
+                fileTooBig: "Some of your files exceed the maximum authorized file size (20 MB) and, therefore, will not be added."
             }
         },
 

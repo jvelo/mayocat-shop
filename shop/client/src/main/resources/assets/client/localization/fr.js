@@ -93,6 +93,10 @@
 
             action: {
                 add: "Ajouter une image"
+            },
+
+            alert: {
+                fileTooBig: "Certains de vos fichiers dépassent la taille maximale autorisée (20 Mo) et ne seront donc pas ajoutés."
             }
         },
 
