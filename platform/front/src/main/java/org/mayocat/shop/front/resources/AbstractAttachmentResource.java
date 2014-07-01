@@ -13,7 +13,7 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.model.Attachment;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 
 /**
  * @version $Id$

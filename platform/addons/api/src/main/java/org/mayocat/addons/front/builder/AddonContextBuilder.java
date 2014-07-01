@@ -64,11 +64,11 @@ public class AddonContextBuilder
             if (addons.containsKey(groupKey)) {
                 AddonGroup addonGroup = addons.get(groupKey);
 
-                Map<String, Object> model = addonGroup.getModel();
+                Map<String, Map<String, Object>> model = addonGroup.getModel();
                 Object value = addonGroup.getValue();
 
                 if (List.class.isAssignableFrom(value.getClass())) {
-                    List<Map<String, Object>> listContext = new ArrayList<>();
+                    List<Map<String, AddonValue>> listContext = new ArrayList<>();
                     List<Map<String, Object>> sequence = (List<Map<String, Object>>) value;
                     for (Map<String, Object> itemInSequence : sequence) {
                         listContext.add(buildGroupItemContext(group, model, itemInSequence));
@@ -87,11 +87,12 @@ public class AddonContextBuilder
         return context;
     }
 
-    private Map<String, Object> buildGroupItemContext(AddonGroupDefinition group, Map<String, Object> model,
+    private Map<String, AddonValue> buildGroupItemContext(AddonGroupDefinition group,
+            Map<String, Map<String, Object>> model,
             Map<String, Object> value)
     {
         Map<String, Object> valueMap = value;
-        Map<String, Object> groupContext = Maps.newHashMap();
+        Map<String, AddonValue> groupContext = Maps.newHashMap();
 
         for (String key : group.getFields().keySet()) {
             AddonFieldDefinition addonField = group.getFields().get(key);

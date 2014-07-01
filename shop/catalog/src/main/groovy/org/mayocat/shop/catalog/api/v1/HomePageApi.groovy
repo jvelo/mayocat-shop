@@ -19,7 +19,7 @@ import org.mayocat.shop.catalog.api.v1.object.HomePageApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityListStore
 import org.xwiki.component.annotation.Component
 

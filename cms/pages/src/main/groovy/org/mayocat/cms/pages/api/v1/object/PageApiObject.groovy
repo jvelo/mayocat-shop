@@ -99,7 +99,7 @@ class PageApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<ImageApiObject> images)
+    def withEmbeddedImages(List<Image> images, UUID featuredImageId)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -107,13 +107,18 @@ class PageApiObject extends BaseApiObject
 
         ImageApiObject featuredImage
 
-        images.each({ ImageApiObject image ->
-            if (image.featured) {
-                featuredImage = image
+        def List<ImageApiObject> imageApiObjectList = [];
+
+        images.each({ Image image ->
+            ImageApiObject imageApiObject = new ImageApiObject()
+            imageApiObject.withImage(image)
+            if (image.attachment.id == featuredImageId) {
+                featuredImage = imageApiObject
             }
+            imageApiObjectList << imageApiObject
         })
 
-        _embedded.images = images;
+        _embedded.images = imageApiObjectList;
 
         if (featuredImage) {
             _embedded.featuredImage = featuredImage

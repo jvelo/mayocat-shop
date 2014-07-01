@@ -33,7 +33,7 @@ import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory

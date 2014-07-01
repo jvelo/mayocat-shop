@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.store.rdbms.dbi;
+package org.mayocat.attachment.store.jdbi;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +20,14 @@ import javax.validation.Valid;
 import org.apache.commons.io.IOUtils;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
 import mayoapp.dao.AttachmentDAO;
+
+import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;

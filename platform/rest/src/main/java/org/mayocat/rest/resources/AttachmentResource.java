@@ -8,6 +8,8 @@
 package org.mayocat.rest.resources;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -53,7 +55,13 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
     {
         Attachment created = this.addAttachment(uploadedInputStream, fileDetail.getFileName(), title, description,
                 Optional.<UUID>absent());
-        return Response.noContent().build();
+
+        try {
+            return Response.created(new URI(created.getSlug())).build();
+        } catch (URISyntaxException e) {
+            logger.error("Failed to created attachment URI", e);
+            return Response.serverError().build();
+        }
     }
 
 }

@@ -24,11 +24,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
@@ -45,7 +43,7 @@ import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.shipping.ShippingService;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;

@@ -30,7 +30,7 @@ class AddonGroupApiObject
 
     Object value
 
-    Map<String, Object> model
+    Map<String, Map<String, Object>> model
 
     static AddonGroupApiObject forAddonGroup(AddonGroup addonGroup) {
         new AddonGroupApiObject([

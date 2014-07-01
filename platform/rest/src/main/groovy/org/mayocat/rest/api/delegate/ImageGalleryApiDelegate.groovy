@@ -7,28 +7,24 @@
  */
 package org.mayocat.rest.api.delegate
 
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
-import org.mayocat.image.store.ThumbnailStore
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Attachment
-import org.mayocat.model.Entity
 import org.mayocat.model.EntityList
 import org.mayocat.model.HasFeaturedImage
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
-import org.mayocat.store.AttachmentStore
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
 
-import javax.ws.rs.Consumes
-import javax.ws.rs.DELETE
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.WebApplicationException
+import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -42,9 +38,9 @@ import static org.mayocat.attachment.util.AttachmentUtils.isImage
 @CompileStatic
 class ImageGalleryApiDelegate
 {
-    EntityListStore entityListStore
+    EntityDataLoader dataLoader
 
-    ThumbnailStore thumbnailStore
+    EntityListStore entityListStore
 
     AttachmentStore attachmentStore
 
@@ -60,30 +56,22 @@ class ImageGalleryApiDelegate
             throw new WebApplicationException(Response.status(404).build());
         }
 
-        EntityList list = entityListStore.findListByHintAndParentId("image_gallery", entity.id)
-        if (list == null) {
-            return images;
+        EntityData<?> data = dataLoader.load(entity)
+
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class)
+
+        if (!gallery.isPresent()) {
+            return Collections.emptyList()
         }
 
-        def allAttachments = this.attachmentStore.findAllChildrenOf(entity as Entity,
-                ["png", "jpg", "jpeg", "gif"] as List)
+        gallery.get().images.each({ Image image ->
+            def imageApiObject = new ImageApiObject()
+            imageApiObject.withImage(image)
 
-        list.entities.each({ UUID id ->
-            Attachment attachment = allAttachments.find({ Attachment attachment -> attachment.id == id })
-
-            if (attachment != null) {
-                def thumbnails = thumbnailStore.findAll(attachment);
-                def image = new Image(attachment, thumbnails);
-
-                def imageApiObject = new ImageApiObject()
-                imageApiObject.withImage(image)
-
-                if (entity.featuredImageId != null && entity.featuredImageId.equals(attachment.id)) {
-                    imageApiObject.featured = true
-                }
-
-                images << imageApiObject
+            if (entity.featuredImageId != null && entity.featuredImageId.equals(image.attachment.id)) {
+                imageApiObject.featured = true
             }
+            images << imageApiObject
         })
 
         images;

@@ -14,7 +14,7 @@ import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
 import org.mayocat.model.Entity
 import org.mayocat.model.EntityList
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityListStore
 
 /**

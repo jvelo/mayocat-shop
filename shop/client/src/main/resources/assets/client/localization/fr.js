@@ -96,7 +96,8 @@
             },
 
             action: {
-                add: "Ajouter une image"
+                add: "Ajouter une image",
+                select: "Choisir un fichier"
             }
         },
 

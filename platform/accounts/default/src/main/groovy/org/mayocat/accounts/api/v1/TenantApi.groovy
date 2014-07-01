@@ -21,12 +21,11 @@ import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.model.Entity
-import org.mayocat.model.EntityList
-import org.mayocat.model.HasFeaturedImage
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
@@ -34,7 +33,7 @@ import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
@@ -46,10 +45,10 @@ import org.xwiki.component.phase.Initializable
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-
-import static org.mayocat.attachment.util.AttachmentUtils.isImage
+import javax.ws.rs.core.UriInfo
 
 /**
  * This resource allow access to the current tenant information. For complete tenant management API, see the
@@ -68,6 +67,9 @@ class TenantApi implements Resource, Initializable {
     WebContext context
 
     @Inject
+    EntityDataLoader dataLoader
+
+    @Inject
     AccountsService accountsService
 
     @Inject
@@ -75,9 +77,6 @@ class TenantApi implements Resource, Initializable {
 
     @Inject
     Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Provider<ThumbnailStore> thumbnailStore
 
     @Inject
     Provider<EntityListStore> entityListStore
@@ -133,9 +132,9 @@ class TenantApi implements Resource, Initializable {
                 }
         ])
         imageGalleryApi = new ImageGalleryApiDelegate([
+                dataLoader     : dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                thumbnailStore : thumbnailStore.get(),
                 handler        : tenantHandler
         ])
     }
@@ -146,11 +145,11 @@ class TenantApi implements Resource, Initializable {
     def currentTenant()
     {
         Tenant tenant = context.tenant
-        def images = this.getImages()
+        def tenantData = dataLoader.load(tenant)
         TenantApiObject tenantApiObject = new TenantApiObject([
                 _href: "/api/tenant/"
         ])
-        tenantApiObject.withEmbeddedImages(images)
+        tenantApiObject.withEmbeddedImages(tenantData.getChildren(Image.class), tenant.featuredImageId)
         tenantApiObject.withTenant(tenant, globalTimeZone)
         tenant
 
@@ -198,9 +197,10 @@ class TenantApi implements Resource, Initializable {
                       @FormDataParam("filename") String sentFilename,
                       @FormDataParam("title") String title,
                       @FormDataParam("description") String description,
-                      @FormDataParam("target") String target)
+                      @FormDataParam("target") String target,
+                      @Context UriInfo uriInfo)
     {
-        attachmentApi.addAttachment(context.tenant.slug, uploadedInputStream, fileDetail, sentFilename, title, description, target)
+        attachmentApi.addAttachment(context.tenant.slug, uploadedInputStream, fileDetail, sentFilename, title, description, target, uriInfo)
     }
 
     @Path("images")

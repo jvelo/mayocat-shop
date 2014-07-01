@@ -26,7 +26,7 @@ import org.mayocat.model.Attachment;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
 import org.mayocat.shop.front.resources.AbstractWebViewResource;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
 

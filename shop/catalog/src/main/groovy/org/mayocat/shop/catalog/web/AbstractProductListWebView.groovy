@@ -24,7 +24,7 @@ import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.web.object.ProductListWebObject
 import org.mayocat.shop.catalog.web.object.ProductWebObject
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.ThemeFileResolver
 import org.mayocat.url.EntityURLFactory

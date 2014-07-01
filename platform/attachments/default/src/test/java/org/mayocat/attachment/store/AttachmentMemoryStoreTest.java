@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.store.memory;
+package org.mayocat.attachment.store;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -13,8 +13,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mayocat.attachment.store.memory.AttachmentMemoryStore;
 import org.mayocat.model.Attachment;
-import org.mayocat.store.AttachmentStore;
 
 /**
  * @version $Id$

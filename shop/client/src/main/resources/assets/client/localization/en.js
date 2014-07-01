@@ -114,7 +114,8 @@
             },
 
             action: {
-                add: "Add an image"
+                add: "Add an image",
+                select: "Select file"
             }
         },
 

@@ -20,7 +20,7 @@ import org.mayocat.shop.cart.CartAccessor;
 import org.mayocat.shop.cart.front.builder.CartContextBuilder;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.shipping.ShippingService;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.xwiki.component.annotation.Component;
 
 /**

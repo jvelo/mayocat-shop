@@ -85,6 +85,10 @@
                     return "<div>" + string + "</div>"
                 }
             });
+            registerEditor("image", {
+                tagName:"addon-image",
+                type:"image"
+            });
 
             return {
 
@@ -129,7 +133,7 @@
                     definition = typeof definition !== "undefined" ? definition : {};
                     options = typeof options !== "undefined" ? options : {};
 
-                    var editor = definition.editor,
+                    var editor = definition.editor || type,
                         output = "",
                         tagName;
 
@@ -292,7 +296,7 @@
                                         entity.addons[groupKey].model = {}
                                     }
 
-                                    entity.addons[groupKey].model[key] = definition.type;
+                                    entity.addons[groupKey].model[key] = { "type": definition.type };
 
                                     addonGroupDefinition.fields.push({
                                         key: key,
@@ -354,6 +358,44 @@
 
             }
         })
+
+        .directive("addonImage", ['$rootScope', function ($rootScope) {
+            return {
+                templateUrl: "partials/directives/addonImage.html?v=2", // Defeat browser cache http://git.io/6dPuFQ
+                require : 'ngModel',
+                restrict: 'E',
+                controller: ['$scope', function ($scope) {
+                    $scope.getImageUploadUri = function () {
+                        return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
+                    }
+
+                    $rootScope.$on("upload:progress", function(event, memo) {
+                        if (memo.id == $scope.id) {
+                            $scope.uploading = true;
+                        }
+                    });
+
+                    $rootScope.$on("upload:done", function(event, memo) {
+                        if (memo.id == $scope.id) {
+                            var parts = memo.fileUri.split('/');
+                            $scope.internalModel = parts[parts.length - 1];
+                            $scope.uploading = false;
+                        }
+                    });
+                }],
+                link: function (scope, element, attrs, ngModel) {
+                    scope.id = Math.random().toString(36).substring(7);
+                    scope.uploading = false;
+                    var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
+                        scope.internalModel = ngModel.$modelValue;
+                        clear();
+                        scope.$watch("internalModel", function (newValue) {
+                            ngModel.$setViewValue(newValue);
+                        });
+                    });
+                }
+            }
+        }])
 
         .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
         return {

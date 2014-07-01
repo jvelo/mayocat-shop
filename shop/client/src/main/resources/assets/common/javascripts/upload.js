@@ -51,48 +51,23 @@
                 );
             }
 
-            // Wraps and adds a new binded scope.
-            function addBindedScope(event) {
-                var scope = event.targetScope;
-
-                bindedScopes.push({
-                    entityUri: $location.path(),
-                    raw: scope
-                });
-
-                // Remove the binded scope once it's destroyed.
-                scope.$on('destroy', removeBindedScope);
+            function sendUploadDoneEvent(data) {
+                $rootScope.$emit("upload:done", data);
             }
 
             // Updates the uploadQueue for all the binded scopes.
-            function updateBindedScopes(reloadUploadedImages) {
-                for (var i = 0, scope; scope = bindedScopes[i++];) {
-                    // For each scope, update its upload queue.
-                    scope.raw.$apply(function(rawScope) {
-                        // An upload queue is affected to a binded scope only if the entity URIs are equivalent.
-                        rawScope.uploadQueue = uploadQueue.filter(function(upload) {
-                            return scope.entityUri == upload.entityUri;
-                        });
-
-                        // If necessary, reload the uploaded images.
-                        reloadUploadedImages && rawScope.reloadImages();
-                    });
-                }
-            }
-
-            // Removes a binded scope.
-            function removeBindedScope(event) {
-                var index = bindedScopes.indexOf(event.targetScope);
-
-                if (index != -1) {
-                    bindedScopes.splice(index, 1);
-                }
+            function sendUploadProgressEvent() {
+                $rootScope.$emit("upload:progress", {
+                    queue: uploadQueue
+                });
             }
 
             // Processes and uploads files.
-            function uploadFiles($form, entityUri, multiple, data, target) {
+            function uploadFiles($form, entityUri, multiple, data, target, id) {
                 var upload = {
                     entityUri: entityUri,
+                    target: target,
+                    id: id,
                     // In "multiple mode", we send all the files. In "mono mode", we send only the first one.
                     files: multiple ? data.files : [data.files[0]],
                     filesUploaded: 0
@@ -147,7 +122,7 @@
                     });
                 }
 
-                updateBindedScopes();
+                sendUploadProgressEvent();
             }
 
             function progressall(data, entityUri) {
@@ -179,29 +154,35 @@
                     }
                 }
 
-                updateBindedScopes();
+                sendUploadProgressEvent();
             }
 
             // Notifies when a file (NOT an upload object) has been uploaded.
-            function done(entityUri) {
-                var upload = filterUploadsByEntity(entityUri);
+            function done(result) {
+                var location = result.location,
+                    status = result.status,
+                    entityUri = result.entityUri,
+                    upload = filterUploadsByEntity(entityUri);
 
                 // If all the files of an upload object have been uploaded, remove the latter from the queue.
                 if (++upload.filesUploaded >= upload.files.length) {
                     notificationService.notify($translate('upload.status.success'));
 
-                    var index = uploadQueue.indexOf(upload);
+                    var index = uploadQueue.indexOf(upload),
+                        uri = upload.entityUri,
+                        id = upload.id;
 
                     if (index != -1) {
                         uploadQueue.splice(index, 1);
-                    }
 
-                    updateBindedScopes(true);
+                        sendUploadDoneEvent({
+                            entityUri: entityUri,
+                            fileUri: location,
+                            id: id
+                        });
+                    }
                 }
             }
-
-            // Register listeners.
-            $rootScope.$on('upload:bindUploadQueue', addBindedScope);
 
             return {
                 uploadFiles: uploadFiles,
@@ -328,7 +309,14 @@
 
                     add: function(event, data) {
                         dropZonesCtrl.hideContainer(true);
-                        uploadService.uploadFiles($form, entityUri, scope.dropZone.multiple, data, scope.dropZone.target);
+                        uploadService.uploadFiles(
+                            $form,
+                            entityUri,
+                            scope.dropZone.multiple,
+                            data,
+                            scope.dropZone.target,
+                            scope.dropZone.id
+                        );
                     },
 
                     progressall: function(event, data) {
@@ -339,8 +327,14 @@
                         uploadService.progress(data, entityUri);
                     },
 
-                    done: function() {
-                        uploadService.done(entityUri);
+                    done: function(event, data) {
+                        var status = data.jqXHR.status,
+                            location = data.jqXHR.getResponseHeader("Location");
+                        uploadService.done({
+                            entityUri: entityUri,
+                            location: location,
+                            status: status
+                        });
                     }
                 });
             }
@@ -361,6 +355,10 @@
             function controller($scope) {
                 // Convert multiple to a boolean.
                 $scope.multiple = ($scope.multipleAttr === 'false') ? false : true;
+
+                $scope.getButtonLabel = function() {
+                    return $scope.label || 'upload.action.add';
+                }
             }
 
             function link(scope, element) {
@@ -377,12 +375,14 @@
 
             return {
                 restrict: 'E',
-                templateUrl: '/common/partials/imageUpload.html',
+                templateUrl: '/common/partials/imageUpload.html?v=2',
                 scope: {
                     'uploadUri': '@',
                     'multipleAttr': '@multiple',
                     'dropText': '=',
-                    'target': '@'
+                    'target': '@',
+                    'id': '=',
+                    'label' : '@'
                 },
                 controller: controller,
                 link: link
@@ -392,11 +392,26 @@
         /**
          * Simple directive to list the current uploads.
          */
-        .directive('uploadList', function() {
+        .directive('uploadList', ['$rootScope', '$location', function($rootScope, $location) {
             return {
                 restrict: 'E',
-                templateUrl: '/common/partials/uploadList.html'
+                scope: {
+                    id: '='
+                },
+                templateUrl: '/common/partials/uploadList.html',
+                controller: function ($scope) {
+                    $rootScope.$on("upload:progress", function (event, memo) {
+                        var queue = memo.queue.filter(function (upload) {
+                            return upload.entityUri == $location.path() && $scope.id == upload.id
+                        });
+                        $scope.uploadQueue = queue;
+                    });
+
+                    $rootScope.$on("upload:done", function (event, memo) {
+                        $scope.uploadQueue = [];
+                    });
+                }
             };
-        });
+        }]);
 
 })();

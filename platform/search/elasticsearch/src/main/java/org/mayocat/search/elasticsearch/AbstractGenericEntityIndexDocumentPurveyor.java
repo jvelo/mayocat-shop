@@ -29,7 +29,7 @@ import org.mayocat.model.Slug;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.search.EntityIndexDocumentPurveyor;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.url.EntityURLFactory;
 import org.mayocat.url.URLType;
 import org.slf4j.Logger;

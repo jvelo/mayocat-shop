@@ -19,9 +19,11 @@ import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.model.Attachment
 import org.mayocat.model.AttachmentData
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.inject.Provider
 import javax.ws.rs.Consumes
@@ -29,8 +31,10 @@ import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.WebApplicationException
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriInfo
 
 /**
  * Helper class API classes can use to delegate attachment related API operations to.
@@ -50,6 +54,8 @@ class AttachmentApiDelegate
 
     private Closure doAfterAttachmentAdded
 
+    private Logger logger = LoggerFactory.getLogger(AttachmentApiDelegate.class);
+
     @Path("{slug}/attachments")
     @Authorized
     @POST
@@ -60,7 +66,8 @@ class AttachmentApiDelegate
             @FormDataParam("filename") String sentFilename,
             @FormDataParam("title") String title,
             @FormDataParam("description") String description,
-            @FormDataParam("target") String target)
+            @FormDataParam("target") String target,
+            @Context UriInfo info)
     {
         def entity = handler.getEntity(slug)
         if (entity == null) {
@@ -76,13 +83,19 @@ class AttachmentApiDelegate
         }
 
         if (created) {
-            // TODO : 201 created
-            return Response.noContent().build()
-        }
-        else {
-            return Response.serverError().build()
-        }
+            try {
+                // User base URI builder instead of new URI(...) to circumvent Jersey bug
+                // See http://stackoverflow.com/a/13704308/1281372
+                URI absoluteURI=info.getBaseUriBuilder().path("/images/" + created.getFilename()).build();
 
+                // TODO: not all attachments are images...
+
+                return Response.created(absoluteURI).build();
+            } catch (URISyntaxException e) {
+                logger.error("Failed to created attachment URI", e);
+            }
+        }
+        return Response.serverError().build();
     }
 
     Attachment addAttachment(InputStream data, String originalFilename, String title, String description,

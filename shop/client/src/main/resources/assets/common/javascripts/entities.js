@@ -51,6 +51,7 @@
                         scope.initializeAddons && scope.initializeAddons();
                         scope.initializeModels && scope.initializeModels();
                         scope.initializeLocalization && scope.initializeLocalization();
+                        scope.initializeImages && scope.initializeImages();
                         $rootScope.$broadcast("entity:initialized", {
                             type: entityType,
                             uri: (options.apiBase || "/api/" + entityType + "s/") + scope.slug + "/"
@@ -194,12 +195,21 @@
             }
         }])
 
-        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', 'entityLocalizationMixin',
-            function ($http, $rootScope, $modal, entityLocalizationMixin) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location', 'entityLocalizationMixin',
+            function ($http, $rootScope, $modal, $location, entityLocalizationMixin) {
             return function (entityType, options) {
                 var mixin = {};
 
                 options = typeof options === "undefined" ? {} : options;
+
+                mixin.initializeImages = function () {
+                    var $scope = this;
+                    $rootScope.$on("upload:done", function(event, memo) {
+                        if (memo.entityUri == $location.path() && memo.id == 'image-gallery') {
+                            $scope.reloadImages();
+                        }
+                    });
+                }
 
                 mixin.getImagesSortableOptions = function () {
                     var $scope = this;
@@ -292,11 +302,6 @@
                     var scope = this;
                     return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
                 }
-
-                mixin.bindUploadQueue = function () {
-                    var scope = this;
-                    scope.$emit('upload:bindUploadQueue');
-                };
 
                 return mixin;
             }

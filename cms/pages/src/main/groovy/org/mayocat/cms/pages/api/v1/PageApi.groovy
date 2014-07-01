@@ -9,14 +9,11 @@ package org.mayocat.cms.pages.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.sun.jersey.core.header.FormDataContentDisposition
-import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
-import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.MetadataExtractor
-import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.cms.pages.api.v1.object.PageApiObject
 import org.mayocat.cms.pages.api.v1.object.PageListApiObject
@@ -24,7 +21,10 @@ import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
@@ -37,7 +37,7 @@ import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
-import org.mayocat.store.AttachmentStore
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
@@ -67,7 +67,7 @@ import javax.ws.rs.core.Response
 class PageApi implements Resource, Initializable
 {
     @Inject
-    Provider<ThumbnailStore> thumbnailStore;
+    EntityDataLoader dataLoader
 
     @Inject
     Provider<PageStore> pageStore;
@@ -134,9 +134,9 @@ class PageApi implements Resource, Initializable
                 }
         ])
         imageGalleryApi = new ImageGalleryApiDelegate([
+                dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                thumbnailStore: thumbnailStore.get(),
                 handler: pageHandler
         ])
     }
@@ -149,22 +149,10 @@ class PageApi implements Resource, Initializable
         def pages = pageStore.get().findAll(number, offset);
         def totalItems = this.pageStore.get().countAll();
 
-        def imageIds = pages.collect({ Page page -> page.featuredImageId })
-                .findAll({ UUID id -> id != null })
+        List<EntityData<Page>> pagesData = dataLoader.load(pages, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 
-        List<Image> images;
-        if (imageIds.size() > 0) {
-            List<Attachment> attachments = this.attachmentStore.get().findByIds(imageIds.toList());
-            List<Thumbnail> thumbnails = this.thumbnailStore.get().findAllForIds(imageIds.toList());
-            images = attachments.collect({ Attachment attachment ->
-                def thumbs = thumbnails.findAll({ Thumbnail thumbnail -> thumbnail.attachmentId = attachment.id })
-                return new Image(attachment, thumbs.toList())
-            });
-        } else {
-            images = []
-        }
-
-        pages.each({ Page page ->
+        pagesData.each({ EntityData<Page> pageData ->
+            def page = pageData.entity
             def articleApiObject = new PageApiObject([
                     _href: "/api/pages/${page.slug}"
             ])
@@ -174,6 +162,7 @@ class PageApi implements Resource, Initializable
                 articleApiObject.withAddons(page.addons.get())
             }
 
+            def images = pageData.getDataList(Image.class)
             def featuredImage = images.find({ Image image -> image.attachment.id == page.featuredImageId })
 
             if (featuredImage) {
@@ -206,6 +195,11 @@ class PageApi implements Resource, Initializable
             return Response.status(404).build();
         }
 
+        EntityData<Page> pageData = dataLoader.load(page)
+
+        def gallery = pageData.getData(ImageGallery)
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
+
         List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : Arrays.asList(expand.split(","));
 
         def pageApiObject = new PageApiObject([
@@ -219,8 +213,7 @@ class PageApi implements Resource, Initializable
         pageApiObject.withPage(page);
 
         if (expansions.contains("images")) {
-            def images = this.getImages(slug)
-            pageApiObject.withEmbeddedImages(images)
+            pageApiObject.withEmbeddedImages(images, page.featuredImageId)
         }
 
         if (page.addons.isLoaded()) {

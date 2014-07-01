@@ -27,7 +27,7 @@ import org.mayocat.search.elasticsearch.internal.testsupport.CustomEntityIndexDo
 import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithClassLevelIndexAnnotation;
 import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithFeaturedImage;
 import org.mayocat.search.elasticsearch.internal.testsupport.EntityWithFieldLevelIndexAnnotations;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.url.DefaultEntityURLFactory;
 import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;

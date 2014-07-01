@@ -27,7 +27,7 @@ import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.util.WebDataHelper;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;

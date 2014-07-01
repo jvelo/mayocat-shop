@@ -53,7 +53,10 @@ public class AddonGroupMapper implements ResultSetMapper<AddonGroup>
         }
 
         try {
-            Map<String, Object> model = mapper.readValue(result.getString("model"), new TypeReference<Map<String, Object>>(){});
+            Map<String, Map<String, Object>>
+                    model = mapper.readValue(result.getString("model"), new TypeReference<Map<String, Object>>()
+            {
+            });
             addonGroup.setModel(model);
         } catch (IOException e) {
             throw new SQLException("Failed to de-serialize model", e);

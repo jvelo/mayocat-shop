@@ -25,7 +25,7 @@ public class AddonGroup implements Serializable
 
     private String group;
 
-    private Map<String, Object> model;
+    private Map<String, Map<String, Object>> model;
 
     private Object value;
 
@@ -59,12 +59,12 @@ public class AddonGroup implements Serializable
         this.group = group;
     }
 
-    public Map<String, Object> getModel()
+    public Map<String, Map<String, Object>> getModel()
     {
         return model;
     }
 
-    public void setModel(Map<String, Object> model)
+    public void setModel(Map<String, Map<String, Object>> model)
     {
         this.model = model;
     }

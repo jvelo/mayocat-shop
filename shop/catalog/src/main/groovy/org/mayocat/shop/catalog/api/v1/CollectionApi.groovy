@@ -7,18 +7,17 @@
  */
 package org.mayocat.shop.catalog.api.v1
 
-import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.sun.jersey.core.header.FormDataContentDisposition
-import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
-import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
 import org.mayocat.attachment.MetadataExtractor
-import org.mayocat.attachment.util.AttachmentUtils
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.cms.news.model.Article
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.model.Entity
@@ -35,6 +34,7 @@ import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.shop.catalog.api.v1.object.*
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.store.*
+import org.mayocat.attachment.store.AttachmentStore
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
 import org.xwiki.component.phase.Initializable
@@ -59,6 +59,9 @@ import javax.ws.rs.core.Response
 class CollectionApi implements Resource, Initializable
 {
     @Inject
+    EntityDataLoader dataLoader
+
+    @Inject
     Provider<CollectionStore> collectionStore
 
     @Inject
@@ -69,9 +72,6 @@ class CollectionApi implements Resource, Initializable
 
     @Inject
     Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Provider<ThumbnailStore> thumbnailStore
 
     @Inject
     Map<String, MetadataExtractor> extractors
@@ -123,9 +123,9 @@ class CollectionApi implements Resource, Initializable
                 }
         ])
         imageGalleryApi = new ImageGalleryApiDelegate([
+                dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                thumbnailStore: thumbnailStore.get(),
                 handler: collectionHandler
         ])
     }
@@ -183,7 +183,10 @@ class CollectionApi implements Resource, Initializable
     {
         org.mayocat.shop.catalog.model.Collection collection = this.catalogService.findCollectionBySlug(slug);
 
-        def images = this.getImages(slug)
+        EntityData<org.mayocat.shop.catalog.model.Collection> collectionData = dataLoader.load(collection)
+
+        def gallery = collectionData.getData(ImageGallery)
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         if (collection == null) {
             return Response.status(404).build();
@@ -198,7 +201,7 @@ class CollectionApi implements Resource, Initializable
         ])
 
         collectionApiObject.withCollection(collection)
-        collectionApiObject.withEmbeddedImages(images)
+        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId)
 
         if (!Strings.isNullOrEmpty(expand)) {
             collectionApiObject.withProductRelationships(this.catalogService.findProductsForCollection(collection))

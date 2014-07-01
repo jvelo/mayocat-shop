@@ -12,11 +12,15 @@ import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
@@ -37,6 +41,7 @@ import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.store.*
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.theme.FeatureDefinition
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.TypeDefinition
@@ -59,13 +64,13 @@ import javax.ws.rs.core.Response
 class ProductApi implements Resource, Initializable
 {
     @Inject
+    EntityDataLoader dataLoader
+
+    @Inject
     Provider<ProductStore> productStore
 
     @Inject
     Provider<CollectionStore> collectionStore
-
-    @Inject
-    Provider<ThumbnailStore> thumbnailStore
 
     @Inject
     Provider<EntityListStore> entityListStore
@@ -132,9 +137,9 @@ class ProductApi implements Resource, Initializable
                 }
         ])
         imageGalleryApi = new ImageGalleryApiDelegate([
+                dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                thumbnailStore: thumbnailStore.get(),
                 handler: productHandler
         ])
     }
@@ -162,22 +167,10 @@ class ProductApi implements Resource, Initializable
             totalItems = productStore.get().countAllNotVariants()
         }
 
-        def imageIds = products.collect({ Product product -> product.getFeaturedImageId() })
-                                      .findAll({ UUID id -> id != null})
+        List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 
-        List<Image> images;
-        if (imageIds.size() > 0) {
-            List<Attachment> attachments = this.attachmentStore.get().findByIds(imageIds.toList());
-            List<Thumbnail> thumbnails = this.thumbnailStore.get().findAllForIds(imageIds.toList());
-            images = attachments.collect({ Attachment attachment ->
-                def thumbs = thumbnails.findAll({ Thumbnail thumbnail -> thumbnail.attachmentId = attachment.id })
-                return new Image(attachment, thumbs.toList())
-            });
-        } else {
-            images = []
-        }
-
-        products.each({ Product product ->
+        productsData.each({ EntityData<Product> productData ->
+            Product product = productData.entity
             def productApiObject = new ProductApiObject([
                     _href: "/api/products/${product.slug}"
             ])
@@ -187,6 +180,7 @@ class ProductApi implements Resource, Initializable
                 productApiObject.withAddons(product.addons.get())
             }
 
+            def images = productData.getDataList(Image.class)
             def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
             if (featuredImage) {
@@ -224,8 +218,12 @@ class ProductApi implements Resource, Initializable
             return Response.status(404).build();
         }
 
+        def productData = dataLoader.load(product)
+
         def collections = this.collectionStore.get().findAllForProduct(product);
-        def images = this.getImages(slug)
+
+        def gallery = productData.getData(ImageGallery)
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         def productApiObject = new ProductApiObject([
             _href: "/api/products/${slug}",
@@ -237,7 +235,7 @@ class ProductApi implements Resource, Initializable
 
         productApiObject.withProduct(product)
         productApiObject.withCollectionRelationships(collections)
-        productApiObject.withEmbeddedImages(images)
+        productApiObject.withEmbeddedImages(images, product.featuredImageId)
 
         if (product.addons.isLoaded()) {
             productApiObject.withAddons(product.addons.get())

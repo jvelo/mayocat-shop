@@ -35,7 +35,7 @@ import org.mayocat.shop.front.context.ImageContext;
 import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.shipping.model.Carrier;
-import org.mayocat.store.AttachmentStore;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

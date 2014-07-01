@@ -329,9 +329,6 @@ angular.module('product', ['ngResource'])
                 };
             };
 
-            // Retrieve and display the uploads for the current product.
-            $scope.bindUploadQueue();
-
         }])
 
     .controller('VariantController', [ '$scope', function ($scope) {
