@@ -182,7 +182,8 @@
                 waitingForPayment: "Waiting for payment",
                 paid: "Paid",
                 prepared: "Prepared",
-                shipped: "Shipped"
+                shipped: "Shipped",
+                cancelled: "Cancelled"
             },
 
             action: {
