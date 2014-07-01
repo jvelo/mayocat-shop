@@ -50,8 +50,7 @@
                 publish: "Publish online",
                 cancel: "Cancel",
                 remove: "Remove",
-                back: "Back",
-                editImage: "Edit image"
+                back: "Back"
             },
 
             alert: {
@@ -277,16 +276,13 @@
          */
 
         image: {
-            misc: {
-                actions: "Actions"
-            },
-
             title: {
                 images: "Images ({imagesLength})"
             },
 
             action: {
-                editMetadata: "Edit metadata"
+                less: "Display less images",
+                more: "Display more images"
             }
         },
 
