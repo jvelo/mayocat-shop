@@ -44,8 +44,7 @@
                 publish: "Mettre en ligne",
                 cancel: "Annuler",
                 remove: "Retirer",
-                back: "Retour",
-                editImage: "Modifier"
+                back: "Retour"
             },
 
             alert: {
@@ -239,16 +238,13 @@
         },
 
         image: {
-            misc: {
-                actions: "Actions"
-            },
-
             title: {
                 images: "Images ({imagesLength})"
             },
 
             action: {
-                editMetadata: "Éditer les métadonnées"
+                less: "Voir moins d'images",
+                more: "Voir plus d'images"
             }
         },
 

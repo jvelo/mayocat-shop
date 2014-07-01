@@ -12,6 +12,7 @@
         ng-class="{reduce: closedList}"
         ui-sortable="sortableOptions()"
         ng-model="entity._embedded.images">
+
         <li class="drag-me" ng-repeat="image in entity._embedded.images">
             <div class="wrapper">
                 <img ng-src="{{image.file._href}}?width=150&amp;height=150"/>
@@ -22,7 +23,7 @@
                     <ul class="menu">
                         <li>
                             <a ng-click="edit({image: image})">
-                                {{'entity.action.editImage' | translate}}
+                                {{'entity.action.edit' | translate}}
                             </a>
                         </li>
                         <li>
@@ -38,6 +39,13 @@
 
     <div class="clearfix"></div>
 
-    <span class="trigger-reduce" ng-show="closedList" ng-click="closedList = false">Voir plus d'images</span>
-    <span class="trigger-reduce" ng-show="!closedList" ng-click="closedList = true">Voir moins d'images</span>
+    <div ng-show="entity._embedded.images.length > 4">
+        <span class="trigger-reduce"
+              ng-show="!closedList"
+              ng-click="closedList = true">{{'image.action.less' | translate}}</span>
+
+        <span class="trigger-reduce"
+              ng-show="closedList"
+              ng-click="closedList = false">{{'image.action.more' | translate}}</span>
+    </div>
 </div>
