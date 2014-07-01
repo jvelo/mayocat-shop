@@ -83,6 +83,9 @@ angular.module('collection', ['ngResource'])
                 };
             };
 
+            // Retrieve and display the uploads for the current collection.
+            $scope.bindUploadQueue();
+
             // Initialize
 
             if (!$scope.isNew()) {

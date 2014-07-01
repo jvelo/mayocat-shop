@@ -94,7 +94,8 @@
                 var upload = {
                     entityUri: entityUri,
                     // In "multiple mode", we send all the files. In "mono mode", we send only the first one.
-                    files: multiple ? data.files : [data.files[0]]
+                    files: multiple ? data.files : [data.files[0]],
+                    filesUploaded: 0
                 };
 
                 // Add a progress bar to the notifications.
@@ -112,8 +113,8 @@
 
                 // Process each file.
                 for (var i = 0; i < upload.files.length; i++) {
-                    // Create a wrapper for the file, with its id, preview and progression. This will be used to display
-                    // the progression of the file across pages.
+                    // Create a wrapper for the file, with its id, preview and progression. This is used to display the
+                    // progression of the file across pages.
                     var file = {
                         id: (idCounter++) +'-'+ upload.files[i].name,
                         progress: {
@@ -154,11 +155,6 @@
                     progress = Math.ceil(data.loaded / data.total * 100);
 
                 upload.setProgress(progress);
-
-                // The upload is finished.
-                if (progress >= 100) {
-                    doneall(upload);
-                }
             }
 
             function progress(data, entityUri) {
@@ -176,7 +172,7 @@
                         file.progress = {
                             arcX: 22 + 22 * Math.cos(radians),
                             arcY: 22 + 22 * Math.sin(radians),
-                            arcFlag: +(degrees > 180)
+                            arcFlag: +(degrees > 90)
                         };
 
                         break;
@@ -186,12 +182,12 @@
                 updateBindedScopes();
             }
 
-            // Notifies a finished upload and removes it from the queue.
-            function doneall(upload) {
-                // Once an upload of one or multiple images is finished, the server could return only some of them for
-                // an unknown reason, so we must wait a bit with setTimeout() to be sure the server properly handled all
-                // the uploaded images and returns them once the reloadImages() function of a binded scope is called.
-                setTimeout(function() {
+            // Notifies when a file (NOT an upload object) has been uploaded.
+            function done(entityUri) {
+                var upload = filterUploadsByEntity(entityUri);
+
+                // If all the files of an upload object have been uploaded, remove the latter from the queue.
+                if (++upload.filesUploaded >= upload.files.length) {
                     notificationService.notify($translate('upload.status.success'));
 
                     var index = uploadQueue.indexOf(upload);
@@ -201,7 +197,7 @@
                     }
 
                     updateBindedScopes(true);
-                }, 250);
+                }
             }
 
             // Register listeners.
@@ -210,7 +206,8 @@
             return {
                 uploadFiles: uploadFiles,
                 progressall: progressall,
-                progress: progress
+                progress: progress,
+                done: done
             };
 
         }])
@@ -340,6 +337,10 @@
 
                     progress: function(event, data) {
                         uploadService.progress(data, entityUri);
+                    },
+
+                    done: function() {
+                        uploadService.done(entityUri);
                     }
                 });
             }
