@@ -264,9 +264,7 @@
                 }
 
                 mixin.selectFeatureImage = function (image) {
-                    // The scope we are called in here is the loop scope of the image list, so we need to climb up
-                    // one scope to get the actual mixin scope.
-                    var scope = this.$parent,
+                    var scope = this,
                         entity = scope[entityType];
 
                     for (var img in entity._embedded.images) {
@@ -294,6 +292,11 @@
                     var scope = this;
                     return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
                 }
+
+                mixin.bindUploadQueue = function () {
+                    var scope = this;
+                    scope.$emit('upload:bindUploadQueue');
+                };
 
                 return mixin;
             }

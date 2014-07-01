@@ -125,8 +125,7 @@ ul li.hoverable:hover .visible-when-hover {
 
   ul.menu {
     display: table-cell;
-    background: white;
-    opacity: 0.9;
+    background: fade(#000, 70%);
     vertical-align: middle;
 
     li {
@@ -155,39 +154,92 @@ ul li.hoverable:hover .visible-when-hover {
     }
   }
 
-  .thumbnail.add {
-    opacity: 0.8;
-
-    .wrapper {
-      background-color: white;
-      background-position: center center;
-      background-image: url(/common/images/plus.png);
-      background-repeat: no-repeat;
-    }
+  a {
+    color: white;
   }
+
 }
 
 .entities.thumbnails.thumbnails-small {
 
+  &.reduce {
+    max-height: 105px;
+    overflow: hidden;
+  }
+
   .wrapper {
+    display: block;
     width: 100px;
     height: 100px;
+    text-align: center;
+
+    &:hover .featured:before {
+      display: none;
+    }
   }
 
   .menu-wrapper {
     width: 100px;
     height: 100px;
+    cursor: move;
+  }
+
+  .upload-progress {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: fade(#000, 70%);
+
+    svg {
+      position: absolute;
+      top: 50%; left: 50%;
+      margin: -22px 0 0 -22px;
+      width: 44px; height: 44px;
+    }
   }
 
   .featured-star {
     position: absolute;
-    right: 0;
-    top: 0;
+    top: 0; right: 0;
+    width: 15px; height: 16px;
     z-index: 500;
+
+    &:before, &:after {
+      position: absolute;
+    }
+
+    &:after {
+      bottom: 0; left: 0;
+      width: 13px; height: 13px;
+      background: url("/common/images/featured-star.png") 0 26px;
+      content: '';
+    }
+
+    &.featured {
+      cursor: auto;
+
+      &:before {
+        top: 0; right: 0;
+        width: 33px; height: 34px;
+        background: url("/common/images/featured-star.png") 0 0;
+        content: '';
+      }
+
+      &:after {
+        background: url("/common/images/featured-star.png") 0 13px;
+      }
+    }
   }
+
 }
 
- /* Thumbnail editor */
+.trigger-reduce {
+  display: inline-block;
+  margin: 5px 0 7px 0;
+  cursor: pointer;
+}
+
+/* Thumbnail editor */
 
 .editImage {
   width: 850px;
@@ -264,87 +316,146 @@ div.thumbnails-list ul li.active {
   background-color: #eeeeee;
 }
 
-/* File upload widget */
+/* Notifications */
 
-image-upload .well {
-  min-height:120px;
+.notifications {
+  position: fixed;
+  top: 0; right: 0; left: 239px;
+  font-size: 12px;
+  z-index: 1050;
+
+  &.reduce {
+    left: 418px;
+  }
 }
 
-image-upload .fileinput-button {
-  float: left;
-  margin-top: 5px;
-}
+.notification {
+  position: relative;
+  padding: 0 15px;
+  height: 40px;
+  color: #fff;
 
-image-upload .fileinput-button input[type=file] {
-  height: 42px;
-}
-
-image-upload .editor ul li {
-  min-height: 185px;
-}
-
-image-upload .editor ul li span.preview .meta .name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100px;
-}
-
-image-upload .editor ul li span.preview > span {
-  height: 100px;
-  width: 100px;
-  display: table-cell;
-  border: 1px solid lightgray;
-  text-align: center;
-  vertical-align: middle;
-}
-
-image-upload .editor ul li span.preview > div {
-  font-size: 10px;
-  text-align: center;
-}
-
-image-upload span.preview {
-  float: left;
-}
-
-image-upload .editor ul li .progress {
-  height: 6px;
-}
-
-image-upload .size input, image-upload .size textarea {
-  width: -webkit-calc(~"100% - 120px") !important;
-  width: -moz-calc(~"100% - 120px") !important;
-  width: calc(~"100% - 120px") !important;
-  margin-left: 10px;
-}
-
-/* Featured image selector */
-span.featured-star {
-
-  display: inline-block;
-  float: left;
-  padding-top: 7px;
-  color: @borderStrong;
-  cursor: pointer;
-
-  &:hover {
-    color: #FDD017;
+  &:before, .text {
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
   }
 
   &:before {
-    content: "\2606";
-    font-size: 26px;
+    height: 100%;
+    content: '';
   }
 
-  &.featured {
-    cursor: auto;
-    color: #FDD017;
-    &:before {
-      content: "\2605";
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.notification-info {
+  background: @successColor;
+}
+
+.notification-error {
+  background: @errorColor;
+}
+
+.notification-progress {
+  background: fade(@backgroundDarkGreen, 93%);
+  color: #fff;
+
+  &.minified {
+    height: 10px;
+
+    .text {
+      display: none;
     }
   }
 
+  .progression {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: fade(@linkColor, 50%);
+  }
+}
+
+/* Drop zone animations **/
+
+@-webkit-keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+/* Drop zone directive **/
+
+.drop-zones-container {
+  position: fixed;
+  top: 0; left: 0;
+  display: none;
+  width: 100%; height: 100%;
+  background: fade(@backgroundDarkGreen, 93%);
+  z-index: 1100;
+
+  &.active {
+    display: block;
+  }
+
+  .drop-zone {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        url('/common/images/drop-border-h.png') center top repeat-x,
+        url('/common/images/drop-border-h.png') center bottom repeat-x,
+        url('/common/images/drop-border-v.png') left center repeat-y,
+        url('/common/images/drop-border-v.png') right center repeat-y;
+      content: '';
+    }
+
+    &.active:after {
+      background:
+        url('/common/images/drop-border-h-hover.png') center top repeat-x,
+        url('/common/images/drop-border-h-hover.png') center bottom repeat-x,
+        url('/common/images/drop-border-v-hover.png') left center repeat-y,
+        url('/common/images/drop-border-v-hover.png') right center repeat-y;
+
+      -webkit-animation: drop-zone-bounce 200ms ease-in-out;
+      animation: drop-zone-bounce 200ms ease-in-out;
+    }
+  }
+
+  .text {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'latolight', sans-serif;
+    color: #fff;
+
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  /* Main drop zone */
+  & > .drop-zone {
+    @margin: 100px;
+
+    position: absolute;
+    top: @margin; right: @margin; bottom: @margin; left: @margin;
+    padding: 38px;
+    font-size: 28px;
+  }
 }
 
 /* Switch button */

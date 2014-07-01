@@ -29,35 +29,21 @@
 
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
-                <ul class="thumbnails thumbnails-small entities movable" ui-sortable="getImagesSortableOptions()" ng-model="article._embedded.images">
-                    <li class="drag-me" ng-repeat="image in article._embedded.images">
-                        <div class="wrapper">
-                            <img ng-src="{{image.file._href}}?width=150&height=150"/>
-                                <span class="featured-star" ng-class="{featured: image.featured}"
-                                      ng-click="selectFeatureImage(image)"/>
 
-                            <div class="menu-wrapper">
-                                <ul class="menu">
-                                    <li>
-                                        <a ng-click="editImage(image)">
-                                            {{'entity.action.editImage' | translate}}
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a ng-click="removeImage(image)">
-                                            {{'entity.action.remove' | translate}}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="alert" ng-show="article.images.length <= 0">
-                    <strong>{{'image.alert.noImage' | translate}}</strong> {{'image.explanation.noImage' | translate}}
-                </div>
-                <image-upload upload-uri="getImageUploadUri()" on-upload="reloadImages()" target="image-gallery"></image-upload>
+                <upload-list></upload-list>
+
+                <image-list entity="article"
+                            sortable-options="getImagesSortableOptions()"
+                            on-select-feature="selectFeatureImage(image)"
+                            on-edit="editImage(image)"
+                            on-remove="removeImage(image)">
+                </image-list>
+
+                <image-upload ng-if="!isNew()"
+                              upload-uri="{{getImageUploadUri()}}"
+                              drop-text="'upload.explanation.dropArticle' | translate:getTranslationProperties()"
+                              target="image-gallery">
+                </image-upload>
             </div>
         </div>
 

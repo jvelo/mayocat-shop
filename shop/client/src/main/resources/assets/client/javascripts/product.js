@@ -323,10 +323,14 @@ angular.module('product', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
+                    productTitle: $scope.localizedProduct.title,
                     imagesLength: $scope.getNumberOfImages(),
                     variantTitle: ($scope.variant || {}).title
                 };
             };
+
+            // Retrieve and display the uploads for the current product.
+            $scope.bindUploadQueue();
 
         }])
 

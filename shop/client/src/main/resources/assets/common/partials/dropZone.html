@@ -7,9 +7,10 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<label class="btn btn-large fileinput-button">
-    <span>{{'upload.action.add' | translate}}</span>
-    <input type="file" name="file">
-</label>
-
-<div class="clearfix"></div>
+<div class="drop-zones-container" ng-class="{active: visible}">
+    <div drop-zone ng-repeat="dropZone in dropZones" ng-class="{active: highlighted}" class="drop-zone">
+        <p class="text">
+            {{dropZone.dropText}}
+        </p>
+    </div>
+</div>

@@ -37,13 +37,12 @@
                         <div ng-show="tenant._embedded.featuredImage">
                                 <img ng-src="{{tenant._embedded.featuredImage.file._href}}?height=100"/>
                         </div>
-                        <image-upload upload-uri="'/api/tenant/attachments'"
-                                      on-upload="reloadImages()"
-                                      drag-and-drop="false"
+
+                        <image-upload upload-uri="/api/tenant/attachments"
                                       multiple="false"
+                                      drop-text="'upload.explanation.dropLogo' | translate"
                                       target="logo">
                         </image-upload>
-
                     </div>
 
                     <!-- Shop addons (if any) -->

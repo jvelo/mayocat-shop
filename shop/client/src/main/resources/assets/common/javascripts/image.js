@@ -205,4 +205,18 @@ angular.module('mayocat.image', ['ngResource'])
                 initializeEdition();
             });
 
-        }]);
+        }])
+
+    .directive('imageList', [function() {
+        return {
+            restrict: 'E',
+            scope: {
+                entity: '=',
+                sortableOptions: '&',
+                selectFeature: '&onSelectFeature',
+                edit: '&onEdit',
+                remove: '&onRemove'
+            },
+            templateUrl: '/common/partials/imageList.html'
+        };
+    }]);

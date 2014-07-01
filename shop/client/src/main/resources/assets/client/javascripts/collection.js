@@ -78,9 +78,13 @@ angular.module('collection', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
+                    collectionTitle: $scope.localizedCollection.title,
                     imagesLength: $scope.getNumberOfImages()
                 };
             };
+
+            // Retrieve and display the uploads for the current collection.
+            $scope.bindUploadQueue();
 
             // Initialize
 

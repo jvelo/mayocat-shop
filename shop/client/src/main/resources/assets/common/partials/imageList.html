@@ -1,0 +1,51 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div ng-init="closedList = true">
+    <ul class="thumbnails thumbnails-small entities movable"
+        ng-class="{reduce: closedList}"
+        ui-sortable="sortableOptions()"
+        ng-model="entity._embedded.images">
+
+        <li class="drag-me" ng-repeat="image in entity._embedded.images">
+            <div class="wrapper">
+                <img ng-src="{{image.file._href}}?width=150&amp;height=150"/>
+                    <span class="featured-star" ng-class="{featured: image.featured}"
+                          ng-click="selectFeature({image: image})"></span>
+
+                <div class="menu-wrapper">
+                    <ul class="menu">
+                        <li>
+                            <a ng-click="edit({image: image})">
+                                {{'entity.action.edit' | translate}}
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="remove({image: image})">
+                                {{'entity.action.remove' | translate}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <div class="clearfix"></div>
+
+    <div ng-show="entity._embedded.images.length > 4">
+        <span class="trigger-reduce"
+              ng-show="!closedList"
+              ng-click="closedList = true">{{'image.action.less' | translate}}</span>
+
+        <span class="trigger-reduce"
+              ng-show="closedList"
+              ng-click="closedList = false">{{'image.action.more' | translate}}</span>
+    </div>
+</div>

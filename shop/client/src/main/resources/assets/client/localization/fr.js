@@ -25,6 +25,7 @@
             filter: "Filtrer",
             select: "Selectionner"
         },
+
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
@@ -43,8 +44,7 @@
                 publish: "Mettre en ligne",
                 cancel: "Annuler",
                 remove: "Retirer",
-                back: "Retour",
-                editImage: "Modifier"
+                back: "Retour"
             },
 
             alert: {
@@ -82,32 +82,32 @@
         },
 
         upload: {
-            misc: {
-                uploading: "En cours de téléchargement...",
-                uploaded: "Téléchargement terminé !",
-                failed: "Échec"
-            },
-
             explanation: {
-                dropHere: "Déplacez des images de votre ordinateur et déposez-les dans cette zone"
+                dropCollection: "Déposez vos fichiers pour les ajouter à la collection « {collectionTitle} »",
+                dropProduct: "Déposez vos fichiers pour les ajouter au produit « {productTitle} »",
+                dropPage: "Déposez vos fichiers pour les ajouter à la page « {pageTitle} »",
+                dropArticle: "Déposez vos fichiers pour les ajouter à l'actualité « {articleTitle} »",
+                dropLogo: "Déposez votre logo"
             },
 
-            placeholder: {
-                title: "Titre de l'image (texte alternatif)",
-                description: "Description (facultatif)"
+            status: {
+                progress: "Téléchargement des {filesNumber} images en cours",
+                success: "Vos images ont été téléchargées avec succès"
             },
 
             action: {
-                browse: "Parcourir...",
-                dismiss: "Abandonner",
-                upload: "Envoyer",
-                uploadAll: "Tout envoyer"
+                add: "Ajouter une image"
             }
         },
 
         imageEditor: {
             title: {
                 editImage: "Editer l'image"
+            },
+
+            placeholder: {
+                title: "Titre de l'image (texte alternatif)",
+                description: "Description (facultatif)"
             },
 
             action: {
@@ -242,24 +242,13 @@
         },
 
         image: {
-            misc: {
-                actions: "Actions"
-            },
-
             title: {
                 images: "Images ({imagesLength})"
             },
 
-            explanation: {
-                noImage: "- utiliser la section ci-dessous pour ajouter de nouvelles images à ce produit."
-            },
-
             action: {
-                editMetadata: "Éditer les métadonnées"
-            },
-
-            alert: {
-                noImage: "Aucune image"
+                less: "Voir moins d'images",
+                more: "Voir plus d'images"
             }
         },
 

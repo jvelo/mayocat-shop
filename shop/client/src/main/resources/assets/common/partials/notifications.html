@@ -1,0 +1,27 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="notifications" ng-class="{reduce: reduce}">
+    <div ng-repeat="notification in progressNotifications"
+         ng-class="{minified: allMinified || notification.minified}"
+         class="notification notification-progress">
+
+        <p class="text">
+            {{notification.message}}
+        </p>
+
+        <div class="progression" style="width: {{notification.progress}}%;"></div>
+    </div>
+
+    <div ng-repeat="notification in basicNotifications" class="notification notification-{{notification.level}}">
+        <p class="text">
+            {{notification.message}}
+        </p>
+    </div>
+</div>
