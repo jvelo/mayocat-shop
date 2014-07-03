@@ -30,7 +30,7 @@
             <div class="block" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
 
-                <upload-list></upload-list>
+                <upload-list id="'image-gallery'"></upload-list>
 
                 <image-list entity="article"
                             sortable-options="getImagesSortableOptions()"
@@ -42,7 +42,8 @@
                 <image-upload ng-if="!isNew()"
                               upload-uri="{{getImageUploadUri()}}"
                               drop-text="'upload.explanation.dropArticle' | translate:getTranslationProperties()"
-                              target="image-gallery">
+                              target="image-gallery"
+                              id="'image-gallery'">
                 </image-upload>
             </div>
         </div>

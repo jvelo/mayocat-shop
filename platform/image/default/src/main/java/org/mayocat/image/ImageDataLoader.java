@@ -8,16 +8,19 @@
 package org.mayocat.image;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.mayocat.entity.DataLoaderAssistant;
 import org.mayocat.entity.EntityData;
 import org.mayocat.entity.LoadingOption;
+import org.mayocat.entity.StandardOptions;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.ImageGallery;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityList;
@@ -27,6 +30,8 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+
+import static org.mayocat.entity.EntityUtils.asSet;
 
 /**
  * @version $Id$
@@ -40,8 +45,13 @@ public class ImageDataLoader implements DataLoaderAssistant
     @Inject
     private ThumbnailStore thumbnailStore;
 
-    public <E extends Entity> void load(EntityData<E> entityData, LoadingOption... options)
+    @Inject
+    private EntityLocalizationService localizationService;
+
+    public <E extends Entity> void load(EntityData<E> entityData, LoadingOption... optionsArray)
     {
+        final Set<LoadingOption> options = asSet(optionsArray);
+
         List<Attachment> attachments = entityData.getChildren(Attachment.class);
 
         if (attachments.size() == 0) {
@@ -59,7 +69,8 @@ public class ImageDataLoader implements DataLoaderAssistant
                 // Costy :/
                 List<Thumbnail> thumbnails = thumbnailStore.findAll(attachment);
 
-                return new Image(attachment, thumbnails);
+                return new Image(options.contains(StandardOptions.LOCALIZE) ? localizationService.localize(attachment) :
+                        attachment, thumbnails);
             }
         }).toList();
 

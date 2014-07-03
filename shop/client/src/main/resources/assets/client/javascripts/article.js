@@ -167,7 +167,4 @@ angular.module('article', ['ngResource'])
                 };
             };
 
-            // Retrieve and display the uploads for the current article.
-            $scope.bindUploadQueue();
-
         }]);

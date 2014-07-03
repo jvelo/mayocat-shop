@@ -9,25 +9,27 @@ package org.mayocat.cms.pages.web
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.addons.AddonsTransformer
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.cms.pages.web.object.PageWebObject
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
+import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.localization.EntityLocalizationService
-import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.attachment.store.AttachmentStore
-import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.ThemeFileResolver
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
-import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -45,7 +47,7 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class PageWebView implements Resource, Initializable
+class PageWebView implements Resource
 {
     @Inject
     Provider<PageStore> pageStore
@@ -69,20 +71,11 @@ class PageWebView implements Resource, Initializable
     ThemeFileResolver themeFileResolver
 
     @Inject
-    Provider<EntityListStore> entityListStore
+    AddonsTransformer addonTransformer
 
-    @Delegate
-    ImageGalleryWebViewDelegate imageGalleryDelegate
+    @Inject
+    EntityDataLoader dataLoader
 
-    void initialize()
-    {
-        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
-                thumbnailStore: thumbnailStore.get(),
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                localizationService: entityLocalizationService,
-        ])
-    }
 
     @Path("{slug}")
     @GET
@@ -100,13 +93,16 @@ class PageWebView implements Resource, Initializable
 
         ThemeDefinition theme = this.context.theme?.definition
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(page)
+        EntityData<Page> data = dataLoader.load(page, StandardOptions.LOCALIZE)
+        addonTransformer.toWebView(data)
+
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         PageWebObject pageWebObject = new PageWebObject()
         pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
                 Optional.fromNullable(theme), themeFileResolver)
-        pageWebObject.withImages(getImagesForImageGallery(page, attachments),
-                page.featuredImageId, Optional.fromNullable(theme))
+        pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
 
         context.put("page", pageWebObject)
 

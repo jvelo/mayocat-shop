@@ -26,10 +26,10 @@
                 <textarea class="" rows="10" ng-model="localizedPage.content" ck-editor localized />
             </div>
 
-            <div class="block" ng-show="!isNew()">
+            <div class="block entity" ng-show="!isNew()">
                 <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
 
-                <upload-list></upload-list>
+                <upload-list id="'image-gallery'"></upload-list>
 
                 <image-list entity="page"
                             sortable-options="getImagesSortableOptions()"
@@ -41,7 +41,8 @@
                 <image-upload ng-if="!isNew()"
                               upload-uri="{{getImageUploadUri()}}"
                               drop-text="'upload.explanation.dropPage' | translate:getTranslationProperties()"
-                              target="image-gallery">
+                              target="image-gallery"
+                              id="'image-gallery'">
                 </image-upload>
             </div>
         </div>

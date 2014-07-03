@@ -10,20 +10,21 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
-import org.mayocat.model.Attachment
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
+import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.shop.catalog.CatalogService
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.catalog.web.object.CollectionWebObject
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.xwiki.component.annotation.Component
-import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -42,7 +43,7 @@ import java.math.RoundingMode
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class CollectionWebView extends AbstractProductListWebView implements Resource, Initializable
+class CollectionWebView extends AbstractProductListWebView implements Resource
 {
     @Inject
     CatalogService catalogService
@@ -51,20 +52,7 @@ class CollectionWebView extends AbstractProductListWebView implements Resource, 
     Provider<ProductStore> productStore
 
     @Inject
-    Provider<EntityListStore> entityListStore;
-
-    @Delegate
-    ImageGalleryWebViewDelegate imageGalleryDelegate
-
-    void initialize()
-    {
-        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
-                thumbnailStore: thumbnailStoreProvider.get(),
-                attachmentStore: attachmentStoreProvider.get(),
-                entityListStore: entityListStore.get(),
-                localizationService: entityLocalizationService,
-        ])
-    }
+    EntityDataLoader dataLoader
 
     @GET
     @Path("{slug}")
@@ -86,7 +74,10 @@ class CollectionWebView extends AbstractProductListWebView implements Resource, 
 
         ThemeDefinition theme = this.context.theme.definition
 
-        List<Attachment> attachments = this.attachmentStoreProvider.get().findAllChildrenOf(collection);
+        EntityData<org.mayocat.shop.catalog.model.Collection> data = dataLoader.load(collection, StandardOptions.LOCALIZE)
+
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         Integer numberOfProductsPerPage =
             this.context.theme.definition.getPaginationDefinition("collection").getItemsPerPage();
@@ -101,8 +92,7 @@ class CollectionWebView extends AbstractProductListWebView implements Resource, 
         collectionWebObject.withCollection(entityLocalizationService.localize(collection) as
             org.mayocat.shop.catalog.model.Collection, urlFactory)
 
-        collectionWebObject.withImages(getImagesForImageGallery(collection, attachments),
-                collection.featuredImageId, Optional.fromNullable(theme))
+        collectionWebObject.withImages(images, collection.featuredImageId, Optional.fromNullable(theme))
         collectionWebObject.withProducts(createProductListContextList(products, collection), currentPage, totalPages);
 
         context.put("collection", collectionWebObject);

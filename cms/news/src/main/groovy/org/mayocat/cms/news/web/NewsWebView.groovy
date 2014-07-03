@@ -13,6 +13,8 @@ import com.google.common.math.IntMath
 import com.googlecode.flyway.core.util.StringUtils
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.text.StrSubstitutor
+import org.mayocat.addons.AddonsTransformer
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.cms.news.NewsSettings
 import org.mayocat.cms.news.model.Article
 import org.mayocat.cms.news.store.ArticleStore
@@ -21,24 +23,23 @@ import org.mayocat.cms.news.web.object.ArticleWebObject
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
-import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.attachment.store.AttachmentStore
-import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
-import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -58,7 +59,7 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class NewsWebView implements Resource, Initializable
+class NewsWebView implements Resource
 {
     @Inject
     Provider<ArticleStore> articleStore
@@ -76,26 +77,13 @@ class NewsWebView implements Resource, Initializable
     EntityURLFactory urlFactory
 
     @Inject
-    EntityLocalizationService entityLocalizationService
-
-    @Inject
     ConfigurationService configurationService
 
     @Inject
-    Provider<EntityListStore> entityListStore;
+    AddonsTransformer addonTransformer
 
-    @Delegate
-    ImageGalleryWebViewDelegate imageGalleryDelegate
-
-    void initialize()
-    {
-        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
-                thumbnailStore: thumbnailStore.get(),
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                localizationService: entityLocalizationService,
-        ])
-    }
+    @Inject
+    EntityDataLoader dataLoader
 
     @GET
     def getNews(@QueryParam("page") @DefaultValue("1") Integer page)
@@ -193,15 +181,18 @@ class NewsWebView implements Resource, Initializable
 
         ThemeDefinition theme = this.context.theme?.definition
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article)
+        EntityData<Article> data = dataLoader.load(article, StandardOptions.LOCALIZE)
+        addonTransformer.toWebView(data)
+
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class)
 
         ArticleWebObject articleWebObject = new ArticleWebObject()
         articleWebObject.withArticle(article, urlFactory, settings.locales.mainLocale.getValue(),
                 Optional.fromNullable(this.context.theme?.definition))
-        articleWebObject.withImages(getImagesForImageGallery(article, attachments),
-                article.featuredImageId, Optional.fromNullable(theme))
+        articleWebObject.withImages(images, article.featuredImageId, Optional.fromNullable(theme))
 
         context.put("article", articleWebObject)
 

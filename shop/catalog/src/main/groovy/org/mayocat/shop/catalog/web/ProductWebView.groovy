@@ -14,12 +14,11 @@ import org.mayocat.addons.AddonsTransformer
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.delegate.ImageGalleryWebViewDelegate
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
@@ -32,7 +31,6 @@ import org.mayocat.shop.front.views.WebView
 import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
 import org.xwiki.component.annotation.Component
-import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -52,32 +50,16 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class ProductWebView extends AbstractProductListWebView implements Resource, Initializable
+class ProductWebView extends AbstractProductListWebView implements Resource
 {
     @Inject
     Provider<ProductStore> productStore;
-
-    @Inject
-    Provider<EntityListStore> entityListStore;
 
     @Inject
     AddonsTransformer addonTransformer
 
     @Inject
     EntityDataLoader dataLoader
-
-    @Delegate
-    ImageGalleryWebViewDelegate imageGalleryDelegate
-
-    void initialize()
-    {
-        imageGalleryDelegate = new ImageGalleryWebViewDelegate([
-                thumbnailStore: thumbnailStoreProvider.get(),
-                attachmentStore: attachmentStoreProvider.get(),
-                entityListStore: entityListStore.get(),
-                localizationService: entityLocalizationService,
-        ])
-    }
 
     @GET
     def getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
@@ -177,7 +159,7 @@ class ProductWebView extends AbstractProductListWebView implements Resource, Ini
                 "description" : product.description
         ])
 
-        EntityData<Product> data = dataLoader.load(product)
+        EntityData<Product> data = dataLoader.load(product, StandardOptions.LOCALIZE)
         addonTransformer.toWebView(data)
 
         ThemeDefinition theme = this.context.theme?.definition;
