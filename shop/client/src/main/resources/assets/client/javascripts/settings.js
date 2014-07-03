@@ -83,8 +83,8 @@ angular.module('settings', ['ngResource'])
     // Controller for the tenant (shop information) settings UI
     // See partials/settingsTenant.html
     //
-    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'entityMixins',
-        function ($scope, $resource, $http, addonsService, entityMixins) {
+    .controller('SettingsTenantController', ['$scope', '$rootScope', '$location', '$resource', '$http', 'addonsService', 'entityMixins',
+        function ($scope, $rootScope, $location, $resource, $http, addonsService, entityMixins) {
 
             entityMixins.extend(["base", "addons", "image"], $scope, "tenant", {
                 "base": {
@@ -101,6 +101,24 @@ angular.module('settings', ['ngResource'])
                             $scope.tenant._embedded.featuredImage = $scope.updatedTenant._embedded.featuredImage;
                         });
                     }
+                }
+            });
+
+            // Refresh logo when a new one is uploaded -----------------------------------------------------------------
+
+            $rootScope.$on("upload:done", function(event, memo) {
+                if (memo.entityUri == $location.path() && memo.id == 'logo') {
+                    $scope.reloadImages();
+                    $scope.uploadingLogo = false;
+                }
+            });
+
+            $rootScope.$on("upload:progress", function(event, memo) {
+                var index = memo.queue.findIndex(function (upload) {
+                    return upload.id == 'logo';
+                });
+                if (index >= 0) {
+                    $scope.uploadingLogo = true;
                 }
             });
 

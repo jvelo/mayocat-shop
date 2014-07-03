@@ -149,7 +149,7 @@ class TenantApi implements Resource, Initializable {
         TenantApiObject tenantApiObject = new TenantApiObject([
                 _href: "/api/tenant/"
         ])
-        tenantApiObject.withEmbeddedImages(tenantData.getChildren(Image.class), tenant.featuredImageId)
+        tenantApiObject.withEmbeddedImages(tenantData.getDataList(Image.class), tenant.featuredImageId)
         tenantApiObject.withTenant(tenant, globalTimeZone)
         tenant
 

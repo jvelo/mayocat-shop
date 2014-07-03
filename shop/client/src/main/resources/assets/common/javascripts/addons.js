@@ -444,7 +444,6 @@
             },
             restrict:"E",
             link:function (scope, element, attrs) {
-
                 scope.$watch(
                     'addon',
                     function (definition) {
