@@ -3,3 +3,4 @@ org.mayocat.image.DefaultImageProcessor
 org.mayocat.image.store.jdbi.DBIThumbnailStore
 org.mayocat.image.ImageDimensionsMetadataExtractor
 org.mayocat.image.ImageDataLoader
+org.mayocat.image.ImageAddonTransformer

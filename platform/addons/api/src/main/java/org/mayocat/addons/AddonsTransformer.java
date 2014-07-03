@@ -15,7 +15,7 @@ import org.xwiki.component.annotation.Role;
  * @version $Id$
  */
 @Role
-public interface AddonTransformer
+public interface AddonsTransformer
 {
     void fromApi(EntityData<? extends HasAddons> entityData);
 

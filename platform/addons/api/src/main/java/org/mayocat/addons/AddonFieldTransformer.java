@@ -8,12 +8,14 @@
 package org.mayocat.addons;
 
 import org.mayocat.entity.EntityData;
+import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
 
 /**
  * @version $Id$
  */
+@Role
 public interface AddonFieldTransformer
 {
     Optional<Object> fromApi(EntityData<?> entityData, Object inputValue);

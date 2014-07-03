@@ -23,7 +23,7 @@ import com.google.common.base.Optional;
  * @version $Id$
  */
 @Component
-public class DefaultAddonTransformer implements AddonTransformer
+public class DefaultAddonsTransformer implements AddonsTransformer
 {
     interface TransformOperation
     {
@@ -112,7 +112,7 @@ public class DefaultAddonTransformer implements AddonTransformer
 
                 Optional<Object> result = operation.apply(transformer, element.get(fieldName));
                 if (result.isPresent()) {
-                    element.put(fieldName, result);
+                    element.put(fieldName, result.get());
                 }
             }
         }

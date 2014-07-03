@@ -361,7 +361,7 @@
 
         .directive("addonImage", ['$rootScope', function ($rootScope) {
             return {
-                templateUrl: "partials/directives/addonImage.html?v=2", // Defeat browser cache http://git.io/6dPuFQ
+                templateUrl: "partials/directives/addonImage.html?v=1", // Defeat browser cache http://git.io/6dPuFQ
                 require : 'ngModel',
                 restrict: 'E',
                 controller: ['$scope', function ($scope) {
@@ -370,7 +370,10 @@
                     }
 
                     $rootScope.$on("upload:progress", function(event, memo) {
-                        if (memo.id == $scope.id) {
+                        var index = memo.queue.findIndex(function (upload) {
+                            return upload.id == $scope.id;
+                        });
+                        if (index >= 0) {
                             $scope.uploading = true;
                         }
                     });

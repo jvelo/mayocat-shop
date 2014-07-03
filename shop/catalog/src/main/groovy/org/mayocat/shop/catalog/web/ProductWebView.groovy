@@ -10,7 +10,12 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
+import org.mayocat.addons.AddonsTransformer
 import org.mayocat.configuration.general.GeneralSettings
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
@@ -54,6 +59,12 @@ class ProductWebView extends AbstractProductListWebView implements Resource, Ini
 
     @Inject
     Provider<EntityListStore> entityListStore;
+
+    @Inject
+    AddonsTransformer addonTransformer
+
+    @Inject
+    EntityDataLoader dataLoader
 
     @Delegate
     ImageGalleryWebViewDelegate imageGalleryDelegate
@@ -166,17 +177,20 @@ class ProductWebView extends AbstractProductListWebView implements Resource, Ini
                 "description" : product.description
         ])
 
+        EntityData<Product> data = dataLoader.load(product)
+        addonTransformer.toWebView(data)
+
         ThemeDefinition theme = this.context.theme?.definition;
 
-        List<Attachment> attachments = this.attachmentStoreProvider.get().findAllChildrenOf(product);
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         ProductWebObject productWebObject = new ProductWebObject()
         productWebObject.withProduct(entityLocalizationService.localize(product) as Product, urlFactory,
                 themeFileResolver, configurationService.getSettings(CatalogSettings.class),
                 configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
 
-        productWebObject.withImages(getImagesForImageGallery(product, attachments),
-                product.featuredImageId, Optional.fromNullable(theme))
+        productWebObject.withImages(images, product.featuredImageId, Optional.fromNullable(theme))
 
         // Collections / featured collection
         if (product.featuredCollection.isLoaded()) {
