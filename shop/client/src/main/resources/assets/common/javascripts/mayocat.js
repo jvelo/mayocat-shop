@@ -378,7 +378,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
                 };
 
                 ck.destroy();
-                ck = CKEDITOR.replace(textarea, ckOptions);
+                ck = CKEDITOR.replace(elm[0], ckOptions);
             });
 
         }
