@@ -55,50 +55,7 @@
 
         <!-- Addons -->
         <div ng-if="addons.length > 0 && !isNew()">
-            <div class="block" ng-repeat="group in addons">
-                <h3>{{group.name}}</h3>
-                <p ng-if="group.text && group.text != ''">
-                {{group.text}}
-                </p>
-
-                <!-- Sequence addons -->
-                <div ng-if="group.sequence">
-                    <ul ng-repeat="item in product.addons[group.key].value">
-                        <li>
-                            <div class="btn btn-add pull-right" ng-click="removeSequenceAddonItem(group, $index)">&ndash;</div>
-                            <div class="clearfix"></div>
-                        </li>
-
-                        <li ng-repeat="addon in group.fields">
-                            {{addon.definition.name}}
-
-                            <addon definition="addon.definition"
-                                   type="product.addons[group.key].model[addon.key]"
-                                   object="item"
-                                   localized-object="localizedProduct.addons[group.key].value[$parent.$index]"
-                                   key="addon.key"></addon>
-                        </li>
-                    </ul>
-
-                    <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
-                    <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
-                    <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
-                </div>
-
-                <!-- Non sequence addons -->
-                <ul ng-if="!group.sequence">
-
-                    <li ng-repeat="addon in group.fields">
-                        {{addon.definition.name}}
-
-                        <addon definition="addon.definition"
-                               type="product.addons[group.key].model[addon.key]"
-                               object="product.addons[group.key].value"
-                               localized-object="localizedProduct.addons[group.key].value"
-                               key="addon.key"></addon>
-                    </li>
-                </ul>
-            </div>
+            <addon-list addons="addons" entity="product" localized-entity="localizedProduct" />
         </div>
 
     </article>

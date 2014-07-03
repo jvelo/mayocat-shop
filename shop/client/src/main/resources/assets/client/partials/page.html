@@ -47,24 +47,9 @@
             </div>
         </div>
 
-        <div ng-show="addons.length > 0 && !isNew()">
-            <div class="block" ng-repeat="group in addons">
-                <h3>{{group.name}}</h3>
-                <p ng-show="group.text && group.text != ''">
-                    {{group.text}}
-                </p>
-                <ul>
-                    <li ng-repeat="addon in group.fields">
-                        {{addon.definition.name}}
-
-                        <addon definition="addon.definition"
-                               type="page.addons[group.key].model[addon.key]"
-                               object="page.addons[group.key].value"
-                               localized-object="localizedPage.addons[group.key].value"
-                               key="addon.key"></addon>
-                    </li>
-                </ul>
-            </div>
+        <!-- Addons -->
+        <div ng-if="addons.length > 0 && !isNew()">
+            <addon-list addons="addons" entity="page" localized-entity="localizedPage" />
         </div>
 
     </article>

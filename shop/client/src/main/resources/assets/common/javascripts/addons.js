@@ -361,7 +361,7 @@
 
         .directive("addonImage", ['$rootScope', function ($rootScope) {
             return {
-                templateUrl: "partials/directives/addonImage.html?v=1", // Defeat browser cache http://git.io/6dPuFQ
+                templateUrl: '/common/partials/addonImage.html',
                 require : 'ngModel',
                 restrict: 'E',
                 controller: ['$scope', function ($scope) {
@@ -387,7 +387,8 @@
                     });
                 }],
                 link: function (scope, element, attrs, ngModel) {
-                    scope.id = Math.random().toString(36).substring(7);
+                    // Generate a random image list/upload id
+                    scope.id = Math.random().toString(36).substring(8);
                     scope.uploading = false;
                     var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
                         scope.internalModel = ngModel.$modelValue;
@@ -398,6 +399,39 @@
                     });
                 }
             }
+        }])
+
+        .directive('addonList', [function () {
+            return {
+                restrict: 'E',
+                scope: {
+                    addons: '=',
+                    entity: '=',
+                    localized: '=localizedEntity'
+                },
+                templateUrl: '/common/partials/addonList.html',
+                controller: function ($scope) {
+                    $scope.removeSequenceAddonItem = function (group, index) {
+                        $scope.entity.addons[group.key].value.splice(index, 1);
+
+                        if (typeof $scope.entity._localized !== 'undefined') {
+                            Object.keys($scope.entity._localized).forEach(function (locale) {
+                                $scope.entity._localized[locale].addons[group.key].value.splice(index, 1);
+                            });
+                        }
+                    }
+
+                    $scope.addSequenceAddonItem = function (group) {
+                        $scope.entity.addons[group.key].value.push(group.getValueShell());
+
+                        if (typeof $scope.entity._localized !== 'undefined') {
+                            Object.keys($scope.entity._localized).forEach(function (locale) {
+                                $scope.entity._localized[locale].addons[group.key].value.push(group.getValueShell());
+                            });
+                        }
+                    }
+                }
+            };
         }])
 
         .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
