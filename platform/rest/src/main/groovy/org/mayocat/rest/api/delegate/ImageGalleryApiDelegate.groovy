@@ -129,6 +129,19 @@ class ImageGalleryApiDelegate
         }
         try {
             attachmentStore.detach(attachment);
+
+            // Now check if the image was the featured image, in which case, we find another (first one on the list
+            // that's not this one)
+            if (HasFeaturedImage.class.isAssignableFrom(entity.class) &&
+                    ((HasFeaturedImage) entity).featuredImageId == attachment.id)
+            {
+                // Detaching the featured image -> we need to find another
+                ((HasFeaturedImage) entity).featuredImageId = entityList.entities.find({ UUID id ->
+                    id != attachment.id
+                })
+                handler.updateEntity(entity)
+            }
+
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(404).build();
@@ -141,7 +154,7 @@ class ImageGalleryApiDelegate
     def updateImageGallery(@PathParam("slug") String slug, ImageGalleryApiObject gallery)
     {
         def entity = handler.getEntity(slug) as HasFeaturedImage
-        def allImages = attachmentStore.findAllChildrenOf(entity, ["png", "jpg", "jpeg", "gif"] as List);
+        def allAttachments = attachmentStore.findAllChildrenOf(entity);
         def EntityList list = entityListStore.findListByHintAndParentId("image_gallery", entity.id);
 
         // 1. Update image gallery entity list
@@ -158,7 +171,7 @@ class ImageGalleryApiDelegate
         }
 
         Collection<UUID> ids = gallery.images.collect({ ImageApiObject image ->
-            allImages.find({ Attachment attachment -> attachment.slug == image.slug })?.id
+            allAttachments.find({ Attachment attachment -> attachment.slug == image.slug })?.id
         });
 
         list.entities = ids.findAll({ UUID id -> id != null }).toList();
@@ -174,10 +187,10 @@ class ImageGalleryApiDelegate
             featured = gallery.images.first()
         }
 
-        def featuredImage = allImages.find({ Attachment attachment -> attachment.slug == featured.slug })
+        def featuredImage = allAttachments.find({ Attachment attachment -> attachment.slug == featured.slug })
 
         if (entity.featuredImageId != featuredImage.id) {
-            // Update is the featured image has changed
+            // Update if the featured image has changed
             entity.featuredImageId = featuredImage.id
             handler.updateEntity(entity)
         }

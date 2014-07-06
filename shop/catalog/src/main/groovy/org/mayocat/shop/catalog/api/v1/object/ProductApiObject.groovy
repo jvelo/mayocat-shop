@@ -174,8 +174,10 @@ class ProductApiObject extends BaseApiObject
         def List<ImageApiObject> imageApiObjectList = [];
 
         images.each({ Image image ->
+
             ImageApiObject imageApiObject = new ImageApiObject()
             imageApiObject.withImage(image)
+
             if (image.attachment.id == featuredImageId) {
                 featuredImage = imageApiObject
             }
