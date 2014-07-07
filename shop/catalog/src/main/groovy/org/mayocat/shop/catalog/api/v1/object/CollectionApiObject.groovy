@@ -100,8 +100,11 @@ class CollectionApiObject extends BaseApiObject
         images.each({ Image image ->
             ImageApiObject imageApiObject = new ImageApiObject()
             imageApiObject.withImage(image)
+            imageApiObject.featured = false
+
             if (image.attachment.id == featuredImageId) {
                 featuredImage = imageApiObject
+                imageApiObject.featured = true
             }
             imageApiObjectList << imageApiObject
         })

@@ -9,7 +9,9 @@ package org.mayocat.image;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.mayocat.entity.DataLoaderAssistant;
@@ -28,6 +30,7 @@ import org.mayocat.store.EntityListStore;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
@@ -39,6 +42,28 @@ import static org.mayocat.entity.EntityUtils.asSet;
 @Component("images")
 public class ImageDataLoader implements DataLoaderAssistant
 {
+    private static <T> Predicate<Optional<T>> present()
+    {
+        return new Predicate<Optional<T>>()
+        {
+            public boolean apply(Optional<T> optional)
+            {
+                return optional.isPresent();
+            }
+        };
+    }
+
+    private static <T> Function<Optional<T>, T> extract()
+    {
+        return new Function<Optional<T>, T>()
+        {
+            public T apply(Optional<T> optional)
+            {
+                return optional.get();
+            }
+        };
+    }
+
     @Inject
     private EntityListStore entityListStore;
 
@@ -62,7 +87,7 @@ public class ImageDataLoader implements DataLoaderAssistant
         final EntityList list =
                 entityListStore.findListByHintAndParentId("image_gallery", entityData.getEntity().getId());
 
-        List<Image> images = FluentIterable.from(attachments).transform(new Function<Attachment, Image>()
+        final List<Image> images = FluentIterable.from(attachments).transform(new Function<Attachment, Image>()
         {
             public Image apply(Attachment attachment)
             {
@@ -78,13 +103,22 @@ public class ImageDataLoader implements DataLoaderAssistant
         entityData.setDataList(Image.class, images);
 
         if (list != null) {
-            List<Image> galleryImages = FluentIterable.from(images).filter(new Predicate<Image>()
-            {
-                public boolean apply(Image input)
-                {
-                    return list.getEntities().contains(input.getAttachment().getId());
-                }
-            }).toList();
+            // If there is an image gallery, find its images according to the gallery order
+
+            List<Image> galleryImages =
+                    FluentIterable.from(list.getEntities()).transform(new Function<UUID, Optional<Image>>()
+                    {
+                        public Optional<Image> apply(final UUID input)
+                        {
+                            return FluentIterable.from(images).firstMatch(new Predicate<Image>()
+                            {
+                                public boolean apply(Image image)
+                                {
+                                    return image.getAttachment().getId().equals(input);
+                                }
+                            });
+                        }
+                    }).filter(this.<Image>present()).transform(this.<Image>extract()).toList();
 
             ImageGallery gallery = new ImageGallery(galleryImages);
 

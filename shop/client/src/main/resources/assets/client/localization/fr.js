@@ -91,7 +91,7 @@
             },
 
             status: {
-                progress: "Téléchargement des {filesNumber} images en cours",
+                progress: "Téléchargement de {filesNumber} images en cours",
                 success: "Vos images ont été téléchargées avec succès"
             },
 

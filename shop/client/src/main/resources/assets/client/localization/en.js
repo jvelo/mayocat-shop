@@ -109,7 +109,7 @@
             },
 
             status: {
-                progress: "Upload of the {filesNumber} images in progress",
+                progress: "Upload of {filesNumber} images in progress",
                 success: "Your images have been successfully uploaded"
             },
 

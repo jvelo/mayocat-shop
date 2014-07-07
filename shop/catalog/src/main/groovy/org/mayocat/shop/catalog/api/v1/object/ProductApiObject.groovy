@@ -177,9 +177,11 @@ class ProductApiObject extends BaseApiObject
 
             ImageApiObject imageApiObject = new ImageApiObject()
             imageApiObject.withImage(image)
+            imageApiObject.featured = false
 
             if (image.attachment.id == featuredImageId) {
                 featuredImage = imageApiObject
+                imageApiObject.featured = true
             }
             imageApiObjectList << imageApiObject
         })

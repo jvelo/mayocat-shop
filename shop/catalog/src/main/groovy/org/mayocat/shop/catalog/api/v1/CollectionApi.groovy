@@ -195,8 +195,8 @@ class CollectionApi implements Resource, Initializable
         CollectionApiObject collectionApiObject = new CollectionApiObject([
             _href: "/api/products/${slug}/",
             _links: [
-                    self: new LinkApiObject([ href: "/api/products/${slug}/" ]),
-                    images: new LinkApiObject([ href: "/api/products/${slug}/images" ])
+                    self: new LinkApiObject([ href: "/api/collections/${slug}/" ]),
+                    images: new LinkApiObject([ href: "/api/collections/${slug}/images" ])
             ]
         ])
 
