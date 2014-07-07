@@ -10,8 +10,6 @@ package org.mayocat.shop.catalog.web.object
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
-import org.mayocat.addons.front.builder.AddonContextBuilder
-import org.mayocat.addons.model.AddonGroupDefinition
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.EntityImagesWebObject
@@ -85,11 +83,18 @@ class ProductWebObject
 
     Boolean hasVariants = false
 
+    /**
+     * @deprecated use #addons
+     */
+    @Deprecated
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Map theme_addons
+    Map<String, Object> theme_addons
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map <String, Object> addons
 
     def withProduct(Product product, EntityURLFactory urlFactory, ThemeFileResolver themeFileResolver,
-            CatalogSettings catalogSettings, GeneralSettings generalSettings, Optional<ThemeDefinition> theme)
+            CatalogSettings catalogSettings, GeneralSettings generalSettings)
     {
         title = ContextUtils.safeString(product.title)
         description = ContextUtils.safeHtml(product.description)
@@ -104,13 +109,6 @@ class ProductWebObject
             template = themeFileResolver.resolveModelPath(product.model.get()).get()
         } else {
             template = "product.html"
-        }
-
-        // Addons
-        if (product.addons.isLoaded() && theme.isPresent()) {
-            def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroupDefinition> themeAddons = theme.get().addons;
-            theme_addons = addonContextBuilder.build(themeAddons, product.addons.get());
         }
 
         if (product.type.isPresent()) {
@@ -146,6 +144,11 @@ class ProductWebObject
         // when variants have the "stock" property set in theme.yml.
         // For the price, the variants might override it as well, as well as setting the "unitPriceStartsAt" when price
         // differs over the different variants
+    }
+
+    def withAddons(Map<String, Object> addons) {
+        theme_addons = addons
+        this.addons = addons
     }
 
     def withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)

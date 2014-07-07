@@ -10,8 +10,6 @@ package org.mayocat.cms.pages.web.object
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
-import org.mayocat.addons.front.builder.AddonContextBuilder
-import org.mayocat.addons.model.AddonGroupDefinition
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.EntityImagesWebObject
@@ -47,10 +45,18 @@ class PageWebObject {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityImagesWebObject images
 
+    /**
+     * @deprecated use #addons
+     */
+    @Deprecated
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Map theme_addons
+    Map<String, Object> theme_addons
 
-    def withPage(Page page, EntityURLFactory urlFactory, Optional<ThemeDefinition> theme, ThemeFileResolver themeFileResolver)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map <String, Object> addons
+
+
+    def withPage(Page page, EntityURLFactory urlFactory, ThemeFileResolver themeFileResolver)
     {
         title = ContextUtils.safeString(page.title)
         content = ContextUtils.safeHtml(page.content)
@@ -65,13 +71,11 @@ class PageWebObject {
         } else {
             template = "page.html";
         }
+    }
 
-        // Addons
-        if (page.addons.isLoaded() && theme.isPresent()) {
-            def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroupDefinition> themeAddons = theme.get().addons
-            theme_addons = addonContextBuilder.build(themeAddons, page.addons.get());
-        }
+    def withAddons(Map<String, Object> addons) {
+        theme_addons = addons
+        this.addons = addons
     }
 
     def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)

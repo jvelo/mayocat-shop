@@ -1,1 +1,2 @@
-org.mayocat.addons.DefaultAddonsTransformer
+org.mayocat.addons.web.DefaultAddonsWebObjectBuilder
+org.mayocat.addons.StringAddonTransformer

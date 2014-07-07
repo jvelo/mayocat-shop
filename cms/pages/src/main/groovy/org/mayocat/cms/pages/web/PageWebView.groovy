@@ -9,7 +9,7 @@ package org.mayocat.cms.pages.web
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
-import org.mayocat.addons.AddonsTransformer
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
@@ -71,11 +71,10 @@ class PageWebView implements Resource
     ThemeFileResolver themeFileResolver
 
     @Inject
-    AddonsTransformer addonTransformer
+    AddonsWebObjectBuilder addonsWebObjectBuilder
 
     @Inject
     EntityDataLoader dataLoader
-
 
     @Path("{slug}")
     @GET
@@ -94,14 +93,14 @@ class PageWebView implements Resource
         ThemeDefinition theme = this.context.theme?.definition
 
         EntityData<Page> data = dataLoader.load(page, StandardOptions.LOCALIZE)
-        addonTransformer.toWebView(data)
 
         Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         PageWebObject pageWebObject = new PageWebObject()
-        pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
-                Optional.fromNullable(theme), themeFileResolver)
+        pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory
+                , themeFileResolver)
+        pageWebObject.withAddons(addonsWebObjectBuilder.build(data))
         pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
 
         context.put("page", pageWebObject)

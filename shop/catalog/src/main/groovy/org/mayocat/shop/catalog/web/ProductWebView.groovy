@@ -10,7 +10,7 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
-import org.mayocat.addons.AddonsTransformer
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
@@ -62,9 +62,6 @@ class ProductWebView implements Resource
     Provider<ProductStore> productStore;
 
     @Inject
-    AddonsTransformer addonTransformer
-
-    @Inject
     EntityDataLoader dataLoader
 
     @Inject
@@ -84,6 +81,9 @@ class ProductWebView implements Resource
 
     @Inject
     EntityLocalizationService entityLocalizationService
+
+    @Inject
+    AddonsWebObjectBuilder addonsWebObjectBuilder
 
     @Inject
     @Delegate
@@ -197,7 +197,6 @@ class ProductWebView implements Resource
         ])
 
         EntityData<Product> data = dataLoader.load(product, StandardOptions.LOCALIZE)
-        addonTransformer.toWebView(data)
 
         ThemeDefinition theme = this.context.theme?.definition;
 
@@ -207,8 +206,8 @@ class ProductWebView implements Resource
         ProductWebObject productWebObject = new ProductWebObject()
         productWebObject.withProduct(entityLocalizationService.localize(product) as Product, urlFactory,
                 themeFileResolver, configurationService.getSettings(CatalogSettings.class),
-                configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
-
+                configurationService.getSettings(GeneralSettings.class))
+        productWebObject.withAddons(addonsWebObjectBuilder.build(data))
         productWebObject.withImages(images, product.featuredImageId, Optional.fromNullable(theme))
 
         // Collections / featured collection

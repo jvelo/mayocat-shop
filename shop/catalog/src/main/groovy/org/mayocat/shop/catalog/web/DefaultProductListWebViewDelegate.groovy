@@ -9,6 +9,7 @@ package org.mayocat.shop.catalog.web
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
@@ -48,6 +49,9 @@ class DefaultProductListWebViewDelegate implements ProductListWebViewDelegate
     ThemeFileResolver themeFileResolver
 
     @Inject
+    AddonsWebObjectBuilder addonsWebObjectBuilder
+
+    @Inject
     EntityLocalizationService entityLocalizationService
 
     ProductListWebObject buildProductListWebObject(int currentPage, Integer totalPages,
@@ -77,7 +81,8 @@ class DefaultProductListWebViewDelegate implements ProductListWebViewDelegate
             productWebObject.
                     withProduct(entityLocalizationService.localize(product) as Product, urlFactory, themeFileResolver,
                             configurationService.getSettings(CatalogSettings.class),
-                            configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
+                            configurationService.getSettings(GeneralSettings.class))
+            productWebObject.withAddons(addonsWebObjectBuilder.build(productData))
 
             if (collection.isPresent()) {
                 productWebObject.withCollection(collection.get(), urlFactory)

@@ -7,6 +7,8 @@
  */
 package org.mayocat.addons;
 
+import org.mayocat.addons.model.AddonFieldDefinition;
+import org.mayocat.addons.web.AddonFieldValueWebObject;
 import org.mayocat.entity.EntityData;
 import org.xwiki.component.annotation.Role;
 
@@ -18,9 +20,6 @@ import com.google.common.base.Optional;
 @Role
 public interface AddonFieldTransformer
 {
-    Optional<Object> fromApi(EntityData<?> entityData, Object inputValue);
-
-    Optional<Object> toApi(EntityData<?> entityData, Object storedValue);
-
-    Optional<Object> toWebView(EntityData<?> entityData, Object storedValue);
+    Optional<AddonFieldValueWebObject> toWebView(EntityData<?> entityData, AddonFieldDefinition definition,
+            Object storedValue);
 }

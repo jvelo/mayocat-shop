@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.cms.news.model.Article
 import org.mayocat.cms.news.store.ArticleStore
@@ -97,6 +98,9 @@ class HomeWebView implements Resource
     ConfigurationService configurationService
 
     @Inject
+    AddonsWebObjectBuilder addonsWebObjectBuilder
+
+    @Inject
     @Delegate
     ProductListWebViewDelegate listWebViewDelegate
 
@@ -163,8 +167,9 @@ class HomeWebView implements Resource
             List<Image> images = pageData.getDataList(Image.class)
 
             PageWebObject pageWebObject = new PageWebObject()
-            pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
-                    Optional.fromNullable(theme), themeFileResolver)
+            pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory
+                    , themeFileResolver)
+            pageWebObject.withAddons(addonsWebObjectBuilder.build(pageData))
             pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
             context.put("home", pageWebObject);
         }
@@ -189,9 +194,8 @@ class HomeWebView implements Resource
             List<Image> images = articleData.getDataList(Image.class)
 
             ArticleWebObject articleWebObject = new ArticleWebObject()
-            articleWebObject.withArticle(article, urlFactory, generalSettings.locales.mainLocale.value,
-                    Optional.fromNullable(theme));
-
+            articleWebObject.withArticle(article, urlFactory, generalSettings.locales.mainLocale.value);
+            articleWebObject.withAddons(addonsWebObjectBuilder.build(articleData))
             articleWebObject.withImages(images, article.featuredImageId, Optional.fromNullable(theme))
 
             articleList << articleWebObject

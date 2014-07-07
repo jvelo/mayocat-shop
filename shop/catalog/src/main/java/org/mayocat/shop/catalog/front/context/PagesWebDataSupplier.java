@@ -16,6 +16,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.cms.pages.model.Page;
 import org.mayocat.cms.pages.store.PageStore;
 import org.mayocat.cms.pages.web.object.PageWebObject;
@@ -27,7 +28,6 @@ import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Attachment;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.util.WebDataHelper;
-import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
 import org.mayocat.url.EntityURLFactory;
@@ -96,7 +96,7 @@ public class PagesWebDataSupplier implements WebDataSupplier
         for (final Page page : rootPages) {
             PageWebObject pageWebObject = new PageWebObject();
             pageWebObject.withPage(entityLocalizationService.localize(page), urlFactory,
-                    Optional.fromNullable(context.getTheme() != null ? context.getTheme().getDefinition() : null), themeFileResolver);
+                    themeFileResolver);
             java.util.Collection<Attachment> attachments = Collections2.filter(allImages,
                     WebDataHelper.isEntityFeaturedImage(page));
             List<Image> images = new ArrayList<>();

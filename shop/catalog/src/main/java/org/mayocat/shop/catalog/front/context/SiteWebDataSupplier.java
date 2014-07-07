@@ -7,29 +7,32 @@
  */
 package org.mayocat.shop.catalog.front.context;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.addons.front.builder.AddonContextBuilder;
-import org.mayocat.addons.model.AddonGroupDefinition;
+import org.mayocat.addons.web.AddonsWebObjectBuilder;
+import org.mayocat.attachment.AttachmentLoadingOptions;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.entity.EntityData;
+import org.mayocat.entity.EntityDataLoader;
+import org.mayocat.entity.StandardOptions;
 import org.mayocat.image.model.Image;
-import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.builder.ImageContextBuilder;
-import org.mayocat.shop.front.resources.AbstractWebViewResource;
-import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 /**
@@ -58,10 +61,16 @@ public class SiteWebDataSupplier implements WebDataSupplier
     @Inject
     private PlatformSettings platformSettings;
 
+    @Inject
+    private EntityDataLoader dataLoader;
+
+    @Inject
+    private AddonsWebObjectBuilder addonsWebObjectBuilder;
+
     @Override
     public void supply(Map<String, Object> data)
     {
-        Tenant tenant = context.getTenant();
+        final Tenant tenant = context.getTenant();
         ThemeDefinition theme = context.getTheme().getDefinition();
 
         Map site = Maps.newHashMap();
@@ -69,27 +78,30 @@ public class SiteWebDataSupplier implements WebDataSupplier
         site.put(SITE_DESCRIPTION, tenant.getDescription());
         ImageContextBuilder imageContextBuilder = new ImageContextBuilder(theme);
 
-        List<Attachment> siteAttachments = this.attachmentStore.get().findAllChildrenOf(tenant);
-        List<Image> siteImages = new ArrayList<Image>();
-        for (Attachment attachment : siteAttachments) {
-            if (AbstractWebViewResource.isImage(attachment)) {
-                if (attachment.getId().equals(tenant.getFeaturedImageId())) {
-                    List<Thumbnail> thumbnails = thumbnailStore.get().findAll(attachment);
-                    Image image = new Image(attachment, thumbnails);
-                    siteImages.add(image);
-                    site.put("logo", imageContextBuilder.createImageContext(image, true));
-                }
+        EntityData<Tenant> tenantData =
+                dataLoader.load(tenant, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY);
+
+        List<Image> images = tenantData.getDataList(Image.class);
+        Optional<Image> logo = FluentIterable.from(images).firstMatch(new Predicate<Image>()
+        {
+            public boolean apply(@Nullable Image input)
+            {
+                return input.getAttachment().getId().equals(tenant.getFeaturedImageId());
             }
+        });
+
+        if (logo.isPresent()) {
+            site.put("logo", imageContextBuilder.createImageContext(logo.get(), true));
         }
 
         if (tenant.getAddons().isLoaded()) {
-            AddonContextBuilder addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroupDefinition> platformAddons = platformSettings.getAddons();
-            site.put("platform_addons",
-                    addonContextBuilder.build(platformAddons, tenant.getAddons().get(), "platform"));
+            Map<String, Object> addons = addonsWebObjectBuilder.build(tenantData);
+            site.put("addons", addons);
+
+            // For backward compatibility
+            site.put("platform_addons", addons);
         }
 
         data.put(SITE, site);
-
     }
 }
