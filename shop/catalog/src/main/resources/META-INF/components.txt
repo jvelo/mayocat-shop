@@ -17,6 +17,7 @@ org.mayocat.shop.catalog.search.CollectionIndexDocumentPurveyor
 org.mayocat.shop.catalog.search.ProductIndexDocumentPurveyor
 org.mayocat.shop.catalog.search.ProductEntityMappingGenerator
 org.mayocat.shop.catalog.search.TenantEntityMappingGenerator
+org.mayocat.shop.catalog.web.DefaultProductListWebViewDelegate
 org.mayocat.shop.catalog.web.ProductWebView
 org.mayocat.shop.catalog.web.HomeWebView
 org.mayocat.shop.catalog.web.CollectionWebView

@@ -195,8 +195,8 @@
             }
         }])
 
-        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location', 'entityLocalizationMixin',
-            function ($http, $rootScope, $modal, $location, entityLocalizationMixin) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location',
+            function ($http, $rootScope, $modal, $location) {
             return function (entityType, options) {
                 var mixin = {};
 
@@ -232,6 +232,7 @@
                     if (typeof $scope[entityType] !== 'undefined' &&
                         typeof $scope[entityType]._embedded !== 'undefined' &&
                         typeof $scope[entityType]._embedded.images !== 'undefined') {
+
                         return $scope[entityType]._embedded.images.length;
                     }
                     return 0;
@@ -258,10 +259,6 @@
                     var scope = this;
                     $http.get($rootScope.entity.uri + "/images")
                         .success(function (data) {
-
-                            // TODO
-                            // remove when all entities have adopted the new API model (_embedded images, see below)
-                            scope[entityType].images = data;
 
                             if (typeof scope[entityType]._embedded !== "undefined") {
                                 scope[entityType]._embedded.images = data;

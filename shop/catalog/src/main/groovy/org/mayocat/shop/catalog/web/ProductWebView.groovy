@@ -11,25 +11,31 @@ import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
 import org.mayocat.addons.AddonsTransformer
+import org.mayocat.attachment.AttachmentLoadingOptions
+import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
+import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
+import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.ProductCollection
+import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.catalog.web.object.ProductWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
+import org.mayocat.theme.ThemeFileResolver
+import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
@@ -50,7 +56,7 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class ProductWebView extends AbstractProductListWebView implements Resource
+class ProductWebView implements Resource
 {
     @Inject
     Provider<ProductStore> productStore;
@@ -61,12 +67,34 @@ class ProductWebView extends AbstractProductListWebView implements Resource
     @Inject
     EntityDataLoader dataLoader
 
+    @Inject
+    ConfigurationService configurationService
+
+    @Inject
+    Provider<CollectionStore> collectionStoreProvider
+
+    @Inject
+    WebContext context
+
+    @Inject
+    EntityURLFactory urlFactory
+
+    @Inject
+    ThemeFileResolver themeFileResolver
+
+    @Inject
+    EntityLocalizationService entityLocalizationService
+
+    @Inject
+    @Delegate
+    ProductListWebViewDelegate listWebViewDelegate
+
     @GET
     def getProducts(@QueryParam("page") @DefaultValue("1") Integer page, @Context UriInfo uriInfo)
     {
         final int currentPage = page < 1 ? 1 : page;
         Integer numberOfProductsPerPage =
-            context.theme.definition.getPaginationDefinition("products").getItemsPerPage();
+                context.theme.definition.getPaginationDefinition("products").getItemsPerPage();
 
         Integer offset = (page - 1) * numberOfProductsPerPage;
         Integer totalCount = this.productStore.get().countAllOnShelf();
@@ -76,10 +104,16 @@ class ProductWebView extends AbstractProductListWebView implements Resource
         context.put(ContextConstants.PAGE_TITLE, "All products");
 
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProductsPerPage, offset);
+        List<EntityData<Product>> productsData = dataLoader.load(products,
+                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY,
+                StandardOptions.LOCALIZE
+        )
+
         List<UUID> productIds = products.collect { Product product -> product.id }
 
         List<Collection> collections = collectionStoreProvider.get().findAllForProductIds(productIds)
-        List<ProductCollection> productsCollections = collectionStoreProvider.get().findAllProductsCollectionsForIds(productIds)
+        List<ProductCollection> productsCollections = collectionStoreProvider.get().
+                findAllProductsCollectionsForIds(productIds)
 
         products.each({ Product product ->
             def productCollections = productsCollections.findAll { ProductCollection productCollection ->
@@ -91,7 +125,7 @@ class ProductWebView extends AbstractProductListWebView implements Resource
             product.setCollections(productCollections)
         })
 
-        context.put("products", createProductListContext(currentPage, totalPages, products, {
+        context.put("products", buildProductListWebObject(currentPage, totalPages, productsData, {
             Integer p -> MessageFormat.format("/products/?page={0}", p);
         }));
 
@@ -101,7 +135,8 @@ class ProductWebView extends AbstractProductListWebView implements Resource
     @Path("{slug}/{feat1}/{slug1}")
     @GET
     def getProductWithOneFeature(@PathParam("slug") String slug, @PathParam("feat1") String feat1,
-        @PathParam("slug1") String slug1) {
+            @PathParam("slug1") String slug1)
+    {
         def selectedFeatures = [:]
         selectedFeatures.put(feat1, slug1)
         return getProduct(slug, selectedFeatures)
@@ -111,7 +146,8 @@ class ProductWebView extends AbstractProductListWebView implements Resource
     @GET
     def getProductWithTwoFeature(@PathParam("slug") String slug, @PathParam("feat1") String feat1,
             @PathParam("slug1") String slug1, @PathParam("feat2") String feat2,
-            @PathParam("slug2") String slug2) {
+            @PathParam("slug2") String slug2)
+    {
         def selectedFeatures = [:]
         selectedFeatures.put(feat1, slug1)
         selectedFeatures.put(feat2, slug2)
@@ -123,7 +159,8 @@ class ProductWebView extends AbstractProductListWebView implements Resource
     def getProductWithThreeFeature(@PathParam("slug") String slug, @PathParam("feat1") String feat1,
             @PathParam("slug1") String slug1, @PathParam("feat2") String feat2,
             @PathParam("slug2") String slug2, @PathParam("feat3") String feat3,
-            @PathParam("slug3") String slug3) {
+            @PathParam("slug3") String slug3)
+    {
         def selectedFeatures = [:]
         selectedFeatures.put(feat1, slug1)
         selectedFeatures.put(feat2, slug2)
@@ -155,8 +192,8 @@ class ProductWebView extends AbstractProductListWebView implements Resource
         }
 
         def context = new HashMap<String, Object>([
-                "title": product.title,
-                "description" : product.description
+                "title"      : product.title,
+                "description": product.description
         ])
 
         EntityData<Product> data = dataLoader.load(product, StandardOptions.LOCALIZE)
@@ -177,7 +214,7 @@ class ProductWebView extends AbstractProductListWebView implements Resource
         // Collections / featured collection
         if (product.featuredCollection.isLoaded()) {
             productWebObject.withCollection(entityLocalizationService.localize(product.featuredCollection.get())
-                as org.mayocat.shop.catalog.model.Collection, urlFactory)
+                    as org.mayocat.shop.catalog.model.Collection, urlFactory)
         }
 
         if (product.virtual) {

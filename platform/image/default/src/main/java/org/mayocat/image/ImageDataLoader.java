@@ -67,6 +67,7 @@ public class ImageDataLoader implements DataLoaderAssistant
             public Image apply(Attachment attachment)
             {
                 // Costy :/
+                // See this.thumbnailStoreProvider.get().findAllForIds(featuredImageIds);
                 List<Thumbnail> thumbnails = thumbnailStore.findAll(attachment);
 
                 return new Image(options.contains(StandardOptions.LOCALIZE) ? localizationService.localize(attachment) :

@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.cms.news.model.Article
 import org.mayocat.cms.news.store.ArticleStore
 import org.mayocat.cms.news.web.object.ArticleListWebObject
@@ -17,23 +18,28 @@ import org.mayocat.cms.news.web.object.ArticleWebObject
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.cms.pages.web.object.PageWebObject
+import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
-import org.mayocat.image.model.Thumbnail
-import org.mayocat.model.Attachment
+import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.ProductCollection
+import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.front.context.ContextConstants
-import org.mayocat.shop.front.resources.AbstractWebViewResource
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeDefinition
+import org.mayocat.theme.ThemeFileResolver
+import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
@@ -55,7 +61,7 @@ import java.text.MessageFormat
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class HomeWebView extends AbstractProductListWebView implements Resource
+class HomeWebView implements Resource
 {
     @Inject
     Provider<ProductStore> productStore;
@@ -70,12 +76,36 @@ class HomeWebView extends AbstractProductListWebView implements Resource
     Provider<EntityListStore> entityListStore
 
     @Inject
+    EntityDataLoader dataLoader
+
+    @Inject
     WebContext webContext
+
+    @Inject
+    Provider<CollectionStore> collectionStoreProvider
+
+    @Inject
+    EntityURLFactory urlFactory
+
+    @Inject
+    ThemeFileResolver themeFileResolver
+
+    @Inject
+    EntityLocalizationService entityLocalizationService
+
+    @Inject
+    ConfigurationService configurationService
+
+    @Inject
+    @Delegate
+    ProductListWebViewDelegate listWebViewDelegate
 
     @GET
     def getHomePage()
     {
         Map<String, Object> context = new HashMap<>();
+
+        ThemeDefinition theme = this.webContext.theme?.definition
 
         // Featured products
 
@@ -85,18 +115,26 @@ class HomeWebView extends AbstractProductListWebView implements Resource
             List<Product> sorted = lists.first().entities.collect({ UUID id ->
                 products.find({ Product product -> product.id == id })
             })
-            context.put("featuredProducts", createProductListContextList(sorted));
 
+            List<EntityData<Product>> productsData = dataLoader.
+                    load(sorted, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY, StandardOptions.LOCALIZE)
+            context.put("featuredProducts", buildProductListListWebObject(productsData, Optional.absent()));
         }
 
         // All products
 
         Integer numberOfProducts =
-                this.context.getTheme().definition.getPaginationDefinition("home").itemsPerPage;
+                this.webContext.getTheme().definition.getPaginationDefinition("home").itemsPerPage;
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0)
+        List<EntityData> productsData = dataLoader.load(products,
+                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY,
+                StandardOptions.LOCALIZE
+        )
         List<UUID> productIds = products.collect { Product product -> product.id }
-        List<org.mayocat.shop.catalog.model.Collection> collections = collectionStoreProvider.get().findAllForProductIds(productIds)
-        List<ProductCollection> productsCollections = collectionStoreProvider.get().findAllProductsCollectionsForIds(productIds)
+        List<org.mayocat.shop.catalog.model.Collection> collections = collectionStoreProvider.get().
+                findAllForProductIds(productIds)
+        List<ProductCollection> productsCollections = collectionStoreProvider.get().
+                findAllProductsCollectionsForIds(productIds)
 
         products.each({ Product product ->
             def productCollections = productsCollections.findAll { ProductCollection productCollection ->
@@ -110,7 +148,7 @@ class HomeWebView extends AbstractProductListWebView implements Resource
 
         Integer totalCount = this.productStore.get().countAllOnShelf();
         Integer totalPages = IntMath.divide(totalCount, numberOfProducts, RoundingMode.UP);
-        context.put("products", createProductListContext(1, totalPages, products, {
+        context.put("products", buildProductListWebObject(1, totalPages, productsData, {
             Integer page -> MessageFormat.format("/products/?page={0}", page);
         }))
 
@@ -121,22 +159,13 @@ class HomeWebView extends AbstractProductListWebView implements Resource
             context.put(ContextConstants.PAGE_TITLE, page.getTitle());
             context.put(ContextConstants.PAGE_DESCRIPTION, page.getContent());
 
-            ThemeDefinition theme = this.context.getTheme().getDefinition();
-
-            List<Attachment> attachments = this.attachmentStoreProvider.get().findAllChildrenOf(page, Arrays
-                    .asList("png", "jpg", "jpeg", "gif"));
-            List<Image> images = new ArrayList<>();
-            attachments.each({ Attachment attachment ->
-                if (AbstractWebViewResource.isImage(attachment)) {
-                    List<Thumbnail> thumbnails = thumbnailStoreProvider.get().findAll(attachment);
-                    images << new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails);
-                }
-            })
+            EntityData<Page> pageData = dataLoader.load(page, StandardOptions.LOCALIZE)
+            List<Image> images = pageData.getDataList(Image.class)
 
             PageWebObject pageWebObject = new PageWebObject()
             pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory,
-                    Optional.fromNullable(webContext.theme?.definition), themeFileResolver)
-            pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(webContext.theme?.definition))
+                    Optional.fromNullable(theme), themeFileResolver)
+            pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
             context.put("home", pageWebObject);
         }
 
@@ -144,48 +173,32 @@ class HomeWebView extends AbstractProductListWebView implements Resource
 
         GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class) // <o
 
-        Integer numberOfArticlesPerPAge = this.context.getTheme().getDefinition()
-                .getPaginationDefinition("home").getOtherDefinition("articles").or(6);
+        Integer numberOfArticlesPerPAge = theme ? theme.getPaginationDefinition("home")
+                .getOtherDefinition("articles").or(6) : 6;
 
-        List<Attachment> allImages;
-        List<Thumbnail> allThumbnails;
         List<Article> articles = articleStore.get().findAllPublished(0, numberOfArticlesPerPAge);
-        List<UUID> featuredImageIds = articles.collect({ Article a -> a.featuredImageId })
-                .findAll({ UUID id -> id != null }) as List<UUID>
-
-        if (featuredImageIds.isEmpty()) {
-            allImages = [];
-            allThumbnails = [];
-        } else {
-            allImages = this.attachmentStoreProvider.get().findByIds(featuredImageIds);
-            allThumbnails = this.thumbnailStoreProvider.get().findAllForIds(featuredImageIds);
-        }
+        List<EntityData<Article>> articlesData = dataLoader.load(articles,
+                StandardOptions.LOCALIZE,
+                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY
+        )
 
         List<ArticleWebObject> articleList = []
 
-        articles.each({ Article article ->
-            def featuredImage
-            def featuredImageAttachment = allImages.find({ Attachment attachment -> attachment.id == article.featuredImageId })
-            if (featuredImageAttachment) {
-                featuredImage = new Image(featuredImageAttachment, allThumbnails.findAll({
-                    Thumbnail thumbnail -> thumbnail.attachmentId == featuredImageAttachment.id
-                }) as List<Thumbnail>)
-            }
+        articlesData.each({ EntityData<Article> articleData ->
+            Article article = articleData.entity
+            List<Image> images = articleData.getDataList(Image.class)
 
             ArticleWebObject articleWebObject = new ArticleWebObject()
             articleWebObject.withArticle(article, urlFactory, generalSettings.locales.mainLocale.value,
-                    Optional.fromNullable(webContext.theme?.definition));
+                    Optional.fromNullable(theme));
 
-            if (featuredImage) {
-                articleWebObject.withImages([featuredImage] as List<Image>, article.featuredImageId,
-                        Optional.fromNullable(webContext.theme?.definition))
-            }
+            articleWebObject.withImages(images, article.featuredImageId, Optional.fromNullable(theme))
 
             articleList << articleWebObject
         })
 
         PaginationWebObject pagination = new PaginationWebObject()
-        pagination.withPages(1, totalPages, { Integer p -> MessageFormat.format("/news/{0}", p)});
+        pagination.withPages(1, totalPages, { Integer p -> MessageFormat.format("/news/{0}", p) });
 
         context.put("articles", new ArticleListWebObject(
                 pagination: pagination,
