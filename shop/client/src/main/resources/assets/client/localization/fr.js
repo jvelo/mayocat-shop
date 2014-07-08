@@ -96,7 +96,7 @@
             },
 
             alert: {
-                fileTooBig: "Certains de vos fichiers dépassent la taille maximale autorisée (20 Mo) et ne seront donc pas ajoutés."
+                oversize: "{filesNb, select, one{Votre fichier dépasse} all{Vos fichiers dépassent} other{Certains de vos fichiers dépassent}} la taille maximale autorisée (20 Mo) et ne {filesNb, select, one{sera donc pas ajouté} all{seront donc pas ajoutés} other{seront donc pas ajoutés}}."
             }
         },
 

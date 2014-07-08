@@ -106,7 +106,13 @@
                 });
 
                 if (upload.files.length < filesLengthBeforefilter) {
-                    notificationService.notify($translate('upload.alert.fileTooBig'), {level: 'error'});
+                    var filesNb = 'one';
+
+                    if (filesLengthBeforefilter > 1) {
+                        filesNb = upload.files.length == 0 ? 'all' : 'other';
+                    }
+
+                    notificationService.notify($translate('upload.alert.oversize', {filesNb: filesNb}), {level: 'error'});
 
                     // Cancel the upload if there's no file left after filtering.
                     if (upload.files.length <= 0) {
