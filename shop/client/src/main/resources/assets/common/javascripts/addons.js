@@ -327,7 +327,7 @@
                                 }
 
                                 var localizedGroup = entity._localized[locale].addons[groupKey];
-                                if (localizedGroup === 'undefined') {
+                                if (typeof localizedGroup === 'undefined') {
                                     localizedGroup = angular.copy(group);
 
                                     // Localized version of the addon does not exist yet : we create it
@@ -356,7 +356,6 @@
                                     }
                                 }
 
-                                var localizedGroup = entity._localized[locale].addons[groupKey];
                                 if (typeof localizedGroup.value === 'undefined') {
                                     localizedGroup.value = {};
                                 }
