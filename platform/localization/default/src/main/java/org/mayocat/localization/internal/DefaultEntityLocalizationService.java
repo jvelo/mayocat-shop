@@ -168,26 +168,31 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
                         // Sequence addons
 
                         List<Map<String, Object>> values = (List<Map<String, Object>>) addon.getValue();
-                        List<Map<String, Object>> localizedGroupValue =
-                                (List<Map<String, Object>>) localizedGroup.get("value");
+                        try {
+                            List<Map<String, Object>> localizedGroupValue =
+                                    (List<Map<String, Object>>) localizedGroup.get("value");
+                            Integer i = 0;
+                            for (Map<String, Object> value : values) {
+                                Map<String, Object> localizedGroupValueItem = localizedGroupValue.get(i);
 
-                        Integer i = 0;
-                        for (Map<String, Object> value : values) {
-                            Map<String, Object> localizedGroupValueItem = localizedGroupValue.get(i);
+                                for (String field : value.keySet()) {
+                                    Object localizedValue = localizedGroupValueItem.get(field);
 
-                            for (String field : value.keySet()) {
-                                Object localizedValue = localizedGroupValueItem.get(field);
+                                    if (localizedValue == null ||
+                                            (String.class.isAssignableFrom(localizedValue.getClass()) &&
+                                                    Strings.isNullOrEmpty((String) localizedValue)))
+                                    {
+                                        // Ignore empty strings, consider them as nulls
+                                        continue;
+                                    }
 
-                                if (localizedValue == null ||
-                                        (String.class.isAssignableFrom(localizedValue.getClass()) &&
-                                                Strings.isNullOrEmpty((String) localizedValue)))
-                                {
-                                    // Ignore empty strings, consider them as nulls
-                                    continue;
+                                    ((List<Map<String, Object>>) addon.getValue()).get(i).put(field, localizedValue);
                                 }
-
-                                ((List<Map<String, Object>>) addon.getValue()).get(i).put(field, localizedValue);
+                                i++;
                             }
+                        }
+                        catch (ClassCastException e) {
+                            // Ignore...
                         }
                     }
                 }

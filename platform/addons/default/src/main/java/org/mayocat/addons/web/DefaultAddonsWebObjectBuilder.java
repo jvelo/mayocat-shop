@@ -8,6 +8,7 @@
 package org.mayocat.addons.web;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +22,10 @@ import org.mayocat.addons.web.AddonsWebObjectBuilder;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.entity.EntityData;
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.model.HasAddons;
+import org.mayocat.model.Localized;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
@@ -43,13 +46,22 @@ public class DefaultAddonsWebObjectBuilder implements AddonsWebObjectBuilder
     @Inject
     private Map<String, AddonFieldTransformer> fieldTransformers;
 
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
+
     public Map<String, Object> build(EntityData<? extends HasAddons> entityData)
     {
         Map<String, Object> result = Maps.newHashMap();
 
-        HasAddons entity = entityData.getEntity();
+        HasAddons entity;
+        if (Localized.class.isAssignableFrom(entityData.getEntity().getClass())) {
+            entity = (HasAddons) entityLocalizationService.localize((Localized) entityData.getEntity());
+        } else {
+            entity = entityData.getEntity();
+        }
+
         if (!entity.getAddons().isLoaded()) {
-            throw new RuntimeException("Cannot build addons web object if addons are not loaded");
+            return Collections.emptyMap();
         }
         Map<String, AddonGroup> addons = entity.getAddons().get();
 

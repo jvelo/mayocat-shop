@@ -11,13 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.mayocat.addons.model.AddonFieldDefinition;
-import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.addons.web.AddonFieldValueWebObject;
 import org.mayocat.entity.EntityData;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+
+import static org.mayocat.addons.util.AddonUtils.getListValues;
+import static org.mayocat.addons.util.AddonUtils.isListWithKeyAndDisplayValues;
 
 /**
  * @version $Id$
@@ -28,11 +30,9 @@ public class StringAddonTransformer implements AddonFieldTransformer
     public Optional<AddonFieldValueWebObject> toWebView(EntityData<?> entityData,
             AddonFieldDefinition addonField, Object fieldValue)
     {
-        if (addonField.getProperties().containsKey("listValues") &&
-                AddonUtils.isListWithKeyAndDisplayValues(addonField))
+        if (isListWithKeyAndDisplayValues(addonField))
         {
-            List<Map<String, Object>> listValues =
-                    (List<Map<String, Object>>) addonField.getProperties().get("listValues");
+            List<Map<String, Object>> listValues = getListValues(addonField);
             Object displayValue = null;
             for (Map<String, Object> entry : listValues) {
                 if (entry.containsKey("key") && fieldValue != null &&

@@ -80,7 +80,7 @@
             registerEditor("selectBox", {
                 tagName:"select",
                 type:"string",
-                extraAttributes:"ng-options='value.key || value as value.name || value for value in addon.properties.listValues'",
+                extraAttributes:"ng-options='value.key || value as value.name || value for value in addon.properties[\"list.values\"]'",
                 postProcess:function (string) {
                     return "<div>" + string + "</div>"
                 }
@@ -292,6 +292,12 @@
                                 definitionKeys.forEach(function (key) {
                                     var definition = definitions[key];
 
+                                    if (typeof definition.properties !== 'undefined'
+                                        && typeof definition.properties.listValues !== 'undefined') {
+                                        // Backward compatibility : "list.values" property used to be "listValues"
+                                        definition.properties['list.values'] = definition.properties.listValues;
+                                    }
+
                                     if (typeof entity.addons[groupKey].model === 'undefined') {
                                         entity.addons[groupKey].model = {}
                                     }
@@ -320,9 +326,11 @@
                                     entity._localized[locale].addons = {};
                                 }
 
-                                if (typeof entity._localized[locale].addons[groupKey] === 'undefined') {
-                                    entity._localized[locale].addons[groupKey] = angular.copy(group);
-                                    var localizedGroup = entity._localized[locale].addons[groupKey];
+                                var localizedGroup = entity._localized[locale].addons[groupKey];
+                                if (localizedGroup === 'undefined') {
+                                    localizedGroup = angular.copy(group);
+
+                                    // Localized version of the addon does not exist yet : we create it
 
                                     if (!localizedGroup.value.length) {
                                         // Non-sequence
@@ -333,6 +341,18 @@
                                     else {
                                         // Sequence
                                         localizedGroup.value = [];
+                                    }
+                                } else {
+                                    // Localized version already exist. Check if consistent
+
+                                    if (group.value instanceof Array && !(localizedGroup.value instanceof Array)) {
+                                        // The localized version is not an array, but the actual version is, let's fix it
+                                        localizedGroup.value = [ localizedGroup.value ];
+                                    }
+
+                                    else if (!(group.value instanceof Array) && localizedGroup.value instanceof Array) {
+                                        // The localized version is an array but the actual version is not, let's fix it
+                                        localizedGroup.value = localizedGroup.value[0] || {};
                                     }
                                 }
 
@@ -416,7 +436,12 @@
 
                         if (typeof $scope.entity._localized !== 'undefined') {
                             Object.keys($scope.entity._localized).forEach(function (locale) {
-                                $scope.entity._localized[locale].addons[group.key].value.splice(index, 1);
+                                try {
+                                    typeof $scope.entity._localized[locale].addons[group.key].value.splice === 'function'
+                                    && $scope.entity._localized[locale].addons[group.key].value.splice(index, 1);
+                                } catch (err) {
+                                    // Ignore (locale not used anymore, etc.)
+                                }
                             });
                         }
                     }
@@ -426,7 +451,12 @@
 
                         if (typeof $scope.entity._localized !== 'undefined') {
                             Object.keys($scope.entity._localized).forEach(function (locale) {
-                                $scope.entity._localized[locale].addons[group.key].value.push(group.getValueShell());
+                                try {
+                                    typeof $scope.entity._localized[locale].addons[group.key].value.push === 'function'
+                                    && $scope.entity._localized[locale].addons[group.key].value.push(group.getValueShell());
+                                } catch (err) {
+                                    // Ignore (locale not used anymore, etc.)
+                                }
                             });
                         }
                     }

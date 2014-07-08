@@ -32,8 +32,8 @@ public class AddonUtils
     }
 
     /**
-     * Finds a addon group definition in a list of group definitions. The priority of the group definitions is order
-     * in which they are passed : first passed has the highest priority, last passed the lowest.
+     * Finds a addon group definition in a list of group definitions. The priority of the group definitions is order in
+     * which they are passed : first passed has the highest priority, last passed the lowest.
      *
      * @param name the name of the addon group definition to find
      * @param groupDefinitions the list of group definitions
@@ -60,7 +60,11 @@ public class AddonUtils
         if (properties == null) {
             return false;
         }
-        Object listValues = properties.get("listValues");
+        Object listValues = properties.get("list.values");
+        if (listValues == null) {
+            // For backward compatibility
+            listValues = properties.get("listValues");
+        }
         if (listValues == null) {
             return false;
         }
@@ -74,5 +78,14 @@ public class AddonUtils
             return false;
         }
         return true;
+    }
+
+    public static List<Map<String, Object>> getListValues(AddonFieldDefinition fieldDefinition)
+    {
+        if (fieldDefinition.getProperties().containsKey("list.values")) {
+            return (List<Map<String, Object>>) fieldDefinition.getProperties().get("list.values");
+        }
+        // Backward compatibility
+        return (List<Map<String, Object>>) fieldDefinition.getProperties().get("listValues");
     }
 }
