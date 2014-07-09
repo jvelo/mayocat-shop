@@ -317,25 +317,15 @@ class CollectionApi implements Resource, Initializable
             } else {
 
                 def id = collection.id
+                def featuredImageId = collection.featuredImageId
                 collection = collectionApiObject.toCollection()
 
                 // ID and slugs are not update-able
                 collection.id = id
                 collection.slug = slug
 
-                if (collectionApiObject._embedded && collectionApiObject._embedded.get("featuredImage")) {
-                    // FIXME:
-                    // This should be done via the {slug}/images/ API instead
-
-                    ImageApiObject featured = collectionApiObject._embedded.get("featuredImage") as ImageApiObject
-
-                    Attachment featuredImage =
-                        this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension);
-
-                    if (featuredImage) {
-                        collection.featuredImageId = featuredImage.id
-                    }
-                }
+                // Featured image is updated via the /images API only, set it back
+                collection.featuredImageId = featuredImageId
 
                 this.catalogService.updateCollection(collection);
 

@@ -263,28 +263,16 @@ class PageApi implements Resource, Initializable
             if (page == null) {
                 return Response.status(404).build();
             } else {
-
+                def id = page.id
+                def featuredImageId = page.featuredImageId
                 page = pageApiObject.toPage(platformSettings,
                         Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
                 // Slug can't be update this way no matter what
                 page.slug = slug
 
-                // Featured image
-                if (pageApiObject._embedded && pageApiObject._embedded.get("featuredImage")) {
-
-                    // FIXME:
-                    // This should be done via the {slug}/images/ API instead
-
-                    ImageApiObject featured = pageApiObject._embedded.get("featuredImage") as ImageApiObject
-
-                    Attachment featuredImage =
-                        this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension);
-
-                    if (featuredImage) {
-                        page.featuredImageId = featuredImage.id
-                    }
-                }
+                // Featured image is updated via the /images API only, set it back
+                page.featuredImageId = featuredImageId
 
                 this.pageStore.get().update(page);
             }

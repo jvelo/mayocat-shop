@@ -288,11 +288,16 @@ class ProductApi implements Resource, Initializable
                 return Response.status(404).build();
             } else {
                 def id = product.id
+                def featuredImageId = product.featuredImageId
+
                 product = productApiObject.toProduct(platformSettings,
                         Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
                 // ID and slugs are not update-able
                 product.id = id
                 product.slug = slug
+
+                // Featured image is updated via the /images API only, set it back
+                product.featuredImageId = featuredImageId
 
                 // Check if virtual flag must be removed or set
                 if (Strings.isNullOrEmpty(productApiObject.type) && product.virtual) {

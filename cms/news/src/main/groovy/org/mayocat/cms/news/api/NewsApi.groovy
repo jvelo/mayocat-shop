@@ -276,11 +276,15 @@ class NewsApi implements Resource, Initializable
             if (article == null) {
                 return Response.status(404).build()
             } else {
+                def featuredImageId = article.featuredImageId
 
                 article = articleApiObject.toArticle(platformSettings, Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
                 // Slug can't be update this way no matter what
                 article.slug = slug
+
+                // Article featured image is updated via the /images API only, set it back
+                article.featuredImageId = featuredImageId
 
                 if (isJustBeingPublished(article, articleApiObject) &&
                         articleApiObject.getPublicationDate() == null)
@@ -292,22 +296,6 @@ class NewsApi implements Resource, Initializable
                 }
 
                 article.setPublished(articleApiObject.published)
-
-                // Featured image
-                if (articleApiObject._embedded && articleApiObject._embedded.get("featuredImage")) {
-
-                    // FIXME:
-                    // This should be done via the {slug}/images/ API instead
-
-                    ImageApiObject featured = articleApiObject._embedded.get("featuredImage") as ImageApiObject
-
-                    Attachment featuredImage =
-                        this.attachmentStore.get().findBySlugAndExtension(featured.slug, featured.file.extension)
-
-                    if (featuredImage) {
-                        article.featuredImageId = featuredImage.id
-                    }
-                }
 
                 this.articleStore.get().update(article)
             }

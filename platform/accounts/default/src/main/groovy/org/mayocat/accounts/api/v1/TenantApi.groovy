@@ -169,7 +169,11 @@ class TenantApi implements Resource, Initializable {
                 Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
         // Forbid to change slug
+        tenant.id = currentTenant.id
         tenant.slug = currentTenant.slug
+
+        // Featured image is updated via the /images API only, set it back
+        tenant.featuredImageId = currentTenant.featuredImageId
 
         try {
             this.accountsService.updateTenant(tenant)
