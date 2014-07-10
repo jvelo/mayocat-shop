@@ -225,26 +225,11 @@
                                     </span>
                         </td>
                         <td><money-amount ng-model="rule.price" currency="{{mainCurrency}}"/></td>
-                        <td><a ng-click="editedCarrier.rules.splice($index, 1)">
-                            {{'entity.action.remove' | translate}}
-                        </a></td>
-                    </tr>
-                    <tr class="disabled hasInputs">
                         <td>
-                            {{'settings.misc.carrierValuePart1' | translate}}
-                            <input type="text" class="span1" value="" disabled/>
-                            {{'settings.misc.carrierValuePart2' | translate}}
-                            <input type="text" class="span1" disabled/>
-                            <span ng-show="editedCarrier.strategy == 'weight'"> {{weightUnit}} </span>
-                            <span ng-show="editedCarrier.strategy == 'price'"> {{mainCurrency}}</span>
+                            <a ng-show="!$first || !$last" ng-click="editedCarrier.rules.splice($index, 1)">{{'entity.action.remove' | translate}}</a>
+                            <span ng-show="!$first && $last">-</span>
+                            <a ng-show="$last" ng-click="editedCarrier.rules.push({});">{{'global.actions.add' | translate}}</a>
                         </td>
-                        <td>
-                            <div class="input-append">
-                                <input class="span2" type="text" disabled>
-                                <span class="add-on">{{mainCurrency}}</span>
-                            </div>
-                        </td>
-                        <td><a ng-click="editedCarrier.rules.push({});">Add</a></td>
                     </tr>
                     <tr ng-show="editedCarrier.strategy == 'weight'" class="hasInput">
                         <td>
