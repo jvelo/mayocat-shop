@@ -241,7 +241,8 @@
 
             status: {
                 onShelf: "On shelf",
-                withdrawnFromSale: "Withdrawn from sale"
+                withdrawnFromSale: "Withdrawn from sale",
+                moved: "The product has been moved"
             },
 
             action: {
@@ -280,6 +281,10 @@
         image: {
             title: {
                 images: "Images ({imagesLength})"
+            },
+
+            status: {
+                moved: "The image has been moved"
             },
 
             action: {

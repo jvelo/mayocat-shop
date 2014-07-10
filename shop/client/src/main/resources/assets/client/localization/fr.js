@@ -211,7 +211,8 @@
 
             status: {
                 onShelf: "En rayon",
-                withdrawnFromSale: "Retiré de la vente"
+                withdrawnFromSale: "Retiré de la vente",
+                moved: "Le produit a bien été déplacé"
             },
 
             action: {
@@ -246,6 +247,10 @@
         image: {
             title: {
                 images: "Images ({imagesLength})"
+            },
+
+            status: {
+                moved: "L'image a bien été déplacée"
             },
 
             action: {
