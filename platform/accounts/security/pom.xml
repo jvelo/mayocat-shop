@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-accounts</artifactId>
-        <version>0.30-SNAPSHOT</version>
+        <version>0.30.0</version>
     </parent>
     <artifactId>mayocat-platform-accounts-security</artifactId>
     <packaging>jar</packaging>
@@ -56,15 +56,13 @@
                         <phase>compile</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="${basedir}/src/main/groovy"/>
-                                <taskdef name="groovyc"
-                                         classname="org.codehaus.groovy.ant.Groovyc">
-                                    <classpath refid="maven.compile.classpath"/>
+                                <mkdir dir="${basedir}/src/main/groovy" />
+                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+                                    <classpath refid="maven.compile.classpath" />
                                 </taskdef>
-                                <mkdir dir="${project.build.outputDirectory}"/>
-                                <groovyc destdir="${project.build.outputDirectory}"
-                                         srcdir="${basedir}/src/main/groovy/" listfiles="true">
-                                    <classpath refid="maven.compile.classpath"/>
+                                <mkdir dir="${project.build.outputDirectory}" />
+                                <groovyc destdir="${project.build.outputDirectory}" srcdir="${basedir}/src/main/groovy/" listfiles="true">
+                                    <classpath refid="maven.compile.classpath" />
                                 </groovyc>
                             </tasks>
                         </configuration>
@@ -77,15 +75,13 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="${basedir}/src/test/groovy"/>
-                                <taskdef name="groovyc"
-                                         classname="org.codehaus.groovy.ant.Groovyc">
-                                    <classpath refid="maven.test.classpath"/>
+                                <mkdir dir="${basedir}/src/test/groovy" />
+                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+                                    <classpath refid="maven.test.classpath" />
                                 </taskdef>
-                                <mkdir dir="${project.build.testOutputDirectory}"/>
-                                <groovyc destdir="${project.build.testOutputDirectory}"
-                                         srcdir="${basedir}/src/test/groovy/" listfiles="true">
-                                    <classpath refid="maven.test.classpath"/>
+                                <mkdir dir="${project.build.testOutputDirectory}" />
+                                <groovyc destdir="${project.build.testOutputDirectory}" srcdir="${basedir}/src/test/groovy/" listfiles="true">
+                                    <classpath refid="maven.test.classpath" />
                                 </groovyc>
                             </tasks>
                         </configuration>
