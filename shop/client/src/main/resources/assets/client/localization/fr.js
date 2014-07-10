@@ -116,6 +116,11 @@
         },
 
         imageEditor: {
+            misc: {
+                width: "de largeur",
+                height: "de hauteur"
+            },
+
             title: {
                 editImage: "Editer l'image"
             },

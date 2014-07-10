@@ -141,6 +141,11 @@
          */
 
         imageEditor: {
+            misc: {
+                width: "width",
+                height: "height"
+            },
+
             title: {
                 editImage: "Edit image"
             },
