@@ -30,6 +30,23 @@
         },
 
         /**
+         * All the titles used for the routes
+         */
+        routes: {
+            title: {
+                home: "Home",
+                orders: "Orders",
+                customers: "Customers",
+                homepage: "Home page",
+                news: "News",
+                pages: "Pages",
+                products: "Products",
+                catalog: "Catalog",
+                settings: "Settings"
+            }
+        },
+
+        /**
          * Translations linked to generic Mayocat entities
          */
         entity: {

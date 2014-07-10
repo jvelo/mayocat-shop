@@ -26,6 +26,20 @@
             select: "Selectionner"
         },
 
+        routes: {
+            title: {
+                home: "Accueil",
+                orders: "Commandes",
+                customers: "Clients",
+                homepage: "Page d'accueil",
+                news: "Actualités",
+                pages: "Pages",
+                products: "Produits",
+                catalog: "Catalogue",
+                settings: "Paramètres"
+            }
+        },
+
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
