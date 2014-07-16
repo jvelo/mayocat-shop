@@ -203,6 +203,7 @@
 
                 $scope.visible = false; // The drop zones are hidden by default.
                 $scope.dropZones = [];
+                $scope.hasAddons = false;
 
                 /**
                  * Show/Hide process for the container: Webkit is bugged (https://bugs.webkit.org/show_bug.cgi?id=66547)
@@ -245,6 +246,14 @@
 
                 // Adds a new drop zone.
                 function addDropZone(dropZoneScope) {
+                    // Is it for an addon?
+                    dropZoneScope.isAddon = dropZoneScope.target == 'addon';
+
+                    // If the current drop zone is for an addon, activate the addon layout for the container.
+                    if (dropZoneScope.isAddon) {
+                        $scope.hasAddons = true;
+                    }
+
                     // Remove the drop zone when the associated scope is destroyed.
                     dropZoneScope.$on('$destroy', function() {
                         var index = $scope.dropZones.indexOf(dropZoneScope);
@@ -370,7 +379,7 @@
                 }
 
                 // Add a new drop zone for this instance.
-                scope.$emit('upload:addDropZone');
+                scope.noDropZone || scope.$emit('upload:addDropZone');
             }
 
             return {
@@ -379,6 +388,8 @@
                 scope: {
                     'uploadUri': '@',
                     'multipleAttr': '@multiple',
+                    'noDropZone': '=',
+                    'dropTitle': '=',
                     'dropText': '=',
                     'target': '@',
                     'id': '=',

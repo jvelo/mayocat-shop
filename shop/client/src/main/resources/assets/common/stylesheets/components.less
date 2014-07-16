@@ -394,22 +394,93 @@ div.thumbnails-list ul li.active {
   }
 }
 
+@keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@-webkit-keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
+@keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
 /* Drop zone directive **/
 
 .drop-zones-container {
+  @padding: 100px;
+
   position: fixed;
   top: 0; left: 0;
   display: none;
   width: 100%; height: 100%;
+  padding: @padding;
   background: fade(@backgroundDarkGreen, 93%);
   z-index: 1100;
 
   &.active {
-    display: block;
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+  }
+
+  &.with-addons .drop-zone:not(.addon) .text {
+    top: 35%;
   }
 
   .drop-zone {
     position: relative;
+
+    &:not(.addon) {
+      position: absolute;
+      top: @padding; right: @padding; bottom: @padding; left: @padding;
+      font-size: 28px;
+    }
+
+    &.addon {
+      @margin: 35px;
+
+      -webkit-align-self: flex-end;
+      -ms-align-self: flex-end;
+      align-self: flex-end;
+
+      -webkit-flex-grow: 1;
+      -ms-flex-grow: 1;
+      flex-grow: 1;
+
+      margin: 0 0 @margin @margin;
+      height: 185px;
+      font-size: 18px;
+
+      &:last-child {
+        margin-right: @margin;
+      }
+    }
 
     &:after {
       position: absolute;
@@ -429,10 +500,25 @@ div.thumbnails-list ul li.active {
         url('/common/images/drop-border-h-hover.png') center bottom repeat-x,
         url('/common/images/drop-border-v-hover.png') left center repeat-y,
         url('/common/images/drop-border-v-hover.png') right center repeat-y;
+    }
 
+    &.active:not(.addon):after {
       -webkit-animation: drop-zone-bounce 200ms ease-in-out;
       animation: drop-zone-bounce 200ms ease-in-out;
     }
+
+    &.active.addon:after {
+      -webkit-animation: drop-zone-addon-bounce 200ms ease-in-out;
+      animation: drop-zone-addon-bounce 200ms ease-in-out;
+    }
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .title + p {
+    font-size: 14px;
   }
 
   .text {
@@ -445,16 +531,6 @@ div.thumbnails-list ul li.active {
 
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
-  }
-
-  /* Main drop zone */
-  & > .drop-zone {
-    @margin: 100px;
-
-    position: absolute;
-    top: @margin; right: @margin; bottom: @margin; left: @margin;
-    padding: 38px;
-    font-size: 28px;
   }
 }
 

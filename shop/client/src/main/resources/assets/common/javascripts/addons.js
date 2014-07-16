@@ -466,10 +466,11 @@
         .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
         return {
             scope:{
-                addon:'=definition',
-                object:'=',
-                localizedObject:"=",
-                key: '='
+                addon: '=definition',
+                object: '=',
+                localizedObject: '=',
+                key: '=',
+                noDropZone: '='
             },
             restrict:"E",
             link:function (scope, element, attrs) {

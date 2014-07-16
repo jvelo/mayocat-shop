@@ -17,12 +17,17 @@
              ng-if="internalModel && internalModel != ''"/>
     </p>
 
+    <div class="clearfix"></div>
+
     <div ng-show="!uploading">
         <image-upload upload-uri="{{getImageUploadUri()}}"
-                      drop-text="'upload.explanation.dropProduct' | translate:getTranslationProperties()"
+                      drop-title="addon.name"
+                      drop-text="addon.properties['upload.dropZoneLabel']"
                       target="addon"
                       id="id"
                       multiple="false"
-                      label="upload.action.select"></image-upload>
+                      no-drop-zone="noDropZone"
+                      label="upload.action.select">
+        </image-upload>
     </div>
 </div>

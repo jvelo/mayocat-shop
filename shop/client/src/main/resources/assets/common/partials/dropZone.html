@@ -7,10 +7,16 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<div class="drop-zones-container" ng-class="{active: visible}">
-    <div drop-zone ng-repeat="dropZone in dropZones" ng-class="{active: highlighted}" class="drop-zone">
-        <p class="text">
+<div class="drop-zones-container" ng-class="{ active: visible, 'with-addons': hasAddons }">
+    <div drop-zone ng-repeat="dropZone in dropZones" ng-class="{ active: highlighted, addon: dropZone.isAddon }" class="drop-zone">
+        <p ng-if="!dropZone.isAddon" class="text">
             {{dropZone.dropText}}
         </p>
+
+        <div ng-if="dropZone.isAddon" class="text">
+            <h1 class="title">{{dropZone.dropTitle}}</h1>
+
+            <p>{{dropZone.dropText}}</p>
+        </div>
     </div>
 </div>
