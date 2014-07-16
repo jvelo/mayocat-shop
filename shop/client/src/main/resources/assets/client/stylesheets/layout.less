@@ -38,13 +38,18 @@ header a {
   color: inherit !important;
 }
 
+header .brand, header p.host small {
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 header p.host {
   max-width: 50px;
 }
 
 header p.host small {
-  text-overflow: ellipsis;
-  white-space: nowrap;
   position: absolute;
 }
 

@@ -30,6 +30,23 @@
         },
 
         /**
+         * All the titles used for the routes
+         */
+        routes: {
+            title: {
+                home: "Home",
+                orders: "Orders",
+                customers: "Customers",
+                homepage: "Home page",
+                news: "News",
+                pages: "Pages",
+                products: "Products",
+                catalog: "Catalog",
+                settings: "Settings"
+            }
+        },
+
+        /**
          * Translations linked to generic Mayocat entities
          */
         entity: {
@@ -124,6 +141,11 @@
          */
 
         imageEditor: {
+            misc: {
+                width: "width",
+                height: "height"
+            },
+
             title: {
                 editImage: "Edit image"
             },
@@ -241,7 +263,8 @@
 
             status: {
                 onShelf: "On shelf",
-                withdrawnFromSale: "Withdrawn from sale"
+                withdrawnFromSale: "Withdrawn from sale",
+                moved: "The product has been moved"
             },
 
             action: {
@@ -280,6 +303,10 @@
         image: {
             title: {
                 images: "Images ({imagesLength})"
+            },
+
+            status: {
+                moved: "The image has been moved"
             },
 
             action: {

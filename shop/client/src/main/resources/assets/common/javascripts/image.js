@@ -7,8 +7,8 @@
  */
 angular.module('mayocat.image', ['ngResource'])
 
-    .controller('ImageEditorController', ['$scope', '$rootScope', '$resource', '$http', '$modal', 'configurationService', 'entityMixins',
-        function ($scope, $rootScope, $resource, $http, $modal, configurationService, entityMixins) {
+    .controller('ImageEditorController', ['$scope', '$rootScope', '$resource', '$http', '$modal', '$translate', 'configurationService', 'entityMixins',
+        function ($scope, $rootScope, $resource, $http, $modal, $translate, configurationService, entityMixins) {
 
             entityMixins.extend("localization", $scope, "image");
 
@@ -110,7 +110,13 @@ angular.module('mayocat.image', ['ngResource'])
             }
 
             $scope.getDisplayRatio = function(size) {
-                return "" + (size.width == null ? "?" : size.width) + " x " + (size.height == null ? "?" : size.height);
+                if (size.width == null) {
+                    return size.height + 'px ' + $translate('imageEditor.misc.height');
+                } else if (size.height == null) {
+                    return size.width + 'px ' + $translate('imageEditor.misc.width');
+                } else {
+                    return size.width + 'px • ' + size.height + 'px';
+                }
             }
 
             $scope.$on('thumbnails:edit:selection', function (event, coordinates) {

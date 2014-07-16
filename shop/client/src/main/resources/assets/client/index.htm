@@ -20,7 +20,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width"/>
 
-    <title ng-bind="$root.page_title"></title>
+    <title ng-bind="$root.page_title">Mayocat | Home</title>
 
     <!-- Included CSS Files -->
     <link rel="stylesheet" href="/common/vendor/bootstrap/2.3.1/bootstrap-mayocat.css">
@@ -121,12 +121,14 @@
 
         <header>
             <div class="logo" ng-click="setRoute('/')"></div>
-            <h2 class="brand" ng-bind="tenant.name"></h2>
+            <h2 class="brand" ng-bind="tenant.name" title="{{tenant.name}}"></h2>
             <p class="host">
                 <!-- Link to host -->
                 <small>
-                    <a ng-href="{{site.url}}"  class="clickable"
+                    <a class="clickable"
+                       ng-href="{{site.url}}"
                        ng-bind="site.domain"
+                       title="{{site.domain}}"
                        target="_new"></a>
                 </small>
             </p>

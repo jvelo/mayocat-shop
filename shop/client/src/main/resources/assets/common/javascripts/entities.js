@@ -195,8 +195,8 @@
             }
         }])
 
-        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location',
-            function ($http, $rootScope, $modal, $location) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location', '$translate', 'notificationService',
+            function ($http, $rootScope, $modal, $location, $translate, notificationService) {
             return function (entityType, options) {
                 var mixin = {};
 
@@ -222,8 +222,11 @@
 
                 mixin.saveImagesGallery = function () {
                     var $scope = this;
-                    $http.post($scope[entityType]._links.images.href, { images: $scope[entityType]._embedded.images }).success(function () {
+                    $http.post($scope[entityType]._links.images.href, {
+                        images: $scope[entityType]._embedded.images
+                    }).success(function () {
                         $scope.imagesDirty = false;
+                        notificationService.notify($translate('image.status.moved'));
                     });
                 }
 

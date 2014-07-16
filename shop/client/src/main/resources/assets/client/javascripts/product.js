@@ -62,6 +62,7 @@ angular.module('product', ['ngResource'])
                     $scope.isSaving = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
                         $scope.isSaving = false;
+                        $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
