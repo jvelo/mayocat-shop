@@ -13,8 +13,8 @@
 
         .service('notificationService', ['$rootScope', function($rootScope) {
 
-            this.notify = function(message, options, controlsProvider) {
-                $rootScope.$emit('notifications:add', message, options, controlsProvider);
+            this.notify = function(message, options) {
+                $rootScope.$emit('notifications:add', message, options);
             };
 
         }])
@@ -33,9 +33,6 @@
                      * Adds a new notification.
                      * @param {String}   message          The message to display.
                      * @param {Object}   options          The options for the notification.
-                     * @param {Function} controlsProvider A callback function which will receive in parameters two functions
-                     * to handle the progression status or to dismiss the notification. Only executed with a progress
-                     * notification.
                      */
                     function add(message, options) {
                         var validTypes = ['basic', 'progress'],

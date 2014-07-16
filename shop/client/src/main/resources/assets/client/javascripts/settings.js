@@ -175,7 +175,7 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.isValidFloat = function (numberAsString) {
-                return !isNaN(numberAsString);
+                return typeof numberAsString == 'undefined' || !isNaN(numberAsString);
             }
 
             $scope.validShippingDurationRange = function (carrier) {
@@ -193,6 +193,7 @@ angular.module('settings', ['ngResource'])
 
             $scope.editCarrier = function (carrier) {
                 $scope.editedCarrier = carrier;
+                $scope.addFirstRule(carrier);
             }
 
             $scope.newCarrierForm = function (strategy) {
@@ -201,7 +202,15 @@ angular.module('settings', ['ngResource'])
                     strategy: strategy,
                     rules: []
                 };
+
+                $scope.addFirstRule($scope.editedCarrier);
             }
+
+            $scope.addFirstRule = function (carrier) {
+                if (carrier.strategy == 'weight' || carrier.strategy == 'price') {
+                    carrier.rules.push({});
+                }
+            };
 
             $scope.createOrUpdateCarrier = function () {
                 if ($scope.editedCarrier.isNew) {

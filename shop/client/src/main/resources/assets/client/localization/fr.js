@@ -26,6 +26,20 @@
             select: "Selectionner"
         },
 
+        routes: {
+            title: {
+                home: "Accueil",
+                orders: "Commandes",
+                customers: "Clients",
+                homepage: "Page d'accueil",
+                news: "Actualités",
+                pages: "Pages",
+                products: "Produits",
+                catalog: "Catalogue",
+                settings: "Paramètres"
+            }
+        },
+
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
@@ -102,6 +116,11 @@
         },
 
         imageEditor: {
+            misc: {
+                width: "de largeur",
+                height: "de hauteur"
+            },
+
             title: {
                 editImage: "Editer l'image"
             },
@@ -211,7 +230,8 @@
 
             status: {
                 onShelf: "En rayon",
-                withdrawnFromSale: "Retiré de la vente"
+                withdrawnFromSale: "Retiré de la vente",
+                moved: "Le produit a bien été déplacé"
             },
 
             action: {
@@ -246,6 +266,10 @@
         image: {
             title: {
                 images: "Images ({imagesLength})"
+            },
+
+            status: {
+                moved: "L'image a bien été déplacée"
             },
 
             action: {
