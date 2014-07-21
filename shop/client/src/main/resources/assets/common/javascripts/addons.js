@@ -420,7 +420,7 @@
             }
         }])
 
-        .directive('addonList', [function () {
+        .directive('addonList', ['$timeout', function ($timeout) {
             return {
                 restrict: 'E',
                 scope: {
@@ -430,8 +430,94 @@
                 },
                 templateUrl: '/common/partials/addonList.html?1',
                 controller: function ($scope) {
-                    $scope.removeSequenceAddonItem = function (group, index) {
 
+                    // The collapsed index hash maps an array of collapsed sequence items positions to a sequenced addon group
+                    $scope.collapsedIndexes = {}
+
+                    // Initialize the collapsed index state : by default all items are collapsed, so for all sequenced
+                    // groups, we fill the index with all existing positions
+                    Object.keys($scope.entity.addons).forEach(function (key) {
+                        if ($scope.entity.addons[key].value instanceof Array) {
+                            $scope.collapsedIndexes[key] = Array.apply(null, {length: $scope.entity.addons[key].value.length}).map(Number.call, function (n) {
+                                return n;
+                            });
+                        }
+                    })
+
+                    /**
+                     * Get the sortable options for a sequenced group. On update after a drag and drop, the we rearranged collapsed positions
+                     * to match the moved elements.
+                     *
+                     * @param group
+                     * @returns the angular-ui sortable options (See https://github.com/angular-ui/ui-sortable)
+                     *
+                     */
+                    $scope.getSortableOptions = function (group) {
+                        return {
+                            update: function (e, ui) {
+                                var indexBefore = ui.item.scope().$index;
+                                $timeout(function () {
+                                    var indexAfter = ui.item.scope().$index,
+                                        groupIndexes = $scope.collapsedIndexes[group];
+
+                                    if (groupIndexes.indexOf(indexBefore) >= 0 && groupIndexes.indexOf(indexAfter) >= 0) {
+                                        // If both index before and after are present, it means we swapped collapsed items
+                                        // No need to do anything
+                                    }
+                                    else if (groupIndexes.indexOf(indexAfter) >= 0) {
+                                        groupIndexes.splice(groupIndexes.indexOf(indexAfter), 1);
+                                        groupIndexes.push(indexBefore);
+                                    }
+                                    else if (groupIndexes.indexOf(indexBefore) >= 0) {
+                                        groupIndexes.splice(groupIndexes.indexOf(indexBefore), 1);
+                                        groupIndexes.push(indexAfter);
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    function getCollapsedElement(type){
+                        return function(group, index) {
+                            var item = $scope.entity.addons[group].value[index],
+                                model = $scope.entity.addons[group].model;
+                            var result;
+                            Object.keys(item).forEach(function(key){
+                                if (typeof result === 'undefined' && typeof model[key] !== 'undefined' && model[key].type === type) {
+                                    result = item[key];
+                                }
+                            });
+                            return result || "";
+                        }
+                    }
+
+                    $scope.getCollapsedText = getCollapsedElement('string');
+                    $scope.getCollapsedImage = getCollapsedElement('image');
+
+                    $scope.hasOneImageAddon = function (group) {
+                        var model = $scope.entity.addons[group].model;
+                        return Object.keys(model).find(function (key) {
+                            return model[key].type === 'image';
+                        })
+                    }
+
+                    $scope.toggleCollapse = function(group, index) {
+                        if ($scope.isCollapsed(group, index)) {
+                            $scope.collapsedIndexes[group].splice($scope.collapsedIndexes[group].indexOf(index), 1);
+                        }
+                        else {
+                            $scope.collapsedIndexes[group].push(index);
+                        }
+                    }
+
+                    $scope.isCollapsed = function(group, index) {
+                        if (typeof $scope.collapsedIndexes[group] === 'undefined') {
+                            return true;
+                        }
+                        return $scope.collapsedIndexes[group].indexOf(index) >= 0;
+                    }
+
+                    $scope.removeSequenceAddonItem = function (group, index) {
                         $scope.entity.addons[group.key].value.splice(index, 1);
 
                         if (typeof $scope.entity._localized !== 'undefined') {
@@ -454,6 +540,13 @@
 
                         // Add the element to the addon value array
                         $scope.entity.addons[group.key].value[method](group.getValueShell());
+
+                        // Shift collapsed indexes if necessary
+                        if (insertPosition !== 'last') {
+                            $scope.collapsedIndexes[group.key] = $scope.collapsedIndexes[group.key].map(function(index){
+                                return index + 1;
+                            });
+                        }
 
                         // Add it also to all localized versions of the addon value
                         if (typeof $scope.entity._localized !== 'undefined') {
