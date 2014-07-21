@@ -8,7 +8,13 @@
 
 -->
 <div class="drop-zones-container" ng-class="{ active: visible, 'with-addons': hasAddons }">
-    <div drop-zone ng-repeat="dropZone in dropZones" ng-class="{ active: highlighted, addon: dropZone.isAddon }" class="drop-zone">
+
+    <div drop-zone
+         ng-repeat="dropZone in dropZones"
+         ng-show="!dropZone.noDropZone"
+         ng-class="{ active: highlighted, addon: dropZone.isAddon }"
+         class="drop-zone">
+
         <p ng-if="!dropZone.isAddon" class="text">
             {{dropZone.dropText}}
         </p>
@@ -18,5 +24,7 @@
 
             <p>{{dropZone.dropText}}</p>
         </div>
+
     </div>
+
 </div>

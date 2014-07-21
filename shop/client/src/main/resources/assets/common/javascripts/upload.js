@@ -224,9 +224,11 @@
                         leaveTimeouts = [];
                     }, 0);
 
-                    // Display the container if there's a least one drop zone.
+                    // Display the container if there's a least one displayed drop zone.
                     $scope.$apply(function() {
-                        $scope.visible = !!$scope.dropZones.length;
+                        angular.forEach($scope.dropZones, function(dropZone) {
+                            $scope.visible = $scope.visible || !dropZone.noDropZone;
+                        });
                     });
                 };
 
@@ -291,27 +293,30 @@
                 var $form = $(scope.dropZone.form),
                     entityUri = $location.path();
 
-                scope.highlighted = false;
+                // Add the jQuery events only if a drop zone is displayed.
+                if (!scope.dropZone.noDropZone) {
+                    scope.highlighted = false;
 
-                // Highlight the element on hover.
-                $(element)
-                    .on('dragenter', function() {
-                        // See the explanations in the "dropZoneContainer" directive.
-                        dropZonesCtrl.showContainer();
+                    // Highlight the element on hover.
+                    $(element)
+                        .on('dragenter', function() {
+                            // See the explanations in the "dropZoneContainer" directive.
+                            dropZonesCtrl.showContainer();
 
-                        scope.$apply(function() {
-                            scope.highlighted = true;
+                            scope.$apply(function() {
+                                scope.highlighted = true;
+                            });
+                        })
+                        .on('dragleave', function() {
+                            scope.$apply(function() {
+                                scope.highlighted = false;
+                            });
                         });
-                    })
-                    .on('dragleave', function() {
-                        scope.$apply(function() {
-                            scope.highlighted = false;
-                        });
-                    });
+                }
 
                 // Extend the form with the jQuery file upload plugin.
                 $form.fileupload({
-                    dropZone: element,
+                    dropZone: scope.dropZone.noDropZone ? null : element, // Hide the drop zone if asked.
                     pasteZone: null, // For an unknown reason, this feature doesn't work with Mayocat Shop.
                     singleFileUploads: false,
                     url: scope.dropZone.uploadUri,
@@ -379,7 +384,7 @@
                 }
 
                 // Add a new drop zone for this instance.
-                scope.noDropZone || scope.$emit('upload:addDropZone');
+                scope.$emit('upload:addDropZone');
             }
 
             return {
