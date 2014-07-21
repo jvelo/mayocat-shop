@@ -256,7 +256,7 @@
                                         model: {}
                                     }
                                 }
-                                else if (sequence && !entity.addons[groupKey].value.length) {
+                                else if (sequence && !entity.addons[groupKey].value instanceof Array) {
                                     // If the addon definition says it's a sequence and the value is not a list, put
                                     // it as a first item of the list.
                                     // (This could happen if the theme developer changes the definition after setting a
@@ -264,7 +264,7 @@
 
                                     entity.addons[groupKey].value = [ entity.addons[groupKey].value ];
                                 }
-                                else if (!sequence && entity.addons[groupKey].value.length) {
+                                else if (!sequence && entity.addons[groupKey].value instanceof Array) {
                                     // Same: if the addon definition says it's a not sequence and the value is a list,
                                     // take the first object in the list if there's one, or put an empty object.
 
@@ -332,7 +332,7 @@
 
                                     // Localized version of the addon does not exist yet : we create it
 
-                                    if (!localizedGroup.value.length) {
+                                    if (!localizedGroup.value instanceof Array) {
                                         // Non-sequence
                                         Object.keys(localizedGroup.value).forEach(function (key) {
                                             localizedGroup.value[key] = null;
