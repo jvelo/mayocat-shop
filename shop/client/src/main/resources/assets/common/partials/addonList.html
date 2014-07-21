@@ -16,6 +16,15 @@
 
     <!-- Sequence addons -->
     <div ng-if="group.sequence">
+
+        <!-- Add element button when positioned at the bottom -->
+        <div ng-if="group.properties['sequence.newElementPosition'] == 'first'">
+            <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
+
+            <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
+            <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
+        </div>
+
         <ul ng-repeat="item in entity.addons[group.key].value">
             <li>
                 <div class="btn btn-add pull-right" ng-click="removeSequenceAddonItem(group, $index)">&ndash;</div>
@@ -34,9 +43,13 @@
             </li>
         </ul>
 
-        <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
-        <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
-        <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
+        <!-- Add element button when positioned at the bottom -->
+        <div ng-if="!group.properties['sequence.newElementPosition'] || group.properties['sequence.newElementPosition'] == 'last'">
+            <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
+
+            <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
+            <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
+        </div>
     </div>
 
     <!-- Non sequence addons -->

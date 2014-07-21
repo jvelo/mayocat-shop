@@ -428,9 +428,10 @@
                     entity: '=',
                     localized: '=localizedEntity'
                 },
-                templateUrl: '/common/partials/addonList.html',
+                templateUrl: '/common/partials/addonList.html?1',
                 controller: function ($scope) {
                     $scope.removeSequenceAddonItem = function (group, index) {
+
                         $scope.entity.addons[group.key].value.splice(index, 1);
 
                         if (typeof $scope.entity._localized !== 'undefined') {
@@ -446,13 +447,20 @@
                     }
 
                     $scope.addSequenceAddonItem = function (group) {
-                        $scope.entity.addons[group.key].value.push(group.getValueShell());
+                        // First, find out if we want to add at the top or the bottom of the array, checking the conf
+                        var insertPosition = typeof group.properties['sequence.newElementPosition'] !== 'undefined' ?
+                                group.properties['sequence.newElementPosition'] : 'last',
+                            method = insertPosition === 'last' ? 'push' : 'unshift';
 
+                        // Add the element to the addon value array
+                        $scope.entity.addons[group.key].value[method](group.getValueShell());
+
+                        // Add it also to all localized versions of the addon value
                         if (typeof $scope.entity._localized !== 'undefined') {
                             Object.keys($scope.entity._localized).forEach(function (locale) {
                                 try {
-                                    typeof $scope.entity._localized[locale].addons[group.key].value.push === 'function'
-                                    && $scope.entity._localized[locale].addons[group.key].value.push(group.getValueShell());
+                                    typeof $scope.entity._localized[locale].addons[group.key].value[method] === 'function'
+                                    && $scope.entity._localized[locale].addons[group.key].value[method](group.getValueShell());
                                 } catch (err) {
                                     // Ignore (locale not used anymore, etc.)
                                 }
