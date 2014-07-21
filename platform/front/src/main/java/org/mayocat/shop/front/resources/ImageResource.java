@@ -43,9 +43,6 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
     private ImageService imageService;
 
     @Inject
-    private Provider<ThumbnailStore> thumbnailStore;
-
-    @Inject
     private Logger logger;
 
     private static final List<String> IMAGE_EXTENSIONS = new ArrayList<String>();
