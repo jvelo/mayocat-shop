@@ -118,7 +118,7 @@ class HomeWebView implements Resource
             List<Product> products = productStore.get().findByIds(lists.first().entities)
             List<Product> sorted = lists.first().entities.collect({ UUID id ->
                 products.find({ Product product -> product.id == id })
-            })
+            }).findAll ({ UUID id -> id != null}) as List<Product>;
 
             List<EntityData<Product>> productsData = dataLoader.
                     load(sorted, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY, StandardOptions.LOCALIZE)
