@@ -36,11 +36,19 @@ public class AddonGroupDefinition
     @JsonProperty("for")
     private Optional<List<String>> entities = Optional.absent();
 
+    @JsonDeserialize(using = OptionalStringListDeserializer.class)
+    private Optional<List<String>> models = Optional.absent();
+
     private boolean sequence;
 
     public Optional<List<String>> getEntities()
     {
         return entities;
+    }
+
+    public Optional<List<String>> getModels()
+    {
+        return models;
     }
 
     public String getName()
