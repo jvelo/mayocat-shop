@@ -79,14 +79,16 @@ class HomePageApi implements Resource
             List<ProductApiObject> featuredProducts = []
             lists.first().entities.each({ UUID id ->
                 def product = products.find({ Product product -> product.id == id})
-                def ProductApiObject featuredProduct = new ProductApiObject()
-                featuredProduct.withProduct(product)
-                def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
+                if (product != null) {
+                    def ProductApiObject featuredProduct = new ProductApiObject()
+                    featuredProduct.withProduct(product)
+                    def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
-                if (featuredImage) {
-                    featuredProduct.withEmbeddedFeaturedImage(featuredImage)
+                    if (featuredImage) {
+                        featuredProduct.withEmbeddedFeaturedImage(featuredImage)
+                    }
+                    featuredProducts << featuredProduct
                 }
-                featuredProducts << featuredProduct
             })
 
             homePageApiObject.featuredProducts = featuredProducts
