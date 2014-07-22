@@ -12,11 +12,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-search</artifactId>
-        <version>0.40-SNAPSHOT</version>
+        <version>0.30.1</version>
     </parent>
     <artifactId>mayocat-platform-search-api</artifactId>
     <packaging>jar</packaging>
-    <version>0.40-SNAPSHOT</version>
+    <version>0.30.1</version>
 
     <name>Mayocat Platform - Search - API</name>
     <description>Search API</description>
