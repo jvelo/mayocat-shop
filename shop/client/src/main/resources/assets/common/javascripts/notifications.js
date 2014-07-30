@@ -123,6 +123,7 @@
                         // If one basic notification is displayed, reduce the progress ones.
                         $scope.allMinified = !!$scope.basicNotifications.length;
 
+                        // TODO: Remove this line. It brings some digest errors while notifying outside of the upload process.
                         $scope.$apply();
                     }
 

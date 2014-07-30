@@ -61,9 +61,11 @@ angular.module('catalog', [])
                         position + "=" + target,
                         { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
                         .success(function (data) {
-                        })
-                        .error(function (data, status) {
-
+                            if (path == 'collections') {
+                                notificationService.notify($translate('product.status.collectionMoved'));
+                            } else if (path == 'products') {
+                                notificationService.notify($translate('product.status.productMoved'));
+                            }
                         });
                 }
 

@@ -264,7 +264,8 @@
             status: {
                 onShelf: "On shelf",
                 withdrawnFromSale: "Withdrawn from sale",
-                moved: "The product has been moved"
+                productMoved: "The product has been moved",
+                collectionMoved: "The collection has been moved"
             },
 
             action: {
