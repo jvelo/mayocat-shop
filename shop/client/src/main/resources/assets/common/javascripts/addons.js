@@ -428,7 +428,7 @@
                     entity: '=',
                     localized: '=localizedEntity'
                 },
-                templateUrl: '/common/partials/addonList.html?1',
+                templateUrl: '/common/partials/addonList.html?2',
                 controller: function ($scope) {
 
                     // The collapsed index hash maps an array of collapsed sequence items positions to a sequenced addon group
@@ -442,7 +442,12 @@
                                 return n;
                             });
                         }
-                    })
+                    });
+
+                    // Filters the addons for the current entity.
+                    $scope.filterAddons = function(addon) {
+                        return !addon.models || addon.models.indexOf($scope.entity.model) >= 0;
+                    };
 
                     /**
                      * Get the sortable options for a sequenced group. On update after a drag and drop, the we rearranged collapsed positions
