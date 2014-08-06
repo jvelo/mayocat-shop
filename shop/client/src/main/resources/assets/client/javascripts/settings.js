@@ -325,6 +325,119 @@ angular.module('settings', ['ngResource'])
 
     //==================================================================================================================
     //
+    // Controller for the taxes settings UI
+    // See partials/settingsShipping.html
+    //
+    .controller('SettingsTaxesController', ['$scope', '$modal', 'configurationService',
+        function ($scope, $modal, configurationService) {
+
+            function newModal(properties, newEntity) {
+                var scope = $scope.$new(true);
+                    scope.newEntity = newEntity;
+
+                $.each(properties, function(key, value) {
+                    scope[key] = value;
+                });
+
+                return $modal.open({
+                    templateUrl: 'settingsTaxesModal.html',
+                    scope: scope
+                });
+            }
+
+            $scope.addVatRate = function() {
+                var vat = $scope.vat,
+                    rate = { value: 0 };
+
+                if (!vat.geo) {
+                    vat.otherRates.push(rate);
+                } else {
+                    vat.areas = vat.areas.map(function(area) {
+                        area.otherRates.push(rate);
+                        return area;
+                    });
+                }
+            };
+
+            $scope.deleteVatRate = function(rateIndex) {
+                var vat = $scope.vat;
+
+                if (!vat.geo) {
+                    vat.otherRates.splice(rateIndex, 1);
+                } else {
+                    vat.areas = vat.areas.map(function(area) {
+                        area.otherRates.splice(rateIndex, 1);
+                        return area;
+                    });
+                }
+            };
+
+            $scope.enableVatGeo = function() {
+                var vat = $scope.vat;
+
+                $scope.settings.taxes.mode = 'excl';
+                vat.geo = true;
+
+                // If there is no area, create a new one and fill it with the VAT values.
+                if (!vat.areas.length) {
+                    vat.areas.push({
+                        defaultRate: vat.defaultRate,
+                        otherRates: vat.otherRates.slice(0) // We want a copy, not a reference.
+                    });
+
+                    // Trigger the modal for area edition.
+                    newModal({
+                        area: vat.areas[0]
+                    }).result.then(null, function() {
+                        // If the modal is cancelled, delete and disable the VAT areas.
+                        vat.areas = [];
+                        $scope.disableVatGeo();
+                    });
+                }
+            };
+
+            $scope.disableVatGeo = function() {
+                $scope.vat.geo = false;
+            };
+
+            $scope.addVatArea = function() {
+                var areas = $scope.vat.areas;
+
+                // Take as much rates as the first area and set them to 0.
+                var otherRates = areas[0].otherRates.slice(0).map(function() {
+                    return { value: 0 };
+                });
+
+                var area = areas[areas.push({
+                    defaultRate: 0,
+                    otherRates: otherRates
+                }) - 1];
+
+                // Trigger the modal for area creation.
+                newModal({
+                    area: area
+                }, true).result.then(null, function() {
+                    // If the modal is cancelled, delete the new area.
+                    areas.splice(areas.length - 1, 1);
+                });
+            };
+
+            $scope.deleteVatArea = function(area) {
+                var index = $scope.vat.areas.indexOf(area);
+                $scope.vat.areas.splice(index, 1);
+            };
+
+            configurationService.getSettings(function(settings) {
+                configurationService.getSettings(function (settings) {
+                    $scope.settings = settings;
+                    $scope.vat = settings.taxes.vat;
+                });
+            });
+
+        }])
+
+    //==================================================================================================================
+    //
     // Controller for the settings sub-menu
     // See partials/settingsMenu.html
     //

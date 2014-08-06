@@ -46,6 +46,17 @@
                 </div>
             </div>
         </li>
+        <li ng-class="{'active': isTaxes}">
+            <div>
+                <div class="droptarget">
+                    <div>
+                        <a ng-click="setRoute('/settings/taxes')">
+                            {{'settings.misc.taxes' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </li>
     </ul>
 
 </div>
