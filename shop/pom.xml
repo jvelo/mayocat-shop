@@ -26,6 +26,7 @@
   <modules>
     <module>catalog</module>
     <module>shipping</module>
+    <module>taxes</module>
     <module>cart</module>
     <module>payment</module>
     <module>billing</module>
