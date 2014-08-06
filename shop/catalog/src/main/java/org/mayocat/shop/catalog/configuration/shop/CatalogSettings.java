@@ -18,11 +18,11 @@ public class CatalogSettings implements ExposedSettings
 {
     @Valid
     @JsonProperty
-    CurrenciesSettings currencies = new CurrenciesSettings();
+    private CurrenciesSettings currencies = new CurrenciesSettings();
 
     @Valid
     @JsonProperty
-    ProductsSettings products = new ProductsSettings();
+    private ProductsSettings products = new ProductsSettings();
 
     @JsonIgnore
     public ProductsSettings getProductsSettings()
