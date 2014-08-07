@@ -326,7 +326,7 @@ angular.module('settings', ['ngResource'])
     //==================================================================================================================
     //
     // Controller for the taxes settings UI
-    // See partials/settingsShipping.html
+    // See partials/settingsTaxes.html
     //
     .controller('SettingsTaxesController', ['$scope', '$modal', 'configurationService',
         function ($scope, $modal, configurationService) {
@@ -340,10 +340,26 @@ angular.module('settings', ['ngResource'])
                 });
 
                 return $modal.open({
-                    templateUrl: 'settingsTaxesModal.html',
+                    templateUrl: 'settingsTaxesEditZoneModal.html',
                     scope: scope
                 });
             }
+
+            // Generic configuration helpers ---------------------------------------------------------------------------
+
+            $scope.isVisible = function (path) {
+                return configurationService.isVisible($scope.settings, path);
+            }
+
+            $scope.isConfigurable = function (path) {
+                return configurationService.isConfigurable($scope.settings, path);
+            }
+
+            $scope.isDefaultValue = function (path) {
+                return configurationService.isDefaultValue($scope.settings, path);
+            };
+
+            // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.addVatRate = function() {
                 var vat = $scope.vat,
@@ -427,11 +443,26 @@ angular.module('settings', ['ngResource'])
                 $scope.vat.areas.splice(index, 1);
             };
 
-            configurationService.getSettings(function(settings) {
+            $scope.updateSettings = function () {
+                $scope.isSaving = true;
                 configurationService.getSettings(function (settings) {
-                    $scope.settings = settings;
-                    $scope.vat = settings.taxes.vat;
+                    settings.taxes.vat.value = $scope.vat;
+                    //settings.taxes.others.value = $scope.others;
+                    //settings.taxes.mode.value = $scope.mode;
+
+                    console.log(settings);
+
+                    configurationService.put(settings, function () {
+                        $scope.isSaving = false;
+                    });
                 });
+            };
+
+            // Initialization ------------------------------------------------------------------------------------------
+
+            configurationService.getSettings(function (settings) {
+                $scope.settings = settings;
+                $scope.vat = settings.taxes.vat.value;
             });
 
         }])

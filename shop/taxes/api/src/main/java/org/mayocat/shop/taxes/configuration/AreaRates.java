@@ -8,6 +8,7 @@
 package org.mayocat.shop.taxes.configuration;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,12 +27,12 @@ public class AreaRates
     /**
      * The default rate applied for this area.
      */
-    private BigDecimal defaultRate;
+    private BigDecimal defaultRate = BigDecimal.ZERO;
 
     /**
      * Possible other rates applied in this area (example: in France, rates for printed books, or restaurants, etc.)
      */
-    private List<Rate> otherRates;
+    private List<Rate> otherRates = Collections.emptyList();
 
     /**
      * The ISO 3166 codes of geographical areas that compose this ares. For example : "FR", "BE"

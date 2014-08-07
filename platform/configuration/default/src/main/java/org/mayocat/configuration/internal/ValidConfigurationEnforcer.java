@@ -66,36 +66,29 @@ public class ValidConfigurationEnforcer extends AbstractJsonConfigurationHandler
             } else {
                 Serializable value = local.get(key);
                 Serializable globalValue = global.get(key);
-                try {
-                    Map<String, Serializable> valueAsMap = (Map<String, Serializable>) value;
+
+                Map<String, Serializable> globalValueAsMap = (Map<String, Serializable>) globalValue;
+
+                if (!isConfigurableEntry(globalValueAsMap)) {
+                    // We need to go deeper
                     try {
-                        Map<String, Serializable> globalValueAsMap = (Map<String, Serializable>) globalValue;
+                        Map<String, Serializable> valueAsMap = (Map<String, Serializable>) value;
                         ValidationResult childResult = this.enforce(globalValueAsMap, valueAsMap);
                         validationResult.setHasErrors(validationResult.isHasErrors() || childResult.isHasErrors());
                         result.put(key, childResult.getResult());
-                    } catch (ClassCastException ex) {
-                        // Incompatible types between the local and global conf : ignore
+                    } catch (ClassCastException e) {
+                        // value should have been a map
                         validationResult.setHasErrors(true);
                     }
-                } catch (ClassCastException e) {
-                    // Not a map
-                    try {
-                        Map<String, Serializable> globalValueAsMap = (Map<String, Serializable>) globalValue;
-                        if (isConfigurableEntry(globalValueAsMap)) {
-                            if (!(Boolean) globalValueAsMap.get(CONFIGURABLE_KEY)) {
-                                validationResult.setHasErrors(true);
-                            } else {
-                                // The global value is configurable
-                                result.put(key, local.get(key));
-                            }
-                        }
-                    } catch (ClassCastException ex) {
-                        // The global value is not a map, we assume it is a configurable field
+                } else {
+                    if (!(Boolean) globalValueAsMap.get(CONFIGURABLE_KEY)) {
+                        // Field is set as not configurable but just attempted to be configured
+                        validationResult.setHasErrors(true);
+                    } else {
+                        // The global value is configurable
                         result.put(key, local.get(key));
                     }
                 }
-                // TODO add support for list of values
-                // i.e. try to cast to List<Object> etc.
             }
         }
         validationResult.setResult(result);

@@ -180,6 +180,19 @@
             <div>
                 <money-amount ng-model="product.price" currency="{{mainCurrency}}"/>
             </div>
+            <div>{{'product.taxes.' + taxes.mode | translate}}</div>
+
+            <!-- Taxes -->
+            <div ng-if="taxes.mode == 'incl'">
+                <!-- Mannaged inclusively : display excl price -->
+                <div ng-if="taxes.vat.defaultRate !== 0">
+                    {{product.price - product.price * taxes.vat.defaultRate}} excl.
+                </div>
+            </div>
+            <div ng-if="taxes.mode != 'incl'">
+                <!-- Mannaged exclusively : display incl price -->
+            </div>
+
         </div>
 
         <!-- Weight -->

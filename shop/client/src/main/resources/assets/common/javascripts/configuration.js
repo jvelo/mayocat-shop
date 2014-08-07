@@ -25,21 +25,6 @@ angular.module('mayocat.configuration', ['ngResource'])
             else {
                 settingsResource.get(function (result) {
                     saveOriginalValues(result);
-
-                    // Insert static content for the taxes until the API is ready.
-                    result.taxes = {
-                        mode: 'incl',
-
-                        vat: {
-                            defaultRate: 0,
-                            otherRates: [],
-                            areas: [],
-                            geo: false
-                        },
-
-                        others: []
-                    }
-
                     settings = result;
                     deferred.resolve(settings);
                 });

@@ -22,7 +22,7 @@ public class TaxesSettings implements ExposedSettings
 
     private Configurable<TaxRule> vat = new Configurable<>(new TaxRule());
 
-    private Configurable<List<TaxRule>> other = new Configurable(Collections.emptyList());
+    private Configurable<List<TaxRule>> others = new Configurable(Collections.emptyList());
 
     @Override
     public String getKey()
@@ -40,8 +40,8 @@ public class TaxesSettings implements ExposedSettings
         return vat;
     }
 
-    public Configurable<List<TaxRule>> getOther()
+    public Configurable<List<TaxRule>> getOthers()
     {
-        return other;
+        return others;
     }
 }

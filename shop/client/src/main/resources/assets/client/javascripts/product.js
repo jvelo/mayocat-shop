@@ -245,6 +245,11 @@ angular.module('product', ['ngResource'])
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
                 $scope.hasStock = catalogConfiguration.products.stock;
                 $scope.mainCurrency = catalogConfiguration.currencies.main;
+
+            });
+
+            configurationService.get("taxes", function (taxes) {
+                $scope.taxes = taxes;
             });
 
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX

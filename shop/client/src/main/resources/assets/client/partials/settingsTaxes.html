@@ -14,21 +14,23 @@
             <h1 class="">{{'settings.title.taxes' | translate}}</h1>
         </div>
 
-        <fieldset>
+        <fieldset ng-show="isVisible('taxes.vat')">
             <legend>TVA</legend>
 
             <div ng-if="!vat.geo">
                 <label>
                     Taux par défaut <br>
-                    <input type="number" ng-model="vat.defaultRate"> %
+                    <input type="number" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
                 </label>
 
                 <div ng-repeat="rate in vat.otherRates">
                     <label>
                         Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                        <input type="number" ng-model="rate.value"> %
+                        <input type="number" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
                     </label>
-                    <input class="btn" type="button" value="Supprimer" ng-click="deleteVatRate($index)">
+                    <input class="btn" type="button" value="Supprimer"
+                           ng-click="deleteVatRate($index)"
+                           ng-show="isConfigurable('taxes.vat')">
                 </div>
             </div>
 
@@ -37,36 +39,54 @@
                     <p>Zone : <strong>{{ area.name }}</strong></p>
                     <label>
                         Taux par défaut <br>
-                        <input type="number" ng-model="area.defaultRate"> %
+                        <input type="number" ng-model="area.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
                     </label>
 
                     <div ng-repeat="rate in area.otherRates">
                         <label>
                             Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                            <input type="number" ng-model="rate.value"> %
+                            <input type="number" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
                         </label>
-                        <input class="btn" type="button" value="Supprimer" ng-click="deleteVatRate($index)">
+                        <input class="btn" type="button" value="Supprimer" ng-click="deleteVatRate($index)"
+                               ng-show="isConfigurable('taxes.vat')">
                     </div>
 
-                    <input class="btn" type="button" ng-click="editVatArea(area)" value="Modifier la zone géographique">
-                    <input class="btn" type="button" ng-click="deleteVatArea()" value="Supprimer la zone géographique">
+                    <input class="btn" type="button"
+                           ng-click="editVatArea(area)"
+                           ng-show="isConfigurable('taxes.vat')"
+                           value="Modifier la zone géographique">
+
+                    <input class="btn" type="button"
+                           ng-click="deleteVatArea()"
+                           ng-show="isConfigurable('taxes.vat')"
+                           value="Supprimer la zone géographique">
                 </div>
             </div>
 
-            <input class="btn" type="button" ng-click="addVatRate()" value="Ajouter un autre taux">
-            <input class="btn" type="button" ng-if="!vat.geo"
-                   ng-click="enableVatGeo()" value="Gérer les taxes par zones géographiques">
+            <div ng-show="isConfigurable('taxes.vat')">
+                <input class="btn" type="button" ng-click="addVatRate()" value="Ajouter un autre taux">
+                <input class="btn" type="button" ng-if="!vat.geo"
+                       ng-click="enableVatGeo()" value="Gérer les taxes par zones géographiques">
 
             <span ng-if="vat.geo">
                 <input class="btn" type="button" ng-click="addVatArea()" value="Ajouter une zone géographique">
                 <input class="btn" type="button" ng-click="disableVatGeo()"
-                       value="Ne plus gérer les taxes par zones géographiques">
+                       value="Ne plus gérer la TVA par zones géographiques">
             </span>
+            </div>
+
+            <div class="buttons hasLoading">
+                <button ng-click="updateSettings()" class="btn btn-large btn-primary">
+                    {{'entity.action.update' | translate}}
+                </button>
+                <span ng-class="{'loading': isSaving}"></span>
+            </div>
+
         </fieldset>
     </div>
 </div>
 
-<script type="text/ng-template" id="settingsTaxesModal.html">
+<script type="text/ng-template" id="settingsTaxesEditZoneModal.html">
     <div class="modal-header">
         <h3 class="modal-title">Gérer les taxes par zones géographiques</h3>
     </div>

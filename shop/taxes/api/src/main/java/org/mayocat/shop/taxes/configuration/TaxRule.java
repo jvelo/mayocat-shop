@@ -47,6 +47,11 @@ public class TaxRule
         return defaultRate;
     }
 
+    public List<Rate> getOtherRates()
+    {
+        return otherRates;
+    }
+
     public List<AreaRates> getAreas()
     {
         return areas;
