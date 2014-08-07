@@ -186,7 +186,16 @@
             <div ng-if="taxes.mode == 'incl'">
                 <!-- Mannaged inclusively : display excl price -->
                 <div ng-if="taxes.vat.defaultRate !== 0">
-                    {{product.price - product.price * taxes.vat.defaultRate}} excl.
+
+                    <!-- TODO
+                         - the calculus should be done in the controller, not directly here
+                         - the formatting (decimals rounding + currency symbol) needs to be done in a directive,
+                           similar to <money-amount> but that displays just the amount, not a input.
+                         - the number of decimals displayed should be related to the currency set.
+                           It's not necessarily 2 ;  See the money service
+                      -->
+
+                    {{(product.price * (1 / (1 + taxes.vat.defaultRate))).toFixed(2)}} excl.
                 </div>
             </div>
             <div ng-if="taxes.mode != 'incl'">

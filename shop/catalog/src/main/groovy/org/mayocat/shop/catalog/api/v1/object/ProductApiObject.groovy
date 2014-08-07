@@ -19,7 +19,12 @@ import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.shop.catalog.model.Product
+import org.mayocat.shop.taxes.TaxesService
+import org.mayocat.shop.taxes.configuration.Mode
+import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.ThemeDefinition
+
+import java.math.RoundingMode
 
 import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
 import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
@@ -73,14 +78,13 @@ class ProductApiObject extends BaseApiObject
     // Helper builder methods
 
     @JsonIgnore
-    def withProduct(Product product)
+    def withProduct(TaxesSettings taxesSettings, Product product)
     {
         this.with {
             slug = product.slug
             title = product.title
             description = product.description
             onShelf = product.onShelf
-            price = product.price
             weight = product.weight
             stock = product.stock
 
@@ -89,10 +93,20 @@ class ProductApiObject extends BaseApiObject
 
             _localized = product.localizedVersions
         }
+
+        if (product.price) {
+            if (!taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
+                this.price = product.price
+            }
+            else {
+                BigDecimal vatRate = BigDecimal.valueOf(0.196 as Double)
+                this.price = BigDecimal.ONE.add(vatRate).multiply(product.price)
+            }
+        }
     }
 
     @JsonIgnore
-    Product toProduct(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition,
+    Product toProduct(TaxesSettings taxesSettings, PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition,
             Optional<Product> parent = Optional.absent())
     {
         def product = new Product()
@@ -100,7 +114,6 @@ class ProductApiObject extends BaseApiObject
             title = this.title
             description = this.description
             onShelf = this.onShelf
-            price = this.price
             weight = this.weight
             stock = this.stock
 
@@ -110,8 +123,24 @@ class ProductApiObject extends BaseApiObject
             setLocalizedVersions this._localized
         }
 
+        if (this.price) {
+            if (!taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
+                product.price = this.price
+            }
+            else {
+                BigDecimal vatRate = BigDecimal.valueOf(0.196 as Double)
+                BigDecimal conversionRate = BigDecimal.ONE.divide(BigDecimal.ONE.add(vatRate), 10, RoundingMode.HALF_UP)
+                product.price = this.price.multiply(conversionRate)
+            }
+        }
+
         if (addons) {
             product.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
+        }
+
+        if (parent.isPresent()) {
+            product.setParent(parent.get())
+            product.setParentId(parent.get().getId())
         }
 
         product
@@ -140,7 +169,7 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedVariants(List<Product> variants)
+    def withEmbeddedVariants(TaxesSettings settings, List<Product> variants)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -152,7 +181,7 @@ class ProductApiObject extends BaseApiObject
             ProductApiObject object = new ProductApiObject([
                     _href: "/api/products/${this.slug}/variants/${variant.slug}"
             ])
-            object.withProduct(variant)
+            object.withProduct(settings, variant)
             if (variant.getAddons().isLoaded()) {
                 object.withAddons(variant.getAddons().get())
             }

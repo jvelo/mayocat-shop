@@ -14,6 +14,7 @@ import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.MetadataExtractor
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
@@ -21,8 +22,6 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.image.model.Thumbnail
-import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.Attachment
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
@@ -40,8 +39,8 @@ import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
+import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.*
-import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.theme.FeatureDefinition
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.TypeDefinition
@@ -83,6 +82,9 @@ class ProductApi implements Resource, Initializable
 
     @Inject
     PlatformSettings platformSettings
+
+    @Inject
+    TaxesSettings taxesSettings
 
     @Inject
     Provider<AttachmentStore> attachmentStore
@@ -174,7 +176,7 @@ class ProductApi implements Resource, Initializable
             def productApiObject = new ProductApiObject([
                     _href: "/api/products/${product.slug}"
             ])
-            productApiObject.withProduct(product)
+            productApiObject.withProduct(taxesSettings, product)
 
             if (product.addons.isLoaded()) {
                 productApiObject.withAddons(product.addons.get())
@@ -233,7 +235,7 @@ class ProductApi implements Resource, Initializable
             ]
         ])
 
-        productApiObject.withProduct(product)
+        productApiObject.withProduct(taxesSettings, product)
         productApiObject.withCollectionRelationships(collections)
         productApiObject.withEmbeddedImages(images, product.featuredImageId)
 
@@ -243,7 +245,7 @@ class ProductApi implements Resource, Initializable
 
         if (product.type.isPresent()) {
             // TODO: have a variants link in _links
-            productApiObject.withEmbeddedVariants(productStore.get().findVariants(product))
+            productApiObject.withEmbeddedVariants(taxesSettings, productStore.get().findVariants(product))
             productApiObject._links.variants = new LinkApiObject([ href: "/api/products/${slug}/variants" ])
         }
 
@@ -290,7 +292,7 @@ class ProductApi implements Resource, Initializable
                 def id = product.id
                 def featuredImageId = product.featuredImageId
 
-                product = productApiObject.toProduct(platformSettings,
+                product = productApiObject.toProduct(taxesSettings, platformSettings,
                         Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
                 // ID and slugs are not update-able
                 product.id = id
@@ -373,7 +375,7 @@ class ProductApi implements Resource, Initializable
     def createProduct(ProductApiObject productApiObject)
     {
         try {
-            def product = productApiObject.toProduct(platformSettings,
+            def product = productApiObject.toProduct(taxesSettings, platformSettings,
                     Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
 
             // Set slug TODO: verify if provided slug is conform
@@ -413,7 +415,7 @@ class ProductApi implements Resource, Initializable
             ProductApiObject object = new ProductApiObject([
                     _href: "/api/products/${product.slug}/variants/${variant.slug}"
             ])
-            object.withProduct(variant)
+            object.withProduct(taxesSettings, variant)
             if (variant.addons.isLoaded()) {
                 object.withAddons(variant.addons.get())
             }
@@ -567,7 +569,7 @@ class ProductApi implements Resource, Initializable
                     return Response.status(404).build();
                 } else {
                     def id = variant.id
-                    variant = variantApiObject.toProduct(platformSettings,
+                    variant = variantApiObject.toProduct(taxesSettings, platformSettings,
                             Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition), Optional.of(product))
                     // ID and slugs are not update-able
                     variant.id = id

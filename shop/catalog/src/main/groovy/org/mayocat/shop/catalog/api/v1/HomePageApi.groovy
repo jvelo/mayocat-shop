@@ -20,6 +20,7 @@ import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.EntityListStore
 import org.xwiki.component.annotation.Component
 
@@ -53,6 +54,9 @@ class HomePageApi implements Resource
     @Inject
     Provider<AttachmentStore> attachmentStore
 
+    @Inject
+    TaxesSettings taxesSettings
+
     @GET
     def getHomePage()
     {
@@ -81,7 +85,7 @@ class HomePageApi implements Resource
                 def product = products.find({ Product product -> product.id == id})
                 if (product != null) {
                     def ProductApiObject featuredProduct = new ProductApiObject()
-                    featuredProduct.withProduct(product)
+                    featuredProduct.withProduct(taxesSettings, product)
                     def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
                     if (featuredImage) {
