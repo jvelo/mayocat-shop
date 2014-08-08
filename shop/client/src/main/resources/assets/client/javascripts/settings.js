@@ -331,6 +331,17 @@ angular.module('settings', ['ngResource'])
     .controller('SettingsTaxesController', ['$scope', '$modal', 'configurationService',
         function ($scope, $modal, configurationService) {
 
+            function randomID() {
+                var result = '',
+                    chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+                for (var i = 0 ; i < 8 ; i++) {
+                    result += chars[Math.round(Math.random() * (chars.length - 1))];
+                }
+
+                return result;
+            }
+
             function newModal(properties, newEntity) {
                 var scope = $scope.$new(true);
                     scope.newEntity = newEntity;
@@ -362,14 +373,13 @@ angular.module('settings', ['ngResource'])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.addVatRate = function() {
-                var vat = $scope.vat,
-                    rate = { value: 0 };
+                var vat = $scope.vat;
 
                 if (!vat.geo) {
                     vat.otherRates.push(rate);
                 } else {
                     vat.areas = vat.areas.map(function(area) {
-                        area.otherRates.push(rate);
+                        area.otherRates.push({ id: randomID() , value: 0 });
                         return area;
                     });
                 }
@@ -391,7 +401,7 @@ angular.module('settings', ['ngResource'])
             $scope.enableVatGeo = function() {
                 var vat = $scope.vat;
 
-                $scope.settings.taxes.mode = 'excl';
+                $scope.mode = 'excl';
                 vat.geo = true;
 
                 // If there is no area, create a new one and fill it with the VAT values.
@@ -420,8 +430,9 @@ angular.module('settings', ['ngResource'])
                 var areas = $scope.vat.areas;
 
                 // Take as much rates as the first area and set them to 0.
-                var otherRates = areas[0].otherRates.slice(0).map(function() {
-                    return { value: 0 };
+                var otherRates = areas[0].otherRates.slice(0).map(function(rate) {
+                    rate.value = 0;
+                    return rate;
                 });
 
                 var area = areas[areas.push({
@@ -438,6 +449,19 @@ angular.module('settings', ['ngResource'])
                 });
             };
 
+            $scope.editVatArea = function(area) {
+                var area = $scope.vat.areas[$scope.vat.areas.indexOf(area)],
+                    oldCodes = area.codes.slice(0);
+
+                // Trigger the modal for area creation.
+                newModal({
+                    area: area
+                }).result.then(null, function() {
+                    // If the modal is cancelled, restore the old codes.
+                    area.codes = oldCodes;
+                });
+            };
+
             $scope.deleteVatArea = function(area) {
                 var index = $scope.vat.areas.indexOf(area);
                 $scope.vat.areas.splice(index, 1);
@@ -450,8 +474,6 @@ angular.module('settings', ['ngResource'])
                     //settings.taxes.others.value = $scope.others;
                     //settings.taxes.mode.value = $scope.mode;
 
-                    console.log(settings);
-
                     configurationService.put(settings, function () {
                         $scope.isSaving = false;
                     });
@@ -463,6 +485,8 @@ angular.module('settings', ['ngResource'])
             configurationService.getSettings(function (settings) {
                 $scope.settings = settings;
                 $scope.vat = settings.taxes.vat.value;
+                // $scope.others = settings.taxes.others.value;
+                // $scope.mode = settings.taxes.mode.value;
             });
 
         }])

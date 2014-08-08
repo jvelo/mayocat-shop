@@ -20,13 +20,13 @@
             <div ng-if="!vat.geo">
                 <label>
                     Taux par défaut <br>
-                    <input type="number" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
+                    <input type="number" step="any" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
                 </label>
 
                 <div ng-repeat="rate in vat.otherRates">
                     <label>
                         Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                        <input type="number" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
+                        <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
                     </label>
                     <input class="btn" type="button" value="Supprimer"
                            ng-click="deleteVatRate($index)"
@@ -39,13 +39,13 @@
                     <p>Zone : <strong>{{ area.name }}</strong></p>
                     <label>
                         Taux par défaut <br>
-                        <input type="number" ng-model="area.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
+                        <input type="number" step="any" ng-model="area.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
                     </label>
 
                     <div ng-repeat="rate in area.otherRates">
                         <label>
                             Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                            <input type="number" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
+                            <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
                         </label>
                         <input class="btn" type="button" value="Supprimer" ng-click="deleteVatRate($index)"
                                ng-show="isConfigurable('taxes.vat')">
@@ -57,8 +57,8 @@
                            value="Modifier la zone géographique">
 
                     <input class="btn" type="button"
-                           ng-click="deleteVatArea()"
-                           ng-show="isConfigurable('taxes.vat')"
+                           ng-click="deleteVatArea(area)"
+                           ng-show="isConfigurable('taxes.vat') && !($first && $last)"
                            value="Supprimer la zone géographique">
                 </div>
             </div>
@@ -105,13 +105,13 @@
         <div ng-if="newEntity">
             <label>
                 Taux par défaut <br>
-                <input type="number" ng-model="area.defaultRate"> %
+                <input type="number" step="any" ng-model="area.defaultRate"> %
             </label>
 
             <div ng-repeat="rate in area.otherRates">
                 <label>
                     Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                    <input type="number" ng-model="rate.value"> %
+                    <input type="number" step="any" ng-model="rate.value"> %
                 </label>
             </div>
         </div>
