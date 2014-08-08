@@ -52,8 +52,6 @@ import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
-import org.mayocat.shop.cart.CartAccessor;
-import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
@@ -87,9 +85,6 @@ public class CheckoutResource implements Resource
 
     @Inject
     private CheckoutRegister checkoutRegister;
-
-    @Inject
-    private CartAccessor cartAccessor;
 
     @Inject
     private SiteSettings siteSettings;
@@ -251,9 +246,7 @@ public class CheckoutResource implements Resource
         }
 
         try {
-            Cart cart = cartAccessor.getCart();
-            CheckoutResponse response =
-                    checkoutRegister.checkout(cart, customer, deliveryAddress, billingAddress, otherOrderData);
+            CheckoutResponse response = checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {
@@ -289,9 +282,8 @@ public class CheckoutResource implements Resource
                     .data(bindings);
         } else {
             try {
-                Cart cart = cartAccessor.getCart();
                 CheckoutResponse response =
-                        checkoutRegister.checkout(cart, null, null, null, Maps.<String, Object>newHashMap());
+                        checkoutRegister.checkout(null, null, null, Maps.<String, Object>newHashMap());
 
                 if (response.getRedirectURL().isPresent()) {
                     return Response.seeOther(new URI(response.getRedirectURL().get())).build();

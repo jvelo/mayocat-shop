@@ -10,12 +10,8 @@ package org.mayocat.shop.checkout;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.core.UriInfo;
-
 import org.mayocat.shop.billing.model.Address;
 import org.mayocat.shop.billing.model.Customer;
-import org.mayocat.shop.billing.model.Order;
-import org.mayocat.shop.cart.model.Cart;
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -26,7 +22,7 @@ public interface CheckoutRegister
 {
     boolean requiresForm();
 
-    CheckoutResponse checkout(Cart cart, Customer customer, Address deliveryAddress,
+    CheckoutResponse checkout(Customer customer, Address deliveryAddress,
             Address billingAddress, Map<String, Object> otherOrderData) throws CheckoutException;
 
     void dropOrder(UUID orderId) throws CheckoutException;

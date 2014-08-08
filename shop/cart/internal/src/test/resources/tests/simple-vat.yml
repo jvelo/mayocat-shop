@@ -1,0 +1,33 @@
+taxes:
+  vat:
+    default:
+      defaultRate: 0.2
+test:
+  input:
+    items:
+      - unitPrice: 1
+        quantity: 2
+      - unitPrice: 10
+        quantity: 1
+  expected:
+    items:
+    - unitPrice:
+        incl: 1.2
+        excl: 1
+        vat: 0.2
+      total:
+        incl: 2.4
+        excl: 2
+        vat: 0.4
+    - unitPrice:
+        incl: 12
+        excl: 10
+        vat: 2
+      total:
+        incl: 12
+        excl: 10
+        vat: 2
+    itemsTotal:
+      incl: 14.4
+      excl: 12
+      vat: 2.4

@@ -1,0 +1,2 @@
+org.mayocat.shop.catalog.configuration.source.CatalogGestaltConfigurationSource
+org.mayocat.shop.catalog.configuration.jackson.MoneyModule

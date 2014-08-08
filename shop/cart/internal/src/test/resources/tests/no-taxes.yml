@@ -1,0 +1,29 @@
+test:
+  input:
+    items:
+      - unitPrice: 1
+        quantity: 2
+      - unitPrice: 10
+        quantity: 1
+  expected:
+    items:
+    - unitPrice:
+        incl: 1
+        excl: 1
+        vat: 0
+      total:
+        incl: 2
+        excl: 2
+        vat: 0
+    - unitPrice:
+        incl: 10
+        excl: 10
+        vat: 0
+      total:
+        incl: 10
+        excl: 10
+        vat: 0
+    itemsTotal:
+      incl: 12
+      excl: 12
+      vat: 0

@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.checkout.internal;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,9 @@ import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.AddressStore;
 import org.mayocat.shop.billing.store.CustomerStore;
 import org.mayocat.shop.billing.store.OrderStore;
-import org.mayocat.shop.cart.CartAccessor;
-import org.mayocat.shop.cart.model.Cart;
+import org.mayocat.shop.cart.Cart;
+import org.mayocat.shop.cart.CartItem;
+import org.mayocat.shop.cart.CartManager;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.checkout.CheckoutException;
@@ -39,7 +39,8 @@ import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.payment.BasePaymentData;
-import org.mayocat.shop.payment.GatewayException;import org.mayocat.shop.payment.GatewayFactory;
+import org.mayocat.shop.payment.GatewayException;
+import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.PaymentData;
 import org.mayocat.shop.payment.PaymentGateway;
@@ -97,18 +98,20 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private ObservationManager observationManager;
 
     @Inject
-    private CartAccessor cartAccessor;
+    private CartManager cartManager;
 
     @Inject
     private WebContext webContext;
 
     @Override
-    public CheckoutResponse checkout(final Cart cart, Customer customer, Address deliveryAddress,
+    public CheckoutResponse checkout(Customer customer, Address deliveryAddress,
             Address billingAddress, Map<String, Object> extraOrderData) throws CheckoutException
     {
         Preconditions.checkNotNull(customer);
         Order order;
         Customer actualCustomer;
+
+        Cart cart = cartManager.getCart();
 
         try {
             UUID customerId;
@@ -148,19 +151,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
             // Items
             Long numberOfItems = 0l;
-            final Map<Purchasable, Long> items = cart.getItems();
             List<Map<String, Object>> orderItems = Lists.newArrayList();
 
-            for (final Purchasable p : items.keySet()) {
-                numberOfItems += items.get(p);
-                BigDecimal unitPrice = p.getUnitPrice();
-
-                if (unitPrice == null && p.getParent().isPresent() && p.getParent().get().isLoaded()) {
-                    unitPrice = p.getParent().get().get().getUnitPrice();
-                }
-                if (unitPrice == null) {
-                    throw new RuntimeException("Can't checkout this item");
-                }
+            for (final CartItem cartItem : cart.items()) {
+                final Purchasable p = cartItem.item();
+                numberOfItems += cartItem.quantity();
 
                 String title;
                 if (p.getParent().isPresent() && p.getParent().get().isLoaded()) {
@@ -170,7 +165,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 }
 
                 final String itemTitle = title;
-                final BigDecimal price = unitPrice;
 
                 Map<String, Object> itemData = new HashMap<String, Object>()
                 {
@@ -178,65 +172,27 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                         put("type", "product");
                         put("id", p.getId());
                         put("title", itemTitle);
-                        put("quantity", items.get(p));
-                        put("unitPrice", price);
-                        put("itemTotal", price.multiply(BigDecimal.valueOf(items.get(p))));
+                        put("quantity", cartItem.quantity());
+                        put("unitPrice", cartItem.unitPrice().incl());
+                        put("itemTotal", cartItem.total().incl());
                     }
                 };
 
-                if (Product.class.isAssignableFrom(p.getClass())) {
-                    Product product = (Product) p;
+                addOrderAddons(p, itemData);
 
-                    if (product.getAddons().isLoaded()) {
-                        List<Map<String, Object>> itemAddons = Lists.newArrayList();
-
-                        Map<String, AddonGroup> addons = product.getAddons().get();
-                        for (String groupName : addons.keySet()) {
-                            AddonGroup addonGroup = addons.get(groupName);
-                            Optional<AddonGroupDefinition> definition = AddonUtils
-                                    .findAddonGroupDefinition(addonGroup.getGroup(), platformSettings.getAddons(),
-                                            webContext.getTheme().getDefinition().getAddons());
-
-                            if (definition.isPresent() &&
-                                    definition.get().getProperties().containsKey("checkout.includeInOrder"))
-                            {
-
-                                Object value = addonGroup.getValue();
-                                if (Map.class.isAssignableFrom(value.getClass())) {
-
-                                    // For now only treat non-repeatable groups
-
-                                    Map<String, Object> valueMap = (Map<String, Object>) value;
-
-                                    for (String key : definition.get().getFields().keySet()) {
-                                        String fieldValue = valueMap.get(key).toString();
-                                        Map<String, Object> addonMap = Maps.newHashMap();
-                                        addonMap.put("value", fieldValue);
-                                        addonMap.put("name", key);
-                                        addonMap.put("group", addonGroup.getGroup());
-                                        itemAddons.add(addonMap);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!itemAddons.isEmpty()) {
-                            itemData.put("addons", itemAddons);
-                        }
-                    }
-                }
                 orderItems.add(itemData);
             }
 
             order.setNumberOfItems(numberOfItems);
-            order.setItemsTotal(cart.getItemsTotal());
+            order.setItemsTotal(cart.itemsTotal().incl());
 
             data.put(Order.ORDER_DATA_ITEMS, orderItems);
 
             // Shipping
-            if (cart.getSelectedShippingOption() != null) {
-                final Carrier carrier = shippingService.getCarrier(cart.getSelectedShippingOption().getCarrierId());
-                order.setShipping(cart.getSelectedShippingOption().getPrice());
+            if (cart.selectedShippingOption().isPresent()) {
+                final Carrier carrier = shippingService.getCarrier(
+                        cart.selectedShippingOption().get().getCarrierId());
+                order.setShipping(cart.selectedShippingOption().get().getPrice());
                 data.put(Order.ORDER_DATA_SHIPPING, new HashMap<String, Object>()
                 {
                     {
@@ -250,11 +206,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             // Dates, currency, status
             order.setCreationDate(new Date());
             order.setUpdateDate(order.getCreationDate());
-            order.setCurrency(cart.getCurrency());
+            order.setCurrency(cart.currency());
             order.setStatus(Order.Status.NONE);
 
             // Grand total
-            order.setGrandTotal(cart.getTotal());
+            order.setGrandTotal(cart.total().incl());
 
             // JSON data
             order.setOrderData(data);
@@ -291,14 +247,14 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 + CheckoutResource.PAYMENT_CANCEL_PATH);
         options.put(BasePaymentData.RETURN_URL, baseUri + CheckoutResource.PATH + "/"
                 + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
-        options.put(BasePaymentData.CURRENCY, cart.getCurrency());
+        options.put(BasePaymentData.CURRENCY, cart.currency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
         options.put(BasePaymentData.CUSTOMER, actualCustomer);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
             response.setOrder(order);
-            GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), options);
 
             if (gatewayResponse.isSuccessful()) {
 
@@ -306,8 +262,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     response.setRedirectURL(Optional.fromNullable(gatewayResponse.getRedirectURL()));
                 }
 
-                cart.empty();
-                cartAccessor.setCart(cart);
+                cartManager.discardCart();
 
                 if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);
@@ -380,5 +335,50 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
         return update;
+    }
+
+    private void addOrderAddons(Purchasable p, Map<String, Object> itemData)
+    {
+        if (Product.class.isAssignableFrom(p.getClass())) {
+            Product product = (Product) p;
+
+            if (product.getAddons().isLoaded()) {
+                List<Map<String, Object>> itemAddons = Lists.newArrayList();
+
+                Map<String, AddonGroup> addons = product.getAddons().get();
+                for (String groupName : addons.keySet()) {
+                    AddonGroup addonGroup = addons.get(groupName);
+                    Optional<AddonGroupDefinition> definition = AddonUtils
+                            .findAddonGroupDefinition(addonGroup.getGroup(), platformSettings.getAddons(),
+                                    webContext.getTheme().getDefinition().getAddons());
+
+                    if (definition.isPresent() &&
+                            definition.get().getProperties().containsKey("checkout.includeInOrder"))
+                    {
+
+                        Object value = addonGroup.getValue();
+                        if (Map.class.isAssignableFrom(value.getClass())) {
+
+                            // For now only treat non-repeatable groups
+
+                            Map<String, Object> valueMap = (Map<String, Object>) value;
+
+                            for (String key : definition.get().getFields().keySet()) {
+                                String fieldValue = valueMap.get(key).toString();
+                                Map<String, Object> addonMap = Maps.newHashMap();
+                                addonMap.put("value", fieldValue);
+                                addonMap.put("name", key);
+                                addonMap.put("group", addonGroup.getGroup());
+                                itemAddons.add(addonMap);
+                            }
+                        }
+                    }
+                }
+
+                if (!itemAddons.isEmpty()) {
+                    itemData.put("addons", itemAddons);
+                }
+            }
+        }
     }
 }
