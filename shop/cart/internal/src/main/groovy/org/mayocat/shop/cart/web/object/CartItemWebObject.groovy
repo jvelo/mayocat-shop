@@ -8,11 +8,15 @@
 package org.mayocat.shop.cart.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.image.model.Image
 import org.mayocat.rest.web.object.ImageWebObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.Purchasable
 import org.mayocat.shop.catalog.web.object.PriceWebObject
+import org.mayocat.shop.taxes.PriceWithTaxes
+import org.mayocat.theme.ThemeDefinition
 
 /**
  * @version $Id$
@@ -44,6 +48,9 @@ class CartItemWebObject
 
     PriceWebObject itemTotalExclusiveOfTaxes;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    ItemTaxesWebObject taxes
+
     ImageWebObject featuredImage;
 
     def withPurchasable(Purchasable purchasable, Long quantity)
@@ -61,27 +68,50 @@ class CartItemWebObject
         }
     }
 
-    def withUnitPrice(BigDecimal price, Currency currency, Locale locale)
+    def withUnitPrice(PriceWithTaxes price, Currency currency, Locale locale)
     {
         unitPrice = new PriceWebObject()
-        unitPrice.withPrice(price, currency, locale)
-    }
+        unitPrice.withPrice(price.incl(), currency, locale)
 
-    def withUnitPriceExclusiveOfTaxes(BigDecimal price, Currency currency, Locale locale)
-    {
         unitPriceExclusiveOfTaxes = new PriceWebObject()
-        unitPriceExclusiveOfTaxes.withPrice(price, currency, locale)
+        unitPriceExclusiveOfTaxes.withPrice(price.excl(), currency, locale)
+
+        if (!price.vat().equals(BigDecimal.ZERO)) {
+            if (taxes == null) {
+                taxes = new ItemTaxesWebObject([
+                        vat: new ItemTaxWebObject([
+                                name: "VAT"
+                        ])
+                ])
+            }
+            taxes.vat.perUnit = new PriceWebObject()
+            taxes.vat.perUnit.withPrice(price.vat(), currency, locale)
+        }
     }
 
-    def withItemTotal(BigDecimal price, Currency currency, Locale locale)
+    def withItemTotal(PriceWithTaxes price, Currency currency, Locale locale)
     {
         itemTotal = new PriceWebObject()
-        itemTotal.withPrice(price, currency, locale)
+        itemTotal.withPrice(price.incl(), currency, locale)
+
+        itemTotalExclusiveOfTaxes = new PriceWebObject()
+        itemTotalExclusiveOfTaxes.withPrice(price.excl(), currency, locale)
+
+        if (!price.vat().equals(BigDecimal.ZERO)) {
+            if (taxes == null) {
+                taxes = new ItemTaxesWebObject([
+                        vat: new ItemTaxWebObject([
+                                name: "VAT"
+                        ])
+                ])
+            }
+            taxes.vat.total = new PriceWebObject()
+            taxes.vat.total.withPrice(price.vat(), currency, locale)
+        }
     }
 
-    def withItemTotalExclusiveOfTaxes(BigDecimal price, Currency currency, Locale locale)
-    {
-        itemTotalExclusiveOfTaxes = new PriceWebObject()
-        itemTotalExclusiveOfTaxes.withPrice(price, currency, locale)
+    def withFeaturedImage(Image image, Optional<ThemeDefinition> themeDefinition) {
+        featuredImage = new ImageWebObject()
+        featuredImage.withImage(image, true, themeDefinition)
     }
 }

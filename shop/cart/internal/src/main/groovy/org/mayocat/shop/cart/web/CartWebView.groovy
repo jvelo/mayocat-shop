@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.cart.web
 
+import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
@@ -14,10 +15,13 @@ import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
+import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.shop.cart.Cart
+import org.mayocat.shop.cart.CartItem
 import org.mayocat.shop.cart.CartManager
 import org.mayocat.shop.cart.InvalidCartOperationException
 import org.mayocat.shop.cart.web.object.CartWebObject
@@ -37,9 +41,6 @@ import javax.ws.rs.core.MultivaluedMap
 import javax.ws.rs.core.Response
 
 /**
- * One important rule is : every time the cart state is modified, CartAccessor#setCart MUST be called, in order for the
- * cart serialization in the session (cookies) to be updated.
- *
  * @version $Id$
  */
 @Component("/cart")
@@ -187,8 +188,24 @@ class CartWebView implements Resource
 
         final Locale locale = generalSettings.locales.mainLocale.value
 
+        List<UUID> featuredImageIds = cart.items()
+                .collect({ CartItem item -> item.item().featuredImageId })
+                .findAll ({ UUID id -> id != null }) as List<UUID>
+
+        List<Attachment> attachments =
+                featuredImageIds.isEmpty() ? [] as List<Attachment> : attachmentStore.get().findByIds(featuredImageIds)
+        List<Thumbnail> thumbnails =
+                featuredImageIds.isEmpty() ? [] as List<Thumbnail> :
+                        thumbnailStore.get().findAllForIds(featuredImageIds)
+
+        List<Image> images = attachments.collect({ Attachment attachment ->
+            List<Thumbnail> thumbs = thumbnails.
+                    findAll({ Thumbnail thumbnail -> thumbnail.attachmentId == attachment.id }) as List<Thumbnail>
+            new Image(attachment, thumbs)
+        })
+
         CartWebObject cartWebObject = new CartWebObject()
-        cartWebObject.withCart(shippingService, cart, locale, [] as List<Image>)
+        cartWebObject.withCart(shippingService, cart, locale, images, Optional.fromNullable(context.theme?.definition))
 
         data.put("cart", cartWebObject)
 

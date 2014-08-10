@@ -8,6 +8,7 @@
 package org.mayocat.shop.cart.web.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.google.common.base.Optional
 import com.google.common.collect.Lists
 import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
@@ -15,8 +16,8 @@ import org.mayocat.shop.cart.Cart
 import org.mayocat.shop.cart.CartItem
 import org.mayocat.shop.catalog.model.Purchasable
 import org.mayocat.shop.catalog.web.object.PriceWebObject
-import org.mayocat.shop.shipping.ShippingOption
 import org.mayocat.shop.shipping.ShippingService
+import org.mayocat.theme.ThemeDefinition
 
 /**
  * @version $Id$
@@ -32,9 +33,13 @@ class CartWebObject
 
     PriceWebObject itemsTotalExclusiveOfTaxes
 
+    CombinedTaxesWebObject itemsTaxes
+
     PriceWebObject total
 
     PriceWebObject totalExclusiveOfTaxes
+
+    CombinedTaxesWebObject totalTaxes
 
     boolean hasShipping
 
@@ -51,9 +56,23 @@ class CartWebObject
         hasShipping
     }
 
-    def withCart(ShippingService shippingService, Cart cart, Locale locale, List<Image> images)
+    def withCart(ShippingService shippingService, Cart cart, Locale locale, List<Image> images = [] as List<Image>,
+            Optional<ThemeDefinition> themeDefinition = Optional.absent())
     {
         items = [] as List<CartItemWebObject>
+
+        // Items total
+        itemsTotal = new PriceWebObject()
+        itemsTotal.withPrice(cart.itemsTotal().incl(), cart.currency(), locale)
+
+        itemsTotalExclusiveOfTaxes = new PriceWebObject()
+        itemsTotalExclusiveOfTaxes.withPrice(cart.itemsTotal().excl(), cart.currency(), locale)
+
+        if (!cart.itemsTotal().vat().equals(BigDecimal.ZERO)) {
+            itemsTaxes = new CombinedTaxesWebObject([
+                    vat: new PriceWebObject().withPrice(cart.itemsTotal().vat(), cart.currency(), locale)
+            ])
+        }
 
         // Total
         total = new PriceWebObject()
@@ -62,15 +81,11 @@ class CartWebObject
         totalExclusiveOfTaxes = new PriceWebObject()
         totalExclusiveOfTaxes.withPrice(cart.total().excl(), cart.currency(), locale)
 
-        itemsTotalExclusiveOfTaxes = new PriceWebObject()
-        itemsTotalExclusiveOfTaxes.withPrice(cart.total().excl(), cart.currency(), locale)
-
-        // Items total
-        itemsTotal = new PriceWebObject()
-        itemsTotal.withPrice(cart.itemsTotal().incl(), cart.currency(), locale)
-
-        itemsTotalExclusiveOfTaxes = new PriceWebObject()
-        itemsTotalExclusiveOfTaxes.withPrice(cart.itemsTotal().excl(), cart.currency(), locale)
+        if (!cart.total().vat().equals(BigDecimal.ZERO)) {
+            totalTaxes = new CombinedTaxesWebObject([
+                    vat: new PriceWebObject().withPrice(cart.total().vat(), cart.currency(), locale)
+            ])
+        }
 
         cart.items().each({ CartItem cartItem ->
             CartItemWebObject cartItemWebObject = new CartItemWebObject()
@@ -90,13 +105,15 @@ class CartWebObject
             }
 
             cartItemWebObject.withPurchasable(product, quantity)
+            cartItemWebObject.withUnitPrice(cartItem.unitPrice(), cart.currency(), locale)
+            cartItemWebObject.withItemTotal(cartItem.total(), cart.currency(), locale)
 
-            cartItemWebObject.withUnitPrice(cartItem.unitPrice().incl(), cart.currency(), locale)
-            cartItemWebObject.
-                    withUnitPriceExclusiveOfTaxes(cartItem.unitPrice().excl(), cart.currency(), locale)
-
-            cartItemWebObject.withItemTotal(cartItem.total().incl(), cart.currency(), locale)
-            cartItemWebObject.withItemTotalExclusiveOfTaxes(cartItem.total().excl(), cart.currency(), locale)
+            Image featuredImage = images.find({ Image image ->
+                image.attachment.parentId == cartItem.item().id
+            })
+            if (featuredImage) {
+                cartItemWebObject.withFeaturedImage(featuredImage, themeDefinition)
+            }
 
             items << cartItemWebObject
             numberOfItems += quantity

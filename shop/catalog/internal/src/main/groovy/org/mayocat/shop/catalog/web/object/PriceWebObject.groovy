@@ -25,11 +25,24 @@ import java.math.RoundingMode
 @CompileStatic
 class PriceWebObject
 {
-    String amount;
-    String amountCompact;
+    /**
+     * Amount, rounded according to the currency number of decimals
+     */
+    String amount
+
+    /**
+     * Same as amount, truncated when the decimals part is zero (i.e. : 4 instead of 4.00)
+     */
+    String amountCompact
+
+    /**
+     * Amount without any rounding
+     */
+    String amountFull
+
     CurrencyWebObject currency;
 
-    def withPrice(BigDecimal price, Currency priceCurrency, Locale locale)
+    PriceWebObject withPrice(BigDecimal price, Currency priceCurrency, Locale locale)
     {
         MoneyFormatter formatter = new MoneyFormatterBuilder().appendAmount(MoneyAmountStyle.of(locale)).toFormatter();
 
@@ -46,5 +59,9 @@ class PriceWebObject
         } else {
             amountCompact = amount;
         }
+
+        amountFull = price.toString()
+
+        this
     }
 }
