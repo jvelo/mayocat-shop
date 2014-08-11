@@ -13,12 +13,8 @@
         .factory('taxesService', ["$rootScope", "$q", "configurationService", function($rootScope, $q,
             configurationService) {
 
-
-            function computeVAT() {
-
-            }
-
             function computeExclPrice(price, rateId) {
+
                 var rate,
                     deferred = $q.defer();
 
@@ -27,9 +23,11 @@
                          rate = taxes.vat.defaultRate;
                     }
                     else {
-                        rate = taxes.otherRates.find(function (rateId) {
-                            return rateId == id;
-                        }).value
+                        var rateObject = taxes.vat.otherRates.find(function (rate) {
+                            return rate.id == rateId;
+                        });
+
+                        rate = rateObject.value
                     }
 
                     deferred.resolve( price * (1 / (1 + rate)) );
@@ -39,7 +37,6 @@
             }
 
             return {
-                vat: computeVAT,
                 excl: computeExclPrice
             }
         }]);

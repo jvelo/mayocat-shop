@@ -28,6 +28,8 @@ public class Rate
      */
     private Optional<String> name;
 
+    private String id;
+
     public BigDecimal getValue()
     {
         return value;
@@ -36,5 +38,10 @@ public class Rate
     public Optional<String> getName()
     {
         return name;
+    }
+
+    public String getId()
+    {
+        return id;
     }
 }

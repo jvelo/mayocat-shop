@@ -28,7 +28,7 @@
                     <label>
                         Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
                         <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"
-                            display-as-percentage> %
+                            display-as-percentage> % {{rate.value}}
                     </label>
                     <input class="btn" type="button" value="Supprimer"
                            ng-click="deleteVatRate($index)"

@@ -243,11 +243,12 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.initializeTaxes = function() {
+                $scope.calculatePrices();
+            }
 
-                $scope.taxes = {};
-
-                taxesService.excl($scope.product.price).then(function(excl){
-                    console.log(excl);
+            $scope.calculatePrices = function() {
+                console.log("Recalculating prices");
+                taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
                     $scope.excl = excl;
                 });
             }
@@ -261,7 +262,7 @@ angular.module('product', ['ngResource'])
             });
 
             configurationService.get("taxes", function (taxes) {
-                $scope.taxes = taxes;
+                $scope.taxesSettings = taxes;
             });
 
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX
