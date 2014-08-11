@@ -75,6 +75,7 @@
                         <include>assets/client/javascripts/page.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/money.js</include>
+                        <include>assets/client/javascripts/taxes.js</include>
                         <include>assets/client/javascripts/dashboard.js</include>
                         <include>assets/client/javascripts/orders.js</include>
                         <include>assets/client/javascripts/order.js</include>

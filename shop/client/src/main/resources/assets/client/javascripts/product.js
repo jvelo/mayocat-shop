@@ -18,11 +18,13 @@ angular.module('product', ['ngResource'])
         '$location',
         '$modal',
         'catalogService',
+        'taxesService',
         'configurationService',
         'addonsService',
         'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, catalogService, configurationService, addonsService, entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal,
+                  catalogService, taxesService, configurationService, addonsService, entityMixins) {
 
             entityMixins.extendAll($scope, "product");
 
@@ -240,6 +242,16 @@ angular.module('product', ['ngResource'])
                 }
             }
 
+            $scope.initializeTaxes = function() {
+
+                $scope.taxes = {};
+
+                taxesService.excl($scope.product.price).then(function(excl){
+                    console.log(excl);
+                    $scope.excl = excl;
+                });
+            }
+
             configurationService.get("catalog", function (catalogConfiguration) {
                 $scope.hasWeight = catalogConfiguration.products.weight;
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
@@ -297,6 +309,9 @@ angular.module('product', ['ngResource'])
                     // Same for addons
                     $scope.initializeEntity();
 
+                    // Initialize taxes
+                    $scope.initializeTaxes();
+
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -304,6 +319,8 @@ angular.module('product', ['ngResource'])
                         // state in angular directives.
                         $scope.product.onShelf = undefined;
                     }
+
+
                 });
             }
             else {

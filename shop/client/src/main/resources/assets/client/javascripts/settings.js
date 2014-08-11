@@ -376,7 +376,7 @@ angular.module('settings', ['ngResource'])
                 var vat = $scope.vat;
 
                 if (!vat.geo) {
-                    vat.otherRates.push(rate);
+                    vat.otherRates.push({ id: randomID() , value: 0 });
                 } else {
                     vat.areas = vat.areas.map(function(area) {
                         area.otherRates.push({ id: randomID() , value: 0 });

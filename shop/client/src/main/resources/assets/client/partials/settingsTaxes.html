@@ -20,13 +20,15 @@
             <div ng-if="!vat.geo">
                 <label>
                     Taux par défaut <br>
-                    <input type="number" step="any" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
+                    <input type="number" step="any" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"
+                            display-as-percentage> %
                 </label>
 
                 <div ng-repeat="rate in vat.otherRates">
                     <label>
                         Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
-                        <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
+                        <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"
+                            display-as-percentage> %
                     </label>
                     <input class="btn" type="button" value="Supprimer"
                            ng-click="deleteVatRate($index)"

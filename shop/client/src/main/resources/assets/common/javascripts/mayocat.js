@@ -532,20 +532,63 @@ mayocat.directive('activeClass', ['$location', function (location) {
  *
  * Inspired by http://stackoverflow.com/questions/15798594/angularjs-forms-validate-fields-after-user-has-left-field
  */
-mayocat.directive('validateOnBlur', function () {
-    return {
-        restrict: 'AC',
-        link: function (scope, element, attrs) {
-            var inputs = $(element).find('input, select, textarea');
+mayocat.directive("percent", function ($filter) {
+    var p = function (viewValue) {
+        var m = viewValue.match(/^(\d+)\/(\d+)/);
+        if (m != null)
+            return $filter('number')(parseInt(m[1]) / parseInt(m[2]), 2);
+        return $filter('number')(parseFloat(viewValue) / 100, 2);
+    };
 
-            inputs.on('blur', function () {
-                $(this).addClass('has-visited');
-                $(this).siblings(".validation").addClass('has-visited');
+    var f = function (modelValue) {
+        return $filter('number')(parseFloat(modelValue) * 100, 2);
+    };
+
+    return {
+        require: 'ngModel',
+        link: function (scope, ele, attr, ctrl) {
+            ctrl.$parsers.unshift(p);
+            ctrl.$formatters.unshift(f);
+        }
+    };
+});
+
+/**
+ * Displays a value as percentage
+ *
+ * Originally from http://jsfiddle.net/gronky/GnTDJ/
+ */
+mayocat.directive("displayAsPercentage", function($filter){
+    var p = function(viewValue){
+        var m = viewValue.match(/^(\d+)\/(\d+)/);
+        if (m != null)
+            return $filter('number')(parseInt(m[1])/parseInt(m[2]), 2);
+        return $filter('number')(parseFloat(viewValue)/100, 2);
+    };
+
+    var f = function(modelValue){
+        return $filter('number')(parseFloat(modelValue)*100, 2);
+    };
+
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attr, ctrl){
+            ctrl.$parsers.unshift(p);
+            ctrl.$formatters.unshift(f);
+        }
+    };
+});
+
+mayocat.directive('loginAnimate', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            scope.$on("event:authenticationFailure", function () {
+                $(element).addClass('login-animate');
             });
 
-            element.on('submit', function () {
-                inputs.addClass('has-visited');
-                inputs.siblings(".validation").addClass('has-visited');
+            $(element).on('animationend webkitAnimationEnd', function () {
+                $(this).removeClass('login-animate');
             });
         }
     };
@@ -567,21 +610,6 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
             $scope.authenticationFailed = true;
         });
     }]);
-
-mayocat.directive('loginAnimate', function() {
-    return {
-        restrict: 'A',
-        link: function (scope, element) {
-            scope.$on("event:authenticationFailure", function () {
-                $(element).addClass('login-animate');
-            });
-
-            $(element).on('animationend webkitAnimationEnd', function () {
-                $(this).removeClass('login-animate');
-            });
-        }
-    };
-});
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',

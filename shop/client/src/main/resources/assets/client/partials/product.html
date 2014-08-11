@@ -184,7 +184,7 @@
 
             <!-- Taxes -->
             <div ng-if="taxes.mode == 'incl'">
-                <!-- Mannaged inclusively : display excl price -->
+                <!-- Managed inclusively : display excl price -->
                 <div ng-if="taxes.vat.defaultRate !== 0">
 
                     <!-- TODO
@@ -195,7 +195,7 @@
                            It's not necessarily 2 ;  See the money service
                       -->
 
-                    {{(product.price * (1 / (1 + taxes.vat.defaultRate))).toFixed(2)}} excl.
+                    {{excl}} {{excl.toFixed(2)}} excl.
                 </div>
             </div>
             <div ng-if="taxes.mode != 'incl'">
