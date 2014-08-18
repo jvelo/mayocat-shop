@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
+import org.mayocat.attachment.store.jdbi.mapper.LoadedAttachmentMapper;
 import org.mayocat.model.Entity;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
-import org.mayocat.store.rdbms.dbi.mapper.AttachmentMapper;
+import org.mayocat.attachment.store.jdbi.mapper.AttachmentMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -29,7 +31,7 @@ import org.skife.jdbi.v2.unstable.BindIn;
  * @version $Id$
  */
 @UseStringTemplate3StatementLocator
-@RegisterMapper(AttachmentMapper.class)
+@RegisterMapper({ AttachmentMapper.class, LoadedAttachmentMapper.class })
 @RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
 public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<AttachmentDAO>, LocalizationDAO<Attachment>
 {
@@ -55,10 +57,12 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
-    Attachment findBySlug(@Bind("slug") String slug,
-            @BindBean("tenant") Tenant tenant);
+    LoadedAttachment findById(@Bind("id") UUID id, @BindBean("tenant") Tenant tenant);
 
     @SqlQuery
-    Attachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
+    LoadedAttachment findBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    LoadedAttachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
             @BindBean("tenant") Tenant tenant);
 }

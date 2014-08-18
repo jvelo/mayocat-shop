@@ -16,9 +16,10 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.mayocat.Slugifier
 import org.mayocat.attachment.MetadataExtractor
+import org.mayocat.attachment.model.LoadedAttachment
 import org.mayocat.authorization.annotation.Authorized
-import org.mayocat.model.Attachment
-import org.mayocat.model.AttachmentData
+import org.mayocat.attachment.model.Attachment
+import org.mayocat.attachment.model.AttachmentData
 import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
@@ -107,7 +108,7 @@ class AttachmentApiDelegate
                     .type(MediaType.TEXT_PLAIN_TYPE).build())
         }
 
-        Attachment attachment = new Attachment()
+        LoadedAttachment attachment = new LoadedAttachment()
 
         String fileName
 
@@ -146,7 +147,7 @@ class AttachmentApiDelegate
             def extractor = extractors.get(name)
             // We retrieved the attachment again from DB to have a stream that is not consumed already
             // (potentially each metadata extractor can consume the stream - and they probably will)
-            Attachment retrieved = this.attachmentStore.get().findById(created.id)
+            LoadedAttachment retrieved = this.attachmentStore.get().findAndLoadById(created.id)
             Optional<Map<String, Object>> result = extractor.extractMetadata(retrieved)
             if (result.isPresent()) {
                 metadata.put(name, result.get())

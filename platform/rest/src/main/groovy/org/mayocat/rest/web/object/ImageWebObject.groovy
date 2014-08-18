@@ -8,7 +8,6 @@
 package org.mayocat.rest.web.object
 
 import com.google.common.base.Optional
-import groovy.text.SimpleTemplateEngine
 import groovy.transform.CompileStatic
 import org.mayocat.configuration.images.ImageFormatDefinition
 import org.mayocat.image.model.Image
@@ -33,12 +32,10 @@ class ImageWebObject extends HashMap<String, Object>
         put "description", RestUtils.safeString(image.attachment.description) as String;
         put "featured", isFeatured
 
-        def templateEngine = new SimpleTemplateEngine()
-
-        put "url", templateEngine.createTemplate('/images/${slug}.${extension}').make([
-                slug: image.attachment.slug,
-                extension: image.attachment.extension
-        ]).toString();
+        put "url", MessageFormat.format("/images/{0}.{1}",
+                image.attachment.slug,
+                image.attachment.extension
+        );
 
         if (theme.isPresent() && theme.get().imageFormats.size() > 0) {
             for (String dimensionName : theme.get().imageFormats.keySet()) {

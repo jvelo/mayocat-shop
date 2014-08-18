@@ -13,7 +13,6 @@ import org.mayocat.shop.cart.CartInSessionConverter;
 import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.cart.model.CartInSession;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;

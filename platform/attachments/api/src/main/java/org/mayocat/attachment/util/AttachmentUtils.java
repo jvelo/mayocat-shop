@@ -10,7 +10,7 @@ package org.mayocat.attachment.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 
 /**
  * @version $Id$

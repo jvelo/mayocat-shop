@@ -7,8 +7,6 @@
  */
 package org.mayocat.search.elasticsearch.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -18,9 +16,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.configuration.SiteSettings;
-import org.mayocat.model.Attachment;
-import org.mayocat.model.Entity;
 import org.mayocat.search.EntityIndexDocumentPurveyor;
 import org.mayocat.search.elasticsearch.internal.testsupport.CustomEntity;
 import org.mayocat.search.elasticsearch.internal.testsupport.CustomEntityIndexDocumentPurveyor;
@@ -33,7 +30,6 @@ import org.mayocat.url.EntityURLFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
-import org.xwiki.component.manager.ComponentRepositoryException;
 import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -102,11 +98,11 @@ public class DefaultEntityIndexDocumentPurveyorTest
         final AttachmentStore attachmentStore =
                 this.componentManager.getInstance(AttachmentStore.class);
 
-        Attachment sample = new Attachment();
+        LoadedAttachment sample = new LoadedAttachment();
         sample.setSlug("sample-attachment");
         sample.setExtension("jpg");
 
-        when(attachmentStore.findById((UUID) anyObject())).thenReturn(sample);
+        when(attachmentStore.findAndLoadById((UUID) anyObject())).thenReturn(sample);
 
         EntityWithFeaturedImage entity = new EntityWithFeaturedImage(UUID.randomUUID(), UUID.randomUUID(), "toto");
 

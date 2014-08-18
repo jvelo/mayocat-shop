@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.mayocat.entity.DataLoaderAssistant;
@@ -23,7 +22,7 @@ import org.mayocat.image.model.ImageGallery;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityList;
 import org.mayocat.store.EntityListStore;
@@ -87,16 +86,28 @@ public class ImageDataLoader implements DataLoaderAssistant
         final EntityList list =
                 entityListStore.findListByHintAndParentId("image_gallery", entityData.getEntity().getId());
 
+        final List<UUID> imagesId = FluentIterable.from(attachments).transform(new Function<Attachment, UUID>()
+        {
+            public UUID apply(Attachment input)
+            {
+                return input.getId();
+            }
+        }).toList();
+        final List<Thumbnail> allThumbnails = thumbnailStore.findAllForIds(imagesId);
+
         final List<Image> images = FluentIterable.from(attachments).transform(new Function<Attachment, Image>()
         {
-            public Image apply(Attachment attachment)
+            public Image apply(final Attachment a)
             {
-                // Costy :/
-                // See this.thumbnailStoreProvider.get().findAllForIds(featuredImageIds);
-                List<Thumbnail> thumbnails = thumbnailStore.findAll(attachment);
-
-                return new Image(options.contains(StandardOptions.LOCALIZE) ? localizationService.localize(attachment) :
-                        attachment, thumbnails);
+                List<Thumbnail> thumbnails = FluentIterable.from(allThumbnails).filter(new Predicate<Thumbnail>()
+                {
+                    public boolean apply(Thumbnail t)
+                    {
+                        return t.getAttachmentId().equals(a.getId());
+                    }
+                }).toList();
+                return new Image(options.contains(StandardOptions.LOCALIZE) ? localizationService.localize(a) :
+                        a, thumbnails);
             }
         }).toList();
 

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.xwiki.component.annotation.Component;
 
 /**

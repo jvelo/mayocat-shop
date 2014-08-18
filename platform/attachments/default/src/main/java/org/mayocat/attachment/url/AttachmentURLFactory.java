@@ -12,7 +12,7 @@ import java.net.URL;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.attachment.util.AttachmentUtils;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.url.AbstractEntityURLFactory;
 import org.mayocat.url.EntityURLFactory;
 import org.mayocat.url.URLType;

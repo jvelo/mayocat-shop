@@ -14,25 +14,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.context.WebContext;
 import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.AddonGroup;
-import org.mayocat.model.Attachment;
-import org.mayocat.model.AttachmentData;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.AttachmentData;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.LocalizedField;
 import org.xwiki.component.annotation.Component;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
@@ -72,9 +69,10 @@ public class DefaultEntityLocalizationService implements EntityLocalizationServi
             return entity;
         }
 
-        // Special I/O case for attachment : set back the input stream manually
-        if (copiedEntity instanceof Attachment) {
-            ((Attachment) copiedEntity).setData(new AttachmentData(((Attachment)entity).getData().getStream()));
+        // Special I/O case for loaded attachment : set back the input stream manually
+        if (copiedEntity instanceof LoadedAttachment) {
+            ((LoadedAttachment) copiedEntity)
+                    .setData(new AttachmentData(((LoadedAttachment) entity).getData().getStream()));
         }
 
         // Handle entity fields :

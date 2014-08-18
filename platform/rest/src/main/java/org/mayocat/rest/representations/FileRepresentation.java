@@ -7,7 +7,7 @@
  */
 package org.mayocat.rest.representations;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 
 /**
  * @version $Id$

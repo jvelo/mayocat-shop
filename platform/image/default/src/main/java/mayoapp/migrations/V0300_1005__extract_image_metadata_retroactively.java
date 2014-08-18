@@ -12,18 +12,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
+import org.mayocat.attachment.model.LoadedAttachment;
+import org.mayocat.attachment.store.jdbi.mapper.AttachmentMapper;
+import org.mayocat.attachment.store.jdbi.mapper.LoadedAttachmentMapper;
 import org.mayocat.flyway.migrations.PG_UUID;
 import org.mayocat.image.DefaultImageProcessor;
 import org.mayocat.image.ImageDimensionsMetadataExtractor;
 import org.mayocat.image.ImageProcessor;
 import org.mayocat.jdbi.StatementContextStub;
-import org.mayocat.model.Attachment;
-import org.mayocat.store.rdbms.dbi.mapper.AttachmentMapper;
+import org.mayocat.attachment.model.Attachment;
+
 import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,8 @@ public class V0300_1005__extract_image_metadata_retroactively implements JdbcMig
                             offset);
 
             while (data.next()) {
-                AttachmentMapper mapper = new AttachmentMapper();
-                Attachment attachment = mapper.map(0, data, context);
+                LoadedAttachmentMapper mapper = new LoadedAttachmentMapper();
+                LoadedAttachment attachment = mapper.map(0, data, context);
 
                 logger.info("Processing attachment " + i + " : " + attachment.getFilename());
 

@@ -10,7 +10,7 @@ package org.mayocat.rest.representations;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

@@ -25,7 +25,7 @@ import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.localization.EntityLocalizationService;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.shop.front.util.WebDataHelper;
 import org.mayocat.theme.ThemeDefinition;

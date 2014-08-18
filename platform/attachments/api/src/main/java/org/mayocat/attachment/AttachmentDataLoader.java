@@ -14,11 +14,11 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.entity.DataLoaderAssistant;
 import org.mayocat.entity.EntityData;
 import org.mayocat.entity.LoadingOption;
-import org.mayocat.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
 import org.slf4j.Logger;

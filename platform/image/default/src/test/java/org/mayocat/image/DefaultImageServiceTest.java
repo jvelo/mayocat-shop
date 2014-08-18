@@ -8,9 +8,6 @@
 package org.mayocat.image;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,10 +18,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.files.FileManager;
-import org.mayocat.image.ImageService;
-import org.mayocat.model.Attachment;
-import org.mayocat.model.AttachmentData;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.AttachmentData;
 import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -58,7 +55,7 @@ public class DefaultImageServiceTest
     {
         // Height > Width
         InputStream data = this.getClass().getResourceAsStream("/120x200.gif");
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setData(new AttachmentData(data));
 
         Rectangle expected = new Rectangle(0, 50, 120, 100);
@@ -75,7 +72,7 @@ public class DefaultImageServiceTest
     {
         // Width > Height
         InputStream data = this.getClass().getResourceAsStream("/600x400.gif");
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setData(new AttachmentData(data));
 
         Rectangle expected = new Rectangle(100, 0, 400, 400);
@@ -94,7 +91,7 @@ public class DefaultImageServiceTest
     public void testGetFittingBoxWhenAspectRatioMatchesDimensions() throws Exception
     {
         InputStream data = this.getClass().getResourceAsStream("/120x100.gif");
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setData(new AttachmentData(data));
 
         Optional<Rectangle> box =

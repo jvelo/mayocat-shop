@@ -21,7 +21,7 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Identifiable;
@@ -151,7 +151,7 @@ public abstract class AbstractGenericEntityIndexDocumentPurveyor<E extends Entit
         if (HasFeaturedImage.class.isAssignableFrom(entity.getClass())) {
             HasFeaturedImage hasFeaturedImage = (HasFeaturedImage) entity;
             if (hasFeaturedImage.getFeaturedImageId() != null) {
-                Attachment attachment = attachmentStore.findById(hasFeaturedImage.getFeaturedImageId());
+                Attachment attachment = attachmentStore.findAndLoadById(hasFeaturedImage.getFeaturedImageId());
                 if (attachment != null) {
                     Map<String, Object> imageMap = Maps.newHashMap();
                     imageMap.put("url", entityURLFactory.create(attachment, tenant));

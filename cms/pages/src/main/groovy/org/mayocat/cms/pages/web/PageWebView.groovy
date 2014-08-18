@@ -43,7 +43,7 @@ import javax.ws.rs.core.MediaType
  */
 @Component("/pages")
 @Path("/pages")
-@Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON ])
+@Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
@@ -86,7 +86,7 @@ class PageWebView implements Resource
         }
 
         def context = new HashMap<String, Object>([
-                "title": page.title,
+                "title"  : page.title,
                 "content": page.content
         ])
 

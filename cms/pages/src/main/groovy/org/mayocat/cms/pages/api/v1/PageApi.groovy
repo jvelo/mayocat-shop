@@ -25,16 +25,13 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.image.model.Thumbnail
-import org.mayocat.image.store.ThumbnailStore
-import org.mayocat.model.Attachment
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
-import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
 import org.mayocat.attachment.store.AttachmentStore

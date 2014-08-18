@@ -9,7 +9,8 @@ package org.mayocat.attachment;
 
 import java.util.Map;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
@@ -28,5 +29,5 @@ public interface MetadataExtractor
     /**
      * Performs the actual meta data extraction.
      */
-    Optional<Map<String, Object>> extractMetadata(Attachment attachment);
+    Optional<Map<String, Object>> extractMetadata(LoadedAttachment attachment);
 }

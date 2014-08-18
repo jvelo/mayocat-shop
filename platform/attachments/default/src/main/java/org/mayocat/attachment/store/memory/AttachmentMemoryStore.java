@@ -13,13 +13,15 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.model.Entity;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.memory.BaseEntityMemoryStore;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
@@ -29,6 +31,15 @@ import com.google.common.collect.FluentIterable;
 @Component("memory")
 public class AttachmentMemoryStore extends BaseEntityMemoryStore<Attachment> implements AttachmentStore
 {
+    private static final Function<Attachment, LoadedAttachment>
+            CAST_AS_LOADED_ATTACHMENT = new Function<Attachment, LoadedAttachment>()
+    {
+        public LoadedAttachment apply(Attachment input)
+        {
+            return (LoadedAttachment) input;
+        }
+    };
+
     private Predicate<Attachment> withExtension(final String... extensions)
     {
         return new Predicate<Attachment>()
@@ -43,15 +54,23 @@ public class AttachmentMemoryStore extends BaseEntityMemoryStore<Attachment> imp
     }
 
     @Override
-    public Attachment findBySlug(final String slug)
+    public LoadedAttachment findAndLoadById(UUID id)
     {
-        return FluentIterable.from(entities.values()).filter(withSlug(slug)).limit(1).first().orNull();
+        return (LoadedAttachment) findById(id);
     }
 
     @Override
-    public Attachment findBySlugAndExtension(final String fileName, final String extension)
+    public LoadedAttachment findAndLoadBySlug(final String slug)
     {
-        return FluentIterable.from(entities.values()).filter(withExtension(extension)).limit(1).first().orNull();
+        return FluentIterable.from(entities.values()).filter(withSlug(slug)).transform(CAST_AS_LOADED_ATTACHMENT)
+                .limit(1).first().orNull();
+    }
+
+    @Override
+    public LoadedAttachment findAndLoadBySlugAndExtension(final String fileName, final String extension)
+    {
+        return FluentIterable.from(entities.values()).transform(CAST_AS_LOADED_ATTACHMENT)
+                .filter(withExtension(extension)).limit(1).first().orNull();
     }
 
     @Override
@@ -85,7 +104,7 @@ public class AttachmentMemoryStore extends BaseEntityMemoryStore<Attachment> imp
     @Override
     public void detach(Attachment attachment) throws EntityDoesNotExistException
     {
-        Attachment found = findById(attachment.getId());
+        Attachment found = findAndLoadById(attachment.getId());
         found.setParentId(null);
     }
 }

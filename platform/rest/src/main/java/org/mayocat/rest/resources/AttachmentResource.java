@@ -19,7 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
 import org.mayocat.rest.annotation.ExistingTenant;

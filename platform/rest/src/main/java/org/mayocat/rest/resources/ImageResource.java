@@ -21,7 +21,7 @@ import org.mayocat.rest.Resource;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.image.util.ImageUtils;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.rest.representations.ThumbnailRepresentation;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.attachment.store.AttachmentStore;
@@ -50,7 +50,7 @@ public class ImageResource implements Resource
     public Response createThumbnail(@PathParam("slug") String slug, @Valid
     List<ThumbnailRepresentation> thumbnailRepresentations)
     {
-        Attachment file = this.attachmentStore.get().findBySlug(slug);
+        Attachment file = this.attachmentStore.get().findAndLoadBySlug(slug);
 
         if (file == null) {
             return Response.status(Response.Status.NOT_FOUND).build();

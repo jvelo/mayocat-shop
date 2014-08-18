@@ -19,8 +19,9 @@ import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.files.FileManager;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -62,7 +63,7 @@ public class DefaultImageService implements ImageService, Initializable
         }
     }
 
-    public InputStream getImage(Attachment attachment, Dimension dimension) throws IOException
+    public InputStream getImage(LoadedAttachment attachment, Dimension dimension) throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
 
@@ -78,7 +79,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    public InputStream getImage(Attachment attachment, Dimension dimension, Rectangle rectangle)
+    public InputStream getImage(LoadedAttachment attachment, Dimension dimension, Rectangle rectangle)
             throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
@@ -99,13 +100,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    private String getDimensionFileName(Attachment attachment, Dimension dimension)
-    {
-        return String.valueOf(Math.round(dimension.getWidth())) + "x" +
-                String.valueOf(Math.round(dimension.getHeight())) + "." + attachment.getExtension();
-    }
-
-    public InputStream getImage(Attachment attachment, Rectangle rectangle)
+    public InputStream getImage(LoadedAttachment attachment, Rectangle rectangle)
             throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
@@ -125,15 +120,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    private String getBoxDirectoryName(Rectangle rectangle)
-    {
-        return String.valueOf(Math.round(rectangle.getX())) + "-" +
-                String.valueOf(Math.round(rectangle.getY())) + "-" +
-                String.valueOf(Math.round(rectangle.getWidth())) + "-" +
-                String.valueOf(Math.round(rectangle.getHeight()));
-    }
-
-    public Optional<Rectangle> getFittingRectangle(Attachment attachment, Dimension dimension) throws IOException
+    public Optional<Rectangle> getFittingRectangle(LoadedAttachment attachment, Dimension dimension) throws IOException
     {
         int imageWidth = -1;
         int imageHeight = -1;
@@ -185,7 +172,7 @@ public class DefaultImageService implements ImageService, Initializable
         return Optional.of(new Rectangle(x, y, width, height));
     }
 
-    public Optional<Dimension> newDimension(Attachment attachment, Optional<Integer> width, Optional<Integer> height)
+    public Optional<Dimension> newDimension(LoadedAttachment attachment, Optional<Integer> width, Optional<Integer> height)
             throws IOException
     {
         Image image = attachment.getData().getObject(loadImage, Image.class);
@@ -289,5 +276,19 @@ public class DefaultImageService implements ImageService, Initializable
             imageDirectory.toFile().mkdirs();
         }
         return imageDirectory;
+    }
+
+    private String getDimensionFileName(Attachment attachment, Dimension dimension)
+    {
+        return String.valueOf(Math.round(dimension.getWidth())) + "x" +
+                String.valueOf(Math.round(dimension.getHeight())) + "." + attachment.getExtension();
+    }
+
+    private String getBoxDirectoryName(Rectangle rectangle)
+    {
+        return String.valueOf(Math.round(rectangle.getX())) + "-" +
+                String.valueOf(Math.round(rectangle.getY())) + "-" +
+                String.valueOf(Math.round(rectangle.getWidth())) + "-" +
+                String.valueOf(Math.round(rectangle.getHeight()));
     }
 }

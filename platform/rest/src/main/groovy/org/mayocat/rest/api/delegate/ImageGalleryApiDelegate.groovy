@@ -15,7 +15,7 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.model.Attachment
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.model.EntityList
 import org.mayocat.model.HasFeaturedImage
 import org.mayocat.rest.api.object.ImageApiObject
@@ -85,7 +85,7 @@ class ImageGalleryApiDelegate
     def updateImage(@PathParam("slug") String slug,
             @PathParam("imageSlug") String imageSlug, ImageApiObject image)
     {
-        def attachment = attachmentStore.findBySlug(imageSlug);
+        def attachment = attachmentStore.findAndLoadBySlug(imageSlug);
         if (attachment == null) {
             return Response.status(404).build();
         }
@@ -111,7 +111,7 @@ class ImageGalleryApiDelegate
     def detachImage(@PathParam("slug") String slug,
             @PathParam("imageSlug") String imageSlug)
     {
-        def attachment = attachmentStore.findBySlug(imageSlug);
+        def attachment = attachmentStore.findAndLoadBySlug(imageSlug);
 
         def entity = handler.getEntity(slug)
         if (entity == null) {

@@ -10,7 +10,8 @@ package org.mayocat.attachment.store;
 import java.util.List;
 import java.util.UUID;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.model.Entity;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.EntityStore;
@@ -23,9 +24,11 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface AttachmentStore extends Store<Attachment, UUID>, EntityStore
 {
-    Attachment findBySlug(String slug);
+    LoadedAttachment findAndLoadById(UUID id);
 
-    Attachment findBySlugAndExtension(String fileName, String extension);
+    LoadedAttachment findAndLoadBySlug(String slug);
+
+    LoadedAttachment findAndLoadBySlugAndExtension(String fileName, String extension);
 
     List<Attachment> findAllChildrenOf(Entity parent);
 

@@ -20,8 +20,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mayocat.Slugifier;
-import org.mayocat.model.Attachment;
-import org.mayocat.model.AttachmentData;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.AttachmentData;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.InvalidEntityException;
@@ -64,7 +65,7 @@ public class AbstractAttachmentResource
                     .type(MediaType.TEXT_PLAIN_TYPE).build());
         }
 
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
 
         String fileName;
         String extension = null;

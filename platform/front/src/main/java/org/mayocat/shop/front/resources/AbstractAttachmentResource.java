@@ -12,7 +12,7 @@ import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.store.AttachmentStore;
 
 /**
@@ -26,7 +26,7 @@ public class AbstractAttachmentResource
     public Response downloadFile(String slug, String extension, ServletContext servletContext)
     {
         String fileName = slug + "." + extension;
-        Attachment file = this.attachmentStore.get().findBySlugAndExtension(slug, extension);
+        LoadedAttachment file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
         if (file == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

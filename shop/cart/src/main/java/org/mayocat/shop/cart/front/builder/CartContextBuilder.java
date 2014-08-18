@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.shop.cart.front.context.CartContext;
 import org.mayocat.shop.cart.front.context.CartItemContext;
 import org.mayocat.shop.cart.front.context.DeliveryTimeContext;

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,9 +21,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.image.ImageService;
-import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.parameters.ImageOptions;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
         }
 
         String fileName = slug + "." + extension;
-        Attachment file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
+        LoadedAttachment file = this.getAttachmentStore().findAndLoadBySlugAndExtension(slug, extension);
         if (file == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -112,7 +111,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
         if (imageOptions.isPresent()) {
 
             String fileName = slug + "." + extension;
-            Attachment file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
+            LoadedAttachment file = this.getAttachmentStore().findAndLoadBySlugAndExtension(slug, extension);
             if (file == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -148,7 +147,7 @@ public class ImageResource extends AbstractAttachmentResource implements Resourc
                     }
 
                         // data stream has been consumed, load it again
-                    file = this.getAttachmentStore().findBySlugAndExtension(slug, extension);
+                    file = this.getAttachmentStore().findAndLoadBySlugAndExtension(slug, extension);
 
                     return Response.ok(file.getData().getStream(), servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)

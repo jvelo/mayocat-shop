@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.store.rdbms.dbi.mapper;
+package org.mayocat.attachment.store.jdbi.mapper;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -15,8 +15,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.mayocat.model.Attachment;
-import org.mayocat.model.AttachmentData;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.AttachmentData;
+import org.mayocat.attachment.model.LoadedAttachment;
+import org.mayocat.store.rdbms.dbi.mapper.MapperUtils;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -28,12 +30,12 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class AttachmentMapper implements ResultSetMapper<Attachment>
+public class LoadedAttachmentMapper implements ResultSetMapper<LoadedAttachment>
 {
     @Override
-    public Attachment map(int i, ResultSet resultSet, StatementContext statementContext) throws SQLException
+    public LoadedAttachment map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setId((UUID) resultSet.getObject("id"));
         attachment.setTitle(resultSet.getString("title"));
         attachment.setDescription(resultSet.getString("description"));
@@ -50,7 +52,8 @@ public class AttachmentMapper implements ResultSetMapper<Attachment>
                 Map<String, Map<String, Object>> metadata = mapper.readValue(resultSet.getString("metadata"),
                         new TypeReference<Map<String, Map<String, Object>>>()
                         {
-                        });
+                        }
+                );
                 attachment.setMetadata(metadata);
             } catch (IOException e) {
                 throw new SQLException("Failed to de-serialize localization JSON data", e);

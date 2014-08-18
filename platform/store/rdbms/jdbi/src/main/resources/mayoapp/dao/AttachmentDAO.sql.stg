@@ -25,7 +25,13 @@ updateAttachment() ::= <<
 >>
 
 findAttachmentsOfEntity() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -34,7 +40,13 @@ findAttachmentsOfEntity() ::= <<
 >>
 
 findAttachmentsOfEntities() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -43,7 +55,13 @@ findAttachmentsOfEntities() ::= <<
 >>
 
 findAttachmentsOfEntityWithExtensions() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -53,13 +71,29 @@ findAttachmentsOfEntityWithExtensions() ::= <<
 >>
 
 findAttachmentsOfEntitiesWithExtensions() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
        AND attachment.extension in (<extensions>)
        AND entity.parent_id in (<ids>)
+>>
+
+findById() ::= <<
+    SELECT entity.*, attachment.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+    WHERE  entity.type = 'attachment'
+       AND entity.tenant_id = :tenant.id
+       AND entity.id = :id
 >>
 
 findBySlug() ::= <<

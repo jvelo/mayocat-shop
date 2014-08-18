@@ -13,8 +13,9 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.store.memory.AttachmentMemoryStore;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 
 /**
  * @version $Id$
@@ -32,41 +33,41 @@ public class AttachmentMemoryStoreTest
     @Test
     public void testCreateAttachmentAndGetBySlug() throws Exception
     {
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setSlug("my-attachment");
 
         store.create(attachment);
 
-        Assert.assertSame(attachment, store.findBySlug(attachment.getSlug()));
+        Assert.assertSame(attachment, store.findAndLoadBySlug(attachment.getSlug()));
     }
 
     @Test
     public void testCreateAttachmentAndGetBySlugAndExtension() throws Exception
     {
-        Attachment attachment = new Attachment();
+        LoadedAttachment attachment = new LoadedAttachment();
         attachment.setSlug("my-attachment");
         attachment.setExtension("txt");
 
         store.create(attachment);
 
-        Assert.assertSame(attachment, store.findBySlugAndExtension(attachment.getSlug(), "txt"));
+        Assert.assertSame(attachment, store.findAndLoadBySlugAndExtension(attachment.getSlug(), "txt"));
     }
 
     @Test
     public void testFindByParentAndExtensions() throws Exception
     {
-        Attachment attachment1 = new Attachment();
+        LoadedAttachment attachment1 = new LoadedAttachment();
         attachment1.setSlug("my-attachment1");
         attachment1.setExtension("txt");
 
         UUID parent = store.create(attachment1).getId();
 
-        Attachment attachment2 = new Attachment();
+        LoadedAttachment attachment2 = new LoadedAttachment();
         attachment2.setSlug("my-attachment2");
         attachment2.setExtension("md");
         attachment2.setParentId(parent);
 
-        Attachment attachment3 = new Attachment();
+        LoadedAttachment attachment3 = new LoadedAttachment();
         attachment3.setSlug("my-attachment3");
         attachment3.setExtension("ogg");
 
@@ -81,18 +82,18 @@ public class AttachmentMemoryStoreTest
     @Test
     public void testFindByParentIdAndExtensions() throws Exception
     {
-        Attachment attachment1 = new Attachment();
+        Attachment attachment1 = new LoadedAttachment();
         attachment1.setSlug("my-attachment1");
         attachment1.setExtension("txt");
 
         attachment1 = store.create(attachment1);
 
-        Attachment attachment2 = new Attachment();
+        Attachment attachment2 = new LoadedAttachment();
         attachment2.setSlug("my-attachment2");
         attachment2.setExtension("md");
         attachment2.setParentId(attachment1.getId());
 
-        Attachment attachment3 = new Attachment();
+        Attachment attachment3 = new LoadedAttachment();
         attachment3.setSlug("my-attachment3");
         attachment3.setExtension("ogg");
 

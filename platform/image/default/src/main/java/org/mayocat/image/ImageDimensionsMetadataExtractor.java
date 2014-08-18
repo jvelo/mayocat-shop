@@ -13,10 +13,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.spi.LoggerFactory;
 import org.mayocat.attachment.MetadataExtractor;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.util.AttachmentUtils;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -52,7 +52,7 @@ public class ImageDimensionsMetadataExtractor implements MetadataExtractor
         this.logger = org.slf4j.LoggerFactory.getLogger(ImageDimensionsMetadataExtractor.class);
     }
 
-    public Optional<Map<String, Object>> extractMetadata(Attachment attachment)
+    public Optional<Map<String, Object>> extractMetadata(LoadedAttachment attachment)
     {
         if (!AttachmentUtils.isImage(attachment)) {
             return Optional.absent();

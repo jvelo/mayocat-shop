@@ -22,8 +22,6 @@ import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 
-import com.google.common.collect.Lists;
-
 /**
  * Tests for {@link MemoryProductStore}
  *

@@ -18,7 +18,8 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.model.Entity;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -59,6 +60,11 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
             throw new EntityAlreadyExistsException();
         }
 
+        if (!LoadedAttachment.class.isAssignableFrom(attachment.getClass())) {
+            throw new InvalidEntityException("Cannot create an attachment which data is not loaded. Attachment must be" +
+                    " an instance of LoadedAttachment");
+        }
+
         this.dao.begin();
 
         UUID entityId = UUID.randomUUID();
@@ -66,7 +72,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
 
         this.dao.createChildEntity(attachment, ATTACHMENT_TABLE_NAME, getTenant());
 
-        InputStream data = attachment.getData().getStream();
+        InputStream data = ((LoadedAttachment)attachment).getData().getStream();
         try {
             // It's too bad we have to load the attachment data in memory. It appears Postgres's JDBC driver requires
             // to know in advance the length of the data to write (contrary to MySQL's one that can stream the data
@@ -102,7 +108,7 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     {
         this.dao.begin();
 
-        Attachment originalAttachment = this.findBySlug(attachment.getSlug());
+        Attachment originalAttachment = this.findAndLoadBySlug(attachment.getSlug());
 
         if (originalAttachment == null) {
             this.dao.commit();
@@ -165,13 +171,19 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
-    public Attachment findBySlugAndExtension(String fileName, String extension)
+    public LoadedAttachment findAndLoadById(UUID id)
+    {
+        return this.dao.findById(id, getTenant());
+    }
+
+    @Override
+    public LoadedAttachment findAndLoadBySlugAndExtension(String fileName, String extension)
     {
         return this.dao.findByFileNameAndExtension(fileName, extension, getTenant());
     }
 
     @Override
-    public Attachment findBySlug(String slug)
+    public LoadedAttachment findAndLoadBySlug(String slug)
     {
         return this.dao.findBySlug(slug, getTenant());
     }

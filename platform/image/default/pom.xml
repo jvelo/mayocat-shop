@@ -25,7 +25,7 @@
         <!-- Explicit dependency on attachments required by the database migration -->
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-attachments-api</artifactId>
+            <artifactId>mayocat-platform-attachments-default</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

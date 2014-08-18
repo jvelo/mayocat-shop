@@ -5,14 +5,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.model;
+package org.mayocat.attachment.model;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.mayocat.model.Child;
+import org.mayocat.model.Entity;
+import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
@@ -33,8 +35,6 @@ public class Attachment implements Entity, Child, Localized
     private String description;
 
     private String extension;
-
-    private AttachmentData data;
 
     private UUID parentId;
 
@@ -100,16 +100,6 @@ public class Attachment implements Entity, Child, Localized
         this.extension = extension;
     }
 
-    public AttachmentData getData()
-    {
-        return data;
-    }
-
-    public void setData(AttachmentData data)
-    {
-        this.data = data;
-    }
-
     public Map<String, Map<String, Object>> getMetadata()
     {
         return metadata;
@@ -168,7 +158,6 @@ public class Attachment implements Entity, Child, Localized
                 && Objects.equal(this.extension, other.extension)
                 && Objects.equal(this.description, other.description)
                 && Objects.equal(this.parentId, other.parentId)
-                && Objects.equal(this.data, other.data)
                 && Objects.equal(this.metadata, other.metadata);
     }
 
@@ -182,7 +171,6 @@ public class Attachment implements Entity, Child, Localized
                 this.extension,
                 this.description,
                 this.parentId,
-                this.data,
                 this.metadata
         );
     }

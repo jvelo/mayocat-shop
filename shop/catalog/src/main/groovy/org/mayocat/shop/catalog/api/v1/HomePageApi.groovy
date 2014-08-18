@@ -11,7 +11,7 @@ import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
-import org.mayocat.model.Attachment
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
