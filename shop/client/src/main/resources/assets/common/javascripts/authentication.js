@@ -58,7 +58,7 @@
 
                 function error(response) {
                     if (response.status === 401 && !response.config.ignoreAuthModule
-                        && response.config.url != '/api/login/') {
+                        && response.config.url.indexOf('/api/login/') < 0) {
                         var deferred = $q.defer();
                         httpBuffer.append(response.config, deferred);
                         $rootScope.$broadcast('event:authenticationRequired');
@@ -80,10 +80,9 @@
 
             $provide.factory('authenticationInterceptor', ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
                 return {
-                    // optional method
-                    'requestError': function (response) {
+                    'responseError': function (response) {
                         if (response.status === 401 && !response.config.ignoreAuthModule
-                            && response.config.url != '/api/login/') {
+                            && response.config.url.indexOf('/api/login/') < 0) {
                             var deferred = $q.defer();
                             httpBuffer.append(response.config, deferred);
                             $rootScope.$broadcast('event:authenticationRequired');
