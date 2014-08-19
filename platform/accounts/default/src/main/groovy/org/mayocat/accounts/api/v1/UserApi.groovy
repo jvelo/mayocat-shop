@@ -72,7 +72,7 @@ class UserApi implements Resource {
             throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors())
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
-                    .entity("A user with this usernane or email already exists").type(MediaType.TEXT_PLAIN_TYPE)
+                    .entity("A user with this username or email already exists").type(MediaType.TEXT_PLAIN_TYPE)
                     .build())
         }
     }
