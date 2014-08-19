@@ -22,42 +22,6 @@ var mayocat = angular.module('mayocat', [
 ]);
 
 /**
- * Authentication/401 interception
- *
- * based on http://www.espeo.pl/2012/02/26/authentication-in-angularjs-application
- */
-mayocat.config(function ($httpProvider) {
-
-    var interceptor = ['$rootScope', '$q', function (scope, $q) {
-        function success(response) {
-            return response;
-        }
-
-        function error(response) {
-            var status = response.status;
-            if (status == 401 && response.config.url != '/api/login/') {
-                var deferred = $q.defer();
-                var req = {
-                    config: response.config,
-                    deferred: deferred
-                }
-                scope.requests401.push(req);
-                scope.$broadcast('event:authenticationRequired');
-                return deferred.promise;
-            }
-            // otherwise
-            return $q.reject(response);
-        }
-
-        return function (promise) {
-            return promise.then(success, error);
-        }
-    }];
-
-    $httpProvider.responseInterceptors.push(interceptor);
-});
-
-/**
  * Internal Server Error / 500 interception
  */
 mayocat.config(function ($httpProvider) {
@@ -79,7 +43,7 @@ mayocat.config(function ($httpProvider) {
             return promise.then(success, error);
         }
     }];
-    $httpProvider.responseInterceptors.push(interceptor);
+    $httpProvider.responseInterceptors && $httpProvider.responseInterceptors.push(interceptor);
 });
 
 /**
