@@ -39,6 +39,7 @@ import org.mayocat.rest.Resource;
 import org.mayocat.rest.jackson.MayocatGroovyModule;
 import org.mayocat.rest.jackson.MayocatJodaModule;
 import org.mayocat.rest.jackson.MayocatLocaleBCP47LanguageTagModule;
+import org.mayocat.rest.jersey.CorsResponseFilter;
 import org.mayocat.servlet.ServletFilter;
 import org.mayocat.task.Task;
 import org.mayocat.util.Utils;
@@ -122,6 +123,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         addRequestFilter(LocalizationContainerFilter.class);
         addResponseFilter(SessionScopeCookieContainerFilter.class);
         addResponseFilter(FlashScopeCookieContainerFilter.class);
+        addResponseFilter(CorsResponseFilter.class);
 
         // Register Jersey container request filters
         environment.setJerseyProperty(

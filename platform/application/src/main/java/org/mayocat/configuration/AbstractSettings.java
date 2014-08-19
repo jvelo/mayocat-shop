@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.mail.SmtpSettings;
+import org.mayocat.rest.CorsSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
@@ -61,6 +62,10 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private LocalizationFilterSettings localizationFilter = new LocalizationFilterSettings();
 
+    @Valid
+    @JsonProperty
+    private CorsSettings cors = new CorsSettings();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -99,5 +104,10 @@ public class AbstractSettings extends Configuration
     public LocalizationFilterSettings getLocalizationFilterSettings()
     {
         return localizationFilter;
+    }
+
+    public CorsSettings getCorsSettings()
+    {
+        return cors;
     }
 }
