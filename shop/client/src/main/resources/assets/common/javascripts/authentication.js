@@ -42,12 +42,14 @@
             };
         }])
 
-        /**
-        * $http interceptor.
-        * On 401 response (without 'ignoreAuthModule' option) stores the request
-        * and broadcasts 'event:angular-auth-loginRequired'.
-        */
-        .config(['$httpProvider', function ($httpProvider) {
+    /**
+     * $http interceptor.
+     * On 401 response (without 'ignoreAuthModule' option) stores the request
+     * and broadcasts 'event:angular-auth-loginRequired'.
+     */
+        .config(['$httpProvider', '$provide', function ($httpProvider, $provide) {
+
+            /* Angular 1.2 */
 
             var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
                 function success(response) {
@@ -71,7 +73,30 @@
                 };
 
             }];
-            $httpProvider.responseInterceptors.push(interceptor);
+
+            $httpProvider.responseInterceptors && $httpProvider.responseInterceptors.push(interceptor);
+
+            /* Angular 1.3 */
+
+            $provide.factory('authenticationInterceptor', ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+                return {
+                    // optional method
+                    'requestError': function (response) {
+                        if (response.status === 401 && !response.config.ignoreAuthModule
+                            && response.config.url != '/api/login/') {
+                            var deferred = $q.defer();
+                            httpBuffer.append(response.config, deferred);
+                            $rootScope.$broadcast('event:authenticationRequired');
+                            return deferred.promise;
+                        }
+                        // otherwise, default behaviour
+                        return $q.reject(response);
+                    }
+                };
+            }]);
+
+            $httpProvider.interceptors && $httpProvider.interceptors.push('authenticationInterceptor');
+
         }]);
 
 
