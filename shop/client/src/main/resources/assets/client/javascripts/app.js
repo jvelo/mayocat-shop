@@ -25,7 +25,7 @@ var MayocatShop = angular.module('MayocatShop', [
     '$strap.directives', // Used for the date picker bs-datepicker directive
                          // TODO rationalize on ui-bootstrap
     'ui.bootstrap',
-    'ui.sortable',
+    'ui.sortable'
 ]);
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
