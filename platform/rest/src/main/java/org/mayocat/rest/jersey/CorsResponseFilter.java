@@ -29,11 +29,14 @@ public class CorsResponseFilter implements ContainerResponseFilter
 
         if (corsSettings.isEnabled()) {
             Response.ResponseBuilder response = Response.fromResponse(containerResponse.getResponse());
-            response.header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD, PUT, DELETE");
+            response.header("Access-Control-Allow-Origin", corsSettings.getAllowOrigin())
+                    .header("Access-Control-Allow-Methods", corsSettings.getAllowMethods());
+
+            if (corsSettings.isAllowCredentials()) {
+                response.header("Access-Control-Allow-Credentials", "true");
+            }
 
             String requestedHeaders = containerRequest.getHeaderValue("Access-Control-Request-Headers");
-
             if (!Strings.isNullOrEmpty(requestedHeaders)) {
                 // Copy over requested headers
                 response.header("Access-Control-Allow-Headers", requestedHeaders);

@@ -16,8 +16,34 @@ public class CorsSettings
 {
     private Boolean enabled = false;
 
+    private String allowOrigin = "*";
+
+    private String allowMethods = "GET, POST, OPTIONS, HEAD, PUT, DELETE";
+
+    private Boolean allowCredentials = false;
+
     public Boolean isEnabled()
     {
         return enabled;
+    }
+
+    public Boolean getEnabled()
+    {
+        return enabled;
+    }
+
+    public String getAllowOrigin()
+    {
+        return allowOrigin;
+    }
+
+    public String getAllowMethods()
+    {
+        return allowMethods;
+    }
+
+    public Boolean isAllowCredentials()
+    {
+        return allowCredentials;
     }
 }
