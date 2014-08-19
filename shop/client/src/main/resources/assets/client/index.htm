@@ -135,9 +135,9 @@
 
             <div class="btn-group">
                 <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
-                <img src="/common/images/flags/{{uiLocale}}.png"/><span class="caret"></span></a>
+                <img ng-src="/common/images/flags/{{uiLocale}}.png"/><span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li ng-repeat="locale in ['en', 'fr']" ng-click="changeLocale(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>
+                    <li ng-repeat="locale in ['en', 'fr']" ng-click="changeLocale(locale)"><img ng-src="/common/images/flags/{{locale}}.png" /></li>
                 </ul>
 
             </div>
