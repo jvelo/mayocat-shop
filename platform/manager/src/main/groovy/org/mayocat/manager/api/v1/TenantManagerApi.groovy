@@ -8,8 +8,10 @@
 package org.mayocat.manager.api.v1
 
 import com.google.common.base.Optional
+import com.google.common.base.Strings
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
+import org.mayocat.Slugifier
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.api.v1.object.UserAndTenantApiObject
@@ -62,6 +64,9 @@ class TenantManagerApi implements Resource
     MultitenancySettings multitenancySettings
 
     @Inject
+    Slugifier slugifier
+
+    @Inject
     PlatformSettings platformSettings
 
     @GET
@@ -98,7 +103,7 @@ class TenantManagerApi implements Resource
 
         tenants.each({ Tenant tenant ->
             TenantApiObject tenantApiObject = new TenantApiObject([
-                _href: "/management/api/tenants/${tenant.slug}"
+                    _href: "/management/api/tenants/${tenant.slug}"
             ])
             tenantApiObject.withTenant(tenant, globalTimeZone)
             tenantList << tenantApiObject
@@ -108,11 +113,11 @@ class TenantManagerApi implements Resource
                 _pagination: new Pagination([
                         numberOfItems: limit,
                         returnedItems: tenantList.size(),
-                        offset: offset,
-                        totalItems: total,
-                        urlTemplate: '/management/api/tenants?number=${numberOfItems}&offset=${offset}'
+                        offset       : offset,
+                        totalItems   : total,
+                        urlTemplate  : '/management/api/tenants?number=${numberOfItems}&offset=${offset}'
                 ]),
-                tenants: tenantList
+                tenants    : tenantList
         ])
     }
 
@@ -148,13 +153,29 @@ class TenantManagerApi implements Resource
             return Response.status(Response.Status.FORBIDDEN).build()
         }
 
+        if (!userAndTenant.tenant || Strings.isNullOrEmpty(userAndTenant.tenant.name)) {
+            return Response.status(Response.Status.BAD_REQUEST).build()
+        }
+
         try {
             Tenant tenant = userAndTenant.tenant.toTenant(platformSettings, Optional.absent())
             tenant.setCreationDate(new Date())
+
+            if (Strings.isNullOrEmpty(tenant.slug)) {
+                tenant.slug = slugifier.slugify(tenant.name)
+            }
+
             accountsService.createTenant(tenant)
-            context.setTenant(tenant)
-            accountsService.createInitialUser(userAndTenant.user.toUser())
-            return Response.ok().build()
+
+            if (userAndTenant.user != null) {
+                // Set tenant in context so that user is created for that tenant
+                context.setTenant(tenant)
+
+                accountsService.createInitialUser(userAndTenant.user.toUser())
+            }
+
+            return Response.created(new URI(tenant.slug)).build();
+
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT).entity("A tenant with this slug already exists").build()
         } catch (InvalidEntityException e) {
