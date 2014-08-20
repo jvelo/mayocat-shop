@@ -198,7 +198,7 @@ public class DefaultConfigurationService implements ConfigurationService
         Map<String, Object> result = Maps.newHashMap();
         for (String key : this.gestaltConfigurationSources.keySet()) {
             Object value = this.gestaltConfigurationSources.get(key).get();
-            if (ExposedSettings.class.isAssignableFrom(value.getClass())) {
+            if (ExposedSettings.class.isAssignableFrom(value.getClass()) && this.context.getTenant() != null) {
                 // If the gestalt source returns an "exposed setting", then we get the version merged with the tenant
                 // configuration.
                 Class<? extends ExposedSettings> configurationClass =
