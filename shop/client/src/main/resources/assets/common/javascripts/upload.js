@@ -389,7 +389,7 @@
 
             return {
                 restrict: 'E',
-                templateUrl: '/common/partials/imageUpload.html?v=2',
+                templateUrl: '/common/partials/imageUpload.html',
                 scope: {
                     'uploadUri': '@',
                     'multipleAttr': '@multiple',

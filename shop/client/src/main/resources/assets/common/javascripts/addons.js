@@ -428,7 +428,7 @@
                     entity: '=',
                     localized: '=localizedEntity'
                 },
-                templateUrl: '/common/partials/addonList.html?1',
+                templateUrl: '/common/partials/addonList.html',
                 controller: function ($scope) {
 
                     // The collapsed index hash maps an array of collapsed sequence items positions to a sequenced addon group
