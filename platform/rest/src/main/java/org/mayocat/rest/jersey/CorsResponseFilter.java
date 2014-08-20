@@ -36,14 +36,23 @@ public class CorsResponseFilter implements ContainerResponseFilter
                 response.header("Access-Control-Allow-Credentials", "true");
             }
 
+            String authorizedHeaders = corsSettings.getAllowHeaders();
             String requestedHeaders = containerRequest.getHeaderValue("Access-Control-Request-Headers");
-            if (!Strings.isNullOrEmpty(requestedHeaders)) {
-                // Copy over requested headers
-                response.header("Access-Control-Allow-Headers", requestedHeaders);
+            if (corsSettings.isCopyRequestedHeaders() && !Strings.isNullOrEmpty(requestedHeaders)) {
+                authorizedHeaders.concat(", ").concat(requestedHeaders);
+            }
+
+            if (!Strings.isNullOrEmpty(authorizedHeaders)) {
+                response.header("Access-Control-Allow-Headers", authorizedHeaders);
+            }
+
+            if (!Strings.isNullOrEmpty(corsSettings.getExposeHeaders())) {
+                response.header("Access-Control-Expose-Headers", corsSettings.getExposeHeaders());
             }
 
             containerResponse.setResponse(response.build());
         }
+
         return containerResponse;
     }
 }

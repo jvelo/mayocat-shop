@@ -20,7 +20,13 @@ public class CorsSettings
 
     private String allowMethods = "GET, POST, OPTIONS, HEAD, PUT, DELETE";
 
+    private String allowHeaders = "Accept, Content-Type";
+
+    private String exposeHeaders = "Location";
+
     private Boolean allowCredentials = false;
+
+    private Boolean copyRequestedHeaders = false;
 
     public Boolean isEnabled()
     {
@@ -45,5 +51,20 @@ public class CorsSettings
     public Boolean isAllowCredentials()
     {
         return allowCredentials;
+    }
+
+    public String getAllowHeaders()
+    {
+        return allowHeaders;
+    }
+
+    public String getExposeHeaders()
+    {
+        return exposeHeaders;
+    }
+
+    public Boolean isCopyRequestedHeaders()
+    {
+        return copyRequestedHeaders;
     }
 }
