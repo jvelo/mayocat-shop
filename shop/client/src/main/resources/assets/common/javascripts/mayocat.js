@@ -594,31 +594,37 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         $scope.ping = function () {
             $http.get('/api/tenant')
                 .success(function (data, status, headers, config) {
-                    if (status === 200) {
+                    // In angular 1.2, 4xx are successes
+                    if (status !== 404) {
                         $scope.tenant = data;
-                    }
-                    else if (status === 404) {
+                    } else {
                         $scope.tenant = undefined;
                     }
-
                 })
                 .error(function (data, status, headers, config) {
-                    $scope.$parent.$broadcast('event:serverError');
+                    // In angular 1.3, 4xx are errors
+                    if (status === 404) {
+                        $scope.tenant = undefined;
+                    }
+                    else {
+                        $scope.$parent.$broadcast('event:serverError');
+                    }
                 });
             $http.get('/api/me')
                 .success(function (data, status, headers, config) {
-                    if (status === 200) {
+                    // In angular 1.2, 4xx are successes
+                    if (status !== 404) {
                         authenticationService.loginConfirmed(data);
                     }
-                    else if (status === 404) {
-                        $scope.tenant = undefined;
-                    }
-
                 })
                 .error(function (data, status, headers, config) {
-                    $scope.$parent.$broadcast('event:serverError');
+                    // In angular 1.3, 4xx are errors
+                    if (status !== 404) {
+                        $scope.$parent.$broadcast('event:serverError');
+                    }
                 });
         }
+
 
         // Ensure authenticated
         $scope.ping();
