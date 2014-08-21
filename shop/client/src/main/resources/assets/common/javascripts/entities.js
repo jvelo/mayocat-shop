@@ -33,14 +33,18 @@
             }
         ])
 
+        // FIXME
+        // Ideally this entityBaseMixin (actually the whole "common" module) should not depend on $routeParams as
+        // consumers might use something else for routing (like ui-router for example).
+
         .factory('entityBaseMixin', ["$routeParams" , "$rootScope", function ($routeParams, $rootScope) {
             return function (entityType, options) {
                 options = typeof options === "undefined" ? {} : options;
 
-                var slug = $routeParams[entityType];
+                var slug = $routeParams[entityType] || options.slug;
 
                 var mixin = {
-                    slug: $routeParams[entityType],
+                    slug: slug,
                     isNew: function () {
                         var scope = this;
                         return scope.slug == "_new";
