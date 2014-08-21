@@ -173,7 +173,6 @@ class AttachmentApiDelegate
             try {
                 return this.attachmentStore.get().create(attachment)
             } catch (InvalidEntityException e) {
-                e.printStackTrace()
                 throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid attachment\n")
                         .type(MediaType.TEXT_PLAIN_TYPE).build())
