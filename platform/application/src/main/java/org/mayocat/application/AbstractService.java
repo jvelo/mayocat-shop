@@ -34,6 +34,7 @@ import org.mayocat.lifecycle.Managed;
 import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
 import org.mayocat.meta.EntityMetaRegistry;
+import org.mayocat.multitenancy.MultitenancyContainerFilter;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.jackson.MayocatGroovyModule;
@@ -121,6 +122,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         addRequestFilter(SessionScopeCookieContainerFilter.class);
         addRequestFilter(FlashScopeCookieContainerFilter.class);
         addRequestFilter(LocalizationContainerFilter.class);
+        addRequestFilter(MultitenancyContainerFilter.class);
         addResponseFilter(SessionScopeCookieContainerFilter.class);
         addResponseFilter(FlashScopeCookieContainerFilter.class);
         addResponseFilter(CorsResponseFilter.class);

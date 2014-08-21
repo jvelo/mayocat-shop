@@ -15,7 +15,7 @@
 
         <li class="drag-me" ng-repeat="image in entity._embedded.images">
             <div class="wrapper">
-                <img ng-src="{{image.file._href}}?width=150&amp;height=150"/>
+                <img ng-src="{{pathPrefix}}{{image.file._href}}?width=100&amp;height=100"/>
                     <span class="featured-star" ng-class="{featured: image.featured}"
                           ng-click="selectFeature({image: image})"></span>
 

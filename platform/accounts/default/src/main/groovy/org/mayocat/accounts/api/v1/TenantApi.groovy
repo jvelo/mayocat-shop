@@ -33,6 +33,7 @@ import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
@@ -55,8 +56,8 @@ import javax.ws.rs.core.UriInfo
  *
  * @version $Id$
  */
-@Component("/api/tenant")
-@Path("/api/tenant")
+@Component("/tenant/{tenant}/api/tenant")
+@Path("/tenant/{tenant}/api/tenant")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
@@ -134,7 +135,8 @@ class TenantApi implements Resource, Initializable {
                 dataLoader     : dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                handler        : tenantHandler
+                handler        : tenantHandler,
+                context        : context
         ])
     }
 
@@ -146,9 +148,13 @@ class TenantApi implements Resource, Initializable {
         Tenant tenant = context.tenant
         def tenantData = dataLoader.load(tenant)
         TenantApiObject tenantApiObject = new TenantApiObject([
-                _href: "/api/tenant/"
+                _href : "/api/tenant/",
+                _links: [
+                        self  : new LinkApiObject([href: "${context.request.tenantPrefix}/api/tenant/"]),
+                        images: new LinkApiObject([href: "${context.request.tenantPrefix}/api/tenant/images"])
+                ]
         ])
-        tenantApiObject.withEmbeddedImages(tenantData.getDataList(Image.class), tenant.featuredImageId)
+        tenantApiObject.withEmbeddedImages(tenantData.getDataList(Image.class), tenant.featuredImageId, context.request)
         tenantApiObject.withTenant(tenant, globalTimeZone)
         tenant
 

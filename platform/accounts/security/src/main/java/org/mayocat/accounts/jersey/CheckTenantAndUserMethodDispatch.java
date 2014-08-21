@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.accounts.AccountsService;
-import org.mayocat.accounts.api.v1.UserApi;
+import org.mayocat.accounts.api.v1.TenantUserApi;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.User;
 import org.mayocat.authorization.Gatekeeper;
@@ -151,7 +151,7 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
 
         private boolean isCreateUserResource()
         {
-            return UserApi.class.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
+            return TenantUserApi.class.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
                     && this.method.getHttpMethod().equals(HttpMethod.POST)
                     && this.method.getResource().getPath().getValue().equals("/api/user");
         }

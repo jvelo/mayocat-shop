@@ -20,8 +20,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.mayocat.attachment.model.Attachment;
-import org.mayocat.rest.Resource;
 import org.mayocat.image.ImageService;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -33,14 +33,11 @@ import com.sun.jersey.multipart.FormDataParam;
 /**
  * @version $Id$
  */
-@Component(AttachmentResource.PATH)
-@Path(AttachmentResource.PATH)
+@Component("/tenant/{tenant}/api/attachments")
+@Path("/tenant/{tenant}/api/attachments")
 @ExistingTenant
 public class AttachmentResource extends AbstractAttachmentResource implements Resource
 {
-    // TODO: Create a module with an attachment entity
-    public static final String PATH = API_ROOT_PATH + "attachments";
-
     @Inject
     private ImageService imageService;
 
@@ -63,5 +60,4 @@ public class AttachmentResource extends AbstractAttachmentResource implements Re
             return Response.serverError().build();
         }
     }
-
 }

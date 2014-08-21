@@ -16,25 +16,24 @@ import org.mayocat.event.EventListener;
 import org.xwiki.component.annotation.Component;
 
 @Component
-@Named("defaultHostAndSubdomainSlugTenantResolverEventListener")
-public class DefaultHostAndSubdomainSlugTenantResolverServletEventListener
+@Named("defaultResolverEventListener")
+public class DefaultTenantResolverServletEventListener
         implements ServletRequestListener, EventListener
 {
     @Inject
-    @Named("defaultHostAndSubdomain")
     private TenantResolver defaultTenantResolver;
 
     @Override
     public void requestDestroyed(ServletRequestEvent sre)
     {
         try {
-            DefaultHostAndSubdomainSlugTenantResolver dtr =
-                    (DefaultHostAndSubdomainSlugTenantResolver) this.defaultTenantResolver;
+            DefaultTenantResolver dtr =
+                    (DefaultTenantResolver) this.defaultTenantResolver;
             if (dtr != null) {
                 dtr.requestDestroyed();
             }
         } catch (ClassCastException e) {
-            // This mean we are not using the sub-domain slug tenant resolver...
+            // This mean we are not using the default slug tenant resolver...
         }
     }
 

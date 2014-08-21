@@ -11,6 +11,7 @@ import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
@@ -46,6 +47,8 @@ class ImageGalleryApiDelegate
 
     EntityApiDelegateHandler handler
 
+    WebContext context
+
     @Path("{slug}/images")
     @GET
     List<ImageApiObject> getImages(@PathParam("slug") String slug)
@@ -66,7 +69,7 @@ class ImageGalleryApiDelegate
 
         gallery.get().images.each({ Image image ->
             def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
+            imageApiObject.withImage(image, context.request)
 
             if (entity.featuredImageId != null && entity.featuredImageId.equals(image.attachment.id)) {
                 imageApiObject.featured = true

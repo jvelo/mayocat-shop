@@ -54,7 +54,7 @@ public class CollectionsWebDataSupplier implements WebDataSupplier, ContextConst
         for (final Collection collection : collections) {
             final Collection localized = entityLocalizationService.localize(collection);
             final String collectionPath = urlFactory.create(localized).getPath();
-            // Determine if this is the currently browsed collection by compoaring its path to the current request path.
+            // Determine if this is the currently browsed collection by comparing its path to the current request path.
             // We don't use the canonical path for the comparison since the URL we got for the collection is localized.
             final boolean current = collectionPath.equals(webContext.getRequest().getPath());
             collectionsContext.add(new HashMap<String, Object>()

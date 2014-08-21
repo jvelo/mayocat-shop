@@ -53,8 +53,8 @@ import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Component("/api/products")
-@Path("/api/products")
+@Component("/tenant/{tenant}/api/products")
+@Path("/tenant/{tenant}/api/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
@@ -138,7 +138,8 @@ class ProductApi implements Resource, Initializable
                 dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                handler: productHandler
+                handler: productHandler,
+                context: webContext
         ])
     }
 
@@ -182,7 +183,7 @@ class ProductApi implements Resource, Initializable
             def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
             if (featuredImage) {
-                productApiObject.withEmbeddedFeaturedImage(featuredImage)
+                productApiObject.withEmbeddedFeaturedImage(featuredImage, webContext.request)
             }
 
             productList << productApiObject
@@ -233,7 +234,7 @@ class ProductApi implements Resource, Initializable
 
         productApiObject.withProduct(product)
         productApiObject.withCollectionRelationships(collections)
-        productApiObject.withEmbeddedImages(images, product.featuredImageId)
+        productApiObject.withEmbeddedImages(images, product.featuredImageId, webContext.request)
 
         if (product.addons.isLoaded()) {
             productApiObject.withAddons(product.addons.get())

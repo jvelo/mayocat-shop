@@ -10,6 +10,7 @@ package org.mayocat.rest.api.object
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.CompileStatic
+import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 
@@ -39,10 +40,10 @@ class ImageApiObject extends BaseApiObject
     Map<Locale, Map<String, Object>> _localized;
 
     @JsonIgnore
-    def withImage(Image image)
+    def withImage(Image image, WebRequest request)
     {
-        def link = "/api/images/${image.attachment.slug}"
-        def fileLink = "/images/${image.attachment.slug}.${image.attachment.extension}"
+        def link = "${request.tenantPrefix}/api/images/${image.attachment.slug}"
+        def fileLink = "${request.tenantPrefix}/api/images/${image.attachment.slug}/file/${image.attachment.slug}.${image.attachment.extension}"
         this.with {
             _href = link
             slug = image.attachment.slug

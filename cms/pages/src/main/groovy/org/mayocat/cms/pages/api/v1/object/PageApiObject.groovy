@@ -14,6 +14,7 @@ import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.configuration.PlatformSettings
+import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
 import org.mayocat.model.AddonGroup
 import org.mayocat.rest.api.object.AddonGroupApiObject
@@ -99,7 +100,7 @@ class PageApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId)
+    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -112,7 +113,7 @@ class PageApiObject extends BaseApiObject
         images.each({ Image image ->
             ImageApiObject imageApiObject = new ImageApiObject()
             imageApiObject.featured = false
-            imageApiObject.withImage(image)
+            imageApiObject.withImage(image, request)
             if (image.attachment.id == featuredImageId) {
                 featuredImage = imageApiObject
                 imageApiObject.featured = true
@@ -128,14 +129,14 @@ class PageApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage)
+    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage)
+        imageApiObject.withImage(featuredImage, request)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
     }

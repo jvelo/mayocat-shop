@@ -11,42 +11,42 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.ServletContext;
 import javax.validation.Valid;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.mayocat.rest.Resource;
+import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.image.model.Thumbnail;
 import org.mayocat.image.store.ThumbnailStore;
 import org.mayocat.image.util.ImageUtils;
-import org.mayocat.attachment.model.Attachment;
-import org.mayocat.rest.representations.ThumbnailRepresentation;
+import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.attachment.store.AttachmentStore;
+import org.mayocat.rest.parameters.ImageOptions;
+import org.mayocat.rest.representations.ThumbnailRepresentation;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 /**
  * @version $Id$
  */
-@Component(ImageResource.PATH)
-@Path(ImageResource.PATH)
+@Component("/tenant/{tenant}/api/images/")
+@Path("/tenant/{tenant}/api/images/")
 @ExistingTenant
-public class ImageResource implements Resource
+public class ImageResource extends AbstractImageResource implements Resource
 {
-    public static final String PATH = API_ROOT_PATH + "images";
-
-    @Inject
-    private Provider<AttachmentStore> attachmentStore;
-
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;
 
     @PUT
-    @Path("/{slug}/thumbnails/")
+    @Path("{slug}/thumbnails/")
     public Response createThumbnail(@PathParam("slug") String slug, @Valid
     List<ThumbnailRepresentation> thumbnailRepresentations)
     {
@@ -76,5 +76,13 @@ public class ImageResource implements Resource
         }
 
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("{slug}/file/{slug}.{ext}")
+    public Response downloadImage(@PathParam("slug") String slug, @PathParam("ext") String extension,
+            @Context ServletContext servletContext, @Context Optional<ImageOptions> imageOptions)
+    {
+        return super.downloadImage(slug, extension, servletContext, imageOptions);
     }
 }

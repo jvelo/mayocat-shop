@@ -21,7 +21,7 @@ import org.mayocat.attachment.store.AttachmentStore;
 public class AbstractAttachmentResource
 {
     @Inject
-    private Provider<AttachmentStore> attachmentStore;
+    protected Provider<AttachmentStore> attachmentStore;
 
     public Response downloadFile(String slug, String extension, ServletContext servletContext)
     {

@@ -46,15 +46,13 @@ import com.yammer.metrics.annotation.Timed;
 /**
  * @version $Id$
  */
-@Component(OrderResource.PATH)
-@Path(OrderResource.PATH)
+@Component("/tenant/{tenant}/api/orders")
+@Path("/tenant/{tenant}/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class OrderResource implements Resource
 {
-    public static final String PATH = API_ROOT_PATH + OrderEntity.PATH;
-
     @Inject
     private Provider<OrderStore> orderStore;
 
@@ -83,11 +81,11 @@ public class OrderResource implements Resource
                 });
 
         Integer total = this.orderStore.get().countAll();
-        ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<OrderRepresentation>(
-                PATH,
+        ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<>(
+                "/api/orders",
                 number,
                 offset,
-                new ArrayList<OrderRepresentation>(representations),
+                new ArrayList<>(representations),
                 total
         );
 

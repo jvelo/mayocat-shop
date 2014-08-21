@@ -33,15 +33,13 @@ import mayoapp.dao.TurnoverStatsDAO;
 /**
  * @version $Id$
  */
-@Component(TurnoverStatsResource.PATH)
-@Path(TurnoverStatsResource.PATH)
+@Component("/tenant/{tenant}/api/billing/stats")
+@Path("/tenant/{tenant}/api/billing/stats")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class TurnoverStatsResource implements Resource, Initializable
 {
-    public static final String PATH = API_ROOT_PATH + "billing/stats";
-
     @Inject
     private DBIProvider dbi;
 

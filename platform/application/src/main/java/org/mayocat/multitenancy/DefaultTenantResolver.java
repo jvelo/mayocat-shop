@@ -27,9 +27,9 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 
-@Component(hints= {"defaultHostAndSubdomain", "default"})
+@Component
 @Singleton
-public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver, ServletRequestListener
+public class DefaultTenantResolver implements TenantResolver, ServletRequestListener
 {
     /**
      * Request-scoped cache so that we don't call the store multiple times per request for the same host. FIXME: maybe
@@ -58,6 +58,12 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
     @Override
     public Tenant resolve(String host)
     {
+        return this.resolve(host, null);
+    }
+
+    @Override
+    public Tenant resolve(String host, String path)
+    {
         if (this.resolved.get() == null) {
             this.resolved.set(new HashMap<String, Tenant>());
         }
@@ -75,11 +81,19 @@ public class DefaultHostAndSubdomainSlugTenantResolver implements TenantResolver
                 } else {
                     // Multi-tenant
 
-                    tenant = this.accountsService.findTenantByDefaultHost(host);
+                    if (path != null && path.startsWith("/tenant/")) {
+                        String tmp = StringUtils.substringAfter(path, "/tenant/");
+                        String slug = StringUtils.substringBefore(tmp, "/");
+                        tenant = this.accountsService.findTenant(slug);
+                    }
+
                     if (tenant == null) {
-                        tenant = this.accountsService.findTenant(this.extractSlugFromHost(host));
+                        tenant = this.accountsService.findTenantByDefaultHost(host);
                         if (tenant == null) {
-                            return null;
+                            tenant = this.accountsService.findTenant(this.extractSlugFromHost(host));
+                            if (tenant == null) {
+                                return null;
+                            }
                         }
                     }
                     this.resolved.get().put(host, tenant);

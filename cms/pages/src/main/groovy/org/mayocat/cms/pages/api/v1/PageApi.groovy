@@ -55,8 +55,8 @@ import javax.ws.rs.core.Response
  *
  * @version $Id$
  */
-@Component("/api/pages")
-@Path("/api/pages")
+@Component("/tenant/{tenant}/api/pages")
+@Path("/tenant/{tenant}/api/pages")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
@@ -134,7 +134,8 @@ class PageApi implements Resource, Initializable
                 dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                handler: pageHandler
+                handler: pageHandler,
+                context: context
         ])
     }
 
@@ -163,7 +164,7 @@ class PageApi implements Resource, Initializable
             def featuredImage = images.find({ Image image -> image.attachment.id == page.featuredImageId })
 
             if (featuredImage) {
-                articleApiObject.withEmbeddedFeaturedImage(featuredImage)
+                articleApiObject.withEmbeddedFeaturedImage(featuredImage, context.request)
             }
 
             pageList << articleApiObject
@@ -210,7 +211,7 @@ class PageApi implements Resource, Initializable
         pageApiObject.withPage(page);
 
         if (expansions.contains("images")) {
-            pageApiObject.withEmbeddedImages(images, page.featuredImageId)
+            pageApiObject.withEmbeddedImages(images, page.featuredImageId, context.request)
         }
 
         if (page.addons.isLoaded()) {

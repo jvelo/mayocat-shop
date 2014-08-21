@@ -52,8 +52,8 @@ import asia.redact.bracket.properties.Properties;
  *
  * @version $Id$
  */
-@Component("/api/localization/theme/")
-@Path("/api/localization/theme/")
+@Component("/tenant/{tenant}/api/localization/theme/")
+@Path("/tenant/{tenant}/api/localization/theme/")
 @Produces(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class LocalizationResource implements Resource

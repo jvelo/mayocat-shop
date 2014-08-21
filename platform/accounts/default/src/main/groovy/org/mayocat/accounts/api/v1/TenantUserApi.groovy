@@ -36,13 +36,13 @@ import javax.ws.rs.core.Response
 /**
  * @version $Id$
  */
-@Component("/api/user")
-@Path("/api/user")
+@Component("/tenant/{tenant}/api/user")
+@Path("/tenant/{tenant}/api/user")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
 @CompileStatic
-class UserApi implements Resource {
+class TenantUserApi implements Resource {
 
     @Inject
     AccountsService accountsService

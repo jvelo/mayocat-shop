@@ -87,7 +87,7 @@ class AttachmentApiDelegate
             try {
                 // User base URI builder instead of new URI(...) to circumvent Jersey bug
                 // See http://stackoverflow.com/a/13704308/1281372
-                URI absoluteURI=info.getBaseUriBuilder().path("/images/" + created.getFilename()).build();
+                URI absoluteURI = info.getBaseUriBuilder().path("/images/" + created.getFilename()).build();
 
                 // TODO: not all attachments are images...
 

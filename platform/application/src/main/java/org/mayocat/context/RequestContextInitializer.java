@@ -32,6 +32,7 @@ import org.mayocat.configuration.general.LocalesSettings;
 import org.mayocat.context.internal.DefaultWebContext;
 import org.mayocat.context.internal.ThreadLocalWebContext;
 import org.mayocat.context.internal.request.DefaultWebRequest;
+import org.mayocat.context.internal.request.DefaultWebRequestBuilder;
 import org.mayocat.event.EventListener;
 import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.theme.Breakpoint;
@@ -109,16 +110,33 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
             return;
         }
 
+        DefaultWebRequestBuilder requestBuilder = new DefaultWebRequestBuilder();
+
         // 1. Tenant
 
         String host = getHost(servletRequestEvent);
-        Tenant tenant = this.tenantResolver.get().resolve(host);
+        String path = getPath(servletRequestEvent);
 
+        Tenant tenant = this.tenantResolver.get().resolve(host, path);
         DefaultWebContext context = new DefaultWebContext(tenant, null);
 
         // Set the context in the context already, even if we haven't figured out if there is a valid user yet.
         // The context tenant is actually needed to find out the context user and to initialize tenant configurations
         ((ThreadLocalWebContext) this.context).setContext(context);
+
+
+        if (tenant != null) {
+            requestBuilder.tenantRequest(true);
+            if (path.indexOf("/tenant/" + tenant.getSlug()) == 0) {
+                path = StringUtils.substringAfter(path, "/tenant/" + tenant.getSlug());
+                requestBuilder.tenantPrefix("/tenant/" + tenant.getSlug());
+            }
+        }
+        else {
+            requestBuilder.tenantRequest(false);
+        }
+
+        requestBuilder.apiRequest(path.indexOf("/api/") == 0);
 
         // 2. Configurations
 
@@ -153,7 +171,6 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
                     FluentIterable.from(localesSettings.getOtherLocales().getValue())
                             .filter(Predicates.notNull()).toList();
 
-            String path = getPath(servletRequestEvent);
             String canonicalPath = path;
             if (!alternativeLocales.isEmpty()) {
                 for (Locale locale : alternativeLocales) {
@@ -180,7 +197,13 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
             // 6. Request
             Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
-            context.setRequest(new DefaultWebRequest(getBaseURI(servletRequestEvent), canonicalPath, path, breakpoint));
+
+            requestBuilder.baseURI(getBaseURI(servletRequestEvent))
+                    .canonicalPath(canonicalPath)
+                    .path(path)
+                    .breakpoint(breakpoint);
+
+            context.setRequest(requestBuilder.build());
         }
     }
 

@@ -25,7 +25,7 @@ public class MultitenancySettings
 
     @Valid
     @JsonProperty
-    private String resolver = "defaultHostAndSubdomain";
+    private String resolver = "default";
 
     @Valid
     @JsonProperty

@@ -221,7 +221,8 @@ angular.module('mayocat.image', ['ngResource'])
                 sortableOptions: '&',
                 selectFeature: '&onSelectFeature',
                 edit: '&onEdit',
-                remove: '&onRemove'
+                remove: '&onRemove',
+                pathPrefix: '@'
             },
             templateUrl: '/common/partials/imageList.html'
         };

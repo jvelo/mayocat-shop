@@ -3,9 +3,13 @@ org.mayocat.accounts.internal.DefaultAccountsService
 org.mayocat.accounts.store.jdbi.DBIUserStore
 org.mayocat.accounts.store.jdbi.DBITenantStore
 org.mayocat.accounts.api.v1.ConfigurationApi
+org.mayocat.accounts.api.v1.TenantConfigurationApi
 org.mayocat.accounts.api.v1.LoginApi
+org.mayocat.accounts.api.v1.TenantLoginApi
 org.mayocat.accounts.api.v1.LogoutApi
+org.mayocat.accounts.api.v1.TenantLogoutApi
 org.mayocat.accounts.api.v1.TenantApi
-org.mayocat.accounts.api.v1.UserApi
+org.mayocat.accounts.api.v1.TenantUserApi
 org.mayocat.accounts.api.v1.MeApi
+org.mayocat.accounts.api.v1.TenantMeApi
 org.mayocat.accounts.url.TenantURLFactory

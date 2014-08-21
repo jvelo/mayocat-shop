@@ -13,6 +13,7 @@ import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
@@ -47,8 +48,8 @@ import javax.ws.rs.core.Response
  *
  * @version $Id$
  */
-@Component("/api/collections")
-@Path("/api/collections")
+@Component("/tenant/{tenant}/api/collections")
+@Path("/tenant/{tenant}/api/collections")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
@@ -75,6 +76,9 @@ class CollectionApi implements Resource, Initializable
 
     @Inject
     Slugifier slugifier
+
+    @Inject
+    WebContext context
 
     @Inject
     Logger logger
@@ -123,7 +127,8 @@ class CollectionApi implements Resource, Initializable
                 dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                handler: collectionHandler
+                handler: collectionHandler,
+                context: context
         ])
     }
 
@@ -198,7 +203,7 @@ class CollectionApi implements Resource, Initializable
         ])
 
         collectionApiObject.withCollection(collection)
-        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId)
+        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request)
 
         if (!Strings.isNullOrEmpty(expand)) {
             collectionApiObject.withProductRelationships(this.catalogService.findProductsForCollection(collection))

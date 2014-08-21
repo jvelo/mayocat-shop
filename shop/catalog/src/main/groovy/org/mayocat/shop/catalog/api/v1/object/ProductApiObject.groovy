@@ -13,6 +13,7 @@ import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
 import org.mayocat.configuration.PlatformSettings
+import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
 import org.mayocat.model.AddonGroup
 import org.mayocat.rest.api.object.AddonGroupApiObject
@@ -163,7 +164,7 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId)
+    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -176,7 +177,7 @@ class ProductApiObject extends BaseApiObject
         images.each({ Image image ->
 
             ImageApiObject imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image)
+            imageApiObject.withImage(image, request)
             imageApiObject.featured = false
 
             if (image.attachment.id == featuredImageId) {
@@ -194,14 +195,14 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage)
+    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage)
+        imageApiObject.withImage(featuredImage, request)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
     }

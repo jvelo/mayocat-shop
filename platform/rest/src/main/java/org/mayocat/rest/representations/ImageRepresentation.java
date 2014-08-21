@@ -68,7 +68,7 @@ public class ImageRepresentation extends AttachmentRepresentation
 
     private static String buildImageApiHref(Image image)
     {
-        return ImageResource.PATH + ImageResource.SLASH + image.getAttachment().getSlug();
+        return "/api/images/" + image.getAttachment().getSlug();
     }
 
     private static String buildImageFileHref(Image image)

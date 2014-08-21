@@ -8,6 +8,7 @@
 package org.mayocat.shop.catalog.api.v1
 
 import groovy.transform.CompileStatic
+import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
@@ -33,8 +34,8 @@ import javax.ws.rs.core.MediaType
  *
  * @version $Id$
  */
-@Component("/api/home")
-@Path("/api/home")
+@Component("/tenant/{tenant}/api/home")
+@Path("/tenant/{tenant}/api/home")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
@@ -52,6 +53,9 @@ class HomePageApi implements Resource
 
     @Inject
     Provider<AttachmentStore> attachmentStore
+
+    @Inject
+    WebContext context
 
     @GET
     def getHomePage()
@@ -85,7 +89,7 @@ class HomePageApi implements Resource
                     def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
                     if (featuredImage) {
-                        featuredProduct.withEmbeddedFeaturedImage(featuredImage)
+                        featuredProduct.withEmbeddedFeaturedImage(featuredImage, context.request)
                     }
                     featuredProducts << featuredProduct
                 }

@@ -30,13 +30,11 @@ import com.google.common.collect.Sets;
 /**
  * @version $Id$
  */
-@Component(LocalesResource.PATH)
-@Path(LocalesResource.PATH)
+@Component("/api/locales")
+@Path("/api/locales")
 @Produces(MediaType.APPLICATION_JSON)
 public class LocalesResource implements Resource
 {
-    public static final String PATH = API_ROOT_PATH + "locales";
-
     private Set<LocaleRepresentation> localesRepresentations;
 
     static class LocaleRepresentation
