@@ -20,7 +20,7 @@ public class CorsSettings
 
     private String allowMethods = "GET, POST, OPTIONS, HEAD, PUT, DELETE";
 
-    private String allowHeaders = "Accept, Content-Type";
+    private String allowHeaders = "Accept, Content-Type, X-Requested-With";
 
     private String exposeHeaders = "Location";
 
