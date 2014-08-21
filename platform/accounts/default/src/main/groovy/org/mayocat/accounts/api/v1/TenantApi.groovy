@@ -24,6 +24,7 @@ import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.attachment.model.Attachment
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
@@ -154,9 +155,12 @@ class TenantApi implements Resource, Initializable {
                         images: new LinkApiObject([href: "${context.request.tenantPrefix}/api/tenant/images"])
                 ]
         ])
-        tenantApiObject.withEmbeddedImages(tenantData.getDataList(Image.class), tenant.featuredImageId, context.request)
+
+        def gallery = tenantData.getData(ImageGallery.class)
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
+
+        tenantApiObject.withEmbeddedImages(images, tenant.featuredImageId, context.request)
         tenantApiObject.withTenant(tenant, globalTimeZone)
-        tenant
 
         if (tenant.addons.isLoaded()) {
             tenantApiObject.withAddons(tenant.addons.get())

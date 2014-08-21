@@ -221,7 +221,7 @@ class ProductApi implements Resource, Initializable
 
         def collections = this.collectionStore.get().findAllForProduct(product);
 
-        def gallery = productData.getData(ImageGallery)
+        def gallery = productData.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         def productApiObject = new ProductApiObject([
