@@ -95,8 +95,6 @@ public class DefaultConfigurationService implements ConfigurationService
                 String json = mapper.writeValueAsString(merged);
                 Serializable result = (Serializable) mapper.readValue(json, c);
                 configurations.put(c, result);
-            } catch (JsonProcessingException e) {
-                this.logger.error("Error while converting configuration to JSON string", e);
             } catch (IOException e) {
                 this.logger.error("Error while converting configuration to JSON string", e);
             }
