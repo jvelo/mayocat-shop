@@ -171,7 +171,7 @@ class ProductApi implements Resource, Initializable
         productsData.each({ EntityData<Product> productData ->
             Product product = productData.entity
             def productApiObject = new ProductApiObject([
-                    _href: "/api/products/${product.slug}"
+                    _href: "${webContext.request.tenantPrefix}/api/products/${product.slug}"
             ])
             productApiObject.withProduct(product)
 
@@ -195,10 +195,12 @@ class ProductApi implements Resource, Initializable
                     returnedItems: productList.size(),
                     offset: offset,
                     totalItems: totalItems,
-                    urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
+                    urlTemplate: '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
                     urlArguments: [
                             titleMatches: titleMatches,
-                            filter: filter
+                            filter: filter,
+                            tenantPrefix: webContext.request.tenantPrefix
+
                     ]
                 ]),
                 products: productList
@@ -225,10 +227,10 @@ class ProductApi implements Resource, Initializable
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         def productApiObject = new ProductApiObject([
-            _href: "/api/products/${slug}",
+            _href: "${webContext.request.tenantPrefix}/api/products/${slug}",
             _links: [
-                self: new LinkApiObject([ href: "/api/products/${slug}" ]),
-                images: new LinkApiObject([ href: "/api/products/${slug}/images" ])
+                self: new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}" ]),
+                images: new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}/images" ])
             ]
         ])
 
@@ -243,7 +245,7 @@ class ProductApi implements Resource, Initializable
         if (product.type.isPresent()) {
             // TODO: have a variants link in _links
             productApiObject.withEmbeddedVariants(productStore.get().findVariants(product))
-            productApiObject._links.variants = new LinkApiObject([ href: "/api/products/${slug}/variants" ])
+            productApiObject._links.variants = new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}/variants" ])
         }
 
         productApiObject;
@@ -375,6 +377,11 @@ class ProductApi implements Resource, Initializable
             def product = productApiObject.toProduct(platformSettings,
                     Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
 
+            if (Strings.isNullOrEmpty(product.slug) && Strings.isNullOrEmpty(product.title)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("No title nor slug provided\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+            }
+
             // Set slug TODO: verify if provided slug is conform
             product.slug = Strings.isNullOrEmpty(productApiObject.slug) ? slugifier.slugify(product.title) : productApiObject.slug
 
@@ -410,7 +417,7 @@ class ProductApi implements Resource, Initializable
 
         variants.each({ Product variant ->
             ProductApiObject object = new ProductApiObject([
-                    _href: "/api/products/${product.slug}/variants/${variant.slug}"
+                    _href: "${webContext.request.tenantPrefix}/api/products/${product.slug}/variants/${variant.slug}"
             ])
             object.withProduct(variant)
             if (variant.addons.isLoaded()) {
