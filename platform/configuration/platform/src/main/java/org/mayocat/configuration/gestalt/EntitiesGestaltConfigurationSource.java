@@ -58,11 +58,12 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         if (theme != null) {
             addAddons(entities, theme.getDefinition().getAddons(), AddonSource.THEME);
             addModels(entities, theme.getDefinition().getModels());
-            addImageFormats(entities, theme.getDefinition().getImageFormats());
+            addImageFormats(entities, theme.getDefinition().getImageFormats(), AddonSource.THEME);
             addTypes(entities, theme.getDefinition().getProductTypes());
         }
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
+        addImageFormats(entities, platformSettings.getThumbnails(), AddonSource.PLATFORM);
 
         return entities;
     }
@@ -74,7 +75,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     }
 
     private void addImageFormats(Map<String, Map<String, Object>> entities,
-            Map<String, ImageFormatDefinition> formats)
+            Map<String, ImageFormatDefinition> formats, AddonSource source)
     {
         // Step 1 : add image formats defined explicitly for some entities
         for (String formatKey : formats.keySet()) {
