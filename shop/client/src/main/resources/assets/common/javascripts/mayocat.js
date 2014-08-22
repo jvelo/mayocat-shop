@@ -668,4 +668,9 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
             $translate.uses(locale);
         };
 
+        // $rootScope.server is a global variable to be used when the back-office and the mayocat server are not hosted
+        // on the same domain.
+        // When the back-office and the server are hosted on the same domain, it is superfluous to set, and we can be
+        // left to the empty string.
+        $rootScope.server = "";
     }]);

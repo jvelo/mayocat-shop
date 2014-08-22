@@ -247,7 +247,7 @@
 
                 mixin.editImage = function (image) {
                     var scope = this,
-                        modalScope = $rootScope.$new(true);
+                        modalScope = $rootScope.$new();
                     modalScope.entityType = entityType;
                     modalScope.image = image;
 
