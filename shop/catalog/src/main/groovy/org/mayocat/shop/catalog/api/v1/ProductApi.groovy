@@ -9,13 +9,13 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.sun.jersey.core.header.FormDataContentDisposition
-import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.MetadataExtractor
+import org.mayocat.attachment.model.Attachment
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
@@ -23,7 +23,6 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.attachment.model.Attachment
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
@@ -41,7 +40,6 @@ import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.store.*
-import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.theme.FeatureDefinition
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.TypeDefinition
@@ -52,10 +50,8 @@ import org.xwiki.component.phase.Initializable
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
-import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import javax.ws.rs.core.UriInfo
 
 @Component("/tenant/{tenant}/api/products")
 @Path("/tenant/{tenant}/api/products")
