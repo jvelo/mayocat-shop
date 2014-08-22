@@ -247,6 +247,11 @@ var Mayocat = (function (Mayocat) {
                 confirmCollectionDeletion: "Veuillez confirmer la suppression de cette collection. Cette opération ne peut pas être annulée !"
             },
 
+            type: {
+                title: "Type",
+                noType: "Aucun type"
+            },
+
             variants: {
                 title: "Déclinaisons",
                 price: "Prix",

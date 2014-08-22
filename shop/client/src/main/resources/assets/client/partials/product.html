@@ -119,11 +119,11 @@
 
         <!-- Product type selector -->
         <div class="block" ng-if="!isNew() && hasTypes">
-            <h3>Type</h3>
+            <h3>{{'product.type.title' | translate}}</h3>
 
             <div>
                 <select name="type" ng-model="product.type" ng-options="type as types[type].name for type in keys(types)">
-                    <option value="">No type</option>
+                    <option value="">{{'product.type.noType' | translate}}</option>
                 </select>
             </div>
         </div>

@@ -280,6 +280,11 @@ var Mayocat = (function (Mayocat) {
                 confirmCollectionDeletion: "Please confirm you want to delete this collection. There's no coming back!"
             },
 
+            type: {
+                title: "Type",
+                noType: "No type"
+            },
+
             variants: {
                 title: "Variants",
                 price: "Price",
