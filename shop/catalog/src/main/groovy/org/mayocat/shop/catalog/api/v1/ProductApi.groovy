@@ -9,6 +9,8 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
+import com.sun.jersey.core.header.FormDataContentDisposition
+import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
@@ -50,8 +52,10 @@ import org.xwiki.component.phase.Initializable
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriInfo
 
 @Component("/tenant/{tenant}/api/products")
 @Path("/tenant/{tenant}/api/products")
