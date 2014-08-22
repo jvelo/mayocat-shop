@@ -257,7 +257,7 @@ angular.module('product', ['ngResource'])
             // Initialize types
             configurationService.get("entities", function (entities) {
                 if (typeof entities.product !== 'undefined') {
-                    $scope.types = entities.product.types;
+                    $scope.types = entities.product.types || {};
                     $scope.hasTypes = !!(Object.keys(angular.copy($scope.types)).length > 0);
 
                     $scope.initializeVariants();
