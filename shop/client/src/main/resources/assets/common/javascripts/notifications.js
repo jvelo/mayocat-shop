@@ -133,7 +133,10 @@
                         // If one basic notification is displayed, reduce the progress ones.
                         $scope.allMinified = !!$scope.basicNotifications.length;
 
-                        $scope.$apply();
+                        $timeout(function() {
+                            // Make sure the scope is applied next digest cycle
+                            $scope.$apply();
+                        });
                     }
 
                     // Register listeners.
