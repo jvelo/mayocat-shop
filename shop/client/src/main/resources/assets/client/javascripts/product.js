@@ -219,7 +219,7 @@ angular.module('product', ['ngResource'])
                     variants.forEach(function (variant) {
 
                         if (typeof variant.addons === "undefined") {
-                            variant.addons = [];
+                            variant.addons = {};
                         }
 
                         addonsService.initializeEntityAddons("product", variant, {
