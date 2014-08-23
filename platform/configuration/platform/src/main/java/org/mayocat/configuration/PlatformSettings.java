@@ -14,6 +14,7 @@ import javax.validation.Valid;
 
 import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.images.ImageFormatDefinition;
+import org.mayocat.theme.TypeDefinition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;

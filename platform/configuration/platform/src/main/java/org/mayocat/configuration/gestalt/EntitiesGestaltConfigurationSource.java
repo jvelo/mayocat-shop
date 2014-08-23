@@ -42,6 +42,9 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     private EntityMetaRegistry entityMetaRegistry;
 
     @Inject
+    private Map<String, EntityConfigurationContributor> contributors;
+
+    @Inject
     private WebContext context;
 
     @Override
@@ -65,13 +68,24 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
         addImageFormats(entities, platformSettings.getThumbnails(), AddonSource.PLATFORM);
 
+        for (String entity : entities.keySet()) {
+            for (EntityConfigurationContributor contributor : contributors.values()) {
+                if (contributor.contributesTo().equals(entity)) {
+                    contributor.contribute(entities.get(entity));
+                }
+            }
+        }
+
         return entities;
     }
 
     private void addTypes(Map<String, Map<String, Object>> entities, Map<String, TypeDefinition> productTypes)
     {
         // Right now we support only products, but ultimately, other entities could have types too.
-        entities.get("product").put("types", productTypes);
+        if (!entities.get("product").containsKey("types")) {
+            entities.get("product").put("types", Maps.newHashMap());
+        }
+        ((Map<String, TypeDefinition>) entities.get("product").get("types")).putAll(productTypes);
     }
 
     private void addImageFormats(Map<String, Map<String, Object>> entities,

@@ -7,6 +7,7 @@ org.mayocat.shop.catalog.api.v1.CollectionApi
 org.mayocat.shop.catalog.api.v1.HomePageApi
 org.mayocat.shop.catalog.configuration.source.CatalogGestaltConfigurationSource
 org.mayocat.shop.catalog.configuration.jackson.MoneyModule
+org.mayocat.shop.catalog.configuration.ProductTypesEntityConfigurationContributor
 org.mayocat.shop.catalog.front.context.MainWebDataSupplier
 org.mayocat.shop.catalog.front.context.SiteWebDataSupplier
 org.mayocat.shop.catalog.front.context.PagesWebDataSupplier
