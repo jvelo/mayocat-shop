@@ -229,7 +229,7 @@ var Mayocat = (function (Mayocat) {
             },
 
             status: {
-                onShelf: "En rayon",
+                onShelf: "En vente",
                 withdrawnFromSale: "Retiré de la vente",
                 moved: "Le produit a bien été déplacé"
             },
