@@ -243,8 +243,7 @@ class ProductApi implements Resource, Initializable
         }
 
         if (product.type.isPresent()) {
-            // TODO: have a variants link in _links
-            productApiObject.withEmbeddedVariants(productStore.get().findVariants(product))
+            productApiObject.withEmbeddedVariants(productStore.get().findVariants(product), webContext.request)
             productApiObject._links.variants = new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}/variants" ])
         }
 

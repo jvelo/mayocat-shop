@@ -141,7 +141,7 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedVariants(List<Product> variants)
+    def withEmbeddedVariants(List<Product> variants, WebRequest webRequest)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -151,7 +151,7 @@ class ProductApiObject extends BaseApiObject
 
         variants.each({ Product variant ->
             ProductApiObject object = new ProductApiObject([
-                    _href: "/api/products/${this.slug}/variants/${variant.slug}"
+                    _href: "${webRequest.tenantPrefix}/api/products/${this.slug}/variants/${variant.slug}"
             ])
             object.withProduct(variant)
             if (variant.getAddons().isLoaded()) {
