@@ -19,7 +19,7 @@
                     deferred = $q.defer();
 
                 configurationService.get('taxes', function(taxes){
-                    if (typeof rateId === 'undefined') {
+                    if (typeof rateId === 'undefined' || rateId === null) {
                          rate = taxes.vat.defaultRate;
                     }
                     else {

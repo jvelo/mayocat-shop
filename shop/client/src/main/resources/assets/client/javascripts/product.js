@@ -247,11 +247,15 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.calculatePrices = function() {
-                console.log("Recalculating prices");
                 taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
                     $scope.excl = excl;
                 });
             }
+
+            $scope.$watch("product.price", function () {
+                // When product price changes, recalculates taxes etc.
+                $scope.calculatePrices();
+            });
 
             configurationService.get("catalog", function (catalogConfiguration) {
                 $scope.hasWeight = catalogConfiguration.products.weight;

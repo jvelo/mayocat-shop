@@ -174,28 +174,39 @@
             </ul>
         </div>
 
-        <!-- Price -->
+        <!-- Taxes -->
         <div class="block" ng-if="!isNew()">
-            <h3>{{'product.misc.price' | translate}}</h3>
+            <h3>{{'product.taxes.title' | translate}}</h3>
+
+            {{'product.taxes.vat' | translate}}
 
             <div ng-if="taxesSettings.mode == 'incl' && taxesSettings.vat.otherRates.length > 0">
                 <!-- Rate selector only where there are other rates than the standard rate -->
                 <select ng-model="product.vatRate"
-                        ng-options="rate.id as ('Rate at ' + (rate.value * 100).toFixed(2) + '%') for rate in taxesSettings.vat.otherRates"
+                        ng-options="rate.id as ((rate.name || 'Rate at') + ' ' + (rate.value * 100).toFixed(2) + '%') for rate in taxesSettings.vat.otherRates"
                         ng-change="calculatePrices()">
-                    <option value="">{{product.taxes.standardRate}} ({{(taxesSettings.vat.defaultRate * 100).toFixed(2)}}%)</option>
+                    <option value="">{{'product.taxes.standardRate' | translate}}
+                        {{(taxesSettings.vat.defaultRate * 100).toFixed(2)}}%
+                    </option>
                 </select>
-
             </div>
+        </div>
+
+        <!-- Price -->
+        <div class="block" ng-if="!isNew()">
+            <h3>{{'product.misc.price' | translate}}</h3>
 
             <div class="money-wrapper">
-                <money-amount ng-model="product.price" currency="{{mainCurrency}}" suffix="{{'product.taxes.' + taxesSettings.mode | translate}}"/>
+                <money-amount
+                        ng-model="product.price"
+                        currency="{{mainCurrency}}"
+                        suffix="{{'product.taxes.' + taxesSettings.mode | translate}}"/>
             </div>
 
             <!-- Taxes -->
             <div ng-show="taxesSettings.mode == 'incl'">
                 <!-- Managed inclusively : display excl price -->
-                <div ng-show="taxesSettings.vat.defaultRate !== 0">
+                <div ng-show="taxesSettings.vat.defaultRate !== 0 && product.price > 0">
                     <!-- TODO
                          - the calculus should be done in the controller, not directly here
                          - the formatting (decimals rounding + currency symbol) needs to be done in a directive,
@@ -204,7 +215,7 @@
                            It's not necessarily 2 ;  See the money service
                       -->
 
-                    <div class="after-money-amount">{{excl.toFixed(2)}} {{product.taxes.excl}}</div>
+                    <div class="after-money-amount">{{excl.toFixed(2)}} {{'product.taxes.excl' | translate}}</div>
                 </div>
             </div>
 

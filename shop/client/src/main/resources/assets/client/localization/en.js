@@ -302,6 +302,8 @@ var Mayocat = (function (Mayocat) {
             },
 
             taxes: {
+                title: "Taxes",
+                vat: "VAT",
                 excl: "excl.",
                 incl: "incl.",
                 standardRate: "Standard rate"

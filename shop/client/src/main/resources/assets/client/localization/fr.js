@@ -269,6 +269,8 @@ var Mayocat = (function (Mayocat) {
             },
 
             taxes: {
+                title: "Taxes",
+                vat: "TVA",
                 excl: "HT",
                 incl: "TTC",
                 standardRate: "Taux standard"
