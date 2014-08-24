@@ -21,6 +21,7 @@ import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.taxes.configuration.Mode
+import org.mayocat.shop.taxes.configuration.Rate
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.ThemeDefinition
 
@@ -100,7 +101,14 @@ class ProductApiObject extends BaseApiObject
         if (product.price) {
             this.price = product.price
             if (taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
-                BigDecimal vatRate = taxesSettings.vat.value.defaultRate
+                BigDecimal vatRate
+                if (product.vatRateId.isPresent()) {
+                    vatRate = taxesSettings.vat.value.otherRates
+                            .find({ Rate rate -> rate.id == product.vatRateId.get() })?.value;
+                }
+                if (!vatRate) {
+                    vatRate = taxesSettings.vat.value.defaultRate
+                }
                 this.price = BigDecimal.ONE.add(vatRate).multiply(product.price)
             }
         }
@@ -136,7 +144,18 @@ class ProductApiObject extends BaseApiObject
                 // If taxes are managed inclusively (API consumer sends inclusive prices), we compute the exclusive
                 // price, which is the price we manipulate and store internally.
 
-                BigDecimal vatRate = taxesSettings.vat.value.defaultRate
+                BigDecimal vatRate
+                if (product.vatRateId.isPresent()) {
+                    vatRate = taxesSettings.vat.value.otherRates
+                            .find({ Rate rate -> rate.id == product.vatRateId.get() })?.value;
+                    if (!vatRate) {
+                        // VAT rate defined in product, but does not exists in configuration -> change to default rate
+                        product.setVatRateId(null);
+                    }
+                }
+                if (!vatRate) {
+                    vatRate = taxesSettings.vat.value.defaultRate
+                }
                 if (!vatRate.equals(BigDecimal.ZERO)) {
                     BigDecimal conversionRate = BigDecimal.ONE.
                             divide(BigDecimal.ONE.add(vatRate), 10, RoundingMode.HALF_UP)

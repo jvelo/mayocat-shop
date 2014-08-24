@@ -10,17 +10,16 @@
 
     angular.module('taxes', [])
 
-        .factory('taxesService', ["$rootScope", "$q", "configurationService", function($rootScope, $q,
-            configurationService) {
+        .factory('taxesService', ["$rootScope", "$q", "configurationService", function ($rootScope, $q, configurationService) {
 
             function computeExclPrice(price, rateId) {
 
                 var rate,
                     deferred = $q.defer();
 
-                configurationService.get('taxes', function(taxes){
+                configurationService.get('taxes', function (taxes) {
                     if (typeof rateId === 'undefined' || rateId === null) {
-                         rate = taxes.vat.defaultRate;
+                        rate = taxes.vat.defaultRate;
                     }
                     else {
                         var rateObject = taxes.vat.otherRates.find(function (rate) {
@@ -30,7 +29,7 @@
                         rate = rateObject.value
                     }
 
-                    deferred.resolve( price * (1 / (1 + rate)) );
+                    deferred.resolve(price * (1 / (1 + rate)));
                 });
 
                 return deferred.promise;

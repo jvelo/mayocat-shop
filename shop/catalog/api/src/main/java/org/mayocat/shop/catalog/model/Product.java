@@ -207,6 +207,9 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
         if (vateRateId != null) {
             this.taxes.put(VAT, vateRateId);
         }
+        else {
+            this.taxes.remove(VAT);
+        }
     }
 
     public BigDecimal getWeight()
