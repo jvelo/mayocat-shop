@@ -90,7 +90,7 @@ class TenantUserApi implements Resource {
         }
 
         UserApiObject userApiObject = new UserApiObject([
-                _href: "/api/user/${user.slug}"
+                _href: "${context.request.tenantPrefix}/api/user/${user.slug}"
         ])
         userApiObject.withUser(user)
         userApiObject

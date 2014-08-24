@@ -147,7 +147,7 @@ class CollectionApi implements Resource, Initializable
 
             entityAndCount.each({ EntityAndCount<org.mayocat.shop.catalog.model.Collection> eac ->
                 CollectionApiObject apiObject = new CollectionApiObject([
-                        _href: "/api/collections/${eac.entity.slug}"
+                        _href: "${context.request.tenantPrefix}/api/collections/${eac.entity.slug}"
                 ])
                 apiObject.withCollection(eac.entity)
                 apiObject.withProductCount(eac.count)
@@ -157,7 +157,7 @@ class CollectionApi implements Resource, Initializable
             collectionList = this.catalogService.findAllCollections(number, offset).collect({
                 org.mayocat.shop.catalog.model.Collection collection ->
                     CollectionApiObject apiObject = new CollectionApiObject([
-                            _href: "/api/collections/${collection.slug}"
+                            _href: "${context.request.tenantPrefix}/api/collections/${collection.slug}"
                     ])
                     apiObject.withCollection(collection)
                     apiObject
@@ -170,7 +170,10 @@ class CollectionApi implements Resource, Initializable
                         returnedItems: collectionList.size(),
                         offset: offset,
                         totalItems: collectionStore.get().countAll(),
-                        urlTemplate: '/api/collections?number=${numberOfItems}&offset=${offset}',
+                        urlTemplate: '${tenantPrefix}/api/collections?number=${numberOfItems}&offset=${offset}',
+                        urlArguments: [
+                                tenantPrefix: context.request.tenantPrefix
+                        ]
                 ]),
                 collections: collectionList
         ])
@@ -195,10 +198,10 @@ class CollectionApi implements Resource, Initializable
         }
 
         CollectionApiObject collectionApiObject = new CollectionApiObject([
-            _href: "/api/products/${slug}/",
+            _href: "${context.request.tenantPrefix}/api/products/${slug}/",
             _links: [
-                    self: new LinkApiObject([ href: "/api/collections/${slug}/" ]),
-                    images: new LinkApiObject([ href: "/api/collections/${slug}/images" ])
+                    self: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/collections/${slug}/" ]),
+                    images: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/collections/${slug}/images" ])
             ]
         ])
 

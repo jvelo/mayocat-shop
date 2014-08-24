@@ -152,7 +152,7 @@ class PageApi implements Resource, Initializable
         pagesData.each({ EntityData<Page> pageData ->
             def page = pageData.entity
             def articleApiObject = new PageApiObject([
-                    _href: "/api/pages/${page.slug}"
+                    _href: "${context.request.tenantPrefix}/api/pages/${page.slug}"
             ])
             articleApiObject.withPage(page)
 
@@ -176,7 +176,10 @@ class PageApi implements Resource, Initializable
                         returnedItems: pageList.size(),
                         offset: offset,
                         totalItems: totalItems,
-                        urlTemplate: '/api/pages?number=${numberOfItems}&offset=${offset}&',
+                        urlTemplate: '${tenantPrefix}/api/pages?number=${numberOfItems}&offset=${offset}&',
+                        urlArguments: [
+                                tenantPrefix: context.request.tenantPrefix
+                        ]
                 ]),
                 pages: pageList
         ])
@@ -201,10 +204,10 @@ class PageApi implements Resource, Initializable
         List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : Arrays.asList(expand.split(","));
 
         def pageApiObject = new PageApiObject([
-                _href: "/api/pages/${slug}",
+                _href: "${context.request.tenantPrefix}/api/pages/${slug}",
                 _links: [
-                        self: new LinkApiObject([ href: "/api/pages/${slug}" ]),
-                        images: new LinkApiObject([ href: "/api/pages/${slug}/images" ])
+                        self: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/pages/${slug}" ]),
+                        images: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/pages/${slug}/images" ])
                 ]
         ])
 

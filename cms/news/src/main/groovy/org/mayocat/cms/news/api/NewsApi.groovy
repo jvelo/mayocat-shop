@@ -159,7 +159,7 @@ class NewsApi implements Resource, Initializable
         articlesData.each({ EntityData<Article> articleData ->
             def article = articleData.entity
             def articleApiObject = new ArticleApiObject([
-                    _href: "/api/news/${article.slug}"
+                    _href: "${context.request.tenantPrefix}/api/news/${article.slug}"
             ])
             articleApiObject.withArticle(article, tenantTz)
 
@@ -183,7 +183,10 @@ class NewsApi implements Resource, Initializable
                         returnedItems: articleList.size(),
                         offset: offset,
                         totalItems: totalItems,
-                        urlTemplate: '/api/products?number=${numberOfItems}&offset=${offset}&',
+                        urlTemplate: '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&',
+                        urlArguments: [
+                                tenantPrefix: context.request.tenantPrefix
+                        ]
                 ]),
                 articles: articleList
         ])
@@ -211,10 +214,10 @@ class NewsApi implements Resource, Initializable
         DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue())
 
         def articleApiObject = new ArticleApiObject([
-                _href: "/api/news/${slug}",
+                _href: "${context.request.tenantPrefix}/api/news/${slug}",
                 _links: [
-                        self: new LinkApiObject([ href: "/api/news/${slug}" ]),
-                        images: new LinkApiObject([ href: "/api/news/${slug}/images" ])
+                        self: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/news/${slug}" ]),
+                        images: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/news/${slug}/images" ])
                 ]
         ])
 
