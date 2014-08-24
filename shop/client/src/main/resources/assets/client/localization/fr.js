@@ -266,6 +266,12 @@ var Mayocat = (function (Mayocat) {
                 conflict: "Cette déclinaison existe déjà.",
                 confirmVariantDeletion: "Veuillez confirmer la suppression de cette déclinaison. Cette opération ne peut pas être annulée !",
                 deleteVariant: "Supprimer la déclinaison"
+            },
+
+            taxes: {
+                excl: "HT",
+                incl: "TTC",
+                standardRate: "Taux standard"
             }
         },
 

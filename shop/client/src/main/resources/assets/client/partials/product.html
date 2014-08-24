@@ -142,7 +142,8 @@
                     <div>
                         <small>
                             <span ng-if="!!variant.price && types[product.type].variants.properties.indexOf('price') >= 0">
-                                {{'product.variants.price' | translate}}: {{variant.price}} {{mainCurrency}}</span>
+                                {{'product.variants.price' | translate}}: {{variant.price}} {{mainCurrency}}
+                            {{'product.taxes.' + taxesSettings.mode | translate}}</span>
                             <span ng-if="variant.stock >= 0 && types[product.type].variants.properties.indexOf('stock') >= 0">
                                 {{'product.variants.stock' | translate}}: {{variant.stock}}</span>
                         </small>
@@ -182,7 +183,7 @@
                 <select ng-model="product.vatRate"
                         ng-options="rate.id as ('Rate at ' + (rate.value * 100).toFixed(2) + '%') for rate in taxesSettings.vat.otherRates"
                         ng-change="calculatePrices()">
-                    <option value="">Standard rate ({{(taxesSettings.vat.defaultRate * 100).toFixed(2)}}%)</option>
+                    <option value="">{{product.taxes.standardRate}} ({{(taxesSettings.vat.defaultRate * 100).toFixed(2)}}%)</option>
                 </select>
 
             </div>
@@ -203,7 +204,7 @@
                            It's not necessarily 2 ;  See the money service
                       -->
 
-                    <div class="after-money-amount">{{excl.toFixed(2)}} excl.</div>
+                    <div class="after-money-amount">{{excl.toFixed(2)}} {{product.taxes.excl}}</div>
                 </div>
             </div>
 
