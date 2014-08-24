@@ -231,7 +231,8 @@ var Mayocat = (function (Mayocat) {
             status: {
                 onShelf: "En vente",
                 withdrawnFromSale: "Retiré de la vente",
-                moved: "Le produit a bien été déplacé"
+                productMoved: "Le produit a bien été déplacé",
+                collectionMoved: "La collection a bien été déplacée"
             },
 
             action: {
