@@ -7,7 +7,7 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<div class="block" ng-repeat="group in addons" ng-show="!group.models || group.models.indexOf(entity.model) >= 0">
+<div class="block" ng-repeat="group in addons | filter:filterAddons">
 
     <h3>{{group.name}}</h3>
 
