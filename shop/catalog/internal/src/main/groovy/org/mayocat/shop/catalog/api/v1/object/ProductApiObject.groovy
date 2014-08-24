@@ -96,11 +96,9 @@ class ProductApiObject extends BaseApiObject
         }
 
         if (product.price) {
-            if (!taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
-                this.price = product.price
-            }
-            else {
-                BigDecimal vatRate = BigDecimal.valueOf(0.196 as Double)
+            this.price = product.price
+            if (taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
+                BigDecimal vatRate = taxesSettings.vat.value.defaultRate
                 this.price = BigDecimal.ONE.add(vatRate).multiply(product.price)
             }
         }
@@ -125,13 +123,19 @@ class ProductApiObject extends BaseApiObject
         }
 
         if (this.price) {
-            if (!taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
-                product.price = this.price
-            }
-            else {
-                BigDecimal vatRate = BigDecimal.valueOf(0.196 as Double)
-                BigDecimal conversionRate = BigDecimal.ONE.divide(BigDecimal.ONE.add(vatRate), 10, RoundingMode.HALF_UP)
-                product.price = this.price.multiply(conversionRate)
+            product.price = this.price
+
+            if (taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES)) {
+
+                // If taxes are managed inclusively (API consumer sends inclusive prices), we compute the exclusive
+                // price, which is the price we manipulate and store internally.
+
+                BigDecimal vatRate = taxesSettings.vat.value.defaultRate
+                if (!vatRate.equals(BigDecimal.ZERO)) {
+                    BigDecimal conversionRate = BigDecimal.ONE.
+                            divide(BigDecimal.ONE.add(vatRate), 10, RoundingMode.HALF_UP)
+                    product.price = this.price.multiply(conversionRate)
+                }
             }
         }
 

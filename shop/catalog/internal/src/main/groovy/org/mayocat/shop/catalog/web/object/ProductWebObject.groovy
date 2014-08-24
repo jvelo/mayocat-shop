@@ -134,7 +134,7 @@ class ProductWebObject
             def currency = catalogSettings.currencies.mainCurrency.value;
 
             // Calculate incl. price
-            def vatRate = BigDecimal.valueOf(0.196 as Double)
+            def vatRate = taxesSettings.vat.value.defaultRate
             def priceInclusiveOfTaxes = product.unitPrice.multiply(BigDecimal.ONE.add(vatRate))
 
             unitPrice = new PriceWebObject()
