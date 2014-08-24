@@ -49,6 +49,24 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-taxes-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-taxes-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-cart-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-shipping-internal</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -56,6 +74,12 @@
         <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-payment-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-catalog-internal</artifactId>
             <version>${project.version}</version>
         </dependency>
 

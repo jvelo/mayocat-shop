@@ -299,6 +299,11 @@ var Mayocat = (function (Mayocat) {
                 conflict: "This variant already exists.",
                 confirmVariantDeletion: "Please confirm you want to delete this variant. There's no coming back!",
                 deleteVariant: "Delete variant"
+            },
+
+            taxes: {
+                excl: "excl.",
+                incl: "incl."
             }
         },
 

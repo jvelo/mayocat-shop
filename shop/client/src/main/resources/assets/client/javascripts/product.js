@@ -18,11 +18,13 @@ angular.module('product', ['ngResource'])
         '$location',
         '$modal',
         'catalogService',
+        'taxesService',
         'configurationService',
         'addonsService',
         'entityMixins',
 
-        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal, catalogService, configurationService, addonsService, entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal,
+                  catalogService, taxesService, configurationService, addonsService, entityMixins) {
 
             entityMixins.extendAll($scope, "product");
 
@@ -240,11 +242,27 @@ angular.module('product', ['ngResource'])
                 }
             }
 
+            $scope.initializeTaxes = function() {
+                $scope.calculatePrices();
+            }
+
+            $scope.calculatePrices = function() {
+                console.log("Recalculating prices");
+                taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
+                    $scope.excl = excl;
+                });
+            }
+
             configurationService.get("catalog", function (catalogConfiguration) {
                 $scope.hasWeight = catalogConfiguration.products.weight;
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
                 $scope.hasStock = catalogConfiguration.products.stock;
                 $scope.mainCurrency = catalogConfiguration.currencies.main;
+
+            });
+
+            configurationService.get("taxes", function (taxes) {
+                $scope.taxesSettings = taxes;
             });
 
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX
@@ -292,6 +310,9 @@ angular.module('product', ['ngResource'])
                     // Same for addons
                     $scope.initializeEntity();
 
+                    // Initialize taxes
+                    $scope.initializeTaxes();
+
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -299,6 +320,8 @@ angular.module('product', ['ngResource'])
                         // state in angular directives.
                         $scope.product.onShelf = undefined;
                     }
+
+
                 });
             }
             else {

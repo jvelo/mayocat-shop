@@ -10,6 +10,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'settings',
     'search',
     'money',
+    'taxes',
     'shipping',
     'product',
     'collection',
@@ -109,6 +110,11 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         .when('/settings/shipping', {
             templateUrl: 'partials/settingsShipping.html',
             controller: 'SettingsShippingController',
+            titleTranslation: 'settings'
+        })
+        .when('/settings/taxes', {
+            templateUrl: 'partials/settingsTaxes.html',
+            controller: 'SettingsTaxesController',
             titleTranslation: 'settings'
         })
         .otherwise({

@@ -302,8 +302,8 @@
                 require: 'ngModel',
                 restrict: 'E',
                 template: '<div class="input-append">' +
-                    '<input ng-model="amount" class="span2" placeholder="{{placeholder}}" type="text">' +
-                    '<span class="add-on">{{currencyCode}}</span>' +
+                    '<input ng-model="amount" class="money-amount" placeholder="{{placeholder}}" type="text">' +
+                    '<span class="add-on">{{currencyCode}} {{suffix}}</span>' +
                     '</div>',
                 controller: function ($scope) {
                     $scope.format = function () {
@@ -334,7 +334,14 @@
                         $scope.amount = "" + controller.$viewValue;
                         $scope.format();
                     };
-                    $scope.$watch(function() {return attrs.currency }, function(newValue){
+                    $scope.$watch(function () {
+                        return attrs.suffix
+                    }, function (value) {
+                        $scope.suffix = value;
+                    });
+                    $scope.$watch(function () {
+                        return attrs.currency
+                    }, function (newValue) {
                         $scope.currencyCode = newValue;
                         $scope.currency = moneyService.getCurrency($scope.currencyCode);
                     });

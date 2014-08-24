@@ -177,9 +177,44 @@
         <div class="block" ng-if="!isNew()">
             <h3>{{'product.misc.price' | translate}}</h3>
 
-            <div>
-                <money-amount ng-model="product.price" currency="{{mainCurrency}}"/>
+            <div ng-if="taxesSettings.mode == 'incl' && taxesSettings.vat.otherRates.length > 0">
+                <!-- Rate selector only where there are other rates than the standard rate -->
+                <select ng-model="product.vatRate"
+                        ng-options="rate.id as ('Rate at ' + (rate.value * 100).toFixed(2) + '%') for rate in taxesSettings.vat.otherRates"
+                        ng-change="calculatePrices()">
+                    <option value="">Standard rate ({{(taxesSettings.vat.defaultRate * 100).toFixed(2)}}%)</option>
+                </select>
+
             </div>
+
+            <div class="money-wrapper">
+                <money-amount ng-model="product.price" currency="{{mainCurrency}}" suffix="{{'product.taxes.' + taxesSettings.mode | translate}}"/>
+            </div>
+
+            <!-- Taxes -->
+            <div ng-show="taxesSettings.mode == 'incl'">
+                <!-- Managed inclusively : display excl price -->
+                <div ng-show="taxesSettings.vat.defaultRate !== 0">
+                    <!-- TODO
+                         - the calculus should be done in the controller, not directly here
+                         - the formatting (decimals rounding + currency symbol) needs to be done in a directive,
+                           similar to <money-amount> but that displays just the amount, not a input.
+                         - the number of decimals displayed should be related to the currency set.
+                           It's not necessarily 2 ;  See the money service
+                      -->
+
+                    <div class="after-money-amount">{{excl.toFixed(2)}} excl.</div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div ng-if="taxesSettings.mode != 'incl'">
+                <!-- Mannaged exclusively : display incl price -->
+            </div>
+
+
+
         </div>
 
         <!-- Weight -->
