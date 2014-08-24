@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-catalog-model</artifactId>
+            <artifactId>mayocat-shop-catalog-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

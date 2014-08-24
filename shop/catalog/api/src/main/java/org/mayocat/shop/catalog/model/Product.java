@@ -33,10 +33,13 @@ import org.mayocat.shop.taxes.Taxable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 @Index
 public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
 {
+    public static final String VAT = "vat";
+
     private static final long serialVersionUID = 6998229869430511994L;
 
     @DoNotIndex
@@ -60,6 +63,8 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
     private transient String description;
 
     private BigDecimal price;
+
+    private Map<String, String> taxes = Maps.newHashMap();
 
     private BigDecimal weight;
 
@@ -180,9 +185,28 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
         return Optional.absent();
     }
 
-    public Optional<String> getVATRateId()
+    public Map<String, String> getTaxes()
     {
-        return Optional.absent();
+        return taxes;
+    }
+
+    public void setTaxes(Map<String, String> taxes)
+    {
+        this.taxes = taxes;
+    }
+
+    public Optional<String> getVatRateId()
+    {
+        return taxes.containsKey(VAT) ?
+                Optional.<String>fromNullable(taxes.get(VAT)) :
+                Optional.<String>absent();
+    }
+
+    public void setVatRateId(String vateRateId)
+    {
+        if (vateRateId != null) {
+            this.taxes.put(VAT, vateRateId);
+        }
     }
 
     public BigDecimal getWeight()
@@ -357,6 +381,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
                 && Objects.equal(this.slug, other.slug)
                 && Objects.equal(this.onShelf, other.onShelf)
                 && Objects.equal(this.price, other.price)
+                && Objects.equal(this.taxes, other.taxes)
                 && Objects.equal(this.stock, other.stock)
                 && Objects.equal(this.weight, other.weight)
                 && Objects.equal(this.featuredImageId, other.featuredImageId);
@@ -370,6 +395,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
                 this.title,
                 this.onShelf,
                 this.price,
+                this.taxes,
                 this.stock,
                 this.featuredImageId,
                 this.weight
@@ -383,7 +409,6 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
                 .addValue(id)
                 .addValue(this.title)
                 .addValue(this.slug)
-                .addValue(this.onShelf)
                 .toString();
     }
 }

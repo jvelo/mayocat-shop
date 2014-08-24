@@ -20,7 +20,6 @@ import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.shop.catalog.model.Product
-import org.mayocat.shop.taxes.TaxesService
 import org.mayocat.shop.taxes.configuration.Mode
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.ThemeDefinition
@@ -55,6 +54,8 @@ class ProductApiObject extends BaseApiObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal price;
 
+    Optional<String> vatRate;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal weight;
 
@@ -81,19 +82,20 @@ class ProductApiObject extends BaseApiObject
     @JsonIgnore
     def withProduct(TaxesSettings taxesSettings, Product product)
     {
-        this.with {
-            slug = product.slug
-            title = product.title
-            description = product.description
-            onShelf = product.onShelf
-            weight = product.weight
-            stock = product.stock
 
-            type = product.type.orNull()
-            model = product.model.orNull()
+        slug = product.slug
+        title = product.title
+        description = product.description
+        onShelf = product.onShelf
+        weight = product.weight
+        stock = product.stock
 
-            _localized = product.localizedVersions
-        }
+        type = product.type.orNull()
+        model = product.model.orNull()
+
+        _localized = product.localizedVersions
+
+        vatRate = product.vatRateId
 
         if (product.price) {
             this.price = product.price
@@ -122,6 +124,10 @@ class ProductApiObject extends BaseApiObject
             setLocalizedVersions this._localized
         }
 
+        if (vatRate.isPresent()) {
+            product.setVatRateId(vatRate.get())
+        }
+
         if (this.price) {
             product.price = this.price
 
@@ -138,6 +144,7 @@ class ProductApiObject extends BaseApiObject
                 }
             }
         }
+
 
         if (addons) {
             product.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)

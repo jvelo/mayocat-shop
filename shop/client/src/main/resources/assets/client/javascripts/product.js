@@ -247,6 +247,9 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.calculatePrices = function() {
+                if (!$scope.product.price) {
+                    return;
+                }
                 taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
                     $scope.excl = excl;
                 });
@@ -267,6 +270,7 @@ angular.module('product', ['ngResource'])
 
             configurationService.get("taxes", function (taxes) {
                 $scope.taxesSettings = taxes;
+                $scope.initializeTaxes();
             });
 
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX

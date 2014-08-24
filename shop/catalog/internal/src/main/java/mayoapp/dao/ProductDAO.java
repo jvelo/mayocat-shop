@@ -15,15 +15,18 @@ import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
+import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 @RegisterMapper(ProductMapper.class)
+@RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
 @UseStringTemplate3StatementLocator
 public abstract class ProductDAO implements EntityDAO<Product>, Transactional<ProductDAO>,
         PositionedDAO<Product>, AddonsDAO<Product>, LocalizationDAO<Product>
