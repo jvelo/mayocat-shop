@@ -198,7 +198,7 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
     public Optional<String> getVatRateId()
     {
         return taxes.containsKey(VAT) ?
-                Optional.<>fromNullable(taxes.get(VAT)) :
+                Optional.fromNullable(taxes.get(VAT)) :
                 Optional.<String>absent();
     }
 
