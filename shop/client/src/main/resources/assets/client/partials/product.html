@@ -19,53 +19,59 @@
 
     <article class="entity">
 
-        <div>
+        <!-- Title -->
+        <h1>
+            <input type="text"
+                   class="title"
+                   ng-model="localizedProduct.title"
+                   placeholder="{{'product.placeholder.productTitle' | translate}}"
+                   localized
+                   required/>
+        </h1>
 
-            <!-- Title -->
-            <h1>
-                <input type="text" class="title" ng-model="localizedProduct.title" placeholder="{{'product.placeholder.productTitle' | translate}}" localized required/>
-            </h1>
+        <!-- Description -->
+        <div ng-if="!isNew()">
+            <label>{{'product.misc.description' | translate}}</label>
+            <textarea class="" rows="10" ng-model="localizedProduct.description" ck-editor localized/>
+        </div>
 
-            <!-- Description -->
-            <div ng-if="!isNew()">
-                <label>{{'product.misc.description' | translate}}</label>
-                <textarea class="" rows="10" ng-model="localizedProduct.description" ck-editor localized />
-            </div>
+        <!-- Images gallery -->
+        <div class="block entity" ng-show="!isNew()">
+            <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
 
-            <div class="block entity" ng-show="!isNew()">
-                <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
+            <upload-list id="'image-gallery'"></upload-list>
 
-                <upload-list id="'image-gallery'"></upload-list>
+            <image-list entity="product"
+                        sortable-options="getImagesSortableOptions()"
+                        on-select-feature="selectFeatureImage(image)"
+                        on-edit="editImage(image)"
+                        on-remove="removeImage(image)">
+            </image-list>
 
-                <image-list entity="product"
-                            sortable-options="getImagesSortableOptions()"
-                            on-select-feature="selectFeatureImage(image)"
-                            on-edit="editImage(image)"
-                            on-remove="removeImage(image)">
-                </image-list>
-
-                <image-upload ng-if="!isNew()"
-                              upload-uri="{{getImageUploadUri()}}"
-                              drop-text="'upload.explanation.dropProduct' | translate:getTranslationProperties()"
-                              target="image-gallery"
-                              id="'image-gallery'">
-                </image-upload>
-            </div>
+            <image-upload ng-if="!isNew()"
+                          upload-uri="{{getImageUploadUri()}}"
+                          drop-text="'upload.explanation.dropProduct' | translate:getTranslationProperties()"
+                          target="image-gallery"
+                          id="'image-gallery'">
+            </image-upload>
         </div>
 
         <!-- Addons -->
         <div ng-if="addons.length > 0 && !isNew()">
-            <addon-list addons="addons" entity="product" localized-entity="localizedProduct" />
+            <addon-list addons="addons" entity="product" localized-entity="localizedProduct"/>
         </div>
 
     </article>
-    </div>
+
     <aside>
+
+        <!-- Create / Update / Sale status buttons -->
         <div class="buttons">
             <div ng-if="isNew()">
                 <!-- Create new product -->
                 <div class="hasLoading">
-                    <button ng-disabled="productForm.$invalid" ng-click="updateProduct()" class="btn btn-large btn-primary">
+                    <button ng-disabled="productForm.$invalid" ng-click="updateProduct()"
+                            class="btn btn-large btn-primary">
                         {{'entity.action.create' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>
@@ -103,6 +109,7 @@
                 <!-- Publish / update product -->
             </div>
         </div>
+
         <p/>
 
         <!-- Permalink -->
@@ -175,12 +182,12 @@
         </div>
 
         <!-- Taxes -->
-        <div class="block" ng-if="!isNew()">
+        <div class="block" ng-if="!isNew() && taxesSettings.vat.otherRates.length > 0">
             <h3>{{'product.taxes.title' | translate}}</h3>
 
             {{'product.taxes.vat' | translate}}
 
-            <div ng-if="taxesSettings.mode == 'incl' && taxesSettings.vat.otherRates.length > 0">
+            <div>
                 <!-- Rate selector only where there are other rates than the standard rate -->
                 <select ng-model="product.vatRate"
                         ng-options="rate.id as ((rate.name || 'Rate at') + ' ' + (rate.value * 100).toFixed(2) + '%') for rate in taxesSettings.vat.otherRates"
@@ -222,10 +229,9 @@
             <div class="clearfix"></div>
 
             <div ng-if="taxesSettings.mode != 'incl'">
-                <!-- Mannaged exclusively : display incl price -->
+                <!-- Mannaged exclusively
+                     TODO display incl price -->
             </div>
-
-
 
         </div>
 
