@@ -48,14 +48,15 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
+
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.RegularCheckoutException;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.front.views.WebView;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;

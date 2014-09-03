@@ -7,11 +7,7 @@
  */
 package org.mayocat.shop.billing.internal;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.RoundingMode;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +18,6 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.money.CurrencyUnit;
@@ -36,29 +31,23 @@ import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
-import org.mayocat.files.FileManager;
-import org.mayocat.mail.Mail;
 import org.mayocat.mail.MailException;
-import org.mayocat.mail.MailService;
+import org.mayocat.mail.MailTemplate;
+import org.mayocat.mail.MailTemplateService;
 import org.mayocat.shop.billing.event.OrderPaidEvent;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
-import org.mayocat.shop.billing.store.AddressStore;
-import org.mayocat.shop.billing.store.CustomerStore;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.AddressStore;
+import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.views.Template;
-import org.mayocat.views.TemplateEngine;
-import org.mayocat.views.TemplateEngineException;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 
 /**
  * Event listener that sends email to tenant and customer when an order is paid.
@@ -71,13 +60,7 @@ import com.google.common.io.Files;
 public class SendEmailsWhenOrderIsPaid implements EventListener
 {
     @Inject
-    private MailService emailService;
-
-    @Inject
-    private Provider<TemplateEngine> engine;
-
-    @Inject
-    private FileManager fileManager;
+    private MailTemplateService mailTemplateService;
 
     @Inject
     private Logger logger;
@@ -102,48 +85,6 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
     @Inject
     private Provider<AddressStore> addressStore;
-
-    /**
-     * Representation of an order notification, with a sender, a recipient a JSON context (as map) and a mail template.
-     */
-    private final static class OrderNotificationMail
-    {
-        private final Template template;
-
-        private final Map<String, Object> context;
-
-        private final String from;
-
-        private final String recipient;
-
-        private OrderNotificationMail(Template template, Map<String, Object> context, String from, String recipient)
-        {
-            this.template = template;
-            this.context = context;
-            this.from = from;
-            this.recipient = recipient;
-        }
-
-        private Template getTemplate()
-        {
-            return template;
-        }
-
-        private Map<String, Object> getContext()
-        {
-            return context;
-        }
-
-        private String getFrom()
-        {
-            return from;
-        }
-
-        private String getRecipient()
-        {
-            return recipient;
-        }
-    }
 
     /**
      * @see {@link org.xwiki.observation.EventListener#getName()}
@@ -214,60 +155,62 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
         String customerEmail = customer.getEmail();
 
-        Optional<OrderNotificationMail> customerNotificationEmail = getCustomerNotificationEmail(tenant, emailContext,
+        Optional<MailTemplate> customerNotificationEmail = getCustomerNotificationEmail(tenant,
                 customerEmail, customerLocale);
         if (customerNotificationEmail.isPresent()) {
-            sendNotificationMail(customerNotificationEmail.get());
+            sendNotificationMail(customerNotificationEmail.get(), emailContext);
         } else {
             logger.warn("Can't send notification email to customer. Does the mail template exists ?");
         }
-        Optional<OrderNotificationMail> tenantNotificationEmail =
-                getTenantNotificationEmail(tenant, emailContext, tenantLocale);
+        Optional<MailTemplate> tenantNotificationEmail =
+                getTenantNotificationEmail(tenant, tenantLocale);
         if (tenantNotificationEmail.isPresent()) {
-            sendNotificationMail(tenantNotificationEmail.get());
+            sendNotificationMail(tenantNotificationEmail.get(), emailContext);
         }
     }
 
     /**
      * @param tenant the tenant of the shop the customer checked out from
-     * @param context the JSON context of the notification mail
      * @param customerEmail the email of the customer
      * @param locale the locale of the customer
      * @return an optional notification email object, present if all information is there and valid and the template
-     *         exists, absent otherwise
+     * exists, absent otherwise
      */
-    private Optional<OrderNotificationMail> getCustomerNotificationEmail(Tenant tenant, Map<String, Object> context,
+    private Optional<MailTemplate> getCustomerNotificationEmail(Tenant tenant,
             String customerEmail, Locale locale)
     {
         String from = StringUtils.isNotBlank(tenant.getContactEmail()) ?
                 tenant.getContactEmail() :
                 generalSettings.getNotificationsEmail();
-        Optional<Template> template = getTemplate("order_paid_customer_email.html", locale);
+        Optional<Template> template = mailTemplateService.getTemplate("order_paid_customer_email.html", locale);
         if (!template.isPresent()) {
             return Optional.absent();
         }
-        return Optional.of(new OrderNotificationMail(template.get(), context, from, customerEmail));
+
+        MailTemplate mailTemplate = new MailTemplate().template(template.get()).from(from).to(customerEmail);
+        return Optional.of(mailTemplate);
     }
 
     /**
      * @param tenant the tenant of the shop the customer checked out from
-     * @param context the JSON context of the notification mail
      * @param locale the main locale of the tenant
      * @return an optional notification email object, present if all information is there and valid and the template
-     *         exists, absent otherwise
+     * exists, absent otherwise
      */
-    private Optional<OrderNotificationMail> getTenantNotificationEmail(Tenant tenant, Map<String, Object> context,
-            Locale locale)
+    private Optional<MailTemplate> getTenantNotificationEmail(Tenant tenant, Locale locale)
     {
         if (StringUtils.isBlank(tenant.getContactEmail())) {
             return Optional.absent();
         }
-        Optional<Template> template = getTemplate("order_paid_tenant_email.html", locale);
+        Optional<Template> template = mailTemplateService.getTemplate("order_paid_tenant_email.html", locale);
         if (!template.isPresent()) {
             return Optional.absent();
         }
-        return Optional.of(new OrderNotificationMail(template.get(), context,
-                generalSettings.getNotificationsEmail(), tenant.getContactEmail()));
+
+        MailTemplate mailTemplate = new MailTemplate().template(template.get())
+                .from(generalSettings.getNotificationsEmail())
+                .to(tenant.getContactEmail());
+        return Optional.of(mailTemplate);
     }
 
     /**
@@ -276,61 +219,25 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @param templateName the name of the template to get
      * @param locale the locale to get it in
      * @return an optional template, present if found (might not be in the asked locale, fallback on a global language)
-     *         absent otherwise
+     * absent otherwise
      */
     private Optional<Template> getTemplate(String templateName, Locale locale)
     {
-        // Localized as country + language
-        Path templatePath = fileManager.resolvePermanentFilePath(Paths.get("emails").resolve(locale.toLanguageTag()))
-                .resolve(templateName);
-
-        // Localized as language
-        if (!templatePath.toFile().isFile()) {
-            templatePath = fileManager.resolvePermanentFilePath(Paths.get("emails"))
-                    .resolve(locale.getLanguage()).resolve(templateName);
-        }
-
-        // Global fallback
-        if (!templatePath.toFile().isFile()) {
-            templatePath =
-                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve(templateName);
-        }
-
-        if (templatePath.toFile().isFile()) {
-            try {
-                String content = Files.toString(templatePath.toFile(), Charsets.UTF_8);
-                Template template = new Template(templateName, content);
-                return Optional.of(template);
-            } catch (IOException e) {
-                // Fail below
-            }
-        }
-        return Optional.absent();
+        return mailTemplateService.getTemplate(templateName, locale);
     }
 
     /**
      * Actually sends a notification email
      *
-     * @param notificationMail the order notification mail to send
+     * @param template the mail template
+     * @param context the mail JSON context
      */
-    private void sendNotificationMail(OrderNotificationMail notificationMail)
+    private void sendNotificationMail(MailTemplate template, Map<String, Object> context)
     {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonContext = mapper.writeValueAsString(notificationMail.getContext());
-            engine.get().register(notificationMail.getTemplate());
-            String html = engine.get().render(notificationMail.getTemplate().getId(), jsonContext);
-            List<String> lines = IOUtils.readLines(new ByteArrayInputStream(html.getBytes()), Charsets.UTF_8);
-            String subject = StringUtils.substringAfter(lines.remove(0), "Subject:").trim();
-            String body = StringUtils.join(lines, "\n");
-            Mail mail = new Mail().from(notificationMail.getFrom())
-                    .to(notificationMail.getRecipient())
-                    .text(body)
-                    .subject(subject);
-
-            emailService.sendEmail(mail);
-        } catch (TemplateEngineException | IOException | MailException e) {
-            logger.error("Failed to send email", ExceptionUtils.getRootCause(e));
+            mailTemplateService.sendMailTemplate(template, context);
+        } catch (MailException e) {
+            logger.error("Failed to send order paid email", ExceptionUtils.getRootCause(e));
         }
     }
 

@@ -10,6 +10,7 @@ package org.mayocat.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.accounts.AccountsSettings;
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.mail.SmtpSettings;
 import org.mayocat.rest.CorsSettings;
@@ -26,6 +27,11 @@ public class AbstractSettings extends Configuration
     @NotNull
     @JsonProperty
     private PlatformSettings platform = new PlatformSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private AccountsSettings accounts = new AccountsSettings();
 
     @Valid
     @NotNull
@@ -109,5 +115,10 @@ public class AbstractSettings extends Configuration
     public CorsSettings getCorsSettings()
     {
         return cors;
+    }
+
+    public AccountsSettings getAccountsSettings()
+    {
+        return accounts;
     }
 }

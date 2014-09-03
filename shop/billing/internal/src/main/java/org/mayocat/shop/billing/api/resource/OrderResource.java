@@ -32,7 +32,6 @@ import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.shop.billing.api.representation.OrderRepresentation;
-import org.mayocat.shop.billing.meta.OrderEntity;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.store.EntityDoesNotExistException;

@@ -1,12 +1,14 @@
 group CustomerDAO;
 
 create() ::= <<
-    INSERT INTO customer (entity_id, email, first_name, last_name, phone_number)
+    INSERT INTO customer (entity_id, email, first_name, last_name, phone_number, company, agent_id)
     VALUES (:customer.id,
             :customer.email,
             :customer.firstName,
             :customer.lastName,
-            :customer.phoneNumber)
+            :customer.phoneNumber,
+            :customer.company,
+            :customer.userId)
 >>
 
 updateCustomer() ::= <<
@@ -15,4 +17,13 @@ updateCustomer() ::= <<
            last_name = :customer.lastName,
            phone_number = :customer.phoneNumber
     WHERE  entity_id = :customer.id
+>>
+
+findByUserId() ::= <<
+    SELECT entity.*,
+           customer.*,
+           localization_data(entity_id)
+    FROM   entity
+    INNER JOIN customer ON entity.id = customer.entity_id
+    WHERE customer.agent_id = :userId
 >>

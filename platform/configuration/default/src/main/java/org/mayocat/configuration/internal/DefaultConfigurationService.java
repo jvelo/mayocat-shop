@@ -85,31 +85,61 @@ public class DefaultConfigurationService implements ConfigurationService
 
     public Map<Class, Serializable> getSettings(Tenant tenant)
     {
-        ObjectMapper mapper = getObjectMapper();
-        Map<String, Serializable> mergedConfiguration = getSettingsAsJson(tenant);
         Map<Class, Serializable> configurations = Maps.newHashMap();
-        for (String source : exposedSettings.keySet()) {
-            Map<String, Serializable> merged = (Map<String, Serializable>) mergedConfiguration.get(source);
-            Class c = exposedSettings.get(source).getClass();
-            try {
-                String json = mapper.writeValueAsString(merged);
-                Serializable result = (Serializable) mapper.readValue(json, c);
-                configurations.put(c, result);
-            } catch (IOException e) {
-                this.logger.error("Error while converting configuration to JSON string", e);
+        if (tenant != null) {
+            // For a tenant : merge global configuration with tenant own overrides
+
+            ObjectMapper mapper = getObjectMapper();
+            Map<String, Serializable> mergedConfiguration = getSettingsAsJson(tenant);
+
+            for (String source : exposedSettings.keySet()) {
+                Map<String, Serializable> merged = (Map<String, Serializable>) mergedConfiguration.get(source);
+                Class c = exposedSettings.get(source).getClass();
+                try {
+                    String json = mapper.writeValueAsString(merged);
+                    Serializable result = (Serializable) mapper.readValue(json, c);
+                    configurations.put(c, result);
+                } catch (IOException e) {
+                    this.logger.error("Error while converting configuration to JSON string", e);
+                }
+            }
+        } else {
+            // Not for a tenant : just return the global configuration
+
+            for (ExposedSettings settings : exposedSettings.values()) {
+                configurations.put(settings.getClass(), settings);
             }
         }
+
         return configurations;
     }
 
     public <T extends ExposedSettings> T getSettings(Class<T> c, Tenant tenant)
     {
-        return (T) this.getSettings(tenant).get(c);
+        if (tenant != null) {
+            return (T) this.getSettings(tenant).get(c);
+        } else {
+            for (ExposedSettings settings : exposedSettings.values()) {
+                if (c.isAssignableFrom(settings.getClass())) {
+                    return (T) settings;
+                }
+            }
+        }
+        return null;
     }
 
     public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
-        return (T) this.getSettings().get(c);
+        if (this.context.getTenant() != null) {
+            return (T) this.getSettings().get(c);
+        } else {
+            for (ExposedSettings settings : exposedSettings.values()) {
+                if (c.isAssignableFrom(settings.getClass())) {
+                    return (T) settings;
+                }
+            }
+        }
+        return null;
     }
 
     public Map<String, Serializable> getSettingsAsJson(final Tenant tenant)

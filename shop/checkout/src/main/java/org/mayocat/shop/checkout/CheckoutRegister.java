@@ -10,8 +10,8 @@ package org.mayocat.shop.checkout;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 import org.xwiki.component.annotation.Role;
 
 /**

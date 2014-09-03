@@ -55,6 +55,12 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-taxes-internal</artifactId>
             <version>${project.version}</version>
         </dependency>

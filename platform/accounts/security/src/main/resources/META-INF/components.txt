@@ -1,0 +1,1 @@
+org.mayocat.accounts.jersey.CheckTenantAndUserMethodDispatch

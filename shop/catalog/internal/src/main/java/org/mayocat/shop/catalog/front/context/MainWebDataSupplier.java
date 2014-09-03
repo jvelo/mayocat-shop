@@ -33,6 +33,10 @@ public class MainWebDataSupplier implements WebDataSupplier, ContextConstants
     @Override
     public void supply(Map<String, Object> data)
     {
+        if (context.getTenant() == null) {
+            return;
+        }
+
         data.put(THEME_PATH, ResourceResource.PATH);
 
         if (!data.containsKey(PAGE_TITLE)) {

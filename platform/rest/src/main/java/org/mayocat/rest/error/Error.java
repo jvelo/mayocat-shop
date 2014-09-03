@@ -28,6 +28,11 @@ public class Error
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String developerMessage;
 
+    public Error(Response.Status status, String message)
+    {
+        this(status, null, message, null);
+    }
+
     public Error(Response.Status status, ErrorCode code, String message)
     {
         this(status, code, message, null);
@@ -42,30 +47,31 @@ public class Error
     }
 
     @JsonInclude
-    public int getStatus()
+    public Integer getStatus()
     {
         return status.getStatusCode();
     }
 
-    @JsonInclude
-    public int getCode()
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Integer getCode()
     {
+        if (errorCode == null) {
+            return null;
+        }
         return errorCode.getCode();
     }
 
-    @JsonInclude
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String getIdentifier()
     {
+        if (errorCode == null) {
+            return null;
+        }
         return errorCode.getIdentifier();
     }
 
     public String getMessage()
     {
         return message;
-    }
-
-    public String getDeveloperMessage()
-    {
-        return developerMessage;
     }
 }

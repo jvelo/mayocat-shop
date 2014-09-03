@@ -123,6 +123,11 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeResource getResource(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
+        if (theme == null) {
+            // Garbage in, garbage out
+            return null;
+        }
+
         Path path = theme.getPath();
         if (breakpoint.isPresent()) {
             path = path.resolve(breakpoint.get().getFolder());

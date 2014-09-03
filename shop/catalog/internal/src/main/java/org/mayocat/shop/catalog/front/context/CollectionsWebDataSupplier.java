@@ -48,6 +48,10 @@ public class CollectionsWebDataSupplier implements WebDataSupplier, ContextConst
     @Override
     public void supply(Map<String, Object> data)
     {
+        if (webContext.getTenant() == null) {
+            return;
+        }
+
         List<Collection> collections = this.collectionStore.get().findAll();
         final List<Map<String, Object>> collectionsContext = Lists.newArrayList();
 

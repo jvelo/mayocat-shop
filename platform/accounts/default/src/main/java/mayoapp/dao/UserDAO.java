@@ -37,7 +37,20 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract void addRoleToUser(@Bind("userId") UUID userId, @Bind("role") String role);
 
     @SqlUpdate
-    public abstract void update(@BindBean("u") User user, @BindBean("tenant") Tenant tenant);
+    public abstract void update(@BindBean("u") User user);
+
+    @SqlUpdate
+    public abstract void changePassword(@BindBean("user") User user, @Bind("hash") String hash);
+
+    @SqlUpdate
+    public abstract void createPasswordResetRequest(@BindBean("user") User user, @Bind("resetKey") String resetKey);
+
+    // TODO try and register a generic UUID mapper that can extract a UUID from the first result like StringMapper etc.
+    @SqlQuery
+    public abstract String findUserIdForPasswordResetKey(@Bind("resetKey") String resetKey);
+
+    @SqlUpdate
+    public abstract void deletePasswordResetRequest(@Bind("resetKey") String resetKey);
 
     @SqlQuery
     public abstract User findByEmailOrUserNameAndTenant(@Bind("userNameOrEmail") String userNameOrEmail,
@@ -58,7 +71,13 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract List<User> findAllGlobalUsers(@Bind("number") Integer number, @Bind("offset") Integer offset);
 
     @SqlQuery
+    public abstract User findByValidationKey(@Bind("validationKey") String validationKey);
+
+    @SqlQuery
     protected abstract User findUserBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+
+    @SqlQuery
+    protected abstract User findGlobalUserBySlug(@Bind("slug") String slug);
 
     public User findById(UUID id)
     {
@@ -67,7 +86,11 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     public User findBySlug(String slug, Tenant tenant)
     {
-        return this.findUserBySlug(slug, tenant);
+        if (tenant != null) {
+            return this.findUserBySlug(slug, tenant);
+        } else {
+            return this.findGlobalUserBySlug(slug);
+        }
     }
 
     public List<User> findAll(Tenant tenant, Integer number, Integer offset)

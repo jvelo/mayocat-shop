@@ -19,6 +19,8 @@ import javax.validation.constraints.Size;
 import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
 import org.mayocat.model.annotation.Index;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 
 /**
  * @version $Id$

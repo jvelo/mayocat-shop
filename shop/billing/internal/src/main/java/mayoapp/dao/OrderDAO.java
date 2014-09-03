@@ -12,11 +12,11 @@ import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.billing.model.Order;
-import org.mayocat.shop.billing.store.jdbi.mapper.OrderMapper;
 import org.mayocat.shop.billing.store.jdbi.argument.CurrencyAsCurrencyCodeArgumentFactory;
+import org.mayocat.shop.billing.store.jdbi.argument.OrderStatusArgumentFactory;
+import org.mayocat.shop.billing.store.jdbi.mapper.OrderMapper;
 import org.mayocat.store.rdbms.dbi.argument.DateAsTimestampArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonStringArgumentFactory;
-import org.mayocat.shop.billing.store.jdbi.argument.OrderStatusArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;

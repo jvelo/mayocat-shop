@@ -25,8 +25,15 @@ public class SiteSettings
     @NotNull
     private String domainName = "localhost:8080";
 
+    private String name = "Mayocat";
+
     public String getDomainName()
     {
         return domainName;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }

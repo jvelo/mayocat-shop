@@ -84,7 +84,7 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
     {
         try {
 
-            if (!webContext.getTheme().isValidDefinition()) {
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE) && !webContext.getTheme().isValidDefinition()) {
                 // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
                 writeHttpError("Invalid theme definition", entityStream);
                 return;
@@ -102,20 +102,24 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             }
 
             Template template = null;
+            String jsonContext = null;
 
-            if (webView.model().isPresent()) {
-                Optional<String> path = themeFileResolver.resolveModelPath(webView.model().get());
-                if (path.isPresent()) {
-                    try {
-                        template = themeFileResolver.getTemplate(path.get(), webContext.getRequest().getBreakpoint());
-                    } catch (TemplateNotFoundException e) {
-                        // Keep going
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                if (webView.model().isPresent()) {
+                    // Check for a model
+
+                    Optional<String> path = themeFileResolver.resolveModelPath(webView.model().get());
+                    if (path.isPresent()) {
+                        try {
+                            template =
+                                    themeFileResolver.getTemplate(path.get(), webContext.getRequest().getBreakpoint());
+                        } catch (TemplateNotFoundException e) {
+                            // Keep going
+                        }
                     }
+                    // else just fallback on the default model
                 }
-                // else just fallback on the default model
-            }
 
-            if (template == null) {
                 try {
                     template = themeFileResolver
                             .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
@@ -123,23 +127,17 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                     if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
                         template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
                                 webContext.getRequest().getBreakpoint());
-                    } else {
-                        if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
-                            // For JSON API calls, we don't care if the template is found or not.
-                            // For other calls, raise the exception
-                            throw e;
-                        }
                     }
                 }
             }
 
-            String jsonContext = null;
-
             if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE) ||
                     httpHeaders.containsKey("X-Mayocat-Full-Context"))
             {
-                webView.data().put("templateContent", template.getId());
-                webView.data().put("template", FilenameUtils.getBaseName(webView.template().toString()));
+                if (template != null) {
+                    webView.data().put("templateContent", template.getId());
+                    webView.data().put("template", FilenameUtils.getBaseName(webView.template().toString()));
+                }
 
                 for (WebDataSupplier supplier : dataSuppliers.values()) {
                     supplier.supply(webView.data());

@@ -7,7 +7,8 @@
  */
 package org.mayocat.shop.billing.api.representation;
 
-import org.mayocat.shop.billing.model.Address;
+
+import org.mayocat.shop.customer.model.Address;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

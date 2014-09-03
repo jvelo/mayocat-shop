@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.mayocat.model.Association;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import org.slf4j.Logger;
@@ -108,7 +108,9 @@ public class OrderMapper implements ResultSetMapper<Order>
         mapper.registerModule(new GuavaModule());
         try {
             Map<String, Object> data = mapper.readValue(resultSet.getString("order_data"),
-                    new TypeReference<Map<String, Object>>(){});
+                    new TypeReference<Map<String, Object>>()
+                    {
+                    });
             order.setOrderData(data);
         } catch (IOException e) {
             final Logger logger = LoggerFactory.getLogger(OrderMapper.class);

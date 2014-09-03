@@ -9,9 +9,13 @@ package org.mayocat.accounts.api.v1
 
 import groovy.transform.CompileStatic
 import org.mayocat.accounts.AccountsService
+import org.mayocat.accounts.AccountsSettings
 import org.mayocat.accounts.model.User
+import org.mayocat.accounts.session.JerseyCookieSessionManager
+import org.mayocat.configuration.ConfigurationService
 import org.mayocat.rest.Resource
-import org.mayocat.security.Cipher
+import org.mayocat.rest.error.ErrorUtil
+import org.mayocat.rest.error.StandardError
 import org.mayocat.security.EncryptionException
 import org.mayocat.security.PasswordManager
 import org.xwiki.component.annotation.Component
@@ -23,7 +27,6 @@ import javax.ws.rs.FormParam
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.NewCookie
 import javax.ws.rs.core.Response
 
 /**
@@ -32,7 +35,7 @@ import javax.ws.rs.core.Response
 @Component("/api/login")
 @Path("/api/login")
 @CompileStatic
-class LoginApi implements Resource 
+class LoginApi implements Resource
 {
     @Inject
     AccountsService accountsService
@@ -41,46 +44,43 @@ class LoginApi implements Resource
     PasswordManager passwordManager
 
     @Inject
-    Cipher crypter
+    JerseyCookieSessionManager sessionManager
+
+    @Inject
+    ConfigurationService configurationService
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     Response login(@FormParam("username") String username, @FormParam("password") String password,
-                          @FormParam("remember") @DefaultValue("false") Boolean remember)
+            @FormParam("remember") @DefaultValue("false") Boolean remember)
     {
         try {
             User user = accountsService.findUserByEmailOrUserName(username)
 
             if (user == null) {
-                // Don't give more information than this
-                return Response.noContent().status(Response.Status.UNAUTHORIZED).build()
+                return ErrorUtil.buildError(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
+                        "Credentials are not correct");
             }
 
             if (!passwordManager.verifyPassword(password, user.getPassword())) {
-                // Don't give more information than this
-                return Response.noContent().status(Response.Status.UNAUTHORIZED).build()
+                return ErrorUtil.buildError(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
+                        "Credentials are not correct");
             }
 
-            // Find out some cookie parameters we will need
-            int ageWhenRemember = 60 * 60 * 24 * 15 // TODO make configurable
-            // String domain = uri.geBaseUri().getHost()
-            // TODO set domain when at least two dots ? Or config ?
-            // See http://curl.haxx.se/rfc/cookie_spec.html
+            if (!user.active && getSettings().userValidationRequiredForLogin.value) {
+                return ErrorUtil.buildError(Response.Status.UNAUTHORIZED, StandardError.ACCOUNT_REQUIRES_VALIDATION,
+                        "Account requires validation");
+            }
 
-            // Create the new cookies to be sent with the response
-            NewCookie newUserCookie =
-                    new NewCookie("username", crypter.encrypt(username), "/", null, null, remember ? ageWhenRemember : -1,
-                            false)
-            NewCookie newPassCookie =
-                    new NewCookie("password", crypter.encrypt(password), "/", null, null, remember ? ageWhenRemember : -1,
-                            false)
-
-            return Response.ok().cookie(newUserCookie, newPassCookie).build()
-
+            return Response.ok().cookie(sessionManager.getCookies(username, password, remember)).build()
         } catch (EncryptionException e) {
-            // Don't give more information than this
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Failed to log in.").type(MediaType.TEXT_PLAIN_TYPE).build()
         }
+    }
+
+    private AccountsSettings getSettings()
+    {
+        return configurationService.getSettings(AccountsSettings.class)
     }
 }

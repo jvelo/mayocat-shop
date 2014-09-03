@@ -16,8 +16,6 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.shop.billing.model.Order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @version $Id$

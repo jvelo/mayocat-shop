@@ -10,6 +10,7 @@ package org.mayocat.accounts;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.ws.rs.core.Response;
 
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
@@ -41,11 +42,24 @@ public interface AccountsService
 
     boolean hasUsers();
 
-    void createInitialUser(@Valid User user) throws EntityAlreadyExistsException, InvalidEntityException;
+    void createInitialUser(@Valid User user)
+            throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException;
 
-    void createUser(@Valid User user) throws EntityAlreadyExistsException, InvalidEntityException;
+    void createUser(@Valid User user)
+            throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException;
 
     List<Role> findRolesForUser(User user);
 
-    public User findUserByEmailOrUserName(String userNameOrEmail);
+    User findUserByEmailOrUserName(String userNameOrEmail);
+
+    User validateAccount(String validationKey) throws NoSuchValidationKeyException, IncompatibleConnectedUserException,
+            UserAlreadyValidatedException;
+
+    void changePassword(User user, String currentPassword, String newPassword) throws WrongPasswordException,
+            PasswordDoesNotMeetRequirementsException;
+
+    void createPasswordResetRequest(String emailOrUsername) throws UserNotFoundException;
+
+    void resetPassword(String resetKey, String password)
+            throws NoSuchPasswordResetKeyException, PasswordDoesNotMeetRequirementsException;
 }

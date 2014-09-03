@@ -7,8 +7,10 @@
  */
 package org.mayocat.accounts.api.v1.object
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import groovy.transform.CompileStatic
 import org.mayocat.accounts.model.User
+import org.mayocat.jackson.PasswordSerializer
 import org.mayocat.rest.api.object.BaseApiObject
 
 /**
@@ -21,6 +23,7 @@ class UserApiObject extends BaseApiObject {
 
     String email;
 
+    @JsonSerialize(using = PasswordSerializer.class)
     String password;
 
     def withUser(User user) {

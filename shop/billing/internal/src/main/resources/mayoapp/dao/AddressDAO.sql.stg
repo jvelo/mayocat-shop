@@ -1,7 +1,7 @@
 group AddressDAO;
 
 createAddress() ::= <<
-    INSERT INTO address (address_id, company, full_name, street, street_complement, zip, city, country)
+    INSERT INTO address (address_id, company, full_name, street, street_complement, zip, city, country, type, customer_id)
     VALUES (:address.id,
             :address.company,
             :address.fullName,
@@ -9,5 +9,14 @@ createAddress() ::= <<
             :address.streetComplement,
             :address.zip,
             :address.city,
-            :address.country)
+            :address.country,
+            :address.type,
+            :address.customerId)
+>>
+
+findByCustomerIdAndType() ::= <<
+    SELECT  *
+    FROM    address
+    WHERE   customer_id = :customerId
+        AND type = :type
 >>

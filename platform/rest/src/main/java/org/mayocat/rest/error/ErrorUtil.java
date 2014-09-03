@@ -15,6 +15,12 @@ import javax.ws.rs.core.Response;
  */
 public class ErrorUtil
 {
+    public static Response buildError(Response.Status status, String message)
+    {
+        return Response.status(status)
+                .entity(new Error(status, message)).type(MediaType.APPLICATION_JSON).build();
+    }
+
     public static Response buildError(Response.Status status, ErrorCode code, String message)
     {
         return Response.status(status)

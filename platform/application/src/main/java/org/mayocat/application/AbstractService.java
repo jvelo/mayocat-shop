@@ -30,6 +30,7 @@ import org.mayocat.event.EventListener;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
 import org.mayocat.jersey.JERSEY920WorkaroundServletFilter;
+import org.mayocat.jersey.MayocatFullContextRequestFilter;
 import org.mayocat.lifecycle.Managed;
 import org.mayocat.localization.LocalizationContainerFilter;
 import org.mayocat.meta.EntityMeta;
@@ -58,6 +59,9 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -126,6 +130,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Servic
         addResponseFilter(SessionScopeCookieContainerFilter.class);
         addResponseFilter(FlashScopeCookieContainerFilter.class);
         addResponseFilter(CorsResponseFilter.class);
+        addResponseFilter(MayocatFullContextRequestFilter.class);
 
         // Register Jersey container request filters
         environment.setJerseyProperty(

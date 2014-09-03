@@ -29,6 +29,7 @@
     <module>shipping</module>
     <module>taxes</module>
     <module>cart</module>
+    <module>customer</module>
     <module>payment</module>
     <module>billing</module>
     <module>checkout</module>

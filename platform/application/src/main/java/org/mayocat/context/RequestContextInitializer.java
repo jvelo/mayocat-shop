@@ -140,10 +140,10 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 2. Configurations
 
-        if (tenant != null) {
+        //if (tenant != null) {
             Map<Class, Serializable> configurations = configurationService.getSettings();
             context.setSettings(configurations);
-        }
+        //}
 
         // 3. User
 
@@ -163,48 +163,47 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         if (tenant != null) {
             // 4. ThemeDefinition
             context.setTheme(themeManager.getTheme());
+        }
+        // 5. Locale
+        LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
+        boolean localeSet = false;
+        List<Locale> alternativeLocales =
+                FluentIterable.from(localesSettings.getOtherLocales().getValue())
+                        .filter(Predicates.notNull()).toList();
 
-            // 5. Locale
-            LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
-            boolean localeSet = false;
-            List<Locale> alternativeLocales =
-                    FluentIterable.from(localesSettings.getOtherLocales().getValue())
-                            .filter(Predicates.notNull()).toList();
-
-            String canonicalPath = path;
-            if (!alternativeLocales.isEmpty()) {
-                for (Locale locale : alternativeLocales) {
-                    List<String> fragments = ImmutableList
-                            .copyOf(Collections2
-                                    .filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
-                    if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
-                        context.setLocale(locale);
-                        context.setAlternativeLocale(true);
-                        canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
-                        localeSet = true;
-                        break;
-                    }
+        String canonicalPath = path;
+        if (!alternativeLocales.isEmpty()) {
+            for (Locale locale : alternativeLocales) {
+                List<String> fragments = ImmutableList
+                        .copyOf(Collections2
+                                .filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
+                if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
+                    context.setLocale(locale);
+                    context.setAlternativeLocale(true);
+                    canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
+                    localeSet = true;
+                    break;
                 }
             }
-            if (!localeSet) {
-                context.setLocale(localesSettings.getMainLocale().getValue());
-                context.setAlternativeLocale(false);
-            }
-
-            if (context.isAlternativeLocale()) {
-                path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
-            }
-
-            // 6. Request
-            Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
-
-            requestBuilder.baseURI(getBaseURI(servletRequestEvent))
-                    .canonicalPath(canonicalPath)
-                    .path(path)
-                    .breakpoint(breakpoint);
-
-            context.setRequest(requestBuilder.build());
         }
+        if (!localeSet) {
+            context.setLocale(localesSettings.getMainLocale().getValue());
+            context.setAlternativeLocale(false);
+        }
+
+        if (context.isAlternativeLocale()) {
+            path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
+        }
+
+        // 6. Request
+        Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
+
+        requestBuilder.baseURI(getBaseURI(servletRequestEvent))
+                .canonicalPath(canonicalPath)
+                .path(path)
+                .breakpoint(breakpoint);
+
+        context.setRequest(requestBuilder.build());
     }
 
     private URI getBaseURI(ServletRequestEvent event)

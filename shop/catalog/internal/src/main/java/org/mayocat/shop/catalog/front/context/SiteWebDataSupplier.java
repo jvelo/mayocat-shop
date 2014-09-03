@@ -71,6 +71,11 @@ public class SiteWebDataSupplier implements WebDataSupplier
     public void supply(Map<String, Object> data)
     {
         final Tenant tenant = context.getTenant();
+
+        if (tenant == null) {
+            return;
+        }
+
         ThemeDefinition theme = context.getTheme().getDefinition();
 
         Map site = Maps.newHashMap();

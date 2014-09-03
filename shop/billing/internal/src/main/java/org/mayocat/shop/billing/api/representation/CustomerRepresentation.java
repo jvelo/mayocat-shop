@@ -7,7 +7,7 @@
  */
 package org.mayocat.shop.billing.api.representation;
 
-import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.shop.customer.model.Customer;
 
 /**
  * @version $Id$

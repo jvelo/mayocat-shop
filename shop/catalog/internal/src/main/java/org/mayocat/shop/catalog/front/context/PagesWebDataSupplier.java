@@ -73,6 +73,10 @@ public class PagesWebDataSupplier implements WebDataSupplier
     @Override
     public void supply(Map<String, Object> data)
     {
+        if (context.getTenant() == null) {
+            return;
+        }
+
         ThemeDefinition theme = context.getTheme().getDefinition();
 
         // Pages

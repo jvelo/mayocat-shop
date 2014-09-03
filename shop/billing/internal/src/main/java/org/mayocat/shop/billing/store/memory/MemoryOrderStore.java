@@ -21,7 +21,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
 /**
- * In-memory implementation of {@link OrderStore}
+ * In-memory implementation of {@link org.mayocat.shop.billing.store.OrderStore}
  *
  * @version $Id$
  */

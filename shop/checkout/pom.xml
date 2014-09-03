@@ -38,6 +38,11 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-billing-internal</artifactId>
             <version>${project.version}</version>
         </dependency>

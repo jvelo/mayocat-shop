@@ -1,1 +1,2 @@
 org.mayocat.mail.internal.JavaMailMailService
+org.mayocat.mail.internal.DefaultMailTemplateService
