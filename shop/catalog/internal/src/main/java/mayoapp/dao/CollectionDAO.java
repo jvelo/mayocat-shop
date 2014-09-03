@@ -44,7 +44,7 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     public abstract Integer update(@BindBean("collection") Collection collection);
 
     @SqlQuery
-    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+    public abstract Integer lastPosition(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract List<Collection> findAllForProduct(@BindBean("product") Product product);
@@ -72,16 +72,16 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
 
     @RegisterMapper(EntityAndCountsJoinRowMapper.class)
     @SqlQuery
-    abstract List<EntityAndCountsJoinRow> findWithProductCountRows(@BindBean("tenant") Tenant tenant);
+    abstract List<EntityAndCountsJoinRow> findWithProductCountRows(@Bind("tenantId") UUID tenantId);
 
-    public Collection findBySlug(String slug, Tenant tenant)
+    public Collection findBySlug(String slug, UUID tenant)
     {
         return this.findBySlug("collection", slug, tenant);
     }
 
-    public List<EntityAndCount<Collection>> findAllWithProductCount(Tenant tenant)
+    public List<EntityAndCount<Collection>> findAllWithProductCount(UUID tenantId)
     {
-        List<EntityAndCountsJoinRow> rows = this.findWithProductCountRows(tenant);
+        List<EntityAndCountsJoinRow> rows = this.findWithProductCountRows(tenantId);
         ImmutableList.Builder<EntityAndCount<Collection>> listBuilder = ImmutableList.builder();
         EntityExtractor<Collection> extractor = new EntityExtractor<Collection>();
         for (EntityAndCountsJoinRow row : rows) {

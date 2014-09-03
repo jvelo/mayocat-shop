@@ -63,15 +63,6 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         return this.create(user, Role.ADMIN);
     }
 
-    public void update(User user, Tenant tenant) throws EntityDoesNotExistException, InvalidEntityException,
-            StoreException
-    {
-        if (this.dao.findBySlug(user.getSlug(), tenant) != null) {
-            throw new EntityDoesNotExistException();
-        }
-        this.dao.update(user);
-    }
-
     public User findById(UUID id)
     {
         return this.dao.findById(id);

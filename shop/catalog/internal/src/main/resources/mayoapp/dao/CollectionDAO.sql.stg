@@ -28,7 +28,7 @@ lastPosition() ::= <<
            INNER JOIN collection
                    ON entity.id = collection.entity_id
     WHERE  entity.type = 'collection'
-           AND entity.tenant_id = :tenant.id
+           AND entity.tenant_id = :tenantId
     ORDER  BY position DESC
     LIMIT  1
 >>
@@ -96,7 +96,7 @@ findWithProductCountRows() ::= <<
                       FROM   collection_product
                       GROUP  BY collection_product.collection_id) _count_collections
                  ON _count_collections.collection_id = collection.entity_id
-    WHERE  entity.tenant_id = :tenant.id
+    WHERE  entity.tenant_id = :tenantId
     ORDER BY collection.position
 >>
 

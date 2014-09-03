@@ -57,12 +57,12 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
-    LoadedAttachment findById(@Bind("id") UUID id, @BindBean("tenant") Tenant tenant);
+    LoadedAttachment findById(@Bind("id") UUID id, @Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    LoadedAttachment findBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    LoadedAttachment findBySlug(@Bind("slug") String slug, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     LoadedAttachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
-            @BindBean("tenant") Tenant tenant);
+            @Bind("tenantId") UUID tenantId);
 }

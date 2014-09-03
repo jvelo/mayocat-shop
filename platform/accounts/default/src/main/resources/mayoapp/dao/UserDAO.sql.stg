@@ -74,7 +74,7 @@ findByEmailOrUserNameAndTenant() ::= <<
                    ON entity.id = agent.entity_id
     WHERE  ( agent.email = :userNameOrEmail
               OR entity.slug = :userNameOrEmail )
-           AND entity.tenant_id = :t.id
+           AND entity.tenant_id = :tenantId
            AND entity.type = 'user'
 >>
 
@@ -90,7 +90,7 @@ findAllUsers() ::= <<
            INNER JOIN agent
                    ON entity.id = agent.entity_id
     WHERE  entity.type = 'user'
-           AND entity.tenant_id = :tenant.id
+           AND entity.tenant_id = :tenantId
     LIMIT  :number
     OFFSET :offset
 >>
@@ -113,7 +113,7 @@ findUserBySlug() ::= <<
                    ON entity.id = agent.entity_id
     WHERE entity.slug = :slug
            AND entity.type = 'user'
-           AND entity.tenant_id = :tenant.id
+           AND entity.tenant_id = :tenantId
 >>
 
 findGlobalUserBySlug() ::= <<

@@ -23,6 +23,7 @@ import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import mayoapp.dao.CollectionDAO;
@@ -61,9 +62,11 @@ public class ShopIndexDocumentPurveyor extends AbstractGenericEntityIndexDocumen
 
     public Map<String, Object> purveyDocument(Tenant tenant)
     {
+        Preconditions.checkNotNull(tenant);
+
         this.dao = this.dbi.get().onDemand(CollectionDAO.class);
         Map<String, Object> extracted = extractSourceFromEntity(tenant, tenant);
-        List<Collection> collections = dao.findAll("collection", tenant);
+        List<Collection> collections = dao.findAll("collection", tenant.getId());
 
         List<Map<String, Object>> collectionsSource = Lists.newArrayList();
         for (Collection collection : collections) {

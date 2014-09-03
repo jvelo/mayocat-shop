@@ -83,7 +83,7 @@ public class BuildIndexTask extends Task implements org.mayocat.task.Task
             output.println("- indexing " + t.getSlug());
             output.flush();
 
-            for (Product product : this.productDAO.findAll("product", tenant)) {
+            for (Product product : this.productDAO.findAll("product", tenant.getId())) {
 
                 // Retrieve again individually to be sure we have addons etc.
                 Product retrieved = this.productStore.findById(product.getId());
@@ -93,7 +93,7 @@ public class BuildIndexTask extends Task implements org.mayocat.task.Task
                 searchEngine.get().index(retrieved, tenant);
             }
 
-            for (Collection collection : this.collectionDAO.findAll("collection", tenant)) {
+            for (Collection collection : this.collectionDAO.findAll("collection", tenant.getId())) {
 
                 // Retrieve again individually to be sure we have addons etc.
                 Collection retrieved = this.collectionStore.findById(collection.getId());

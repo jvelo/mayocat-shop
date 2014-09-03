@@ -8,6 +8,7 @@
 package mayoapp.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.store.dbi.AddonsHelper;
@@ -29,11 +30,16 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 public abstract class PageDAO implements EntityDAO<Page>, Transactional<PageDAO>,
     PositionedDAO<Page>, AddonsDAO<Page>, LocalizationDAO<Page>
 {
-    @SqlQuery
-    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+    public PageDAO()
+    {
+        super();
+    }
 
     @SqlQuery
-    public abstract List<Page> findAllRootPages(@BindBean("tenant") Tenant tenant);
+    public abstract Integer lastPosition(@Bind("tenantId") UUID tenant);
+
+    @SqlQuery
+    public abstract List<Page> findAllRootPages(@Bind("tenantId") UUID tenant);
 
     @SqlUpdate
     public abstract void createPage(@Bind("position") Integer position, @BindBean("page") Page page);

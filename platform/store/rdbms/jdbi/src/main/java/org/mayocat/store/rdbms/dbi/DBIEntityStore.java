@@ -7,17 +7,19 @@
  */
 package org.mayocat.store.rdbms.dbi;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
 import org.mayocat.store.EntityStore;
-import mayoapp.dao.EntityDAO;
 import org.skife.jdbi.v2.DBI;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 import org.xwiki.observation.ObservationManager;
+
+import mayoapp.dao.EntityDAO;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIEntityStore implements EntityStore, Initializable
@@ -42,9 +44,12 @@ public class DBIEntityStore implements EntityStore, Initializable
         return dbi.get();
     }
 
-    protected Tenant getTenant()
+    protected UUID getTenant()
     {
-        return this.context.getTenant();
+        if (this.context.getTenant() != null) {
+            return this.context.getTenant().getId();
+        }
+        return null;
     }
 
     @Override

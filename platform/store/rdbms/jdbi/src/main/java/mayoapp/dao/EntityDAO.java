@@ -10,10 +10,8 @@ package mayoapp.dao;
 import java.util.List;
 import java.util.UUID;
 
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
-import org.mayocat.model.EntityList;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -39,32 +37,33 @@ public interface EntityDAO< E extends Entity >
 
     @SqlUpdate
     (
-        "INSERT INTO entity (id, slug, type, tenant_id) VALUES (:entity.id, :entity.slug, :type, :tenant.id)"
+        "INSERT INTO entity (id, slug, type, tenant_id) VALUES (:entity.id, :entity.slug, :type, :tenantId)"
     )
-    Integer createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+    Integer createEntity(@BindBean("entity") Entity entity, @Bind("type") String type, @Bind("tenantId")
+    UUID tenantId);
 
     @SqlUpdate
     (
-        "INSERT INTO entity (id, slug, type, tenant_id) SELECT :entity.id, :entity.slug, :type, :tenant.id " +
-        "WHERE NOT EXISTS (SELECT 1 FROM entity where slug = :entity.slug AND type = :type AND tenant_id = :tenant.id)"
+        "INSERT INTO entity (id, slug, type, tenant_id) SELECT :entity.id, :entity.slug, :type, :tenantId " +
+        "WHERE NOT EXISTS (SELECT 1 FROM entity where slug = :entity.slug AND type = :type AND tenant_id = :tenantId)"
     )
     Integer createEntityIfItDoesNotExist(@BindBean("entity") Child entity, @Bind("type") String type,
-            @BindBean("tenant") Tenant tenant);
+            @Bind("tenantId") UUID tenantId);
 
 
     @SqlUpdate
     (
-        "INSERT INTO entity (id, slug, type, tenant_id, parent_id) VALUES (:entity.id, :entity.slug, :type, :tenant.id, :entity.parentId)"
+        "INSERT INTO entity (id, slug, type, tenant_id, parent_id) VALUES (:entity.id, :entity.slug, :type, :tenantId, :entity.parentId)"
     )
     Integer createChildEntity(@BindBean("entity") Child entity, @Bind("type") String type,
-            @BindBean("tenant") Tenant tenant);
+            @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
-        "SELECT insert_child_entity_if_not_exist(:entity.id, :entity.slug, :type, :tenant.id, :entity.parentId)"
+        "SELECT insert_child_entity_if_not_exist(:entity.id, :entity.slug, :type, :tenantId, :entity.parentId)"
     )
     Integer createChildEntityIfItDoesNotExist(@BindBean("entity") Child entity, @Bind("type") String type,
-            @BindBean("tenant") Tenant tenant);
+            @Bind("tenantId") UUID tenantId);
 
     @SqlUpdate
     (
@@ -92,9 +91,9 @@ public interface EntityDAO< E extends Entity >
 
     @SqlQuery
     (
-        "SELECT id FROM entity WHERE slug = :entity.slug AND type = :type AND tenant_id = :tenant.id"
+        "SELECT id FROM entity WHERE slug = :entity.slug AND type = :type AND tenant_id = :tenantId"
     )
-    UUID getId(@BindBean("entity") Entity entity, @Bind("type") String type, @BindBean("tenant") Tenant tenant);
+    UUID getId(@BindBean("entity") Entity entity, @Bind("type") String type, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
@@ -113,16 +112,16 @@ public interface EntityDAO< E extends Entity >
     @SqlQuery
     (
         "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
-        "WHERE entity.slug = :slug AND entity.type = '<type>' AND entity.tenant_id = :tenant.id"
+        "WHERE entity.slug = :slug AND entity.type = '<type>' AND entity.tenant_id = :tenantId"
     )
-    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
         "SELECT entity.*, <type>.*, localization_data(entity_id) FROM entity INNER JOIN <type> ON entity.id = <type>.entity_id " +
-        "WHERE entity.slug = :slug AND entity.parent_id = :parent AND entity.type = '<type>' AND tenant_id = :tenant.id"
+        "WHERE entity.slug = :slug AND entity.parent_id = :parent AND entity.type = '<type>' AND tenant_id = :tenantId"
     )
-    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @BindBean("tenant") Tenant tenant,
+    E findBySlug(@Define("type") String type, @Bind("slug") String slug, @Bind("tenantId") UUID tenantId,
             @Bind("parent") UUID parent);
 
     @SqlQuery
@@ -140,9 +139,9 @@ public interface EntityDAO< E extends Entity >
         "FROM entity " +
         "INNER JOIN <type> ON entity.id = <type>.entity_id " +
         "WHERE entity.type = '<type>'" +
-        "  AND entity.tenant_id = :tenant.id"
+        "  AND entity.tenant_id = :tenantId"
     )
-    List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
+    List<E> findAll(@Define("type") String type, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
@@ -151,10 +150,10 @@ public interface EntityDAO< E extends Entity >
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
         "WHERE  entity.type = '<type>' " +
-        "       AND entity.tenant_id = :tenant.id " +
+        "       AND entity.tenant_id = :tenantId " +
         "ORDER  BY <order> ASC "
     )
-    List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant);
+    List<E> findAll(@Define("type") String type, @Define("order") String order, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
@@ -163,11 +162,11 @@ public interface EntityDAO< E extends Entity >
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
         "WHERE  entity.type = '<type>' " +
-        "       AND entity.tenant_id = :tenant.id " +
+        "       AND entity.tenant_id = :tenantId " +
         "LIMIT  :number " +
         "OFFSET :offset "
     )
-    List<E> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    List<E> findAll(@Define("type") String type, @Bind("tenantId") UUID tenantId, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
 
@@ -178,9 +177,9 @@ public interface EntityDAO< E extends Entity >
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
         "WHERE  entity.type = '<type>' " +
-        "       AND entity.tenant_id = :tenant.id "
+        "       AND entity.tenant_id = :tenantId "
     )
-    Integer countAll(@Define("type") String type, @BindBean("tenant") Tenant tenant);
+    Integer countAll(@Define("type") String type, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
     (
@@ -199,11 +198,11 @@ public interface EntityDAO< E extends Entity >
         "       INNER JOIN <type>" +
         "               ON entity.id = <type>.entity_id " +
         "WHERE  entity.type = '<type>' " +
-        "       AND entity.tenant_id = :tenant.id " +
+        "       AND entity.tenant_id = :tenantId " +
         "ORDER  BY <order> ASC " +
         "LIMIT  :number " +
         "OFFSET :offset "
     )
-    List<E> findAll(@Define("type") String type, @Define("order") String order, @BindBean("tenant") Tenant tenant,
+    List<E> findAll(@Define("type") String type, @Define("order") String order, @Bind("tenantId") UUID tenantId,
             @Bind("number") Integer number, @Bind("offset") Integer offset);
 }

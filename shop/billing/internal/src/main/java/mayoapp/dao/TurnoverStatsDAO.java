@@ -7,10 +7,11 @@
  */
 package mayoapp.dao;
 
-import org.mayocat.accounts.model.Tenant;
+import java.util.UUID;
+
 import org.mayocat.shop.billing.model.stats.TurnoverStatEntry;
 import org.mayocat.shop.billing.store.jdbi.mapper.TurnoverStatEntryMapper;
-import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -23,14 +24,14 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 public interface TurnoverStatsDAO
 {
     @SqlQuery
-    TurnoverStatEntry daily(@BindBean("tenant") Tenant tenant);
+    TurnoverStatEntry daily(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    TurnoverStatEntry weekly(@BindBean("tenant") Tenant tenant);
+    TurnoverStatEntry weekly(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    TurnoverStatEntry monthly(@BindBean("tenant") Tenant tenant);
+    TurnoverStatEntry monthly(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    TurnoverStatEntry forever(@BindBean("tenant") Tenant tenant);
+    TurnoverStatEntry forever(@Bind("tenantId") UUID tenant);
 }
