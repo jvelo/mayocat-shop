@@ -30,5 +30,14 @@ public abstract class AddressDAO implements Transactional<AddressDAO>
     public abstract void createAddress(@BindBean("address") Address address);
 
     @SqlQuery
+    public abstract Address findById(@Bind("id") UUID id);
+
+    @SqlQuery
     public abstract Address findByCustomerIdAndType(@Bind("customerId") UUID customerId, @Bind("type") String type);
+
+    @SqlUpdate
+    public abstract void updateAddress(@BindBean("address") Address address);
+
+    @SqlUpdate
+    public abstract void deleteAddress(@BindBean("address") Address address);
 }

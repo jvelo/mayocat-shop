@@ -64,7 +64,7 @@ class CustomerWebObject
 
     CustomerWebObject withBillingAddress(Address address)
     {
-        deliveryAddress = new AddressWebObject().withAddress(address)
+        billingAddress = new AddressWebObject().withAddress(address)
 
         this
     }

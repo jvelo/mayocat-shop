@@ -60,8 +60,6 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     @Override
     public void update(@Valid Customer customer) throws EntityDoesNotExistException, InvalidEntityException
     {
-        // TODO handle global customers
-
         if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) == null) {
             throw new EntityDoesNotExistException();
         }

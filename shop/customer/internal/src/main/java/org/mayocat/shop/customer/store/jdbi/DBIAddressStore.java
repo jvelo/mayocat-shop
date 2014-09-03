@@ -52,15 +52,23 @@ public class DBIAddressStore implements AddressStore, Initializable
     }
 
     @Override
-    public void update(@Valid Address entity) throws EntityDoesNotExistException, InvalidEntityException
+    public void update(@Valid Address address) throws EntityDoesNotExistException, InvalidEntityException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        if (this.findById(address.getId()) == null) {
+            throw new EntityDoesNotExistException();
+        }
+
+        this.dao.updateAddress(address);
     }
 
     @Override
-    public void delete(@Valid Address entity) throws EntityDoesNotExistException
+    public void delete(@Valid Address address) throws EntityDoesNotExistException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        if (this.findById(address.getId()) == null) {
+            throw new EntityDoesNotExistException();
+        }
+
+        this.dao.deleteAddress(address);
     }
 
     @Override
@@ -84,7 +92,7 @@ public class DBIAddressStore implements AddressStore, Initializable
     @Override
     public Address findById(UUID id)
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return this.dao.findById(id);
     }
 
     @Override

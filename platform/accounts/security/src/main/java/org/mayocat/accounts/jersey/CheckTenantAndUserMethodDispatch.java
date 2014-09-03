@@ -22,6 +22,7 @@ import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.context.WebContext;
 import org.mayocat.rest.Provider;
 import org.mayocat.rest.annotation.ExistingTenant;
+import org.mayocat.rest.error.Error;
 import org.mayocat.rest.error.ErrorUtil;
 import org.mayocat.rest.error.StandardError;
 import org.xwiki.component.annotation.Component;
@@ -103,7 +104,8 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
             if (user != null) {
                 if (!this.checkAuthorization(user)) {
                     throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                            .entity("Insufficient privileges").type(MediaType.TEXT_PLAIN_TYPE).build());
+                            .entity(new Error(Response.Status.FORBIDDEN, StandardError.INSUFFICIENT_PRIVILEGES,
+                                    "Insufficient privileges")).type(MediaType.APPLICATION_JSON).build());
                 }
             } else {
                 if (this.isTenantEmptyOfUser() && this.isCreateUserResource()) {
@@ -127,6 +129,13 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
         private boolean checkAuthorization(User user)
         {
             if (annotation.requiresGlobalUser() && !user.isGlobal()) {
+                return false;
+            }
+
+            if (context.getRequest().isApiRequest() && !gatekeeper.userHasRole(user, Role.ADMIN)) {
+                // For now, hard-code the fact API requests require Admin role.
+                // If/when we need several admin roles (like "manager", "content creator" etc. ; then review the need
+                // for this check, and maybe ban only users with role "NONE" from API requests.
                 return false;
             }
 

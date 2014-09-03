@@ -14,6 +14,31 @@ createAddress() ::= <<
             :address.customerId)
 >>
 
+updateAddress() ::= <<
+    UPDATE address
+    SET    company = :address.company,
+           full_name = :address.fullName,
+           street = :address.street,
+           street_complement = :address.streetComplement,
+           zip = :address.zip,
+           city = :address.city,
+           country = :address.country,
+           type = :address.type,
+           customer_id = :address.customerId
+    WHERE  address_id = :address.id
+>>
+
+deleteAddress() ::= <<
+    DELETE FROM address
+    WHERE  address_id = :address.id
+>>
+
+findById() ::= <<
+    SELECT  *
+    FROM    address
+    WHERE   address_id = :id
+>>
+
 findByCustomerIdAndType() ::= <<
     SELECT  *
     FROM    address
