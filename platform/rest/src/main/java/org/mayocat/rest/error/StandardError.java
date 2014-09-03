@@ -21,6 +21,9 @@ public enum StandardError implements ErrorCode
     ACCOUNT_REQUIRES_VALIDATION(40102),
     REQUIRES_VALID_USER(40103),
 
+    // 403
+    INSUFFICIENT_PRIVILEGES(40301),
+
     // 404
     NOT_A_VALID_TENANT(40401),
     USER_NOT_FOUND(40402),
