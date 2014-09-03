@@ -96,9 +96,7 @@ class CustomerAccountWebView implements Resource
         {
             accountCreationData.put("error",
                     new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA, "Invalid user account"))
-        }
-
-        else if (!customerWebObject || Strings.isNullOrEmpty(customerWebObject.firstName) ||
+        } else if (!customerWebObject || Strings.isNullOrEmpty(customerWebObject.firstName) ||
                 Strings.isNullOrEmpty(customerWebObject.lastName))
         {
             accountCreationData.put("error", new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA,
@@ -188,14 +186,56 @@ class CustomerAccountWebView implements Resource
         if (!customerWebObject) {
             customerDetailsUpdate.put("error",
                     new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA, "Invalid user account"))
-        }
-        else {
-            Customer stored = this.customerStore.findByUserId(context.user.id);
+        } else {
+            Customer storedCustomer = this.customerStore.findByUserId(context.user.id);
             Customer customer = customerWebObject.toCustomer()
-            customer.id = stored.id
+            customer.id = storedCustomer.id
+            customer.slug = storedCustomer.slug
+            if (storedCustomer.userId.isPresent()) {
+                customer.setUserId storedCustomer.userId.get()
+            }
 
             try {
                 this.customerStore.update(customer)
+
+                Address storedDeliveryAddress = this.addressStore.get().
+                        findByCustomerIdAndType(storedCustomer.id, 'delivery')
+                Address storedBillingAddress = this.addressStore.get().
+                        findByCustomerIdAndType(storedCustomer.id, 'billing')
+
+                if (customerWebObject.deliveryAddress) {
+                    // Update or create delivery address
+
+                    Address delivery = customerWebObject.deliveryAddress.toAddress()
+                    delivery.customerId = storedCustomer.id
+                    delivery.type = 'delivery'
+
+                    if (!storedDeliveryAddress) {
+                        this.addressStore.get().create(delivery)
+                    } else {
+                        delivery.id = storedDeliveryAddress.id
+                        this.addressStore.get().update(delivery)
+                    }
+                } else if (storedDeliveryAddress) {
+                    this.addressStore.get().delete(storedDeliveryAddress)
+                }
+
+                if (customerWebObject.billingAddress) {
+                    // Update or create billing address
+
+                    Address billing = customerWebObject.billingAddress.toAddress()
+                    billing.customerId = storedCustomer.id
+                    billing.type = 'billing'
+
+                    if (!storedBillingAddress) {
+                        this.addressStore.get().create(billing)
+                    } else {
+                        billing.id = storedBillingAddress.id
+                        this.addressStore.get().update(billing)
+                    }
+                } else if (storedBillingAddress) {
+                    this.addressStore.get().delete(storedBillingAddress)
+                }
             } catch (EntityDoesNotExistException e) {
                 customerDetailsUpdate.
                         put("error", new Error(Response.Status.NOT_FOUND, CustomerAccountError.CUSTOMER_NOT_FOUND,
