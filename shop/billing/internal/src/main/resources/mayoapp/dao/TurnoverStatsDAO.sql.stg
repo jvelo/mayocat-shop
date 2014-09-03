@@ -7,7 +7,7 @@ daily() ::= <<
             INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN current_date AND localtimestamp
        AND  status in ('SHIPPED', 'PREPARED', 'PAID')
-       AND  tenant_id = :tenantId
+       AND  tenant_id IS NOT DISTINCT FROM :tenantId
 >>
 
 weekly() ::= <<
@@ -17,7 +17,7 @@ weekly() ::= <<
             INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN localtimestamp - interval '7 days' AND localtimestamp
        AND  status in ('SHIPPED', 'PREPARED', 'PAID')
-       AND  tenant_id = :tenantId
+       AND  tenant_id IS NOT DISTINCT FROM :tenantId
 >>
 
 monthly() ::= <<
@@ -27,7 +27,7 @@ monthly() ::= <<
             INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  creation_date BETWEEN localtimestamp - interval '30 days' AND localtimestamp
        AND  status in ('SHIPPED', 'PREPARED', 'PAID')
-       AND  tenant_id = :tenantId
+       AND  tenant_id IS NOT DISTINCT FROM :tenantId
 >>
 
 forever() ::= <<
@@ -36,5 +36,5 @@ forever() ::= <<
      FROM   purchase_order
             INNER JOIN entity on purchase_order.entity_id = entity.id
      WHERE  status in ('SHIPPED', 'PREPARED', 'PAID')
-       AND  tenant_id = :tenantId
+       AND  tenant_id IS NOT DISTINCT FROM :tenantId
 >>

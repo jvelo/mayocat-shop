@@ -12,7 +12,7 @@ findAll() ::= <<
     SELECT *
     FROM carrier
     LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
-    WHERE carrier.tenant_id = :tenantId
+    WHERE carrier.tenant_id IS NOT DISTINCT FROM :tenantId
     ORDER BY id, carrier_rule.up_to_value
 >>
 
@@ -21,7 +21,7 @@ findAllWithStrategy() ::= <<
     FROM carrier
     LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
     WHERE carrier.strategy = :strategy
-      AND carrier.tenant_id = :tenantId
+      AND carrier.tenant_id IS NOT DISTINCT FROM :tenantId
     ORDER BY id, carrier_rule.up_to_value
 >>
 

@@ -92,7 +92,7 @@ findById() ::= <<
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.tenant_id = :tenantId
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
        AND entity.id = :id
 >>
 
@@ -102,7 +102,7 @@ findBySlug() ::= <<
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.tenant_id = :tenantId
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
        AND entity.slug = :slug
 >>
 
@@ -112,7 +112,7 @@ findByFileNameAndExtension() ::= <<
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.tenant_id = :tenantId
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
        AND entity.slug = :filename
        AND attachment.extension = :extension
 >>
