@@ -21,7 +21,7 @@ findByHint() ::= <<
     FROM entity
     INNER JOIN entity_list ON entity.id = entity_list.entity_id
     WHERE   entity.type = 'entity_list'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
         AND entity_list.hint = :hint
 >>
 

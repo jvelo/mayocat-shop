@@ -8,6 +8,7 @@
 package org.mayocat.shop.billing.api.resource;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -54,10 +55,12 @@ public class TurnoverStatsResource implements Resource, Initializable
     {
         Map<String, Object> stats = Maps.newHashMap();
 
-        stats.put("daily", statsDAO.daily(webContext.getTenant()));
-        stats.put("weekly", statsDAO.weekly(webContext.getTenant()));
-        stats.put("monthly", statsDAO.monthly(webContext.getTenant()));
-        stats.put("forever", statsDAO.forever(webContext.getTenant()));
+        UUID tenantId = webContext.getTenant() != null ? webContext.getTenant().getId() : null;
+
+        stats.put("daily", statsDAO.daily(tenantId));
+        stats.put("weekly", statsDAO.weekly(tenantId));
+        stats.put("monthly", statsDAO.monthly(tenantId));
+        stats.put("forever", statsDAO.forever(tenantId));
 
         return Response.ok(stats).build();
     }

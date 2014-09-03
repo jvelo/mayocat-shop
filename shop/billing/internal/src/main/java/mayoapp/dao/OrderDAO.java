@@ -10,7 +10,6 @@ package mayoapp.dao;
 import java.util.List;
 import java.util.UUID;
 
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.jdbi.argument.CurrencyAsCurrencyCodeArgumentFactory;
 import org.mayocat.shop.billing.store.jdbi.argument.OrderStatusArgumentFactory;
@@ -44,14 +43,14 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
     @SqlQuery
     public abstract List<Order> findAllPaidOrAwaitingPayment(@Bind("number") Integer number,
             @Bind("offset") Integer offset,
-            @BindBean("tenant") Tenant tenant);
+            @Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    public abstract Order findBySlugWithCustomer(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    public abstract Order findBySlugWithCustomer(@Bind("slug") String slug, @Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract Order findByIdWithCustomer(@Bind("id") UUID id);
 
     @SqlQuery
-    public abstract Integer lastOrderNumber(@BindBean("tenant") Tenant tenant);
+    public abstract Integer lastOrderNumber(@Bind("tenantId") UUID tenant);
 }

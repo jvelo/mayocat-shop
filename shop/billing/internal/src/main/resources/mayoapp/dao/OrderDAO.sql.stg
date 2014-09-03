@@ -31,7 +31,7 @@ findAllPaidOrAwaitingPayment() ::= <<
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     WHERE   entity.type = 'purchase_order'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
         AND purchase_order.status NOT IN ('NONE', 'PAYMENT_PENDING')
     ORDER BY purchase_order.creation_date DESC
     LIMIT  :number
@@ -65,7 +65,7 @@ findBySlugWithCustomer() ::= <<
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE   entity.type = 'purchase_order'
         AND entity.slug = :slug
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
 >>
 
 findByIdWithCustomer() ::= <<
@@ -102,5 +102,5 @@ lastOrderNumber() ::= <<
     SELECT MAX(TO_NUMBER(SUBSTRING(slug from '([0-9].*)'),'99999999999'))
     FROM entity
     WHERE   entity.type='purchase_order'
-        AND entity.tenant_id = :tenant.id;
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId;
 >>

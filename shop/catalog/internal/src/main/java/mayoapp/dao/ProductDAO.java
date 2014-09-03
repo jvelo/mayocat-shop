@@ -44,13 +44,13 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract Integer deleteProductFromCollections(@Bind("id") UUID id);
 
     @SqlQuery
-    public abstract Integer lastPosition(@BindBean("tenant") Tenant tenant);
+    public abstract Integer lastPosition(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract Integer lastPositionForVariant(@BindBean("product") Product parent);
 
     @SqlQuery
-    public abstract List<Product> findOrphanProducts(@BindBean("tenant") Tenant tenant);
+    public abstract List<Product> findOrphanProducts(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract List<Product> findForCollection(@BindBean("collection") Collection collection,
@@ -63,37 +63,37 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract Integer countAllForCollection(@BindBean("collection") Collection collection);
 
     @SqlQuery
-    public abstract List<Product> findAllOnShelf(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    public abstract List<Product> findAllOnShelf(@Bind("tenantId") UUID tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
-    public abstract Integer countAllOnShelf(@BindBean("tenant") Tenant tenant);
+    public abstract Integer countAllOnShelf(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    public abstract List<Product> findAllNotVariants(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    public abstract List<Product> findAllNotVariants(@Bind("tenantId") UUID tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
-    public abstract Integer countAllNotVariants(@BindBean("tenant") Tenant tenant);
+    public abstract Integer countAllNotVariants(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    public abstract List<Product> findAllWithTitleLike(@BindBean("tenant") Tenant tenant, @Bind("title") String title,
+    public abstract List<Product> findAllWithTitleLike(@Bind("tenantId") UUID tenant, @Bind("title") String title,
             @Bind("number") Integer number, @Bind("offset") Integer offset);
 
     @SqlQuery
-    public abstract Integer countAllWithTitleLike(@BindBean("tenant") Tenant tenant, @Bind("title") String title);
+    public abstract Integer countAllWithTitleLike(@Bind("tenantId") UUID tenant, @Bind("title") String title);
 
     @SqlQuery
     public abstract List<Product> findAllVariants(@BindBean("product") Product product);
 
-    public Product findBySlug(String slug, Tenant tenant)
+    public Product findBySlug(String slug, UUID tenantId)
     {
-        return this.findBySlug("product", slug, tenant);
+        return this.findBySlug("product", slug, tenantId);
     }
 
-    public Product findBySlug(String slug, Tenant tenant, UUID parent)
+    public Product findBySlug(String slug, UUID tenantId, UUID parent)
     {
-        return this.findBySlug("product", slug, tenant, parent);
+        return this.findBySlug("product", slug, tenantId, parent);
     }
 
     public void createOrUpdateAddons(Product entity)

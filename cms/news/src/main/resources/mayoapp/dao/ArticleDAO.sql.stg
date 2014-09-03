@@ -25,7 +25,7 @@ findAllPublished() ::= <<
     FROM entity
     INNER JOIN article ON entity.id = article.entity_id
     WHERE   entity.type = 'article'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
         AND article.published = true
     ORDER BY article.publication_date DESC
     LIMIT  :number
@@ -37,7 +37,7 @@ findAllLatestFirst() ::= <<
     FROM entity
     INNER JOIN article ON entity.id = article.entity_id
     WHERE   entity.type = 'article'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
     ORDER BY article.publication_date DESC
     LIMIT  :number
     OFFSET :offset
@@ -48,6 +48,6 @@ countAllPublished() ::= <<
     FROM entity
     INNER JOIN article ON entity.id = article.entity_id
     WHERE   entity.type = 'article'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
         AND article.published = true
 >>
