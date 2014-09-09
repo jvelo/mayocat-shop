@@ -164,7 +164,7 @@ class TenantApi implements Resource, Initializable {
         def gallery = tenantData.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
-        tenantApiObject.withEmbeddedImages(images, tenant.featuredImageId, context.request)
+        tenantApiObject.withEmbeddedImages(images, tenant.featuredImageId, context.request.tenantPrefix)
         tenantApiObject.withTenant(tenant, globalTimeZone)
 
         if (tenant.addons.isLoaded()) {

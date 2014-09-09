@@ -1,3 +1,6 @@
+org.mayocat.shop.marketplace.api.v1.HomePageApi
+org.mayocat.shop.marketplace.api.v1.ProductApi
+org.mayocat.shop.marketplace.store.jdbi.DBIMarketplaceProductStore
 org.mayocat.shop.marketplace.web.MarketplaceHomeWebView
 org.mayocat.shop.marketplace.web.data.UserWebDataSupplier
 org.mayocat.shop.marketplace.search.BuildIndexTask

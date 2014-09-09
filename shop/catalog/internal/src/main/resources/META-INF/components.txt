@@ -2,9 +2,9 @@ org.mayocat.shop.catalog.internal.DefaultCatalogService
 org.mayocat.shop.catalog.internal.UpdateStockWhenOrderIsPaid
 org.mayocat.shop.catalog.store.jdbi.DBICollectionStore
 org.mayocat.shop.catalog.store.jdbi.DBIProductStore
-org.mayocat.shop.catalog.api.v1.ProductApi
 org.mayocat.shop.catalog.api.v1.CollectionApi
-org.mayocat.shop.catalog.api.v1.HomePageApi
+org.mayocat.shop.catalog.api.v1.TenantProductApi
+org.mayocat.shop.catalog.api.v1.TenantHomePageApi
 org.mayocat.shop.catalog.configuration.ProductTypesEntityConfigurationContributor
 org.mayocat.shop.catalog.front.context.MainWebDataSupplier
 org.mayocat.shop.catalog.front.context.SiteWebDataSupplier

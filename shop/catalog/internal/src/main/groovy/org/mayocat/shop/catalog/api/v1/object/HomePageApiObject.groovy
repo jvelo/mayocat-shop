@@ -8,6 +8,7 @@
 package org.mayocat.shop.catalog.api.v1.object
 
 import groovy.transform.CompileStatic
+import org.mayocat.accounts.api.v1.object.TenantApiObject
 
 /**
  * API object for the home page management. Contains a list of featured products.
@@ -18,4 +19,6 @@ import groovy.transform.CompileStatic
 class HomePageApiObject
 {
     List<ProductApiObject> featuredProducts;
+
+    List<TenantApiObject> featuredTenants;
 }

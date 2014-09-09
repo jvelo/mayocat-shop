@@ -12,6 +12,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
+import org.joda.time.DateTimeZone
+import org.mayocat.accounts.api.v1.object.TenantApiObject
+import org.mayocat.accounts.model.Tenant
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
@@ -33,7 +36,7 @@ import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 /**
  * API object for product APIs
  *
- * See {@link org.mayocat.shop.catalog.api.v1.ProductApi}
+ * See {@link org.mayocat.shop.catalog.api.v1.TenantProductApi}
  *
  * @version $Id$
  */
@@ -81,7 +84,7 @@ class ProductApiObject extends BaseApiObject
     // Helper builder methods
 
     @JsonIgnore
-    def withProduct(TaxesSettings taxesSettings, Product product)
+    ProductApiObject withProduct(TaxesSettings taxesSettings, Product product)
     {
 
         slug = product.slug
@@ -112,6 +115,8 @@ class ProductApiObject extends BaseApiObject
                 this.price = BigDecimal.ONE.add(vatRate).multiply(product.price)
             }
         }
+
+        this
     }
 
     @JsonIgnore
@@ -178,7 +183,7 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withCollectionRelationships(List<org.mayocat.shop.catalog.model.Collection> collections)
+    ProductApiObject withCollectionRelationships(List<org.mayocat.shop.catalog.model.Collection> collections)
     {
         if (_relationships == null) {
             _relationships = [:]
@@ -197,10 +202,12 @@ class ProductApiObject extends BaseApiObject
         })
 
         _relationships.collections = collectionRelationships
+
+        this
     }
 
     @JsonIgnore
-    def withEmbeddedVariants(TaxesSettings settings, List<Product> variants, WebRequest webRequest)
+    ProductApiObject withEmbeddedVariants(TaxesSettings settings, List<Product> variants, WebRequest webRequest)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -220,10 +227,12 @@ class ProductApiObject extends BaseApiObject
         })
 
         _embedded.variants = variantApiObjects
+
+        this
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
+    ProductApiObject withEmbeddedImages(List<Image> images, UUID featuredImageId, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -236,7 +245,7 @@ class ProductApiObject extends BaseApiObject
         images.each({ Image image ->
 
             ImageApiObject imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image, request)
+            imageApiObject.withImage(image, tenantPrefix)
             imageApiObject.featured = false
 
             if (image.attachment.id == featuredImageId) {
@@ -251,23 +260,27 @@ class ProductApiObject extends BaseApiObject
         if (featuredImage) {
             _embedded.featuredImage = featuredImage
         }
+
+        this
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request)
+    ProductApiObject withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage, request)
+        imageApiObject.withImage(featuredImage, tenantPrefix)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
+
+        this
     }
 
     @JsonIgnore
-    def withAddons(Map<String, AddonGroup> entityAddons) {
+    ProductApiObject withAddons(Map<String, AddonGroup> entityAddons) {
         if (!addons) {
             addons = [:]
         }
@@ -275,5 +288,21 @@ class ProductApiObject extends BaseApiObject
         entityAddons.values().each({ AddonGroup addon ->
             addons.put(addon.group, forAddonGroup(addon))
         })
+
+        this
+    }
+
+    @JsonIgnore
+    ProductApiObject withEmbeddedTenant(Tenant tenant, DateTimeZone timeZone)
+    {
+        if (_embedded == null) {
+            _embedded = [:]
+        }
+
+        TenantApiObject tenantApiObject = new TenantApiObject().withTenant(tenant, timeZone)
+
+        _embedded.tenant = tenantApiObject
+
+        this
     }
 }

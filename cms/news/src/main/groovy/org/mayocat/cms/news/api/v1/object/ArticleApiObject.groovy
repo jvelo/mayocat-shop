@@ -15,7 +15,6 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mayocat.cms.news.model.Article
 import org.mayocat.configuration.PlatformSettings
-import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
 import org.mayocat.model.AddonGroup
 import org.mayocat.rest.api.object.AddonGroupApiObject
@@ -98,7 +97,7 @@ class ArticleApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
+    def withEmbeddedImages(List<Image> images, UUID featuredImageId, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -110,7 +109,7 @@ class ArticleApiObject extends BaseApiObject
 
         images.each({ Image image ->
             ImageApiObject imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image, request)
+            imageApiObject.withImage(image, tenantPrefix)
             imageApiObject.featured = false
 
             if (image.attachment.id == featuredImageId) {
@@ -128,14 +127,14 @@ class ArticleApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request)
+    def withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage, request)
+        imageApiObject.withImage(featuredImage, tenantPrefix)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
     }

@@ -69,7 +69,7 @@ class ImageGalleryApiDelegate
 
         gallery.get().images.each({ Image image ->
             def imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image, context.request)
+            imageApiObject.withImage(image, context.request.tenantPrefix)
 
             if (entity.featuredImageId != null && entity.featuredImageId.equals(image.attachment.id)) {
                 imageApiObject.featured = true

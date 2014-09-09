@@ -207,7 +207,7 @@ class CollectionApi implements Resource, Initializable
         ])
 
         collectionApiObject.withCollection(collection)
-        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request)
+        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         if (!Strings.isNullOrEmpty(expand)) {
             collectionApiObject.withProductRelationships(this.catalogService.findProductsForCollection(collection))
