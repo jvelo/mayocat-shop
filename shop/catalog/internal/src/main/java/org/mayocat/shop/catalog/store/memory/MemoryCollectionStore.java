@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.model.EntityAndCount;
+import org.mayocat.model.PositionedEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.ProductCollection;
@@ -118,6 +119,18 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
     }
 
     public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public List<Collection> findAllOrderedByParentAndPosition()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void updateCollectionTree(List<PositionedEntity<Collection>> collections)
     {
         throw new RuntimeException("Not implemented");
     }

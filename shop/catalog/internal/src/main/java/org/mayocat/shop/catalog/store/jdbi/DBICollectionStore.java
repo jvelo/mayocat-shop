@@ -13,9 +13,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 
 import org.mayocat.model.EntityAndCount;
+import org.mayocat.model.PositionedEntity;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
@@ -37,6 +39,9 @@ import mayoapp.dao.ProductDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 
 @Component(hints = { "jdbi", "default" })
 public class DBICollectionStore extends DBIEntityStore implements CollectionStore, Initializable
@@ -154,6 +159,35 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     }
 
     @Override
+    public void updateCollectionTree(List<PositionedEntity<Collection>> positionedCollections)
+    {
+        this.dao.begin();
+
+        List<Collection> collections = FluentIterable.from(positionedCollections)
+                .transform(new Function<PositionedEntity<Collection>, Collection>()
+                {
+                    public Collection apply(PositionedEntity<Collection> input)
+                    {
+                        return input.getEntity();
+                    }
+                }).toList();
+
+        List<Integer> positions = FluentIterable.from(positionedCollections)
+                .transform(new Function<PositionedEntity<Collection>, Integer>()
+                {
+                    public Integer apply(PositionedEntity<Collection> input)
+                    {
+                        return input.getPosition();
+                    }
+                }).toList();
+
+        this.dao.updateCollectionPosition(collections, positions);
+        this.dao.updateCollectionParent(collections);
+
+        this.dao.commit();
+    }
+
+    @Override
     public List<EntityAndCount<Collection>> findAllWithProductCount()
     {
         return this.dao.findAllWithProductCount(getTenant());
@@ -206,6 +240,12 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public List<Collection> findAll(Integer number, Integer offset)
     {
         return this.dao.findAll(COLLECTION_TABLE_NAME, COLLECTION_POSITION, getTenant(), number, offset);
+    }
+
+    @Override
+    public List<Collection> findAllOrderedByParentAndPosition()
+    {
+        return this.dao.findAllOrderedByParentAndPosition(getTenant());
     }
 
     @Override

@@ -58,6 +58,9 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     @SqlQuery
     public abstract Integer lastProductPosition(@BindBean("collection") Collection collection);
 
+    @SqlQuery
+    public abstract List<Collection> findAllOrderedByParentAndPosition(@Bind("tenantId") UUID tenantId);
+
     @SqlUpdate
     public abstract void addProduct(@BindBean("collection") Collection collection, @BindBean("product") Product product,
             @Bind("position") Integer position);
@@ -65,6 +68,14 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     @SqlUpdate
     public abstract void removeProduct(@BindBean("collection") Collection collection,
             @BindBean("product") Product product);
+
+    @SqlBatch
+    public abstract void updateCollectionPosition(@BindBean("collection")
+    List<org.mayocat.shop.catalog.model.Collection> collection, @Bind("position") List<Integer> position);
+
+    @SqlBatch
+    public abstract void updateCollectionParent(
+            @BindBean("collection") List<org.mayocat.shop.catalog.model.Collection> collection);
 
     @SqlBatch
     public abstract void updateProductPosition(@BindBean("product") List<Product> entity,
@@ -92,4 +103,5 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
         }
         return listBuilder.build();
     }
+
 }

@@ -30,6 +30,7 @@ public class CollectionMapper implements ResultSetMapper<Collection>
     public Collection map(int index, ResultSet result, StatementContext statementContext) throws SQLException
     {
         Collection collection = new Collection((UUID) result.getObject("id"));
+        collection.setParentId((UUID) result.getObject("parent_id"));
         collection.setSlug(result.getString("slug"));
         collection.setTitle(result.getString("title"));
         collection.setDescription(result.getString("description"));

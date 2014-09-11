@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Localized;
@@ -22,9 +23,11 @@ import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 
-public class Collection implements Entity, HasFeaturedImage, Localized
+public class Collection implements Entity, HasFeaturedImage, Localized, Child
 {
     private UUID id;
+
+    private UUID parentId;
 
     @Index
     @NotNull
@@ -58,6 +61,18 @@ public class Collection implements Entity, HasFeaturedImage, Localized
     public UUID getId()
     {
         return id;
+    }
+
+    @Override
+    public UUID getParentId()
+    {
+        return this.parentId;
+    }
+
+    @Override
+    public void setParentId(UUID parentId)
+    {
+        this.parentId = parentId;
     }
 
     public String getSlug()
@@ -133,6 +148,7 @@ public class Collection implements Entity, HasFeaturedImage, Localized
         final Collection other = (Collection) obj;
 
         return Objects.equal(this.id, other.id)
+            && Objects.equal(this.parentId, other.parentId)
             && Objects.equal(this.title, other.title)
             && Objects.equal(this.slug, other.slug)
             && Objects.equal(this.description, other.description);
@@ -141,7 +157,7 @@ public class Collection implements Entity, HasFeaturedImage, Localized
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(this.slug, this.title, this.description);
+        return Objects.hashCode(this.id, this.parentId, this.slug, this.title, this.description);
     }
 
     @Override

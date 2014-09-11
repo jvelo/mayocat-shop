@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.store;
 import java.util.List;
 import java.util.UUID;
 
+import org.mayocat.model.PositionedEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Product;
@@ -35,9 +36,13 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
     void moveProductInCollection(Collection collection, String productToMove, String productToMoveRelativeTo,
             RelativePosition relativePosition) throws InvalidMoveOperation;
 
+    void updateCollectionTree(List<PositionedEntity<Collection>> collections);
+
     List<EntityAndCount<Collection>> findAllWithProductCount();
 
     List<Collection> findAll();
+
+    List<Collection> findAllOrderedByParentAndPosition();
 
     List<Collection> findAllForProduct(Product product);
 

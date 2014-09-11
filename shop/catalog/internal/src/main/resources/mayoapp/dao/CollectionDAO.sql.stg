@@ -33,6 +33,17 @@ lastPosition() ::= <<
     LIMIT  1
 >>
 
+findAllOrderedByParentAndPosition() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND tenant_id IS NOT DISTINCT FROM :tenantId
+    ORDER
+    BY     entity.parent_id, position;
+>>
+
 findAllForProduct() ::= <<
     SELECT entity.*, collection.*, localization_data(entity_id)
     FROM   entity
@@ -104,4 +115,16 @@ updateProductPosition() ::= <<
     UPDATE collection_product
     SET    position = :position
     WHERE  product_id = :product.id
+>>
+
+updateCollectionPosition() ::= <<
+    UPDATE collection
+    SET    position = :position
+    WHERE  entity_id = :collection.id
+>>
+
+updateCollectionParent() ::= <<
+    UPDATE entity
+    SET    parent_id = :collection.parentId
+    WHERE  id = :collection.id
 >>
