@@ -29,6 +29,10 @@ public abstract class AbstractEntityURLFactory<E extends Entity> implements Enti
 
     protected String getDomain(Tenant tenant)
     {
+        if (tenant == null) {
+            return siteSettings.getDomainName();
+        }
+
         return StringUtils
                 .defaultIfBlank(tenant.getDefaultHost(), tenant.getSlug() + "." + siteSettings.getDomainName());
     }

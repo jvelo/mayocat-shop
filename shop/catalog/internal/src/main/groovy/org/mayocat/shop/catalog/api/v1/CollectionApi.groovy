@@ -12,7 +12,6 @@ import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.PositionedEntity
 import org.mayocat.rest.Resource
-import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
@@ -81,6 +80,37 @@ class CollectionApi implements Resource
             }
         })
 
+        // Inject parent slugs & hrefs
+
+        Closure addParentsToItem;
+        addParentsToItem = { CollectionItemApiObject item, List<CollectionItemApiObject> parents ->
+            item.parentSlugs = parents.collect({ CollectionItemApiObject i -> i.slug })
+            item.children.each({ CollectionItemApiObject children ->
+                List<CollectionItemApiObject> childrenParents = []
+                childrenParents.addAll(parents)
+                childrenParents.add(0, item)
+                addParentsToItem(children, childrenParents)
+            })
+        }
+
+        Closure addLinks;
+        addLinks = { CollectionItemApiObject item ->
+            def parentsChain = item.parentSlugs.reverse().join('/') + (item.parentSlugs.size() > 0 ? '/' : '')
+            item._href = "/collections/elements/${parentsChain}${item.slug}"
+            item._links = [
+                    self: new LinkApiObject([href: item._href])
+            ]
+
+            item.children.each({ CollectionItemApiObject children ->
+                addLinks(children)
+            })
+        }
+
+        roots.each({ CollectionItemApiObject item ->
+            addParentsToItem(item, [])
+            addLinks(item)
+        })
+
         new CollectionTreeApiObject([
                 collections: roots
         ])
@@ -99,7 +129,7 @@ class CollectionApi implements Resource
         processItem = { CollectionItemApiObject item, UUID parent, Integer position ->
 
             org.mayocat.shop.catalog.model.Collection collection = collections.find({
-                org.mayocat.shop.catalog.model.Collection c -> c.slug == item.slug
+                org.mayocat.shop.catalog.model.Collection c -> c.id.toString() == item._id
             })
             if (!collection) {
                 logger.warn("Trying to update a collection that does not exist");
@@ -188,7 +218,70 @@ class CollectionApi implements Resource
     @Path("elements/{slug}")
     def getCollection(@PathParam("slug") String slug)
     {
-        org.mayocat.shop.catalog.model.Collection collection = this.collectionStore.get().findBySlug(slug);
+        getCollectionInternal(slug)
+    }
+
+    @GET
+    @Path("elements/{parent1}/{slug}")
+    def getCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getCollectionInternal(parent1, slug)
+    }
+
+    @GET
+    @Path("elements/{parent2}/{parent1}/{slug}")
+    def getCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getCollectionInternal(parent2, parent1, slug)
+    }
+
+    @GET
+    @Path("elements/{parent3}/{parent2}/{parent1}/{slug}")
+    def getCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getCollectionInternal(parent3, parent2, parent1, slug)
+    }
+
+    def getCollectionInternal(String... slugsArray)
+    {
+        // Reverse array
+        def slugs = slugsArray.reverse() as List<String>
+
+        List<org.mayocat.shop.catalog.model.Collection> parents = []
+        def index = 0
+
+        while (slugs.size() > 1) {
+            // Walk down the parents slug chain
+
+            def parentSlug = slugs.pop()
+            def parentCollection = this.collectionStore.get().
+                    findBySlug(parentSlug, index > 0 ? parents[index - 1].id : null);
+
+            if (!parentCollection) {
+                return Response.status(Response.Status.NOT_FOUND).build()
+            }
+
+            parents.push(parentCollection)
+            index++
+        }
+
+        def slug = slugs[0]
+
+        org.mayocat.shop.catalog.model.Collection collection = this.collectionStore.get().
+                findBySlug(slug, parents.size() > 0 ? parents[-1].id : null);
+
+        if (!collection) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
 
         EntityData<org.mayocat.shop.catalog.model.Collection> collectionData = dataLoader.load(collection)
 

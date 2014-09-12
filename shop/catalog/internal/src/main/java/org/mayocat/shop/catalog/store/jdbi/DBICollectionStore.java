@@ -56,7 +56,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public Collection create(Collection collection) throws EntityAlreadyExistsException, InvalidEntityException
     {
-        if (this.dao.findBySlug(collection.getSlug(), getTenant()) != null) {
+        if (this.dao.findBySlug(collection.getSlug(), getTenant(), collection.getParentId()) != null) {
             throw new EntityAlreadyExistsException();
         }
 
@@ -268,6 +268,12 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public Collection findBySlug(String slug)
     {
         return this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant());
+    }
+
+    @Override
+    public Collection findBySlug(String slug, UUID parentId)
+    {
+        return this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant(), parentId);
     }
 
     public void initialize() throws InitializationException

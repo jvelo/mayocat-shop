@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.model.PositionedEntity;
+import org.mayocat.model.Slug;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.ProductCollection;
@@ -121,6 +124,25 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
     public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
     {
         throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public Collection findBySlug(final String slug, final UUID parentId)
+    {
+        CollectionPositionedEntity found =
+                FluentIterable.from(allPositioned()).filter(new Predicate<CollectionPositionedEntity>()
+                {
+                    public boolean apply(final CollectionPositionedEntity input)
+                    {
+                        return input.getEntity().getSlug().equals(slug) &&
+                                input.getEntity().getParentId().equals(parentId);
+                    }
+                }).first().orNull();
+
+        if (found != null) {
+            return found.getEntity();
+        }
+        return null;
     }
 
     @Override

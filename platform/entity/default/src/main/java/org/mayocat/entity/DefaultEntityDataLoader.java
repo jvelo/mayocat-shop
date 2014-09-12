@@ -7,12 +7,15 @@
  */
 package org.mayocat.entity;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.model.Entity;
+import org.mayocat.model.Localized;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
@@ -29,9 +32,19 @@ public class DefaultEntityDataLoader implements EntityDataLoader, Initializable
     @Inject
     private List<DataLoaderAssistant> assistants;
 
+    @Inject
+    private EntityLocalizationService localizationService;
+
     public <E extends Entity> EntityData<E> load(E entity, LoadingOption... options)
     {
-        EntityData<E> data = new EntityData<>(entity);
+        boolean localize = Arrays.asList(options).indexOf(StandardOptions.LOCALIZE) >= 0;
+        E actual;
+        if (localize && Localized.class.isAssignableFrom(entity.getClass())) {
+            actual = (E) localizationService.localize((Localized) entity);
+        } else {
+            actual = entity;
+        }
+        EntityData<E> data = new EntityData<>(actual);
         for (DataLoaderAssistant assistant : assistants) {
             assistant.load(data, options);
         }
@@ -40,11 +53,18 @@ public class DefaultEntityDataLoader implements EntityDataLoader, Initializable
 
     public <E extends Entity> List<EntityData<E>> load(List<E> entities, LoadingOption... options)
     {
+        final boolean localize = Arrays.asList(options).indexOf(StandardOptions.LOCALIZE) >= 0;
         List<EntityData<E>> data = FluentIterable.from(entities).transform(new Function<E, EntityData<E>>()
         {
             public EntityData<E> apply(final E input)
             {
-                return new EntityData<E>(input);
+                E actual;
+                if (localize && Localized.class.isAssignableFrom(input.getClass())) {
+                    actual = (E) localizationService.localize((Localized) input);
+                } else {
+                    actual = input;
+                }
+                return new EntityData<E>(actual);
             }
         }).toList();
 

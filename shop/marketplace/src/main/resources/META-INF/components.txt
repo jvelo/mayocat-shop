@@ -1,4 +1,5 @@
 org.mayocat.shop.marketplace.web.MarketplaceHomeWebView
+org.mayocat.shop.marketplace.web.MarketplaceCollectionWebView
 org.mayocat.shop.marketplace.web.data.UserWebDataSupplier
 org.mayocat.shop.marketplace.search.BuildIndexTask
 org.mayocat.shop.marketplace.resources.MarketplaceResource

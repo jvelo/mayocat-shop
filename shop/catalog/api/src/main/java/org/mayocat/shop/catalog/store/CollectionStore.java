@@ -26,6 +26,8 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
 {
     Collection findBySlug(String slug);
 
+    Collection findBySlug(String slug, UUID parentId);
+
     void addProduct(Collection collection, Product product);
 
     void removeProduct(Collection c, Product p);

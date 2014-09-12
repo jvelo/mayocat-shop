@@ -25,6 +25,7 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -88,6 +89,11 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     public Collection findBySlug(String slug, UUID tenant)
     {
         return this.findBySlug("collection", slug, tenant);
+    }
+
+    public Collection findBySlug(String slug, UUID tenantId, UUID parent)
+    {
+        return this.findBySlug("collection", slug, tenantId, parent);
     }
 
     public List<EntityAndCount<Collection>> findAllWithProductCount(UUID tenantId)
