@@ -18,12 +18,18 @@ import org.mayocat.accounts.api.v1.object.UserAndTenantApiObject
 import org.mayocat.accounts.model.Role
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.accounts.model.User
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.authorization.Gatekeeper
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.MultitenancySettings
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
+import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.manager.api.v1.object.TenantListApiObject
 import org.mayocat.rest.Resource
 import org.mayocat.rest.api.object.Pagination
@@ -48,6 +54,9 @@ import javax.ws.rs.core.Response
 @CompileStatic
 class TenantManagerApi implements Resource
 {
+    @Inject
+    EntityDataLoader dataLoader
+
     @Inject
     WebContext context
 
@@ -99,13 +108,24 @@ class TenantManagerApi implements Resource
             throw new WebApplicationException(Response.Status.NOT_FOUND)
         }
 
+        List<EntityData<Tenant>> tenantsData = dataLoader.load(tenants, StandardOptions.LOCALIZE,
+                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
+
         def tenantList = [] as List<TenantApiObject>
 
-        tenants.each({ Tenant tenant ->
+        tenantsData.each({ EntityData<Tenant> tenantData ->
+            Tenant tenant = tenantData.entity
             TenantApiObject tenantApiObject = new TenantApiObject([
                     _href: "/management/api/tenants/${tenant.slug}"
             ])
+
             tenantApiObject.withTenant(tenant, globalTimeZone)
+
+            def gallery = tenantData.getData(ImageGallery.class)
+            List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
+
+            tenantApiObject.withEmbeddedImages(images, tenant.featuredImageId, "/tenant/${tenant.slug}")
+
             tenantList << tenantApiObject
         })
 

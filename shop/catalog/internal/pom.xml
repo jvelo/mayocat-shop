@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-accounts-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-catalog-api</artifactId>
             <version>${project.version}</version>

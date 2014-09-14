@@ -341,7 +341,7 @@ class CollectionApi implements Resource
         ])
 
         collectionApiObject.withCollection(collection)
-        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request)
+        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         collectionApiObject
     }

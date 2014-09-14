@@ -51,7 +51,7 @@ findAttachmentsOfEntities() ::= <<
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.parent_id (<ids>)
+       AND entity.parent_id in (<ids>)
 >>
 
 findAttachmentsOfEntityWithExtensions() ::= <<

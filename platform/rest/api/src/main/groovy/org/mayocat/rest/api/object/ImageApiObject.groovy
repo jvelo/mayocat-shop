@@ -40,23 +40,22 @@ class ImageApiObject extends BaseApiObject
     Map<Locale, Map<String, Object>> _localized;
 
     @JsonIgnore
-    def withImage(Image image, WebRequest request)
+    def withImage(Image image, String tenantPrefix)
     {
-        def link = "${request.tenantPrefix}/api/images/${image.attachment.slug}"
-        def fileLink = "${request.tenantPrefix}/api/images/${image.attachment.slug}/file/${image.attachment.slug}.${image.attachment.extension}"
-        this.with {
-            _href = link
-            slug = image.attachment.slug
-            title = image.attachment.title
-            description = image.attachment.description
-            file = new FileApiObject([
-                    _href: fileLink,
-                    fileName: "${image.attachment.slug}.${image.attachment.extension}",
-                    extension: image.attachment.extension
-            ])
+        def link = "${tenantPrefix}/api/images/${image.attachment.slug}"
+        def fileLink = "${tenantPrefix}/api/images/${image.attachment.slug}/file/${image.attachment.slug}.${image.attachment.extension}"
 
-            _localized = image.attachment.localizedVersions
-        }
+        _href = link
+        slug = image.attachment.slug
+        title = image.attachment.title
+        description = image.attachment.description
+        file = new FileApiObject([
+                _href    : fileLink,
+                fileName : "${image.attachment.slug}.${image.attachment.extension}",
+                extension: image.attachment.extension
+        ])
+
+        _localized = image.attachment.localizedVersions
 
         image.thumbnails.each({ Thumbnail thumbnail ->
             thumbnails << new ImageThumbnailApiObject([

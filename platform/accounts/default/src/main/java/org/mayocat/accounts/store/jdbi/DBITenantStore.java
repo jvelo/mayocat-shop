@@ -128,7 +128,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public List<Tenant> findByIds(List<UUID> ids)
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return this.dao.findByIds(TENANT_TABLE_NAME, ids);
     }
 
     @Override

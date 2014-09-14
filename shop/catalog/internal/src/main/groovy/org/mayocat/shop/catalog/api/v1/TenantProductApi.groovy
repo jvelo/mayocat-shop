@@ -61,7 +61,7 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class ProductApi implements Resource, Initializable
+class TenantProductApi implements Resource, Initializable
 {
     @Inject
     EntityDataLoader dataLoader
@@ -188,7 +188,7 @@ class ProductApi implements Resource, Initializable
             def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
             if (featuredImage) {
-                productApiObject.withEmbeddedFeaturedImage(featuredImage, webContext.request)
+                productApiObject.withEmbeddedFeaturedImage(featuredImage, webContext.request.tenantPrefix)
             }
 
             productList << productApiObject
@@ -241,7 +241,7 @@ class ProductApi implements Resource, Initializable
 
         productApiObject.withProduct(taxesSettings, product)
         productApiObject.withCollectionRelationships(collections)
-        productApiObject.withEmbeddedImages(images, product.featuredImageId, webContext.request)
+        productApiObject.withEmbeddedImages(images, product.featuredImageId, webContext.request.tenantPrefix)
 
         if (product.addons.isLoaded()) {
             productApiObject.withAddons(product.addons.get())

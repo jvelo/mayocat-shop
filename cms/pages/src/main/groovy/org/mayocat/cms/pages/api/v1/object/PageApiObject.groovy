@@ -100,7 +100,7 @@ class PageApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
+    def withEmbeddedImages(List<Image> images, UUID featuredImageId, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -113,7 +113,7 @@ class PageApiObject extends BaseApiObject
         images.each({ Image image ->
             ImageApiObject imageApiObject = new ImageApiObject()
             imageApiObject.featured = false
-            imageApiObject.withImage(image, request)
+            imageApiObject.withImage(image, tenantPrefix)
             if (image.attachment.id == featuredImageId) {
                 featuredImage = imageApiObject
                 imageApiObject.featured = true
@@ -129,14 +129,14 @@ class PageApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request)
+    def withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage, request)
+        imageApiObject.withImage(featuredImage, tenantPrefix)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
     }

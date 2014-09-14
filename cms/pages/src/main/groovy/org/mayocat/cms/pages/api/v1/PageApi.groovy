@@ -164,7 +164,7 @@ class PageApi implements Resource, Initializable
             def featuredImage = images.find({ Image image -> image.attachment.id == page.featuredImageId })
 
             if (featuredImage) {
-                articleApiObject.withEmbeddedFeaturedImage(featuredImage, context.request)
+                articleApiObject.withEmbeddedFeaturedImage(featuredImage, context.request.tenantPrefix)
             }
 
             pageList << articleApiObject
@@ -214,7 +214,7 @@ class PageApi implements Resource, Initializable
         pageApiObject.withPage(page);
 
         if (expansions.contains("images")) {
-            pageApiObject.withEmbeddedImages(images, page.featuredImageId, context.request)
+            pageApiObject.withEmbeddedImages(images, page.featuredImageId, context.request.tenantPrefix)
         }
 
         if (page.addons.isLoaded()) {

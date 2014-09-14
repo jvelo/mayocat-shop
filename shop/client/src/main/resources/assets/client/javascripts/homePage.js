@@ -22,7 +22,7 @@ angular.module('homePage', [])
                 $scope.isLoading = false;
             });
 
-            $scope.featuredProductsSortableOptions = {
+            $scope.featuredSortableOptions = {
                 update: function(e, ui) {
                     if (ui.item.hasClass("no-drag")) {
                         ui.item.sortable.cancel();

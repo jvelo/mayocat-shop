@@ -26,6 +26,7 @@ import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.HasType;
 import org.mayocat.model.Localized;
+import org.mayocat.model.Owned;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizedField;
@@ -36,7 +37,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 @Index
-public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
+public class Product implements Entity, Owned, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
 {
     public static final String VAT = "vat";
 
@@ -47,6 +48,9 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
 
     @DoNotIndex
     private UUID parentId = null;
+
+    @DoNotIndex
+    private UUID tenantId = null;
 
     private Boolean onShelf;
 
@@ -103,6 +107,16 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
     public Product(UUID id)
     {
         this.id = id;
+    }
+
+    public UUID getTenantId()
+    {
+        return tenantId;
+    }
+
+    public void setTenantId(UUID tenantId)
+    {
+        this.tenantId = tenantId;
     }
 
     public String getSlug()

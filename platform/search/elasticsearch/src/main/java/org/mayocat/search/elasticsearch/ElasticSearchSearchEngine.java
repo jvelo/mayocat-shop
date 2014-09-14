@@ -85,6 +85,11 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     {
         public void onEvent(Event event, Object source, Object data)
         {
+            if (context.getTenant() == null) {
+                // For now, do nothing when out of a tenant context.
+                return;
+            }
+
             Entity entity = (Entity) source;
             try {
                 index(entity);
@@ -113,7 +118,7 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
     public void index(Entity entity) throws SearchEngineException
     {
         if (context.getTenant() == null) {
-            throw new SearchEngineException("Cannot index entity : no tenant given and none in context context");
+            throw new SearchEngineException("Cannot index entity : no tenant given and none in context");
         }
         index(entity, context.getTenant());
     }

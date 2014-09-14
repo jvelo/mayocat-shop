@@ -171,7 +171,7 @@ class NewsApi implements Resource, Initializable
             def featuredImage = images.find({ Image image -> image.attachment.id == article.featuredImageId })
 
             if (featuredImage) {
-                articleApiObject.withEmbeddedFeaturedImage(featuredImage, context.request)
+                articleApiObject.withEmbeddedFeaturedImage(featuredImage, context.request.tenantPrefix)
             }
 
             articleList << articleApiObject
@@ -224,7 +224,7 @@ class NewsApi implements Resource, Initializable
         articleApiObject.withArticle(article, tenantTz)
 
         if (expansions.contains("images")) {
-            articleApiObject.withEmbeddedImages(images, article.featuredImageId, context.request)
+            articleApiObject.withEmbeddedImages(images, article.featuredImageId, context.request.tenantPrefix)
         }
 
         if (article.addons.isLoaded()) {

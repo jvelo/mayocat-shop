@@ -34,6 +34,7 @@ public class ProductMapper implements ResultSetMapper<Product>
     {
         try {
             Product product = new Product((UUID) resultSet.getObject("id"));
+            product.setTenantId((UUID) resultSet.getObject("tenant_id"));
             if (resultSet.getObject("parent_id") != null) {
                 product.setParentId((UUID) resultSet.getObject("parent_id"));
             }

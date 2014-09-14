@@ -28,9 +28,7 @@ import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
 import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
- * API object for tenant
- *
- * See {@link org.mayocat.accounts.api.v1.TenantApi}
+ * API object for a tenant
  *
  * @version $Id$
  */
@@ -68,7 +66,7 @@ class TenantApiObject extends BaseApiObject {
     }
 
     @JsonIgnore
-    def withTenant(Tenant tenant, DateTimeZone timeZone) {
+    TenantApiObject withTenant(Tenant tenant, DateTimeZone timeZone) {
         slug = tenant.slug
         name = tenant.name
         description = tenant.description
@@ -78,21 +76,25 @@ class TenantApiObject extends BaseApiObject {
         if (tenant.creationDate != null) {
             creationDate = new DateTime(tenant.creationDate.time, timeZone);
         }
+
+        this
     }
 
     @JsonIgnore
-    def withAddons(Map<String, AddonGroup> entityAddons) {
+    TenantApiObject withAddons(Map<String, AddonGroup> entityAddons) {
         if (!addons) {
             addons = [:]
         }
 
         entityAddons.values().each({ AddonGroup addon ->
-            addons.put(addon.group, forAddonGroup(addon))
+            addons.put(addon.group, org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup(addon))
         })
+
+        this
     }
 
     @JsonIgnore
-    def withEmbeddedImages(List<Image> images, UUID featuredImageId, WebRequest request)
+    TenantApiObject withEmbeddedImages(List<Image> images, UUID featuredImageId, String tenantPrefix)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -104,7 +106,7 @@ class TenantApiObject extends BaseApiObject {
 
         images.each({ Image image ->
             ImageApiObject imageApiObject = new ImageApiObject()
-            imageApiObject.withImage(image, request)
+            imageApiObject.withImage(image, tenantPrefix)
             imageApiObject.featured = false
 
             if (image.attachment.id == featuredImageId) {
@@ -119,18 +121,22 @@ class TenantApiObject extends BaseApiObject {
         if (featuredImage) {
             _embedded.featuredImage = featuredImage
         }
+
+        this
     }
 
     @JsonIgnore
-    def withEmbeddedFeaturedImage(Image featuredImage, WebRequest request) {
+    TenantApiObject withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix) {
         if (_embedded == null) {
             _embedded = [:]
         }
 
         def imageApiObject = new ImageApiObject()
-        imageApiObject.withImage(featuredImage, request)
+        imageApiObject.withImage(featuredImage, tenantPrefix)
         imageApiObject.featured = true
         _embedded.featuredImage = imageApiObject
+
+        this
     }
 
     @JsonIgnore
@@ -145,7 +151,7 @@ class TenantApiObject extends BaseApiObject {
         }
 
         if (addons) {
-            tenant.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
+            tenant.addons = org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap(addons, platformSettings, themeDefinition)
         }
 
         tenant

@@ -42,7 +42,7 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class HomePageApi implements Resource
+class TenantHomePageApi implements Resource
 {
     @Inject
     Provider<ProductStore> productStore
@@ -96,7 +96,7 @@ class HomePageApi implements Resource
                     def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
                     if (featuredImage) {
-                        featuredProduct.withEmbeddedFeaturedImage(featuredImage, context.request)
+                        featuredProduct.withEmbeddedFeaturedImage(featuredImage, context.request.tenantPrefix)
                     }
                     featuredProducts << featuredProduct
                 }
