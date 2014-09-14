@@ -1,5 +1,6 @@
 org.mayocat.shop.marketplace.api.v1.HomePageApi
 org.mayocat.shop.marketplace.api.v1.ProductApi
+org.mayocat.shop.marketplace.api.v1.CollectionApi
 org.mayocat.shop.marketplace.store.jdbi.DBIMarketplaceProductStore
 org.mayocat.shop.marketplace.web.MarketplaceHomeWebView
 org.mayocat.shop.marketplace.web.MarketplaceCollectionWebView

@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.model.PositionedEntity;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityCreatingEvent;
@@ -43,6 +44,7 @@ import org.xwiki.component.phase.InitializationException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 
 @Component(hints = { "jdbi", "default" })
 public class DBICollectionStore extends DBIEntityStore implements CollectionStore, Initializable
@@ -215,16 +217,55 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     @Override
     public void addEntityToCollection(Collection collection, Entity entity)
     {
+        // FIXME: check if collection already has entity
+
         this.dao.begin();
         String path = getPath(collection);
-        Integer position = this.dao.lastEntityPosition(path);
+        Integer position = this.dao.lastEntityPosition(collection);
         if (position == null) {
             position = 0;
         } else {
             position += 1;
         }
-        this.dao.addEntityToCollection(path, entity, position);
+        this.dao.addEntityToCollection(collection, path, entity, position);
         this.dao.commit();
+    }
+
+    @Override
+    public void removeEntityFromCollection(Collection collection, Entity entity)
+    {
+        this.dao.removeEntityFromCollection(collection, entity);
+    }
+
+    @Override
+    public List<EntityAndParent<Collection>> findAllForEntity(Entity entity)
+    {
+        List<Collection> collections = this.dao.findCollectionsForEntity(entity);
+        List<EntityAndParent<Collection>> result = Lists.newArrayList();
+
+        for (Collection collection : collections) {
+            List<Collection> chain = Lists.newArrayList();
+            chain.add(collection);
+            Collection parent = collection;
+            while (parent.getParentId() != null) {
+                parent = this.findById(parent.getParentId());
+                chain.add(parent);
+            }
+            EntityAndParent<Collection> collectionChain = getCollectionChain(chain);
+            result.add(collectionChain);
+
+        }
+        return result;
+    }
+
+    private EntityAndParent<Collection> getCollectionChain(List<Collection> chain)
+    {
+        EntityAndParent<Collection> root = null;
+        while (chain.size() > 0) {
+            Collection c = chain.remove(chain.size() - 1);
+            root = new EntityAndParent<>(root, c);
+        }
+        return root;
     }
 
     public List<Collection> findAllForProduct(Product product)

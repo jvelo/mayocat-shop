@@ -68,12 +68,20 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
             @Bind("position") Integer position);
 
     @SqlQuery
-    public abstract Integer lastEntityPosition(@Bind("collectionPath") String path);
+    public abstract Integer lastEntityPosition(@BindBean("collection") Collection collection);
 
     @SqlUpdate
-    public abstract void addEntityToCollection(@Bind("collectionPath") String path,
-            @BindBean("entity") Entity entity, @Bind("position") Integer position);
+    public abstract void addEntityToCollection(@BindBean("collection") Collection collection,
+            @Bind("collectionPath") String path, @BindBean("entity") Entity entity, @Bind("position") Integer position);
 
+    @SqlUpdate
+    public abstract void removeEntityFromCollection(@BindBean("collection") Collection collection,
+            @BindBean("entity") Entity entity);
+
+    @SqlQuery
+    public abstract List<Collection> findCollectionsForEntity(@BindBean("entity") Entity entity);
+
+    @Deprecated
     @SqlUpdate
     public abstract void removeProduct(@BindBean("collection") Collection collection,
             @BindBean("product") Product product);
@@ -117,5 +125,4 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
         }
         return listBuilder.build();
     }
-
 }

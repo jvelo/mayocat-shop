@@ -25,14 +25,20 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.model.Entity
+import org.mayocat.model.EntityAndParent
+import org.mayocat.rest.Reference
 import org.mayocat.rest.Resource
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.Pagination
+import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductListApiObject
 import org.mayocat.shop.catalog.model.Product
+import org.mayocat.shop.catalog.model.Collection
+import org.mayocat.shop.catalog.store.CollectionStore
+import org.mayocat.shop.marketplace.api.v1.object.ProductCollectionsApiObject
 import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
 import org.mayocat.shop.taxes.configuration.TaxesSettings
@@ -44,6 +50,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 /**
  * @version $Id$
@@ -61,6 +68,9 @@ class ProductApi implements Resource
 
     @Inject
     Provider<MarketplaceProductStore> productStore
+
+    @Inject
+    Provider<CollectionStore> collectionStore
 
     @Inject
     Provider<EntityListStore> entityListStore
@@ -210,6 +220,42 @@ class ProductApi implements Resource
         productListResult
     }
 
+    @GET
+    @Path("{product}/collections")
+    def getProductCollections(@PathParam("product") Reference reference)
+    {
+        EntityAndTenant<Product> product = this.productStore.get().
+                findBySlugAndTenant(reference.entitySlug, reference.tenantSlug)
+
+        if (!product) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+
+        List<EntityAndParent<Collection>> collections = this.collectionStore.get().findAllForEntity(product.entity)
+
+        List<CollectionApiObject> collectionApiObjects = []
+
+        collections.each({ EntityAndParent<Collection> collection ->
+            String href = collection.entity.slug
+            EntityAndParent<Collection> parent = collection.parent
+            while (parent != null) {
+                href = parent.entity.slug + "/collections/" + href
+                parent = parent.parent
+            }
+            href = "/api/collections/" + href;
+
+            CollectionApiObject object = new CollectionApiObject([
+                    _href: href
+            ])
+            object.withCollection(collection.entity)
+
+            collectionApiObjects << object
+        })
+
+        new ProductCollectionsApiObject([
+                collections: collectionApiObjects
+        ])
+    }
 
     private def TaxesSettings getTaxesSettings()
     {

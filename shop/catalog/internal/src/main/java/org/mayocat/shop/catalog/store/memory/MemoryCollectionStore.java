@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.model.PositionedEntity;
 import org.mayocat.model.Slug;
 import org.mayocat.shop.catalog.model.Collection;
@@ -160,6 +161,18 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
 
     @Override
     public void addEntityToCollection(Collection collection, Entity entity)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public List<EntityAndParent<Collection>> findAllForEntity(Entity entity)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void removeEntityFromCollection(Collection collection, Entity entity)
     {
         throw new RuntimeException("Not implemented");
     }

@@ -20,7 +20,7 @@ class CollectionItemApiObject extends BaseApiObject
      * Usually we don't expose internal IDs in API, but here it is needed so that we can differentiate items that have
      * the same slug but different parents.
      *
-     * See {@link org.mayocat.shop.catalog.api.v1.CollectionApi#updateCollectionTree()}
+     * See {@link CollectionApi#updateCollectionTree()}
      */
     String _id
 

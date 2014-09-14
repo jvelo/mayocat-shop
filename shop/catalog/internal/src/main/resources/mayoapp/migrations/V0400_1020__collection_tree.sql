@@ -10,7 +10,8 @@ CREATE EXTENSION ltree;
 
 CREATE TABLE collection_entity (
     entity_id uuid NOT NULL,
-    collection ltree,
+    collection_id uuid NOT NULL,
+    path ltree,
     position smallint
 );
 
@@ -20,6 +21,9 @@ CREATE TABLE collection_entity (
 
 ALTER TABLE ONLY collection_entity
     ADD CONSTRAINT collection_entity_entity_fk FOREIGN KEY (entity_id) REFERENCES entity(id);
+
+ALTER TABLE ONLY collection_entity
+    ADD CONSTRAINT collection_entity_collection_fk FOREIGN KEY (collection_id) REFERENCES collection(entity_id);
 
 --
 -- Create indexes
@@ -31,5 +35,5 @@ CREATE INDEX collection_entity_collection_index ON collection_entity USING GIST(
 -- Import back products
 --
 
-INSERT INTO collection_entity (entity_id, collection, position)
- SELECT product_id, CAST(replace(collection_id::text, '-', '_') AS ltree), position FROM collection_product;
+INSERT INTO collection_entity (entity_id, collection_id, path, position)
+ SELECT product_id, collection_id, CAST(replace(collection_id::text, '-', '_') AS ltree), position FROM collection_product;

@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A qualifed reference to an entity, providing both the entity slug and its tenant owner slug.
+ * A qualified reference to an entity, providing both the entity slug and its tenant owner slug.
  *
  * @version $Id$
  */

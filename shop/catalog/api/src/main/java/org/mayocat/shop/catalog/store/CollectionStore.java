@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.model.Entity;
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.model.PositionedEntity;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.model.EntityAndCount;
@@ -36,6 +37,10 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
     void removeProduct(Collection c, Product p);
 
     void addEntityToCollection(Collection collection, Entity entity);
+
+    void removeEntityFromCollection(Collection collection, Entity entity);
+
+    List<EntityAndParent<Collection>> findAllForEntity(Entity entity);
 
     void moveCollection(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;

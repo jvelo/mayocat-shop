@@ -93,7 +93,7 @@ addProduct() ::= <<
 lastEntityPosition() ::= <<
     SELECT position
     FROM   collection_entity
-    WHERE  collection = :collectionPath
+    WHERE  collection_id = :collection.id
     ORDER  BY position DESC
     LIMIT  1
 >>
@@ -101,11 +101,30 @@ lastEntityPosition() ::= <<
 addEntityToCollection() ::= <<
     INSERT INTO collection_entity
                 (entity_id,
-                 collection,
+                 collection_id,
+                 path,
                  position)
-    VALUES      (:product.id,
-                 :collectionPath,
+    VALUES      (:entity.id,
+                 :collection.id,
+                 CAST(:collectionPath AS ltree),
                  :position)
+>>
+
+removeEntityFromCollection() ::= <<
+    DELETE FROM collection_entity
+    WHERE  collection_id = :collection.id
+           AND entity_id = :entity.id
+>>
+
+findCollectionsForEntity() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                        FROM   collection_entity
+                                        WHERE  entity_id = :entity.id)
 >>
 
 removeProduct() ::= <<

@@ -11,6 +11,7 @@ import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
+import org.joda.time.DateTimeZone
 import org.mayocat.Slugifier
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.MetadataExtractor
@@ -19,6 +20,7 @@ import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
+import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
@@ -83,6 +85,9 @@ class TenantProductApi implements Resource, Initializable
 
     @Inject
     PlatformSettings platformSettings
+
+    @Inject
+    GeneralSettings generalSettings
 
     @Inject
     ConfigurationService configurationService
@@ -242,6 +247,7 @@ class TenantProductApi implements Resource, Initializable
         productApiObject.withProduct(taxesSettings, product)
         productApiObject.withCollectionRelationships(collections)
         productApiObject.withEmbeddedImages(images, product.featuredImageId, webContext.request.tenantPrefix)
+        productApiObject.withEmbeddedTenant(webContext.tenant, globalTimeZone)
 
         if (product.addons.isLoaded()) {
             productApiObject.withAddons(product.addons.get())
@@ -648,6 +654,11 @@ class TenantProductApi implements Resource, Initializable
     private def TaxesSettings getTaxesSettings()
     {
         return configurationService.getSettings(TaxesSettings.class)
+    }
+
+    private def DateTimeZone getGlobalTimeZone()
+    {
+        return DateTimeZone.forTimeZone(generalSettings.time.timeZone.defaultValue)
     }
 
 }
