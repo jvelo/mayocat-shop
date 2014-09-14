@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.model.PositionedEntity;
 import org.mayocat.model.Slug;
@@ -153,6 +154,12 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
 
     @Override
     public void updateCollectionTree(List<PositionedEntity<Collection>> collections)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void addEntityToCollection(Collection collection, Entity entity)
     {
         throw new RuntimeException("Not implemented");
     }

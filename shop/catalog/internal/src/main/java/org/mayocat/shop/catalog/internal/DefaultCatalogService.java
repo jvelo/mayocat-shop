@@ -88,7 +88,7 @@ public class DefaultCatalogService implements CatalogService
     {
         this.collectionStore.get().update(entity);
     }
-
+ 
     @Override
     public List<Collection> findCollectionsForProduct(Product product)
     {

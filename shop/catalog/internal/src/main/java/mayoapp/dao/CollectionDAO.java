@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Product;
@@ -65,6 +66,13 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     @SqlUpdate
     public abstract void addProduct(@BindBean("collection") Collection collection, @BindBean("product") Product product,
             @Bind("position") Integer position);
+
+    @SqlQuery
+    public abstract Integer lastEntityPosition(@Bind("collectionPath") String path);
+
+    @SqlUpdate
+    public abstract void addEntityToCollection(@Bind("collectionPath") String path,
+            @BindBean("entity") Entity entity, @Bind("position") Integer position);
 
     @SqlUpdate
     public abstract void removeProduct(@BindBean("collection") Collection collection,

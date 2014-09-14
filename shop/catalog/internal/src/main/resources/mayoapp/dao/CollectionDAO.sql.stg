@@ -90,6 +90,24 @@ addProduct() ::= <<
                  :position)
 >>
 
+lastEntityPosition() ::= <<
+    SELECT position
+    FROM   collection_entity
+    WHERE  collection = :collectionPath
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+addEntityToCollection() ::= <<
+    INSERT INTO collection_entity
+                (entity_id,
+                 collection,
+                 position)
+    VALUES      (:product.id,
+                 :collectionPath,
+                 :position)
+>>
+
 removeProduct() ::= <<
     DELETE FROM collection_product
     WHERE  collection_id = :collection.id

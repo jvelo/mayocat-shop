@@ -16,6 +16,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
+import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.model.PositionedEntity;
 import org.mayocat.model.event.EntityCreatedEvent;
@@ -211,6 +212,21 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         this.dao.removeProduct(collection, product);
     }
 
+    @Override
+    public void addEntityToCollection(Collection collection, Entity entity)
+    {
+        this.dao.begin();
+        String path = getPath(collection);
+        Integer position = this.dao.lastEntityPosition(path);
+        if (position == null) {
+            position = 0;
+        } else {
+            position += 1;
+        }
+        this.dao.addEntityToCollection(path, entity, position);
+        this.dao.commit();
+    }
+
     public List<Collection> findAllForProduct(Product product)
     {
         return this.dao.findAllForProduct(product);
@@ -281,5 +297,29 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         this.dao = this.getDbi().onDemand(CollectionDAO.class);
         this.productDao = this.getDbi().onDemand(ProductDAO.class);
         super.initialize();
+    }
+
+    // Helpers
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Compute the ltree path of a collection, which is the UUID chain (where dashes are replaced by underscores since
+     * dashes are not allowed in ltree pathes) of parents leading to that collection (included).
+     *
+     * @param collection the collection for which to get the path
+     * @return the computed path
+     */
+    private String getPath(Collection collection)
+    {
+        Collection parent = collection;
+        String path = collection.getId().toString().replace('-', '_');
+        while (parent.getParentId() != null) {
+            parent = findById(parent.getParentId());
+            if (parent == null) {
+                throw new RuntimeException("Broken collection path chain in database");
+            }
+            path = parent.getId().toString().replace('-', '_') + '.' + path;
+        }
+        return path;
     }
 }

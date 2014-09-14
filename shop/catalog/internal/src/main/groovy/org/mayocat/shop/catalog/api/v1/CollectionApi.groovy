@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Strings
@@ -16,7 +23,10 @@ import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionTreeApiObject
+import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
+import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
+import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
 import org.slf4j.Logger
@@ -42,6 +52,10 @@ class CollectionApi implements Resource
     Provider<CollectionStore> collectionStore
 
     @Inject
+    Provider<ProductStore> productStore
+
+
+    @Inject
     Slugifier slugifier
 
     @Inject
@@ -54,7 +68,6 @@ class CollectionApi implements Resource
     Logger logger
 
     @GET
-    @Path("tree")
     public CollectionTreeApiObject getCollectionTree()
     {
         List<org.mayocat.shop.catalog.model.Collection> collections = collectionStore.get().
@@ -95,10 +108,11 @@ class CollectionApi implements Resource
 
         Closure addLinks;
         addLinks = { CollectionItemApiObject item ->
-            def parentsChain = item.parentSlugs.reverse().join('/') + (item.parentSlugs.size() > 0 ? '/' : '')
+            def parentsChain = item.parentSlugs.reverse().join('/collections/') + (item.parentSlugs.size() > 0 ? '/' : '')
             item._href = "/collections/elements/${parentsChain}${item.slug}"
             item._links = [
-                    self: new LinkApiObject([href: item._href])
+                    self: new LinkApiObject([href: item._href]),
+                    products: new LinkApiObject([href: item._href + '/products'])
             ]
 
             item.children.each({ CollectionItemApiObject children ->
@@ -116,8 +130,7 @@ class CollectionApi implements Resource
         ])
     }
 
-    @POST
-    @Path("tree")
+    @PUT
     public void updateCollectionTree(CollectionTreeApiObject collectionTreeApiObject)
     {
         List<org.mayocat.shop.catalog.model.Collection> collections = collectionStore.get().
@@ -152,7 +165,6 @@ class CollectionApi implements Resource
     }
 
     @POST
-    @Path("elements")
     @Timed
     @Authorized
     public Response createCollection(CollectionApiObject collectionApiObject)
@@ -179,7 +191,7 @@ class CollectionApi implements Resource
         }
     }
 
-    @Path("elements/{slug}")
+    @Path("{slug}")
     @POST
     @Timed
     @Authorized
@@ -215,14 +227,14 @@ class CollectionApi implements Resource
     }
 
     @GET
-    @Path("elements/{slug}")
+    @Path("{slug}")
     def getCollection(@PathParam("slug") String slug)
     {
         getCollectionInternal(slug)
     }
 
     @GET
-    @Path("elements/{parent1}/{slug}")
+    @Path("{parent1}/collections/{slug}")
     def getCollectionWithOneParent(
             @PathParam("parent1") String parent1,
             @PathParam("slug") String slug)
@@ -231,7 +243,7 @@ class CollectionApi implements Resource
     }
 
     @GET
-    @Path("elements/{parent2}/{parent1}/{slug}")
+    @Path("{parent2}/collections/{parent1}/{slug}")
     def getCollectionWithTwoParents(
             @PathParam("parent2") String parent2,
             @PathParam("parent1") String parent1,
@@ -241,7 +253,7 @@ class CollectionApi implements Resource
     }
 
     @GET
-    @Path("elements/{parent3}/{parent2}/{parent1}/{slug}")
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}")
     def getCollectionWithThreeParents(
             @PathParam("parent3") String parent3,
             @PathParam("parent2") String parent2,
@@ -250,6 +262,32 @@ class CollectionApi implements Resource
     {
         getCollectionInternal(parent3, parent2, parent1, slug)
     }
+
+    @POST
+    @Path("{slug}/products")
+    def addProductToCollection(@PathParam("slug") String slug, ProductApiObject productApiObject)
+    {
+        org.mayocat.shop.catalog.model.Collection collection = this.collectionStore.get().findBySlug(slug)
+        String productSlug = productApiObject.slug
+        Product product = this.productStore.get().findBySlug(productSlug)
+
+        if (!collection || !product) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+
+        this.collectionStore.get().addEntityToCollection(collection, product)
+    }
+
+    @DELETE
+    @Path("{collection}/products/{product}")
+    def removeProductFromCollection(
+            @PathParam("collection") String collectionSlug,
+            @PathParam("product") Reference product)
+    {
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     def getCollectionInternal(String... slugsArray)
     {
@@ -267,6 +305,7 @@ class CollectionApi implements Resource
                     findBySlug(parentSlug, index > 0 ? parents[index - 1].id : null);
 
             if (!parentCollection) {
+                // If any of the collection of the chain is not found, the collection is not found
                 return Response.status(Response.Status.NOT_FOUND).build()
             }
 
@@ -306,4 +345,5 @@ class CollectionApi implements Resource
 
         collectionApiObject
     }
+
 }
