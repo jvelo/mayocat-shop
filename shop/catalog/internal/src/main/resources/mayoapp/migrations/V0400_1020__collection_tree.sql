@@ -29,7 +29,7 @@ ALTER TABLE ONLY collection_entity
 -- Create indexes
 --
 CREATE INDEX collection_entity_position_index ON collection_entity USING btree ("position");
-CREATE INDEX collection_entity_collection_index ON collection_entity USING GIST(collection);
+CREATE INDEX collection_entity_collection_index ON collection_entity USING GIST(path);
 
 --
 -- Import back products

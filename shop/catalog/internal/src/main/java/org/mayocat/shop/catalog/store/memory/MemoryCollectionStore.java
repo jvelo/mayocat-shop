@@ -176,4 +176,10 @@ public class MemoryCollectionStore extends AbstractPositionedEntityMemoryStore<C
     {
         throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public EntityAndParent<Collection> findBySlugs(String... slugs)
+    {
+        throw new RuntimeException("Not implemented");
+    }
 }

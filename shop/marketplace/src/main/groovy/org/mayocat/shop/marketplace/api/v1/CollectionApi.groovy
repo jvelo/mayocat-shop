@@ -246,7 +246,7 @@ class CollectionApi implements Resource
     }
 
     @GET
-    @Path("{parent2}/collections/{parent1}/{slug}")
+    @Path("{parent2}/collections/{parent1}/collections/{slug}")
     def getCollectionWithTwoParents(
             @PathParam("parent2") String parent2,
             @PathParam("parent1") String parent1,
@@ -383,11 +383,12 @@ class CollectionApi implements Resource
     def getCollectionInternal(String... slugsArray)
     {
         def org.mayocat.shop.catalog.model.Collection collection = getCollectionFromSlugChain(slugsArray);
-        def slug = collection.slug
 
         if (!collection) {
             return Response.status(Response.Status.NOT_FOUND).build()
+
         }
+        def slug = collection.slug
 
         EntityData<org.mayocat.shop.catalog.model.Collection> collectionData = dataLoader.load(collection)
 

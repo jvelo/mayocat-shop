@@ -5,16 +5,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.marketplace.api.v1.object
+package org.mayocat.shop.marketplace.web.object
 
 import groovy.transform.CompileStatic
-import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
+import org.mayocat.accounts.model.Tenant
 
 /**
  * @version $Id$
  */
 @CompileStatic
-class ProductCollectionsApiObject
+class MarketplaceShopWebObject
 {
-    List<CollectionApiObject> collections
+    String name
+
+    String description
+
+    MarketplaceShopWebObject withTenant(Tenant tenant)
+    {
+        name = tenant.name
+        description = tenant.description
+
+        this
+    }
 }

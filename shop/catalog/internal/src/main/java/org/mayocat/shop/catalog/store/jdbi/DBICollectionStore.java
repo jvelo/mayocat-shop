@@ -7,10 +7,12 @@
  */
 package org.mayocat.shop.catalog.store.jdbi;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -235,6 +237,27 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public void removeEntityFromCollection(Collection collection, Entity entity)
     {
         this.dao.removeEntityFromCollection(collection, entity);
+    }
+
+    @Override
+    public EntityAndParent<Collection> findBySlugs(String... slugsArray)
+    {
+        Stack<String> slugs = new Stack<>();
+        slugs.addAll(Arrays.asList(slugsArray));
+
+        List<org.mayocat.shop.catalog.model.Collection> chain = Lists.newArrayList();
+
+        while (slugs.size() > 0) {
+            String slug = slugs.remove(0);
+            Collection collection = findBySlug(slug, chain.size() > 0 ? chain.get(0).getId() : null);
+            if (collection == null) {
+                // If the chain is broken, the collection is not found
+                return null;
+            }
+            chain.add(0, collection);
+        }
+
+        return getCollectionChain(chain);
     }
 
     @Override

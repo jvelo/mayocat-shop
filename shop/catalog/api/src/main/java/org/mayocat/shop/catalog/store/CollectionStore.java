@@ -40,6 +40,8 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
 
     void removeEntityFromCollection(Collection collection, Entity entity);
 
+    EntityAndParent<Collection> findBySlugs(String... slugs);
+
     List<EntityAndParent<Collection>> findAllForEntity(Entity entity);
 
     void moveCollection(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)

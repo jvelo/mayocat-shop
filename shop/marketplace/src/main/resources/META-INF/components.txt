@@ -4,6 +4,7 @@ org.mayocat.shop.marketplace.api.v1.CollectionApi
 org.mayocat.shop.marketplace.store.jdbi.DBIMarketplaceProductStore
 org.mayocat.shop.marketplace.web.MarketplaceHomeWebView
 org.mayocat.shop.marketplace.web.MarketplaceCollectionWebView
+org.mayocat.shop.marketplace.web.MarketplaceShopWebView
 org.mayocat.shop.marketplace.web.data.UserWebDataSupplier
 org.mayocat.shop.marketplace.search.BuildIndexTask
 org.mayocat.shop.marketplace.resources.MarketplaceResource
