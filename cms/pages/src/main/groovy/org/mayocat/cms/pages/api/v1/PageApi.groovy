@@ -106,7 +106,7 @@ class PageApi implements Resource, Initializable
 
         void updateEntity(Entity entity)
         {
-            pageStore.get().update(entity)
+            pageStore.get().update(entity as Page)
         }
 
         String type()
