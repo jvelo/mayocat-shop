@@ -65,4 +65,8 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
     @SqlQuery
     LoadedAttachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
             @Bind("tenantId") UUID tenantId);
+
+    @SqlQuery
+    LoadedAttachment findByTenantAndFileNameAndExtension(@Bind("tenant") String tenantSlug,
+            @Bind("filename") String fileName, @Bind("extension") String extension);
 }

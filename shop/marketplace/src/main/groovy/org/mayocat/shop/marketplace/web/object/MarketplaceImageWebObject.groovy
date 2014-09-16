@@ -5,47 +5,47 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.rest.web.object
+package org.mayocat.shop.marketplace.web.object
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
-import org.mayocat.configuration.images.ImageFormatDefinition
+import org.mayocat.accounts.model.Tenant
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.util.ImageUtils
 import org.mayocat.rest.util.RestUtils
-import org.mayocat.theme.ThemeDefinition
 
 import java.text.MessageFormat
 
 /**
- * Web object for an {@link Image} representation
- *
  * @version $Id$
  */
 @CompileStatic
-class ImageWebObject extends HashMap<String, Object>
+class MarketplaceImageWebObject extends HashMap<String, Object>
 {
-    def withImage(Image image, boolean isFeatured, Optional<ThemeDefinition> theme)
+    def withImage(Tenant tenant, Image image, boolean isFeatured, PlatformSettings platformSettings)
     {
         put "title", RestUtils.safeString(image.attachment.title) as String;
         put "description", RestUtils.safeString(image.attachment.description) as String;
         put "featured", isFeatured
 
-        put "url", MessageFormat.format("/images/{0}.{1}",
+        put "url", MessageFormat.format("/images/{0}/{1}.{2}",
+                tenant.slug,
                 image.attachment.slug,
                 image.attachment.extension
         );
 
-        if (theme.isPresent() && theme.get().imageFormats.size() > 0) {
-            for (String dimensionName : theme.get().imageFormats.keySet()) {
-                def definition = theme.get().imageFormats.get(dimensionName);
+        if (platformSettings.images && platformSettings.images.size() > 0) {
+            for (String dimensionName : platformSettings.images.keySet()) {
+                def definition = platformSettings.images.get(dimensionName);
                 Optional<Thumbnail> bestFit = findBestFit(image, definition.width, definition.height);
 
                 if (bestFit.isPresent()) {
                     String url = MessageFormat.format(
-                            "/images/thumbnails/{0}_{1,number,#}_{2,number,#}_{3,number,#}_{4,number,#}.{5}" +
-                                    "?width={6,number,#}&height={7,number,#}",
+                            "/images/thumbnails/{0}/{1}_{2,number,#}_{3,number,#}_{4,number,#}_{5,number,#}.{6}" +
+                                    "?width={7,number,#}&height={8,number,#}",
+                            tenant.slug,
                             image.attachment.slug,
                             bestFit.get().x,
                             bestFit.get().y,
@@ -55,53 +55,19 @@ class ImageWebObject extends HashMap<String, Object>
                             definition.width,
                             definition.height
                     );
-                    // Backward compat'
-                    put "theme_${dimensionName}_url" as String, url as String
-                    // Preferred way
                     put "${dimensionName}_url" as String, url as String
                 } else {
-                    String url = MessageFormat.format("/images/{0}.{1}?width={2,number,#}&height={3,number,#}",
+                    String url = MessageFormat.format("/images/{0}/{1}.{2}?width={3,number,#}&height={4,number,#}",
+                            tenant.slug,
                             image.attachment.slug,
                             image.attachment.extension,
                             definition.width,
                             definition.height
                     );
-                    // Backward compat'
-                    put "theme_${dimensionName}_url" as String, url as String
-                    // PReferred way
                     put "${dimensionName}_url" as String, url as String
                 }
             }
         }
-    }
-
-    def withPlaceholderImage(Optional<ThemeDefinition> theme)
-    {
-        withPlaceholderImage(false, theme);
-    }
-
-    def withPlaceholderImage(boolean featured, Optional<ThemeDefinition> theme)
-    {
-        if (theme.isPresent() && theme.get().imageFormats.size() > 0) {
-            for (String dimensionName : theme.get().imageFormats.keySet()) {
-                // Note: if only one dimension is passed for an image format (it means the image format is supposed
-                // to respect the original image aspect ratio according to the one dimension passed), we present the
-                // placeholder image as a square.
-                ImageFormatDefinition definition = theme.get().imageFormats.get(dimensionName);
-                String url = MessageFormat.format("http://placehold.it/{0,number,#}x{1,number,#}",
-                        definition.width != null ? definition.width : definition.height,
-                        definition.height != null ? definition.height : definition.width);
-
-                // Backward compat'
-                put "theme_${dimensionName}_url" as String, url as String
-
-                // Preferred way
-                put "${dimensionName}_url" as String, url as String
-            }
-        }
-        put "url", "http://placehold.it/300x300"
-        put "title", "Placeholder image"
-        put "featured", featured
     }
 
     private def Optional<Thumbnail> findBestFit(Image image, Integer width, Integer height)

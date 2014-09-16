@@ -9,6 +9,8 @@ package org.mayocat.shop.marketplace.web.object
 
 import groovy.transform.CompileStatic
 import org.mayocat.accounts.model.Tenant
+import org.mayocat.configuration.PlatformSettings
+import org.mayocat.image.model.Image
 
 /**
  * @version $Id$
@@ -16,15 +18,48 @@ import org.mayocat.accounts.model.Tenant
 @CompileStatic
 class MarketplaceShopWebObject
 {
+    String slug
+
     String name
 
     String description
+
+    MarketplaceEntityImagesWebObject images
 
     MarketplaceShopWebObject withTenant(Tenant tenant)
     {
         name = tenant.name
         description = tenant.description
+        slug = tenant.slug
 
         this
+    }
+
+    def withImages(Tenant tenant, List<Image> imagesList, UUID featuredImageId, PlatformSettings platformSettings)
+    {
+        List<MarketplaceImageWebObject> all = [];
+        MarketplaceImageWebObject featuredImage;
+
+        if (imagesList.size() > 0) {
+            for (Image image : imagesList) {
+                def featured = image.attachment.id.equals(featuredImageId)
+                MarketplaceImageWebObject imageWebObject = new MarketplaceImageWebObject();
+                imageWebObject.withImage(tenant, image, featured, platformSettings)
+                if (featuredImage == null && featured) {
+                    featuredImage = imageWebObject;
+                }
+                all << imageWebObject
+            }
+            if (!featuredImage) {
+                // If no featured image has been set, we use the first image in the array.
+                featuredImage = all.get(0)
+            }
+        } else {
+            // Placeholder
+        }
+        images = new MarketplaceEntityImagesWebObject([
+                all     : all,
+                featured: featuredImage
+        ])
     }
 }

@@ -291,7 +291,7 @@ class ProductWebObject
                 }
                 all << imageWebObject
             }
-            if (featuredImage == null) {
+            if (!featuredImage) {
                 // If no featured image has been set, we use the first image in the array.
                 featuredImage = all.get(0)
             }

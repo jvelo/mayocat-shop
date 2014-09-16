@@ -14,7 +14,6 @@ import javax.validation.Valid;
 
 import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.images.ImageFormatDefinition;
-import org.mayocat.theme.TypeDefinition;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
@@ -26,15 +25,15 @@ public class PlatformSettings
 {
     @Valid
     @JsonProperty
-    private Map<String, ImageFormatDefinition> thumbnails = Maps.newHashMap();
+    private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
 
     @Valid
     @JsonProperty
     private Map<String, AddonGroupDefinition> addons = Collections.emptyMap();
 
-    public Map<String, ImageFormatDefinition> getThumbnails()
+    public Map<String, ImageFormatDefinition> getImages()
     {
-        return thumbnails;
+        return images;
     }
 
     public Map<String, AddonGroupDefinition> getAddons()

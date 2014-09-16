@@ -177,6 +177,12 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     }
 
     @Override
+    public LoadedAttachment findAndLoadByTenantAndSlugAndExtension(String tenantSlug, String fileName, String extension)
+    {
+        return this.dao.findByTenantAndFileNameAndExtension(tenantSlug, fileName, extension);
+    }
+
+    @Override
     public LoadedAttachment findAndLoadBySlugAndExtension(String fileName, String extension)
     {
         return this.dao.findByFileNameAndExtension(fileName, extension, getTenant());

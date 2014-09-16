@@ -53,10 +53,15 @@ public class AbstractImageResource
         IMAGE_EXTENSIONS.add("png");
     }
 
-    public Response downloadThumbnail(@PathParam("slug") String slug, @PathParam("ext") String extension,
-            @PathParam("x") Integer x, @PathParam("y") Integer y, @PathParam("width") Integer width,
-            @PathParam("height") Integer height, @Context ServletContext servletContext,
-            @Context Optional<ImageOptions> imageOptions)
+    public Response downloadThumbnail(String slug, String extension, Integer x, Integer y, Integer width,
+            Integer height, ServletContext servletContext, Optional<ImageOptions> imageOptions)
+    {
+        return this.downloadThumbnail(null, slug, extension, x, y, width, height, servletContext, imageOptions);
+    }
+
+    public Response downloadThumbnail(String tenantSlug, String slug, String extension, Integer x, Integer y,
+            Integer width,
+            Integer height, ServletContext servletContext, Optional<ImageOptions> imageOptions)
     {
         if (!IMAGE_EXTENSIONS.contains(extension)) {
             // Refuse to treat a request with image options for a non-image attachment
@@ -64,7 +69,14 @@ public class AbstractImageResource
         }
 
         String fileName = slug + "." + extension;
-        LoadedAttachment file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+        LoadedAttachment file;
+
+        if (tenantSlug == null) {
+            file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+        } else {
+            file = this.attachmentStore.get().findAndLoadByTenantAndSlugAndExtension(tenantSlug, slug, extension);
+        }
+
         if (file == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -99,6 +111,12 @@ public class AbstractImageResource
     public Response downloadImage(String slug, String extension, ServletContext servletContext,
             Optional<ImageOptions> imageOptions)
     {
+        return this.downloadImage(null, slug, extension, servletContext, imageOptions);
+    }
+
+    public Response downloadImage(String tenantSlug, String slug, String extension, ServletContext servletContext,
+            Optional<ImageOptions> imageOptions)
+    {
         if (!IMAGE_EXTENSIONS.contains(extension)) {
             // Refuse to treat a request with image options for a non-image attachment
             return Response.status(Response.Status.BAD_REQUEST).entity("Not an image").build();
@@ -107,7 +125,13 @@ public class AbstractImageResource
         if (imageOptions.isPresent()) {
 
             String fileName = slug + "." + extension;
-            LoadedAttachment file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+            LoadedAttachment file;
+            if (tenantSlug == null) {
+                file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+            } else {
+                file = this.attachmentStore.get().findAndLoadByTenantAndSlugAndExtension(tenantSlug, slug, extension);
+            }
+
             if (file == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -155,13 +179,23 @@ public class AbstractImageResource
             }
         }
 
-        return this.downloadFile(slug, extension, servletContext);
+        return this.downloadFile(tenantSlug, slug, extension, servletContext);
     }
 
     public Response downloadFile(String slug, String extension, ServletContext servletContext)
     {
+        return this.downloadFile(null, slug, extension, servletContext);
+    }
+
+    public Response downloadFile(String tenantSlug, String slug, String extension, ServletContext servletContext)
+    {
         String fileName = slug + "." + extension;
-        LoadedAttachment file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+        LoadedAttachment file;
+        if (tenantSlug == null) {
+            file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+        } else {
+            file = this.attachmentStore.get().findAndLoadByTenantAndSlugAndExtension(tenantSlug, slug, extension);
+        }
         if (file == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -170,5 +204,4 @@ public class AbstractImageResource
                 .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                 .build();
     }
-
 }

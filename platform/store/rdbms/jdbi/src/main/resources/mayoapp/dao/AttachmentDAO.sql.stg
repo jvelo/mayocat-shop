@@ -116,3 +116,16 @@ findByFileNameAndExtension() ::= <<
        AND entity.slug = :filename
        AND attachment.extension = :extension
 >>
+
+findByTenantAndFileNameAndExtension() ::= <<
+    SELECT entity.*, attachment.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+           INNER JOIN entity AS entity_tenant
+                   ON entity.tenant_id = entity_tenant.id
+    WHERE  entity.type = 'attachment'
+       AND entity.slug = :filename
+       AND attachment.extension = :extension
+       AND entity_tenant.slug = :tenant
+>>

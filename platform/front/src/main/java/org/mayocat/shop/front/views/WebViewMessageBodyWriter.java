@@ -84,7 +84,9 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
     {
         try {
 
-            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE) && !webContext.getTheme().isValidDefinition()) {
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)
+                    && webContext.getTheme() != null
+                    && !webContext.getTheme().isValidDefinition()) {
                 // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
                 writeHttpError("Invalid theme definition", entityStream);
                 return;
