@@ -9,11 +9,13 @@ package mayoapp.dao;
 
 import java.util.List;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.marketplace.model.EntityAndTenant;
 import org.mayocat.shop.marketplace.store.jdbi.ProductAndTenantMapper;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -45,4 +47,10 @@ public abstract class MarketplaceProductDAO
 
     @SqlQuery
     public abstract Integer countAllWithTitleLike(@Bind("title") String title);
+
+    @SqlQuery
+    public abstract List<EntityAndTenant<Product>> findAllForTenant(
+            @BindBean("tenant") Tenant tenant,
+            @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
 }

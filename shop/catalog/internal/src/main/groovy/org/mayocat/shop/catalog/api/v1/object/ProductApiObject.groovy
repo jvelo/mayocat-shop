@@ -58,7 +58,7 @@ class ProductApiObject extends BaseApiObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal price;
 
-    Optional<String> vatRate;
+    Optional<String> vatRate = Optional.absent()
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal weight;

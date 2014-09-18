@@ -9,6 +9,7 @@ package org.mayocat.shop.marketplace.store;
 
 import java.util.List;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.marketplace.model.EntityAndTenant;
 import org.xwiki.component.annotation.Role;
@@ -28,4 +29,6 @@ public interface MarketplaceProductStore
     List<EntityAndTenant<Product>> findAllWithTitleLike(String title, Integer number, Integer offset);
 
     Integer countAllWithTitleLike(String title);
+
+    List<EntityAndTenant<Product>> findAllForTenant(Tenant tenant, Integer number, Integer offset);
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.marketplace.model.EntityAndTenant;
@@ -64,6 +65,12 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     public Integer countAllWithTitleLike(String title)
     {
         return this.marketplaceProductDAO.countAllWithTitleLike(title);
+    }
+
+    @Override
+    public List<EntityAndTenant<Product>> findAllForTenant(Tenant tenant, Integer number, Integer offset)
+    {
+        return this.marketplaceProductDAO.findAllForTenant(tenant, number, offset);
     }
 
     @Override

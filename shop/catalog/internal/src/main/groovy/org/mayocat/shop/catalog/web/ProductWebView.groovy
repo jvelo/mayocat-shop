@@ -13,6 +13,7 @@ import groovy.transform.CompileStatic
 import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.configuration.ConfigurationService
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
@@ -36,6 +37,7 @@ import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.ThemeFileResolver
+import org.mayocat.theme.TypeDefinition
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
@@ -225,9 +227,13 @@ class ProductWebView implements Resource
             def features = productStore.get().findFeatures(product)
             def variants = productStore.get().findVariants(product)
 
+            Map<String, TypeDefinition> types = [:]
+            types.putAll(theme.productTypes)
+            types.putAll(catalogSettings.productsSettings.types)
+
             productWebObject.withFeaturesAndVariants(features, variants, selectedFeatures,
                     configurationService.getSettings(CatalogSettings.class),
-                    configurationService.getSettings(GeneralSettings.class), Optional.fromNullable(theme))
+                    configurationService.getSettings(GeneralSettings.class), types)
         }
 
         context.put("product", productWebObject);

@@ -120,7 +120,7 @@ class TenantProductApi implements Resource, Initializable
 
         void updateEntity(Entity entity)
         {
-            productStore.get().update(entity)
+            productStore.get().update(entity as Product)
         }
 
         String type()
@@ -328,10 +328,10 @@ class TenantProductApi implements Resource, Initializable
 
                     List<Product> existingVariants = productStore.get().findVariants(product);
 
-                    variantApiObjects.eachWithIndex({ Map<String, Object> entry, int i ->
-                        def index = existingVariants.findIndexOf ({ Product p -> p.slug == entry.slug })
+                    variantApiObjects.eachWithIndex({ ProductApiObject entry, Integer i ->
+                        def index = existingVariants.findIndexOf({ Product p -> p.slug == entry.slug })
                         if (index != i) {
-                            Product variant = existingVariants.find ({ Product p -> p.slug == entry.slug })
+                            Product variant = existingVariants.find({ Product p -> p.slug == entry.slug })
                             productStore.get().updatePosition(i, variant);
                         }
                     })

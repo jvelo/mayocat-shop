@@ -22,7 +22,7 @@ public class TypeDefinition
 
     private Map<String, FeatureDefinition> features = Maps.newHashMap();
 
-    private VariantsDefinition variants;
+    private VariantsDefinition variants = new VariantsDefinition();
 
     public String getName()
     {

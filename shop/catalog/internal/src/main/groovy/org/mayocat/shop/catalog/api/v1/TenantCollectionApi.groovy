@@ -32,6 +32,7 @@ import org.mayocat.rest.api.object.Pagination
 import org.mayocat.shop.catalog.CatalogService
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionListApiObject
+import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.store.*
 import org.slf4j.Logger
@@ -100,7 +101,7 @@ class TenantCollectionApi implements Resource, Initializable
 
         void updateEntity(Entity entity)
         {
-            collectionStore.get().update(entity)
+            collectionStore.get().update(entity as Collection)
         }
 
         String type()

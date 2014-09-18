@@ -110,7 +110,7 @@ class NewsApi implements Resource, Initializable
 
         void updateEntity(Entity entity)
         {
-            articleStore.get().update(entity)
+            articleStore.get().update(entity as Article)
         }
 
         String type()

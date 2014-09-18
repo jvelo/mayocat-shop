@@ -15,6 +15,7 @@ import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.util.ImageUtils
 import org.mayocat.rest.util.RestUtils
+import org.mayocat.rest.web.object.AbstractImageWebObject
 
 import java.text.MessageFormat
 
@@ -22,7 +23,7 @@ import java.text.MessageFormat
  * @version $Id$
  */
 @CompileStatic
-class MarketplaceImageWebObject extends HashMap<String, Object>
+class MarketplaceImageWebObject extends AbstractImageWebObject
 {
     def withImage(Tenant tenant, Image image, boolean isFeatured, PlatformSettings platformSettings)
     {
@@ -68,39 +69,5 @@ class MarketplaceImageWebObject extends HashMap<String, Object>
                 }
             }
         }
-    }
-
-    private def Optional<Thumbnail> findBestFit(Image image, Integer width, Integer height)
-    {
-        if (!width || !height) {
-            // First handle the case where we have only one dimension width or height
-            for (Thumbnail thumbnail : image.thumbnails) {
-                if ((thumbnail.ratio.equals("1:0") && !height) ||
-                        (thumbnail.ratio.equals("0:1") && !width))
-                {
-                    return Optional.of(thumbnail);
-                }
-            }
-            return Optional.absent();
-        }
-
-        // Then handle the general case where we have both dimensions width and height
-        Thumbnail foundRatio = null;
-        String expectedRatio = ImageUtils.imageRatio(width, height);
-
-        for (Thumbnail thumbnail : image.thumbnails) {
-            if (thumbnail.ratio.equals(expectedRatio)) {
-                if (thumbnail.width.equals(width)
-                        && thumbnail.height.equals(height))
-                {
-                    // Exact match, stop searching
-                    return Optional.of(thumbnail);
-                } else {
-                    // Ratio match, keep searching
-                    foundRatio = thumbnail;
-                }
-            }
-        }
-        return Optional.fromNullable(foundRatio);
     }
 }

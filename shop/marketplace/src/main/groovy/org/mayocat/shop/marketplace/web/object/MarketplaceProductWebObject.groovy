@@ -7,14 +7,17 @@
  */
 package org.mayocat.shop.marketplace.web.object
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.CompileStatic
+import org.mayocat.shop.catalog.web.object.AbstractProductWebObject
 import org.mayocat.shop.catalog.web.object.ProductWebObject
 
 /**
  * @version $Id$
  */
 @CompileStatic
-class MarketplaceProductWebObject extends ProductWebObject
+class MarketplaceProductWebObject extends AbstractProductWebObject implements WithMarketplaceImages
 {
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    MarketplaceShopWebObject shop
 }
