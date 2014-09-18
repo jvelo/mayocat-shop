@@ -9,8 +9,9 @@ package org.mayocat.shop.marketplace.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.CompileStatic
+import org.mayocat.accounts.model.Tenant
+import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.web.object.AbstractProductWebObject
-import org.mayocat.shop.catalog.web.object.ProductWebObject
 
 /**
  * @version $Id$
@@ -20,4 +21,11 @@ class MarketplaceProductWebObject extends AbstractProductWebObject implements Wi
 {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     MarketplaceShopWebObject shop
+    
+    String reference
+
+    def withReference(Product product, Tenant tenant)
+    {
+        reference = "${product.slug}@${tenant.slug}"
+    }
 }

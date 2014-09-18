@@ -30,6 +30,17 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-cart-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Needed for CartWebObject -->
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-cart-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-catalog-api</artifactId>
             <version>${project.version}</version>
         </dependency>
