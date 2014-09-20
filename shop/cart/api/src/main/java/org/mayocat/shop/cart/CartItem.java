@@ -9,6 +9,7 @@ package org.mayocat.shop.cart;
 
 import java.math.BigDecimal;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.taxes.PriceWithTaxes;
 
@@ -21,6 +22,8 @@ import com.google.common.base.Preconditions;
  */
 public class CartItem
 {
+    private final Tenant tenant;
+
     private final Purchasable item;
 
     private final Long quantity;
@@ -29,18 +32,25 @@ public class CartItem
 
     private final PriceWithTaxes total;
 
-    public CartItem(Purchasable item, Long quantity, PriceWithTaxes unitPrice)
+    public CartItem(Tenant tenant, Purchasable item, Long quantity, PriceWithTaxes unitPrice)
     {
+        Preconditions.checkNotNull(tenant);
         Preconditions.checkNotNull(item);
         Preconditions.checkNotNull(quantity);
         Preconditions.checkNotNull(unitPrice);
 
         PriceWithTaxes total = unitPrice.multiply(quantity);
 
+        this.tenant = tenant;
         this.item = item;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.total = total;
+    }
+
+    public Tenant tenant()
+    {
+        return tenant;
     }
 
     public Purchasable item()

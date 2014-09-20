@@ -13,13 +13,14 @@ import java.math.BigDecimal;
 import org.mayocat.model.Association;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Identifiable;
+import org.mayocat.model.Owned;
 
 import com.google.common.base.Optional;
 
 /**
  * @version $Id$
  */
-public interface Purchasable extends Identifiable, Serializable, HasFeaturedImage
+public interface Purchasable extends Identifiable, Serializable, HasFeaturedImage, Owned
 {
     String getTitle();
 

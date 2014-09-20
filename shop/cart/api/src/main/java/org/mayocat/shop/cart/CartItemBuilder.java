@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.cart;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.mayocat.shop.taxes.Taxable;
 
@@ -15,11 +16,19 @@ import org.mayocat.shop.taxes.Taxable;
  */
 public class CartItemBuilder
 {
+    private Tenant tenant;
+
     private Taxable item;
 
     private Long quantity;
 
     private PriceWithTaxes unitPrice;
+
+    public CartItemBuilder tenant(Tenant tenant)
+    {
+        this.tenant = tenant;
+        return this;
+    }
 
     public CartItemBuilder item(Taxable item)
     {
@@ -39,8 +48,10 @@ public class CartItemBuilder
         return this;
     }
 
-    public CartItem build() {
+    public CartItem build()
+    {
         return new CartItem(
+                tenant,
                 item,
                 quantity,
                 unitPrice

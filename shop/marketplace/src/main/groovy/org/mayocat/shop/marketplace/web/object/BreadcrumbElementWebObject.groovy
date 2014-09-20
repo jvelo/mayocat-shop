@@ -7,9 +7,12 @@
  */
 package org.mayocat.shop.marketplace.web.object
 
+import groovy.transform.CompileStatic
+
 /**
  * @version $Id$
  */
+@CompileStatic
 class BreadcrumbElementWebObject
 {
     String title

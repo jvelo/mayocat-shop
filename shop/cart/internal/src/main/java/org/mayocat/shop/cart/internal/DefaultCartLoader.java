@@ -10,7 +10,11 @@ package org.mayocat.shop.cart.internal;
 import java.math.BigDecimal;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.store.TenantStore;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.cart.Cart;
 import org.mayocat.shop.cart.CartBuilder;
 import org.mayocat.shop.cart.CartContents;
@@ -19,6 +23,7 @@ import org.mayocat.shop.cart.CartLoader;
 import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.mayocat.shop.taxes.Taxable;
 import org.mayocat.shop.taxes.TaxesService;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -29,6 +34,15 @@ public class DefaultCartLoader implements CartLoader
 {
     @Inject
     private TaxesService taxesService;
+
+    @Inject
+    private WebContext webContext;
+
+    @Inject
+    private Provider<TenantStore> tenantStore;
+
+    @Inject
+    private Logger logger;
 
     @Override
     public Cart load(CartContents contents)
@@ -55,6 +69,17 @@ public class DefaultCartLoader implements CartLoader
                     .item(taxable)
                     .quantity(quantity)
                     .unitPrice(itemUnit);
+
+            if (webContext.getTenant() != null) {
+                itemBuilder.tenant(webContext.getTenant());
+            } else {
+                Tenant tenant = tenantStore.get().findById(taxable.getTenantId());
+                if (tenant == null) {
+                    logger.error("Cannot load purchasable for which the tenant can't be found");
+                    continue;
+                }
+                itemBuilder.tenant(tenant);
+            }
 
             builder.addItem(itemBuilder.build());
         }

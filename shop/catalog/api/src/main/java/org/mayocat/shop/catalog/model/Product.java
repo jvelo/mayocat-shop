@@ -37,7 +37,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 @Index
-public class Product implements Entity, Owned, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
+public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
 {
     public static final String VAT = "vat";
 

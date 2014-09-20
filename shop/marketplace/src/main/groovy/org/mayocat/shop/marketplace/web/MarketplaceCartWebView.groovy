@@ -13,6 +13,7 @@ import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
@@ -31,6 +32,7 @@ import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
+import org.mayocat.shop.marketplace.web.object.MarketplaceCartWebObject
 import org.mayocat.shop.shipping.ShippingOption
 import org.mayocat.shop.shipping.ShippingService
 import org.xwiki.component.annotation.Component
@@ -78,6 +80,9 @@ class MarketplaceCartWebView implements Resource
 
     @Inject
     GeneralSettings generalSettings
+
+    @Inject
+    PlatformSettings platformSettings
 
     @Inject
     WebContext context
@@ -226,8 +231,8 @@ class MarketplaceCartWebView implements Resource
             new Image(attachment, thumbs)
         })
 
-        CartWebObject cartWebObject = new CartWebObject()
-        cartWebObject.withCart(shippingService, cart, locale, images, Optional.fromNullable(context.theme?.definition))
+        MarketplaceCartWebObject cartWebObject = new MarketplaceCartWebObject()
+        cartWebObject.withCart(shippingService, cart, locale, images, platformSettings, Optional.absent())
 
         data.put("cart", cartWebObject)
 

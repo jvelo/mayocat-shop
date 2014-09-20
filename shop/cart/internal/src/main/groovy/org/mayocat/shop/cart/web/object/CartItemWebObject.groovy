@@ -22,96 +22,13 @@ import org.mayocat.theme.ThemeDefinition
  * @version $Id$
  */
 @CompileStatic
-class CartItemWebObject
+class CartItemWebObject extends AbstractCartItemWebObject
 {
-    String title
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    String variant;
-
-    String description;
-
-    Long quantity;
-
-    String type;
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    String slug;
-
-    UUID id;
-
-    PriceWebObject unitPrice;
-
-    PriceWebObject unitPriceExclusiveOfTaxes;
-
-    PriceWebObject itemTotal;
-
-    PriceWebObject itemTotalExclusiveOfTaxes;
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    ItemTaxesWebObject taxes
-
-    ImageWebObject featuredImage;
-
-    def withPurchasable(Purchasable purchasable, Long quantity)
-    {
-        title = purchasable.title
-        description = purchasable.description
-
-        this.quantity = quantity
-
-        if (Product.class.isAssignableFrom(purchasable.class)) {
-            type = "product";
-            slug = (purchasable as Product).slug
-        } else {
-            type = purchasable.class.simpleName.toLowerCase()
-        }
-    }
-
-    def withUnitPrice(PriceWithTaxes price, Currency currency, Locale locale)
-    {
-        unitPrice = new PriceWebObject()
-        unitPrice.withPrice(price.incl(), currency, locale)
-
-        unitPriceExclusiveOfTaxes = new PriceWebObject()
-        unitPriceExclusiveOfTaxes.withPrice(price.excl(), currency, locale)
-
-        if (!price.vat().equals(BigDecimal.ZERO)) {
-            if (taxes == null) {
-                taxes = new ItemTaxesWebObject([
-                        vat: new ItemTaxWebObject([
-                                name: "VAT"
-                        ])
-                ])
-            }
-            taxes.vat.perUnit = new PriceWebObject()
-            taxes.vat.perUnit.withPrice(price.vat(), currency, locale)
-        }
-    }
-
-    def withItemTotal(PriceWithTaxes price, Currency currency, Locale locale)
-    {
-        itemTotal = new PriceWebObject()
-        itemTotal.withPrice(price.incl(), currency, locale)
-
-        itemTotalExclusiveOfTaxes = new PriceWebObject()
-        itemTotalExclusiveOfTaxes.withPrice(price.excl(), currency, locale)
-
-        if (!price.vat().equals(BigDecimal.ZERO)) {
-            if (taxes == null) {
-                taxes = new ItemTaxesWebObject([
-                        vat: new ItemTaxWebObject([
-                                name: "VAT"
-                        ])
-                ])
-            }
-            taxes.vat.total = new PriceWebObject()
-            taxes.vat.total.withPrice(price.vat(), currency, locale)
-        }
-    }
+    ImageWebObject featuredImage
 
     def withFeaturedImage(Image image, Optional<ThemeDefinition> themeDefinition) {
         featuredImage = new ImageWebObject()
         featuredImage.withImage(image, true, themeDefinition)
     }
+
 }

@@ -8,6 +8,7 @@
 package org.mayocat.shop.marketplace.web
 
 import com.google.common.base.Optional
+import groovy.transform.CompileStatic
 import org.mayocat.rest.Resource
 import org.mayocat.rest.parameters.ImageOptions
 import org.mayocat.rest.resources.AbstractImageResource
@@ -25,6 +26,7 @@ import javax.ws.rs.core.Response
  */
 @Component("/marketplace/images/")
 @Path("/marketplace/images/")
+@CompileStatic
 class MarketplaceImageWebView extends AbstractImageResource implements Resource
 {
     @GET

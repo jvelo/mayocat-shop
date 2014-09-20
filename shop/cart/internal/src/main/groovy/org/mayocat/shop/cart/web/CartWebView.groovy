@@ -13,6 +13,7 @@ import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
@@ -69,6 +70,9 @@ class CartWebView implements Resource
 
     @Inject
     GeneralSettings generalSettings
+
+    @Inject
+    PlatformSettings platformSettings
 
     @Inject
     WebContext context
@@ -206,7 +210,8 @@ class CartWebView implements Resource
         })
 
         CartWebObject cartWebObject = new CartWebObject()
-        cartWebObject.withCart(shippingService, cart, locale, images, Optional.fromNullable(context.theme?.definition))
+        cartWebObject.withCart(shippingService, cart, locale, images, platformSettings,
+                Optional.fromNullable(context.theme?.definition))
 
         data.put("cart", cartWebObject)
 
