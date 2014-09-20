@@ -81,7 +81,7 @@ public class CartContents
         Preconditions.checkArgument(quantity > 0);
 
         BigDecimal unitPrice = null;
-        if (item.getUnitPrice() != null && !item.getParent().isPresent()) {
+        if (item.getUnitPrice() != null) {
             unitPrice = item.getUnitPrice();
         } else if (item.getParent().isPresent() && item.getParent().get().isLoaded()) {
             unitPrice = item.getParent().get().get().getUnitPrice();

@@ -180,6 +180,8 @@ class AbstractProductWebObject
         def anyVariantForSale = false
         def priceDefinedByVariants = productType.variants.properties.indexOf("price") >= 0
         def stockDefinedByVariants = productType.variants.properties.indexOf("stock") >= 0
+        def locale = generalSettings.locales.mainLocale.value;
+        def currency = catalogSettings.currencies.mainCurrency.value;
         BigDecimal minPrice
         def atLeastOnePriceDiffers = false
 
@@ -213,7 +215,10 @@ class AbstractProductWebObject
                         slug: feature.featureSlug
                 ])
             })
+            PriceWebObject variantPrice = variant.unitPrice ?
+                    new PriceWebObject().withPrice(variant.unitPrice, currency, locale) : null
             this.variants << new ProductVariantWebObject([
+                    unitPrice: variantPrice,
                     title: variant.title,
                     slug: variant.slug,
                     availability: variantAvailability,
@@ -222,8 +227,6 @@ class AbstractProductWebObject
         })
 
         // Override availability and price from product if necessary
-        def locale = generalSettings.locales.mainLocale.value;
-        def currency = catalogSettings.currencies.mainCurrency.value;
         if (priceDefinedByVariants && !anyVariantForSale) {
             availability = "not_for_sale"
         } else if (priceDefinedByVariants && atLeastOnePriceDiffers) {

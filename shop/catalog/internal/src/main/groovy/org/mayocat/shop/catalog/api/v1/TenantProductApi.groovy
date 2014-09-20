@@ -111,7 +111,6 @@ class TenantProductApi implements Resource, Initializable
     ImageGalleryApiDelegate imageGalleryApi
 
     // Entity handler for delegates
-
     EntityApiDelegateHandler productHandler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
@@ -132,10 +131,10 @@ class TenantProductApi implements Resource, Initializable
     void initialize()
     {
         attachmentApi = new AttachmentApiDelegate([
-                extractors: extractors,
+                extractors     : extractors,
                 attachmentStore: attachmentStore,
-                slugifier: slugifier,
-                handler: productHandler,
+                slugifier      : slugifier,
+                handler        : productHandler,
                 doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
                     switch (target) {
                         case "image-gallery":
@@ -148,8 +147,8 @@ class TenantProductApi implements Resource, Initializable
                 dataLoader: dataLoader,
                 attachmentStore: attachmentStore.get(),
                 entityListStore: entityListStore.get(),
-                handler: productHandler,
-                context: webContext
+                handler   : productHandler,
+                context   : webContext
         ])
     }
 
@@ -157,9 +156,9 @@ class TenantProductApi implements Resource, Initializable
     @Timed
     @Authorized
     def getProducts(@QueryParam("number") @DefaultValue("50") Integer number,
-                    @QueryParam("offset") @DefaultValue("0") Integer offset,
-                    @QueryParam("filter") @DefaultValue("") String filter,
-                    @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
+            @QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("filter") @DefaultValue("") String filter,
+            @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
     {
         List<ProductApiObject> productList = [];
         def products;
@@ -201,19 +200,19 @@ class TenantProductApi implements Resource, Initializable
 
         def productListResult = new ProductListApiObject([
                 _pagination: new Pagination([
-                    numberOfItems: number,
-                    returnedItems: productList.size(),
-                    offset: offset,
-                    totalItems: totalItems,
-                    urlTemplate: '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
-                    urlArguments: [
-                            titleMatches: titleMatches,
-                            filter: filter,
-                            tenantPrefix: webContext.request.tenantPrefix
+                        numberOfItems: number,
+                        returnedItems: productList.size(),
+                        offset       : offset,
+                        totalItems   : totalItems,
+                        urlTemplate  : '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
+                        urlArguments : [
+                                titleMatches: titleMatches,
+                                filter      : filter,
+                                tenantPrefix: webContext.request.tenantPrefix
 
-                    ]
+                        ]
                 ]),
-                products: productList
+                products   : productList
         ])
 
         productListResult
@@ -237,11 +236,12 @@ class TenantProductApi implements Resource, Initializable
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         def productApiObject = new ProductApiObject([
-            _href: "${webContext.request.tenantPrefix}/api/products/${slug}",
-            _links: [
-                self: new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}" ]),
-                images: new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}/images" ])
-            ]
+                _href : "${webContext.request.tenantPrefix}/api/products/${slug}",
+                _links: [
+                        self  : new LinkApiObject([href: "${webContext.request.tenantPrefix}/api/products/${slug}"]),
+                        images: new LinkApiObject(
+                                [href: "${webContext.request.tenantPrefix}/api/products/${slug}/images"])
+                ]
         ])
 
         productApiObject.withProduct(taxesSettings, product)
@@ -254,8 +254,10 @@ class TenantProductApi implements Resource, Initializable
         }
 
         if (product.type.isPresent()) {
-            productApiObject.withEmbeddedVariants(taxesSettings, productStore.get().findVariants(product), webContext.request)
-            productApiObject._links.variants = new LinkApiObject([ href: "${webContext.request.tenantPrefix}/api/products/${slug}/variants" ])
+            productApiObject.
+                    withEmbeddedVariants(taxesSettings, productStore.get().findVariants(product), webContext.request)
+            productApiObject._links.variants =
+                    new LinkApiObject([href: "${webContext.request.tenantPrefix}/api/products/${slug}/variants"])
         }
 
         productApiObject;
@@ -268,8 +270,8 @@ class TenantProductApi implements Resource, Initializable
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.WILDCARD)
     def move(@PathParam("slug") String slug,
-             @FormParam("before") String slugOfProductToMoveBeforeOf,
-             @FormParam("after") String slugOfProductToMoveAfterTo)
+            @FormParam("before") String slugOfProductToMoveBeforeOf,
+            @FormParam("after") String slugOfProductToMoveAfterTo)
     {
         try {
             if (!Strings.isNullOrEmpty(slugOfProductToMoveAfterTo)) {
@@ -321,21 +323,21 @@ class TenantProductApi implements Resource, Initializable
                 this.productStore.get().update(product);
 
                 // Update variants order if needed
+                // TODO : do this in a PUT "{slug}/variants" API instead
 
                 if (productApiObject._embedded?.containsKey("variants")) {
-                    List<ProductApiObject> variantApiObjects =
-                        productApiObject._embedded?.get("variants") as List<ProductApiObject>
+                    List<Map<String, Object>> variantApiObjects =
+                            productApiObject._embedded?.get("variants") as List<Map<String, Object>>;
 
                     List<Product> existingVariants = productStore.get().findVariants(product);
 
-                    variantApiObjects.eachWithIndex({ ProductApiObject entry, Integer i ->
-                        def index = existingVariants.findIndexOf({ Product p -> p.slug == entry.slug })
+                    variantApiObjects.eachWithIndex({ Map<String, Object> entry, Integer i ->
+                        def index = existingVariants.findIndexOf({ Product p -> p.slug == entry.get("slug") })
                         if (index != i) {
-                            Product variant = existingVariants.find({ Product p -> p.slug == entry.slug })
+                            Product variant = existingVariants.find({ Product p -> p.slug == entry.get("slug") })
                             productStore.get().updatePosition(i, variant);
                         }
                     })
-
                 }
             }
 
