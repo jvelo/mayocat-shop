@@ -16,7 +16,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.context.WebContext;
+import org.mayocat.context.internal.DefaultWebContext;
 import org.mayocat.shop.cart.Cart;
 import org.mayocat.shop.cart.CartContents;
 import org.mayocat.shop.cart.CartLoader;
@@ -43,6 +47,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
 /**
@@ -60,6 +66,8 @@ public class DefaultCartLoaderTest
     public void setUp() throws Exception
     {
         this.componentManager.registerMockComponent(ConfigurationService.class);
+        this.componentManager.registerMockComponent(WebContext.class);
+        this.componentManager.registerMockComponent(TenantStore.class);
     }
 
     @Test
@@ -83,6 +91,14 @@ public class DefaultCartLoaderTest
             settings = new TaxesSettings();
         }
         when(configurationService.getSettings(TaxesSettings.class)).thenReturn(settings);
+
+        // Mock web context
+        WebContext webContext = componentManager.getInstance(WebContext.class);
+        when(webContext.getTenant()).thenReturn(null);
+
+        // Mock tenant store
+        TenantStore tenantStore = componentManager.getInstance(TenantStore.class);
+        when(tenantStore.findById(any(UUID.class))).thenReturn(new Tenant());
 
         CartTest test = definition.getTest();
         TestInput input = test.getInput();

@@ -154,13 +154,13 @@ class CollectionApi implements Resource
                 positionedCollections <<
                         new PositionedEntity<org.mayocat.shop.catalog.model.Collection>(collection, position)
 
-                item.children.eachWithIndex({ CollectionItemApiObject entry, int i ->
+                item.children.eachWithIndex({ CollectionItemApiObject entry, Integer i ->
                     processItem(entry, collection.id, i)
                 })
             }
         }
 
-        collectionTreeApiObject.collections.eachWithIndex({ CollectionItemApiObject item, int i ->
+        collectionTreeApiObject.collections.eachWithIndex({ CollectionItemApiObject item, Integer i ->
             processItem(item, null, i)
         })
 
@@ -264,6 +264,44 @@ class CollectionApi implements Resource
             @PathParam("slug") String slug)
     {
         getCollectionInternal(parent3, parent2, parent1, slug)
+    }
+
+
+    @DELETE
+    @Path("{slug}")
+    def deleteCollection(@PathParam("slug") String slug)
+    {
+        deleteCollectionInternal(slug)
+    }
+
+    @DELETE
+    @Path("{parent1}/collections/{slug}")
+    def deleteCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        deleteCollectionInternal(parent1, slug)
+    }
+
+    @DELETE
+    @Path("{parent2}/collections/{parent1}/collections/{slug}")
+    def deleteCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        deleteCollectionInternal(parent2, parent1, slug)
+    }
+
+    @DELETE
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}")
+    def deleteCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        deleteCollectionInternal(parent3, parent2, parent1, slug)
     }
 
     @POST
@@ -378,6 +416,19 @@ class CollectionApi implements Resource
         }
 
         this.collectionStore.get().addEntityToCollection(collection, product.entity)
+    }
+
+    def deleteCollectionInternal(String... slugsArray)
+    {
+        def org.mayocat.shop.catalog.model.Collection collection = getCollectionFromSlugChain(slugsArray);
+
+        if (!collection) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+
+        this.collectionStore.get().delete(collection)
+
+        return Response.ok().build()
     }
 
     def getCollectionInternal(String... slugsArray)

@@ -55,6 +55,15 @@ findAllForProduct() ::= <<
                                       WHERE  product_id = :product.id)
 >>
 
+findAllChildrenOfCollection() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND entity.parent_id = :collection.id
+>>
+
 findAllForProductIds(ids) ::= <<
     SELECT entity.*, collection.*, localization_data(entity_id)
     FROM   entity

@@ -27,34 +27,13 @@ import java.text.MessageFormat
  * @version $Id$
  */
 @CompileStatic
-class CollectionWebObject
+class CollectionWebObject extends AbstractCollectionWebObject
 {
-    String title
-
-    String description
-
-    String url
-
-    String slug
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    EntityModelWebObject model
-
-    String template
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityImagesWebObject images
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     ProductListWebObject products
-
-    def withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)
-    {
-        title = ContextUtils.safeString(collection.title)
-        description = ContextUtils.safeHtml(collection.description)
-        url = urlFactory.create(collection).path
-        slug = collection.slug
-    }
 
     def withProducts(List<ProductWebObject> productList, Integer currentPage, Integer totalPages)
     {

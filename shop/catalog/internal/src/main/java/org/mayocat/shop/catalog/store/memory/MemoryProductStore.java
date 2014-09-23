@@ -13,6 +13,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
@@ -185,6 +186,11 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
     }
 
     public Feature createFeature(Feature feature) throws InvalidEntityException, EntityAlreadyExistsException
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public List<Product> findAllForCollection(EntityAndParent<Collection> collection)
     {
         throw new RuntimeException("Not implemented");
     }

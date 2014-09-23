@@ -29,6 +29,7 @@ import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
+import org.mayocat.shop.marketplace.web.delegate.WithProductWebObjectBuilder
 import org.mayocat.shop.marketplace.web.object.MarketplaceProductWebObject
 import org.mayocat.shop.marketplace.web.object.MarketplaceShopWebObject
 import org.mayocat.shop.taxes.configuration.TaxesSettings
@@ -52,7 +53,7 @@ import javax.ws.rs.core.MediaType
 @Path("/marketplace/shops")
 @Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @CompileStatic
-class MarketplaceShopWebView implements Resource
+class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
 {
     @Inject
     Provider<TenantStore> tenantStore
@@ -74,9 +75,6 @@ class MarketplaceShopWebView implements Resource
 
     @Inject
     ThemeFileResolver themeFileResolver
-
-    @Inject
-    ConfigurationService configurationService
 
     @GET
     def listShops()
@@ -175,32 +173,4 @@ class MarketplaceShopWebView implements Resource
         return new WebView().data(context)
     }
 
-    private MarketplaceProductWebObject buildProductWebObject(Tenant tenant, EntityData<Product> entityData)
-    {
-        def catalogSettings = configurationService.getSettings(CatalogSettings.class)
-        def generalSettings = configurationService.getSettings(GeneralSettings.class)
-        def taxesSettings = configurationService.getSettings(TaxesSettings.class)
-
-        def product = entityData.entity
-        Optional<ImageGallery> productGallery = entityData.getData(ImageGallery.class);
-        List<Image> productImages = productGallery.isPresent() ? productGallery.get().images : [] as List<Image>
-
-        def productWebObject = new MarketplaceProductWebObject()
-        productWebObject.withProduct(entityData.entity, urlFactory,
-                themeFileResolver, catalogSettings, generalSettings, taxesSettings)
-        productWebObject.withImages(tenant, productImages, entityData.entity.featuredImageId, platformSettings)
-
-        if (product.virtual) {
-            def features = tenantProductStore.get().findFeatures(product)
-            def variants = tenantProductStore.get().findVariants(product)
-
-            Map<String, TypeDefinition> types = [:]
-            types.putAll(catalogSettings.productsSettings.types)
-
-            productWebObject.withFeaturesAndVariants(features, variants, [:],
-                    configurationService.getSettings(CatalogSettings.class),
-                    configurationService.getSettings(GeneralSettings.class), types)
-        }
-        return productWebObject
-    }
 }

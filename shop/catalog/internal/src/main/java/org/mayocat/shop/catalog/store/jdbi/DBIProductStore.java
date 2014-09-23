@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.model.AddonGroup;
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.model.event.EntityCreatedEvent;
 import org.mayocat.model.event.EntityCreatingEvent;
 import org.mayocat.model.event.EntityUpdatedEvent;
@@ -39,6 +40,7 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 
 import mayoapp.dao.FeatureDAO;
@@ -262,6 +264,21 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
     public List<Product> findAllForCollection(Collection collection)
     {
         return AddonsHelper.withAddons(this.dao.findAllForCollection(collection), this.dao);
+    }
+
+    public List<Product> findAllForCollection(EntityAndParent<Collection> collection)
+    {
+        String path = "";
+        EntityAndParent<Collection> parent = collection;
+        while (parent != null) {
+            if (Strings.isNullOrEmpty(path)) {
+                path = parent.getEntity().getId().toString().replace('-', '_');
+            } else {
+                path = parent.getEntity().getId().toString().replace('-', '_') + "." + path;
+            }
+            parent = parent.getParent();
+        }
+        return AddonsHelper.withAddons(this.dao.findAllForCollectionPath(path), this.dao);
     }
 
     public List<Product> findAllOnShelf(Integer number, Integer offset)

@@ -60,6 +60,9 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract List<Product> findAllForCollection(@BindBean("collection") Collection collection);
 
     @SqlQuery
+    public abstract List<Product> findAllForCollectionPath(@Bind("path") String path);
+
+    @SqlQuery
     public abstract Integer countAllForCollection(@BindBean("collection") Collection collection);
 
     @SqlQuery

@@ -79,6 +79,7 @@
             <artifactId>mayocat-platform-front</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-money</artifactId>

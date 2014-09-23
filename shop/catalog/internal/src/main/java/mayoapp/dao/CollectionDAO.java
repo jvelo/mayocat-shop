@@ -52,6 +52,9 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
     public abstract List<Collection> findAllForProduct(@BindBean("product") Product product);
 
     @SqlQuery
+    public abstract List<Collection> findAllChildrenOfCollection(@BindBean("collection") Collection entity);
+
+    @SqlQuery
     public abstract List<Collection> findAllForProductIds(@BindIn("ids") List<UUID> ids);
 
     @SqlQuery
@@ -125,4 +128,6 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
         }
         return listBuilder.build();
     }
+
+
 }

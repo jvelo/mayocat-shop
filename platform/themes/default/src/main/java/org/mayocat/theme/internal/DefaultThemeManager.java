@@ -133,7 +133,6 @@ public class DefaultThemeManager implements ThemeManager
                     return null;
                 }
             } else {
-                logger.error("Failed to resolve theme");
                 // Here there is nothing more we can do ; surrender
                 return null;
             }

@@ -9,18 +9,26 @@ package org.mayocat.shop.marketplace.web
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.accounts.store.TenantStore
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
+import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.model.EntityAndParent
 import org.mayocat.rest.Resource
 import org.mayocat.shop.catalog.model.Collection
+import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
+import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.catalog.web.object.CollectionWebObject
 import org.mayocat.shop.front.views.WebView
+import org.mayocat.shop.marketplace.web.delegate.WithProductWebObjectBuilder
 import org.mayocat.shop.marketplace.web.object.BreadcrumbElementWebObject
+import org.mayocat.shop.marketplace.web.object.MarketplaceCollectionWebObject
+import org.mayocat.shop.marketplace.web.object.MarketplaceProductWebObject
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
@@ -37,13 +45,19 @@ import javax.ws.rs.core.Response
 @Path("/marketplace/collections")
 @Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @CompileStatic
-class MarketplaceCollectionWebView implements Resource
+class MarketplaceCollectionWebView implements Resource, WithProductWebObjectBuilder
 {
     @Inject
     EntityDataLoader dataLoader
 
     @Inject
     Provider<CollectionStore> collectionStore
+
+    @Inject
+    Provider<ProductStore> productStore
+
+    @Inject
+    Provider<TenantStore> tenantStore
 
     @Inject
     EntityURLFactory urlFactory
@@ -100,6 +114,8 @@ class MarketplaceCollectionWebView implements Resource
             ]).build()
         }
 
+        // Breadcrumb
+
         List<BreadcrumbElementWebObject> breadcrumbElements = []
         EntityAndParent<Collection> element = collectionChain
         while (true) {
@@ -112,8 +128,23 @@ class MarketplaceCollectionWebView implements Resource
             }
             element = element.parent
         }
-
         context.put("breadcrumb", breadcrumbElements.reverse())
+
+        // Products
+
+        List<Product> products = productStore.get().findAllForCollection(collectionChain)
+        List<EntityData<Product>> productsData = dataLoader.
+                load(products, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
+
+        def productList = []
+        productsData.each({ EntityData<Product> productData ->
+            Product product = productData.entity
+            def tenant = tenantStore.get().findById(product.tenantId)
+            MarketplaceProductWebObject productWebObject = buildProductWebObject(tenant, productData)
+            productList << productWebObject
+        })
+
+        // Collection
 
         final Collection collection = collectionChain.entity
 
@@ -123,14 +154,42 @@ class MarketplaceCollectionWebView implements Resource
         Optional<ImageGallery> gallery = data.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
-        CollectionWebObject collectionWebObject = new CollectionWebObject()
+        MarketplaceCollectionWebObject collectionWebObject = new MarketplaceCollectionWebObject()
         collectionWebObject.withCollection(data.entity, urlFactory)
+        collectionWebObject.withImages(null, images, collection.featuredImageId, platformSettings)
+        collectionWebObject.withProducts(productList, 0, 0)
 
-        collectionWebObject.withImages(images, collection.featuredImageId, Optional.absent())
+        // Children
+
+        List<EntityAndParent<Collection>> children = collectionStore.get().findAllChildrenOfCollection(collection)
+        List<MarketplaceCollectionWebObject> childrenWebObjects = []
+
+        children.each({ EntityAndParent<Collection> child ->
+            MarketplaceCollectionWebObject object = new MarketplaceCollectionWebObject()
+            List<String> childSlugs = getSlugs(child)
+            object.withCollection(child.entity, urlFactory, childSlugs)
+            childrenWebObjects << object
+        })
+
+        collectionWebObject.withChildren(childrenWebObjects)
 
         context.put("collection", collectionWebObject)
 
         new WebView().data(context)
+    }
+
+    List<String> getSlugs(EntityAndParent<Collection> collection)
+    {
+        List<String> slugs = []
+        EntityAndParent<Collection> item = collection
+        while (true) {
+            slugs.add(item.entity.slug)
+            if (item.parent == null) {
+                break
+            }
+            item = item.parent
+        }
+        return slugs
     }
 
     String serializeUrl(EntityAndParent<Collection> collection)

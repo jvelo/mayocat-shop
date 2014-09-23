@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.store;
 import java.util.List;
 import java.util.UUID;
 
+import org.mayocat.model.EntityAndParent;
 import org.mayocat.shop.catalog.model.Collection;
 import org.mayocat.shop.catalog.model.Feature;
 import org.mayocat.shop.catalog.model.Product;
@@ -41,6 +42,8 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
     List<Product> findAllForCollection(Collection collection);
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
+
+    List<Product> findAllForCollection(EntityAndParent<Collection> collection);
 
     Integer countAllOnShelf();
 

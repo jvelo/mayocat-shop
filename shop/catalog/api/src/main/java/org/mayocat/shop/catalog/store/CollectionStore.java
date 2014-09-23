@@ -44,6 +44,8 @@ public interface CollectionStore extends Store<Collection, UUID>, EntityStore, H
 
     List<EntityAndParent<Collection>> findAllForEntity(Entity entity);
 
+    List<EntityAndParent<Collection>> findAllChildrenOfCollection(Collection entity);
+
     void moveCollection(String collectionToMove, String collectionToMoveRelativeTo, RelativePosition relativePosition)
             throws InvalidMoveOperation;
 

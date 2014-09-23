@@ -264,21 +264,14 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
     public List<EntityAndParent<Collection>> findAllForEntity(Entity entity)
     {
         List<Collection> collections = this.dao.findCollectionsForEntity(entity);
-        List<EntityAndParent<Collection>> result = Lists.newArrayList();
+        return getEntityAndParents(collections);
+    }
 
-        for (Collection collection : collections) {
-            List<Collection> chain = Lists.newArrayList();
-            chain.add(collection);
-            Collection parent = collection;
-            while (parent.getParentId() != null) {
-                parent = this.findById(parent.getParentId());
-                chain.add(parent);
-            }
-            EntityAndParent<Collection> collectionChain = getCollectionChain(chain);
-            result.add(collectionChain);
-
-        }
-        return result;
+    @Override
+    public List<EntityAndParent<Collection>> findAllChildrenOfCollection(Collection entity)
+    {
+        List<Collection> collections = this.dao.findAllChildrenOfCollection(entity);
+        return getEntityAndParents(collections);
     }
 
     private EntityAndParent<Collection> getCollectionChain(List<Collection> chain)
@@ -386,4 +379,27 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         }
         return path;
     }
+
+    /**
+     * Get a list of entity and parents from a list of collections
+     */
+    private List<EntityAndParent<Collection>> getEntityAndParents(List<Collection> collections)
+    {
+        List<EntityAndParent<Collection>> result = Lists.newArrayList();
+
+        for (Collection collection : collections) {
+            List<Collection> chain = Lists.newArrayList();
+            chain.add(collection);
+            Collection parent = collection;
+            while (parent.getParentId() != null) {
+                parent = this.findById(parent.getParentId());
+                chain.add(parent);
+            }
+            EntityAndParent<Collection> collectionChain = getCollectionChain(chain);
+            result.add(collectionChain);
+
+        }
+        return result;
+    }
+
 }
