@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.marketplace.model.EntityAndTenant;
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore;
@@ -22,6 +23,8 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import mayoapp.dao.MarketplaceProductDAO;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 /**
  * @version $Id$
@@ -40,7 +43,12 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     @Override
     public EntityAndTenant<Product> findBySlugAndTenant(String slug, String tenantSlug)
     {
-        return this.marketplaceProductDAO.findBySlugAndTenant(slug, tenantSlug);
+        EntityAndTenant<Product> result = this.marketplaceProductDAO.findBySlugAndTenant(slug, tenantSlug);
+        if (result != null) {
+            List<AddonGroup> addons = this.marketplaceProductDAO.findAddons(result.getEntity());
+            result.getEntity().setAddons(asMap(addons));
+        }
+        return result;
     }
 
     @Override

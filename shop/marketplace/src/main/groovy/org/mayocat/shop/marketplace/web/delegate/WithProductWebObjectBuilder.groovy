@@ -9,6 +9,7 @@ package org.mayocat.shop.marketplace.web.delegate
 
 import com.google.common.base.Optional
 import org.mayocat.accounts.model.Tenant
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
@@ -50,6 +51,9 @@ trait WithProductWebObjectBuilder
     @Inject
     PlatformSettings platformSettings
 
+    @Inject
+    AddonsWebObjectBuilder addonsWebObjectBuilder
+
     MarketplaceProductWebObject buildProductWebObject(Tenant tenant, EntityData<Product> entityData)
     {
         def catalogSettings = configurationService.getSettings(CatalogSettings.class)
@@ -64,6 +68,9 @@ trait WithProductWebObjectBuilder
         productWebObject.withProduct(entityData.entity, urlFactory,
                 themeFileResolver, catalogSettings, generalSettings, taxesSettings)
         productWebObject.withImages(tenant, productImages, entityData.entity.featuredImageId, platformSettings)
+        if (product.addons.isLoaded()) {
+            productWebObject.withAddons(addonsWebObjectBuilder.build(entityData))
+        }
 
         if (product.virtual) {
             def features = tenantProductStore.get().findFeatures(product)

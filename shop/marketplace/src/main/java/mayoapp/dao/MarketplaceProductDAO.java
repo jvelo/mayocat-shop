@@ -27,7 +27,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @RegisterMapper(ProductAndTenantMapper.class)
 @RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
 @UseStringTemplate3StatementLocator
-public abstract class MarketplaceProductDAO
+public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
 {
     @SqlQuery
     public abstract EntityAndTenant<Product> findBySlugAndTenant(@Bind("slug") String slug,

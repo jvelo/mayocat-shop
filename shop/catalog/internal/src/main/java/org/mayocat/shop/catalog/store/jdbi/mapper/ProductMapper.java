@@ -100,6 +100,7 @@ public class ProductMapper implements ResultSetMapper<Product>
                     product.setFeatures(ids);
                 }
             }
+
             return product;
         } catch (IOException e) {
             throw new SQLException("Failed to de-serialize JSON data", e);
