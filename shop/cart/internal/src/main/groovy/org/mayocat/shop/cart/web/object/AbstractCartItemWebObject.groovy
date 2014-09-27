@@ -25,6 +25,9 @@ class AbstractCartItemWebObject
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     String variant;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    String variantSlug;
+
     String description;
 
     Long quantity;

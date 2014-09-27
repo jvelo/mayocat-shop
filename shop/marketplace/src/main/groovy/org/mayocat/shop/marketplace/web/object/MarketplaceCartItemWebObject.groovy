@@ -23,6 +23,8 @@ class MarketplaceCartItemWebObject extends AbstractCartItemWebObject
 
     MarketplaceShopWebObject shop
 
+    MarketplaceProductWebObject product
+
     def withFeaturedImage(Tenant tenant, Image image, PlatformSettings platformSettings)
     {
         featuredImage = new MarketplaceImageWebObject()

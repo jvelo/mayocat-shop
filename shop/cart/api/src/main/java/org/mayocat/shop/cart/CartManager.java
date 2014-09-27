@@ -19,6 +19,8 @@ public interface CartManager
 {
     Cart getCart();
 
+    Taxable getItem(Integer index);
+
     void addItem(Taxable purchasable);
 
     void addItem(Taxable purchasable, Long quantity);
@@ -26,6 +28,8 @@ public interface CartManager
     void removeItem(Taxable purchasable) throws InvalidCartOperationException;
 
     void removeItem(Integer index) throws InvalidCartOperationException;
+
+    void setItem(Taxable purchasable, Integer index) throws InvalidCartOperationException;
 
     void setQuantity(Taxable purchasable, Long quantity) throws InvalidCartOperationException;
 

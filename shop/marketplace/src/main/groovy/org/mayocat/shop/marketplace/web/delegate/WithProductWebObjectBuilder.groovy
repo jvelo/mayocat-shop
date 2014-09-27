@@ -14,10 +14,8 @@ import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.entity.EntityData
-import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore

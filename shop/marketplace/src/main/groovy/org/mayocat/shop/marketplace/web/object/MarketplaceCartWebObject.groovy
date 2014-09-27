@@ -32,37 +32,5 @@ class MarketplaceCartWebObject extends AbstractCartWebObject
             Optional<ThemeDefinition> themeDefinition)
     {
         items = [] as List<MarketplaceCartItemWebObject>
-
-        cart.items().each({ CartItem cartItem ->
-            MarketplaceCartItemWebObject cartItemWebObject = new MarketplaceCartItemWebObject()
-            Long quantity = cartItem.quantity()
-            Purchasable purchasable = cartItem.item()
-            Purchasable product
-
-            if (purchasable.parent.isPresent()) {
-                if (!purchasable.parent.get().isLoaded()) {
-                    // This should never happen
-                    throw new RuntimeException("Can't build cart with a variant which parent product is not loaded")
-                }
-                product = purchasable.parent.get().get()
-                cartItemWebObject.variant = purchasable.title
-            } else {
-                product = purchasable
-            }
-
-            cartItemWebObject.withPurchasable(product, quantity)
-            cartItemWebObject.withUnitPrice(cartItem.unitPrice(), cart.currency(), locale)
-            cartItemWebObject.withItemTotal(cartItem.total(), cart.currency(), locale)
-
-            Image featuredImage = images.find({ Image image ->
-                image.attachment.parentId == cartItem.item().id
-            })
-            if (featuredImage) {
-                cartItemWebObject.withFeaturedImage(cartItem.tenant(), featuredImage, platformSettings)
-            }
-
-            items << cartItemWebObject
-            numberOfItems += quantity
-        })
     }
 }

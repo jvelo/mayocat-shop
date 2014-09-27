@@ -42,6 +42,21 @@ public class DefaultCartManager implements CartManager
     }
 
     @Override
+    public Taxable getItem(Integer index)
+    {
+        CartContents cart = cartAccessor.getCart();
+        Map<Taxable, Long> items = cart.getItems();
+        Integer i = 0;
+        for (Taxable purchasable : items.keySet()) {
+            if (i == index) {
+                return purchasable;
+            }
+            i++;
+        }
+        return null;
+    }
+
+    @Override
     public void addItem(Taxable purchasable)
     {
         CartContents cart = cartAccessor.getCart();
@@ -80,6 +95,30 @@ public class DefaultCartManager implements CartManager
         }
         if (toRemove != null) {
             removeItem(toRemove);
+        }
+    }
+
+    @Override
+    public void setItem(Taxable newItem, Integer index) throws InvalidCartOperationException
+    {
+        CartContents cart = cartAccessor.getCart();
+        Map<Taxable, Long> items = cart.getItems();
+        Integer i = 0;
+        Long quantity = null;
+        Taxable toReplace = null;
+        for (Taxable purchasable : items.keySet()) {
+            if (i == index) {
+                quantity = items.get(purchasable);
+                toReplace = purchasable;
+            }
+            i++;
+        }
+        if (quantity != null && toReplace != null) {
+            cart.replaceItem(toReplace, newItem, quantity);
+            cartAccessor.setCart(cart);
+        }
+        else {
+            throw new InvalidCartOperationException();
         }
     }
 

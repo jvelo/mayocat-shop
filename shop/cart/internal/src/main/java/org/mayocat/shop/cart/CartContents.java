@@ -9,6 +9,7 @@ package org.mayocat.shop.cart;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.mayocat.shop.shipping.ShippingOption;
@@ -98,6 +99,19 @@ public class CartContents
         }
 
         LOGGER.debug("Cart now contains {} items", this.items.size());
+    }
+
+    public void replaceItem(Taxable oldKey, Taxable newKey, Long quantity)
+    {
+        LinkedHashMap<Taxable, Long> tmp = new LinkedHashMap<>(this.items);
+        items.clear();
+        for (Map.Entry<Taxable, Long> e : tmp.entrySet()) {
+            if (e.getKey().equals(oldKey)) {
+                items.put(newKey, quantity);
+            } else {
+                items.put(e.getKey(), e.getValue());
+            }
+        }
     }
 
     public Map<Taxable, Long> getItems()

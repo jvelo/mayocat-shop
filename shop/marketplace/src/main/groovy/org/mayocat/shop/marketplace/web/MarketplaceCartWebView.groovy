@@ -32,6 +32,7 @@ import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
+import org.mayocat.shop.marketplace.web.delegate.WithMarketplaceCartWebObjectBuilder
 import org.mayocat.shop.marketplace.web.object.MarketplaceCartWebObject
 import org.mayocat.shop.shipping.ShippingOption
 import org.mayocat.shop.shipping.ShippingService
@@ -58,7 +59,7 @@ import javax.ws.rs.core.Response
 @Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @CompileStatic
-class MarketplaceCartWebView implements Resource
+class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBuilder
 {
     @Inject
     Provider<MarketplaceProductStore> marketplaceProductStore
@@ -183,6 +184,28 @@ class MarketplaceCartWebView implements Resource
                         return Response.status(Response.Status.BAD_REQUEST).build()
                     }
                 }
+                else if (key.startsWith("variant_")) {
+                    try {
+                        Integer index = Integer.valueOf(key.substring("variant_".length()))
+
+                        Product product = (cartManager.getItem(index) as Product).getParent().get().get() as Product
+                        String variantSlug = queryParams.getFirst(key)
+
+                        if (!Strings.isNullOrEmpty(variantSlug)) {
+                            Product variant = productStore.get().findVariant(product, variantSlug)
+                            if (variant == null) {
+                                return Response.status(Response.Status.BAD_REQUEST).build()
+                            }
+                            variant.setParent(product)
+                            product = variant
+                        }
+
+                        cartManager.setItem(product, index);
+                    }
+                    catch (InvalidCartOperationException e) {
+
+                    }
+                }
             }
         }
 
@@ -213,28 +236,7 @@ class MarketplaceCartWebView implements Resource
 
         Map<String, Object> data = new HashMap<String, Object>()
 
-        final Locale locale = generalSettings.locales.mainLocale.value
-
-        List<UUID> featuredImageIds = cart.items()
-                .collect({ CartItem item -> item.item().featuredImageId })
-                .findAll({ UUID id -> id != null }) as List<UUID>
-
-        List<Attachment> attachments =
-                featuredImageIds.isEmpty() ? [] as List<Attachment> : attachmentStore.get().findByIds(featuredImageIds)
-        List<Thumbnail> thumbnails =
-                featuredImageIds.isEmpty() ? [] as List<Thumbnail> :
-                        thumbnailStore.get().findAllForIds(featuredImageIds)
-
-        List<Image> images = attachments.collect({ Attachment attachment ->
-            List<Thumbnail> thumbs = thumbnails.
-                    findAll({ Thumbnail thumbnail -> thumbnail.attachmentId == attachment.id }) as List<Thumbnail>
-            new Image(attachment, thumbs)
-        })
-
-        MarketplaceCartWebObject cartWebObject = new MarketplaceCartWebObject()
-        cartWebObject.withCart(shippingService, cart, locale, images, platformSettings, Optional.absent())
-
-        data.put("cart", cartWebObject)
+        data.put("cart", this.buildCartWebObject(cart))
 
         return new WebView().template("cart.html").data(data)
     }
