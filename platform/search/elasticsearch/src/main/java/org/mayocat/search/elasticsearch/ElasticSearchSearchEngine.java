@@ -255,7 +255,9 @@ public class ElasticSearchSearchEngine implements SearchEngine, Managed, Initial
 
     public void stop() throws Exception
     {
-        this.client.close();
+        if (this.client != null) {
+            this.client.close();
+        }
     }
 
     public Client getClient()

@@ -20,6 +20,7 @@ import org.mayocat.shop.cart.CartBuilder;
 import org.mayocat.shop.cart.CartContents;
 import org.mayocat.shop.cart.CartItemBuilder;
 import org.mayocat.shop.cart.CartLoader;
+import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.mayocat.shop.taxes.Taxable;
 import org.mayocat.shop.taxes.TaxesService;
@@ -82,6 +83,17 @@ public class DefaultCartLoader implements CartLoader
             }
 
             builder.addItem(itemBuilder.build());
+        }
+
+        if (contents.getSelectedShippingOption() != null) {
+            ShippingOption option = contents.getSelectedShippingOption();
+            PriceWithTaxes shipping = new PriceWithTaxes(
+                    option.getPrice(),
+                    option.getPrice(),
+                    BigDecimal.ZERO
+            );
+            builder.setShipping(shipping);
+            builder.selectedShippingOption(option);
         }
 
         builder.itemsTotal(itemsTotal);

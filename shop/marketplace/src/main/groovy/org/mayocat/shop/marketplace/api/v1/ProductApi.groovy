@@ -152,7 +152,6 @@ class ProductApi implements Resource
     @Authorized
     def getProducts(@QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
-            @QueryParam("filter") @DefaultValue("") String filter,
             @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
     {
         List<ProductApiObject> productList = [];
@@ -206,10 +205,9 @@ class ProductApi implements Resource
                         returnedItems: productList.size(),
                         offset: offset,
                         totalItems: totalItems,
-                        urlTemplate: '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&filter=${filter}',
+                        urlTemplate: '${tenantPrefix}/api/products?number=${numberOfItems}&offset=${offset}&titleMatches=${titleMatches}&',
                         urlArguments: [
                                 titleMatches: titleMatches,
-                                filter: filter,
                                 tenantPrefix: webContext.request.tenantPrefix
 
                         ]

@@ -37,20 +37,13 @@ abstract class AbstractCartWebObject
 
     CombinedTaxesWebObject totalTaxes
 
-    boolean hasShipping
+    Boolean hasShipping
 
     PriceWebObject shipping
 
     List<ShippingOptionWebObject> shippingOptions
 
     ShippingOptionWebObject selectedShippingOption
-
-    // See https://github.com/FasterXML/jackson-core/issues/79
-    @JsonIgnore
-    public Boolean isHasShipping()
-    {
-        hasShipping
-    }
 
     def withCart(ShippingService shippingService, Cart cart, Locale locale, List<Image> images = [] as List<Image>,
             PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition = Optional.absent())

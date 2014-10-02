@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.cart.web.object
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import org.mayocat.shop.catalog.web.object.PriceWebObject
 import org.mayocat.shop.shipping.ShippingOption
@@ -25,11 +26,18 @@ class ShippingOptionWebObject
 
     String title;
 
-    boolean selected = false;
+    Boolean selected = false;
 
     String destinations;
 
     DeliveryTimeWebObject deliveryTime;
+
+    // See https://github.com/FasterXML/jackson-core/issues/79
+    @JsonIgnore
+    public Boolean isSelected()
+    {
+        selected
+    }
 
     def withOption(ShippingService service, ShippingOption option, Currency currency, Locale locale)
     {

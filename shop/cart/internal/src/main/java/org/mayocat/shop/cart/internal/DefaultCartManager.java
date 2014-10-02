@@ -8,6 +8,7 @@
 package org.mayocat.shop.cart.internal;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -17,9 +18,13 @@ import org.mayocat.shop.cart.CartContents;
 import org.mayocat.shop.cart.CartLoader;
 import org.mayocat.shop.cart.CartManager;
 import org.mayocat.shop.cart.InvalidCartOperationException;
+import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.shipping.ShippingOption;
+import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.taxes.Taxable;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -33,6 +38,8 @@ public class DefaultCartManager implements CartManager
     @Inject
     private CartLoader cartLoader;
 
+    @Inject
+    private ShippingService shippingService;
 
     @Override
     public Cart getCart()
@@ -62,6 +69,8 @@ public class DefaultCartManager implements CartManager
         CartContents cart = cartAccessor.getCart();
         cart.addItem(purchasable);
         cartAccessor.setCart(cart);
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -70,6 +79,8 @@ public class DefaultCartManager implements CartManager
         CartContents cart = cartAccessor.getCart();
         cart.addItem(purchasable, quantity);
         cartAccessor.setCart(cart);
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -78,6 +89,8 @@ public class DefaultCartManager implements CartManager
         CartContents cart = cartAccessor.getCart();
         cart.removeItem(purchasable);
         cartAccessor.setCart(cart);
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -120,6 +133,8 @@ public class DefaultCartManager implements CartManager
         else {
             throw new InvalidCartOperationException();
         }
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -128,6 +143,8 @@ public class DefaultCartManager implements CartManager
         CartContents cart = cartAccessor.getCart();
         cart.setItem(purchasable, quantity);
         cartAccessor.setCart(cart);
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -154,6 +171,8 @@ public class DefaultCartManager implements CartManager
         CartContents cart = cartAccessor.getCart();
         cart.setSelectedShippingOption(option);
         cartAccessor.setCart(cart);
+
+        this.recalculateShipping();
     }
 
     @Override
@@ -161,30 +180,33 @@ public class DefaultCartManager implements CartManager
     {
         CartContents cart = cartAccessor.getCart();
         cart.empty();
+        cart.setSelectedShippingOption(null);
         cartAccessor.setCart(cart);
     }
 
-    /*
     private void recalculateShipping()
     {
         CartContents cart = cartAccessor.getCart();
 
         // In case shipping has been disabled or cart emptied
-        if (!shippingService.isShippingEnabled() || cartIsEmpty(cart)) {
+        if (!shippingService.isShippingEnabled() || cart.isEmpty()) {
             cart.setSelectedShippingOption(null);
-            cartAccessor.setCart(cart)
-            return
+            cartAccessor.setCart(cart);
+            return;
         }
 
-        if (cart.selectedShippingOption == null) {
+        if (cart.getSelectedShippingOption() == null) {
             // Nothing else to do if we get there
-            return
+            return;
         }
 
-        UUID selectedCarrierId = cart.selectedShippingOption.getCarrierId()
-        cart.setSelectedShippingOption(shippingService.getOption(selectedCarrierId, cart.getItems()))
+        UUID selectedCarrierId = cart.getSelectedShippingOption().getCarrierId();
+        Map<Purchasable, Long> itemsAsPurchasable = Maps.newHashMap();
+        for (Taxable taxable : cart.getItems().keySet()) {
+            itemsAsPurchasable.put(taxable, cart.getItems().get(taxable));
+        }
+        cart.setSelectedShippingOption(shippingService.getOption(selectedCarrierId, itemsAsPurchasable));
 
-        cartAccessor.setCart(cart)
+        cartAccessor.setCart(cart);
     }
-    */
 }
