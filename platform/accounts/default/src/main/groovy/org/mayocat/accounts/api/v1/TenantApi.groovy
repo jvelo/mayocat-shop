@@ -210,6 +210,7 @@ class TenantApi implements Resource, Initializable {
     @Authorized
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
     def addAttachment(@FormDataParam("file") InputStream uploadedInputStream,
                       @FormDataParam("file") FormDataContentDisposition fileDetail,
                       @FormDataParam("filename") String sentFilename,
