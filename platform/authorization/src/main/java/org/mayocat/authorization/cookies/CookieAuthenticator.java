@@ -83,7 +83,7 @@ public class CookieAuthenticator implements Authenticator
             }
             return Optional.absent();
         } catch (EncryptionException e) {
-            this.logger.error("Failed to decrypt cookies", e);
+            this.logger.warn("Failed to decrypt cookies", e);
             return Optional.absent();
         }
     }
