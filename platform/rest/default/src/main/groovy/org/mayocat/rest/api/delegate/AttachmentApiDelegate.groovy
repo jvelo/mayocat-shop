@@ -26,6 +26,7 @@ import org.mayocat.store.InvalidEntityException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
@@ -44,19 +45,23 @@ import javax.ws.rs.core.UriInfo
  * @version $Id$
  */
 @CompileStatic
-class AttachmentApiDelegate
+trait AttachmentApiDelegate
 {
-    private Map<String, MetadataExtractor> extractors
+    @Inject
+    Map<String, MetadataExtractor> extractors
 
-    private Provider<AttachmentStore> attachmentStore
+    @Inject
+    Provider<AttachmentStore> attachmentStore
 
-    private Slugifier slugifier
+    @Inject
+    Slugifier slugifier
 
-    private EntityApiDelegateHandler handler
+    @Inject
+    Logger logger = LoggerFactory.getLogger(AttachmentApiDelegate.class);
 
-    private Closure doAfterAttachmentAdded
+    abstract EntityApiDelegateHandler getHandler()
 
-    private Logger logger = LoggerFactory.getLogger(AttachmentApiDelegate.class);
+    abstract Closure getDoAfterAttachmentAdded()
 
     @Path("{slug}/attachments")
     @Authorized
@@ -81,7 +86,9 @@ class AttachmentApiDelegate
         def created = this.addAttachment(uploadedInputStream, filename, title, description,
                 Optional.of(entity.id))
 
+System.out.println("doAfterAttachmentAdded: " + doAfterAttachmentAdded);
         if (target && created && doAfterAttachmentAdded) {
+            System.out.println("TADA");
             doAfterAttachmentAdded.call(target, entity, filename, created)
         }
 
@@ -130,12 +137,10 @@ class AttachmentApiDelegate
                             .type(MediaType.TEXT_PLAIN_TYPE).build())
         }
 
-        attachment.with {
-            setSlug slug
-            setData new AttachmentData(data)
-            setTitle title
-            setDescription description
-        }
+        attachment.setSlug(slug)
+        attachment.setData(new AttachmentData(data))
+        attachment.setTitle(title)
+        attachment.setDescription(description)
 
         if (parent.isPresent()) {
             attachment.setParentId(parent.get())
@@ -149,7 +154,7 @@ class AttachmentApiDelegate
             def extractor = extractors.get(name)
             // We retrieved the attachment again from DB to have a stream that is not consumed already
             // (potentially each metadata extractor can consume the stream - and they probably will)
-            LoadedAttachment retrieved = this.attachmentStore.get().findAndLoadById(created.id)
+            LoadedAttachment retrieved = attachmentStore.get().findAndLoadById(created.id)
             Optional<Map<String, Object>> result = extractor.extractMetadata(retrieved)
             if (result.isPresent()) {
                 metadata.put(name, result.get())
@@ -158,7 +163,7 @@ class AttachmentApiDelegate
 
         if (!metadata.isEmpty()) {
             created.setMetadata(metadata)
-            this.attachmentStore.get().update(created)
+            attachmentStore.get().update(created)
         }
 
         created

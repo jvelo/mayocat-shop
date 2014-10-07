@@ -11,21 +11,17 @@ import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
-import org.mayocat.Slugifier
 import org.mayocat.attachment.AttachmentLoadingOptions
-import org.mayocat.attachment.MetadataExtractor
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.cms.pages.api.v1.object.PageApiObject
 import org.mayocat.cms.pages.api.v1.object.PageListApiObject
 import org.mayocat.cms.pages.model.Page
 import org.mayocat.cms.pages.store.PageStore
 import org.mayocat.configuration.PlatformSettings
-import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
-import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.attachment.model.Attachment
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
@@ -34,7 +30,6 @@ import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.rest.api.object.Pagination
-import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
@@ -61,11 +56,8 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class PageApi implements Resource, Initializable
+class PageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
-    @Inject
-    EntityDataLoader dataLoader
-
     @Inject
     Provider<PageStore> pageStore;
 
@@ -76,29 +68,10 @@ class PageApi implements Resource, Initializable
     PlatformSettings platformSettings
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Map<String, MetadataExtractor> extractors
-
-    @Inject
-    WebContext context;
-
-    @Inject
-    Slugifier slugifier
-
-    @Inject
     Logger logger
 
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    AttachmentApiDelegate attachmentApi
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    ImageGalleryApiDelegate imageGalleryApi
-
     // Entity handler for delegates
-
-    EntityApiDelegateHandler pageHandler = new EntityApiDelegateHandler() {
+    EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
             return pageStore.get().findBySlug(slug)
@@ -115,28 +88,12 @@ class PageApi implements Resource, Initializable
         }
     }
 
-    void initialize()
-    {
-        attachmentApi = new AttachmentApiDelegate([
-                extractors: extractors,
-                attachmentStore: attachmentStore,
-                slugifier: slugifier,
-                handler: pageHandler,
-                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
-                    switch (target) {
-                        case "image-gallery":
-                            afterImageAddedToGallery(entity as Page, fileName, created)
-                            break;
-                    }
-                }
-        ])
-        imageGalleryApi = new ImageGalleryApiDelegate([
-                dataLoader: dataLoader,
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                handler: pageHandler,
-                context: context
-        ])
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        switch (target) {
+            case "image-gallery":
+                afterImageAddedToGallery(entity as Page, fileName, created)
+                break;
+        }
     }
 
     @GET
@@ -174,14 +131,14 @@ class PageApi implements Resource, Initializable
                 _pagination: new Pagination([
                         numberOfItems: number,
                         returnedItems: pageList.size(),
-                        offset: offset,
-                        totalItems: totalItems,
-                        urlTemplate: '${tenantPrefix}/api/pages?number=${numberOfItems}&offset=${offset}&',
-                        urlArguments: [
+                        offset       : offset,
+                        totalItems   : totalItems,
+                        urlTemplate  : '${tenantPrefix}/api/pages?number=${numberOfItems}&offset=${offset}&',
+                        urlArguments : [
                                 tenantPrefix: context.request.tenantPrefix
                         ]
                 ]),
-                pages: pageList
+                pages      : pageList
         ])
 
         pageListApiObject
@@ -204,10 +161,10 @@ class PageApi implements Resource, Initializable
         List<String> expansions = Strings.isNullOrEmpty(expand) ? [] as List<String> : Arrays.asList(expand.split(","));
 
         def pageApiObject = new PageApiObject([
-                _href: "${context.request.tenantPrefix}/api/pages/${slug}",
+                _href : "${context.request.tenantPrefix}/api/pages/${slug}",
                 _links: [
-                        self: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/pages/${slug}" ]),
-                        images: new LinkApiObject([ href: "${context.request.tenantPrefix}/api/pages/${slug}/images" ])
+                        self  : new LinkApiObject([href: "${context.request.tenantPrefix}/api/pages/${slug}"]),
+                        images: new LinkApiObject([href: "${context.request.tenantPrefix}/api/pages/${slug}/images"])
                 ]
         ])
 
@@ -303,7 +260,6 @@ class PageApi implements Resource, Initializable
             this.pageStore.get().delete(page);
 
             return Response.noContent().build();
-
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();

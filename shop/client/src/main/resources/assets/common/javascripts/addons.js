@@ -409,6 +409,7 @@
                     // Generate a random image list/upload id
                     scope.id = Math.random().toString(36).substring(8);
                     scope.uploading = false;
+                    scope.server = $rootScope.server;
                     var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
                         scope.internalModel = ngModel.$modelValue;
                         clear();
@@ -420,16 +421,19 @@
             }
         }])
 
-        .directive('addonList', ['$timeout', function ($timeout) {
+        .directive('addonList', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
             return {
                 restrict: 'E',
                 scope: {
                     addons: '=',
                     entity: '=',
-                    localized: '=localizedEntity'
+                    localized: '=localizedEntity',
+                    server: '='
                 },
                 templateUrl: '/common/partials/addonList.html',
                 controller: function ($scope) {
+
+                    $scope.server = $rootScope.server;
 
                     // The collapsed index hash maps an array of collapsed sequence items positions to a sequenced addon group
                     $scope.collapsedIndexes = {}

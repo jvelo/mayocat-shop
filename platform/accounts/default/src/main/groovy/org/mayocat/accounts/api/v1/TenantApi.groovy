@@ -12,18 +12,14 @@ import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
-import org.mayocat.Slugifier
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.model.Tenant
-import org.mayocat.attachment.MetadataExtractor
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
-import org.mayocat.context.WebContext
-import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
-import org.mayocat.attachment.model.Attachment
 import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Entity
 import org.mayocat.rest.Resource
@@ -33,10 +29,8 @@ import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
-import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.store.EntityDoesNotExistException
-import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
 import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
@@ -44,7 +38,6 @@ import org.xwiki.component.annotation.Component
 import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
-import javax.inject.Provider
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
@@ -62,14 +55,8 @@ import javax.ws.rs.core.UriInfo
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
-class TenantApi implements Resource, Initializable {
-
-    @Inject
-    WebContext context
-
-    @Inject
-    EntityDataLoader dataLoader
-
+class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
+{
     @Inject
     AccountsService accountsService
 
@@ -77,24 +64,12 @@ class TenantApi implements Resource, Initializable {
     GeneralSettings generalSettings
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Provider<EntityListStore> entityListStore
-
-    @Inject
-    Map<String, MetadataExtractor> extractors
-
-    @Inject
     PlatformSettings platformSettings
-
-    @Inject
-    Slugifier slugifier
 
     @Inject
     Logger logger
 
-    EntityApiDelegateHandler tenantHandler = new EntityApiDelegateHandler() {
+    EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
             return accountsService.findTenant(slug)
@@ -111,39 +86,17 @@ class TenantApi implements Resource, Initializable {
         }
     }
 
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    AttachmentApiDelegate attachmentApi
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    ImageGalleryApiDelegate imageGalleryApi
-
-    void initialize()
-    {
-        attachmentApi = new AttachmentApiDelegate([
-                extractors            : extractors,
-                attachmentStore       : attachmentStore,
-                slugifier             : slugifier,
-                handler               : tenantHandler,
-                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
-                    switch (target) {
-                        case "image-gallery":
-                            imageGalleryApi.afterImageAddedToGallery(entity as Tenant, fileName, created)
-                            break;
-                        case "logo":
-                            def tenant = entity as Tenant
-                            imageGalleryApi.afterImageAddedToGallery(tenant, fileName, created)
-                            tenant.featuredImageId = created.id;
-                            tenantHandler.updateEntity(entity);
-                    }
-                }
-        ])
-        imageGalleryApi = new ImageGalleryApiDelegate([
-                dataLoader     : dataLoader,
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                handler        : tenantHandler,
-                context        : context
-        ])
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        switch (target) {
+            case "image-gallery":
+                afterImageAddedToGallery(entity as Tenant, fileName, created)
+                break;
+            case "logo":
+                def tenant = entity as Tenant
+                afterImageAddedToGallery(tenant, fileName, created)
+                tenant.featuredImageId = created.id;
+                handler.updateEntity(entity);
+        }
     }
 
     @GET
@@ -152,7 +105,7 @@ class TenantApi implements Resource, Initializable {
     def currentTenant()
     {
         Tenant tenant = context.tenant
-        def tenantData = dataLoader.load(tenant)
+        def tenantData =  this.dataLoader.load(tenant)
         TenantApiObject tenantApiObject = new TenantApiObject([
                 _href : "/api/tenant/",
                 _links: [
@@ -176,7 +129,8 @@ class TenantApi implements Resource, Initializable {
     @POST
     @Authorized
     @ExistingTenant
-    public Response updateTenant(TenantApiObject tenantRepresentation) {
+    public Response updateTenant(TenantApiObject tenantRepresentation)
+    {
         Tenant currentTenant = context.tenant
 
         Tenant tenant = tenantRepresentation.toTenant(platformSettings,
@@ -205,28 +159,28 @@ class TenantApi implements Resource, Initializable {
     }
 
     // Delegate to attachments and images API delegates, but without their {{slug}} prefixes (meant for product, pages, etc.)
-
     @Path("attachments")
     @Authorized
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
     def addAttachment(@FormDataParam("file") InputStream uploadedInputStream,
-                      @FormDataParam("file") FormDataContentDisposition fileDetail,
-                      @FormDataParam("filename") String sentFilename,
-                      @FormDataParam("title") String title,
-                      @FormDataParam("description") String description,
-                      @FormDataParam("target") String target,
-                      @Context UriInfo uriInfo)
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("filename") String sentFilename,
+            @FormDataParam("title") String title,
+            @FormDataParam("description") String description,
+            @FormDataParam("target") String target,
+            @Context UriInfo uriInfo)
     {
-        attachmentApi.addAttachment(context.tenant.slug, uploadedInputStream, fileDetail, sentFilename, title, description, target, uriInfo)
+        addAttachment(context.tenant.slug, uploadedInputStream, fileDetail, sentFilename, title, description, target,
+                uriInfo)
     }
 
     @Path("images")
     @GET
     List<ImageApiObject> getImages()
     {
-        imageGalleryApi.getImages(context.tenant.slug)
+        getImages(context.tenant.slug)
     }
 
     @Path("images/{imageSlug}")
@@ -235,7 +189,7 @@ class TenantApi implements Resource, Initializable {
     @Consumes(MediaType.WILDCARD)
     def updateImage(@PathParam("imageSlug") String imageSlug, ImageApiObject image)
     {
-        imageGalleryApi.updateImage(context.tenant.slug, imageSlug, image)
+        updateImage(context.tenant.slug, imageSlug, image)
     }
 
     @Path("images/{imageSlug}")
@@ -243,9 +197,9 @@ class TenantApi implements Resource, Initializable {
     @DELETE
     @Consumes(MediaType.WILDCARD)
     def detachImage(@PathParam("slug") String slug,
-                    @PathParam("imageSlug") String imageSlug)
+            @PathParam("imageSlug") String imageSlug)
     {
-        imageGalleryApi.detachImage(context.tenant.slug, imageSlug)
+        detachImage(context.tenant.slug, imageSlug)
     }
 
     @Path("images/")
@@ -253,6 +207,6 @@ class TenantApi implements Resource, Initializable {
     @POST
     def updateImageGallery(ImageGalleryApiObject gallery)
     {
-        imageGalleryApi.updateImageGallery(context.tenant.slug, gallery)
+        updateImageGallery(context.tenant.slug, gallery)
     }
 }

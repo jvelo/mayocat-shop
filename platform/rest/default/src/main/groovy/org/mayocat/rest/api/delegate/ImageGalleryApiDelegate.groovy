@@ -25,6 +25,7 @@ import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.EntityListStore
 import org.mayocat.store.InvalidEntityException
 
+import javax.inject.Inject
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -37,16 +38,20 @@ import static org.mayocat.attachment.util.AttachmentUtils.isImage
  * @version $Id$
  */
 @CompileStatic
-class ImageGalleryApiDelegate
+trait ImageGalleryApiDelegate
 {
+    @Inject
     EntityDataLoader dataLoader
 
-    EntityListStore entityListStore
+    @Inject
+    protected EntityListStore entityListStore
 
-    AttachmentStore attachmentStore
+    @Inject
+    protected AttachmentStore attachmentStore
 
-    EntityApiDelegateHandler handler
+    abstract EntityApiDelegateHandler getHandler()
 
+    @Inject
     WebContext context
 
     @Path("{slug}/images")
@@ -93,11 +98,9 @@ class ImageGalleryApiDelegate
             return Response.status(404).build();
         }
         try {
-            attachment.with {
-                setTitle image.title
-                setDescription image.description
-                setLocalizedVersions image._localized
-            }
+            attachment.setTitle(image.title)
+            attachment.setDescription(image.description)
+            attachment.setLocalizedVersions(image._localized)
             attachmentStore.update(attachment);
             return Response.noContent().build();
         } catch (EntityDoesNotExistException e) {

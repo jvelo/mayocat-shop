@@ -60,12 +60,8 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
-class ProductApi implements Resource
+class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
-
-    @Inject
-    EntityDataLoader dataLoader
-
     @Inject
     Provider<MarketplaceProductStore> productStore
 
@@ -82,29 +78,14 @@ class ProductApi implements Resource
     ConfigurationService configurationService
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Map<String, MetadataExtractor> extractors
-
-    @Inject
-    Slugifier slugifier
-
-    @Inject
     Logger logger
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    AttachmentApiDelegate attachmentApi
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    ImageGalleryApiDelegate imageGalleryApi
 
     @Inject
     GeneralSettings generalSettings
 
     // Entity handler for delegates
 
-    EntityApiDelegateHandler productHandler = new EntityApiDelegateHandler() {
+    EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
             return null;
@@ -123,28 +104,12 @@ class ProductApi implements Resource
         }
     }
 
-    void initialize()
-    {
-        attachmentApi = new AttachmentApiDelegate([
-                extractors: extractors,
-                attachmentStore: attachmentStore,
-                slugifier: slugifier,
-                handler: productHandler,
-                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
-                    switch (target) {
-                        case "image-gallery":
-                            afterImageAddedToGallery(entity as Product, fileName, created)
-                            break;
-                    }
-                }
-        ])
-        imageGalleryApi = new ImageGalleryApiDelegate([
-                dataLoader: dataLoader,
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                handler: productHandler,
-                context: webContext
-        ])
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        switch (target) {
+            case "image-gallery":
+                afterImageAddedToGallery(entity as Product, fileName, created)
+                break;
+        }
     }
 
     @GET

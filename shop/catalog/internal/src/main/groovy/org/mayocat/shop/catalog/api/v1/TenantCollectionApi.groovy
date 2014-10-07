@@ -10,14 +10,9 @@ package org.mayocat.shop.catalog.api.v1
 import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
-import org.mayocat.Slugifier
-import org.mayocat.attachment.MetadataExtractor
 import org.mayocat.attachment.model.Attachment
-import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
-import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
-import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Entity
@@ -56,11 +51,8 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class TenantCollectionApi implements Resource, Initializable
+class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
-    @Inject
-    EntityDataLoader dataLoader
-
     @Inject
     Provider<CollectionStore> collectionStore
 
@@ -71,29 +63,11 @@ class TenantCollectionApi implements Resource, Initializable
     CatalogService catalogService
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Map<String, MetadataExtractor> extractors
-
-    @Inject
-    Slugifier slugifier
-
-    @Inject
-    WebContext context
-
-    @Inject
     Logger logger
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    AttachmentApiDelegate attachmentApi
-
-    @Delegate(methodAnnotations = true, parameterAnnotations = true)
-    ImageGalleryApiDelegate imageGalleryApi
 
     // Entity handler for delegates
 
-    EntityApiDelegateHandler collectionHandler = new EntityApiDelegateHandler() {
+    EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
             return collectionStore.get().findBySlug(slug)
@@ -110,30 +84,13 @@ class TenantCollectionApi implements Resource, Initializable
         }
     }
 
-    void initialize()
-    {
-        attachmentApi = new AttachmentApiDelegate([
-                extractors: extractors,
-                attachmentStore: attachmentStore,
-                slugifier: slugifier,
-                handler: collectionHandler,
-                doAfterAttachmentAdded: { String target, Entity entity, String fileName, Attachment created ->
-                    switch (target) {
-                        case "image-gallery":
-                            afterImageAddedToGallery(entity as org.mayocat.shop.catalog.model.Collection, fileName, created)
-                            break;
-                    }
-                }
-        ])
-        imageGalleryApi = new ImageGalleryApiDelegate([
-                dataLoader: dataLoader,
-                attachmentStore: attachmentStore.get(),
-                entityListStore: entityListStore.get(),
-                handler: collectionHandler,
-                context: context
-        ])
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        switch (target) {
+            case "image-gallery":
+                afterImageAddedToGallery(entity as org.mayocat.shop.catalog.model.Collection, fileName, created)
+                break;
+        }
     }
-
 
     @GET
     @Timed

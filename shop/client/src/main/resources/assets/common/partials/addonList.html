@@ -53,7 +53,7 @@
                 </ul>
                 <div class='collapsed' ng-if="isCollapsed(group.key, $index)">
                     <!-- Image preview -->
-                    <img ng-src="/images/{{getCollapsedImage(group.key, $index)}}?width=40&height=40"
+                    <img ng-src="{{server}}/images/{{getCollapsedImage(group.key, $index)}}?width=40&height=40"
                          ng-if="getCollapsedImage(group.key, $index)" />
                     <!-- Placeholder if group has one image field definition but element image is not defined -->
                     <img ng-src="/common/images/addon-image-placeholder.jpg"
