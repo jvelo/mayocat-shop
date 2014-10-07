@@ -7,16 +7,19 @@
  */
 package org.mayocat.shop.marketplace.api.v1
 
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
-import org.mayocat.accounts.api.v1.TenantApi
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.accounts.store.TenantStore
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.cms.home.model.HomePage
+import org.mayocat.cms.home.store.HomePageStore
 import org.mayocat.configuration.ConfigurationService
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
@@ -28,11 +31,11 @@ import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
-import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.shop.catalog.api.v1.object.HomePageApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
+import org.mayocat.shop.catalog.api.v1.object.ShopHomePageApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
+import org.mayocat.shop.marketplace.api.v1.object.MarketplaceHomePageApiObject
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.EntityListStore
@@ -46,6 +49,7 @@ import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 /**
  * @version $Id$
@@ -79,6 +83,9 @@ class HomePageApi implements Resource
     Provider<AttachmentStore> attachmentStore
 
     @Inject
+    Provider<HomePageStore> homePageStore
+
+    @Inject
     WebContext context
 
     @Inject
@@ -87,10 +94,13 @@ class HomePageApi implements Resource
     @Inject
     GeneralSettings generalSettings
 
+    @Inject
+    PlatformSettings platformSettings
+
     @GET
     def getHomePage()
     {
-        def homePageApiObject = new HomePageApiObject()
+        def homePageApiObject = new MarketplaceHomePageApiObject()
 
         // 1. Retrieve featured products
 
@@ -186,11 +196,19 @@ class HomePageApi implements Resource
             homePageApiObject.featuredTenants = featuredTenants
         }
 
+        // Home
+
+        HomePage homePage = homePageStore.get().getOrCreate(new HomePage())
+
+        if (homePage.getAddons().isLoaded()) {
+            homePageApiObject.withAddons(homePage.addons.get())
+        }
+
         homePageApiObject
     }
 
     @POST
-    def updateHomePage(HomePageApiObject homePageApiObject)
+    def updateHomePage(MarketplaceHomePageApiObject homePageApiObject)
     {
         // 1. Update featured products
 
@@ -229,6 +247,13 @@ class HomePageApi implements Resource
 
         homeFeaturedTenantsList.entities = tenantIds.findAll({ UUID id -> id != null }).toList()
         entityListStore.get().update(homeFeaturedTenantsList)
+
+        // Home page
+
+        HomePage homePage = homePageApiObject.toHomePage(platformSettings, Optional.absent())
+        homePageStore.get().update(homePage)
+
+        return Response.ok().build()
     }
 
     DateTimeZone getGlobalTimeZone()

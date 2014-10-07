@@ -47,7 +47,7 @@ public interface EntityDAO< E extends Entity >
         "INSERT INTO entity (id, slug, type, tenant_id) SELECT :entity.id, :entity.slug, :type, :tenantId " +
         "WHERE NOT EXISTS (SELECT 1 FROM entity where slug = :entity.slug AND type = :type AND tenant_id IS NOT DISTINCT FROM :tenantId)"
     )
-    Integer createEntityIfItDoesNotExist(@BindBean("entity") Child entity, @Bind("type") String type,
+    Integer createEntityIfItDoesNotExist(@BindBean("entity") Entity entity, @Bind("type") String type,
             @Bind("tenantId") UUID tenantId);
 
 

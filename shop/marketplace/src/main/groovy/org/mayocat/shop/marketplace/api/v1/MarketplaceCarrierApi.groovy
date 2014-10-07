@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.marketplace.api.v1
 
+import groovy.transform.CompileStatic
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.shop.shipping.rest.resource.CarrierResource
 import org.xwiki.component.annotation.Component
@@ -23,6 +24,7 @@ import javax.ws.rs.core.MediaType
 @Path("/api/shipping/carrier/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@CompileStatic
 class MarketplaceCarrierApi extends CarrierResource
 {
 }

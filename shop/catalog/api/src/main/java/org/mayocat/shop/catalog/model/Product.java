@@ -26,7 +26,6 @@ import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.HasModel;
 import org.mayocat.model.HasType;
 import org.mayocat.model.Localized;
-import org.mayocat.model.Owned;
 import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizedField;

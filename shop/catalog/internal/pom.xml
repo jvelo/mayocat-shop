@@ -48,6 +48,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mayocat.cms</groupId>
+            <artifactId>mayocat-cms-home</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-store-api</artifactId>
             <version>${project.version}</version>

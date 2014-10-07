@@ -60,6 +60,7 @@
         <module>pages</module>
         <module>news</module>
         <module>contact</module>
+        <module>home</module>
     </modules>
 
     <build>

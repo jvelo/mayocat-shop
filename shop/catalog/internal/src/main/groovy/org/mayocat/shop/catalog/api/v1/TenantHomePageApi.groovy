@@ -18,8 +18,8 @@ import org.mayocat.image.store.ThumbnailStore
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.shop.catalog.api.v1.object.HomePageApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
+import org.mayocat.shop.catalog.api.v1.object.ShopHomePageApiObject
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.taxes.configuration.TaxesSettings
@@ -65,7 +65,7 @@ class TenantHomePageApi implements Resource
     @GET
     def getHomePage()
     {
-        def homePageApiObject = new HomePageApiObject()
+        def homePageApiObject = new ShopHomePageApiObject()
         def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
         if (lists.isEmpty() || lists.first().entities.isEmpty()) {
             homePageApiObject.featuredProducts = []
@@ -110,7 +110,7 @@ class TenantHomePageApi implements Resource
 
 
     @POST
-    def updateHomePage(HomePageApiObject homePageApiObject)
+    def updateHomePage(ShopHomePageApiObject homePageApiObject)
     {
         def homeFeaturedList = entityListStore.get().getOrCreate(new EntityList([
                 slug: "home-featured-products",

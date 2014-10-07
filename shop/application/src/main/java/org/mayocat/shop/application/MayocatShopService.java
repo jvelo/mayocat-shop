@@ -8,6 +8,7 @@
 package org.mayocat.shop.application;
 
 import org.mayocat.application.AbstractService;
+import org.mayocat.cms.home.HomePageModule;
 import org.mayocat.cms.news.NewsModule;
 import org.mayocat.cms.pages.PagesModule;
 import org.mayocat.flyway.FlywayBundle;
@@ -80,6 +81,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
         addModule(new PagesModule());
         addModule(new NewsModule());
+        addModule(new HomePageModule());
         addModule(new CatalogModule());
     }
 

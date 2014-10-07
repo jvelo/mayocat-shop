@@ -8,6 +8,7 @@
 package org.mayocat.shop.marketplace.web.delegate
 
 import com.google.common.base.Optional
+import groovy.transform.CompileStatic
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.configuration.ConfigurationService
@@ -32,6 +33,7 @@ import javax.inject.Provider
 /**
  * @version $Id$
  */
+@CompileStatic
 trait WithProductWebObjectBuilder
 {
     @Inject
