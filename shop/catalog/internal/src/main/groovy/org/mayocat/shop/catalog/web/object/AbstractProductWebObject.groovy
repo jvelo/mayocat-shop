@@ -16,6 +16,7 @@ import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
 import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.front.util.ContextUtils
+import org.mayocat.shop.taxes.configuration.Rate
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.FeatureDefinition
 import org.mayocat.theme.ThemeDefinition
@@ -108,7 +109,16 @@ class AbstractProductWebObject
             def currency = catalogSettings.currencies.mainCurrency.value;
 
             // Calculate incl. price
-            def vatRate = taxesSettings.vat.value.defaultRate
+            BigDecimal vatRate = null
+            if (product.vatRateId.isPresent()) {
+                vatRate = taxesSettings.vat.value.otherRates.find({ Rate rate ->
+                    rate.id == product.vatRateId.get()
+                })?.value
+            }
+            if (!vatRate) {
+                vatRate = taxesSettings.vat.value.defaultRate
+            }
+
             def priceInclusiveOfTaxes = product.unitPrice.multiply(BigDecimal.ONE.add(vatRate))
 
             unitPrice = new PriceWebObject()
