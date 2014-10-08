@@ -10,6 +10,8 @@ package org.mayocat.shop.marketplace.web
 import groovy.transform.CompileStatic
 import org.mayocat.accounts.store.TenantStore
 import org.mayocat.attachment.AttachmentLoadingOptions
+import org.mayocat.cms.home.model.HomePage
+import org.mayocat.cms.home.store.HomePageStore
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
@@ -22,6 +24,7 @@ import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.marketplace.web.delegate.WithProductWebObjectBuilder
+import org.mayocat.shop.marketplace.web.object.MarketplaceHomeWebObject
 import org.mayocat.shop.marketplace.web.object.MarketplaceProductWebObject
 import org.mayocat.store.EntityListStore
 import org.mayocat.theme.ThemeFileResolver
@@ -46,6 +49,9 @@ import javax.ws.rs.core.MediaType
 @CompileStatic
 class MarketplaceHomeWebView implements Resource, WithProductWebObjectBuilder
 {
+    @Inject
+    Provider<HomePageStore> homePageStore
+
     @Inject
     Provider<ProductStore> productStore
 
@@ -76,7 +82,9 @@ class MarketplaceHomeWebView implements Resource, WithProductWebObjectBuilder
     @GET
     def getHomePage()
     {
-        def context = [:]
+        MarketplaceHomeWebObject homeWebObject = new MarketplaceHomeWebObject()
+        HomePage homePage = homePageStore.get().getOrCreate(new HomePage())
+        EntityData<HomePage> homeData = dataLoader.load(homePage, StandardOptions.LOCALIZE)
 
         def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
         if (!lists.isEmpty() && !lists.first().entities.isEmpty()) {
@@ -88,7 +96,7 @@ class MarketplaceHomeWebView implements Resource, WithProductWebObjectBuilder
             List<EntityData<Product>> productsData = dataLoader.
                     load(sorted, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY, StandardOptions.LOCALIZE)
 
-            def list = []
+            List<MarketplaceProductWebObject> list = []
 
             productsData.each({ EntityData<Product> productData ->
                 Product product = productData.entity
@@ -97,9 +105,11 @@ class MarketplaceHomeWebView implements Resource, WithProductWebObjectBuilder
                 list << productWebObject
             })
 
-            context.put("featuredProducts", list);
+            homeWebObject.featuredProducts = list
         }
 
-        return new WebView().data([home: context] as Map<String, Object>);
+        homeWebObject.addons = addonsWebObjectBuilder.build(homeData)
+
+        return new WebView().data([home: homeWebObject] as Map<String, Object>);
     }
 }

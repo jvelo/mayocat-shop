@@ -76,6 +76,9 @@ public class DefaultAddonsWebObjectBuilder implements AddonsWebObjectBuilder
             AddonGroup group = addons.get(groupName);
             Map<String, Map<String, Object>> model = group.getModel();
             Object value = group.getValue();
+            if (value == null) {
+                continue;
+            }
             Object resultValue = null;
 
             if (List.class.isAssignableFrom(value.getClass())) {

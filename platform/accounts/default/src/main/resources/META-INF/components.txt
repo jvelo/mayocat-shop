@@ -15,3 +15,4 @@ org.mayocat.accounts.api.v1.TenantMeApi
 org.mayocat.accounts.web.LoginWebView
 org.mayocat.accounts.web.LogoutWebView
 org.mayocat.accounts.url.TenantURLFactory
+org.mayocat.accounts.TenantDataLoader
