@@ -21,6 +21,7 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 
 /**
@@ -58,6 +59,10 @@ public class DefaultEntityDataLoader implements EntityDataLoader, Initializable
         {
             public EntityData<E> apply(final E input)
             {
+                if (input == null) {
+                    // Garbage in, garbage out
+                    return null;
+                }
                 E actual;
                 if (localize && Localized.class.isAssignableFrom(input.getClass())) {
                     actual = (E) localizationService.localize((Localized) input);
@@ -66,7 +71,7 @@ public class DefaultEntityDataLoader implements EntityDataLoader, Initializable
                 }
                 return new EntityData<E>(actual);
             }
-        }).toList();
+        }).filter(Predicates.notNull()).toList();
 
         for (DataLoaderAssistant assistant : assistants) {
             assistant.loadList(data, options);

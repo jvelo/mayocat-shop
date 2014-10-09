@@ -141,7 +141,7 @@ public class DefaultAddonsWebObjectBuilder implements AddonsWebObjectBuilder
         }
 
         // Then, in theme
-        if (context.getTheme().getDefinition() != null &&
+        if (context.getTheme() != null && context.getTheme().getDefinition() != null &&
                 context.getTheme().getDefinition().getAddons().containsKey(groupName))
         {
             return Optional.of(context.getTheme().getDefinition().getAddons().get(groupName));
