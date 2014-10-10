@@ -32,6 +32,10 @@ public interface AttachmentStore extends Store<Attachment, UUID>, EntityStore
 
     LoadedAttachment findAndLoadBySlugAndExtension(String fileName, String extension);
 
+    Attachment findBySlugAndExtension(String fileName, String extension);
+
+    Attachment findByTenantAndSlugAndExtension(String tenantSlug, String fileName, String extension);
+
     List<Attachment> findAllChildrenOf(Entity parent);
 
     List<Attachment> findAllChildrenOf(Entity parent, List<String> extensions);

@@ -9,7 +9,10 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
+import com.yammer.metrics.Metrics
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.Timer
+import com.yammer.metrics.core.TimerContext
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.attachment.AttachmentLoadingOptions
@@ -44,6 +47,7 @@ import org.mayocat.theme.FeatureDefinition
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.TypeDefinition
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
@@ -136,7 +140,14 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             totalItems = productStore.get().countAllNotVariants()
         }
 
+        Timer timer = Metrics.newTimer(TenantProductApi.class, "getProducts timer");
+        TimerContext context = timer.time();
+
         List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
+
+        Logger logger = LoggerFactory.getLogger(TenantProductApi.class);
+        context.stop()
+        logger.info("\n\n\tLoad data in {} ms\n", (int) Math.round(timer.min()));
 
         productsData.each({ EntityData<Product> productData ->
             Product product = productData.entity

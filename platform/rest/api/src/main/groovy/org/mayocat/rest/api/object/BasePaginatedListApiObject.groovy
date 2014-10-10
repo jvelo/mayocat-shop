@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
+import groovy.text.TemplateEngine
 import groovy.transform.CompileStatic
 
 /**
@@ -21,6 +23,21 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class BasePaginatedListApiObject
 {
+    @JsonIgnore
+    static TemplateEngine templateEngine = new SimpleTemplateEngine()
+
+    @JsonIgnore
+    static Map<String, Template> templateCache = [:]
+
+    @JsonIgnore
+    static Template getTemplate(String template)
+    {
+        if (!templateCache.containsKey(template)) {
+            templateCache.put(template, templateEngine.createTemplate(template as String))
+        }
+        templateCache.get(template)
+    }
+
     Pagination _pagination;
 
     @JsonIgnore
@@ -47,38 +64,36 @@ class BasePaginatedListApiObject
             _links = [:]
 
             if (_pagination) {
-                def templateEngine = new SimpleTemplateEngine()
-
                 if (!_href) {
                     Map<String, String> arguments = [
-                            offset: _pagination.offset as String,
+                            offset       : _pagination.offset as String,
                             numberOfItems: _pagination.numberOfItems as String
                     ]
                     arguments.putAll(_pagination.urlArguments)
-                    _href = templateEngine.createTemplate(_pagination.urlTemplate as String).make(arguments).toString()
+                    _href = getTemplate(_pagination.urlTemplate).make(arguments).toString()
                 }
 
                 if (_pagination.offset + _pagination.numberOfItems < _pagination.totalItems) {
                     // there is a next page
                     Map<String, String> arguments = [
-                            offset: _pagination.offset + _pagination.numberOfItems as String,
+                            offset       : _pagination.offset + _pagination.numberOfItems as String,
                             numberOfItems: _pagination.numberOfItems as String
                     ]
                     arguments.putAll(_pagination.urlArguments)
                     _links.nextPage = new LinkApiObject([
-                        href: templateEngine.createTemplate(_pagination.urlTemplate as String).make(arguments).toString()
+                            href: getTemplate(_pagination.urlTemplate).make(arguments).toString()
                     ])
                 }
 
                 if (_pagination.offset > 0) {
                     // there is a next page
                     Map<String, String> arguments = [
-                            offset: (_pagination.offset - _pagination.numberOfItems) as String,
+                            offset       : (_pagination.offset - _pagination.numberOfItems) as String,
                             numberOfItems: _pagination.numberOfItems as String
                     ]
                     arguments.putAll(_pagination.urlArguments)
                     _links.previousPage = new LinkApiObject([
-                            href: templateEngine.createTemplate(_pagination.urlTemplate as String).make(arguments).toString()
+                            href: getTemplate(_pagination.urlTemplate).make(arguments).toString()
                     ])
                 }
             }

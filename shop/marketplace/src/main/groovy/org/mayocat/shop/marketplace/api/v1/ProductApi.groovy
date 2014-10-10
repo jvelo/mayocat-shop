@@ -8,7 +8,10 @@
 package org.mayocat.shop.marketplace.api.v1
 
 import com.google.common.base.Strings
+import com.yammer.metrics.Metrics
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.Timer
+import com.yammer.metrics.core.TimerContext
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.Slugifier
@@ -44,6 +47,7 @@ import org.mayocat.shop.marketplace.store.MarketplaceProductStore
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.EntityListStore
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
@@ -179,6 +183,8 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
                 ]),
                 products: productList
         ])
+
+
 
         productListResult
     }

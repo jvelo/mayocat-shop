@@ -16,12 +16,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.ServletContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.image.ImageService;
@@ -69,12 +66,12 @@ public class AbstractImageResource
         }
 
         String fileName = slug + "." + extension;
-        LoadedAttachment file;
+        Attachment file;
 
         if (tenantSlug == null) {
-            file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+            file = this.attachmentStore.get().findBySlugAndExtension(slug, extension);
         } else {
-            file = this.attachmentStore.get().findAndLoadByTenantAndSlugAndExtension(tenantSlug, slug, extension);
+            file = this.attachmentStore.get().findByTenantAndSlugAndExtension(tenantSlug, slug, extension);
         }
 
         if (file == null) {
@@ -125,11 +122,11 @@ public class AbstractImageResource
         if (imageOptions.isPresent()) {
 
             String fileName = slug + "." + extension;
-            LoadedAttachment file;
+            Attachment file;
             if (tenantSlug == null) {
-                file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
+                file = this.attachmentStore.get().findBySlugAndExtension(slug, extension);
             } else {
-                file = this.attachmentStore.get().findAndLoadByTenantAndSlugAndExtension(tenantSlug, slug, extension);
+                file = this.attachmentStore.get().findByTenantAndSlugAndExtension(tenantSlug, slug, extension);
             }
 
             if (file == null) {
@@ -169,7 +166,8 @@ public class AbstractImageResource
                     // data stream has been consumed, load it again
                     file = this.attachmentStore.get().findAndLoadBySlugAndExtension(slug, extension);
 
-                    return Response.ok(file.getData().getStream(), servletContext.getMimeType(fileName))
+                    LoadedAttachment loadedAttachment = attachmentStore.get().findAndLoadById(file.getId());
+                    return Response.ok(loadedAttachment.getData().getStream(), servletContext.getMimeType(fileName))
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();
                 }

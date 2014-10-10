@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.mayocat.attachment.model.Attachment;
-import org.mayocat.attachment.model.LoadedAttachment;
 import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;
@@ -23,11 +22,11 @@ import com.google.common.base.Optional;
 @Role
 public interface ImageService
 {
-    InputStream getImage(LoadedAttachment attachment, Dimension dimension) throws IOException;
+    InputStream getImage(Attachment attachment, Dimension dimension) throws IOException;
 
-    InputStream getImage(LoadedAttachment attachment, Dimension dimension, Rectangle rectangle) throws IOException;
+    InputStream getImage(Attachment attachment, Dimension dimension, Rectangle rectangle) throws IOException;
 
-    InputStream getImage(LoadedAttachment attachment, Rectangle rectangle) throws IOException;
+    InputStream getImage(Attachment attachment, Rectangle rectangle) throws IOException;
 
     /**
      * Computes the largest rectangle of the passed image that respect the passed dimension ratio. Cropped areas are
@@ -38,7 +37,7 @@ public interface ImageService
      * @return the image boundaries as an optional rectangle. If the rectangle is absent, it means there is an exact
      * match between the dimension passed and the image aspect ratio, so that no cropping is necessary.
      */
-    Optional<Rectangle> getFittingRectangle(LoadedAttachment attachment, Dimension dimension) throws IOException;
+    Optional<Rectangle> getFittingRectangle(Attachment attachment, Dimension dimension) throws IOException;
 
     /**
      * Computes the dimension (width and height) an image will have, respecting its original aspect ratio when adapting
@@ -52,7 +51,7 @@ public interface ImageService
      * @param height an option of a height of the new image dimension
      * @return either a new dimension or an absent option if the dimensions matches exactly the original image
      */
-    Optional<Dimension> newDimension(LoadedAttachment image, Optional<Integer> width, Optional<Integer> height)
+    Optional<Dimension> newDimension(Attachment image, Optional<Integer> width, Optional<Integer> height)
             throws IOException;
 
     Optional<Dimension> newDimension(Rectangle boundaries, Optional<Integer> width, Optional<Integer> height)

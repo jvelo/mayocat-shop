@@ -161,31 +161,43 @@ public class DBIAttachmentStore extends DBIEntityStore implements AttachmentStor
     @Override
     public List<Attachment> findByIds(List<UUID> ids)
     {
-        return this.dao.findByIds(ATTACHMENT_TABLE_NAME, ids);
+        return this.dao.findAttachmentsByIds(ids);
     }
 
     @Override
     public Attachment findById(UUID id)
     {
-        return this.dao.findById(ATTACHMENT_TABLE_NAME, id);
+        return this.dao.findById(id);
     }
 
     @Override
     public LoadedAttachment findAndLoadById(UUID id)
     {
-        return this.dao.findById(id, getTenant());
+        return this.dao.findAndLoadById(id);
     }
 
     @Override
     public LoadedAttachment findAndLoadByTenantAndSlugAndExtension(String tenantSlug, String fileName, String extension)
     {
-        return this.dao.findByTenantAndFileNameAndExtension(tenantSlug, fileName, extension);
+        return this.dao.findAndLoadByTenantAndFileNameAndExtension(tenantSlug, fileName, extension);
     }
 
     @Override
     public LoadedAttachment findAndLoadBySlugAndExtension(String fileName, String extension)
     {
+        return this.dao.findAndLoadByFileNameAndExtension(fileName, extension, getTenant());
+    }
+
+    @Override
+    public Attachment findBySlugAndExtension(String fileName, String extension)
+    {
         return this.dao.findByFileNameAndExtension(fileName, extension, getTenant());
+    }
+
+    @Override
+    public Attachment findByTenantAndSlugAndExtension(String tenantSlug, String fileName, String extension)
+    {
+        return this.dao.findByTenantAndFileNameAndExtension(tenantSlug, fileName, extension);
     }
 
     @Override

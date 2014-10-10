@@ -18,10 +18,12 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-import org.mayocat.attachment.model.LoadedAttachment;
-import org.mayocat.files.FileManager;
 import org.mayocat.attachment.model.Attachment;
+import org.mayocat.attachment.model.LoadedAttachment;
+import org.mayocat.attachment.store.AttachmentStore;
+import org.mayocat.files.FileManager;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
@@ -45,6 +47,9 @@ public class DefaultImageService implements ImageService, Initializable
     @Inject
     private Logger logger;
 
+    @Inject
+    private Provider<AttachmentStore> attachmentStore;
+
     private Path imageFileCache;
 
     private Function<InputStream, Image> loadImage;
@@ -63,7 +68,7 @@ public class DefaultImageService implements ImageService, Initializable
         }
     }
 
-    public InputStream getImage(LoadedAttachment attachment, Dimension dimension) throws IOException
+    public InputStream getImage(Attachment attachment, Dimension dimension) throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
 
@@ -71,7 +76,8 @@ public class DefaultImageService implements ImageService, Initializable
 
         File dimensionFile = imageDirectory.resolve(dimensionFileName).toFile();
         if (!dimensionFile.isFile()) {
-            Image image = attachment.getData().getObject(loadImage, Image.class);
+            LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+            Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
             RenderedImage scaled;
             scaled = imageProcessor.scaleImage(image, dimension);
             ImageIO.write(scaled, attachment.getExtension(), dimensionFile);
@@ -79,7 +85,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    public InputStream getImage(LoadedAttachment attachment, Dimension dimension, Rectangle rectangle)
+    public InputStream getImage(Attachment attachment, Dimension dimension, Rectangle rectangle)
             throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
@@ -90,7 +96,8 @@ public class DefaultImageService implements ImageService, Initializable
 
         File dimensionFile = imageDirectory.resolve(boxDirectory).resolve(dimensionFileName).toFile();
         if (!dimensionFile.isFile()) {
-            Image image = attachment.getData().getObject(loadImage, Image.class);
+            LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+            Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
             RenderedImage cropped = imageProcessor.cropImage(image, rectangle);
             RenderedImage scaled = imageProcessor.scaleImage((Image) cropped, dimension);
             dimensionFile.mkdirs();
@@ -100,7 +107,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    public InputStream getImage(LoadedAttachment attachment, Rectangle rectangle)
+    public InputStream getImage(Attachment attachment, Rectangle rectangle)
             throws IOException
     {
         Path imageDirectory = getImageCacheDirectoryPath(attachment);
@@ -111,7 +118,8 @@ public class DefaultImageService implements ImageService, Initializable
 
         File dimensionFile = imageDirectory.resolve(boxDirectory).resolve(dimensionFileName).toFile();
         if (!dimensionFile.isFile()) {
-            Image image = attachment.getData().getObject(loadImage, Image.class);
+            LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+            Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
             RenderedImage cropped = imageProcessor.cropImage(image, rectangle);
             dimensionFile.mkdirs();
             ImageIO.write(cropped, attachment.getExtension(), dimensionFile);
@@ -120,7 +128,7 @@ public class DefaultImageService implements ImageService, Initializable
         return new java.io.FileInputStream(dimensionFile);
     }
 
-    public Optional<Rectangle> getFittingRectangle(LoadedAttachment attachment, Dimension dimension) throws IOException
+    public Optional<Rectangle> getFittingRectangle(Attachment attachment, Dimension dimension) throws IOException
     {
         int imageWidth = -1;
         int imageHeight = -1;
@@ -130,10 +138,10 @@ public class DefaultImageService implements ImageService, Initializable
 
             imageWidth = (int) attachment.getMetadata().get("imageDimensions").get("width");
             imageHeight = (int) attachment.getMetadata().get("imageDimensions").get("height");
-        }
-        else {
+        } else {
             // Fallback on loading the image
-            Image image = attachment.getData().getObject(loadImage, Image.class);
+            LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+            Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
 
             imageWidth = image.getWidth(null);
             imageHeight = image.getHeight(null);
@@ -172,10 +180,11 @@ public class DefaultImageService implements ImageService, Initializable
         return Optional.of(new Rectangle(x, y, width, height));
     }
 
-    public Optional<Dimension> newDimension(LoadedAttachment attachment, Optional<Integer> width, Optional<Integer> height)
+    public Optional<Dimension> newDimension(Attachment attachment, Optional<Integer> width, Optional<Integer> height)
             throws IOException
     {
-        Image image = attachment.getData().getObject(loadImage, Image.class);
+        LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+        Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
 
         int imageWidth = image.getWidth(null);
         int imageHeight = image.getHeight(null);

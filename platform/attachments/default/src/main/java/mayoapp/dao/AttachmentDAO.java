@@ -49,6 +49,9 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
     List<Attachment> findAttachmentsOfEntities(@BindIn("ids") List<UUID> ids);
 
     @SqlQuery
+    List<Attachment> findAttachmentsByIds(@BindIn("ids") List<UUID> ids);
+
+    @SqlQuery
     List<Attachment> findAttachmentsOfEntityWithExtensions(@BindBean("entity") Entity entity,
             @BindIn("extensions") List<String> extensions);
 
@@ -57,16 +60,27 @@ public interface AttachmentDAO extends EntityDAO<Attachment>, Transactional<Atta
             @BindIn("extensions") List<String> extensions);
 
     @SqlQuery
-    LoadedAttachment findById(@Bind("id") UUID id, @Bind("tenantId") UUID tenant);
+    LoadedAttachment findAndLoadById(@Bind("id") UUID id);
+
+    @SqlQuery
+    Attachment findById(@Bind("id") UUID id);
 
     @SqlQuery
     LoadedAttachment findBySlug(@Bind("slug") String slug, @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
-    LoadedAttachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
+    LoadedAttachment findAndLoadByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
             @Bind("tenantId") UUID tenantId);
 
     @SqlQuery
-    LoadedAttachment findByTenantAndFileNameAndExtension(@Bind("tenant") String tenantSlug,
+    LoadedAttachment findAndLoadByTenantAndFileNameAndExtension(@Bind("tenant") String tenantSlug,
+            @Bind("filename") String fileName, @Bind("extension") String extension);
+
+    @SqlQuery
+    Attachment findByFileNameAndExtension(@Bind("filename") String fileName, @Bind("extension") String extension,
+            @Bind("tenantId") UUID tenantId);
+
+    @SqlQuery
+    Attachment findByTenantAndFileNameAndExtension(@Bind("tenant") String tenantSlug,
             @Bind("filename") String fileName, @Bind("extension") String extension);
 }

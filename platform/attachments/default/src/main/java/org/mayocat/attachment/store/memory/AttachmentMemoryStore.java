@@ -81,6 +81,19 @@ public class AttachmentMemoryStore extends BaseEntityMemoryStore<Attachment> imp
     }
 
     @Override
+    public Attachment findBySlugAndExtension(String fileName, String extension)
+    {
+        return FluentIterable.from(entities.values())
+                .filter(withExtension(extension)).limit(1).first().orNull();
+    }
+
+    @Override
+    public Attachment findByTenantAndSlugAndExtension(String tenantSlug, String fileName, String extension)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public List<Attachment> findAllChildrenOf(Entity parent)
     {
         return FluentIterable.from(entities.values()).filter(withParent(parent)).toList();
