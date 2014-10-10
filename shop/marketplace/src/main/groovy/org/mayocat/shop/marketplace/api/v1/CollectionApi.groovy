@@ -11,15 +11,20 @@ import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
+import org.mayocat.model.Entity
 import org.mayocat.model.PositionedEntity
 import org.mayocat.rest.Reference
 import org.mayocat.rest.Resource
+import org.mayocat.rest.api.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
+import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
@@ -49,7 +54,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
-class CollectionApi implements Resource
+class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
     @Inject
     Provider<CollectionStore> collectionStore
@@ -68,6 +73,31 @@ class CollectionApi implements Resource
 
     @Inject
     Logger logger
+
+    EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
+        Entity getEntity(String slug)
+        {
+            return collectionStore.get().findBySlug(slug)
+        }
+
+        void updateEntity(Entity entity)
+        {
+            collectionStore.get().update(entity as Collection)
+        }
+
+        String type()
+        {
+            "collection"
+        }
+    }
+
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        switch (target) {
+            case "image-gallery":
+                afterImageAddedToGallery(entity as Collection, fileName, created)
+                break;
+        }
+    }
 
     @GET
     public CollectionTreeApiObject getCollectionTree()
