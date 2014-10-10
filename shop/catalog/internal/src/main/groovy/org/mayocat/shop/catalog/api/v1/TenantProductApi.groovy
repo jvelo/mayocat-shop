@@ -88,40 +88,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
     @Inject
     Logger logger
 
-    /*
-    // Entity handler for delegates
-    EntityApiDelegateHandler getHandler()
-    {
-        return new EntityApiDelegateHandler() {
-            Entity getEntity(String slug)
-            {
-                return productStore.get().findBySlug(slug)
-            }
-
-            void updateEntity(Entity entity)
-            {
-                productStore.get().update(entity as Product)
-            }
-
-            String type()
-            {
-                "product"
-            }
-        }
-    }
-
-    Closure getDoAfterAttachmentAdded()
-    {
-        return { String target, Entity entity, String fileName, Attachment created ->
-            switch (target) {
-                case "image-gallery":
-                    afterImageAddedToGallery(entity as Product, fileName, created)
-                    break;
-            }
-        }
-    }
-    */
-
     EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
         {
