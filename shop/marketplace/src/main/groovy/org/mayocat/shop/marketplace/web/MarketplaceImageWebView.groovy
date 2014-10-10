@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response
 class MarketplaceImageWebView extends AbstractImageResource implements Resource
 {
     @GET
-    @Path("{tenant}/thumbnails/{slug}_{x: \\d+}_{y: \\d+}_{width: \\d+}_{height: \\d+}.{ext}")
+    @Path("thumbnails/{tenant}/{slug}_{x: \\d+}_{y: \\d+}_{width: \\d+}_{height: \\d+}.{ext}")
     public Response downloadThumbnail(
             @PathParam("tenant") String tenantSlug,
             @PathParam("slug") String slug,

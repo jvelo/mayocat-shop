@@ -30,9 +30,8 @@ class MarketplaceImageWebObject extends AbstractImageWebObject
         put "title", RestUtils.safeString(image.attachment.title) as String;
         put "description", RestUtils.safeString(image.attachment.description) as String;
         put "featured", isFeatured
-
-        put "url", MessageFormat.format("/images/{0}/{1}.{2}",
-                tenant.slug,
+        put "url", MessageFormat.format("/images/{0}{1}.{2}",
+                tenant ? (tenant.slug + "") : "",
                 image.attachment.slug,
                 image.attachment.extension
         );
@@ -44,9 +43,9 @@ class MarketplaceImageWebObject extends AbstractImageWebObject
 
                 if (bestFit.isPresent()) {
                     String url = MessageFormat.format(
-                            "/images/thumbnails/{0}/{1}_{2,number,#}_{3,number,#}_{4,number,#}_{5,number,#}.{6}" +
+                            "/images/thumbnails/{0}{1}_{2,number,#}_{3,number,#}_{4,number,#}_{5,number,#}.{6}" +
                                     "?width={7,number,#}&height={8,number,#}",
-                            tenant.slug,
+                            tenant ? (tenant.slug + "/") : "",
                             image.attachment.slug,
                             bestFit.get().x,
                             bestFit.get().y,
@@ -58,8 +57,8 @@ class MarketplaceImageWebObject extends AbstractImageWebObject
                     );
                     put "${dimensionName}_url" as String, url as String
                 } else {
-                    String url = MessageFormat.format("/images/{0}/{1}.{2}?width={3,number,#}&height={4,number,#}",
-                            tenant.slug,
+                    String url = MessageFormat.format("/images/{0}{1}.{2}?width={3,number,#}&height={4,number,#}",
+                            tenant ? (tenant.slug + "/") : "",
                             image.attachment.slug,
                             image.attachment.extension,
                             definition.width,
