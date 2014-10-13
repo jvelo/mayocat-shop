@@ -62,14 +62,15 @@ class PageWebObject {
         content = ContextUtils.safeHtml(page.content)
         url = urlFactory.create(page).path
         slug = page.slug
-        if (page.model.isPresent() && themeFileResolver.resolveModelPath(page.model.get()).isPresent()) {
+        if (page.model.isPresent()) {
             model = new EntityModelWebObject([
-                    template: themeFileResolver.resolveModelPath(page.model.get()).get(),
+                    template: themeFileResolver.resolveModelPath(page.model.get()).orNull(),
                     slug: page.model.get()
             ])
-            template = themeFileResolver.resolveModelPath(page.model.get()).get();
-        } else {
-            template = "page.html";
+            template = themeFileResolver.resolveModelPath(page.model.get()).orNull();
+        }
+        if (!template) {
+            template = "page.html"
         }
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.mayocat.image.model.Image;
 import org.mayocat.image.model.Thumbnail;
-import org.mayocat.rest.resources.ImageResource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;

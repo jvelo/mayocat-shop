@@ -56,7 +56,7 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class PageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
+class TenantPageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
     @Inject
     Provider<PageStore> pageStore;

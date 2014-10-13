@@ -99,7 +99,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public void delete(@Valid Tenant entity) throws EntityDoesNotExistException
     {
-        throw new RuntimeException("Not implemented");
+        this.dao.deleteEntityAndChildrenById(entity.getId());
     }
 
     @Override

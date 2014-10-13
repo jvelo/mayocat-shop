@@ -86,9 +86,7 @@ trait AttachmentApiDelegate
         def created = this.addAttachment(uploadedInputStream, filename, title, description,
                 Optional.of(entity.id))
 
-System.out.println("doAfterAttachmentAdded: " + doAfterAttachmentAdded);
         if (target && created && doAfterAttachmentAdded) {
-            System.out.println("TADA");
             doAfterAttachmentAdded.call(target, entity, filename, created)
         }
 

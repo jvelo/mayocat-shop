@@ -40,7 +40,7 @@ import com.google.common.base.Strings;
 @Component("/tenant/{tenant}/api/images/")
 @Path("/tenant/{tenant}/api/images/")
 @ExistingTenant
-public class ImageResource extends AbstractImageResource implements Resource
+public class TenantImageApi extends AbstractImageResource implements Resource
 {
     @Inject
     private Provider<ThumbnailStore> thumbnailStore;

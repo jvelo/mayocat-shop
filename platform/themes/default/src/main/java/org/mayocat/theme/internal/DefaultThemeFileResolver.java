@@ -83,6 +83,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     @Override
     public Optional<String> resolveModelPath(String id)
     {
+        if (getThemeDefinition() == null) {
+            return Optional.absent();
+        }
         Map<String, Model> models = getThemeDefinition().getModels();
         if (models.containsKey(id)) {
             return Optional.fromNullable(models.get(id).getFile());
@@ -197,6 +200,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeDefinition getThemeDefinition()
     {
+        if (context.getTheme() == null) {
+            return null;
+        }
         return context.getTheme().getDefinition();
     }
 

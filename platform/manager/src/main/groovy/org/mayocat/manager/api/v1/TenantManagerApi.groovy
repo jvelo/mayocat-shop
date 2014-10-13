@@ -18,6 +18,7 @@ import org.mayocat.accounts.api.v1.object.UserAndTenantApiObject
 import org.mayocat.accounts.model.Role
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.accounts.model.User
+import org.mayocat.accounts.store.TenantStore
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.authorization.Gatekeeper
 import org.mayocat.authorization.annotation.Authorized
@@ -39,6 +40,7 @@ import org.mayocat.store.InvalidEntityException
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.validation.Valid
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
@@ -62,6 +64,9 @@ class TenantManagerApi implements Resource
 
     @Inject
     AccountsService accountsService
+
+    @Inject
+    Provider<TenantStore> tenantStore
 
     @Inject
     Gatekeeper gatekeeper
@@ -153,6 +158,27 @@ class TenantManagerApi implements Resource
 
         try {
             this.accountsService.updateTenant(tenant)
+            return Response.ok().build()
+        } catch (InvalidEntityException e) {
+            return Response.status(422).entity("Invalid entity").build()
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+    }
+
+    @DELETE
+    @Path("{slug}")
+    @Authorized(roles = Role.ADMIN, requiresGlobalUser = true)
+    Response deleteTenant(@PathParam("slug") String slug)
+    {
+        Tenant tenant = this.accountsService.findTenant(slug)
+
+        if (!tenant) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+
+        try {
+            this.tenantStore.get().delete(tenant)
             return Response.ok().build()
         } catch (InvalidEntityException e) {
             return Response.status(422).entity("Invalid entity").build()

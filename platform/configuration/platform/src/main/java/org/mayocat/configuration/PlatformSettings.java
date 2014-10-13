@@ -14,6 +14,7 @@ import javax.validation.Valid;
 
 import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.images.ImageFormatDefinition;
+import org.mayocat.theme.Model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
@@ -23,6 +24,9 @@ import com.google.common.collect.Maps;
  */
 public class PlatformSettings
 {
+    @JsonProperty
+    private Map<String, Model> models = Maps.newLinkedHashMap();
+
     @Valid
     @JsonProperty
     private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
@@ -39,5 +43,10 @@ public class PlatformSettings
     public Map<String, AddonGroupDefinition> getAddons()
     {
         return this.addons;
+    }
+
+    public Map<String, Model> getModels()
+    {
+        return models;
     }
 }

@@ -35,6 +35,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 /**
  * Web view of a {@link Page}
@@ -82,7 +83,7 @@ class PageWebView implements Resource
     {
         Page page = pageStore.get().findBySlug(slug)
         if (page == null) {
-            return new ErrorWebView().status(404)
+            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorWebView().status(404)).build()
         }
 
         def context = new HashMap<String, Object>([

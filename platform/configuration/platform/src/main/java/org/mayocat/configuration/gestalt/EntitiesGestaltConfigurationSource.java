@@ -67,6 +67,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
         addImageFormats(entities, platformSettings.getImages(), AddonSource.PLATFORM);
+        addModels(entities, platformSettings.getModels());
 
         for (String entity : entities.keySet()) {
             for (EntityConfigurationContributor contributor : contributors.values()) {
