@@ -16,6 +16,7 @@ import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.model.AddonGroup;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 /**
  * @version $Id$
@@ -87,5 +88,16 @@ public class AddonUtils
         }
         // Backward compatibility
         return (List<Map<String, Object>>) fieldDefinition.getProperties().get("listValues");
+    }
+
+    public static Object emptyToNull(Object value)
+    {
+        if (value == null) {
+            return null;
+        }
+        if (String.class.isAssignableFrom(value.getClass())) {
+            return Strings.emptyToNull((String) value);
+        }
+        return value;
     }
 }

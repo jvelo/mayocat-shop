@@ -18,6 +18,7 @@ import org.xwiki.component.annotation.Component;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import static org.mayocat.addons.util.AddonUtils.emptyToNull;
 import static org.mayocat.addons.util.AddonUtils.getListValues;
 import static org.mayocat.addons.util.AddonUtils.isListWithKeyAndDisplayValues;
 
@@ -52,16 +53,5 @@ public class StringAddonTransformer implements AddonFieldTransformer
                     emptyToNull(fieldValue)
             ));
         }
-    }
-
-    private static Object emptyToNull(Object value)
-    {
-        if (value == null) {
-            return null;
-        }
-        if (String.class.isAssignableFrom(value.getClass())) {
-            return Strings.emptyToNull((String) value);
-        }
-        return value;
     }
 }
