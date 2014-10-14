@@ -9,6 +9,7 @@ package org.mayocat.rest.api.delegate
 
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.context.WebContext
@@ -16,7 +17,7 @@ import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
-import org.mayocat.attachment.model.Attachment
+import org.mayocat.model.Entity
 import org.mayocat.model.EntityList
 import org.mayocat.model.HasFeaturedImage
 import org.mayocat.rest.api.object.ImageApiObject
@@ -49,17 +50,71 @@ trait ImageGalleryApiDelegate
     @Inject
     protected AttachmentStore attachmentStore
 
-    abstract EntityApiDelegateHandler getHandler()
-
     @Inject
     WebContext context
 
+    abstract EntityApiDelegateHandler getHandler()
+
     @Path("{slug}/images")
     @GET
-    List<ImageApiObject> getImages(@PathParam("slug") String slug)
+    def List<ImageApiObject> getImages(@PathParam("slug") String slug)
+    {
+        HasFeaturedImage entity = handler.getEntity(slug) as HasFeaturedImage;
+        return getImages(entity)
+    }
+
+    @Path("{slug}/images/{imageSlug}")
+    @Authorized
+    @DELETE
+    @Consumes(MediaType.WILDCARD)
+    def Response detachImage(@PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug)
+    {
+        def entity = handler.getEntity(slug)
+        return detachImages(imageSlug, entity)
+    }
+
+    @Path("{slug}/images/")
+    @Authorized
+    @POST
+    def void updateImageGallery(@PathParam("slug") String slug, ImageGalleryApiObject gallery)
+    {
+        def entity = handler.getEntity(slug) as HasFeaturedImage
+        updateImageGallery(entity, gallery)
+    }
+
+    @Path("{slug}/images/{imageSlug}")
+    @Authorized
+    @POST
+    @Consumes(MediaType.WILDCARD)
+    def Response updateImage(@PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug, ImageApiObject image)
+    {
+        return updateImage(imageSlug, image)
+    }
+
+    def Response updateImage(String imageSlug, ImageApiObject image)
+    {
+        def attachment = attachmentStore.findAndLoadBySlug(imageSlug);
+        if (attachment == null) {
+            return Response.status(404).build();
+        }
+        try {
+            attachment.setTitle(image.title)
+            attachment.setDescription(image.description)
+            attachment.setLocalizedVersions(image._localized)
+            attachmentStore.update(attachment);
+            return Response.noContent().build();
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(404).build();
+        } catch (InvalidEntityException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    def List<ImageApiObject> getImages(HasFeaturedImage entity)
     {
         def images = [] as List<ImageApiObject>;
-        HasFeaturedImage entity = handler.getEntity(slug) as HasFeaturedImage;
         if (entity == null) {
             throw new WebApplicationException(Response.status(404).build());
         }
@@ -85,41 +140,10 @@ trait ImageGalleryApiDelegate
         images;
     }
 
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug, ImageApiObject image)
-    {
-        def attachment = attachmentStore.findAndLoadBySlug(imageSlug);
-        if (attachment == null) {
-            return Response.status(404).build();
-        }
-        try {
-            attachment.setTitle(image.title)
-            attachment.setDescription(image.description)
-            attachment.setLocalizedVersions(image._localized)
-            attachmentStore.update(attachment);
-            return Response.noContent().build();
-        } catch (EntityDoesNotExistException e) {
-            return Response.status(404).build();
-        } catch (InvalidEntityException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-    }
-
-    @Path("{slug}/images/{imageSlug}")
-    @Authorized
-    @DELETE
-    @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug)
+    def Response detachImages(String imageSlug, Entity entity)
     {
         def attachment = attachmentStore.findAndLoadBySlug(imageSlug);
 
-        def entity = handler.getEntity(slug)
         if (entity == null) {
             return Response.status(404).entity("Entity not found").build();
         }
@@ -154,12 +178,8 @@ trait ImageGalleryApiDelegate
         }
     }
 
-    @Path("{slug}/images/")
-    @Authorized
-    @POST
-    def updateImageGallery(@PathParam("slug") String slug, ImageGalleryApiObject gallery)
+    def void updateImageGallery(HasFeaturedImage entity, ImageGalleryApiObject gallery)
     {
-        def entity = handler.getEntity(slug) as HasFeaturedImage
         def allAttachments = attachmentStore.findAllChildrenOf(entity);
         def EntityList list = entityListStore.findListByHintAndParentId("image_gallery", entity.id);
 
@@ -169,9 +189,9 @@ trait ImageGalleryApiDelegate
             // This is not supposed to happen but who knows...
             // (the list is expected to be created as soon as an image is uploaded)
             list = entityListStore.getOrCreate(new EntityList([
-                    slug: "image-gallery",
-                    hint: "image_gallery",
-                    type: handler.type(),
+                    slug    : "image-gallery",
+                    hint    : "image_gallery",
+                    type    : handler.type(),
                     parentId: entity.id
             ]))
         }
@@ -205,9 +225,9 @@ trait ImageGalleryApiDelegate
     def afterImageAddedToGallery(HasFeaturedImage entity, String filename, Attachment attachment)
     {
         def EntityList list = entityListStore.getOrCreate(new EntityList([
-                slug: "image-gallery",
-                hint: "image_gallery",
-                type: handler.type(),
+                slug    : "image-gallery",
+                hint    : "image_gallery",
+                type    : handler.type(),
                 parentId: entity.id
         ]))
 

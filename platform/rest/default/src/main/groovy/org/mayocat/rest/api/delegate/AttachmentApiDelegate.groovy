@@ -21,6 +21,7 @@ import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.model.AttachmentData
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.model.Entity
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
 import org.slf4j.Logger
@@ -78,6 +79,12 @@ trait AttachmentApiDelegate
             @Context UriInfo info)
     {
         def entity = handler.getEntity(slug)
+        return addAttachment(entity, fileDetail, sentFilename, uploadedInputStream, title, description, target, info)
+    }
+
+    def Response addAttachment(Entity entity, FormDataContentDisposition fileDetail, String sentFilename,
+            InputStream uploadedInputStream, String title, String description, String target, UriInfo info)
+    {
         if (entity == null) {
             return Response.status(404).build()
         }

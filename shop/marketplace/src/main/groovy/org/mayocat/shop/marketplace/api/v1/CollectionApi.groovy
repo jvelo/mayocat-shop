@@ -8,6 +8,8 @@
 package org.mayocat.shop.marketplace.api.v1
 
 import com.google.common.base.Strings
+import com.sun.jersey.core.header.FormDataContentDisposition
+import com.sun.jersey.multipart.FormDataParam
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
@@ -25,6 +27,8 @@ import org.mayocat.rest.Resource
 import org.mayocat.rest.api.delegate.AttachmentApiDelegate
 import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
+import org.mayocat.rest.api.object.ImageApiObject
+import org.mayocat.rest.api.object.ImageGalleryApiObject
 import org.mayocat.rest.api.object.LinkApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
@@ -43,8 +47,10 @@ import org.xwiki.component.annotation.Component
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriInfo
 
 /**
  * @version $Id$
@@ -54,6 +60,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
+@Authorized
 class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
     @Inject
@@ -226,37 +233,42 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
     @Path("{slug}")
     @POST
-    @Timed
-    @Authorized
-    public Response updateCollection(@PathParam("slug") String slug,
+    def updateCollection(@PathParam("slug") String slug, CollectionApiObject collectionApiObject)
+    {
+        updateCollectionInternal(collectionApiObject, slug)
+    }
+
+    @POST
+    @Path("{parent1}/collections/{slug}")
+    def updateCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
             CollectionApiObject collectionApiObject)
     {
-        try {
-            org.mayocat.shop.catalog.model.Collection collection = this.collectionStore.get().findBySlug(slug);
-            if (collection == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("No collection with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).
-                        build();
-            } else {
+        updateCollectionInternal(collectionApiObject, parent1, slug)
+    }
 
-                def id = collection.id
-                def featuredImageId = collection.featuredImageId
-                collection = collectionApiObject.toCollection()
+    @POST
+    @Path("{parent2}/collections/{parent1}/collections/{slug}")
+    def updateCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            CollectionApiObject collectionApiObject)
+    {
+        updateCollectionInternal(collectionApiObject, parent2, parent1, slug)
+    }
 
-                // ID and slugs are not update-able
-                collection.id = id
-                collection.slug = slug
-
-                // Featured image is updated via the /images API only, set it back
-                collection.featuredImageId = featuredImageId
-
-                this.collectionStore.get().update(collection);
-
-                return Response.ok().build();
-            }
-        } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
-        }
+    @POST
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}")
+    def updateCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            CollectionApiObject collectionApiObject)
+    {
+        updateCollectionInternal(collectionApiObject, parent3, parent2, parent1, slug)
     }
 
     @GET
@@ -295,7 +307,6 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     {
         getCollectionInternal(parent3, parent2, parent1, slug)
     }
-
 
     @DELETE
     @Path("{slug}")
@@ -418,6 +429,217 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    // Attachments
+
+    @POST
+    @Path("{parent1}/collections/{slug}/attachments")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    def addAttachmentForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("filename") String sentFilename,
+            @FormDataParam("title") String title,
+            @FormDataParam("description") String description,
+            @FormDataParam("target") String target,
+            @Context UriInfo info)
+    {
+        Collection collection = getCollectionFromSlugChain(parent1, slug);
+        return addAttachment(collection, fileDetail, sentFilename, uploadedInputStream, title, description, target, info)
+    }
+
+    @POST
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/attachments")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    def addAttachmentForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("filename") String sentFilename,
+            @FormDataParam("title") String title,
+            @FormDataParam("description") String description,
+            @FormDataParam("target") String target,
+            @Context UriInfo info)
+    {
+        Collection collection = getCollectionFromSlugChain(parent2, parent1, slug);
+        return addAttachment(collection, fileDetail, sentFilename, uploadedInputStream, title, description, target, info)
+    }
+
+    @POST
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/attachments")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    def addAttachmentForCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("filename") String sentFilename,
+            @FormDataParam("title") String title,
+            @FormDataParam("description") String description,
+            @FormDataParam("target") String target,
+            @Context UriInfo info)
+    {
+        Collection collection = getCollectionFromSlugChain(parent3, parent2, parent1, slug);
+        return addAttachment(collection, fileDetail, sentFilename, uploadedInputStream, title, description, target, info)
+    }
+
+    @GET
+    @Path("{parent1}/collections/{slug}/images")
+    def getImagesForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent1, slug);
+        getImages(collection)
+    }
+
+    @GET
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/images")
+    def getImagesForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent2, parent1, slug);
+        getImages(collection)
+    }
+
+    @GET
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/images")
+    def getImagesForCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent3, parent2, parent1, slug);
+        getImages(collection)
+    }
+
+    @GET
+    @Path("{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def detachImageForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent1, slug);
+        detachImages(imageSlug, collection)
+    }
+
+    @GET
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def detachImageForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent2, parent1, slug);
+        detachImages(imageSlug, collection)
+    }
+
+    @GET
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def detachImageForCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug)
+    {
+        Collection collection = getCollectionFromSlugChain(parent3, parent2, parent1, slug);
+        detachImages(imageSlug, collection)
+    }
+
+    @POST
+    @Path("{parent1}/collections/{slug}/images")
+    def void updateImageGalleryForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            ImageGalleryApiObject gallery)
+    {
+        Collection collection = getCollectionFromSlugChain(parent1, slug);
+        updateImageGallery(collection, gallery)
+    }
+
+    @POST
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/images/")
+    def void updateImageGalleryForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            ImageGalleryApiObject gallery)
+    {
+        Collection collection = getCollectionFromSlugChain(parent2, parent1, slug);
+        updateImageGallery(collection, gallery)
+    }
+
+    @POST
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/images/")
+    def void updateImageGalleryForCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            ImageGalleryApiObject gallery)
+    {
+        Collection collection = getCollectionFromSlugChain(parent3, parent2, parent1, slug);
+        updateImageGallery(collection, gallery)
+    }
+
+    @POST
+    @Path("{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def Response updateImageForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug,
+            ImageApiObject image)
+    {
+        updateImage(imageSlug, image)
+    }
+
+    @POST
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def Response updateImageForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug,
+            ImageApiObject image)
+    {
+        updateImage(imageSlug, image)
+    }
+
+    @POST
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
+    @Consumes(MediaType.WILDCARD)
+    def Response updateImageForCollectionWithTwoParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug,
+            @PathParam("imageSlug") String imageSlug,
+            ImageApiObject image)
+    {
+        updateImage(imageSlug, image)
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     def removeProductFromCollectionInternal(Reference reference, String... slugsArray)
     {
         Collection collection = getCollectionFromSlugChain(slugsArray);
@@ -446,6 +668,37 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         }
 
         this.collectionStore.get().addEntityToCollection(collection, product.entity)
+    }
+
+    def updateCollectionInternal(CollectionApiObject collectionApiObject, String... slugsArray)
+    {
+        try {
+            def org.mayocat.shop.catalog.model.Collection collection = getCollectionFromSlugChain(slugsArray);
+            if (collection == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("No collection with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).
+                        build();
+            } else {
+                def id = collection.id
+                def featuredImageId = collection.featuredImageId
+                def slug = collection.slug
+
+                collection = collectionApiObject.toCollection()
+
+                // ID and slugs are not update-able
+                collection.id = id
+                collection.slug = slug
+
+                // Featured image is updated via the /images API only, set it back
+                collection.featuredImageId = featuredImageId
+
+                this.collectionStore.get().update(collection);
+
+                return Response.ok().build();
+            }
+        } catch (InvalidEntityException e) {
+            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
+        }
     }
 
     def deleteCollectionInternal(String... slugsArray)

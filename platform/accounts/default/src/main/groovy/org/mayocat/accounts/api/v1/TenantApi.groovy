@@ -178,7 +178,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
 
     @Path("images")
     @GET
-    List<ImageApiObject> getImages()
+    def List<ImageApiObject> getImages()
     {
         getImages(context.tenant.slug)
     }
@@ -187,7 +187,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
     @Authorized
     @POST
     @Consumes(MediaType.WILDCARD)
-    def updateImage(@PathParam("imageSlug") String imageSlug, ImageApiObject image)
+    def Response updateImage(@PathParam("imageSlug") String imageSlug, ImageApiObject image)
     {
         updateImage(context.tenant.slug, imageSlug, image)
     }
@@ -196,7 +196,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
     @Authorized
     @DELETE
     @Consumes(MediaType.WILDCARD)
-    def detachImage(@PathParam("slug") String slug,
+    def Response detachImage(@PathParam("slug") String slug,
             @PathParam("imageSlug") String imageSlug)
     {
         detachImage(context.tenant.slug, imageSlug)
@@ -205,7 +205,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
     @Path("images/")
     @Authorized
     @POST
-    def updateImageGallery(ImageGalleryApiObject gallery)
+    def void updateImageGallery(ImageGalleryApiObject gallery)
     {
         updateImageGallery(context.tenant.slug, gallery)
     }
