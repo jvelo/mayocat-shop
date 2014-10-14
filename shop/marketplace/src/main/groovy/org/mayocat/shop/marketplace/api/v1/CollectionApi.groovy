@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.marketplace.api.v1
 
+import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
@@ -15,6 +16,7 @@ import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
@@ -41,6 +43,7 @@ import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
+import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
 
@@ -77,6 +80,9 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
     @Inject
     WebContext context
+
+    @Inject
+    PlatformSettings platformSettings
 
     @Inject
     Logger logger
@@ -210,7 +216,9 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     public Response createCollection(CollectionApiObject collectionApiObject)
     {
         try {
-            def collection = collectionApiObject.toCollection();
+
+            def collection = collectionApiObject.toCollection(platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(context.theme?.definition));
 
             // Set slug TODO: verify if provided slug is conform
             collection.slug = Strings.isNullOrEmpty(collectionApiObject.slug) ? slugifier.slugify(collection.title) :
@@ -683,7 +691,8 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
                 def featuredImageId = collection.featuredImageId
                 def slug = collection.slug
 
-                collection = collectionApiObject.toCollection()
+                collection = collectionApiObject.toCollection(platformSettings,
+                        Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
                 // ID and slugs are not update-able
                 collection.id = id
@@ -744,6 +753,9 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         ])
 
         collectionApiObject.withCollection(collection)
+        if (collection.addons.isLoaded()) {
+            collectionApiObject.withAddons(collection.addons.get())
+        }
         collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         collectionApiObject

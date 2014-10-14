@@ -217,6 +217,9 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
                     _href: href
             ])
             object.withCollection(collection.entity)
+            if (collection.entity.addons.isLoaded()) {
+                object.withAddons(collection.entity.addons.get())
+            }
 
             collectionApiObjects << object
         })

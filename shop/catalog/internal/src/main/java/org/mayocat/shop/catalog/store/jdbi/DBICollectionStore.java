@@ -18,6 +18,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
+import org.mayocat.addons.store.dbi.AddonsHelper;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.model.EntityAndParent;
@@ -48,6 +50,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
+import static org.mayocat.addons.util.AddonUtils.asMap;
+
 @Component(hints = { "jdbi", "default" })
 public class DBICollectionStore extends DBIEntityStore implements CollectionStore, Initializable
 {
@@ -76,6 +80,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         Integer lastIndex = this.dao.lastPosition(getTenant());
         this.dao.create(lastIndex == null ? 0 : ++lastIndex, collection);
         // this.dao.insertTranslations(entityId, collection.getTranslations());
+        this.dao.createOrUpdateAddons(collection);
 
         this.dao.commit();
 
@@ -95,6 +100,8 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         }
         collection.setId(originalCollection.getId());
         Integer updatedRows = this.dao.update(collection);
+
+        this.dao.createOrUpdateAddons(collection);
 
         if (collection.getLocalizedVersions() != null && !collection.getLocalizedVersions().isEmpty()) {
             Map<Locale, Map<String, Object>> localizedVersions = collection.getLocalizedVersions();
@@ -286,7 +293,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public List<Collection> findAllForProduct(Product product)
     {
-        return this.dao.findAllForProduct(product);
+        return AddonsHelper.withAddons(this.dao.findAllForProduct(product), dao);
     }
 
     public List<Collection> findAllForProductIds(List<UUID> ids)
@@ -294,7 +301,7 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
         if (ids == null || ids.size() <= 0) {
             return Collections.emptyList();
         }
-        return this.dao.findAllForProductIds(ids);
+        return AddonsHelper.withAddons(this.dao.findAllForProductIds(ids), dao);
     }
 
     public List<ProductCollection> findAllProductsCollectionsForIds(List<UUID> ids)
@@ -307,24 +314,25 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public List<Collection> findAll()
     {
-        return this.dao.findAll(COLLECTION_TABLE_NAME, COLLECTION_POSITION, getTenant());
+        return AddonsHelper.withAddons(this.dao.findAll(COLLECTION_TABLE_NAME, COLLECTION_POSITION, getTenant()), dao);
     }
 
     public List<Collection> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(COLLECTION_TABLE_NAME, COLLECTION_POSITION, getTenant(), number, offset);
+        return AddonsHelper.withAddons(
+                this.dao.findAll(COLLECTION_TABLE_NAME, COLLECTION_POSITION, getTenant(), number, offset), dao);
     }
 
     @Override
     public List<Collection> findAllOrderedByParentAndPosition()
     {
-        return this.dao.findAllOrderedByParentAndPosition(getTenant());
+        return AddonsHelper.withAddons(this.dao.findAllOrderedByParentAndPosition(getTenant()), dao);
     }
 
     @Override
     public List<Collection> findByIds(List<UUID> ids)
     {
-        return this.dao.findByIds(COLLECTION_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(COLLECTION_TABLE_NAME, ids), dao);
     }
 
     @Override
@@ -335,18 +343,33 @@ public class DBICollectionStore extends DBIEntityStore implements CollectionStor
 
     public Collection findById(UUID id)
     {
-        return this.dao.findById(COLLECTION_TABLE_NAME, id);
+        Collection collection = this.dao.findById(COLLECTION_TABLE_NAME, id);
+        if (collection != null) {
+            List<AddonGroup> addons = this.dao.findAddons(collection);
+            collection.setAddons(asMap(addons));
+        }
+        return collection;
     }
 
     public Collection findBySlug(String slug)
     {
-        return this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant());
+        Collection collection = this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant());
+        if (collection != null) {
+            List<AddonGroup> addons = this.dao.findAddons(collection);
+            collection.setAddons(asMap(addons));
+        }
+        return collection;
     }
 
     @Override
     public Collection findBySlug(String slug, UUID parentId)
     {
-        return this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant(), parentId);
+        Collection collection = this.dao.findBySlug(COLLECTION_TABLE_NAME, slug, getTenant(), parentId);
+        if (collection != null) {
+            List<AddonGroup> addons = this.dao.findAddons(collection);
+            collection.setAddons(asMap(addons));
+        }
+        return collection;
     }
 
     public void initialize() throws InitializationException

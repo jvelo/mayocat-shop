@@ -32,6 +32,13 @@ class AbstractCollectionWebObject
 
     String template
 
+    @Deprecated
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<String, Object> theme_addons
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map <String, Object> addons
+
     AbstractCollectionWebObject withCollection(org.mayocat.shop.catalog.model.Collection collection, EntityURLFactory urlFactory)
     {
         title = ContextUtils.safeString(collection.title)
@@ -41,4 +48,12 @@ class AbstractCollectionWebObject
 
         this
     }
+
+    AbstractCollectionWebObject withAddons(Map<String, Object> addons) {
+        theme_addons = addons
+        this.addons = addons
+
+        this
+    }
+
 }

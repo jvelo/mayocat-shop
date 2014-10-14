@@ -10,6 +10,7 @@ package org.mayocat.shop.catalog.web
 import com.google.common.base.Optional
 import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
+import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
@@ -65,11 +66,11 @@ class CollectionWebView implements Resource
     EntityURLFactory urlFactory
 
     @Inject
-    EntityLocalizationService entityLocalizationService
-
-    @Inject
     @Delegate
     ProductListWebViewDelegate listWebViewDelegate
+
+    @Inject
+    AddonsWebObjectBuilder addonsWebObjectBuilder
 
     @GET
     @Path("{slug}")
@@ -81,19 +82,19 @@ class CollectionWebView implements Resource
             return new ErrorWebView().status(404)
         }
 
-        final org.mayocat.shop.catalog.model.Collection localized = entityLocalizationService.
-                localize(collection) as org.mayocat.shop.catalog.model.Collection
+        EntityData<org.mayocat.shop.catalog.model.Collection> data = dataLoader.
+                load(collection, StandardOptions.LOCALIZE)
+
         final int currentPage = page < 1 ? 1 : page
 
         def context = new HashMap<String, Object>([
-                "title"      : localized.title,
-                "description": localized.description
+                "title"      : data.entity.title,
+                "description": data.entity.description
         ])
 
         ThemeDefinition theme = this.context.theme.definition
 
-        EntityData<org.mayocat.shop.catalog.model.Collection> data = dataLoader.
-                load(collection, StandardOptions.LOCALIZE)
+
 
         Optional<ImageGallery> gallery = data.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
@@ -112,9 +113,8 @@ class CollectionWebView implements Resource
         )
 
         CollectionWebObject collectionWebObject = new CollectionWebObject()
-        collectionWebObject.withCollection(entityLocalizationService.localize(collection) as
-                org.mayocat.shop.catalog.model.Collection, urlFactory)
-
+        collectionWebObject.withCollection(data.entity, urlFactory)
+        collectionWebObject.withAddons(addonsWebObjectBuilder.build(data))
         collectionWebObject.withImages(images, collection.featuredImageId, Optional.fromNullable(theme))
         collectionWebObject.withProducts(buildProductListListWebObject(productsData, Optional.of(collection)),
                 currentPage, totalPages)

@@ -9,11 +9,19 @@ package org.mayocat.shop.catalog.api.v1.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
+import org.mayocat.model.AddonGroup
+import org.mayocat.rest.api.object.AddonGroupApiObject
 import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
+import org.mayocat.theme.ThemeDefinition
+
+import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
+import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
  * API object for a {@link org.mayocat.shop.catalog.model.Collection}
@@ -37,6 +45,9 @@ class CollectionApiObject extends BaseApiObject
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Long numberOfProducts = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<String, AddonGroupApiObject> addons
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
@@ -129,7 +140,8 @@ class CollectionApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    org.mayocat.shop.catalog.model.Collection toCollection()
+    org.mayocat.shop.catalog.model.Collection toCollection(PlatformSettings platformSettings,
+            Optional<ThemeDefinition> themeDefinition)
     {
         def collection = new org.mayocat.shop.catalog.model.Collection()
         collection.with {
@@ -141,6 +153,23 @@ class CollectionApiObject extends BaseApiObject
             setLocalizedVersions this._localized
         }
 
+        if (addons) {
+            collection.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
+        }
+
         collection
+    }
+
+    @JsonIgnore
+    CollectionApiObject withAddons(Map<String, AddonGroup> entityAddons) {
+        if (!addons) {
+            addons = [:]
+        }
+
+        entityAddons.values().each({ AddonGroup addon ->
+            addons.put(addon.group, forAddonGroup(addon))
+        })
+
+        this
     }
 }

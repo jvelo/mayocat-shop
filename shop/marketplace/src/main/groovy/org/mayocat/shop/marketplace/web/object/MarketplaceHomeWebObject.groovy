@@ -8,11 +8,13 @@
 package org.mayocat.shop.marketplace.web.object
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import groovy.transform.CompileStatic
 import org.mayocat.shop.catalog.web.object.ProductWebObject
 
 /**
  * @version $Id$
  */
+@CompileStatic
 class MarketplaceHomeWebObject
 {
     List<MarketplaceProductWebObject> featuredProducts;

@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.marketplace.api.v1
 
+import groovy.transform.CompileStatic
 import org.mayocat.rest.resources.TenantImageApi
 import org.xwiki.component.annotation.Component
 
@@ -17,6 +18,7 @@ import javax.ws.rs.Path
  */
 @Component("/api/images/")
 @Path("/api/images/")
+@CompileStatic
 class ImageApi extends TenantImageApi
 {
 }

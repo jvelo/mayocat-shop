@@ -10,7 +10,7 @@ package mayoapp.dao;
 import java.util.List;
 import java.util.UUID;
 
-import org.mayocat.accounts.model.Tenant;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.model.Entity;
 import org.mayocat.model.EntityAndCount;
 import org.mayocat.shop.catalog.model.Collection;
@@ -26,7 +26,6 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -37,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 @UseStringTemplate3StatementLocator
 @RegisterMapper({CollectionMapper.class, ProductCollectionMapper.class})
 public abstract class CollectionDAO  implements EntityDAO<Collection>, Transactional<CollectionDAO>, PositionedDAO<Collection>,
-        LocalizationDAO<Collection>
+        LocalizationDAO<Collection>, AddonsDAO<Collection>
 {
     @SqlUpdate
     public abstract void create(@Bind("position") Integer position, @BindBean("collection") Collection collection);
@@ -129,5 +128,9 @@ public abstract class CollectionDAO  implements EntityDAO<Collection>, Transacti
         return listBuilder.build();
     }
 
+    public void createOrUpdateAddons(Collection entity)
+    {
+        AddonsHelper.createOrUpdateAddons(this, entity);
+    }
 
 }

@@ -14,8 +14,11 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mayocat.model.AddonGroup;
+import org.mayocat.model.Association;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
+import org.mayocat.model.HasAddons;
 import org.mayocat.model.HasFeaturedImage;
 import org.mayocat.model.Localized;
 import org.mayocat.model.annotation.Index;
@@ -23,7 +26,7 @@ import org.mayocat.model.annotation.LocalizedField;
 
 import com.google.common.base.Objects;
 
-public class Collection implements Entity, HasFeaturedImage, Localized, Child
+public class Collection implements Entity, HasFeaturedImage, Localized, Child, HasAddons
 {
     private UUID id;
 
@@ -46,6 +49,8 @@ public class Collection implements Entity, HasFeaturedImage, Localized, Child
     private UUID featuredImageId;
 
     private Map<Locale, Map<String, Object>> localizedVersions;
+
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     public Collection()
     {
@@ -127,11 +132,22 @@ public class Collection implements Entity, HasFeaturedImage, Localized, Child
         this.localizedVersions = versions;
     }
 
-
     @Override
     public Map<Locale, Map<String, Object>> getLocalizedVersions()
     {
         return localizedVersions;
+    }
+
+    @Override
+    public Association<Map<String, AddonGroup>> getAddons()
+    {
+        return addons;
+    }
+
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
+    {
+        this.addons = new Association(addons);
     }
 
     // //////////////////////////////////////////////

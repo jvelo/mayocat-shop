@@ -7,11 +7,13 @@
  */
 package org.mayocat.shop.catalog.api.v1
 
+import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.entity.EntityData
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
@@ -30,6 +32,7 @@ import org.mayocat.shop.catalog.api.v1.object.CollectionListApiObject
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.store.*
+import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
 import org.xwiki.component.phase.Initializable
@@ -64,6 +67,9 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Inject
     Logger logger
+
+    @Inject
+    PlatformSettings platformSettings
 
     // Entity handler for delegates
 
@@ -109,6 +115,9 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
                         _href: "${context.request.tenantPrefix}/api/collections/${eac.entity.slug}"
                 ])
                 apiObject.withCollection(eac.entity)
+                if (eac.entity.addons.isLoaded()) {
+                    apiObject.withAddons(eac.entity.addons.get())
+                }
                 apiObject.withProductCount(eac.count)
                 collectionList << apiObject
             })
@@ -119,6 +128,9 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
                             _href: "${context.request.tenantPrefix}/api/collections/${collection.slug}"
                     ])
                     apiObject.withCollection(collection)
+                    if (collection.addons.isLoaded()) {
+                        apiObject.withAddons(collection.addons.get())
+                    }
                     apiObject
             })
         }
@@ -165,6 +177,9 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
         ])
 
         collectionApiObject.withCollection(collection)
+        if (collection.addons.isLoaded()) {
+            collectionApiObject.withAddons(collection.addons.get())
+        }
         collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         if (!Strings.isNullOrEmpty(expand)) {
@@ -282,7 +297,8 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
                 def id = collection.id
                 def featuredImageId = collection.featuredImageId
-                collection = collectionApiObject.toCollection()
+                collection = collectionApiObject.toCollection(platformSettings,
+                        Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
                 // ID and slugs are not update-able
                 collection.id = id
@@ -324,7 +340,8 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
     public Response createCollection(CollectionApiObject collection)
     {
         try {
-            def coll = collection.toCollection();
+            def coll = collection.toCollection(platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
             // Set slug TODO: verify if provided slug is conform
             coll.slug = Strings.isNullOrEmpty(collection.slug) ? slugifier.slugify(coll.title) : collection.slug
