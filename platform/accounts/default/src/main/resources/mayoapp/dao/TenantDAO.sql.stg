@@ -50,7 +50,7 @@ findAll() ::= <<
     FROM   entity
            INNER JOIN tenant
                    ON entity.id = tenant.entity_id
-    ORDER BY creation_date DESC NULLS LAST
+    ORDER BY tenant.name ASC
     LIMIT  :number
     OFFSET :offset
 >>
