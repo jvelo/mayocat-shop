@@ -154,7 +154,7 @@ findAllForCollection() ::= <<
 >>
 
 findAllForCollectionPath() ::= <<
-    SELECT entity.*, product.*, localization_data(product.entity_id)
+    SELECT DISTINCT ON (id) entity.*, product.*, localization_data(product.entity_id)
     FROM   collection_entity
            INNER JOIN entity
                    ON entity.id = collection_entity.entity_id
@@ -163,7 +163,7 @@ findAllForCollectionPath() ::= <<
     WHERE  collection_entity.path \<@ CAST(:path AS ltree)
            AND (entity.parent_id IS NULL OR product.virtual)
            AND product.on_shelf
-    ORDER  BY collection_entity.position
+    ORDER  BY entity.id, collection_entity.position
 >>
 
 findAllOnShelf() ::= <<
