@@ -18,6 +18,7 @@ import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
 import mayoapp.dao.TenantDAO;
 
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.context.WebContext;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.store.EntityAlreadyExistsException;
@@ -122,19 +123,24 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public List<Tenant> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(number, offset);
+        return AddonsHelper.withAddons(this.dao.findAll(number, offset), dao);
     }
 
     @Override
     public List<Tenant> findByIds(List<UUID> ids)
     {
-        return this.dao.findByIds(TENANT_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(TENANT_TABLE_NAME, ids), dao);
     }
 
     @Override
     public Tenant findById(UUID id)
     {
-        return this.dao.findById(TENANT_TABLE_NAME, id);
+        Tenant tenant = this.dao.findById(TENANT_TABLE_NAME, id);
+        if (tenant != null) {
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
+        }
+        return tenant;
     }
 
     @Override
