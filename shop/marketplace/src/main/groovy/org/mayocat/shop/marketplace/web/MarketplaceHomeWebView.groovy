@@ -154,6 +154,7 @@ class MarketplaceHomeWebView implements Resource, WithProductWebObjectBuilder
                 if (data) {
                     Tenant tenant = data.entity
                     MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(tenant)
+                    shopWebObject.withAddons(addonsWebObjectBuilder.build(data))
 
                     Optional<ImageGallery> gallery = data.getData(ImageGallery.class)
                     List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>

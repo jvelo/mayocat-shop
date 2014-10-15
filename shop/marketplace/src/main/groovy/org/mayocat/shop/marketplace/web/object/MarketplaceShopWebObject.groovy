@@ -26,6 +26,9 @@ class MarketplaceShopWebObject implements WithMarketplaceImages
     String description
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map <String, Object> addons
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     List<MarketplaceProductWebObject> products
 
     MarketplaceShopWebObject withTenant(Tenant tenant)
@@ -36,5 +39,12 @@ class MarketplaceShopWebObject implements WithMarketplaceImages
 
         this
     }
+
+    MarketplaceShopWebObject withAddons(Map<String, Object> addons) {
+        this.addons = addons
+
+        this
+    }
+
 
 }

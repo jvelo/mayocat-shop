@@ -23,6 +23,7 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import mayoapp.dao.MarketplaceProductDAO;
+import mayoapp.dao.TenantDAO;
 
 import static org.mayocat.addons.util.AddonUtils.asMap;
 
@@ -40,13 +41,17 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
 
     private MarketplaceProductDAO marketplaceProductDAO;
 
+    private TenantDAO tenantDAO;
+
     @Override
     public EntityAndTenant<Product> findBySlugAndTenant(String slug, String tenantSlug)
     {
         EntityAndTenant<Product> result = this.marketplaceProductDAO.findBySlugAndTenant(slug, tenantSlug);
         if (result != null) {
             List<AddonGroup> addons = this.marketplaceProductDAO.findAddons(result.getEntity());
+            List<AddonGroup> tenantAddons = this.tenantDAO.findAddons(result.getTenant());
             result.getEntity().setAddons(asMap(addons));
+            result.getTenant().setAddons(asMap(tenantAddons));
         }
         return result;
     }
@@ -85,5 +90,6 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     public void initialize() throws InitializationException
     {
         this.marketplaceProductDAO = this.dbi.get().onDemand(MarketplaceProductDAO.class);
+        this.tenantDAO = this.dbi.get().onDemand(TenantDAO.class);
     }
 }

@@ -90,6 +90,7 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
         tenantsData.each({ EntityData<Tenant> tenantData ->
             Tenant tenant = tenantData.entity
             MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(tenant)
+            shopWebObject.withAddons(addonsWebObjectBuilder.build(tenantData))
 
             Optional<ImageGallery> gallery = tenantData.getData(ImageGallery.class)
             List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
@@ -118,6 +119,7 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
         // Shop data
         EntityData<Tenant> tenantData = dataLoader.load(tenant)
         MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(tenant)
+        shopWebObject.withAddons(addonsWebObjectBuilder.build(tenantData))
         Optional<ImageGallery> gallery = tenantData.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
         shopWebObject.withImages(tenant, images, tenant.featuredImageId, platformSettings)
@@ -159,6 +161,7 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
         // Shop data
         EntityData<Tenant> tenantData = dataLoader.load(product.tenant, StandardOptions.LOCALIZE)
         MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(product.tenant)
+        shopWebObject.withAddons(addonsWebObjectBuilder.build(tenantData))
         Optional<ImageGallery> gallery = tenantData.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
         shopWebObject.withImages(product.tenant, images, product.tenant.featuredImageId, platformSettings)
