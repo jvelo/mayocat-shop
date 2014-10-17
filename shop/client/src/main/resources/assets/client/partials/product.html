@@ -149,7 +149,7 @@
                     <div>
                         <small>
                             <span ng-if="!!variant.price && types[product.type].variants.properties.indexOf('price') >= 0">
-                                {{'product.variants.price' | translate}}: {{variant.price}} {{mainCurrency}}
+                                {{'product.variants.price' | translate}}: {{variant.price | money:mainCurrency}} {{mainCurrency}}
                             {{'product.taxes.' + taxesSettings.mode | translate}}</span>
                             <span ng-if="variant.stock >= 0 && types[product.type].variants.properties.indexOf('stock') >= 0">
                                 {{'product.variants.stock' | translate}}: {{variant.stock}}</span>
