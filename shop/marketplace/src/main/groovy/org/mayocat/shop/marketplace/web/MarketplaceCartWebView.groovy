@@ -152,22 +152,22 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
     @Path("update")
     Response updateCart(MultivaluedMap<String, String> queryParams) throws URISyntaxException
     {
-        boolean isRemoveItemRequest = false
+        Integer removeIndex = null;
 
         for (String key : queryParams.keySet()) {
             if (key.startsWith("remove_")) {
-                // Handle "remove product" request
-                isRemoveItemRequest = true
                 try {
-                    Integer index = Integer.valueOf(key.substring("remove_".length()))
-                    cartManager.removeItem(index)
+                    removeIndex = Integer.valueOf(key.substring("remove_".length()))
                 } catch (NumberFormatException | InvalidCartOperationException e) {
                     return Response.status(Response.Status.BAD_REQUEST).build()
                 }
             }
         }
 
-        if (!isRemoveItemRequest) {
+        if (removeIndex) {
+            cartManager.removeItem(removeIndex)
+        }
+        else {
             // Handle update request
             for (String key : queryParams.keySet()) {
                 if (key.startsWith("quantity_")) {
