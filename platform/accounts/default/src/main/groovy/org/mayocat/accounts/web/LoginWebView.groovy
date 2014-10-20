@@ -62,34 +62,40 @@ class LoginWebView implements Resource
     Response login(LoginWebObject loginWebObject)
     {
         try {
+            Map<String, Object> data = Maps.newHashMap()
+            Map<String, Object> loginAttemptData = Maps.newHashMap()
+
+            data.put("loginAttempt", loginAttemptData)
+
+            Error error;
+
             if (Strings.isNullOrEmpty(loginWebObject.username)
                     || Strings.isNullOrEmpty(loginWebObject.password))
             {
-                return ErrorUtil.buildError(Response.Status.BAD_REQUEST, "Invalid login request");
-            }
+                error = new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA, "Invalid login request");
+            } else {
+                User user = accountsService.findUserByEmailOrUserName(loginWebObject.username)
 
-            User user = accountsService.findUserByEmailOrUserName(loginWebObject.username)
-            Error error;
-
-            if (user == null) {
-                error = new Error(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
-                        "Credentials are not correct");
-            } else if (!passwordManager.verifyPassword(loginWebObject.password, user.getPassword())) {
-                error = new Error(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
-                        "Credentials are not correct");
-            } else if (!user.active && getSettings().userValidationRequiredForLogin.value) {
-                error = new Error(Response.Status.UNAUTHORIZED, StandardError.ACCOUNT_REQUIRES_VALIDATION,
-                        "Account requires validation");
+                if (user == null) {
+                    error = new Error(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
+                            "Credentials are not correct");
+                } else if (!passwordManager.verifyPassword(loginWebObject.password, user.getPassword())) {
+                    error = new Error(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
+                            "Credentials are not correct");
+                } else if (!user.active && getSettings().userValidationRequiredForLogin.value) {
+                    error = new Error(Response.Status.UNAUTHORIZED, StandardError.ACCOUNT_REQUIRES_VALIDATION,
+                            "Account requires validation");
+                }
             }
 
             if (error) {
-                Map<String, Object> data = [
-                        error: error
-                ] as Map<String, Object>
+                loginAttemptData.put("error", error)
                 return Response.status(Response.Status.UNAUTHORIZED).entity(new WebView().data(data)).build()
             }
 
-            return Response.ok().entity(new WebView()).cookie(sessionManager.
+            loginAttemptData.put("successful", true)
+
+            return Response.ok().entity(new WebView().data(data)).cookie(sessionManager.
                     getCookies(loginWebObject.username, loginWebObject.password, loginWebObject.remember)).build()
         } catch (EncryptionException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
