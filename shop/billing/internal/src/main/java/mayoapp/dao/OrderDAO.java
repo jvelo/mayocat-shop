@@ -42,8 +42,10 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
 
     @SqlQuery
     public abstract List<Order> findAllPaidOrAwaitingPayment(@Bind("number") Integer number,
-            @Bind("offset") Integer offset,
-            @Bind("tenantId") UUID tenant);
+            @Bind("offset") Integer offset, @Bind("tenantId") UUID tenant);
+
+    @SqlQuery
+    public abstract Integer countAllPaidOrAwaitingPayment(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract Order findBySlugWithCustomer(@Bind("slug") String slug, @Bind("tenantId") UUID tenant);

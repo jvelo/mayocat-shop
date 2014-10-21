@@ -79,7 +79,7 @@ public class OrderResource implements Resource
                     }
                 });
 
-        Integer total = this.orderStore.get().countAll();
+        Integer total = this.orderStore.get().countAllPaidOrAwaitingPayment();
         ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<>(
                 "/api/orders",
                 number,

@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.checkout.internal;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.billing.store.OrderStore;
@@ -49,6 +51,8 @@ import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.shipping.model.Carrier;
+import org.mayocat.shop.taxes.configuration.Rate;
+import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -58,6 +62,8 @@ import org.xwiki.observation.ObservationManager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,6 +83,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private CheckoutSettings checkoutSettings;
 
     @Inject
+    private TaxesSettings taxesSettings;
+
+    @Inject
     private Provider<OrderStore> orderStore;
 
     @Inject
@@ -84,6 +93,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private Provider<AddressStore> addressStore;
+
+    @Inject
+    private Provider<ProductStore> productStore;
 
     @Inject
     private Map<String, GatewayFactory> gatewayFactories;
@@ -119,26 +131,35 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             UUID billingAddressId = null;
             Map<String, Object> data = Maps.newHashMap(); // Order JSON data
 
-            customer.setSlug(customer.getEmail());
-            if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
-                actualCustomer = this.customerStore.get().create(customer);
-            } else {
-                Customer existingCustomer = this.customerStore.get().findBySlug(customer.getEmail());
-                boolean update = updateCustomerIfNecessary(existingCustomer, customer);
-                if (update) {
-                    this.customerStore.get().update(existingCustomer);
+            if (customer.getId() == null) {
+                customer.setSlug(customer.getEmail());
+                if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
+                    actualCustomer = this.customerStore.get().create(customer);
+                } else {
+                    Customer existingCustomer = this.customerStore.get().findBySlug(customer.getEmail());
+                    boolean update = updateCustomerIfNecessary(existingCustomer, customer);
+                    if (update) {
+                        this.customerStore.get().update(existingCustomer);
+                    }
+                    actualCustomer = existingCustomer;
                 }
-                actualCustomer = existingCustomer;
-            }
-            customerId = actualCustomer.getId();
+                customerId = actualCustomer.getId();
 
-            if (deliveryAddress != null) {
-                deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                if (deliveryAddress != null) {
+                    deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                    deliveryAddressId = deliveryAddress.getId();
+                }
+                if (billingAddress != null) {
+                    billingAddress = this.addressStore.get().create(billingAddress);
+                    billingAddressId = billingAddress.getId();
+                }
+            } else {
+                actualCustomer = customer;
+                customerId = customer.getId();
                 deliveryAddressId = deliveryAddress.getId();
-            }
-            if (billingAddress != null) {
-                billingAddress = this.addressStore.get().create(billingAddress);
-                billingAddressId = billingAddress.getId();
+                if (billingAddress != null) {
+                    billingAddressId = billingAddress.getId();
+                }
             }
 
             order = new Order();
@@ -166,6 +187,16 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
                 final String itemTitle = title;
 
+                Product product = productStore.get().findById(p.getId());
+
+                final BigDecimal vatRate;
+                if (product.getVatRateId().isPresent() && getRateDefinition(product.getVatRateId().get()).isPresent()) {
+                    vatRate = getRateDefinition(product.getVatRateId().get()).get().getValue();
+                }
+                else {
+                    vatRate = taxesSettings.getVat().getValue().getDefaultRate();
+                }
+
                 Map<String, Object> itemData = new HashMap<String, Object>()
                 {
                     {
@@ -174,7 +205,10 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                         put("title", itemTitle);
                         put("quantity", cartItem.quantity());
                         put("unitPrice", cartItem.unitPrice().incl());
+                        put("unitPriceExcl", cartItem.unitPrice().excl());
                         put("itemTotal", cartItem.total().incl());
+                        put("itemTotalExcl", cartItem.total().excl());
+                        put("vatRate", vatRate);
                     }
                 };
 
@@ -250,11 +284,17 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         options.put(BasePaymentData.CURRENCY, cart.currency());
         options.put(BasePaymentData.ORDER_ID, order.getId());
         options.put(BasePaymentData.CUSTOMER, actualCustomer);
+        if (billingAddress != null) {
+            options.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
+        }
+        options.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
+        options.put(BasePaymentData.ORDER, order);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
             response.setOrder(order);
             GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), options);
+            response.setData(gatewayResponse.getData());
 
             if (gatewayResponse.isSuccessful()) {
 
@@ -313,6 +353,17 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         return true;
     }
 
+    private Optional<Rate> getRateDefinition(final String rate)
+    {
+        return FluentIterable.from(taxesSettings.getVat().getValue().getOtherRates()).filter(new Predicate<Rate>()
+        {
+            public boolean apply(Rate input)
+            {
+                return input.getId().equals(rate);
+            }
+        }).first();
+    }
+
     private boolean updateCustomerIfNecessary(Customer existingCustomer, Customer customer)
     {
         boolean update = false;
@@ -348,9 +399,14 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 Map<String, AddonGroup> addons = product.getAddons().get();
                 for (String groupName : addons.keySet()) {
                     AddonGroup addonGroup = addons.get(groupName);
+                    Map<String, AddonGroupDefinition>[] sources = new Map[2];
+                    sources[0] = platformSettings.getAddons();
+                    if (webContext.getTheme() != null) {
+                        sources[1] = webContext.getTheme().getDefinition().getAddons();
+                    }
                     Optional<AddonGroupDefinition> definition = AddonUtils
-                            .findAddonGroupDefinition(addonGroup.getGroup(), platformSettings.getAddons(),
-                                    webContext.getTheme().getDefinition().getAddons());
+                            .findAddonGroupDefinition(addonGroup.getGroup(),
+                                    (Map<String, AddonGroupDefinition>[]) sources);
 
                     if (definition.isPresent() &&
                             definition.get().getProperties().containsKey("checkout.includeInOrder"))

@@ -51,8 +51,11 @@ public class OrderMapper implements ResultSetMapper<Order>
         order.setCurrency(Currency.getInstance(resultSet.getString("currency")));
 
         order.setItemsTotal(resultSet.getBigDecimal("items_total"));
+        order.setItemsTotalExcl(resultSet.getBigDecimal("items_total_excl"));
         order.setShipping(resultSet.getBigDecimal("shipping"));
+        order.setShippingExcl(resultSet.getBigDecimal("shipping_excl"));
         order.setGrandTotal(resultSet.getBigDecimal("grand_total"));
+        order.setGrandTotalExcl(resultSet.getBigDecimal("grand_total_excl"));
 
         order.setStatus(Order.Status.valueOf(resultSet.getString("status")));
         order.setAdditionalInformation(resultSet.getString("additional_information"));

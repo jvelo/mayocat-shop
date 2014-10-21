@@ -94,9 +94,15 @@ public class Order implements Entity
 
     private BigDecimal itemsTotal;
 
+    private BigDecimal itemsTotalExcl;
+
     private BigDecimal shipping;
 
+    private BigDecimal shippingExcl;
+
     private BigDecimal grandTotal;
+
+    private BigDecimal grandTotalExcl;
 
     private Status status;
 
@@ -184,6 +190,16 @@ public class Order implements Entity
         this.itemsTotal = itemsTotal;
     }
 
+    public BigDecimal getItemsTotalExcl()
+    {
+        return itemsTotalExcl;
+    }
+
+    public void setItemsTotalExcl(BigDecimal itemsTotalExcl)
+    {
+        this.itemsTotalExcl = itemsTotalExcl;
+    }
+
     public BigDecimal getShipping()
     {
         return shipping;
@@ -194,6 +210,16 @@ public class Order implements Entity
         this.shipping = shipping;
     }
 
+    public BigDecimal getShippingExcl()
+    {
+        return shippingExcl;
+    }
+
+    public void setShippingExcl(BigDecimal shippingExcl)
+    {
+        this.shippingExcl = shippingExcl;
+    }
+
     public BigDecimal getGrandTotal()
     {
         return grandTotal;
@@ -202,6 +228,16 @@ public class Order implements Entity
     public void setGrandTotal(BigDecimal grandTotal)
     {
         this.grandTotal = grandTotal;
+    }
+
+    public BigDecimal getGrandTotalExcl()
+    {
+        return grandTotalExcl;
+    }
+
+    public void setGrandTotalExcl(BigDecimal grandTotalExcl)
+    {
+        this.grandTotalExcl = grandTotalExcl;
     }
 
     public Status getStatus()

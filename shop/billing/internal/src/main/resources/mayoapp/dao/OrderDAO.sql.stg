@@ -3,7 +3,7 @@ group OrderDAO;
 createOrder() ::= <<
     INSERT INTO purchase_order (entity_id, customer_id, delivery_address_id, billing_address_id, creation_date,
         update_date, currency, number_of_items, items_total, shipping, grand_total, status, additional_information,
-        order_data)
+        order_data, items_total_excl, shipping_excl, grand_total_excl)
     VALUES (:order.id,
             :order.customerId,
             :order.deliveryAddressId,
@@ -17,7 +17,10 @@ createOrder() ::= <<
             :order.grandTotal,
             :order.status,
             :order.additionalInformation,
-            :order.orderData)
+            :order.orderData,
+            :order.itemsTotalExcl,
+            :order.shippingExcl,
+            :order.grandTotalExcl)
 >>
 
 updateOrder() ::= <<
@@ -36,6 +39,15 @@ findAllPaidOrAwaitingPayment() ::= <<
     ORDER BY purchase_order.creation_date DESC
     LIMIT  :number
     OFFSET :offset
+>>
+
+countAllPaidOrAwaitingPayment() ::= <<
+    SELECT count(entity_id)
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE   entity.type = 'purchase_order'
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+        AND purchase_order.status NOT IN ('NONE', 'PAYMENT_PENDING')
 >>
 
 findBySlugWithCustomer() ::= <<

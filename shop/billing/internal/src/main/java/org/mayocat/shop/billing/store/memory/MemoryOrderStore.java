@@ -44,6 +44,12 @@ public class MemoryOrderStore extends BaseEntityMemoryStore<Order> implements Or
         return FluentIterable.from(all()).filter(paidOrAwaitingPayment).skip(offset).limit(number).toList();
     }
 
+    @Override
+    public Integer countAllPaidOrAwaitingPayment()
+    {
+        return FluentIterable.from(all()).filter(paidOrAwaitingPayment).size();
+    }
+
     public Order findBySlug(String order)
     {
         return FluentIterable.from(all()).filter(withSlug(order)).first().orNull();

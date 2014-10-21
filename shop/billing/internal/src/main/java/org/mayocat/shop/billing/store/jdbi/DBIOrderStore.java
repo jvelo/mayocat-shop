@@ -124,6 +124,12 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     }
 
     @Override
+    public Integer countAllPaidOrAwaitingPayment()
+    {
+        return this.dao.countAllPaidOrAwaitingPayment(getTenant());
+    }
+
+    @Override
     public Order findBySlug(String slug)
     {
         return this.dao.findBySlugWithCustomer(slug, getTenant());
