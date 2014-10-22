@@ -36,8 +36,18 @@ public interface PaymentGateway
      * status acknowledgement mechanism where the status of an operation (fund transfer) is POST-ed back to an URL (of
      * ours) by the third party server.
      *
+     * @param orderId the order ID for which to acknowledge a payment
      * @param data the POST data associated with this acknowledgement request.
      * @throws GatewayException when an un-expected exception occurs.
      */
     GatewayResponse acknowledge(UUID orderId, Map<String, List<String>> data) throws GatewayException;
+
+    /**
+     * Same as {@link #acknowledge(java.util.UUID, java.util.Map)} except we don't know the order ID : it is retrieved
+     * from the data map.
+     *
+     * @param data the POST data associated with this acknowledgement request.
+     * @throws GatewayException when an un-expected exception occurs.
+     */
+    GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException;
 }

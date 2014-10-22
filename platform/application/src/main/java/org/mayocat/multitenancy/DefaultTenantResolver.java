@@ -110,7 +110,8 @@ public class DefaultTenantResolver implements TenantResolver, ServletRequestList
     private String extractSlugFromHost(String host)
     {
         String rootDomain;
-        if (Strings.emptyToNull(siteSettings.getDomainName()) == null) {
+        String siteName = siteSettings.getWebDomainName().or(siteSettings.getDomainName());
+        if (Strings.emptyToNull(siteName) == null) {
             InternetDomainName domainName = InternetDomainName.from(host);
             if (domainName.hasPublicSuffix()) {
                 // Domain is under a valid TLD, extract the TLD + first child

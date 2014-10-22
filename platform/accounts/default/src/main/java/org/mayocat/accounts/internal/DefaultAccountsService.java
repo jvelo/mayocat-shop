@@ -44,6 +44,7 @@ import org.mayocat.security.PasswordManager;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.url.URLHelper;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -86,6 +87,9 @@ public class DefaultAccountsService implements AccountsService
 
     @Inject
     private SiteSettings siteSettings;
+
+    @Inject
+    private URLHelper urlHelper;
 
     @Inject
     private Logger logger;
@@ -328,8 +332,7 @@ public class DefaultAccountsService implements AccountsService
                 if (!Strings.isNullOrEmpty(settings.getUserValidationUriTemplate().getValue())) {
                     validationUriTemplate = settings.getUserValidationUriTemplate().getValue();
                 } else {
-                    validationUriTemplate = siteSettings.getDomainName() +
-                            "/account/validation/${validationKey}";
+                    validationUriTemplate = urlHelper.getContextWebURL("/account/validation/${validationKey}").toString();
                 }
                 SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
                 groovy.text.Template uriTemplate = templateEngine.createTemplate(validationUriTemplate);
@@ -364,8 +367,7 @@ public class DefaultAccountsService implements AccountsService
                 if (!Strings.isNullOrEmpty(settings.getUserPasswordResetUriTemplate().getValue())) {
                     passwordResetUriLink = settings.getUserPasswordResetUriTemplate().getValue();
                 } else {
-                    passwordResetUriLink = siteSettings.getDomainName() +
-                            "/login/reset-password/${resetKey}";
+                    passwordResetUriLink = urlHelper.getContextWebURL("/login/reset-password/${resetKey}").toString();
                 }
                 SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
                 groovy.text.Template uriTemplate = templateEngine.createTemplate(passwordResetUriLink);

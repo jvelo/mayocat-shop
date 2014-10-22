@@ -7,7 +7,6 @@
  */
 package org.mayocat.url;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.inject.Inject;
@@ -21,10 +20,13 @@ import org.mayocat.model.annotation.PluralForm;
 /**
  * @version $Id$
  */
-public abstract class AbstractGenericEntityURLFactory<E extends Entity> extends AbstractEntityURLFactory<E>
+public abstract class AbstractGenericEntityURLFactory<E extends Entity> implements EntityURLFactory<E>
 {
     @Inject
     private WebContext context;
+
+    @Inject
+    private URLHelper urlHelper;
 
     @Override
     public URL create(E entity, Tenant tenant)
@@ -41,29 +43,15 @@ public abstract class AbstractGenericEntityURLFactory<E extends Entity> extends 
     @Override
     public URL create(E entity, Tenant tenant, URLType type)
     {
-        try {
-            // TODO
-            // See if/how we want to support other protocol than HTTP
-            String urlString = "http://" + getDomain(tenant);
+        String path = "/" + getPluralForm(entity) + "/" + entity.getSlug();
 
-            switch (type) {
-                case API:
-                    urlString += "/api/";
-                    break;
-                case PUBLIC:
-                default:
-                    urlString += "/";
-                    if (context != null && context.isAlternativeLocale()) {
-                        urlString += context.getLocale() + "/";
-                    }
-                    break;
-            }
-
-            urlString += getPluralForm(entity) + "/" + entity.getSlug();
-            URL url = new URL(urlString);
-            return url;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+        switch (type) {
+            case API:
+                path = "/api/" + path;
+                return urlHelper.getTenantPlatformURL(tenant, path);
+            case PUBLIC:
+            default:
+                return urlHelper.getTenantWebURL(tenant, path);
         }
     }
 

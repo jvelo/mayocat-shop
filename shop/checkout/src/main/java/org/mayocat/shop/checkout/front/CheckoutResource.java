@@ -58,6 +58,7 @@ import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.front.views.WebView;
+import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -89,6 +90,9 @@ public class CheckoutResource implements Resource
 
     @Inject
     private SiteSettings siteSettings;
+
+    @Inject
+    private URLHelper urlHelper;
 
     @Inject
     private MultitenancySettings multitenancySettings;
@@ -329,7 +333,7 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    @Path("{orderId}/" + PAYMENT_CANCEL_PATH)
+    @Path(PAYMENT_CANCEL_PATH + "/{orderId}")
     public WebView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId)
     {
         try {
@@ -442,7 +446,7 @@ public class CheckoutResource implements Resource
             context.put("deliveryAddress", prepareAddressContext(da.get()));
         }
 
-        context.put("siteUrl", getSiteUrl(tenant));
+        context.put("siteUrl", urlHelper.getContextWebURL("").toString());
 
         return context;
     }
@@ -465,19 +469,5 @@ public class CheckoutResource implements Resource
         return addressContext;
     }
 
-    /**
-     * Returns the site URL for a tenant
-     *
-     * @param tenant the tenant to get the site URL from
-     * @return the site URL for the tenant
-     */
-    private String getSiteUrl(Tenant tenant)
-    {
-        if (multitenancySettings.isActivated()) {
-            return "http://" + tenant.getSlug() + "." + siteSettings.getDomainName();
-        } else {
-            return "http://" + siteSettings.getDomainName();
-        }
-    }
 }
 

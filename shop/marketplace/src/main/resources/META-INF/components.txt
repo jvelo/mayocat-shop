@@ -13,6 +13,7 @@ org.mayocat.shop.marketplace.web.MarketplaceCollectionWebView
 org.mayocat.shop.marketplace.web.MarketplaceShopWebView
 org.mayocat.shop.marketplace.web.MarketplaceImageWebView
 org.mayocat.shop.marketplace.web.MarketplacePageWebView
+org.mayocat.shop.marketplace.web.MarketplacePaymentWebView
 org.mayocat.shop.marketplace.web.data.UserWebDataSupplier
 org.mayocat.shop.marketplace.search.BuildIndexTask
 org.mayocat.shop.marketplace.resources.MarketplaceResource

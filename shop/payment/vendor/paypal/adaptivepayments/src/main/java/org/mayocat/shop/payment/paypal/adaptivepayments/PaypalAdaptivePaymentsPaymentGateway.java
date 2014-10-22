@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.payment.paypal.adaptivepayments;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,14 +27,7 @@ import org.mayocat.shop.payment.model.PaymentOperation;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.paypal.core.ConfigManager;
-import com.paypal.exception.ClientActionRequiredException;
-import com.paypal.exception.HttpErrorException;
-import com.paypal.exception.InvalidCredentialException;
-import com.paypal.exception.InvalidResponseDataException;
-import com.paypal.exception.MissingCredentialException;
-import com.paypal.exception.SSLConfigurationException;
 import com.paypal.ipn.IPNMessage;
-import com.paypal.sdk.exceptions.OAuthException;
 import com.paypal.svcs.services.AdaptivePaymentsService;
 import com.paypal.svcs.types.ap.DisplayOptions;
 import com.paypal.svcs.types.ap.PayRequest;
@@ -94,7 +86,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setActionType(ACTION_TYPE_CREATE);
         request.setCurrencyCode(((Currency) options.get(BasePaymentData.CURRENCY)).getCurrencyCode());
 
-        String baseURI = (String) options.get(BasePaymentData.BASE_URL);
+        String baseURI = (String) options.get(BasePaymentData.BASE_WEB_URL);
         String orderId = options.get(BasePaymentData.ORDER_ID).toString();
 
         // -> FIXME determine if we want to set the order ID as tracking ID.
@@ -199,6 +191,11 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         }
 
         return response;
+    }
+
+    public GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException
+    {
+        throw new RuntimeException("Not implemented : use the version with the order ID instead");
     }
 
     private Map<String, String[]> convertDataMap(Map<String, List<String>> data)

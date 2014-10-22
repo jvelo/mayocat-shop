@@ -19,19 +19,19 @@ import javax.inject.Provider;
 
 import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.addons.util.AddonUtils;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
+import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.billing.model.Order;
-import org.mayocat.shop.catalog.store.ProductStore;
-import org.mayocat.shop.customer.store.AddressStore;
-import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.Cart;
 import org.mayocat.shop.cart.CartItem;
 import org.mayocat.shop.cart.CartManager;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
@@ -40,6 +40,8 @@ import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.AddressStore;
+import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
 import org.mayocat.shop.payment.GatewayFactory;
@@ -56,6 +58,7 @@ import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.ObservationManager;
@@ -114,6 +117,15 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private WebContext webContext;
+
+    @Inject
+    private SiteSettings siteSettings;
+
+    @Inject
+    private URLHelper urlHelper;
+
+    @Inject
+    private MultitenancySettings multitenancySettings;
 
     @Override
     public CheckoutResponse checkout(Customer customer, Address deliveryAddress,
@@ -269,31 +281,28 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException("Gateway could not be created.");
         }
 
-        String localePath = "";
-        if (webContext.isAlternativeLocale()) {
-            localePath += webContext.getLocale() + "/";
-        }
+        Map<PaymentData, Object> data = Maps.newHashMap();
 
-        Map<PaymentData, Object> options = Maps.newHashMap();
-        String baseUri = webContext.getRequest().getBaseUri().toString() + localePath;
-        options.put(BasePaymentData.BASE_URL, baseUri);
-        options.put(BasePaymentData.CANCEL_URL, baseUri + CheckoutResource.PATH + "/" + order.getId() + "/"
-                + CheckoutResource.PAYMENT_CANCEL_PATH);
-        options.put(BasePaymentData.RETURN_URL, baseUri + CheckoutResource.PATH + "/"
-                + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
-        options.put(BasePaymentData.CURRENCY, cart.currency());
-        options.put(BasePaymentData.ORDER_ID, order.getId());
-        options.put(BasePaymentData.CUSTOMER, actualCustomer);
+        data.put(BasePaymentData.BASE_WEB_URL, urlHelper.getContextWebBaseURL());
+        data.put(BasePaymentData.BASE_PLATFORM_URL, urlHelper.getContextPlatformBaseURL());
+        data.put(BasePaymentData.CANCEL_URL,
+                urlHelper.getContextWebURL(CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH + "/"
+                        + order.getId()).toString());
+        data.put(BasePaymentData.RETURN_URL, urlHelper.getContextWebURL(CheckoutResource.PATH + "/"
+                + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
+        data.put(BasePaymentData.CURRENCY, cart.currency());
+        data.put(BasePaymentData.ORDER_ID, order.getId());
+        data.put(BasePaymentData.CUSTOMER, actualCustomer);
         if (billingAddress != null) {
-            options.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
+            data.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
         }
-        options.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
-        options.put(BasePaymentData.ORDER, order);
+        data.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
+        data.put(BasePaymentData.ORDER, order);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
             response.setOrder(order);
-            GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), data);
             response.setData(gatewayResponse.getData());
 
             if (gatewayResponse.isSuccessful()) {

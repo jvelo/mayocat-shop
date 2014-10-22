@@ -7,14 +7,15 @@
  */
 package org.mayocat.attachment.url;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.inject.Inject;
+
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.attachment.model.Attachment;
-import org.mayocat.url.AbstractEntityURLFactory;
+import org.mayocat.attachment.util.AttachmentUtils;
 import org.mayocat.url.EntityURLFactory;
+import org.mayocat.url.URLHelper;
 import org.mayocat.url.URLType;
 import org.xwiki.component.annotation.Component;
 
@@ -22,8 +23,11 @@ import org.xwiki.component.annotation.Component;
  * @version $Id$
  */
 @Component
-public class AttachmentURLFactory extends AbstractEntityURLFactory<Attachment> implements EntityURLFactory<Attachment>
+public class AttachmentURLFactory implements EntityURLFactory<Attachment>
 {
+    @Inject
+    private URLHelper urlHelper;
+
     @Override
     public URL create(Attachment entity, Tenant tenant, URLType type)
     {
@@ -31,11 +35,7 @@ public class AttachmentURLFactory extends AbstractEntityURLFactory<Attachment> i
         if (!AttachmentUtils.isImage(fileName)) {
             throw new UnsupportedOperationException("Not implemented");
         }
-        try {
-            return new URL(getSchemeAndDomain(tenant) + "/images/" + fileName);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        return urlHelper.getTenantPlatformURL(tenant, "/images/" + fileName);
     }
 
     @Override

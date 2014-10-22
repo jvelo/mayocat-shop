@@ -40,6 +40,7 @@ import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
+import org.mayocat.url.URLHelper;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -73,6 +74,9 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
     @Inject
     private SiteSettings siteSettings;
+
+    @Inject
+    private URLHelper urlHelper;
 
     @Inject
     private MultitenancySettings multitenancySettings;
@@ -112,6 +116,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         final Locale customerLocale = webContext.getLocale();
         final Tenant tenant = webContext.getTenant();
         final Locale tenantLocale = settings.getLocales().getMainLocale().getValue();
+
         Executors.newSingleThreadExecutor().submit(new Callable<Void>()
         {
             @Override
@@ -135,37 +140,40 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      */
     private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale)
     {
-        Customer customer = order.getCustomer().get();
+        try {
+            Customer customer = order.getCustomer().get();
 
-        Optional<Address> billingAddress;
-        if (order.getBillingAddress().isLoaded()) {
-            billingAddress = Optional.of(order.getBillingAddress().get());
-        } else {
-            billingAddress = Optional.absent();
-        }
-        Optional<Address> deliveryAddress;
-        if (order.getDeliveryAddress().isLoaded()) {
-            deliveryAddress = Optional.of(order.getDeliveryAddress().get());
-        } else {
-            deliveryAddress = Optional.absent();
-        }
+            Optional<Address> billingAddress;
+            if (order.getBillingAddress().isLoaded()) {
+                billingAddress = Optional.of(order.getBillingAddress().get());
+            } else {
+                billingAddress = Optional.absent();
+            }
+            Optional<Address> deliveryAddress;
+            if (order.getDeliveryAddress().isLoaded()) {
+                deliveryAddress = Optional.of(order.getDeliveryAddress().get());
+            } else {
+                deliveryAddress = Optional.absent();
+            }
 
-        Map<String, Object> emailContext =
-                prepareMailContext(order, customer, billingAddress, deliveryAddress, tenant, tenantLocale);
+            Map<String, Object> emailContext =
+                    prepareMailContext(order, customer, billingAddress, deliveryAddress, tenant, tenantLocale);
 
-        String customerEmail = customer.getEmail();
+            String customerEmail = customer.getEmail();
 
-        Optional<MailTemplate> customerNotificationEmail = getCustomerNotificationEmail(tenant,
-                customerEmail, customerLocale);
-        if (customerNotificationEmail.isPresent()) {
-            sendNotificationMail(customerNotificationEmail.get(), emailContext);
-        } else {
-            logger.warn("Can't send notification email to customer. Does the mail template exists ?");
-        }
-        Optional<MailTemplate> tenantNotificationEmail =
-                getTenantNotificationEmail(tenant, tenantLocale);
-        if (tenantNotificationEmail.isPresent()) {
-            sendNotificationMail(tenantNotificationEmail.get(), emailContext);
+            Optional<MailTemplate> customerNotificationEmail = getCustomerNotificationEmail(tenant,
+                    customerEmail, customerLocale);
+            if (customerNotificationEmail.isPresent()) {
+                sendNotificationMail(customerNotificationEmail.get(), emailContext);
+            } else {
+                logger.warn("Can't send notification email to customer. Does the mail template exists ?");
+            }
+            Optional<MailTemplate> tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
+            if (tenantNotificationEmail.isPresent()) {
+                sendNotificationMail(tenantNotificationEmail.get(), emailContext);
+            }
+        } catch (Exception e) {
+            logger.error("Exception when sending email", e);
         }
     }
 
@@ -179,9 +187,10 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
     private Optional<MailTemplate> getCustomerNotificationEmail(Tenant tenant,
             String customerEmail, Locale locale)
     {
-        String from = StringUtils.isNotBlank(tenant.getContactEmail()) ?
-                tenant.getContactEmail() :
-                generalSettings.getNotificationsEmail();
+        String from = getTenantContactEmail(tenant);
+        if (from == null) {
+            return Optional.absent();
+        }
         Optional<Template> template = mailTemplateService.getTemplate("order_paid_customer_email.html", locale);
         if (!template.isPresent()) {
             return Optional.absent();
@@ -199,7 +208,8 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      */
     private Optional<MailTemplate> getTenantNotificationEmail(Tenant tenant, Locale locale)
     {
-        if (StringUtils.isBlank(tenant.getContactEmail())) {
+        String tenantEmail = getTenantContactEmail(tenant);
+        if (StringUtils.isBlank(tenantEmail)) {
             return Optional.absent();
         }
         Optional<Template> template = mailTemplateService.getTemplate("order_paid_tenant_email.html", locale);
@@ -209,8 +219,26 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
         MailTemplate mailTemplate = new MailTemplate().template(template.get())
                 .from(generalSettings.getNotificationsEmail())
-                .to(tenant.getContactEmail());
+                .to(tenantEmail);
         return Optional.of(mailTemplate);
+    }
+
+    /**
+     * Retrieves the contact email for a tenant. If the tenant is null ("global tenant"), then use the global site
+     * settings
+     *
+     * @param tenant the tenant for which to get the contact email, or null for a global tenant
+     * @return the found contact email or null if no contact email has been found
+     */
+    private String getTenantContactEmail(Tenant tenant)
+    {
+        if (tenant == null) {
+            return siteSettings.getContactEmail();
+        } else {
+            return StringUtils.isNotBlank(tenant.getContactEmail()) ?
+                    tenant.getContactEmail() :
+                    generalSettings.getNotificationsEmail();
+        }
     }
 
     /**
@@ -289,7 +317,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
             context.put("shipping", order.getOrderData().get("shipping"));
         }
 
-        context.put("siteName", tenant.getName());
+        context.put("siteName", tenant != null ? tenant.getName() : siteSettings.getName());
         context.put("itemsTotal", itemsTotal);
         context.put("orderId", order.getSlug());
         context.put("grandTotal", grandTotal);
@@ -308,7 +336,8 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
             context.put("deliveryAddress", prepareAddressContext(da.get()));
         }
 
-        context.put("siteUrl", getSiteUrl(tenant));
+        context.put("siteUrl", urlHelper.getTenantWebURL(tenant, "").toString());
+        context.put("backOfficeUrl", urlHelper.getTenantBackOfficeURL(tenant, "").toString());
 
         return context;
     }
@@ -331,18 +360,4 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         return addressContext;
     }
 
-    /**
-     * Returns the site URL for a tenant
-     *
-     * @param tenant the tenant to get the site URL from
-     * @return the site URL for the tenant
-     */
-    private String getSiteUrl(Tenant tenant)
-    {
-        if (multitenancySettings.isActivated()) {
-            return "http://" + tenant.getSlug() + "." + siteSettings.getDomainName();
-        } else {
-            return "http://" + siteSettings.getDomainName();
-        }
-    }
 }
