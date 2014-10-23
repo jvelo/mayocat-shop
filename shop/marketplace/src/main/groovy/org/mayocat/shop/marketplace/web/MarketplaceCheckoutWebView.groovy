@@ -7,10 +7,17 @@
  */
 package org.mayocat.shop.marketplace.web
 
+import com.google.common.base.Optional
 import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
+import org.mayocat.configuration.PlatformSettings
+import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.image.model.Image
 import org.mayocat.rest.Resource
+import org.mayocat.shop.cart.Cart
+import org.mayocat.shop.cart.CartManager
+import org.mayocat.shop.cart.web.object.CartWebObject
 import org.mayocat.shop.checkout.CheckoutRegister
 import org.mayocat.shop.checkout.CheckoutResponse
 import org.mayocat.shop.checkout.CheckoutSettings
@@ -21,6 +28,7 @@ import org.mayocat.shop.customer.store.CustomerStore
 import org.mayocat.shop.front.views.WebView
 import org.mayocat.shop.marketplace.web.object.CheckoutResponseWebObject
 import org.mayocat.shop.marketplace.web.object.CheckoutWebObject
+import org.mayocat.shop.shipping.ShippingService
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
 
@@ -47,6 +55,9 @@ class MarketplaceCheckoutWebView implements Resource
     CheckoutSettings checkoutSettings
 
     @Inject
+    CartManager cartManager
+
+    @Inject
     WebContext webContext;
 
     @Inject
@@ -57,6 +68,15 @@ class MarketplaceCheckoutWebView implements Resource
 
     @Inject
     CheckoutRegister checkoutRegister
+
+    @Inject
+    ShippingService shippingService
+
+    @Inject
+    GeneralSettings generalSettings
+
+    @Inject
+    PlatformSettings platformSettings
 
     @Inject
     Logger logger
@@ -79,6 +99,12 @@ class MarketplaceCheckoutWebView implements Resource
         Address deliveryAddress = addressStore.get().findByCustomerIdAndType(customer.id, "delivery")
         Address billingAddress = addressStore.get().findByCustomerIdAndType(customer.id, "billing")
 
+        Cart cart = cartManager.cart
+        final Locale locale = generalSettings.locales.mainLocale.value
+
+        CartWebObject cartWebObject = new CartWebObject()
+        cartWebObject.withCart(shippingService, cart, locale, [] as List<Image>, platformSettings, Optional.absent())
+
         try {
             CheckoutResponse response = checkoutRegister.
                     checkout(customer, deliveryAddress, billingAddress, otherData);
@@ -88,8 +114,9 @@ class MarketplaceCheckoutWebView implements Resource
             }
             checkoutResponseWebObject.paymentData = response.getData()
 
-            return new WebView().data([checkout: checkoutResponseWebObject] as Map<String, Object>)
-
+            return new WebView().data(
+                    [checkout: checkoutResponseWebObject, cart: cartWebObject] as Map<String, Object>,
+            )
         } catch (final Exception e) {
             this.logger.error("Exception checking out", e);
             Map<String, Object> data = new HashMap<>();

@@ -18,8 +18,4 @@ class CustomerAccountCreationWebObject
     UserAccountWebObject account
 
     CustomerWebObject customer
-
-    AddressWebObject deliveryAddress
-
-    AddressWebObject billingAddress
 }

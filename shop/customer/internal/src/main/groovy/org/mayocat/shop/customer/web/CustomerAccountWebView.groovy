@@ -20,6 +20,7 @@ import org.mayocat.accounts.WrongPasswordException
 import org.mayocat.accounts.model.User
 import org.mayocat.accounts.session.JerseyCookieSessionManager
 import org.mayocat.accounts.web.object.UserValidationWebObject
+import org.mayocat.accounts.web.object.UserWebObject
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.context.WebContext
@@ -148,7 +149,12 @@ class CustomerAccountWebView implements Resource
 
                 if (!accountCreationData.containsKey("error")) {
                     if (accountsSettings.isAutoLoginAfterSignup().value) {
-                        // Login-in
+
+                        // Put the user and customer in context
+                        data.put("user", new UserWebObject().withUser(user))
+                        data.put("customer", customerWebObject);
+
+                        // Response with login cookies
                         return Response.ok().entity(new WebView().data(data)).
                                 cookie(sessionManager.getCookies(user.slug, password, false)).build()
                     } else {
