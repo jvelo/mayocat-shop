@@ -30,6 +30,8 @@ class AddressWebObject
 
     String country
 
+    String note
+
     Address toAddress()
     {
         Address address = new Address()
@@ -41,6 +43,7 @@ class AddressWebObject
         address.zip = zip
         address.city = city
         address.country = country
+        address.note = note
 
         address
     }
@@ -54,6 +57,7 @@ class AddressWebObject
         zip = address.zip
         city = address.city
         country = address.country
+        note = address.note
 
         this
     }

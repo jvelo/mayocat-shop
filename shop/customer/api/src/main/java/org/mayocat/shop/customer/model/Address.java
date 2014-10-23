@@ -34,6 +34,8 @@ public class Address implements Identifiable
 
     private String country;
 
+    private String note;
+
     private String type;
 
     public UUID getId()
@@ -124,6 +126,16 @@ public class Address implements Identifiable
     public void setCountry(String country)
     {
         this.country = country;
+    }
+
+    public String getNote()
+    {
+        return note;
+    }
+
+    public void setNote(String note)
+    {
+        this.note = note;
     }
 
     public String getType()

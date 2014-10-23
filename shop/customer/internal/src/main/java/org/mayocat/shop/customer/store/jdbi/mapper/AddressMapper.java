@@ -35,6 +35,7 @@ public class AddressMapper implements ResultSetMapper<Address>
         address.setCity(resultSet.getString("city"));
         address.setCountry(resultSet.getString("country"));
         address.setType(resultSet.getString("type"));
+        address.setNote(resultSet.getString("note"));
 
         return address;
     }
