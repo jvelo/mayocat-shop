@@ -32,10 +32,16 @@ public interface OrderStore extends Store<Order, UUID>, EntityStore
     List<Order> findAllPaidOrAwaitingPayment(Integer number, Integer offset);
 
     /**
+     * Lists all paid orders for a customer.
+     *
+     * @return the matched orders
+     */
+    List<Order> findAllPaidForCustomer(UUID customerId);
+
+    /**
      * @return the total count for {@link #findAllPaidOrAwaitingPayment(Integer, Integer)}.
      */
     Integer countAllPaidOrAwaitingPayment();
 
     Order findBySlug(String order);
-
 }

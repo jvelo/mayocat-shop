@@ -55,4 +55,7 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
 
     @SqlQuery
     public abstract Integer lastOrderNumber(@Bind("tenantId") UUID tenant);
+
+    @SqlQuery
+    public abstract List<Order> findAllPaidForCustomer(@Bind("customerId") UUID customerId);
 }

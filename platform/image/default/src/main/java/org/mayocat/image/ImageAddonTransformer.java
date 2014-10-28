@@ -56,7 +56,7 @@ public class ImageAddonTransformer implements AddonFieldTransformer
         }
 
         Image image = found.get();
-        String uri = urlFactory.create(image.getAttachment()).toString();
+        String uri = urlFactory.create(image.getAttachment()).getPath();
 
         String template;
         Map<String, Object> arguments = Maps.newHashMap();

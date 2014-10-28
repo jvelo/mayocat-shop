@@ -33,7 +33,7 @@ class DateWebObject
 
     String dateTime;
 
-    def withDate(Date date, Locale locale)
+    DateWebObject withDate(Date date, Locale locale)
     {
         DateTime dt = new DateTime(date);
 
@@ -45,5 +45,7 @@ class DateWebObject
         year = dt.getYear();
         time = dt.toDate().getTime();
         dateTime = dt.toString();
+
+        this
     }
 }

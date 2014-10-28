@@ -9,6 +9,7 @@ package org.mayocat.shop.billing.store.memory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -53,5 +54,11 @@ public class MemoryOrderStore extends BaseEntityMemoryStore<Order> implements Or
     public Order findBySlug(String order)
     {
         return FluentIterable.from(all()).filter(withSlug(order)).first().orNull();
+    }
+
+    @Override
+    public List<Order> findAllPaidForCustomer(UUID customerId)
+    {
+        throw new RuntimeException("Not implemented");
     }
 }

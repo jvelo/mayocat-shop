@@ -28,6 +28,7 @@ public enum StandardError implements ErrorCode
     NOT_A_VALID_TENANT(40401),
     USER_NOT_FOUND(40402),
     PASSWORD_RESET_KEY_NOT_FOUND(40403),
+    ORDER_NOT_FOUND(40404),
 
     // 409
     EMAIL_ALREADY_REGISTERED(40901),

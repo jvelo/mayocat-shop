@@ -41,6 +41,16 @@ findAllPaidOrAwaitingPayment() ::= <<
     OFFSET :offset
 >>
 
+findAllPaidForCustomer() ::= <<
+    SELECT *
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+    ORDER BY purchase_order.creation_date DESC
+>>
+
 countAllPaidOrAwaitingPayment() ::= <<
     SELECT count(entity_id)
     FROM entity

@@ -5,17 +5,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.marketplace.web.object
+package org.mayocat.shop.customer.web.object
 
 import groovy.transform.CompileStatic
+import org.mayocat.shop.catalog.web.object.PriceWebObject
+import org.mayocat.shop.marketplace.web.object.MarketplaceProductWebObject
 
 /**
  * @version $Id$
  */
 @CompileStatic
-class CheckoutResponseWebObject
+class OrderItemWebObject
 {
-    String redirection
+    MarketplaceProductWebObject product
 
-    Map<String, Object> paymentData
+    String title
+
+    Long quantity
+
+    PriceWebObject unitPrice
+
+    PriceWebObject itemTotal
 }
