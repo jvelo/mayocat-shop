@@ -158,6 +158,7 @@ class MarketplaceCollectionWebView implements Resource, WithProductWebObjectBuil
         collectionWebObject.withCollection(data.entity, urlFactory)
         collectionWebObject.withAddons(addonsWebObjectBuilder.build(data))
         collectionWebObject.withImages(null, images, collection.featuredImageId, platformSettings)
+        // TODO handle real pagination
         collectionWebObject.withProducts(productList, 0, 0)
 
         // Children
