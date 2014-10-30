@@ -15,8 +15,8 @@ updateCustomer() ::= <<
     UPDATE customer
     SET    first_name = :customer.firstName,
            last_name = :customer.lastName,
-           phone_number = :customer.phoneNumber
-           email = :customer.email
+           phone_number = :customer.phoneNumber,
+           email = :customer.email,
            company = :customer.company
     WHERE  entity_id = :customer.id
 >>
