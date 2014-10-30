@@ -63,8 +63,6 @@ public class JavaMailMailService implements MailService
         properties.put("mail.transport.protocol", "smtp");
         properties.put("mail.smtp.host", smtpSettings.getServer());
         properties.put("mail.smtp.port", smtpSettings.getPort());
-        properties.put("mail.smtp.timeout", 1000);
-        properties.put("mail.smtp.connectiontimeout", 1000);
 
         for (String key : smtpSettings.getProperties().keySet()) {
             properties.put(key, smtpSettings.getProperties().get(key));
