@@ -60,7 +60,6 @@ import javax.ws.rs.core.Response
 @CompileStatic
 class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegate
 {
-
     @Inject
     Provider<ProductStore> productStore
 
@@ -260,46 +259,45 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             Product product = this.productStore.get().findBySlug(slug);
             if (product == null) {
                 return Response.status(404).build();
-            } else {
-                def id = product.id
-                def featuredImageId = product.featuredImageId
+            }
+            def id = product.id
+            def featuredImageId = product.featuredImageId
 
-                product = productApiObject.toProduct(taxesSettings, platformSettings,
-                        Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
-                // ID and slugs are not update-able
-                product.id = id
-                product.slug = slug
+            product = productApiObject.toProduct(taxesSettings, platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
+            // ID and slugs are not update-able
+            product.id = id
+            product.slug = slug
 
-                // Featured image is updated via the /images API only, set it back
-                product.featuredImageId = featuredImageId
+            // Featured image is updated via the /images API only, set it back
+            product.featuredImageId = featuredImageId
 
-                // Check if virtual flag must be removed or set
-                if (Strings.isNullOrEmpty(productApiObject.type) && product.virtual) {
-                    // It had a type but no it hasn't
-                    product.virtual = false;
-                } else if (!Strings.isNullOrEmpty(productApiObject.type) && !product.virtual) {
-                    product.virtual = true;
-                }
+            // Check if virtual flag must be removed or set
+            if (Strings.isNullOrEmpty(productApiObject.type) && product.virtual) {
+                // It had a type but no it hasn't
+                product.virtual = false;
+            } else if (!Strings.isNullOrEmpty(productApiObject.type) && !product.virtual) {
+                product.virtual = true;
+            }
 
-                this.productStore.get().update(product);
+            this.productStore.get().update(product);
 
-                // Update variants order if needed
-                // TODO : do this in a PUT "{slug}/variants" API instead
+            // Update variants order if needed
+            // TODO : do this in a PUT "{slug}/variants" API instead
 
-                if (productApiObject._embedded?.containsKey("variants")) {
-                    List<Map<String, Object>> variantApiObjects =
-                            productApiObject._embedded?.get("variants") as List<Map<String, Object>>;
+            if (productApiObject._embedded?.containsKey("variants")) {
+                List<Map<String, Object>> variantApiObjects =
+                        productApiObject._embedded?.get("variants") as List<Map<String, Object>>;
 
-                    List<Product> existingVariants = productStore.get().findVariants(product);
+                List<Product> existingVariants = productStore.get().findVariants(product);
 
-                    variantApiObjects.eachWithIndex({ Map<String, Object> entry, Integer i ->
-                        def index = existingVariants.findIndexOf({ Product p -> p.slug == entry.get("slug") })
-                        if (index != i) {
-                            Product variant = existingVariants.find({ Product p -> p.slug == entry.get("slug") })
-                            productStore.get().updatePosition(i, variant);
-                        }
-                    })
-                }
+                variantApiObjects.eachWithIndex({ Map<String, Object> entry, Integer i ->
+                    def index = existingVariants.findIndexOf({ Product p -> p.slug == entry.get("slug") })
+                    if (index != i) {
+                        Product variant = existingVariants.find({ Product p -> p.slug == entry.get("slug") })
+                        productStore.get().updatePosition(i, variant);
+                    }
+                })
             }
 
             return Response.ok().build();
@@ -356,7 +354,8 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             }
 
             // Set slug TODO: verify if provided slug is conform
-            product.slug = Strings.isNullOrEmpty(productApiObject.slug) ? slugifier.slugify(product.title) : productApiObject.slug
+            product.slug = Strings.isNullOrEmpty(productApiObject.slug) ? slugifier.slugify(product.title) :
+                    productApiObject.slug
 
             def created = productStore.get().create(product);
 
@@ -456,7 +455,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             // 2. Check if feature exists, and create it if not
 
             String title = variant.keys.containsKey(feature.value) ?
-                variant.keys.get(feature.value) : feature.value
+                    variant.keys.get(feature.value) : feature.value
             String featureSlug = variant.keys.containsKey(feature.value) ? feature.value : slugifier.slugify(title)
 
             def feat = productStore.get().findFeature(product, feature.key, featureSlug);
@@ -474,8 +473,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
                 featureToCreate = productStore.get().createFeature(featureToCreate);
                 variantFeatures << featureToCreate
-            }
-            else {
+            } else {
                 variantFeatures << feat
             }
         }
@@ -503,11 +501,10 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
             if (typeDefinition.getVariants().properties.indexOf("stock") >= 0) {
                 List<Product> products = this.productStore.get().findVariants(product);
-                if (!products.any({Product v -> v.stock && v.stock > 0 })) {
+                if (!products.any({ Product v -> v.stock && v.stock > 0 })) {
                     product.stock = 0
                     productStore.get().update(product)
-                }
-                else {
+                } else {
                     product.stock = null
                     productStore.get().update(product)
                 }
@@ -518,7 +515,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
         catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT).entity([reason: "Variant already exists"]).build()
         }
-
     }
 
     @POST
@@ -531,41 +527,39 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             Product product = this.productStore.get().findBySlug(slug);
             if (product == null || !product.type.isPresent()) {
                 return Response.status(404).build();
-            } else {
+            }
 
-                TypeDefinition typeDefinition = getTypeDefinition(product)
+            TypeDefinition typeDefinition = getTypeDefinition(product)
 
-                if (!typeDefinition) {
-                    return Response.status(Response.Status.BAD_REQUEST)
-                            .entity([reason: """Type definition for [${product.type}] not found"""]).build()
-                }
+            if (!typeDefinition) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity([reason: """Type definition for [${product.type}] not found"""]).build()
+            }
 
-                Product variant = productStore.get().findVariant(product, variantSlug);
+            Product variant = productStore.get().findVariant(product, variantSlug);
 
-                if (variant == null) {
-                    return Response.status(404).build();
+            if (variant == null) {
+                return Response.status(404).build();
+            }
+
+            def id = variant.id
+            variant = variantApiObject.toProduct(taxesSettings, platformSettings,
+                    Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition), Optional.of(product))
+            // ID and slugs are not update-able
+            variant.id = id
+            variant.slug = variantSlug
+            variant.parentId = product.id
+
+            this.productStore.get().update(variant)
+
+            if (typeDefinition.getVariants().properties.indexOf("stock") >= 0) {
+                List<Product> products = this.productStore.get().findVariants(product);
+                if (!products.any({ Product v -> v.stock && v.stock > 0 })) {
+                    product.stock = 0
+                    productStore.get().update(product)
                 } else {
-                    def id = variant.id
-                    variant = variantApiObject.toProduct(taxesSettings, platformSettings,
-                            Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition), Optional.of(product))
-                    // ID and slugs are not update-able
-                    variant.id = id
-                    variant.slug = variantSlug
-                    variant.parentId = product.id
-
-                    this.productStore.get().update(variant)
-
-                    if (typeDefinition.getVariants().properties.indexOf("stock") >= 0) {
-                        List<Product> products = this.productStore.get().findVariants(product);
-                        if (!products.any({Product v -> v.stock && v.stock > 0 })) {
-                            product.stock = 0
-                            productStore.get().update(product)
-                        }
-                        else {
-                            product.stock = null
-                            productStore.get().update(product)
-                        }
-                    }
+                    product.stock = null
+                    productStore.get().update(product)
                 }
             }
 
@@ -585,19 +579,18 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
         if (product == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
-        } else {
-
-            Product variant = productStore.get().findVariant(product, variantSlug);
-
-            if (variant == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("No variant with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
-            }
-
-            this.productStore.get().delete(variant);
-
-            return Response.noContent().build();
         }
+
+        Product variant = productStore.get().findVariant(product, variantSlug);
+
+        if (variant == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No variant with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();
+        }
+
+        this.productStore.get().delete(variant);
+
+        return Response.noContent().build();
     }
 
     private def TypeDefinition getTypeDefinition(Product product)
@@ -623,5 +616,4 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
     {
         return DateTimeZone.forTimeZone(generalSettings.time.timeZone.defaultValue)
     }
-
 }
