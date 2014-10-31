@@ -95,20 +95,17 @@ public class JavaMailMailService implements MailService
 
             // To:
             for (String to : mail.getTo()) {
-                message.addRecipient(Message.RecipientType.TO,
-                        new InternetAddress(to));
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             }
 
             // Cc:
             for (String cc : mail.getCc()) {
-                message.addRecipient(Message.RecipientType.CC,
-                        new InternetAddress(cc));
+                message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
             }
 
             // Bcc:
             for (String bcc : mail.getBcc()) {
-                message.addRecipient(Message.RecipientType.BCC,
-                        new InternetAddress(bcc));
+                message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
             }
 
             // Subject:
