@@ -28,6 +28,7 @@ import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.Purchasable
 import org.mayocat.shop.marketplace.web.object.MarketplaceCartItemWebObject
 import org.mayocat.shop.marketplace.web.object.MarketplaceCartWebObject
+import org.mayocat.shop.marketplace.web.object.MarketplaceShopWebObject
 import org.mayocat.shop.shipping.ShippingService
 
 import javax.inject.Inject
@@ -144,6 +145,7 @@ trait WithMarketplaceCartWebObjectBuilder extends WithProductWebObjectBuilder
         if (productData) {
             Tenant tenant = this.tenantStore.get().findById(productData.entity.tenantId)
             cartItemWebObject.product = this.buildProductWebObject(tenant, productData)
+            cartItemWebObject.shop = new MarketplaceShopWebObject().withTenant(tenant)
         }
 
         cartWebObject.items << cartItemWebObject

@@ -54,6 +54,7 @@ class AbstractCartItemWebObject
     {
         title = purchasable.title
         description = purchasable.description
+        id = purchasable.id
 
         this.quantity = quantity
 

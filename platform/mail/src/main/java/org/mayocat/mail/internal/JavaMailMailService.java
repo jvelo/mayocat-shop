@@ -7,7 +7,6 @@
  */
 package org.mayocat.mail.internal;
 
-import java.util.Objects;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -29,7 +28,6 @@ import org.mayocat.mail.SmtpSettings;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link org.mayocat.mail.MailService} based on JavaMail/SMTP
