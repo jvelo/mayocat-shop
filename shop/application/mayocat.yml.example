@@ -42,7 +42,7 @@ security:
 # --------------------
 
 platform:
-  thumbnails:
+  images:
     small:
       name: Small
       width: 100
