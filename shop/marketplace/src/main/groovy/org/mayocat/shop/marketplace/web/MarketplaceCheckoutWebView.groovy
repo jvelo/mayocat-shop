@@ -8,6 +8,7 @@
 package org.mayocat.shop.marketplace.web
 
 import com.google.common.base.Optional
+import com.google.common.base.Strings
 import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
 import org.mayocat.configuration.PlatformSettings
@@ -93,11 +94,14 @@ class MarketplaceCheckoutWebView implements Resource
                     entity("Not supported").build()
         }
 
-        Map<String, Object> otherData = Maps.newHashMap()
-
         Customer customer = customerStore.get().findByUserId(webContext.user.id)
         Address deliveryAddress = addressStore.get().findByCustomerIdAndType(customer.id, "delivery")
         Address billingAddress = addressStore.get().findByCustomerIdAndType(customer.id, "billing")
+
+        Map<String, Object> otherData = Maps.newHashMap()
+        if (!Strings.isNullOrEmpty(checkoutWebObject.additionalInformation)) {
+            otherData.put("additionalInformation", checkoutWebObject.additionalInformation)
+        }
 
         Cart cart = cartManager.cart
         final Locale locale = generalSettings.locales.mainLocale.value

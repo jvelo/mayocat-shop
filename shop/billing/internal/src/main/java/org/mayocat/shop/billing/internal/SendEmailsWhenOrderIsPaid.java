@@ -321,6 +321,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         context.put("itemsTotal", itemsTotal);
         context.put("orderId", order.getSlug());
         context.put("grandTotal", grandTotal);
+        context.put("additionalInformation", order.getAdditionalInformation());
 
         Map<String, Object> customerMap = Maps.newHashMap();
         customerMap.put("firstName", customer.getFirstName());
