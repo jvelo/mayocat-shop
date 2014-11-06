@@ -189,7 +189,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
     @Consumes(MediaType.WILDCARD)
     def Response updateImage(@PathParam("imageSlug") String imageSlug, ImageApiObject image)
     {
-        updateImage(context.tenant.slug, imageSlug, image)
+        ImageGalleryApiDelegate.super.updateImage(imageSlug, image)
     }
 
     @Path("images/{imageSlug}")
