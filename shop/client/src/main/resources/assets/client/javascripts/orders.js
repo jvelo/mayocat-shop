@@ -47,7 +47,7 @@ angular.module('orders', [])
 
                 getStatus: function(status) {
                     var $scope = this;
-                    var camelCaseStatus = status.toLowerCase().replace(/-(.)/g, function(match, grp1) {
+                    var camelCaseStatus = status.toLowerCase().replace(/_(.)/g, function(match, grp1) {
                         return grp1.toUpperCase();
                     });
 
