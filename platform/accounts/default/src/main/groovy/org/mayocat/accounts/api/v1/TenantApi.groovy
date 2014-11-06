@@ -196,8 +196,7 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
     @Authorized
     @DELETE
     @Consumes(MediaType.WILDCARD)
-    def Response detachImage(@PathParam("slug") String slug,
-            @PathParam("imageSlug") String imageSlug)
+    def Response detachImage(@PathParam("imageSlug") String imageSlug)
     {
         detachImage(context.tenant.slug, imageSlug)
     }
