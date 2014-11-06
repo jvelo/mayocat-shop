@@ -84,6 +84,7 @@ public class OrderMapper implements ResultSetMapper<Order>
                 billing.setZip(resultSet.getString("billing_address_zip"));
                 billing.setCity(resultSet.getString("billing_address_city"));
                 billing.setCountry(resultSet.getString("billing_address_country"));
+                billing.setNote(resultSet.getString("billing_address_note"));
                 order.setBillingAddress(new Association<>(billing));
             }
         } catch (SQLException e) {
@@ -101,6 +102,7 @@ public class OrderMapper implements ResultSetMapper<Order>
                 delivery.setZip(resultSet.getString("delivery_address_zip"));
                 delivery.setCity(resultSet.getString("delivery_address_city"));
                 delivery.setCountry(resultSet.getString("delivery_address_country"));
+                delivery.setNote(resultSet.getString("delivery_address_note"));
                 order.setDeliveryAddress(new Association<>(delivery));
             }
         } catch (SQLException e) {

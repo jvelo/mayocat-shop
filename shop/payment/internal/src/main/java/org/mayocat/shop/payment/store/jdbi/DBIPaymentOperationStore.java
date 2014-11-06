@@ -63,6 +63,12 @@ public class DBIPaymentOperationStore implements PaymentOperationStore, Initiali
     }
 
     @Override
+    public List<PaymentOperation> findAllForOrderId(UUID order)
+    {
+        return this.dao.findAllForOrderId(order);
+    }
+
+    @Override
     public List<PaymentOperation> findAll(Integer number, Integer offset)
     {
         throw new UnsupportedOperationException("Not implemented");

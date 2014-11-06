@@ -72,6 +72,7 @@ findBySlugWithCustomer() ::= <<
            delivery_address.zip as delivery_address_zip,
            delivery_address.city as delivery_address_city,
            delivery_address.country as delivery_address_country,
+           delivery_address.note as delivery_address_note,
            billing_address.address_id as billing_address_id,
            billing_address.company as billing_address_company,
            billing_address.full_name as billing_address_full_name,
@@ -79,7 +80,8 @@ findBySlugWithCustomer() ::= <<
            billing_address.street_complement as billing_address_street_complement,
            billing_address.zip as billing_address_zip,
            billing_address.city as billing_address_city,
-           billing_address.country as billing_address_country
+           billing_address.country as billing_address_country,
+           billing_address.note as billing_address_note
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
@@ -102,6 +104,7 @@ findByIdWithCustomer() ::= <<
            delivery_address.zip as delivery_address_zip,
            delivery_address.city as delivery_address_city,
            delivery_address.country as delivery_address_country,
+           delivery_address.note as delivery_address_note,
            billing_address.address_id as billing_address_id,
            billing_address.company as billing_address_company,
            billing_address.full_name as billing_address_full_name,
@@ -109,7 +112,8 @@ findByIdWithCustomer() ::= <<
            billing_address.street_complement as billing_address_street_complement,
            billing_address.zip as billing_address_zip,
            billing_address.city as billing_address_city,
-           billing_address.country as billing_address_country
+           billing_address.country as billing_address_country,
+           billing_address.note as billing_address_note
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id

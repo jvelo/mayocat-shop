@@ -218,6 +218,16 @@ var Mayocat = (function (Mayocat) {
                 commandShipped: "Command shipped"
             },
 
+            paymentDetails: {
+                title: "Payment details",
+                toggle: "Display payment details",
+                gateway: "Gateway",
+                externalId: "External Id",
+                internalId: "Internal Id",
+                result: "Result",
+                memo: "Memo"
+            },
+
             alert: {
                 empty: "There are no orders yet."
             }

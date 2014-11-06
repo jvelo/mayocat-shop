@@ -16,7 +16,8 @@
 
     <div ng-show="order.status">
         <div class="header">
-            <h1>{{'order.misc.orderName' | translate:getTranslationProperties()}} <span ng-class="{'loading': isSaving}"></span></h1>
+            <h1>{{'order.misc.orderName' | translate:getTranslationProperties()}} <span
+                    ng-class="{'loading': isSaving}"></span></h1>
 
             <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
         </div>
@@ -82,7 +83,8 @@
                         <small>
                             {{item.description}}
                         </small>
-                        <dl ng-repeat="addon in item.addons"><!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
+                        <dl ng-repeat="addon in item.addons">
+                            <!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
                             <dt>{{addon.name}}</dt>
                             <dd>{{addon.value}}</dd>
                         </dl>
@@ -124,36 +126,43 @@
 
             <div class="vcard">
                 <div>
-                    <span class="fn">{{order.customer.firstName}} {{order.customer.lastName}}</span>
+                    <span class="fn">{{order._embedded.customer.firstName}} {{order._embedded.customer.lastName}}</span>
                 </div>
                 <div>
-                    <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
+                    <a class="email"
+                       href="mailto:{{order._embedded.customer.email}}">{{order._embedded.customer.email}}</a>
                 </div>
                 <div>
-                    <a class="email"a href="tel:{{order.customer.phoneNumber}}">{{order.customer.phoneNumber}}</a>
+                    <a class="email" a href="tel:{{order.customer.phoneNumber}}">{{order._embedded.customer.phoneNumber}}</a>
                 </div>
 
-                <div ng-show="order.deliveryAddress">
+                <div ng-show="order._embedded.deliveryAddress">
                     <strong>{{'order.misc.deliveryAddress' | translate}}</strong>
 
                     <div class="adr">
-                        <div class="fn">{{order.deliveryAddress.fullName}}</div>
-                        <div class="street-address">{{order.deliveryAddress.street}}</div>
-                        <span class="postal-code">{{order.deliveryAddress.zip}}</span>
-                        <span class="locality">{{order.deliveryAddress.city}}</span>
-                        <div class="country-name">{{order.deliveryAddress.country}}</div>
+                        <div class="fn">{{order._embedded.deliveryAddress.fullName}}</div>
+                        <div class="street-address">{{order._embedded.deliveryAddress.street}}</div>
+                        <span class="postal-code">{{order._embedded.deliveryAddress.zip}}</span>
+                        <span class="locality">{{order._embedded.deliveryAddress.city}}</span>
+
+                        <div class="country-name">{{order._embedded.deliveryAddress.country}}</div>
+
+                        <blockquote ng-if="order._embedded.deliveryAddress.note">
+                            {{order._embedded.deliveryAddress.note}}
+                        </blockquote>
                     </div>
                 </div>
 
-                <div ng-show="order.billingAddress">
+                <div ng-show="order._embedded.billingAddress">
                     <strong>{{'order.misc.billingAddress' | translate}}</strong>
 
                     <div class="adr">
-                        <div class="fn">{{order.billingAddress.fullName}}</div>
-                        <div class="street-address">{{order.billingAddress.street}}</div>
-                        <span class="postal-code">{{order.billingAddress.zip}}</span>
-                        <span class="locality">{{order.billingAddress.city}}</span>
-                        <div class="country-name">{{order.billingAddress.country}}</div>
+                        <div class="fn">{{order._embedded.billingAddress.fullName}}</div>
+                        <div class="street-address">{{order._embedded.billingAddress.street}}</div>
+                        <span class="postal-code">{{order._embedded.billingAddress.zip}}</span>
+                        <span class="locality">{{order._embedded.billingAddress.city}}</span>
+
+                        <div class="country-name">{{order._embedded.billingAddress.country}}</div>
                     </div>
                 </div>
 
@@ -164,6 +173,36 @@
             <h3>{{'order.misc.additionalInformation' | translate}}</h3>
 
             <div>{{order.additionalInformation}}</div>
+        </div>
+
+        <div class="block" ng-show="order._embedded.operations">
+            <h3>{{'order.paymentDetails.title' | translate}}</h3>
+
+            <div class="clickable" ng-click="showOperations = !showOperations">
+               <i class="icon-list"></i> {{'order.paymentDetails.toggle' | translate}}
+            </div>
+            <br />
+
+            <div ng-show="showOperations" ng-repeat="operation in order._embedded.operations">
+                <table class="table table-condensed" ng-if="operation.gatewayId">
+                    <tr>
+                        <td>{{'order.paymentDetails.gateway' | translate}}</td>
+                        <td>{{operation.gatewayId}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'order.paymentDetails.externalId' | translate}}</td>
+                        <td>{{operation.externalId}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'order.paymentDetails.internalId' | translate}}</td>
+                        <td>{{operation.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'order.paymentDetails.result' | translate}}</td>
+                        <td>{{operation.result}}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         <aside>

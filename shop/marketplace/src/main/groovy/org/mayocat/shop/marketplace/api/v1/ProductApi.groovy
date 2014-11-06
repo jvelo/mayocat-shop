@@ -184,8 +184,6 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
                 products: productList
         ])
 
-
-
         productListResult
     }
 

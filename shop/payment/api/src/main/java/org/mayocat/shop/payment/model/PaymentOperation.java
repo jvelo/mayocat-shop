@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import org.mayocat.model.Identifiable;
 
+import com.google.common.collect.Maps;
+
 /**
  * @version $Id$
  */
@@ -36,7 +38,7 @@ public class PaymentOperation implements Identifiable
 
     private Result result;
 
-    private Map<String, Object> memo;
+    private Map<String, Object> memo = Maps.newHashMap();
 
     public UUID getId()
     {

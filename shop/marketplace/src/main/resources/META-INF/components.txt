@@ -4,7 +4,7 @@ org.mayocat.shop.marketplace.api.v1.PageApi
 org.mayocat.shop.marketplace.api.v1.CollectionApi
 org.mayocat.shop.marketplace.api.v1.MarketplaceCarrierApi
 org.mayocat.shop.marketplace.api.v1.ImageApi
-org.mayocat.shop.marketplace.api.v1.OrdersApi
+org.mayocat.shop.marketplace.api.v1.OrderApi
 org.mayocat.shop.marketplace.cart.MarketplaceCartWebDataSupplier
 org.mayocat.shop.marketplace.store.jdbi.DBIMarketplaceProductStore
 org.mayocat.shop.marketplace.web.MarketplaceHomeWebView

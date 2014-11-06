@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.payment.store;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.shop.payment.model.PaymentOperation;
@@ -19,4 +20,5 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface PaymentOperationStore extends Store<PaymentOperation, UUID>
 {
+    List<PaymentOperation> findAllForOrderId(UUID order);
 }

@@ -189,6 +189,16 @@ var Mayocat = (function (Mayocat) {
                 commandShipped: "Colis expédié"
             },
 
+            paymentDetails: {
+                title: "Détails paiement",
+                toggle: "Afficher les détails liés au paiement",
+                gateway: "Passerelle",
+                externalId: "Id externe",
+                internalId: "Id interne",
+                result: "Résultat",
+                memo: "Memo"
+            },
+
             alert: {
                 empty: "Il n'y a aucune commande pour le moment."
             }

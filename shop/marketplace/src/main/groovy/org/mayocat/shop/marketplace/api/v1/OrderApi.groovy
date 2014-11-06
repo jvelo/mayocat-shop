@@ -9,6 +9,7 @@ package org.mayocat.shop.marketplace.api.v1
 
 import groovy.transform.CompileStatic
 import org.mayocat.shop.billing.api.resource.OrderResource
+import org.mayocat.shop.billing.api.v1.TenantOrderApi
 import org.xwiki.component.annotation.Component
 
 import javax.ws.rs.Consumes
@@ -24,6 +25,6 @@ import javax.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
-class OrdersApi extends OrderResource
+class OrderApi extends TenantOrderApi
 {
 }

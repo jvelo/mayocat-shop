@@ -76,5 +76,10 @@
             <artifactId>mayocat-platform-rest-default</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
