@@ -13,7 +13,10 @@ import groovy.transform.CompileStatic
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.image.model.Image
 import org.mayocat.shop.cart.Cart
+import org.mayocat.shop.cart.CartItem
+import org.mayocat.shop.catalog.model.Purchasable
 import org.mayocat.shop.catalog.web.object.PriceWebObject
+import org.mayocat.shop.shipping.ShippingOption
 import org.mayocat.shop.shipping.ShippingService
 import org.mayocat.theme.ThemeDefinition
 
@@ -89,20 +92,26 @@ abstract class AbstractCartWebObject
                 selectedShippingOption.selected = true
             }
 
-            /*
-            shippingOptions = [] as List<ShippingOptionWebObject>;
-            List<ShippingOption> availableOptions = shippingService.getOptions(cart.getItems());
+
+            shippingOptions = [] as List<ShippingOptionWebObject>
+            List<CartItem> items = cart.items()
+            Map<Purchasable, Long> itemsAsMap = [:]
+            items.each({ CartItem item ->
+                itemsAsMap.put(item.item(), item.quantity())
+            })
+            List<ShippingOption> availableOptions = shippingService.getOptions(itemsAsMap);
             for (ShippingOption option : availableOptions) {
                 ShippingOptionWebObject shippingOptionWebObject = new ShippingOptionWebObject()
                 shippingOptionWebObject.withOption(shippingService, option, cart.currency(), locale)
 
-                if (cart.selectedShippingOption.carrierId == option.carrierId) {
+                if (cart.selectedShippingOption().isPresent() &&
+                        cart.selectedShippingOption().get().carrierId == option.carrierId)
+                {
                     shippingOptionWebObject.selected = true
                 }
 
                 shippingOptions << shippingOptionWebObject
             }
-            */
         }
     }
 
