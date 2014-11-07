@@ -83,7 +83,22 @@ public class DefaultThemeManager implements ThemeManager
     private FilesSettings filesSettings;
 
     @Inject
+    private ThemeSettings themeSettings;
+
+    @Inject
     private WebContext context;
+
+
+    public Theme getDefaultTheme()
+    {
+        return getTheme(themeSettings.getActive().getDefaultValue(), Optional.<Tenant>absent(),
+                Collections.<Level>emptyList());
+    }
+
+    public Theme getTheme(String themeName)
+    {
+        return getTheme(themeName, Optional.<Tenant>absent(), Collections.<Level>emptyList());
+    }
 
     public Theme getTheme()
     {

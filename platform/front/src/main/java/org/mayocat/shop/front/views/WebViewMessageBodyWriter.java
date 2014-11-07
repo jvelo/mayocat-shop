@@ -29,6 +29,7 @@ import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.mayocat.views.TemplateEngineException;
@@ -51,6 +52,9 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
 {
     @Inject
     private Provider<TemplateEngine> engine;
+
+    @Inject
+    private ThemeManager themeManager;
 
     @Inject
     private ThemeFileResolver themeFileResolver;
@@ -126,9 +130,17 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                     template = themeFileResolver
                             .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
                 } catch (TemplateNotFoundException e) {
-                    if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
-                        template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
-                                webContext.getRequest().getBreakpoint());
+
+                    if (webView.hasOption(WebView.Option.FALLBACK_ON_DEFAULT_THEME)) {
+                        try {
+                            template = themeFileResolver.getTemplate(themeManager.getDefaultTheme(),
+                                    webView.template().toString(), webContext.getRequest().getBreakpoint());
+                        } catch (TemplateNotFoundException e1) {
+                            if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
+                                template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
+                                        webContext.getRequest().getBreakpoint());
+                            }
+                        }
                     }
                 }
             }

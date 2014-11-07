@@ -20,6 +20,7 @@ import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.ThemeResource;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
@@ -61,6 +62,19 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     {
         try {
             String content = this.getTemplateContent(name, breakpoint);
+            Template template = new Template(generateTemplateId(name, breakpoint), content, true);
+            return template;
+        } catch (IOException e) {
+            throw new TemplateNotFoundException(e);
+        }
+    }
+
+    @Override
+    public Template getTemplate(Theme theme, String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException
+    {
+        try {
+            String content = this.getTemplateContent(theme, name, breakpoint);
             Template template = new Template(generateTemplateId(name, breakpoint), content, true);
             return template;
         } catch (IOException e) {

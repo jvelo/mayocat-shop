@@ -18,6 +18,13 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface ThemeManager
 {
+    /**
+     * @return the default {@link Theme} defined at the platform level
+     */
+    Theme getDefaultTheme();
+
+    Theme getTheme(String themeName);
+
     Theme getTheme();
 
     Theme getTheme(Tenant tenant);
