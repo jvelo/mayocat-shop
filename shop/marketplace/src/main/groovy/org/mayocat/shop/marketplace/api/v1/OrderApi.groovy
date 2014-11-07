@@ -8,7 +8,6 @@
 package org.mayocat.shop.marketplace.api.v1
 
 import groovy.transform.CompileStatic
-import org.mayocat.shop.billing.api.resource.OrderResource
 import org.mayocat.shop.billing.api.v1.TenantOrderApi
 import org.xwiki.component.annotation.Component
 
