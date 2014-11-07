@@ -193,28 +193,6 @@
             </plugin>
             <!--
             Use the antrun plugin and groovyc until https://jira.codehaus.org/browse/GRECLIPSE-1731 is resolved
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-
-                <version>3.1</version>
-                <configuration>
-                    <compilerId>groovy-eclipse-compiler</compilerId>
-
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>2.8.0-01</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>2.1.8-01</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
             -->
         </plugins>
     </build>
