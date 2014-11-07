@@ -26,7 +26,7 @@ public class SecuritySettings
 
     @Valid
     @JsonProperty
-    Integer passwordSaltLogRounds = 10;
+    Integer passwordSaltLogRounds = 15;
 
     public String getEncryptionKey()
     {
