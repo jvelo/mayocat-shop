@@ -129,7 +129,7 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
 
                             $(imageElement).Jcrop({
                                 boxWidth: 400,
-                                boxHeight: 600,
+                                boxHeight: 400,
                                 setSelect: $scope.selection(),
                                 aspectRatio: aspectRatio,
                                 onSelect: function (coordinates) {
