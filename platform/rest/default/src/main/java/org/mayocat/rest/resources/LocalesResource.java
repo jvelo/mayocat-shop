@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.representations.LocaleRepresentation;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
@@ -44,34 +45,8 @@ public class LocalesResource implements Resource
 {
     private Set<LocaleRepresentation> localesRepresentations;
 
-    @ApiModel(value = "Represents information about a locale")
-    static class LocaleRepresentation
-    {
-        @ApiModelProperty(value = "The BPC 47 tag for this locale")
-        private String tag;
-
-        @ApiModelProperty(value = "The locale name in plain english")
-        private String name;
-
-        public LocaleRepresentation(String tag, String name)
-        {
-            this.tag = tag;
-            this.name = name;
-        }
-
-        public String getTag()
-        {
-            return tag;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-    }
-
     @GET
-    @ApiOperation(value="Lists locales", response = LocaleRepresentation.class)
+    @ApiOperation(value="Lists locales", response = LocaleRepresentation.class, responseContainer="List")
     @ApiResponses(
             @ApiResponse(code = 200, message = "List of locales", response = LocaleRepresentation.class)
     )

@@ -54,16 +54,7 @@ class PageWebView implements Resource
     Provider<PageStore> pageStore
 
     @Inject
-    Provider<AttachmentStore> attachmentStore
-
-    @Inject
-    Provider<ThumbnailStore> thumbnailStore
-
-    @Inject
     WebContext context
-
-    @Inject
-    EntityLocalizationService entityLocalizationService
 
     @Inject
     EntityURLFactory urlFactory
@@ -99,8 +90,7 @@ class PageWebView implements Resource
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         PageWebObject pageWebObject = new PageWebObject()
-        pageWebObject.withPage(entityLocalizationService.localize(page) as Page, urlFactory
-                , themeFileResolver)
+        pageWebObject.withPage(page, urlFactory, themeFileResolver)
         pageWebObject.withAddons(addonsWebObjectBuilder.build(data))
         pageWebObject.withImages(images, page.featuredImageId, Optional.fromNullable(theme))
 
