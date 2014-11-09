@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.billing.api.v1
 
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.authorization.annotation.Authorized
@@ -57,7 +56,6 @@ class TenantOrderApi implements Resource
     WebContext context
 
     @GET
-    @Timed
     @Authorized
     def getAllOrders(@QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset)
@@ -133,7 +131,6 @@ class TenantOrderApi implements Resource
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     // Partial update : NOT idempotent
     def updateOrder(@PathParam("slug") String slug,
@@ -149,7 +146,7 @@ class TenantOrderApi implements Resource
                 return Response.ok().build()
             }
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors())
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build()

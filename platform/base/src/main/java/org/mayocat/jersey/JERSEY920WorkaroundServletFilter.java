@@ -16,8 +16,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.mayocat.servlet.ServletFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xwiki.component.annotation.Component;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -30,7 +32,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  * @version $Id$
  */
-public class JERSEY920WorkaroundServletFilter implements Filter
+@Component
+public class JERSEY920WorkaroundServletFilter implements Filter, ServletFilter
 {
     private Logger logger = LoggerFactory.getLogger(JERSEY920WorkaroundServletFilter.class);
 
@@ -57,5 +60,11 @@ public class JERSEY920WorkaroundServletFilter implements Filter
     @Override
     public void destroy()
     {
+    }
+
+    @Override
+    public String urlPattern()
+    {
+        return "/*";
     }
 }

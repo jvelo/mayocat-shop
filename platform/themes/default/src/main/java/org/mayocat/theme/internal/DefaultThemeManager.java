@@ -7,34 +7,36 @@
  */
 package org.mayocat.theme.internal;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.base.Optional;
-import com.google.common.io.Resources;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
-
-import org.mayocat.accounts.model.Tenant;
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.configuration.theme.ThemeSettings;
-import org.mayocat.context.WebContext;
-import org.mayocat.theme.*;
-import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
-
-import javax.inject.Inject;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.general.FilesSettings;
+import org.mayocat.configuration.theme.ThemeSettings;
+import org.mayocat.context.WebContext;
+import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 /**
  * @version $Id$
@@ -68,7 +70,7 @@ public class DefaultThemeManager implements ThemeManager
     private final static String TENANTS_FOLDER_NAME = "tenants";
 
     @Inject
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectMapper mapper;
 
     @Inject
     private Logger logger;
@@ -114,7 +116,6 @@ public class DefaultThemeManager implements ThemeManager
     private Theme getTheme(String themeId, Optional<Tenant> tenant, List<Level> ignore)
     {
         Level level = Level.TENANT_DIRECTORY;
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
         JsonNode node;
 
         Path themeDirectory = null;
@@ -138,8 +139,7 @@ public class DefaultThemeManager implements ThemeManager
                     ThemeDefinition definition =
                             mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
 
-                    Theme theme = new Theme(path.get(), definition, null, Theme.Type.CLASSPATH);
-                    return theme;
+                    return new Theme(path.get(), definition, null, Theme.Type.CLASSPATH);
                 } catch (JsonProcessingException e) {
                     Theme theme = new Theme(path.get(), null, null, Theme.Type.CLASSPATH, false);
                 } catch (IOException e) {
@@ -163,6 +163,7 @@ public class DefaultThemeManager implements ThemeManager
         } catch (JsonProcessingException e) {
             definition = null;
             definitionValid = false;
+            logger.warn("Trying to load invalid theme. Error: {}", e.getMessage());
         } catch (IOException e) {
             logger.error("I/O exception parsing theme", e);
             // theme.yml file not found -> theme might have a parent

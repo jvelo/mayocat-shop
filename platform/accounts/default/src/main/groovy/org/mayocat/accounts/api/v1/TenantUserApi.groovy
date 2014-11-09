@@ -7,7 +7,6 @@
  */
 package org.mayocat.accounts.api.v1
 
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.accounts.AccountsService
 import org.mayocat.accounts.api.v1.object.UserApiObject
@@ -23,13 +22,7 @@ import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
 import javax.validation.Valid
-import javax.ws.rs.Consumes
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
-import javax.ws.rs.WebApplicationException
+import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -51,7 +44,6 @@ class TenantUserApi implements Resource {
     WebContext context
 
     @POST
-    @Timed
     @Consumes(MediaType.APPLICATION_JSON)
     @Authorized(roles = [ Role.ADMIN ])
     @ExistingTenant
@@ -69,7 +61,9 @@ class TenantUserApi implements Resource {
 
             return Response.ok().build()
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors())
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid user").type(MediaType.TEXT_PLAIN_TYPE)
+                    .build())
         } catch (EntityAlreadyExistsException e) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
                     .entity("A user with this username or email already exists").type(MediaType.TEXT_PLAIN_TYPE)
@@ -79,7 +73,6 @@ class TenantUserApi implements Resource {
 
     @Path("{slug}")
     @GET
-    @Timed
     @ExistingTenant
     UserApiObject getUser(@PathParam("slug") String slug)
     {

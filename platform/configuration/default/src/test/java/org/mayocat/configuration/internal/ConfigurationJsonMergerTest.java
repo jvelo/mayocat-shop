@@ -12,14 +12,19 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mayocat.configuration.general.GeneralSettings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.config.ConfigurationFactory;
-import com.yammer.dropwizard.validation.Validator;
+
+import io.dropwizard.configuration.ConfigurationFactory;
 
 /**
  * @version $Id$
@@ -30,14 +35,19 @@ public class ConfigurationJsonMergerTest extends AbstractConfigurationTest
 
     private GeneralSettings localesNotConfigurableConfiguration;
 
-    private final Validator validator = new Validator();
+    private Validator validator;
 
-    private final ConfigurationFactory<GeneralSettings> factory =
-            ConfigurationFactory.forClass(GeneralSettings.class, validator);
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private ConfigurationFactory<GeneralSettings> factory;
 
     @Before
     public void setUp() throws Exception
     {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+
+        factory = new ConfigurationFactory<>(GeneralSettings.class, validator, objectMapper, "foo");
 
         File notConfigurableConfigurationFile = new File(Resources.getResource(
                 "configuration/locales-not-configurable.yml").toURI());

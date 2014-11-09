@@ -90,7 +90,8 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
 
             if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)
                     && webContext.getTheme() != null
-                    && !webContext.getTheme().isValidDefinition()) {
+                    && !webContext.getTheme().isValidDefinition())
+            {
                 // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
                 writeHttpError("Invalid theme definition", entityStream);
                 return;
@@ -189,6 +190,12 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Template error;
+            Template masterTemplate = null;
+            try {
+                masterTemplate = themeFileResolver.getIndexTemplate(webContext.getRequest().getBreakpoint());
+            } catch (TemplateNotFoundException e) {
+                // Nothing doing
+            }
             try {
                 error = themeFileResolver.getTemplate("500.html", webContext.getRequest().getBreakpoint());
             } catch (TemplateNotFoundException notFound) {
@@ -200,7 +207,18 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             errorContext.put("error", message);
 
             engine.get().register(error);
-            String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+
+            String rendered;
+
+            if (masterTemplate != null) {
+                errorContext.put("templateContent", error.getId());
+                errorContext.put("template", "500");
+                engine.get().register(masterTemplate);
+                rendered = engine.get().render(masterTemplate.getId(), mapper.writeValueAsString(errorContext));
+            } else {
+                rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+            }
+
             entityStream.write(rendered.getBytes());
         } catch (Exception e1) {
             throw new RuntimeException(e1);

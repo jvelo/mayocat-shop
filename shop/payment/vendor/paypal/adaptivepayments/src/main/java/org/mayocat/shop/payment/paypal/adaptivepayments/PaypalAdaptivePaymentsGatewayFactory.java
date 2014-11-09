@@ -26,8 +26,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 /**
  * @version $Id$
@@ -57,7 +55,7 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
     private WebContext context;
 
     @Inject
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectMapper mapper;
 
     @Override
     public String getId()
@@ -76,8 +74,6 @@ public class PaypalAdaptivePaymentsGatewayFactory implements GatewayFactory
                 new File(filesSettings.getPermanentDirectory() + SLASH + TENANTS_DIRECTORY + SLASH
                         + this.context.getTenant().getSlug() + SLASH + PAYMENTS_DIRECTORY + SLASH + ID +
                         SLASH + TENANT_CONFIGURATION_FILENAME);
-
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
 
         InputStream inputStream = null;
         try {

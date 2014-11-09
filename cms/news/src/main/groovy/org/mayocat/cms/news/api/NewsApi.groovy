@@ -9,7 +9,6 @@ package org.mayocat.cms.news.api
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.attachment.AttachmentLoadingOptions
@@ -192,7 +191,6 @@ class NewsApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegat
     }
 
     @POST
-    @Timed
     @Authorized
     def createArticle(ArticleApiObject articleApiObject)
     {
@@ -212,7 +210,8 @@ class NewsApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegat
             // This will add a location header like http://host/api/<version>/news/my-article
             return Response.created(new URI(created.slug)).build()
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors())
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid article\n").type(MediaType.TEXT_PLAIN_TYPE).build()
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("An article with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build()
@@ -223,7 +222,6 @@ class NewsApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegat
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     // Partial update : NOT idempotent
     def updateArticle(@PathParam("slug") String slug,
@@ -261,7 +259,8 @@ class NewsApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDelegat
 
             return Response.ok().build()
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors())
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid article\n").type(MediaType.TEXT_PLAIN_TYPE).build()
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No Article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build()

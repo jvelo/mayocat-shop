@@ -9,7 +9,6 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
@@ -99,7 +98,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
     }
 
     @GET
-    @Timed
     def getAllCollections(@QueryParam("number") @DefaultValue("50") Integer number,
                           @QueryParam("offset") @DefaultValue("0") Integer offset,
                           @QueryParam("expand") @DefaultValue("") String expand)
@@ -154,7 +152,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}")
     @GET
-    @Timed
     def Object getCollection(@PathParam("slug") String slug, @QueryParam("expand") @DefaultValue("") String expand)
     {
         org.mayocat.shop.catalog.model.Collection collection = this.catalogService.findCollectionBySlug(slug);
@@ -191,7 +188,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}/move")
     @POST
-    @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.WILDCARD)
@@ -217,7 +213,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}/addProduct")
     @POST
-    @Timed
     @Authorized
     @Consumes([MediaType.APPLICATION_FORM_URLENCODED, MediaType.TEXT_PLAIN])
     @Produces(MediaType.WILDCARD)
@@ -238,7 +233,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}/removeProduct")
     @POST
-    @Timed
     @Authorized
     @Consumes([MediaType.APPLICATION_FORM_URLENCODED, MediaType.TEXT_PLAIN])
     @Produces(MediaType.WILDCARD)
@@ -254,7 +248,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}/moveProduct")
     @POST
-    @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.WILDCARD)
@@ -283,7 +276,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     public Response updateCollection(@PathParam("slug") String slug,
             CollectionApiObject collectionApiObject)
@@ -313,7 +305,7 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
             }
 
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -335,7 +327,6 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
     }
 
     @POST
-    @Timed
     @Authorized
     public Response createCollection(CollectionApiObject collection)
     {
@@ -355,7 +346,7 @@ class TenantCollectionApi implements Resource, AttachmentApiDelegate, ImageGalle
             return Response.created(new URI(created.slug)).build();
 
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("A Collection with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();

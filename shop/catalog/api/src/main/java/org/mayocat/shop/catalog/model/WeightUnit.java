@@ -8,6 +8,7 @@
 package org.mayocat.shop.catalog.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -20,11 +21,12 @@ public enum WeightUnit
     OUNCE("oz"),
     POUND("lb");
 
-    WeightUnit(String smybol)
+    WeightUnit(String symbol)
     {
-        this.symbol = smybol;
+        this.symbol = symbol;
     }
 
+    @JsonProperty
     private String symbol;
 
     public String getSymbol()

@@ -21,7 +21,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 import junit.framework.Assert;
 
@@ -30,19 +29,17 @@ import junit.framework.Assert;
  */
 public class ThemeDefinitionTest
 {
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectMapper mapper;
 
     @Before
     public void setUp() throws Exception
     {
-        objectMapperFactory = new ObjectMapperFactory();
+        mapper = new ObjectMapper(new YAMLFactory());
     }
 
     @Test
     public void testParseTheme() throws Exception
     {
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-
         String themeConfig = Resources.toString(Resources.getResource("theme.yml"), Charsets.UTF_8);
         ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 
@@ -74,8 +71,6 @@ public class ThemeDefinitionTest
     @Test
     public void testParsePagination() throws Exception
     {
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-
         String themeConfig = Resources.toString(Resources.getResource("pagination-theme.yml"), Charsets.UTF_8);
         ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 
@@ -94,8 +89,6 @@ public class ThemeDefinitionTest
     @Test
     public void testParseTypes() throws Exception
     {
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-
         String themeConfig = Resources.toString(Resources.getResource("theme-with-types.yml"), Charsets.UTF_8);
         ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 
@@ -125,8 +118,6 @@ public class ThemeDefinitionTest
     @Test
     public void testParseEmptyTheme() throws Exception
     {
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
-
         String themeConfig = Resources.toString(Resources.getResource("empty-theme.yml"), Charsets.UTF_8);
         ThemeDefinition theme = mapper.readValue(themeConfig, ThemeDefinition.class);
 

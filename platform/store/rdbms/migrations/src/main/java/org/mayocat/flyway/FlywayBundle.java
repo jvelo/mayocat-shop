@@ -7,17 +7,17 @@
  */
 package org.mayocat.flyway;
 
-import com.yammer.dropwizard.Bundle;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
-import com.yammer.dropwizard.util.Generics;
+import io.dropwizard.Bundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.Configuration;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.db.DatabaseConfiguration;
+import io.dropwizard.util.Generics;
 
 /**
  * @version $Id$
  */
-public abstract class FlywayBundle<T extends Configuration> implements Bundle, ConfigurationStrategy<T>
+public abstract class FlywayBundle<T extends Configuration> implements Bundle, DatabaseConfiguration<T>
 {
     @Override
     public final void initialize(Bootstrap<?> bootstrap)

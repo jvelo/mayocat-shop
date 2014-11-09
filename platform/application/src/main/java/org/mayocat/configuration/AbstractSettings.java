@@ -16,7 +16,8 @@ import org.mayocat.mail.SmtpSettings;
 import org.mayocat.rest.CorsSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
+
+import io.dropwizard.Configuration;
 
 /**
  * @version $Id$
@@ -47,7 +48,6 @@ public class AbstractSettings extends Configuration
     @NotNull
     @JsonProperty
     private FilesSettings files = new FilesSettings();
-
 
     @Valid
     @NotNull

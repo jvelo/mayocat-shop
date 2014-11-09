@@ -11,7 +11,6 @@ import com.google.common.base.Optional
 import com.google.common.base.Strings
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.Slugifier
 import org.mayocat.attachment.model.Attachment
@@ -211,7 +210,6 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     }
 
     @POST
-    @Timed
     @Authorized
     public Response createCollection(CollectionApiObject collectionApiObject)
     {
@@ -230,7 +228,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
             // This will add a location header like http://host/api/<version>/collections/items/my-created-collection
             return Response.created(new URI(created.slug)).build();
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("A Collection with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
@@ -706,7 +704,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
                 return Response.ok().build();
             }
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.message, e.errors);
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 

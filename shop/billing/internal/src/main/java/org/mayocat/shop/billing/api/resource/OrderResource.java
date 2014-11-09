@@ -40,7 +40,6 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.yammer.metrics.annotation.Timed;
 
 /**
  * @version $Id$
@@ -59,7 +58,6 @@ public class OrderResource implements Resource
     private ConfigurationService configurationService;
 
     @GET
-    @Timed
     @Authorized
     public ResultSetRepresentation<OrderRepresentation> getAllOrders(
             @QueryParam("number") @DefaultValue("50") Integer number,
@@ -107,7 +105,6 @@ public class OrderResource implements Resource
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     // Partial update : NOT idempotent
     public Response updateOrder(@PathParam("slug") String slug,
@@ -123,7 +120,7 @@ public class OrderResource implements Resource
                 return Response.ok().build();
             }
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();

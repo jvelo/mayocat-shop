@@ -13,15 +13,20 @@ import java.util.List;
 import org.mayocat.configuration.Configurable;
 import org.mayocat.configuration.ExposedSettings;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @version $Id$
  */
 public class TaxesSettings implements ExposedSettings
 {
+    @JsonProperty
     private Configurable<Mode> mode = new Configurable<>(Mode.INCLUSIVE_OF_TAXES);
 
+    @JsonProperty
     private Configurable<TaxRule> vat = new Configurable<>(new TaxRule());
 
+    @JsonProperty
     private Configurable<List<TaxRule>> others = new Configurable(Collections.emptyList());
 
     @Override
