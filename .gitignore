@@ -22,3 +22,4 @@ shop/application/data
 
 # misc
 /classes
+shop/logs/mayocat.log

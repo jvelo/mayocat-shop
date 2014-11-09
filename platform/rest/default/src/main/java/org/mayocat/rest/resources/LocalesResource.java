@@ -26,6 +26,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
  * @version $Id$
@@ -33,14 +39,18 @@ import com.google.common.collect.Sets;
 @Component("/api/locales")
 @Path("/api/locales")
 @Produces(MediaType.APPLICATION_JSON)
+@Api("/api/locales")
 public class LocalesResource implements Resource
 {
     private Set<LocaleRepresentation> localesRepresentations;
 
+    @ApiModel(value = "Represents information about a locale")
     static class LocaleRepresentation
     {
+        @ApiModelProperty(value = "The BPC 47 tag for this locale")
         private String tag;
 
+        @ApiModelProperty(value = "The locale name in plain english")
         private String name;
 
         public LocaleRepresentation(String tag, String name)
@@ -61,6 +71,10 @@ public class LocalesResource implements Resource
     }
 
     @GET
+    @ApiOperation(value="Lists locales", response = LocaleRepresentation.class)
+    @ApiResponses(
+            @ApiResponse(code = 200, message = "List of locales", response = LocaleRepresentation.class)
+    )
     public Response getLocales()
     {
         if (localesRepresentations == null) {
@@ -81,8 +95,7 @@ public class LocalesResource implements Resource
                     Ordering.natural().onResultOf(new Function<LocaleRepresentation, String>()
                     {
                         public String apply(LocaleRepresentation from)
-                        {
-                            return from.getName();
+                        { return from.getName();
                         }
                     });
 

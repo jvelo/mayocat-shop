@@ -7,6 +7,8 @@
  */
 package org.mayocat.shop.application;
 
+import java.net.InetAddress;
+
 import org.mayocat.application.AbstractService;
 import org.mayocat.cms.home.HomePageModule;
 import org.mayocat.cms.news.NewsModule;
@@ -27,6 +29,8 @@ import org.xwiki.component.manager.ComponentRepositoryException;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.net.HostAndPort;
+import com.google.common.net.InetAddresses;
 
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -34,6 +38,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -49,6 +54,8 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
     private static final MetricRegistry metrics = new MetricRegistry();
 
+    private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
+
     public static void main(String[] args) throws Exception
     {
         Timer timer = metrics.timer(name(MayocatShopService.class, "startUpTimer"));
@@ -57,7 +64,18 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         context.stop();
 
         Logger logger = LoggerFactory.getLogger(MayocatShopService.class);
-        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.getMeanRate()));
+        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.getSnapshot().getMin() / 1000000));
+    }
+
+    @Override
+    public void run(MayocatShopSettings configuration, Environment environment) throws Exception
+    {
+        super.run(configuration, environment);
+
+        if (configuration.getDevelopmentEnvironment().isEnabled()) {
+            HostAndPort hp = HostAndPort.fromString(configuration.getSiteSettings().getDomainName());
+            swaggerDropwizard.onRun(configuration, environment, hp.getHostText(), hp.getPort());
+        }
     }
 
     @Override
@@ -87,6 +105,8 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         addModule(new NewsModule());
         addModule(new HomePageModule());
         addModule(new CatalogModule());
+
+        swaggerDropwizard.onInitialize(bootstrap);
     }
 
     private void registerDBIFactoryComponent(Environment environment, MayocatShopSettings configuration)

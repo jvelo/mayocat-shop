@@ -105,8 +105,6 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
     public void initialize(Bootstrap<C> bootstrap)
     {
         this.addModule(new AccountsModule());
-
-        swaggerDropwizard.onInitialize(bootstrap);
     }
 
     @Override
@@ -163,8 +161,6 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
 
         ObservationManager observationManager = getComponentManager().getInstance(ObservationManager.class);
         observationManager.notify(new ApplicationStartedEvent(), this);
-
-        swaggerDropwizard.onRun(configuration, environment);
     }
 
     public final void addRequestFilter(Class clazz)
