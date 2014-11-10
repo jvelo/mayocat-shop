@@ -16,7 +16,7 @@
     <version>0.40-SNAPSHOT</version>
 
     <name>Mayocat - Parent POM</name>
-    <description>Modern e-commerce and marketplace management on the JVM</description>
+    <description>Open source e-commerce and marketplaces made simple</description>
     <url>http://github.com/mayocat/mayocat-shop/</url>
 
     <organization>
