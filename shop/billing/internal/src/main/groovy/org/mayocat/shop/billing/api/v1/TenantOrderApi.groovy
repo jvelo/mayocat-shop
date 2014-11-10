@@ -37,7 +37,8 @@ import javax.ws.rs.core.Response
 /**
  * @version $Id$
  */
-@CompileStatic @Component("/tenant/{tenant}/api/orders")
+@CompileStatic
+@Component("/tenant/{tenant}/api/orders")
 @Path("/tenant/{tenant}/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
