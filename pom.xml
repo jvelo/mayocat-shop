@@ -352,7 +352,7 @@
                                     <classpath refid="maven.test.classpath"/>
                                 </taskdef>
                                 <if>
-                                    <available file="${basedir}/src/main/groovy" type="dir"/>
+                                    <available file="${basedir}/src/test/groovy" type="dir"/>
                                     <then>
                                         <mkdir dir="${project.build.testOutputDirectory}"/>
                                         <groovyc destdir="${project.build.testOutputDirectory}"
