@@ -24,6 +24,7 @@ import org.mayocat.accounts.NoSuchPasswordResetKeyException;
 import org.mayocat.accounts.NoSuchValidationKeyException;
 import org.mayocat.accounts.PasswordDoesNotMeetRequirementsException;
 import org.mayocat.accounts.UserAlreadyValidatedException;
+import org.mayocat.accounts.UserDataSupplier;
 import org.mayocat.accounts.UserNotFoundException;
 import org.mayocat.accounts.WrongPasswordException;
 import org.mayocat.accounts.model.Role;
@@ -41,6 +42,7 @@ import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailTemplate;
 import org.mayocat.mail.MailTemplateService;
 import org.mayocat.security.PasswordManager;
+import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -92,6 +94,9 @@ public class DefaultAccountsService implements AccountsService
     private URLHelper urlHelper;
 
     @Inject
+    private Map<String, UserDataSupplier> userDataSuppliers;
+
+    @Inject
     private Logger logger;
 
     @Inject
@@ -112,14 +117,21 @@ public class DefaultAccountsService implements AccountsService
         // Initial user does not have to validate, whatever the settings
         user.setActive(true);
 
-        this.create(user, Role.ADMIN);
+        this.create(user, Role.ADMIN, Maps.<String, Object>newHashMap());
     }
 
     @Override
     public void createUser(@Valid User user) throws EntityAlreadyExistsException, InvalidEntityException,
             PasswordDoesNotMeetRequirementsException
     {
-        this.create(user, Role.NONE);
+        this.create(user, Role.NONE, Maps.<String, Object>newHashMap());
+    }
+
+    @Override
+    public void createUser(@Valid User user, Map<String, Object> additionalContext)
+            throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException
+    {
+        this.create(user, Role.NONE, additionalContext);
     }
 
     @Override
@@ -287,8 +299,8 @@ public class DefaultAccountsService implements AccountsService
     // Private helpers
     // -----------------------------------------------------------------------------------------------------------------
 
-    private void create(User user, Role initialRole) throws InvalidEntityException, EntityAlreadyExistsException,
-            PasswordDoesNotMeetRequirementsException
+    private void create(User user, Role initialRole, Map<String, Object> additionalContext)
+            throws InvalidEntityException, EntityAlreadyExistsException, PasswordDoesNotMeetRequirementsException
     {
         AccountsSettings settings = getSettings();
         Boolean validationIsRequired = settings.getUserValidation().getValue();
@@ -312,11 +324,12 @@ public class DefaultAccountsService implements AccountsService
         final User createdUser = this.userStore.get().create(user, initialRole);
 
         if (validationIsRequired) {
-            sendValidationMail(createdUser, settings);
+            sendValidationMail(createdUser, settings, additionalContext);
         }
     }
 
-    private void sendValidationMail(final User createdUser, AccountsSettings settings)
+    private void sendValidationMail(final User createdUser, AccountsSettings settings,
+            Map<String, Object> additionalContext)
     {
         Optional<Template> template = mailTemplateService.getTemplate("account_validation.html");
         if (!template.isPresent()) {
@@ -328,11 +341,13 @@ public class DefaultAccountsService implements AccountsService
 
             try {
                 Map<String, Object> context = Maps.newHashMap();
+                context.putAll(additionalContext);
                 String validationUriTemplate;
                 if (!Strings.isNullOrEmpty(settings.getUserValidationUriTemplate().getValue())) {
                     validationUriTemplate = settings.getUserValidationUriTemplate().getValue();
                 } else {
-                    validationUriTemplate = urlHelper.getContextWebURL("/account/validation/${validationKey}").toString();
+                    validationUriTemplate =
+                            urlHelper.getContextWebURL("/account/validation/${validationKey}").toString();
                 }
                 SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
                 groovy.text.Template uriTemplate = templateEngine.createTemplate(validationUriTemplate);
@@ -363,6 +378,9 @@ public class DefaultAccountsService implements AccountsService
 
             try {
                 Map<String, Object> context = Maps.newHashMap();
+                for (UserDataSupplier supplier : userDataSuppliers.values()) {
+                    supplier.supply(user, context);
+                }
                 String passwordResetUriLink;
                 if (!Strings.isNullOrEmpty(settings.getUserPasswordResetUriTemplate().getValue())) {
                     passwordResetUriLink = settings.getUserPasswordResetUriTemplate().getValue();
