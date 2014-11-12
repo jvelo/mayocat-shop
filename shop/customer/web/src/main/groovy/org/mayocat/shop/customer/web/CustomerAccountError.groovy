@@ -8,6 +8,7 @@
 package org.mayocat.shop.customer.web
 
 import groovy.transform.CompileStatic
+import ErrorCode
 import org.mayocat.rest.error.ErrorCode
 
 /**

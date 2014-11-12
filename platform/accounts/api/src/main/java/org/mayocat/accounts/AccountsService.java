@@ -8,6 +8,7 @@
 package org.mayocat.accounts;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.ws.rs.core.Response;
@@ -46,6 +47,9 @@ public interface AccountsService
             throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException;
 
     void createUser(@Valid User user)
+            throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException;
+
+    void createUser(@Valid User user, Map<String, Object> additionalContext)
             throws EntityAlreadyExistsException, InvalidEntityException, PasswordDoesNotMeetRequirementsException;
 
     List<Role> findRolesForUser(User user);

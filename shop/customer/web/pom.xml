@@ -15,55 +15,42 @@
         <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
-    <artifactId>mayocat-shop-customer-internal</artifactId>
+    <artifactId>mayocat-shop-customer-web</artifactId>
     <packaging>jar</packaging>
 
-    <name>Mayocat Shop - Customer - Default</name>
-    <description>Customer module implementation</description>
+    <name>Mayocat Shop - Customer - Web</name>
+    <description>Customer management</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-customer-web</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-accounts-api</artifactId>
+            <artifactId>mayocat-platform-base</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-memory</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-rdbms-migrations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-store-rdbms-jdbi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-catalog-internal</artifactId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Testing dependencies -->
         <dependency>
-            <groupId>org.xwiki.commons</groupId>
-            <artifactId>xwiki-commons-test-component</artifactId>
-            <version>${xwiki.version}</version>
-            <scope>test</scope>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-billing-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-accounts-default</artifactId><!-- needed for the JerseyCookieSessionManager -->
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-rest-default</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-marketplace</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -18,12 +18,10 @@ class OrderWebObject extends OrderSummaryWebObject
 {
     List<OrderItemWebObject> items = [] as List<OrderItemWebObject>
 
-
-
     @Override
     OrderWebObject withOrder(Order order, Locale locale)
     {
-        super.withOrder(order, locale)
+        withOrder(order, locale)
         this
     }
 }
