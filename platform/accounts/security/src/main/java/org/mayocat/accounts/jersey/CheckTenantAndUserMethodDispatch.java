@@ -162,7 +162,7 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
         {
             return TenantUserApi.class.isAssignableFrom(this.method.getDeclaringResource().getResourceClass())
                     && this.method.getHttpMethod().equals(HttpMethod.POST)
-                    && this.method.getResource().getPath().getValue().equals("/api/user");
+                    && this.method.getResource().getPath().getValue().endsWith("/api/user");
         }
     }
 
