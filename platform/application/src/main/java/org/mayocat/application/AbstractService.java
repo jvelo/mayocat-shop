@@ -71,7 +71,6 @@ import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.LogbackModule;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 
 /**
  * @version $Id$
@@ -83,8 +82,6 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(AbstractService.class);
 
     protected abstract void registerComponents(C configuration, Environment environment);
-
-    private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
 
     private EmbeddableComponentManager componentManager;
 
