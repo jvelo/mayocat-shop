@@ -127,19 +127,21 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                     // else just fallback on the default model
                 }
 
-                try {
-                    template = themeFileResolver
-                            .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
-                } catch (TemplateNotFoundException e) {
+                if (template == null) {
+                    try {
+                        template = themeFileResolver
+                                .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
+                    } catch (TemplateNotFoundException e) {
 
-                    if (webView.hasOption(WebView.Option.FALLBACK_ON_DEFAULT_THEME)) {
-                        try {
-                            template = themeFileResolver.getTemplate(themeManager.getDefaultTheme(),
-                                    webView.template().toString(), webContext.getRequest().getBreakpoint());
-                        } catch (TemplateNotFoundException e1) {
-                            if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
-                                template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
-                                        webContext.getRequest().getBreakpoint());
+                        if (webView.hasOption(WebView.Option.FALLBACK_ON_DEFAULT_THEME)) {
+                            try {
+                                template = themeFileResolver.getTemplate(themeManager.getDefaultTheme(),
+                                        webView.template().toString(), webContext.getRequest().getBreakpoint());
+                            } catch (TemplateNotFoundException e1) {
+                                if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
+                                    template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
+                                            webContext.getRequest().getBreakpoint());
+                                }
                             }
                         }
                     }
