@@ -7,8 +7,6 @@
  */
 package org.mayocat.shop.application;
 
-import java.net.InetAddress;
-
 import org.mayocat.application.AbstractService;
 import org.mayocat.cms.home.HomePageModule;
 import org.mayocat.cms.news.NewsModule;
@@ -30,7 +28,6 @@ import org.xwiki.component.manager.ComponentRepositoryException;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.net.HostAndPort;
-import com.google.common.net.InetAddresses;
 
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -89,9 +86,9 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
         bootstrap.getObjectMapper().registerModule(new MoneyModule());
 
-        bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
-        bootstrap.addBundle(new AssetsBundle(COMMON_PATH, COMMON_PATH));
-        bootstrap.addBundle(new AssetsBundle(MANAGER_PATH, MANAGER_PATH));
+        bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH, "index.htm", "admin"));
+        bootstrap.addBundle(new AssetsBundle(COMMON_PATH, COMMON_PATH, null, "common"));
+        bootstrap.addBundle(new AssetsBundle(MANAGER_PATH, MANAGER_PATH, "index.htm", "manager"));
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new FlywayBundle<MayocatShopSettings>()
         {
