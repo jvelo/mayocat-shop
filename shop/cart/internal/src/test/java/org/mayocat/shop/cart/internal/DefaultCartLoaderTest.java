@@ -8,7 +8,6 @@
 package org.mayocat.shop.cart.internal;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Currency;
 import java.util.UUID;
 
@@ -20,7 +19,6 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.context.WebContext;
-import org.mayocat.context.internal.DefaultWebContext;
 import org.mayocat.shop.cart.Cart;
 import org.mayocat.shop.cart.CartContents;
 import org.mayocat.shop.cart.CartLoader;
@@ -32,23 +30,18 @@ import org.mayocat.shop.cart.internal.support.TestExpectation;
 import org.mayocat.shop.cart.internal.support.TestInput;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.taxes.PriceWithTaxes;
-import org.mayocat.shop.taxes.Taxable;
 import org.mayocat.shop.taxes.TaxesService;
 import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.mayocat.shop.taxes.internal.DefaultTaxesService;
-import org.xwiki.test.ComponentManagerRule;
 import org.xwiki.test.annotation.ComponentList;
 import org.xwiki.test.mockito.MockitoComponentManagerRule;
-import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
 /**
@@ -137,8 +130,8 @@ public class DefaultCartLoaderTest
 
     private CartTestDefinition loadTest(String name) throws IOException
     {
-        ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
+
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
         String test = Resources.toString(Resources.getResource("tests/" + name), Charsets.UTF_8);
 

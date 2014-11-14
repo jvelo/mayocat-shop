@@ -25,34 +25,39 @@ import org.slf4j.LoggerFactory;
 import org.xwiki.component.descriptor.DefaultComponentDescriptor;
 import org.xwiki.component.manager.ComponentRepositoryException;
 
-import com.yammer.dropwizard.assets.AssetsBundle;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.DBIFactory;
-import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Timer;
-import com.yammer.metrics.core.TimerContext;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+
+import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.jdbi.bundles.DBIExceptionsBundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+
+import static com.codahale.metrics.MetricRegistry.name;
 
 public class MayocatShopService extends AbstractService<MayocatShopSettings>
 {
     public static final String COMMON_PATH = "/common/";
+
     public static final String MANAGER_PATH = "/manager/";
 
     public static final String ADMIN_UI_PATH = "/admin/";
 
     public static final String CLIENT_RESOURCE_PATH = "/client/";
 
+    private static final MetricRegistry metrics = new MetricRegistry();
+
     public static void main(String[] args) throws Exception
     {
-        Timer timer = Metrics.newTimer(MayocatShopService.class, "startUpTimer");
-        TimerContext context = timer.time();
+        Timer timer = metrics.timer(name(MayocatShopService.class, "startUpTimer"));
+        Timer.Context context = timer.time();
         new MayocatShopService().run(args);
         context.stop();
 
         Logger logger = LoggerFactory.getLogger(MayocatShopService.class);
-        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.min()));
+        logger.info("\n\n\tMayocat Shop started in {} ms\n", (int) Math.round(timer.getMeanRate()));
     }
 
     @Override
@@ -64,7 +69,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
         super.initialize(bootstrap);
 
-        bootstrap.getObjectMapperFactory().registerModule(new MoneyModule());
+        bootstrap.getObjectMapper().registerModule(new MoneyModule());
 
         bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH));
         bootstrap.addBundle(new AssetsBundle(COMMON_PATH, COMMON_PATH));
@@ -72,10 +77,9 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         bootstrap.addBundle(new DBIExceptionsBundle());
         bootstrap.addBundle(new FlywayBundle<MayocatShopSettings>()
         {
-            @Override
-            public DatabaseConfiguration getDatabaseConfiguration(MayocatShopSettings configuration)
+            @Override public DataSourceFactory getDataSourceFactory(MayocatShopSettings mayocatShopSettings)
             {
-                return configuration.getDatabaseConfiguration();
+                return mayocatShopSettings.getDataSourceFactory();
             }
         });
 
@@ -89,7 +93,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
             throws ClassNotFoundException, ComponentRepositoryException
     {
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "jdbi");
+        final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "jdbi");
         jdbi.registerArgumentFactory(new PostgresUUIDArgumentFactory());
         jdbi.registerArgumentFactory(new PostgresUUIDArrayArgumentFactory());
 

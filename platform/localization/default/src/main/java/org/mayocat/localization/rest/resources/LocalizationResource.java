@@ -34,7 +34,6 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.theme.Theme;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Charsets;
@@ -43,9 +42,9 @@ import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.assets.ResourceURL;
 
 import asia.redact.bracket.properties.Properties;
+import io.dropwizard.servlets.assets.ResourceURL;
 
 /**
  * Expose theme localization properties.

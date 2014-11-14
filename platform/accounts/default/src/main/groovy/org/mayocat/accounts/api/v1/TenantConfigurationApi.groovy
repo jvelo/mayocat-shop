@@ -9,20 +9,13 @@ package org.mayocat.accounts.api.v1
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.NoSuchModuleException
 import org.mayocat.rest.annotation.ExistingTenant
 import org.xwiki.component.annotation.Component
 
-import javax.ws.rs.Consumes
-import javax.ws.rs.GET
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
-import javax.ws.rs.WebApplicationException
+import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -39,7 +32,6 @@ import javax.ws.rs.core.Response
 class TenantConfigurationApi extends ConfigurationApi
 {
     @GET
-    @Timed
     @Path("settings")
     Map<String, Serializable> getConfiguration()
     {
@@ -47,7 +39,6 @@ class TenantConfigurationApi extends ConfigurationApi
     }
 
     @GET
-    @Timed
     @Path("settings/{module}")
     Map<String, Serializable> getModuleConfiguration(@PathParam("module") String module)
     {
@@ -60,7 +51,6 @@ class TenantConfigurationApi extends ConfigurationApi
     }
 
     @PUT
-    @Timed
     @Path("settings/{module}")
     @Authorized
     Response updateModuleConfiguration(@PathParam("module") String module, String configurationAsString)
@@ -81,7 +71,6 @@ class TenantConfigurationApi extends ConfigurationApi
     }
 
     @PUT
-    @Timed
     @Authorized
     @Path("settings")
     Response updateModuleConfiguration(String configurationAsString)

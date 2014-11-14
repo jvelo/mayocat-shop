@@ -9,7 +9,6 @@ package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.attachment.AttachmentLoadingOptions
@@ -113,7 +112,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
     }
 
     @GET
-    @Timed
     @Authorized
     def getProducts(@QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
@@ -180,7 +178,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
     @Path("{slug}")
     @GET
-    @Timed
     def getProduct(@PathParam("slug") String slug)
     {
         def product = this.productStore.get().findBySlug(slug);
@@ -225,7 +222,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
     @Path("{slug}/move")
     @POST
-    @Timed
     @Authorized
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.WILDCARD)
@@ -251,7 +247,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     def updateProduct(@PathParam("slug") String slug, ProductApiObject productApiObject)
     {
@@ -302,7 +297,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -331,7 +326,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
     @Path("{slug}")
     @PUT
-    @Timed
     @Authorized
     def replaceProduct(@PathParam("slug") String slug, Product newProduct)
     {
@@ -340,7 +334,6 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
     }
 
     @POST
-    @Timed
     @Authorized
     def createProduct(ProductApiObject productApiObject)
     {
@@ -365,7 +358,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
         }
 
         catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
@@ -565,7 +558,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 

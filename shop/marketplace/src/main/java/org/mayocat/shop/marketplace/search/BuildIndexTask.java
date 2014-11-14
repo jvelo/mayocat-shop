@@ -23,8 +23,8 @@ import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.yammer.dropwizard.tasks.Task;
 
+import io.dropwizard.servlets.tasks.Task;
 import mayoapp.dao.CollectionDAO;
 import mayoapp.dao.EntityDAO;
 import mayoapp.dao.ProductDAO;

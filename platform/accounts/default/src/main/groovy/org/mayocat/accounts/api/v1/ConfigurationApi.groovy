@@ -7,7 +7,6 @@
  */
 package org.mayocat.accounts.api.v1
 
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.ConfigurationService
@@ -36,7 +35,6 @@ class ConfigurationApi implements Resource
     ConfigurationService configurationService
 
     @GET
-    @Timed
     @Path("gestalt")
     Map<String, Serializable> getGestaltConfiguration()
     {

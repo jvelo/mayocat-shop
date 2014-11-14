@@ -8,6 +8,7 @@
 package org.mayocat.shop.taxes.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -37,7 +38,7 @@ public enum Mode
     }
 
     @JsonCreator
-    public static Mode fromJson(String text)
+    public static Mode create(String text)
     {
         for (Mode mode : values()) {
             if (mode.toJson().equals(text)) {

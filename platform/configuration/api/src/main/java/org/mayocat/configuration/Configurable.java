@@ -9,7 +9,7 @@ package org.mayocat.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.validation.ValidationMethod;
+import io.dropwizard.validation.ValidationMethod;
 
 /**
  * The type of a settings field whose value can be overridden at the tenant level. Useful for {@link
@@ -19,6 +19,7 @@ import com.yammer.dropwizard.validation.ValidationMethod;
  */
 public class Configurable<T>
 {
+    @JsonProperty
     private T value;
 
     @JsonProperty("default")
@@ -78,6 +79,7 @@ public class Configurable<T>
         return visible;
     }
 
+    @JsonIgnore
     public T getValue()
     {
         if (value == null) {

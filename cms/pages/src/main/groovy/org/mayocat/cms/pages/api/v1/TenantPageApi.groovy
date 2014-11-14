@@ -9,7 +9,6 @@ package org.mayocat.cms.pages.api.v1
 
 import com.google.common.base.Optional
 import com.google.common.base.Strings
-import com.yammer.metrics.annotation.Timed
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.model.Attachment
@@ -37,7 +36,6 @@ import org.mayocat.store.InvalidEntityException
 import org.mayocat.theme.ThemeDefinition
 import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
-import org.xwiki.component.phase.Initializable
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -182,7 +180,6 @@ class TenantPageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     }
 
     @POST
-    @Timed
     @Authorized
     public Object createPage(PageApiObject page)
     {
@@ -200,7 +197,8 @@ class TenantPageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
             // This will add a location header like http://host/api/<version>/page/my-created-product
             return Response.created(new URI(created.slug)).build();
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid page\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         } catch (EntityAlreadyExistsException e) {
             return Response.status(Response.Status.CONFLICT)
                     .entity("A product with this slug already exists\n").type(MediaType.TEXT_PLAIN_TYPE).build();
@@ -211,7 +209,6 @@ class TenantPageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     // Partial update : NOT idempotent
     public Response updatePage(@PathParam("slug") String slug, PageApiObject pageApiObject)
@@ -237,7 +234,8 @@ class TenantPageApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
             return Response.ok().build();
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid page\n").type(MediaType.TEXT_PLAIN_TYPE).build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No page with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();

@@ -26,5 +26,5 @@ productTypes:
           name: Additional information
           fields:
             madein:
-              text: Enter the country this variant is made in
+              placeholder: Enter the country this variant is made in
       properties: ["stock", "price", "weight"]

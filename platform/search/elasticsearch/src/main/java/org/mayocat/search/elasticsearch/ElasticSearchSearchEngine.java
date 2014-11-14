@@ -52,7 +52,7 @@ import org.xwiki.observation.EventListener;
 import org.xwiki.observation.ObservationManager;
 import org.xwiki.observation.event.Event;
 
-import com.yammer.dropwizard.lifecycle.Managed;
+import io.dropwizard.lifecycle.Managed;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;

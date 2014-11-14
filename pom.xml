@@ -65,8 +65,8 @@
 
         <!-- Dependencies versions -->
         <postgresql.driver.version>9.3-1102-jdbc41</postgresql.driver.version>
-        <dropwizard.version>0.6.2</dropwizard.version>
-        <jersey.version>1.17.1</jersey.version>
+        <dropwizard.version>0.7.1</dropwizard.version>
+        <jersey.version>1.18.1</jersey.version>
         <!-- Used for multipart contrib module. Needs to be the same as the dropwizard's jersey version -->
         <flyway.version>2.2.1</flyway.version>
         <xwiki.version>4.5.2</xwiki.version>
@@ -75,6 +75,7 @@
         <joda-money.version>0.8</joda-money.version>
         <commons-codec.version>1.9</commons-codec.version>
         <groovy.version>2.3.6</groovy.version>
+        <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
     <repositories>
@@ -429,12 +430,37 @@
     </dependencyManagement>
 
     <dependencies>
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>${groovy.version}</version>
-        <scope>compile</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Loggin' -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- SLF4J implementation we use -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <!-- External libraries using Commons Logging will delegate to SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- External libraries using Log4J will delegate to SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
     </dependencies>
 
     <!-- Deploy releases and snapshots to the CloudBees maven repositories -->

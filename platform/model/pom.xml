@@ -43,7 +43,7 @@
 
         <!-- Drag jackson deps from DW -->
         <dependency>
-            <groupId>com.yammer.dropwizard</groupId>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>

@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 /**
  * @version $Id$
@@ -54,10 +53,10 @@ public class DefaultConfigurationService implements ConfigurationService
     private Map<String, GestaltConfigurationSource> gestaltConfigurationSources;
 
     @Inject
-    private ObjectMapperFactory objectMapperFactory;
+    private WebContext context;
 
     @Inject
-    private WebContext context;
+    private ObjectMapper objectMapper;
 
     @Inject
     private Logger logger;
@@ -89,7 +88,8 @@ public class DefaultConfigurationService implements ConfigurationService
         if (tenant != null) {
             // For a tenant : merge global configuration with tenant own overrides
 
-            ObjectMapper mapper = getObjectMapper();
+            //ObjectMapper mapper = getObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
             Map<String, Serializable> mergedConfiguration = getSettingsAsJson(tenant);
 
             for (String source : exposedSettings.keySet()) {
@@ -276,6 +276,6 @@ public class DefaultConfigurationService implements ConfigurationService
 
     private ObjectMapper getObjectMapper()
     {
-        return objectMapperFactory.build();
+        return objectMapper;
     }
 }
