@@ -86,7 +86,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
 
         bootstrap.getObjectMapper().registerModule(new MoneyModule());
 
-        bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH, "index.html", "admin"));
+        bootstrap.addBundle(new AssetsBundle(CLIENT_RESOURCE_PATH, ADMIN_UI_PATH, "index.htm", "admin"));
         bootstrap.addBundle(new AssetsBundle(COMMON_PATH, COMMON_PATH, null, "common"));
         bootstrap.addBundle(new AssetsBundle(MANAGER_PATH, MANAGER_PATH, "index.htm", "manager"));
         bootstrap.addBundle(new DBIExceptionsBundle());
