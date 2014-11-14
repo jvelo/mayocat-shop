@@ -132,17 +132,17 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                         template = themeFileResolver
                                 .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
                     } catch (TemplateNotFoundException e) {
-
                         if (webView.hasOption(WebView.Option.FALLBACK_ON_DEFAULT_THEME)) {
                             try {
                                 template = themeFileResolver.getTemplate(themeManager.getDefaultTheme(),
                                         webView.template().toString(), webContext.getRequest().getBreakpoint());
                             } catch (TemplateNotFoundException e1) {
-                                if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
-                                    template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
-                                            webContext.getRequest().getBreakpoint());
-                                }
+                                // continue
                             }
+                        }
+                        if (template == null && webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
+                            template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
+                                    webContext.getRequest().getBreakpoint());
                         }
                     }
                 }
@@ -167,6 +167,10 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                 if (mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
                     mapper.writeValue(entityStream, webView.data());
                     return;
+                }
+
+                if (template == null) {
+                    throw new TemplateNotFoundException();
                 }
 
                 jsonContext = mapper.writeValueAsString(webView.data());
