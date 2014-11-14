@@ -26,6 +26,7 @@ import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;
 import org.mayocat.configuration.jackson.GestaltConfigurationModule;
+import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.context.WebContext;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -33,9 +34,13 @@ import org.xwiki.component.annotation.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
+
+import io.dropwizard.jackson.GuavaExtrasModule;
 
 /**
  * @version $Id$
@@ -54,9 +59,6 @@ public class DefaultConfigurationService implements ConfigurationService
 
     @Inject
     private WebContext context;
-
-    @Inject
-    private ObjectMapper objectMapper;
 
     @Inject
     private Logger logger;
@@ -84,12 +86,10 @@ public class DefaultConfigurationService implements ConfigurationService
 
     public Map<Class, Serializable> getSettings(Tenant tenant)
     {
+        ObjectMapper mapper = getObjectMapper();
         Map<Class, Serializable> configurations = Maps.newHashMap();
         if (tenant != null) {
             // For a tenant : merge global configuration with tenant own overrides
-
-            //ObjectMapper mapper = getObjectMapper();
-            ObjectMapper mapper = new ObjectMapper();
             Map<String, Serializable> mergedConfiguration = getSettingsAsJson(tenant);
 
             for (String source : exposedSettings.keySet()) {
@@ -255,12 +255,12 @@ public class DefaultConfigurationService implements ConfigurationService
         if (exposedPlatformSettingsAsJson != null) {
             return exposedPlatformSettingsAsJson;
         }
-        ObjectMapper mapper = getObjectMapper();
         Map<String, ExposedSettings> configurationsToSerialize = Maps.newHashMap();
         for (String hint : exposedSettings.keySet()) {
             configurationsToSerialize.put(hint, exposedSettings.get(hint));
         }
         try {
+            ObjectMapper mapper = getObjectMapper();
             String json = mapper.writeValueAsString(configurationsToSerialize);
             exposedPlatformSettingsAsJson = mapper.readValue(json, new TypeReference<Map<String, Object>>()
             {
@@ -274,8 +274,14 @@ public class DefaultConfigurationService implements ConfigurationService
         return Collections.emptyMap();
     }
 
-    private ObjectMapper getObjectMapper()
+    public ObjectMapper getObjectMapper()
     {
-        return objectMapper;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new GuavaModule());
+        mapper.registerModule(new JodaModule());
+        mapper.registerModule(new GuavaExtrasModule());
+        mapper.registerModule(new TimeZoneModule());
+
+        return mapper;
     }
 }
