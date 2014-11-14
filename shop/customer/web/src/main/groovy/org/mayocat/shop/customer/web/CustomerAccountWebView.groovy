@@ -11,7 +11,13 @@ import com.google.common.base.Strings
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import groovy.transform.CompileStatic
-import org.mayocat.accounts.*
+import org.mayocat.accounts.AccountsService
+import org.mayocat.accounts.AccountsSettings
+import org.mayocat.accounts.IncompatibleConnectedUserException
+import org.mayocat.accounts.NoSuchValidationKeyException
+import org.mayocat.accounts.PasswordDoesNotMeetRequirementsException
+import org.mayocat.accounts.UserAlreadyValidatedException
+import org.mayocat.accounts.WrongPasswordException
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.accounts.model.User
 import org.mayocat.accounts.session.JerseyCookieSessionManager
@@ -131,7 +137,12 @@ class CustomerAccountWebView implements Resource, WithProductWebObjectBuilder
             customer.slug = customer.email
 
             try {
-                this.accountsService.createUser(user)
+                this.accountsService.createUser(user, [
+                        customer: [
+                                firstName: customer.firstName,
+                                lastName : customer.lastName
+                        ]
+                ] as Map<String, Object>)
                 user = accountsService.findUserByEmailOrUserName(user.email)
 
                 customer.userId = user.id

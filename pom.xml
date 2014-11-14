@@ -16,7 +16,7 @@
     <version>0.40-SNAPSHOT</version>
 
     <name>Mayocat - Parent POM</name>
-    <description>Modern e-commerce and marketplace management on the JVM</description>
+    <description>Open source e-commerce and marketplaces made simple</description>
     <url>http://github.com/mayocat/mayocat-shop/</url>
 
     <organization>
@@ -353,7 +353,7 @@
                                     <classpath refid="maven.test.classpath"/>
                                 </taskdef>
                                 <if>
-                                    <available file="${basedir}/src/main/groovy" type="dir"/>
+                                    <available file="${basedir}/src/test/groovy" type="dir"/>
                                     <then>
                                         <mkdir dir="${project.build.testOutputDirectory}"/>
                                         <groovyc destdir="${project.build.testOutputDirectory}"
@@ -368,6 +368,38 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Adds src/main/groovy as source and src/test/groovy as test sources for IDE support-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <id>add-groovy-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/main/groovy</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-groovy-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/test/groovy</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

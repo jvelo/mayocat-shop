@@ -12,6 +12,7 @@ org.mayocat.accounts.api.v1.TenantApi
 org.mayocat.accounts.api.v1.TenantUserApi
 org.mayocat.accounts.api.v1.MeApi
 org.mayocat.accounts.api.v1.TenantMeApi
+org.mayocat.accounts.api.v1.UserApi
 org.mayocat.accounts.web.LoginWebView
 org.mayocat.accounts.web.LogoutWebView
 org.mayocat.accounts.url.TenantURLFactory

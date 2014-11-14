@@ -35,6 +35,7 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
 @CompileStatic
+@ExistingTenant
 class TenantUserApi implements Resource {
 
     @Inject
@@ -46,7 +47,6 @@ class TenantUserApi implements Resource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Authorized(roles = [ Role.ADMIN ])
-    @ExistingTenant
     Response addUser(@Valid UserApiObject userApiObject)
     {
         User user = userApiObject.toUser()
@@ -73,7 +73,6 @@ class TenantUserApi implements Resource {
 
     @Path("{slug}")
     @GET
-    @ExistingTenant
     UserApiObject getUser(@PathParam("slug") String slug)
     {
         def user = accountsService.findUserByEmailOrUserName(slug)

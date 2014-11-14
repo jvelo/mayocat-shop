@@ -61,6 +61,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
+        </dependency>
+
         <!-- Support for CMYK JPEG's (and other exotic JPEGs) -->
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
