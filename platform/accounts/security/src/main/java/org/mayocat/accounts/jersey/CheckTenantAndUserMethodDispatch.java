@@ -194,7 +194,6 @@ public class CheckTenantAndUserMethodDispatch implements ResourceMethodDispatchA
             if (method.getMethod().isAnnotationPresent(Authorized.class)
                     || method.getDeclaringResource().getResourceClass().isAnnotationPresent(Authorized.class))
             {
-
                 Authorized annotation;
                 if (method.isAnnotationPresent(Authorized.class)) {
                     annotation = method.getAnnotation(Authorized.class);
