@@ -31,6 +31,7 @@ import org.mayocat.event.ApplicationStartedEvent;
 import org.mayocat.event.EventListener;
 import org.mayocat.health.HealthCheck;
 import org.mayocat.internal.meta.DefaultEntityMetaRegistry;
+import org.mayocat.jackson.PermissiveFuzzyEnumModule;
 import org.mayocat.jersey.MayocatFullContextRequestFilter;
 import org.mayocat.lifecycle.Managed;
 import org.mayocat.localization.LocalizationContainerFilter;
@@ -102,6 +103,9 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
     public void initialize(Bootstrap<C> bootstrap)
     {
         this.addModule(new AccountsModule());
+
+        // TODO: remove when upgrading DW to 0.8
+        bootstrap.getObjectMapper().registerModule(new PermissiveFuzzyEnumModule());
     }
 
     @Override
