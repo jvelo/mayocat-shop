@@ -153,6 +153,11 @@ public class DefaultThemeManager implements ThemeManager
             }
         }
 
+        if (themeDirectory == null || !themeDirectory.resolve("theme.yml").toFile().isFile()) {
+            // Theme not found
+            return null;
+        }
+
         ThemeDefinition definition = null;
         Theme parent = null;
         boolean definitionValid = true;
