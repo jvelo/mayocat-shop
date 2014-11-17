@@ -104,6 +104,11 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
     {
         this.addModule(new AccountsModule());
 
+        bootstrap.getObjectMapper().registerModule(new NIOModule());
+        bootstrap.getObjectMapper().registerModule(new MayocatJodaModule());
+        bootstrap.getObjectMapper().registerModule(new MayocatLocaleBCP47LanguageTagModule());
+        bootstrap.getObjectMapper().registerModule(new TimeZoneModule());
+
         // TODO: remove when upgrading DW to 0.8
         bootstrap.getObjectMapper().registerModule(new PermissiveFuzzyEnumModule());
     }
