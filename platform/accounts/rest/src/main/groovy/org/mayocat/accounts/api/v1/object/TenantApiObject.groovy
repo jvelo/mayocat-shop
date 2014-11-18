@@ -55,6 +55,9 @@ class TenantApiObject extends BaseApiObject {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<Locale, Map<String, Object>> _localized;
+
     @JsonProperty("creationDate")
     public DateTime getCreationDate() {
         return creationDate;
