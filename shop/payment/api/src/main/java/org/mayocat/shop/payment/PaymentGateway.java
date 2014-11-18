@@ -50,4 +50,13 @@ public interface PaymentGateway
      * @throws GatewayException when an un-expected exception occurs.
      */
     GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException;
+
+    /**
+     * Generic callback from the gateway
+     *
+     * @param data
+     * @return
+     * @throws GatewayException
+     */
+    GatewayResponse callback(Map<String, List<String>> data) throws GatewayException;
 }

@@ -198,6 +198,11 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         throw new RuntimeException("Not implemented : use the version with the order ID instead");
     }
 
+    public GatewayResponse callback(Map<String, List<String>> data) throws GatewayException
+    {
+        throw new RuntimeException("Not supported");
+    }
+
     private Map<String, String[]> convertDataMap(Map<String, List<String>> data)
     {
         Map<String, String[]> converted = Maps.newHashMap();

@@ -83,4 +83,33 @@ class MarketplacePaymentWebView extends PaymentResource
 
         return Response.ok().build();
     }
+
+    @POST
+    @Path("callback/{gatewayId}")
+    public Response genericCallback(@PathParam("gatewayId") String gatewayId,
+            MultivaluedMap<String, String> data)
+    {
+        GatewayFactory factory = gatewayFactories.get(gatewayId);
+        PaymentGateway gateway = factory.createGateway();
+        GatewayResponse response;
+
+        try {
+            response = gateway.callback(data);
+            PaymentOperation op = response.getOperation();
+
+            if (op) {
+                paymentOperationStore.get().create(op);
+                observationManager.notify(new PaymentOperationEvent(), op);
+            }
+        } catch (GatewayException | InvalidEntityException | EntityAlreadyExistsException e) {
+            this.logger.error("Error during gateway callback", e);
+            throw new WebApplicationException(e);
+        }
+
+        if (!Strings.isNullOrEmpty(response.getResponseText())) {
+            return Response.ok(response.getResponseText()).build();
+        }
+
+        return Response.ok().build();
+    }
 }
