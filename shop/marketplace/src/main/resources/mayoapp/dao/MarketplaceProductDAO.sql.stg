@@ -2,19 +2,6 @@ group MarketplaceProductDAO;
 
 findBySlugAndTenant() ::= <<
   SELECT entity.*, product.*,
-         tenant_entity.id as tenant_entity_id,
-         tenant_entity.slug as tenant_entity_slug,
-         tenant_entity.type as tenant_entity_type,
-         tenant_entity.tenant_id as tenant_entity_tenant_id,
-         tenant_entity.parent_id as tenant_entity_parent_id,
-         tenant.default_host as tenant_entity_default_host,
-         tenant.configuration as tenant_entity_configuration,
-         tenant.configuration_version as tenant_entity_configuration_version,
-         tenant.name as tenant_entity_name,
-         tenant.creation_date as tenant_entity_creation_date,
-         tenant.featured_image_id as tenant_entity_featured_image_id,
-         tenant.contact_email as tenant_entity_contact_email,
-         tenant.description as tenant_entity_description,
          localization_data(product.entity_id)
   FROM   entity
          INNER JOIN product
@@ -29,19 +16,6 @@ findBySlugAndTenant() ::= <<
 
 findAllNotVariants() ::= <<
     SELECT entity.*, product.*,
-           tenant_entity.id as tenant_entity_id,
-           tenant_entity.slug as tenant_entity_slug,
-           tenant_entity.type as tenant_entity_type,
-           tenant_entity.tenant_id as tenant_entity_tenant_id,
-           tenant_entity.parent_id as tenant_entity_parent_id,
-           tenant.default_host as tenant_entity_default_host,
-           tenant.configuration as tenant_entity_configuration,
-           tenant.configuration_version as tenant_entity_configuration_version,
-           tenant.name as tenant_entity_name,
-           tenant.creation_date as tenant_entity_creation_date,
-           tenant.featured_image_id as tenant_entity_featured_image_id,
-           tenant.contact_email as tenant_entity_contact_email,
-           tenant.description as tenant_entity_description,
            localization_data(product.entity_id)
     FROM   entity
            INNER JOIN product
@@ -67,19 +41,6 @@ countAllNotVariants() ::= <<
 
 findAllWithTitleLike() ::= <<
     SELECT entity.*, product.*,
-           tenant_entity.id as tenant_entity_id,
-           tenant_entity.slug as tenant_entity_slug,
-           tenant_entity.type as tenant_entity_type,
-           tenant_entity.tenant_id as tenant_entity_tenant_id,
-           tenant_entity.parent_id as tenant_entity_parent_id,
-           tenant.default_host as tenant_entity_default_host,
-           tenant.configuration as tenant_entity_configuration,
-           tenant.configuration_version as tenant_entity_configuration_version,
-           tenant.name as tenant_entity_name,
-           tenant.creation_date as tenant_entity_creation_date,
-           tenant.featured_image_id as tenant_entity_featured_image_id,
-           tenant.contact_email as tenant_entity_contact_email,
-           tenant.description as tenant_entity_description,
            localization_data(product.entity_id)
     FROM   entity
            INNER JOIN product
@@ -108,19 +69,6 @@ countAllWithTitleLike() ::= <<
 
 findAllForTenant() ::= <<
     SELECT entity.*, product.*,
-           tenant_entity.id as tenant_entity_id,
-           tenant_entity.slug as tenant_entity_slug,
-           tenant_entity.type as tenant_entity_type,
-           tenant_entity.tenant_id as tenant_entity_tenant_id,
-           tenant_entity.parent_id as tenant_entity_parent_id,
-           tenant.default_host as tenant_entity_default_host,
-           tenant.configuration as tenant_entity_configuration,
-           tenant.configuration_version as tenant_entity_configuration_version,
-           tenant.name as tenant_entity_name,
-           tenant.creation_date as tenant_entity_creation_date,
-           tenant.featured_image_id as tenant_entity_featured_image_id,
-           tenant.contact_email as tenant_entity_contact_email,
-           tenant.description as tenant_entity_description,
            localization_data(product.entity_id)
     FROM   entity
            INNER JOIN product

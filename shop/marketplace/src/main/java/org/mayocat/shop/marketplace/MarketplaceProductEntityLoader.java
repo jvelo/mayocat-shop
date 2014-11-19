@@ -39,8 +39,7 @@ public class MarketplaceProductEntityLoader implements EntityLoader
 
     public <E extends Entity> E load(String slug, String tenantSlug)
     {
-        EntityAndTenant<Product> product = marketplaceProductStore.get().findBySlugAndTenant(slug, tenantSlug);
-        return product == null ? null : (E) product.getEntity();
+        return (E) marketplaceProductStore.get().findBySlugAndTenant(slug, tenantSlug);
     }
 }
 

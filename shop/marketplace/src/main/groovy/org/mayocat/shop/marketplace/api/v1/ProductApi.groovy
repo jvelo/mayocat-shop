@@ -114,20 +114,16 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
             @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
     {
         List<ProductApiObject> productList = [];
-        List<EntityAndTenant<Product>> productsAndTenants;
+        List<Product> products;
         def totalItems;
 
         if (!Strings.isNullOrEmpty(titleMatches)) {
-            productsAndTenants = productStore.get().findAllWithTitleLike(titleMatches, number, offset)
+            products = productStore.get().findAllWithTitleLike(titleMatches, number, offset)
             totalItems = productStore.get().countAllWithTitleLike(titleMatches);
         } else {
-            productsAndTenants = productStore.get().findAllNotVariants(number, offset)
+            products = productStore.get().findAllNotVariants(number, offset)
             totalItems = productStore.get().countAllNotVariants()
         }
-
-        List<Product> products = productsAndTenants.collect({ EntityAndTenant<Product> entityAndTenant ->
-            entityAndTenant.getEntity()
-        })
 
         List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 
@@ -144,10 +140,7 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
 
             def images = productData.getDataList(Image.class)
             def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
-
-            Tenant tenant = productsAndTenants.find({ EntityAndTenant<Product> entityAndTenant ->
-                return entityAndTenant.getEntity().id == product.id
-            }).getTenant();
+            def tenant = productData.getData(Tenant.class).orNull()
 
             if (featuredImage) {
                 productApiObject.withEmbeddedFeaturedImage(featuredImage, "/tenant/${tenant.slug}")
@@ -181,14 +174,14 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
     @Path("{product}/collections")
     def getProductCollections(@PathParam("product") Reference reference)
     {
-        EntityAndTenant<Product> product = this.productStore.get().
+        Product product = this.productStore.get().
                 findBySlugAndTenant(reference.entitySlug, reference.tenantSlug)
 
         if (!product) {
             return Response.status(Response.Status.NOT_FOUND).build()
         }
 
-        List<EntityAndParent<Collection>> collections = this.collectionStore.get().findAllForEntity(product.entity)
+        List<EntityAndParent<Collection>> collections = this.collectionStore.get().findAllForEntity(product)
 
         List<CollectionApiObject> collectionApiObjects = []
 

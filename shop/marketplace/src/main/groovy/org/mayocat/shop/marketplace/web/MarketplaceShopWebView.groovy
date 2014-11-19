@@ -126,9 +126,7 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
         context.put("shop", shopWebObject)
 
         // Products
-        List<EntityAndTenant<Product>> tenantProducts = productStore.get().findAllForTenant(tenant, 100, 0);
-        List<Product> products = tenantProducts.
-                collect({ EntityAndTenant<Product> tenantAndProduct -> tenantAndProduct.entity })
+        List<Product> products = productStore.get().findAllForTenant(tenant, 100, 0);
 
         List<EntityData<Product>> productsData = dataLoader.
                 load(products, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
@@ -152,24 +150,26 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
     {
         def context = [:]
 
-        EntityAndTenant<Product> product = this.productStore.get().findBySlugAndTenant(productSlug, shopSlug)
+        Product product = this.productStore.get().findBySlugAndTenant(productSlug, shopSlug)
 
         if (!product) {
             return new ErrorWebView().status(404)
         }
 
+        // Product
+        def productData = dataLoader.load(product, StandardOptions.LOCALIZE)
+        def tenant = productData.getData(Tenant.class).orNull()
+        MarketplaceProductWebObject productWebObject = buildProductWebObject(tenant, productData)
+
         // Shop data
-        EntityData<Tenant> tenantData = dataLoader.load(product.tenant, StandardOptions.LOCALIZE)
-        MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(product.tenant)
+        EntityData<Tenant> tenantData = dataLoader.load(tenant, StandardOptions.LOCALIZE)
+        MarketplaceShopWebObject shopWebObject = new MarketplaceShopWebObject().withTenant(tenant)
         shopWebObject.withAddons(addonsWebObjectBuilder.build(tenantData))
         Optional<ImageGallery> gallery = tenantData.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
-        shopWebObject.withImages(product.tenant, images, product.tenant.featuredImageId, platformSettings)
-        context.put("shop", shopWebObject)
+        shopWebObject.withImages(tenant, images, tenant.featuredImageId, platformSettings)
 
-        // Product
-        def productData = dataLoader.load(product.entity, StandardOptions.LOCALIZE)
-        MarketplaceProductWebObject productWebObject = buildProductWebObject(product.tenant, productData)
+        context.put("shop", shopWebObject)
         productWebObject.shop = shopWebObject
         context.put("product", productWebObject)
 

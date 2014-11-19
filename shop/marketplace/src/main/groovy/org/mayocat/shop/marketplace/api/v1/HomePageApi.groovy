@@ -248,7 +248,7 @@ class HomePageApi implements Resource, AttachmentApiDelegate
             // Not very efficient since we are doing 1 query per product but this is a write operation not so frequent
             // so that will do it for now.
             def productEntity = marketplaceProductStore.get().findBySlugAndTenant(product.slug, tenantSlug)
-            return productEntity?.entity.id
+            return productEntity?.id
         });
 
         homeFeaturedProductsList.entities = productIds.findAll({ UUID id -> id != null }).toList()

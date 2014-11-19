@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.marketplace.model.EntityAndTenant;
+import org.mayocat.shop.catalog.store.jdbi.mapper.ProductMapper;
 import org.mayocat.shop.marketplace.store.jdbi.ProductAndTenantMapper;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -24,24 +24,24 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 /**
  * @version $Id$
  */
-@RegisterMapper(ProductAndTenantMapper.class)
+@RegisterMapper(ProductMapper.class)
 @RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
 @UseStringTemplate3StatementLocator
 public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
 {
     @SqlQuery
-    public abstract EntityAndTenant<Product> findBySlugAndTenant(@Bind("slug") String slug,
+    public abstract Product findBySlugAndTenant(@Bind("slug") String slug,
             @Bind("tenantSlug") String tenantSlug);
 
     @SqlQuery
-    public abstract List<EntityAndTenant<Product>> findAllNotVariants(@Bind("number") Integer number,
+    public abstract List<Product> findAllNotVariants(@Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
     public abstract Integer countAllNotVariants();
 
     @SqlQuery
-    public abstract List<EntityAndTenant<Product>> findAllWithTitleLike(@Bind("title") String title,
+    public abstract List<Product> findAllWithTitleLike(@Bind("title") String title,
             @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
@@ -49,7 +49,7 @@ public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
     public abstract Integer countAllWithTitleLike(@Bind("title") String title);
 
     @SqlQuery
-    public abstract List<EntityAndTenant<Product>> findAllForTenant(
+    public abstract List<Product> findAllForTenant(
             @BindBean("tenant") Tenant tenant,
             @Bind("number") Integer number,
             @Bind("offset") Integer offset);

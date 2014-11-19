@@ -20,15 +20,15 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface MarketplaceProductStore
 {
-    EntityAndTenant<Product> findBySlugAndTenant(String slug, String tenantSlug);
+    Product findBySlugAndTenant(String slug, String tenantSlug);
 
-    List<EntityAndTenant<Product>> findAllNotVariants(Integer number, Integer offset);
+    List<Product> findAllNotVariants(Integer number, Integer offset);
 
     Integer countAllNotVariants();
 
-    List<EntityAndTenant<Product>> findAllWithTitleLike(String title, Integer number, Integer offset);
+    List<Product> findAllWithTitleLike(String title, Integer number, Integer offset);
 
     Integer countAllWithTitleLike(String title);
 
-    List<EntityAndTenant<Product>> findAllForTenant(Tenant tenant, Integer number, Integer offset);
+    List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset);
 }

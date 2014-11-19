@@ -100,10 +100,8 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
             return Response.status(Response.Status.BAD_REQUEST).build()
         }
 
-        EntityAndTenant<Product> productAndTenant = marketplaceProductStore.get().
+        Product product = marketplaceProductStore.get().
                 findBySlugAndTenant(productReference.entitySlug, productReference.tenantSlug)
-
-        def product = productAndTenant.entity
 
         if (!Strings.isNullOrEmpty(variantSlug)) {
             Product variant = productStore.get().findVariant(product, variantSlug)
@@ -134,10 +132,8 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
             return Response.status(Response.Status.BAD_REQUEST).build()
         }
 
-        EntityAndTenant<Product> productAndTenant = marketplaceProductStore.get().
+        Product product = marketplaceProductStore.get().
                 findBySlugAndTenant(productReference.entitySlug, productReference.tenantSlug)
-
-        def product = productAndTenant.entity
 
         if (product == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Product not found").build()
@@ -166,8 +162,7 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
 
         if (removeIndex) {
             cartManager.removeItem(removeIndex)
-        }
-        else {
+        } else {
             // Handle update request
             for (String key : queryParams.keySet()) {
                 if (key.startsWith("quantity_")) {
@@ -183,8 +178,7 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
                     } catch (NumberFormatException | InvalidCartOperationException e) {
                         return Response.status(Response.Status.BAD_REQUEST).build()
                     }
-                }
-                else if (key.startsWith("variant_")) {
+                } else if (key.startsWith("variant_")) {
                     try {
                         Integer index = Integer.valueOf(key.substring("variant_".length()))
 
@@ -203,7 +197,6 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
                         cartManager.setItem(product, index);
                     }
                     catch (InvalidCartOperationException e) {
-
                     }
                 }
             }

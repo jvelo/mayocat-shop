@@ -9,6 +9,7 @@ package org.mayocat.shop.marketplace.web
 
 import com.google.common.base.Strings
 import groovy.transform.CompileStatic
+import org.mayocat.accounts.model.Tenant
 import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
@@ -58,15 +59,13 @@ class MarketplaceProductWebView implements Resource, WithProductWebObjectBuilder
         if (Strings.isNullOrEmpty(query)) {
             return new ErrorWebView().status(404)
         }
-        List<EntityAndTenant<Product>> productsAndTenants = productStore.findAllWithTitleLike(query, 200, 0)
-        List<Product> products = productsAndTenants.collect({ EntityAndTenant<Product> p -> p.entity })
+        List<Product> products = productStore.findAllWithTitleLike(query, 200, 0)
         List<EntityData<Product>> productsData = dataLoader.
                 load(products, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 
         def productList = [] as List<MarketplaceProductWebObject>
         productsData.each({ EntityData<Product> productData ->
-            Product product = productData.entity
-            def tenant = productsAndTenants.find({ EntityAndTenant<Product> e -> e.entity.id == product.id }).tenant
+            def tenant = productData.getData(Tenant.class).orNull()
             MarketplaceProductWebObject productWebObject = buildProductWebObject(tenant, productData)
             productList << productWebObject
         })

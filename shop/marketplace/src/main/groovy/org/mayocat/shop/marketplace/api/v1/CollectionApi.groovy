@@ -38,7 +38,6 @@ import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
-import org.mayocat.shop.marketplace.model.EntityAndTenant
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
@@ -652,13 +651,13 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         String productSlug = reference.entitySlug
         String tenantSlug = reference.tenantSlug
 
-        EntityAndTenant<Product> product = this.productStore.get().findBySlugAndTenant(productSlug, tenantSlug)
+        Product product = this.productStore.get().findBySlugAndTenant(productSlug, tenantSlug)
 
         if (!collection || !product) {
             return Response.status(Response.Status.NOT_FOUND).build()
         }
 
-        this.collectionStore.get().removeEntityFromCollection(collection, product.entity);
+        this.collectionStore.get().removeEntityFromCollection(collection, product);
     }
 
     def addProductToCollectionInternal(ProductApiObject productApiObject, String... slugsArray)
@@ -667,13 +666,13 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         String productSlug = productApiObject.slug
         String tenantSlug = (productApiObject._embedded?.tenant as Map)?.slug
 
-        EntityAndTenant<Product> product = this.productStore.get().findBySlugAndTenant(productSlug, tenantSlug)
+        Product product = this.productStore.get().findBySlugAndTenant(productSlug, tenantSlug)
 
         if (!collection || !product) {
             return Response.status(Response.Status.NOT_FOUND).build()
         }
 
-        this.collectionStore.get().addEntityToCollection(collection, product.entity)
+        this.collectionStore.get().addEntityToCollection(collection, product)
     }
 
     def updateCollectionInternal(CollectionApiObject collectionApiObject, String... slugsArray)

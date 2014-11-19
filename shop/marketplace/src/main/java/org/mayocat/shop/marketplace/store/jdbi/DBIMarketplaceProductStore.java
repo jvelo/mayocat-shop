@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.context.WebContext;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.catalog.model.Product;
@@ -44,22 +45,21 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     private TenantDAO tenantDAO;
 
     @Override
-    public EntityAndTenant<Product> findBySlugAndTenant(String slug, String tenantSlug)
+    public Product findBySlugAndTenant(String slug, String tenantSlug)
     {
-        EntityAndTenant<Product> result = this.marketplaceProductDAO.findBySlugAndTenant(slug, tenantSlug);
-        if (result != null) {
-            List<AddonGroup> addons = this.marketplaceProductDAO.findAddons(result.getEntity());
-            List<AddonGroup> tenantAddons = this.tenantDAO.findAddons(result.getTenant());
-            result.getEntity().setAddons(asMap(addons));
-            result.getTenant().setAddons(asMap(tenantAddons));
+        Product product = this.marketplaceProductDAO.findBySlugAndTenant(slug, tenantSlug);
+        if (product != null) {
+            List<AddonGroup> addons = this.marketplaceProductDAO.findAddons(product);
+            product.setAddons(asMap(addons));
         }
-        return result;
+        return product;
     }
 
     @Override
-    public List<EntityAndTenant<Product>> findAllNotVariants(Integer number, Integer offset)
+    public List<Product> findAllNotVariants(Integer number, Integer offset)
     {
-        return this.marketplaceProductDAO.findAllNotVariants(number, offset);
+        return AddonsHelper
+                .withAddons(this.marketplaceProductDAO.findAllNotVariants(number, offset), this.marketplaceProductDAO);
     }
 
     @Override
@@ -69,9 +69,11 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     }
 
     @Override
-    public List<EntityAndTenant<Product>> findAllWithTitleLike(String title, Integer number, Integer offset)
+    public List<Product> findAllWithTitleLike(String title, Integer number, Integer offset)
     {
-        return this.marketplaceProductDAO.findAllWithTitleLike(title, number, offset);
+        return AddonsHelper
+                .withAddons(this.marketplaceProductDAO.findAllWithTitleLike(title, number, offset),
+                        this.marketplaceProductDAO);
     }
 
     @Override
@@ -81,9 +83,10 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     }
 
     @Override
-    public List<EntityAndTenant<Product>> findAllForTenant(Tenant tenant, Integer number, Integer offset)
+    public List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset)
     {
-        return this.marketplaceProductDAO.findAllForTenant(tenant, number, offset);
+        return AddonsHelper.withAddons(this.marketplaceProductDAO.findAllForTenant(tenant, number, offset),
+                this.marketplaceProductDAO);
     }
 
     @Override
