@@ -21,7 +21,7 @@ class OrderWebObject extends OrderSummaryWebObject
     @Override
     OrderWebObject withOrder(Order order, Locale locale)
     {
-        withOrder(order, locale)
+        super.withOrder(order, locale)
         this
     }
 }
