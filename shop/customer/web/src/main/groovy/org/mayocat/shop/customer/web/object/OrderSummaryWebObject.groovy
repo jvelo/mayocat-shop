@@ -32,6 +32,8 @@ class OrderSummaryWebObject
 
     Integer numberOfItems
 
+    String additionalInformation
+
     def withOrder(Order order, Locale locale)
     {
         this.slug = order.slug
@@ -41,5 +43,8 @@ class OrderSummaryWebObject
         this.date = new DateWebObject().withDate(order.creationDate, locale)
         this.numberOfItems = (order.orderData.get("items") as List).size()
         this.status = order.status.toString().toLowerCase()
+        this.additionalInformation = order.additionalInformation
+
+        this
     }
 }
