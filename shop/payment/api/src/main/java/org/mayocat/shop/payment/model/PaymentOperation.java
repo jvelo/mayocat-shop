@@ -25,7 +25,8 @@ public class PaymentOperation implements Identifiable
         AUTHORIZED,
         CAPTURED,
         CANCELLED,
-        FAILED;
+        FAILED,
+        REFUND
     }
 
     private UUID id;
