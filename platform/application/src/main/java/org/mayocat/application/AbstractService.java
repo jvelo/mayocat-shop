@@ -55,6 +55,7 @@ import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.observation.ObservationManager;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
@@ -199,6 +200,8 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
         objectMapper.registerModule(new MayocatJodaModule());
         objectMapper.registerModule(new MayocatLocaleBCP47LanguageTagModule());
         objectMapper.registerModule(new MayocatGroovyModule());
+
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     protected void addModule(Module module)
