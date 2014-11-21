@@ -31,6 +31,8 @@ public class Mail
 
     private String text;
 
+    private String html;
+
     public Mail()
     {
         to = Lists.newArrayList();
@@ -74,6 +76,12 @@ public class Mail
         return this;
     }
 
+    public Mail html(String html)
+    {
+        this.html = html;
+        return this;
+    }
+
     public String getFrom()
     {
         return from;
@@ -102,5 +110,10 @@ public class Mail
     public String getText()
     {
         return text;
+    }
+
+    public String getHtml()
+    {
+        return html;
     }
 }

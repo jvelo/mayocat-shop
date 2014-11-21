@@ -114,6 +114,10 @@ public class JavaMailMailService implements MailService
                 message.setText(mail.getText());
             }
 
+            if (mail.getHtml() != null) {
+                message.setContent(mail.getHtml(), "text/html; charset=utf-8");
+            }
+
             // Boom goes the dynamite
             Transport.send(message);
         } catch (MessagingException e) {
