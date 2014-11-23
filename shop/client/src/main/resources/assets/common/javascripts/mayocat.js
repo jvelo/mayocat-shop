@@ -298,6 +298,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
 
+            CKEDITOR.config.mayocat_server = $rootScope.server;
             CKEDITOR.config.mayocat_entity_uri = $rootScope.entity.uri;
             var ck = CKEDITOR.replace(elm[0], ckOptions);
 
@@ -327,7 +328,7 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             };
 
             scope.$on('entity:initialized', function(event, entity){
-                CKEDITOR.config.mayocat_entityUri = entity.uri;
+                CKEDITOR.config.mayocat_entityUri = $rootScope.server + entity.uri;
             });
 
             // Create a new ckEditor with a new locale when this last one is changed

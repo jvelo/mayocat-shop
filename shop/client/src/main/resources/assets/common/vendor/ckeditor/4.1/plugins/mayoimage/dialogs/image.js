@@ -429,12 +429,12 @@
                                                     .append(
                                                         $('<img>')
                                                             .attr({
-                                                                src: v.file._href + '?width=90&height=90',
+                                                                src: CKEDITOR.config.mayocat_server + v.file._href + '?width=90&height=90',
                                                                 rel: 'attachment',
                                                                 title: v.title
                                                             })
                                                             .css('border', '2px solid white')
-                                                            .data('href', v.file._href)
+                                                            .data('href', CKEDITOR.config.mayocat_server + v.file._href)
                                                     );
                                                 $imgsDiv.append($el);
                                             });
