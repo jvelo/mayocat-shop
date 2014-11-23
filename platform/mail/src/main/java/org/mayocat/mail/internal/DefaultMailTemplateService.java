@@ -7,38 +7,25 @@
  */
 package org.mayocat.mail.internal;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.mayocat.context.WebContext;
 import org.mayocat.files.FileManager;
-import org.mayocat.mail.Mail;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailService;
 import org.mayocat.mail.MailTemplate;
 import org.mayocat.mail.MailTemplateService;
-import org.mayocat.views.Template;
-import org.mayocat.views.TemplateEngine;
-import org.mayocat.views.TemplateEngineException;
-import org.slf4j.Logger;
+import org.mayocat.templating.TemplateRenderer;
+import org.mayocat.templating.TemplateRenderingException;
 import org.xwiki.component.annotation.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.io.Files;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * @version $Id$
@@ -50,80 +37,60 @@ public class DefaultMailTemplateService implements MailTemplateService
     private FileManager fileManager;
 
     @Inject
-    private WebContext context;
+    private MailService mailService;
 
     @Inject
-    private Provider<TemplateEngine> engine;
+    private TemplateRenderer templateRenderer;
 
-    @Inject
-    private MailService emailService;
-
-    @Inject
-    private Logger logger;
+    private static final String DELIMITER =
+            "------------------------------------------------------------------------------------------------------------------------";
 
     @Override
-    public Optional<Template> getTemplate(String templateName)
+    public void sendTemplateMail(MailTemplate mail, Map<String, Object> context) throws MailException
     {
-        return getTemplate(templateName, context != null ? context.getLocale() : Locale.ENGLISH);
-    }
-
-    @Override
-    public Optional<Template> getTemplate(String templateName, Locale locale)
-    {
-        // Localized as country + language
-        Path templatePath = fileManager.resolvePermanentFilePath(Paths.get("emails").resolve(locale.toLanguageTag()))
-                .resolve(templateName);
-
-        // Localized as language
-        if (!templatePath.toFile().isFile()) {
-            templatePath = fileManager.resolvePermanentFilePath(Paths.get("emails"))
-                    .resolve(locale.getLanguage()).resolve(templateName);
-        }
-
-        // Global fallback
-        if (!templatePath.toFile().isFile()) {
+        Path templatePath = null;
+        if (mail.locale().isPresent()) {
             templatePath =
-                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve(templateName);
-        }
-
-        if (templatePath.toFile().isFile()) {
-            try {
-                String content = Files.toString(templatePath.toFile(), Charsets.UTF_8);
-                Template template = new Template(templateName, content);
-                return Optional.of(template);
-            } catch (IOException e) {
-                // Fail below
+                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
+                            .resolve(mail.locale().get().toLanguageTag())
+                            .resolve(mail.template() + ".twig");
+            if (templatePath == null) {
+                templatePath =
+                        fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
+                                .resolve(mail.locale().get().getLanguage())
+                                .resolve(mail.template() + ".twig");
             }
         }
-        return Optional.absent();
-    }
 
-    @Override
-    public void sendMailTemplate(MailTemplate mailTemplate, Map<String, Object> context) throws MailException
-    {
-        Preconditions.checkNotNull(mailTemplate);
-        Preconditions.checkNotNull(mailTemplate.getTemplate());
-        Preconditions.checkNotNull(context);
+        if (templatePath == null) {
+            templatePath =
+                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve(mail.template() + ".twig");
+        }
+
+        if (templatePath == null) {
+            throw new MailException("Mail template not found");
+        }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            engine.get().register(mailTemplate.getTemplate());
-            String jsonContext = mapper.writeValueAsString(context);
-            String html = engine.get().render(mailTemplate.getTemplate().getId(), jsonContext);
-            List<String> lines = IOUtils.readLines(new ByteArrayInputStream(html.getBytes()), Charsets.UTF_8);
-            String subject = StringUtils.substringAfter(lines.remove(0), "Subject:").trim();
-            String body = StringUtils.join(lines, "\n");
-            Mail mail = new Mail().from(mailTemplate.getFrom())
-                    .to((String[]) mailTemplate.getTo().toArray(new String[mailTemplate.getTo().size()]))
-                    .cc((String[]) mailTemplate.getCc().toArray(new String[mailTemplate.getCc().size()]))
-                    .bcc((String[]) mailTemplate.getBcc().toArray(new String[mailTemplate.getBcc().size()]))
-                    .text(body)
-                    .subject(subject);
+            String result = templateRenderer.renderAsString(templatePath, context);
 
-            emailService.sendEmail(mail);
-        } catch (TemplateEngineException | IOException | MailException e) {
-            logger.error("Failed to send email from template", ExceptionUtils.getRootCause(e));
-            throw new MailException(e);
+            List<String> parts = Lists.newArrayList(Splitter.on(DELIMITER).trimResults().split(result));
+
+            if (parts.size() != 3) {
+                throw new MailException("Failed to render email. Is the mail extending mail.twig ?");
+            }
+
+            mail.subject(parts.get(0));
+            if (!Strings.isNullOrEmpty(parts.get(1))) {
+                mail.text(parts.get(1));
+            }
+            if (!Strings.isNullOrEmpty(parts.get(2))) {
+                mail.html(parts.get(2));
+            }
+
+            mailService.sendEmail(mail);
+        } catch (TemplateRenderingException e) {
+            throw new MailException("Failed to render mail template", e);
         }
     }
 }

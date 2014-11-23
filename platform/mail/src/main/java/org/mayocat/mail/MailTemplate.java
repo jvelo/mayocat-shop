@@ -7,88 +7,87 @@
  */
 package org.mayocat.mail;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
-import org.mayocat.views.Template;
-
-import com.google.common.collect.Lists;
+import com.google.common.base.Optional;
 
 /**
  * @version $Id$
  */
-public class MailTemplate
+public class MailTemplate extends Mail
 {
-    private String from;
+    private String template;
 
-    private List<String> to;
+    private Optional<Locale> locale = Optional.absent();
 
-    private List<String> cc;
-
-    private List<String> bcc;
-
-    private Template template;
-
-    public MailTemplate()
-    {
-        to = Lists.newArrayList();
-        cc = Lists.newArrayList();
-        bcc = Lists.newArrayList();
-    }
-
+    @Override
     public MailTemplate from(String from)
     {
-        this.from = from;
+        super.from(from);
         return this;
     }
 
+    @Override
     public MailTemplate to(String... to)
     {
-        this.to = Arrays.asList(to);
+        super.to(to);
         return this;
     }
 
+    @Override
     public MailTemplate cc(String... cc)
     {
-        this.cc = Arrays.asList(cc);
+        super.cc(cc);
         return this;
     }
 
+    @Override
     public MailTemplate bcc(String... bcc)
     {
-        this.bcc = Arrays.asList(bcc);
+        super.bcc(bcc);
         return this;
     }
 
-    public MailTemplate template(Template template)
+    @Override
+    public MailTemplate subject(String subject)
+    {
+        super.subject(subject);
+        return this;
+    }
+
+    @Override
+    public MailTemplate text(String subject)
+    {
+        super.text(subject);
+        return this;
+    }
+
+    @Override
+    public MailTemplate html(String subject)
+    {
+        super.html(subject);
+        return this;
+    }
+
+    public MailTemplate template(String template)
     {
         this.template = template;
         return this;
     }
 
-    public String getFrom()
+    public MailTemplate locale(Locale locale)
     {
-        return from;
+        this.locale = Optional.fromNullable(locale);
+        return this;
     }
 
-    public List<String> getTo()
-    {
-        return to;
-    }
-
-    public List<String> getCc()
-    {
-        return cc;
-    }
-
-    public List<String> getBcc()
-    {
-        return bcc;
-    }
-
-    public Template getTemplate()
+    public String template()
     {
         return template;
+    }
+
+    public Optional<Locale> locale()
+    {
+        return locale;
     }
 }

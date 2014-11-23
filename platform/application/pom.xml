@@ -138,6 +138,12 @@
             <groupId>io.federecio</groupId>
             <artifactId>dropwizard-swagger</artifactId>
             <version>0.5.2</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Testing dependencies -->

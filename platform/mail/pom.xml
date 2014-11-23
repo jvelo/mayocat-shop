@@ -37,13 +37,7 @@
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-files</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-views</artifactId>
+            <artifactId>mayocat-platform-templating</artifactId>
             <version>${project.version}</version>
         </dependency>
 

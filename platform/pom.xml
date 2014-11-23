@@ -38,6 +38,7 @@
         <module>authorization</module>
         <module>localization</module>
         <module>addons</module>
+        <module>templating</module>
         <module>views</module>
         <module>themes</module>
         <module>attachments</module>

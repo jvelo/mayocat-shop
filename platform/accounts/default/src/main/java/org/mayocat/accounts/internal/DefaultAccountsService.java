@@ -331,76 +331,64 @@ public class DefaultAccountsService implements AccountsService
     private void sendValidationMail(final User createdUser, AccountsSettings settings,
             Map<String, Object> additionalContext)
     {
-        Optional<Template> template = mailTemplateService.getTemplate("account_validation.html");
-        if (!template.isPresent()) {
-            // This is a configuration error, we log it
-            logger.error("Account validation is required but not validation email template could be found !");
-        } else {
-            MailTemplate mailTemplate = new MailTemplate().template(template.get()).to(createdUser.getEmail())
-                    .from(generalSettings.getNotificationsEmail());
+        MailTemplate mailTemplate = new MailTemplate().template("account-validation").to(createdUser.getEmail())
+                .from(generalSettings.getNotificationsEmail());
 
-            try {
-                Map<String, Object> context = Maps.newHashMap();
-                context.putAll(additionalContext);
-                String validationUriTemplate;
-                if (!Strings.isNullOrEmpty(settings.getUserValidationUriTemplate().getValue())) {
-                    validationUriTemplate = settings.getUserValidationUriTemplate().getValue();
-                } else {
-                    validationUriTemplate =
-                            urlHelper.getContextWebURL("/account/validation/${validationKey}").toString();
-                }
-                SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
-                groovy.text.Template uriTemplate = templateEngine.createTemplate(validationUriTemplate);
-                context.put("validationLink", uriTemplate.make(new HashMap()
-                {
-                    {
-                        put("validationKey", createdUser.getValidationKey());
-                    }
-                }).toString());
-                context.put("siteName", siteSettings.getName());
-
-                mailTemplateService.sendMailTemplate(mailTemplate, context);
-            } catch (MailException | ClassNotFoundException | IOException e) {
-                logger.error("Failed to send validation email", e);
+        try {
+            Map<String, Object> context = Maps.newHashMap();
+            context.putAll(additionalContext);
+            String validationUriTemplate;
+            if (!Strings.isNullOrEmpty(settings.getUserValidationUriTemplate().getValue())) {
+                validationUriTemplate = settings.getUserValidationUriTemplate().getValue();
+            } else {
+                validationUriTemplate =
+                        urlHelper.getContextWebURL("/account/validation/${validationKey}").toString();
             }
+            SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
+            groovy.text.Template uriTemplate = templateEngine.createTemplate(validationUriTemplate);
+            context.put("validationLink", uriTemplate.make(new HashMap()
+            {
+                {
+                    put("validationKey", createdUser.getValidationKey());
+                }
+            }).toString());
+            context.put("siteName", siteSettings.getName());
+
+            mailTemplateService.sendTemplateMail(mailTemplate, context);
+        } catch (MailException | ClassNotFoundException | IOException e) {
+            logger.error("Failed to send validation email", e);
         }
     }
 
     private void sendPasswordResetMail(User user, final String secret, AccountsSettings settings)
     {
-        Optional<Template> template = mailTemplateService.getTemplate("password_reset.html");
-        if (!template.isPresent()) {
-            // This is a configuration error, we log it
-            logger.error("Cannot send password reset request email : template does not exist");
-        } else {
-            MailTemplate mailTemplate = new MailTemplate().template(template.get()).to(user.getEmail())
-                    .from(generalSettings.getNotificationsEmail());
+        MailTemplate mailTemplate = new MailTemplate().template("password-reset").to(user.getEmail())
+                .from(generalSettings.getNotificationsEmail());
 
-            try {
-                Map<String, Object> context = Maps.newHashMap();
-                for (UserDataSupplier supplier : userDataSuppliers.values()) {
-                    supplier.supply(user, context);
-                }
-                String passwordResetUriLink;
-                if (!Strings.isNullOrEmpty(settings.getUserPasswordResetUriTemplate().getValue())) {
-                    passwordResetUriLink = settings.getUserPasswordResetUriTemplate().getValue();
-                } else {
-                    passwordResetUriLink = urlHelper.getContextWebURL("/login/reset-password/${resetKey}").toString();
-                }
-                SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
-                groovy.text.Template uriTemplate = templateEngine.createTemplate(passwordResetUriLink);
-                context.put("resetLink", uriTemplate.make(new HashMap()
-                {
-                    {
-                        put("resetKey", secret);
-                    }
-                }).toString());
-                context.put("siteName", siteSettings.getName());
-
-                mailTemplateService.sendMailTemplate(mailTemplate, context);
-            } catch (MailException | ClassNotFoundException | IOException e) {
-                logger.error("Failed to send validation email", e);
+        try {
+            Map<String, Object> context = Maps.newHashMap();
+            for (UserDataSupplier supplier : userDataSuppliers.values()) {
+                supplier.supply(user, context);
             }
+            String passwordResetUriLink;
+            if (!Strings.isNullOrEmpty(settings.getUserPasswordResetUriTemplate().getValue())) {
+                passwordResetUriLink = settings.getUserPasswordResetUriTemplate().getValue();
+            } else {
+                passwordResetUriLink = urlHelper.getContextWebURL("/login/reset-password/${resetKey}").toString();
+            }
+            SimpleTemplateEngine templateEngine = new SimpleTemplateEngine();
+            groovy.text.Template uriTemplate = templateEngine.createTemplate(passwordResetUriLink);
+            context.put("resetLink", uriTemplate.make(new HashMap()
+            {
+                {
+                    put("resetKey", secret);
+                }
+            }).toString());
+            context.put("siteName", siteSettings.getName());
+
+            mailTemplateService.sendTemplateMail(mailTemplate, context);
+        } catch (MailException | ClassNotFoundException | IOException e) {
+            logger.error("Failed to send validation email", e);
         }
     }
 

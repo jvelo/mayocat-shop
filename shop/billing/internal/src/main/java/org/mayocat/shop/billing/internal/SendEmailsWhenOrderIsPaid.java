@@ -41,7 +41,6 @@ import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.url.URLHelper;
-import org.mayocat.views.Template;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.EventListener;
@@ -161,19 +160,13 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
             String customerEmail = customer.getEmail();
 
-            Optional<MailTemplate> customerNotificationEmail = getCustomerNotificationEmail(tenant,
+            MailTemplate customerNotificationEmail = getCustomerNotificationEmail(tenant,
                     customerEmail, customerLocale);
-            if (customerNotificationEmail.isPresent()) {
-                sendNotificationMail(customerNotificationEmail.get(), emailContext);
-            } else {
-                logger.warn("Can't send notification email to customer. Does the mail template exists ?");
-            }
-            Optional<MailTemplate> tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
-            if (tenantNotificationEmail.isPresent()) {
-                sendNotificationMail(tenantNotificationEmail.get(), emailContext);
-            }
+            sendNotificationMail(customerNotificationEmail, emailContext);
+            MailTemplate tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
+            sendNotificationMail(tenantNotificationEmail, emailContext);
         } catch (Exception e) {
-            logger.error("Exception when sending email", e);
+            logger.error("Failed to send order notification email when sending email", e);
         }
     }
 
@@ -184,20 +177,14 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @return an optional notification email object, present if all information is there and valid and the template
      * exists, absent otherwise
      */
-    private Optional<MailTemplate> getCustomerNotificationEmail(Tenant tenant,
+    private MailTemplate getCustomerNotificationEmail(Tenant tenant,
             String customerEmail, Locale locale)
     {
-        String from = getTenantContactEmail(tenant);
-        if (from == null) {
-            return Optional.absent();
-        }
-        Optional<Template> template = mailTemplateService.getTemplate("order_paid_customer_email.html", locale);
-        if (!template.isPresent()) {
-            return Optional.absent();
-        }
-
-        MailTemplate mailTemplate = new MailTemplate().template(template.get()).from(from).to(customerEmail);
-        return Optional.of(mailTemplate);
+        return new MailTemplate()
+                .from(getTenantContactEmail(tenant))
+                .to(customerEmail)
+                .template("order-paid-customer")
+                .locale(locale);
     }
 
     /**
@@ -206,21 +193,13 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @return an optional notification email object, present if all information is there and valid and the template
      * exists, absent otherwise
      */
-    private Optional<MailTemplate> getTenantNotificationEmail(Tenant tenant, Locale locale)
+    private MailTemplate getTenantNotificationEmail(Tenant tenant, Locale locale)
     {
-        String tenantEmail = getTenantContactEmail(tenant);
-        if (StringUtils.isBlank(tenantEmail)) {
-            return Optional.absent();
-        }
-        Optional<Template> template = mailTemplateService.getTemplate("order_paid_tenant_email.html", locale);
-        if (!template.isPresent()) {
-            return Optional.absent();
-        }
-
-        MailTemplate mailTemplate = new MailTemplate().template(template.get())
+        return new MailTemplate()
                 .from(generalSettings.getNotificationsEmail())
-                .to(tenantEmail);
-        return Optional.of(mailTemplate);
+                .to(getTenantContactEmail(tenant))
+                .template("order-paid-tenant")
+                .locale(locale);
     }
 
     /**
@@ -242,19 +221,6 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
     }
 
     /**
-     * Retrieves a notification mail template
-     *
-     * @param templateName the name of the template to get
-     * @param locale the locale to get it in
-     * @return an optional template, present if found (might not be in the asked locale, fallback on a global language)
-     * absent otherwise
-     */
-    private Optional<Template> getTemplate(String templateName, Locale locale)
-    {
-        return mailTemplateService.getTemplate(templateName, locale);
-    }
-
-    /**
      * Actually sends a notification email
      *
      * @param template the mail template
@@ -263,7 +229,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
     private void sendNotificationMail(MailTemplate template, Map<String, Object> context)
     {
         try {
-            mailTemplateService.sendMailTemplate(template, context);
+            mailTemplateService.sendTemplateMail(template, context);
         } catch (MailException e) {
             logger.error("Failed to send order paid email", ExceptionUtils.getRootCause(e));
         }
@@ -360,5 +326,4 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         addressContext.put("company", address.getCompany());
         return addressContext;
     }
-
 }

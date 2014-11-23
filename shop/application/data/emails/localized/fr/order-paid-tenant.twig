@@ -1,0 +1,50 @@
+{% extends 'base-mail.twig' %}
+
+{% block subject %}
+    Nouvelle commande sur {{ siteName }}
+{% endblock %}
+
+{% block html_content %}
+    Bonjour,<br/>
+    <br/>
+    Vous avez reçu une nouvelle commande sur {{ siteName }}.<br/>
+    <br/>
+    {{ siteUrl }}/admin/#/orders/{{ orderId }}<br/>
+    <br/>
+    Détails de la commande:<br/>
+    {% for item in items %}
+        - {{ item.title }}<br/>
+        Quantity: {{ item.quantity }}<br/>
+        Unit price: {{ item.unitPrice }}<br/>
+        <br/>
+    {% endfor %}
+    <br/>
+    Total produits: {{ itemsTotal }}<br/>
+    <br/>
+    {% if shippingTotal -%}
+        Livraison: {{ shipping.title }} {{ shippingTotal }}<br/>
+        <br/>
+    {% endif %}
+    Total: {{ grandTotal }}<br/>
+    <br/>
+    Informations client:<br/>
+    <br/>
+    {{ customer.firstName }} {{ customer.lastName }}<br/>
+    {{ customer.email }}<br/>
+    {% if customer.phone %}{{ customer.phone }}<br/>{% endif %}
+    <br/>
+    {% if deliveryAddress %}
+        Adresse de livraison:<br/>
+        {{ deliveryAddress.street }}<br/>
+        {{ deliveryAddress.zip }} {{ deliveryAddress.city }}<br/>
+        {{ deliveryAddress.country }}<br/>
+        <br/>
+    {%- endif %}
+    {% if billingAddress %}
+        Adresse de facturation:<br/>
+        {{ billingAddress.street }}<br/>
+        {{ billingAddress.zip }} {{ billingAddress.city }}<br/>
+        {{ billingAddress.country }}<br/>
+        <br/>
+    {%- endif %}
+{% endblock %}
