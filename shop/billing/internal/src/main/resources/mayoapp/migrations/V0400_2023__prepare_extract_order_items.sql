@@ -5,7 +5,7 @@
 CREATE TABLE purchase_order_item (
   id uuid PRIMARY KEY,
   order_id uuid REFERENCES purchase_order(entity_id),
-  purchasable_id uuid REFERENCES entity(id),
+  purchasable_id uuid,
   type character varying(32),
   title character varying(255),
   quantity smallint,

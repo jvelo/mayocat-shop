@@ -48,9 +48,7 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
             order.setId((UUID) data.getObject("entity_id"));
 
             String orderDataString = data.getString("order_data");
-            Map<String, Object> orderData = mapper.readValue(orderDataString, new TypeReference<Map<String, Object>>()
-            {
-            });
+            Map<String, Object> orderData = mapper.readValue(orderDataString, new TypeReference<Map<String, Object>>() {});
 
             List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
 
@@ -99,7 +97,7 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
 
         PreparedStatement insertItems = connection.prepareStatement(
                 "INSERT INTO purchase_order_item (id, order_id, purchasable_id, type, title, quantity, unit_price, " +
-                        "item_total, vat_rate, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "item_total, vat_rate, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CAST (? as json))");
 
         for (OrderItem item : orderItems) {
             insertItems.setObject(1, item.getId());

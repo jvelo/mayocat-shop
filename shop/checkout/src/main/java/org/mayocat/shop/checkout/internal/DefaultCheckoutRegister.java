@@ -59,7 +59,6 @@ import org.xwiki.observation.ObservationManager;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -182,6 +181,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     webContext
             )).toList();
             order.setItemsTotal(cart.itemsTotal().incl());
+            order.setItemsTotalExcl(cart.itemsTotal().excl());
             order.setOrderItems(items);
             order.setNumberOfItems(Long.valueOf(items.size()));
 
@@ -190,6 +190,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 final Carrier carrier = shippingService.getCarrier(
                         cart.selectedShippingOption().get().getCarrierId());
                 order.setShipping(cart.selectedShippingOption().get().getPrice());
+                order.setShippingExcl(cart.selectedShippingOption().get().getPrice());
                 data.put(Order.ORDER_DATA_SHIPPING, new HashMap<String, Object>()
                 {
                     {
@@ -208,6 +209,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
             // Grand total
             order.setGrandTotal(cart.total().incl());
+            order.setGrandTotalExcl(cart.total().excl());
 
             // JSON data
             order.setOrderData(data);

@@ -60,7 +60,7 @@ findAllPaidOrAwaitingPayment() ::= <<
     SELECT entity.*,
            purchase_order.*,
            json_agg(purchase_order_item.*) as items,
-           count(purchase_order_item.id)
+           count(purchase_order_item.id) as number_of_items
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN purchase_order_item on order_id = entity_id
@@ -77,7 +77,7 @@ findAllPaidForCustomer() ::= <<
     SELECT entity.*,
            purchase_order.*,
            json_agg(purchase_order_item.*) as items,
-           count(purchase_order_item.id)
+           count(purchase_order_item.id) as number_of_items
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN purchase_order_item on order_id = entity_id
@@ -101,7 +101,7 @@ findBySlugWithCustomer() ::= <<
     SELECT entity.*,
            purchase_order.*,
            json_agg(purchase_order_item.*) as items,
-           count(purchase_order_item.id),
+           count(purchase_order_item.id) as number_of_items,
            customer.*,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
@@ -141,7 +141,7 @@ findByIdWithCustomer() ::= <<
     SELECT entity.*,
            purchase_order.*,
            json_agg(purchase_order_item.*) as items,
-           count(purchase_order_item.id),
+           count(purchase_order_item.id) as number_of_items,
            customer.*,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
