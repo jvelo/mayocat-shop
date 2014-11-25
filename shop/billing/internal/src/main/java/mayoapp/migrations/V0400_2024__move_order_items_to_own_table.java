@@ -22,6 +22,7 @@ import org.mayocat.shop.billing.model.OrderItem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 
 /**
@@ -43,7 +44,6 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
         ObjectMapper mapper = new ObjectMapper();
 
         while (data.next()) {
-
             Order order = new Order();
             order.setId((UUID) data.getObject("entity_id"));
 
@@ -67,6 +67,10 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
                 orderItem.setUnitPrice(BigDecimal.valueOf((Double) item.get("unitPrice")));
                 orderItem.setItemTotal(BigDecimal.valueOf((Double) item.get("itemTotal")));
                 orderItem.setVatRate(BigDecimal.valueOf((Double) item.get("vatRate")));
+
+                if (item.containsKey("addons")) {
+                    orderItem.addData("addons", convertAddonsToMap((List<Map<String, Object>>) item.get("addons")));
+                }
 
                 orderItems.add(orderItem);
             }
@@ -95,7 +99,7 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
 
         PreparedStatement insertItems = connection.prepareStatement(
                 "INSERT INTO purchase_order_item (id, order_id, purchasable_id, type, title, quantity, unit_price, " +
-                        "item_total, vat_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "item_total, vat_rate, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         for (OrderItem item : orderItems) {
             insertItems.setObject(1, item.getId());
@@ -107,9 +111,24 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
             insertItems.setBigDecimal(7, item.getUnitPrice());
             insertItems.setBigDecimal(8, item.getItemTotal());
             insertItems.setBigDecimal(9, item.getVatRate());
+            insertItems.setString(10, mapper.writeValueAsString(item.getData()));
             insertItems.addBatch();
         }
 
         insertItems.executeBatch();
+    }
+
+    private Map<String, Object> convertAddonsToMap(List<Map<String, Object>> addons)
+    {
+        Map<String, Object> map = Maps.newHashMap();
+
+        for (Map<String, Object> addon : addons) {
+            if (!map.containsKey(addon.get("group"))) {
+                map.put((String) addon.get("group"), Maps.newHashMap());
+            }
+            ((Map<String, Object>) map.get(addon.get("group"))).put((String) addon.get("name"), addon.get("value"));
+        }
+
+        return map;
     }
 }

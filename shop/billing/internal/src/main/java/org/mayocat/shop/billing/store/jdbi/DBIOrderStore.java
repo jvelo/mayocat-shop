@@ -13,6 +13,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -23,6 +24,8 @@ import mayoapp.dao.OrderDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
@@ -46,6 +49,13 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
 
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
         this.dao.createOrder(order);
+
+        for (OrderItem item : order.getOrderItems()) {
+            item.setId(UUID.randomUUID());
+            item.setOrderId(order.getId());
+        }
+
+        this.dao.insertOrderItems(order.getOrderItems());
 
         this.dao.commit();
 

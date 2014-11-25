@@ -140,17 +140,17 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
     private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale)
     {
         try {
-            Customer customer = order.getCustomer().get();
+            Customer customer = order.getCustomer();
 
             Optional<Address> billingAddress;
-            if (order.getBillingAddress().isLoaded()) {
-                billingAddress = Optional.of(order.getBillingAddress().get());
+            if (order.getBillingAddress() != null) {
+                billingAddress = Optional.of(order.getBillingAddress());
             } else {
                 billingAddress = Optional.absent();
             }
             Optional<Address> deliveryAddress;
-            if (order.getDeliveryAddress().isLoaded()) {
-                deliveryAddress = Optional.of(order.getDeliveryAddress().get());
+            if (order.getDeliveryAddress() != null) {
+                deliveryAddress = Optional.of(order.getDeliveryAddress());
             } else {
                 deliveryAddress = Optional.absent();
             }

@@ -12,6 +12,8 @@ import groovy.transform.CompileStatic
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mayocat.shop.billing.model.Order
+import org.mayocat.shop.billing.model.OrderItem
+import org.mayocat.shop.billing.model.OrderSummary
 import org.mayocat.shop.customer.api.v1.object.AddressApiObject
 import org.mayocat.shop.customer.api.v1.object.CustomerApiObject
 import org.mayocat.shop.customer.model.Address
@@ -40,11 +42,13 @@ class OrderApiObject
 
     BigDecimal grandTotal;
 
-    Order.Status status;
+    OrderSummary.Status status;
 
     String additionalInformation;
 
     Map<String, Object> data;
+
+    List<OrderItemApiObject> items = [];
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Map<String, Object> _embedded
@@ -67,6 +71,8 @@ class OrderApiObject
         this.status = order.status
         this.additionalInformation = order.additionalInformation
         this.data = order.orderData
+
+        items = order.orderItems.collect({ OrderItem item -> new OrderItemApiObject().withOrderItem(item) })
 
         this
     }

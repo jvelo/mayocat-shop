@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.checkout.internal;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,20 +16,15 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.addons.model.AddonGroupDefinition;
-import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
-import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.cart.Cart;
-import org.mayocat.shop.cart.CartItem;
 import org.mayocat.shop.cart.CartManager;
-import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
@@ -53,7 +47,6 @@ import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.shipping.model.Carrier;
-import org.mayocat.shop.taxes.configuration.Rate;
 import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -65,7 +58,6 @@ import org.xwiki.observation.ObservationManager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -183,56 +175,15 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             }
 
             // Items
-            Long numberOfItems = 0l;
-            List<Map<String, Object>> orderItems = Lists.newArrayList();
-
-            for (final CartItem cartItem : cart.items()) {
-                final Purchasable p = cartItem.item();
-                numberOfItems += cartItem.quantity();
-
-                String title;
-                if (p.getParent().isPresent() && p.getParent().get().isLoaded()) {
-                    title = p.getParent().get().get().getTitle() + " - " + p.getTitle();
-                } else {
-                    title = p.getTitle();
-                }
-
-                final String itemTitle = title;
-
-                Product product = productStore.get().findById(p.getId());
-
-                final BigDecimal vatRate;
-                if (product.getVatRateId().isPresent() && getRateDefinition(product.getVatRateId().get()).isPresent()) {
-                    vatRate = getRateDefinition(product.getVatRateId().get()).get().getValue();
-                }
-                else {
-                    vatRate = taxesSettings.getVat().getValue().getDefaultRate();
-                }
-
-                Map<String, Object> itemData = new HashMap<String, Object>()
-                {
-                    {
-                        put("type", "product");
-                        put("id", p.getId());
-                        put("title", itemTitle);
-                        put("quantity", cartItem.quantity());
-                        put("unitPrice", cartItem.unitPrice().incl());
-                        put("unitPriceExcl", cartItem.unitPrice().excl());
-                        put("itemTotal", cartItem.total().incl());
-                        put("itemTotalExcl", cartItem.total().excl());
-                        put("vatRate", vatRate);
-                    }
-                };
-
-                addOrderAddons(p, itemData);
-
-                orderItems.add(itemData);
-            }
-
-            order.setNumberOfItems(numberOfItems);
+            List<OrderItem> items = FluentIterable.from(cart.items()).transform(new CartItemToOrderItemTransformer(
+                    platformSettings,
+                    productStore.get(),
+                    taxesSettings,
+                    webContext
+            )).toList();
             order.setItemsTotal(cart.itemsTotal().incl());
-
-            data.put(Order.ORDER_DATA_ITEMS, orderItems);
+            order.setOrderItems(items);
+            order.setNumberOfItems(Long.valueOf(items.size()));
 
             // Shipping
             if (cart.selectedShippingOption().isPresent()) {
@@ -362,17 +313,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         return true;
     }
 
-    private Optional<Rate> getRateDefinition(final String rate)
-    {
-        return FluentIterable.from(taxesSettings.getVat().getValue().getOtherRates()).filter(new Predicate<Rate>()
-        {
-            public boolean apply(Rate input)
-            {
-                return input.getId().equals(rate);
-            }
-        }).first();
-    }
-
     private boolean updateCustomerIfNecessary(Customer existingCustomer, Customer customer)
     {
         boolean update = false;
@@ -395,55 +335,5 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
         return update;
-    }
-
-    private void addOrderAddons(Purchasable p, Map<String, Object> itemData)
-    {
-        if (Product.class.isAssignableFrom(p.getClass())) {
-            Product product = (Product) p;
-
-            if (product.getAddons().isLoaded()) {
-                List<Map<String, Object>> itemAddons = Lists.newArrayList();
-
-                Map<String, AddonGroup> addons = product.getAddons().get();
-                for (String groupName : addons.keySet()) {
-                    AddonGroup addonGroup = addons.get(groupName);
-                    Map<String, AddonGroupDefinition>[] sources = new Map[2];
-                    sources[0] = platformSettings.getAddons();
-                    if (webContext.getTheme() != null) {
-                        sources[1] = webContext.getTheme().getDefinition().getAddons();
-                    }
-                    Optional<AddonGroupDefinition> definition = AddonUtils
-                            .findAddonGroupDefinition(addonGroup.getGroup(),
-                                    (Map<String, AddonGroupDefinition>[]) sources);
-
-                    if (definition.isPresent() &&
-                            definition.get().getProperties().containsKey("checkout.includeInOrder"))
-                    {
-
-                        Object value = addonGroup.getValue();
-                        if (Map.class.isAssignableFrom(value.getClass())) {
-
-                            // For now only treat non-repeatable groups
-
-                            Map<String, Object> valueMap = (Map<String, Object>) value;
-
-                            for (String key : definition.get().getFields().keySet()) {
-                                String fieldValue = valueMap.get(key).toString();
-                                Map<String, Object> addonMap = Maps.newHashMap();
-                                addonMap.put("value", fieldValue);
-                                addonMap.put("name", key);
-                                addonMap.put("group", addonGroup.getGroup());
-                                itemAddons.add(addonMap);
-                            }
-                        }
-                    }
-                }
-
-                if (!itemAddons.isEmpty()) {
-                    itemData.put("addons", itemAddons);
-                }
-            }
-        }
     }
 }
