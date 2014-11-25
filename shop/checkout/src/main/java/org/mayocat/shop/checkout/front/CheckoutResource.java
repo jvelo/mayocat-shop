@@ -48,7 +48,6 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.checkout.CheckoutException;
@@ -251,7 +250,8 @@ public class CheckoutResource implements Resource
         }
 
         try {
-            CheckoutResponse response = checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
+            CheckoutResponse response =
+                    checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {
@@ -318,12 +318,12 @@ public class CheckoutResource implements Resource
         if (StringUtils.isNotBlank(orderId)) {
             Order order = orderStore.get().findById(UUID.fromString(orderId));
             if (order != null) {
-                Optional<Address> da = order.getDeliveryAddress().isLoaded() ?
-                        Optional.fromNullable(order.getDeliveryAddress().get()) : Optional.<Address>absent();
-                Optional<Address> ba = order.getBillingAddress().isLoaded() ?
-                        Optional.fromNullable(order.getBillingAddress().get()) : Optional.<Address>absent();
+                Optional<Address> da = order.getDeliveryAddress() != null ?
+                        Optional.fromNullable(order.getDeliveryAddress()) : Optional.<Address>absent();
+                Optional<Address> ba = order.getBillingAddress() != null ?
+                        Optional.fromNullable(order.getBillingAddress()) : Optional.<Address>absent();
                 bindings.putAll(
-                        prepareMailContext(order, order.getCustomer().get(), ba, da, webContext.getTenant(),
+                        prepareMailContext(order, order.getCustomer(), ba, da, webContext.getTenant(),
                                 configurationService.getSettings(GeneralSettings.class).getLocales().getMainLocale()
                                         .getValue()));
             }
@@ -468,6 +468,5 @@ public class CheckoutResource implements Resource
         addressContext.put("company", address.getCompany());
         return addressContext;
     }
-
 }
 

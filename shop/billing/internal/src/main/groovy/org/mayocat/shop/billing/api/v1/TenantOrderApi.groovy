@@ -16,7 +16,6 @@ import org.mayocat.context.WebContext
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.api.object.Pagination
-import org.mayocat.shop.billing.api.representation.OrderRepresentation
 import org.mayocat.shop.billing.api.v1.object.OrderApiObject
 import org.mayocat.shop.billing.api.v1.object.OrderListApiObject
 import org.mayocat.shop.billing.model.Order
@@ -72,14 +71,14 @@ class TenantOrderApi implements Resource
 
         List<OrderApiObject> orderApiObjects = orders.collect({ Order order ->
             def apiObject = new OrderApiObject().withOrder(order, tenantTz)
-            if (order.customer.isLoaded()) {
-                apiObject.withEmbeddedCustomer(order.customer.get())
+            if (order.customer) {
+                apiObject.withEmbeddedCustomer(order.customer)
             }
-            if (order.billingAddress.isLoaded()) {
-                apiObject.withEmbeddedBillingAddress(order.billingAddress.get())
+            if (order.billingAddress) {
+                apiObject.withEmbeddedBillingAddress(order.billingAddress)
             }
-            if (order.deliveryAddress.isLoaded()) {
-                apiObject.withEmbeddedDeliveryAddress(order.deliveryAddress.get())
+            if (order.deliveryAddress) {
+                apiObject.withEmbeddedDeliveryAddress(order.deliveryAddress)
             }
 
             apiObject
@@ -117,14 +116,14 @@ class TenantOrderApi implements Resource
         def apiObject = new OrderApiObject().withOrder(order, tenantTz)
         apiObject.withEmbeddedPaymentOperations(operations)
 
-        if (order.customer.isLoaded()) {
-            apiObject.withEmbeddedCustomer(order.customer.get())
+        if (order.customer) {
+            apiObject.withEmbeddedCustomer(order.customer)
         }
-        if (order.billingAddress.isLoaded()) {
-            apiObject.withEmbeddedBillingAddress(order.billingAddress.get())
+        if (order.billingAddress) {
+            apiObject.withEmbeddedBillingAddress(order.billingAddress)
         }
-        if (order.deliveryAddress.isLoaded()) {
-            apiObject.withEmbeddedDeliveryAddress(order.deliveryAddress.get())
+        if (order.deliveryAddress) {
+            apiObject.withEmbeddedDeliveryAddress(order.deliveryAddress)
         }
 
         return Response.ok(apiObject).build()

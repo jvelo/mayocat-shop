@@ -8,6 +8,7 @@
 package org.mayocat.shop.customer.web.object
 
 import groovy.transform.CompileStatic
+import org.mayocat.shop.billing.model.OrderItem
 import org.mayocat.shop.catalog.web.object.PriceWebObject
 import org.mayocat.shop.marketplace.web.object.MarketplaceProductWebObject
 
@@ -26,4 +27,17 @@ class OrderItemWebObject
     PriceWebObject unitPrice
 
     PriceWebObject itemTotal
+
+    Map<String, Object> data
+
+    OrderItemWebObject withOrderItem(OrderItem orderItem, Currency currency, Locale locale)
+    {
+        this.title = orderItem.title
+        this.quantity = orderItem.quantity
+        this.unitPrice  = new PriceWebObject().withPrice(orderItem.unitPrice, currency, locale)
+        this.itemTotal  = new PriceWebObject().withPrice(orderItem.itemTotal, currency, locale)
+        this.data = orderItem.data
+
+        this
+    }
 }

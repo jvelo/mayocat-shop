@@ -24,9 +24,15 @@ class OrderSummaryWebObject
 
     PriceWebObject grandTotal
 
+    PriceWebObject totalTaxes
+
     PriceWebObject itemsTotal
 
+    PriceWebObject itemsTaxes
+
     PriceWebObject shipping
+
+    PriceWebObject shippingTaxes
 
     DateWebObject date
 
@@ -41,9 +47,24 @@ class OrderSummaryWebObject
         this.itemsTotal = new PriceWebObject().withPrice(order.itemsTotal, order.currency, locale)
         this.shipping = new PriceWebObject().withPrice(order.shipping, order.currency, locale)
         this.date = new DateWebObject().withDate(order.creationDate, locale)
-        this.numberOfItems = (order.orderData.get("items") as List).size()
+        this.numberOfItems = order.numberOfItems
         this.status = order.status.toString().toLowerCase()
         this.additionalInformation = order.additionalInformation
+
+        if (order.itemsTotal && order.itemsTotalExcl) {
+            this.itemsTaxes = new PriceWebObject().withPrice(order.itemsTotal.subtract(order.itemsTotalExcl),
+                    order.currency, locale)
+        }
+
+        if (order.grandTotal && order.grandTotalExcl) {
+            this.totalTaxes = new PriceWebObject().withPrice(order.grandTotal.subtract(order.grandTotalExcl),
+                    order.currency, locale)
+        }
+
+        if (order.shipping && order.shippingExcl) {
+            this.shippingTaxes = new PriceWebObject().withPrice(order.shipping.subtract(order.shippingExcl),
+                    order.currency, locale)
+        }
 
         this
     }

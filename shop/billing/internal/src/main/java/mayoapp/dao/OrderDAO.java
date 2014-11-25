@@ -7,10 +7,12 @@
  */
 package mayoapp.dao;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.jdbi.argument.CurrencyAsCurrencyCodeArgumentFactory;
 import org.mayocat.shop.billing.store.jdbi.argument.OrderStatusArgumentFactory;
 import org.mayocat.shop.billing.store.jdbi.mapper.OrderMapper;
@@ -18,6 +20,7 @@ import org.mayocat.store.rdbms.dbi.argument.DateAsTimestampArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.MapAsJsonStringArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
@@ -36,6 +39,9 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
 {
     @SqlUpdate
     public abstract void createOrder(@BindBean("order") Order order);
+
+    @SqlBatch
+    public abstract void insertOrderItems(@BindBean("orderItem") List<OrderItem> orderItem);
 
     @SqlUpdate
     public abstract Integer updateOrder(@BindBean("order") Order order);
