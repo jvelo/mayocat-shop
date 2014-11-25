@@ -60,14 +60,21 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
                             OrderItem orderItem = new OrderItem();
                             orderItem.setId(UUID.fromString((String) map.get("id")));
                             orderItem.setOrderId(UUID.fromString((String) map.get("order_id")));
-                            orderItem.setPurchasableId(UUID.fromString((String) map.get("purchasable_id")));
+                            if (map.containsKey("purchasable_id") && map.get("purchasable_id") != null) {
+                                // There might not be a purchasable id
+                                orderItem.setPurchasableId(UUID.fromString((String) map.get("purchasable_id")));
+                            }
                             orderItem.setType((String) map.get("type"));
                             orderItem.setTitle((String) map.get("title"));
                             orderItem.setQuantity(((Integer) map.get("quantity")).longValue());
                             orderItem.setUnitPrice(BigDecimal.valueOf((Double) map.get("unit_price")));
                             orderItem.setItemTotal(BigDecimal.valueOf((Double) map.get("item_total")));
-                            orderItem.setVatRate(BigDecimal.valueOf((Double) map.get("vat_rate")));
+                            if (map.containsKey("vat_rate") && map.get("vat_rate") != null) {
+                                // There might not be a VAT rate
+                                orderItem.setVatRate(BigDecimal.valueOf((Double) map.get("vat_rate")));
+                            }
                             if (map.containsKey("data") && map.get("data") != null) {
+                                // There might not be data
                                 orderItem.addData((Map<String, Object>) map.get("data"));
                             }
                             return orderItem;

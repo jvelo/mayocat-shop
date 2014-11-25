@@ -58,13 +58,17 @@ public class V0400_2024__move_order_items_to_own_table implements JdbcMigration
                 orderItem.setId(UUID.randomUUID());
                 orderItem.setOrderId(order.getId());
 
-                orderItem.setPurchasableId(UUID.fromString((String) item.get("id")));
+                if (item.containsKey("id") && String.class.isAssignableFrom(item.get("id").getClass())) {
+                    orderItem.setPurchasableId(UUID.fromString((String) item.get("id")));
+                }
                 orderItem.setType((String) item.get("type"));
                 orderItem.setTitle((String) item.get("title"));
                 orderItem.setQuantity(((Integer) item.get("quantity")).longValue());
                 orderItem.setUnitPrice(BigDecimal.valueOf((Double) item.get("unitPrice")));
                 orderItem.setItemTotal(BigDecimal.valueOf((Double) item.get("itemTotal")));
-                orderItem.setVatRate(BigDecimal.valueOf((Double) item.get("vatRate")));
+                if (item.containsKey("vatRate")) {
+                    orderItem.setVatRate(BigDecimal.valueOf((Double) item.get("vatRate")));
+                }
 
                 if (item.containsKey("addons")) {
                     orderItem.addData("addons", convertAddonsToMap((List<Map<String, Object>>) item.get("addons")));

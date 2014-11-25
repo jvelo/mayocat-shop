@@ -77,18 +77,21 @@
                 <th>{{'order.misc.total' | translate}}</th>
                 </thead>
                 <tbody>
-                <tr ng-repeat="item in order.data.items">
+                <tr ng-repeat="item in order.items">
                     <td>
                         {{item.title}}
                         <small>
                             {{item.description}}
                         </small>
-                        <dl ng-repeat="addon in item.addons">
-                            <!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
-                            <dt>{{addon.name}}</dt>
-                            <dd>{{addon.value}}</dd>
-                        </dl>
-
+                        <!-- We don't want to display order items addons this way...
+                        <div ng-repeat="(group, fields) in item.data.addons">
+                            <dl ng-repeat="(name, value) in fields">
+                                <!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 --><!--
+                                <dt>{{name}}</dt>
+                                <dd>{{value}}</dd>
+                            </dl>
+                        </div>
+                        -->
                     </td>
                     <td>{{item.unitPrice| money:'EUR'}} {{order.currency}}</td>
                     <td>{{item.quantity}}</td>
