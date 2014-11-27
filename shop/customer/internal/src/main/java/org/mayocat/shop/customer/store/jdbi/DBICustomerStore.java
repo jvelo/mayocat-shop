@@ -12,8 +12,13 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.mayocat.shop.customer.store.CustomerStore;
+import org.mayocat.addons.store.dbi.AddonsHelper;
+import org.mayocat.model.AddonGroup;
+import org.mayocat.model.event.EntityCreatedEvent;
+import org.mayocat.model.event.EntityCreatingEvent;
+import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -23,6 +28,8 @@ import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
 
 import mayoapp.dao.CustomerDAO;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 /**
  * @version $Id$
@@ -41,6 +48,8 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
             throw new EntityAlreadyExistsException();
         }
 
+        getObservationManager().notify(new EntityCreatingEvent(), customer);
+
         this.dao.begin();
 
         UUID entityId = UUID.randomUUID();
@@ -54,16 +63,21 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
         this.dao.create(customer);
         this.dao.commit();
 
+        getObservationManager().notify(new EntityCreatedEvent(), customer);
+
         return customer;
     }
 
     @Override
     public void update(@Valid Customer customer) throws EntityDoesNotExistException, InvalidEntityException
     {
+        this.dao.begin();
         if (this.dao.findBySlug(CUSTOMER_TABLE_NAME, customer.getSlug(), getTenant()) == null) {
             throw new EntityDoesNotExistException();
         }
         this.dao.updateCustomer(customer);
+        this.dao.createOrUpdateAddons(customer);
+        this.dao.commit();
     }
 
     @Override
@@ -90,31 +104,46 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     @Override
     public List<Customer> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(CUSTOMER_TABLE_NAME, getTenant(), number, offset);
+        return AddonsHelper.withAddons(this.dao.findAll(CUSTOMER_TABLE_NAME, getTenant(), number, offset), this.dao);
     }
 
     @Override
     public List<Customer> findByIds(List<UUID> ids)
     {
-        return this.dao.findByIds(CUSTOMER_TABLE_NAME, ids);
+        return AddonsHelper.withAddons(this.dao.findByIds(CUSTOMER_TABLE_NAME, ids), this.dao);
     }
 
     @Override
     public Customer findById(UUID id)
     {
-        return this.dao.findById(CUSTOMER_TABLE_NAME, id);
+        Customer customer = this.dao.findById(CUSTOMER_TABLE_NAME, id);
+        if (customer != null) {
+            List<AddonGroup> addons = this.dao.findAddons(customer);
+            customer.setAddons(asMap(addons));
+        }
+        return customer;
     }
 
     @Override
     public Customer findBySlug(String slug)
     {
-        return this.dao.findBySlug(CUSTOMER_TABLE_NAME, slug, getTenant());
+        Customer customer = this.dao.findBySlug(CUSTOMER_TABLE_NAME, slug, getTenant());
+        if (customer != null) {
+            List<AddonGroup> addons = this.dao.findAddons(customer);
+            customer.setAddons(asMap(addons));
+        }
+        return customer;
     }
 
     @Override
     public Customer findByUserId(UUID userId)
     {
-        return this.dao.findByUserId(userId);
+        Customer customer = this.dao.findByUserId(userId);
+        if (customer != null) {
+            List<AddonGroup> addons = this.dao.findAddons(customer);
+            customer.setAddons(asMap(addons));
+        }
+        return customer;
     }
 
     @Override

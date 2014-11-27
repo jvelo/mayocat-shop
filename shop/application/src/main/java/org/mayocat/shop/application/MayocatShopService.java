@@ -12,10 +12,10 @@ import org.mayocat.cms.home.HomePageModule;
 import org.mayocat.cms.news.NewsModule;
 import org.mayocat.cms.pages.PagesModule;
 import org.mayocat.flyway.FlywayBundle;
-import org.mayocat.jackson.PermissiveFuzzyEnumModule;
 import org.mayocat.shop.catalog.CatalogModule;
 import org.mayocat.shop.catalog.configuration.jackson.MoneyModule;
 import org.mayocat.shop.configuration.MayocatShopSettings;
+import org.mayocat.shop.customer.CustomerModule;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArgumentFactory;
 import org.mayocat.store.rdbms.dbi.argument.PostgresUUIDArrayArgumentFactory;
@@ -32,7 +32,6 @@ import com.google.common.net.HostAndPort;
 
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jackson.FuzzyEnumModule;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -104,6 +103,7 @@ public class MayocatShopService extends AbstractService<MayocatShopSettings>
         addModule(new NewsModule());
         addModule(new HomePageModule());
         addModule(new CatalogModule());
+        addModule(new CustomerModule());
 
         swaggerDropwizard.onInitialize(bootstrap);
     }

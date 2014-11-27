@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.billing.api.v1
 
+import com.google.common.base.Strings
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.authorization.annotation.Authorized
@@ -20,6 +21,8 @@ import org.mayocat.shop.billing.api.v1.object.OrderApiObject
 import org.mayocat.shop.billing.api.v1.object.OrderListApiObject
 import org.mayocat.shop.billing.model.Order
 import org.mayocat.shop.billing.store.OrderStore
+import org.mayocat.shop.customer.model.Customer
+import org.mayocat.shop.customer.store.CustomerStore
 import org.mayocat.shop.payment.model.PaymentOperation
 import org.mayocat.shop.payment.store.PaymentOperationStore
 import org.mayocat.store.EntityDoesNotExistException
@@ -44,6 +47,9 @@ import javax.ws.rs.core.Response
 class TenantOrderApi implements Resource
 {
     @Inject
+    Provider<CustomerStore> customerStore
+
+    @Inject
     Provider<OrderStore> orderStore
 
     @Inject
@@ -58,7 +64,8 @@ class TenantOrderApi implements Resource
     @GET
     @Authorized
     def getAllOrders(@QueryParam("number") @DefaultValue("50") Integer number,
-            @QueryParam("offset") @DefaultValue("0") Integer offset)
+            @QueryParam("offset") @DefaultValue("0") Integer offset,
+            @QueryParam("customer") @DefaultValue("") String customerSlug)
     {
         if (number < 0 || offset < 0) {
             return Response.status(Response.Status.BAD_REQUEST).build()
@@ -66,8 +73,26 @@ class TenantOrderApi implements Resource
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class)
         final DateTimeZone tenantTz = DateTimeZone.forTimeZone(settings.getTime().getTimeZone().getValue())
-        List<Order> orders = orderStore.get().findAllPaidOrAwaitingPayment(number, offset)
-        Integer total = this.orderStore.get().countAllPaidOrAwaitingPayment()
+
+        List<Order> orders;
+        Integer total;
+
+        if (!Strings.isNullOrEmpty(customerSlug)) {
+            // Filter by customer
+            Customer customer = this.customerStore.get().findBySlug(customerSlug)
+            if (!customer) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Customer not found").build()
+            }
+
+            orders = orderStore.get().findAllPaidForCustomer(customer.id, number, offset)
+            total = this.orderStore.get().countAllPaidForCustomer(customer.id)
+        } else {
+            // Get all orders
+            orders = orderStore.get().findAllPaidOrAwaitingPayment(number, offset)
+            total = this.orderStore.get().countAllPaidOrAwaitingPayment()
+        }
+
+
 
         List<OrderApiObject> orderApiObjects = orders.collect({ Order order ->
             def apiObject = new OrderApiObject().withOrder(order, tenantTz)
@@ -90,9 +115,10 @@ class TenantOrderApi implements Resource
                         returnedItems: orderApiObjects.size(),
                         offset       : offset,
                         totalItems   : total,
-                        urlTemplate  : '${tenantPrefix}/api/orders?number=${numberOfItems}&offset=${offset}',
+                        urlTemplate  : '${tenantPrefix}/api/orders?number=${numberOfItems}&offset=${offset}&customer={customer}',
                         urlArguments : [
-                                tenantPrefix: context.request.tenantPrefix
+                                tenantPrefix: context.request.tenantPrefix,
+                                customer: customerSlug
                         ]
                 ]),
                 orders     : orderApiObjects

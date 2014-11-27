@@ -61,4 +61,16 @@ public class MemoryOrderStore extends BaseEntityMemoryStore<Order> implements Or
     {
         throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public List<Order> findAllPaidForCustomer(UUID customerId, Integer number, Integer offset)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public Integer countAllPaidForCustomer(UUID customerId)
+    {
+        throw new RuntimeException("Not implemented");
+    }
 }

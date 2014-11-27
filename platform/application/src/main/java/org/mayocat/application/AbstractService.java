@@ -66,9 +66,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.core.ResourceConfig;
 
 import io.dropwizard.Application;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.GuavaExtrasModule;
 import io.dropwizard.jackson.LogbackModule;
 import io.dropwizard.setup.Bootstrap;
@@ -224,6 +226,7 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
 
         this.registerSettingsAsComponents(configuration);
         this.registerObjectMapper(objectMapper);
+        this.registerJerseyClient(configuration, environment);
         this.registerEntityMetaRegistryAsComponent();
         this.registerComponents(configuration, environment);
 
@@ -328,6 +331,16 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
 
         componentManager.registerComponent(cd, registry);
     }
+
+    private void registerJerseyClient(AbstractSettings settings, Environment environment)
+    {
+        final Client client = new JerseyClientBuilder(environment).using(settings.getJerseyClientConfiguration())
+                .build(getName());
+        DefaultComponentDescriptor<Client> cd = new DefaultComponentDescriptor<Client>();
+        cd.setRoleType(Client.class);
+        componentManager.registerComponent(cd, client);
+    }
+
 
     private void registerObjectMapper(ObjectMapper mapper)
     {

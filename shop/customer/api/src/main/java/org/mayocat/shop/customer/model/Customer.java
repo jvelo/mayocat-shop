@@ -7,12 +7,16 @@
  */
 package org.mayocat.shop.customer.model;
 
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.mayocat.model.AddonGroup;
+import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
+import org.mayocat.model.HasAddons;
 import org.mayocat.model.annotation.Index;
 
 import com.google.common.base.Optional;
@@ -20,7 +24,7 @@ import com.google.common.base.Optional;
 /**
  * @version $Id$
  */
-public class Customer implements Entity
+public class Customer implements Entity, HasAddons
 {
     private UUID id;
 
@@ -40,6 +44,8 @@ public class Customer implements Entity
     @NotNull
     @Size(min = 1)
     private String slug;
+
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     public String getSlug()
     {
@@ -119,5 +125,17 @@ public class Customer implements Entity
     public void setUserId(UUID userId)
     {
         this.userId = Optional.fromNullable(userId);
+    }
+
+    @Override
+    public Association<Map<String, AddonGroup>> getAddons()
+    {
+        return addons;
+    }
+
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
+    {
+        this.addons = new Association(addons);
     }
 }

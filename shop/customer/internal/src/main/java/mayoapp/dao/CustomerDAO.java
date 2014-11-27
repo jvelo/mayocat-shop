@@ -9,8 +9,9 @@ package mayoapp.dao;
 
 import java.util.UUID;
 
-import org.mayocat.shop.customer.store.jdbi.mapper.CustomerMapper;
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.jdbi.mapper.CustomerMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -24,7 +25,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  */
 @RegisterMapper(CustomerMapper.class)
 @UseStringTemplate3StatementLocator
-public abstract class CustomerDAO implements EntityDAO<Customer>, Transactional<CustomerDAO>
+public abstract class CustomerDAO implements EntityDAO<Customer>, Transactional<CustomerDAO>, AddonsDAO<Customer>
 {
     @SqlUpdate
     public abstract void create(@BindBean("customer") Customer customer);
@@ -34,4 +35,9 @@ public abstract class CustomerDAO implements EntityDAO<Customer>, Transactional<
 
     @SqlQuery
     public abstract Customer findByUserId(@Bind("userId") UUID userId);
+
+    public void createOrUpdateAddons(Customer entity)
+    {
+        AddonsHelper.createOrUpdateAddons(this, entity);
+    }
 }

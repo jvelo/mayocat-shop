@@ -18,6 +18,7 @@ import org.mayocat.rest.CorsSettings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
 
 /**
  * @version $Id$
@@ -72,6 +73,11 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private CorsSettings cors = new CorsSettings();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -120,5 +126,10 @@ public class AbstractSettings extends Configuration
     public AccountsSettings getAccountsSettings()
     {
         return accounts;
+    }
+
+    public JerseyClientConfiguration getJerseyClientConfiguration()
+    {
+        return httpClient;
     }
 }

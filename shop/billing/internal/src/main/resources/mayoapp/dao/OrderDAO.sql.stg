@@ -88,6 +88,34 @@ findAllPaidForCustomer() ::= <<
     ORDER BY purchase_order.creation_date DESC
 >>
 
+countAllPaidForCustomer() ::= <<
+    SELECT count(entity.id)
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+>>
+
+
+findAllPaidForCustomerPaginated() ::= <<
+    SELECT entity.*,
+           purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+    GROUP BY entity.id, purchase_order.entity_id
+    ORDER BY purchase_order.creation_date DESC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+
 countAllPaidOrAwaitingPayment() ::= <<
     SELECT count(entity_id)
     FROM entity

@@ -140,6 +140,18 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     }
 
     @Override
+    public List<Order> findAllPaidForCustomer(UUID customerId, Integer number, Integer offset)
+    {
+        return this.dao.findAllPaidForCustomerPaginated(customerId, number, offset);
+    }
+
+    @Override
+    public Integer countAllPaidForCustomer(UUID customerId)
+    {
+        return this.dao.countAllPaidForCustomer(customerId);
+    }
+
+    @Override
     public Integer countAllPaidOrAwaitingPayment()
     {
         return this.dao.countAllPaidOrAwaitingPayment(getTenant());

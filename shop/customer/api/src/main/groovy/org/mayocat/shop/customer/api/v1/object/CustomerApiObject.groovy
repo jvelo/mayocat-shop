@@ -7,16 +7,29 @@
  */
 package org.mayocat.shop.customer.api.v1.object
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.configuration.PlatformSettings
+import org.mayocat.model.AddonGroup
+import org.mayocat.rest.api.object.AddonGroupApiObject
+import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.shop.customer.model.Address
 import org.mayocat.shop.customer.model.Customer
+import org.mayocat.theme.ThemeDefinition
+
+import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
+import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
 
 /**
  * @version $Id$
  */
 @CompileStatic
-class CustomerApiObject
+class CustomerApiObject extends BaseApiObject
 {
+    String slug
+
     String email
 
     String firstName
@@ -27,10 +40,14 @@ class CustomerApiObject
 
     String phone
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map<String, AddonGroupApiObject> addons
+
     Map<String, Object> _embedded
 
     CustomerApiObject withCustomer(Customer customer)
     {
+        this.slug = customer.slug
         this.email = customer.email
         this.firstName = customer.firstName
         this.lastName = customer.lastName
@@ -40,7 +57,38 @@ class CustomerApiObject
         this
     }
 
-    CustomerApiObject withDeliveryAddress(Address address)
+    Customer toCustomer(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
+    {
+        Customer customer = new Customer();
+        customer.slug = slug
+        customer.email = email
+        customer.firstName = firstName
+        customer.lastName = lastName
+        customer.company = company
+        customer.phoneNumber = phone
+
+        if (addons) {
+            customer.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
+        }
+
+        customer
+    }
+
+    @JsonIgnore
+    CustomerApiObject withAddons(Map<String, AddonGroup> entityAddons) {
+        if (!addons) {
+            addons = [:]
+        }
+
+        entityAddons.values().each({ AddonGroup addon ->
+            addons.put(addon.group, forAddonGroup(addon))
+        })
+
+        this
+    }
+
+
+    CustomerApiObject withEmbeddedDeliveryAddress(Address address)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -51,7 +99,7 @@ class CustomerApiObject
         this
     }
 
-    CustomerApiObject withBillingAddress(Address address)
+    CustomerApiObject withEmbeddedBillingAddress(Address address)
     {
         if (_embedded == null) {
             _embedded = [:]

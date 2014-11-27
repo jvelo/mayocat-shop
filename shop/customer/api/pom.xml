@@ -32,5 +32,10 @@
             <artifactId>mayocat-platform-store-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-rest-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
