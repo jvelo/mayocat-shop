@@ -34,6 +34,8 @@ class OrderSummaryWebObject
 
     PriceWebObject shippingTaxes
 
+    PriceWebObject taxes
+
     DateWebObject date
 
     Integer numberOfItems
@@ -52,7 +54,7 @@ class OrderSummaryWebObject
         this.additionalInformation = order.additionalInformation
 
         if (order.itemsTotal && order.itemsTotalExcl) {
-            this.itemsTaxes = new PriceWebObject().withPrice(order.itemsTotal.subtract(order.itemsTotalExcl),
+            this.itemsTaxes = new PriceWebObject().withPrice(order.getShipping() - order.shippingExcl,
                     order.currency, locale)
         }
 

@@ -20,6 +20,7 @@ import org.mayocat.shop.cart.CartInSession;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.shipping.ShippingOption;
+import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -63,8 +64,14 @@ public class DefaultCartInSessionConverterTest
         cartContents.addItem(p1, 4l);
         cartContents.addItem(p2, 3l);
 
+
+
         ShippingOption shippingOption =
-                new ShippingOption(UUID.randomUUID(), "International Space Station", BigDecimal.ONE);
+                new ShippingOption(UUID.randomUUID(), "International Space Station", new PriceWithTaxes(
+                        BigDecimal.ONE,
+                        BigDecimal.ONE,
+                        BigDecimal.ZERO
+                ));
         cartContents.setSelectedShippingOption(shippingOption);
 
         // Do the Cart ))<>(( CartInSession back and forth

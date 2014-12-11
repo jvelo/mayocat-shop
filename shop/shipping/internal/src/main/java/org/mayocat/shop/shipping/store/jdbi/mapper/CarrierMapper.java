@@ -68,6 +68,10 @@ public class CarrierMapper implements ResultSetMapper<Carrier>
             carrier.addRule(rule);
         }
 
+        if (r.getBigDecimal("vat_rate") != null) {
+            carrier.setVatRate(r.getBigDecimal("vat_rate"));
+        }
+
         ctx.setAttribute("__accumulator", carrier);
         return carrier;
     }

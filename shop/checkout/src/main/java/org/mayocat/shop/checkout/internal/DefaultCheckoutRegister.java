@@ -126,7 +126,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         Order order;
         Customer actualCustomer;
 
-        Cart cart = cartManager.getCart();
+        final Cart cart = cartManager.getCart();
 
         try {
             UUID customerId;
@@ -189,14 +189,15 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             if (cart.selectedShippingOption().isPresent()) {
                 final Carrier carrier = shippingService.getCarrier(
                         cart.selectedShippingOption().get().getCarrierId());
-                order.setShipping(cart.selectedShippingOption().get().getPrice());
-                order.setShippingExcl(cart.selectedShippingOption().get().getPrice());
+                order.setShipping(cart.selectedShippingOption().get().getPrice().incl());
+                order.setShippingExcl(cart.selectedShippingOption().get().getPrice().excl());
                 data.put(Order.ORDER_DATA_SHIPPING, new HashMap<String, Object>()
                 {
                     {
                         put("carrierId", carrier.getId());
                         put("title", carrier.getTitle());
                         put("strategy", carrier.getStrategy());
+                        put("vatRate", carrier.getVatRate().doubleValue());
                     }
                 });
             }

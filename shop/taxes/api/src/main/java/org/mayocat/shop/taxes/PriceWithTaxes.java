@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.taxes;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -23,7 +24,7 @@ import com.google.common.base.Objects;
  *
  * @version $Id$
  */
-public class PriceWithTaxes
+public class PriceWithTaxes implements Serializable
 {
     private final BigDecimal incl;
 

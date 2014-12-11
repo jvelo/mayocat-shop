@@ -150,7 +150,7 @@ public class CartContents
     {
         BigDecimal total = getItemsTotal();
         if (getSelectedShippingOption() != null) {
-            total = total.add(getSelectedShippingOption().getPrice());
+            total = total.add(getSelectedShippingOption().getPrice().incl());
         }
         return total;
     }

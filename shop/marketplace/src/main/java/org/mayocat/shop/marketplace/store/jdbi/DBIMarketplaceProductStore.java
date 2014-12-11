@@ -59,7 +59,21 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     public List<Product> findAllNotVariants(Integer number, Integer offset)
     {
         return AddonsHelper
-                .withAddons(this.marketplaceProductDAO.findAllNotVariants(number, offset), this.marketplaceProductDAO);
+                .withAddons(this.marketplaceProductDAO.findAllNotVariants(number, offset, "product.title"),
+                        this.marketplaceProductDAO);
+    }
+
+    @Override
+    public List<Product> findAllNotVariants(Integer number, Integer offset, Order order)
+    {
+        String orderby = "product.title";
+        switch (order) {
+            case TENANT_NAME_THEN_PRODUCT_TITLE:
+                orderby = "tenant.name, product.title";
+        }
+        return AddonsHelper
+                .withAddons(this.marketplaceProductDAO.findAllNotVariants(number, offset, orderby),
+                        this.marketplaceProductDAO);
     }
 
     @Override
@@ -86,6 +100,13 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     public List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset)
     {
         return AddonsHelper.withAddons(this.marketplaceProductDAO.findAllForTenant(tenant, number, offset),
+                this.marketplaceProductDAO);
+    }
+
+    @Override
+    public List<Product> findAllForTenantOnShelf(Tenant tenant, Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.marketplaceProductDAO.findAllForTenantOnShelf(tenant, number, offset),
                 this.marketplaceProductDAO);
     }
 

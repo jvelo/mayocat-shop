@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.mayocat.shop.billing.event.OrderPaidEvent;
+import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -63,20 +65,23 @@ public class UpdateStockWhenOrderIsPaid implements EventListener
     public void onEvent(Event event, Object source, Object data)
     {
         // Update stocks for bought products
-        Map<String, Object> orderData = (Map<String, Object>) data;
-        List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
+        Order order = (Order) source;
+        List<OrderItem> items = order.getOrderItems();
 
-        for (Map<String, Object> item : items) {
-            UUID itemId = UUID.fromString((String) item.get("id"));
-            Integer quantity = (Integer) item.get("quantity");
+        for (OrderItem item : items) {
+            UUID itemId = item.getPurchasableId();
+            if (itemId == null) {
+                return;
+            }
+            Long quantity = item.getQuantity();
 
             try {
                 Product product = productStore.get().findById(itemId);
                 if (product.getStock() != null) {
-                    productStore.get().updateStock(itemId, -quantity);
+                    productStore.get().updateStock(itemId, -quantity.intValue());
                 } else if (product.getParentId() != null) {
                     Product parent = productStore.get().findById(product.getParentId());
-                    productStore.get().updateStock(product.getParentId(), -quantity);
+                    productStore.get().updateStock(product.getParentId(), -quantity.intValue());
                 }
             } catch (EntityDoesNotExistException e) {
                 // Ignore, there is just no stock to update

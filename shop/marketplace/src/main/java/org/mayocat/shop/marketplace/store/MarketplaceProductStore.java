@@ -20,9 +20,17 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface MarketplaceProductStore
 {
+    public enum Order
+    {
+        PRODUCT_TITLE,
+        TENANT_NAME_THEN_PRODUCT_TITLE
+    }
+
     Product findBySlugAndTenant(String slug, String tenantSlug);
 
     List<Product> findAllNotVariants(Integer number, Integer offset);
+
+    List<Product> findAllNotVariants(Integer number, Integer offset, Order order);
 
     Integer countAllNotVariants();
 
@@ -31,4 +39,6 @@ public interface MarketplaceProductStore
     Integer countAllWithTitleLike(String title);
 
     List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset);
+
+    List<Product> findAllForTenantOnShelf(Tenant tenant, Integer number, Integer offset);
 }

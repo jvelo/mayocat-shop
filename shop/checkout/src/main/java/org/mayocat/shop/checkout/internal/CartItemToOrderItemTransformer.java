@@ -81,7 +81,7 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
         orderItem.setTitle(itemTitle);
         orderItem.setQuantity(cartItem.quantity());
         orderItem.setUnitPrice(cartItem.unitPrice().incl());
-        orderItem.setItemTotal(cartItem.total().excl());
+        orderItem.setItemTotal(cartItem.total().incl());
         orderItem.setVatRate(vatRate);
 
         Map<String, Object> data = Maps.newHashMap();

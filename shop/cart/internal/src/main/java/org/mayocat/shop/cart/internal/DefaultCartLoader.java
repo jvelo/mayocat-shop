@@ -87,12 +87,7 @@ public class DefaultCartLoader implements CartLoader
 
         if (contents.getSelectedShippingOption() != null) {
             ShippingOption option = contents.getSelectedShippingOption();
-            PriceWithTaxes shipping = new PriceWithTaxes(
-                    option.getPrice(),
-                    option.getPrice(),
-                    BigDecimal.ZERO
-            );
-            builder.setShipping(shipping);
+            builder.setShipping(option.getPrice());
             builder.selectedShippingOption(option);
         }
 

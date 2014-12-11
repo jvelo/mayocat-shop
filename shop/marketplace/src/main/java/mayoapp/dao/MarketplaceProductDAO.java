@@ -17,6 +17,7 @@ import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
@@ -35,7 +36,7 @@ public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
 
     @SqlQuery
     public abstract List<Product> findAllNotVariants(@Bind("number") Integer number,
-            @Bind("offset") Integer offset);
+            @Bind("offset") Integer offset, @Define("orderby") String orderBy);
 
     @SqlQuery
     public abstract Integer countAllNotVariants();
@@ -53,4 +54,11 @@ public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
             @BindBean("tenant") Tenant tenant,
             @Bind("number") Integer number,
             @Bind("offset") Integer offset);
+
+    @SqlQuery
+    public abstract List<Product> findAllForTenantOnShelf(
+            @BindBean("tenant") Tenant tenant,
+            @Bind("number") Integer number,
+            @Bind("offset") Integer offset
+    );
 }

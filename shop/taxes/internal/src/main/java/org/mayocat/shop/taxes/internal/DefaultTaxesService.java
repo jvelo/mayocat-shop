@@ -16,8 +16,14 @@ import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.mayocat.shop.taxes.Taxable;
 import org.mayocat.shop.taxes.TaxesService;
+import org.mayocat.shop.taxes.configuration.Rate;
+import org.mayocat.shop.taxes.configuration.TaxRule;
 import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
@@ -29,19 +35,47 @@ public class DefaultTaxesService implements TaxesService
     private ConfigurationService configurationService;
 
     @Override
-    public PriceWithTaxes getPriceWithTaxes(Taxable taxable)
+    public BigDecimal getVatRate(Taxable taxable)
     {
+        BigDecimal itemVatRate = null;
         TaxesSettings taxesSettings = getTaxesSettings();
         BigDecimal defaultVatRate = taxesSettings.getVat().getValue().getDefaultRate();
 
+        final Optional<String> vatRateId = taxable.getVatRateId();
+        if (vatRateId.isPresent()) {
+            Optional<Rate> rate =
+                    FluentIterable.from(taxesSettings.getVat().getValue().getOtherRates()).filter(new Predicate<Rate>()
+                    {
+                        @Override
+                        public boolean apply(Rate rate)
+                        {
+                            return rate.getId().equals(vatRateId.get());
+                        }
+                    }).first();
+            if (rate.isPresent()) {
+                itemVatRate = rate.get().getValue();
+            }
+        }
+
+        if (itemVatRate == null) {
+            itemVatRate = defaultVatRate;
+        }
+
+        return itemVatRate;
+    }
+
+    @Override
+    public PriceWithTaxes getPriceWithTaxes(Taxable taxable)
+    {
+        BigDecimal itemVatRate = getVatRate(taxable);
+
         PriceWithTaxes itemUnit = new PriceWithTaxes(
-                taxable.getUnitPrice().multiply(BigDecimal.ONE.add(defaultVatRate)),
+                taxable.getUnitPrice().multiply(BigDecimal.ONE.add(itemVatRate)),
                 taxable.getUnitPrice(),
-                taxable.getUnitPrice().multiply(defaultVatRate)
+                taxable.getUnitPrice().multiply(itemVatRate)
         );
 
         return itemUnit;
-
     }
 
     private TaxesSettings getTaxesSettings()

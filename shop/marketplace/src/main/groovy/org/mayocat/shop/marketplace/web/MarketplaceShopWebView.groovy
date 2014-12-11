@@ -126,7 +126,7 @@ class MarketplaceShopWebView implements Resource, WithProductWebObjectBuilder
         context.put("shop", shopWebObject)
 
         // Products
-        List<Product> products = productStore.get().findAllForTenant(tenant, 100, 0);
+        List<Product> products = productStore.get().findAllForTenantOnShelf(tenant, 100, 0);
 
         List<EntityData<Product>> productsData = dataLoader.
                 load(products, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)

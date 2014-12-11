@@ -45,7 +45,7 @@ class ShippingOptionWebObject
         title = option.title
 
         price = new PriceWebObject()
-        price.withPrice(option.price, currency, locale)
+        price.withPrice(option.price.incl(), currency, locale)
 
         Carrier carrier = service.getCarrier(option.carrierId);
         if (carrier != null) {

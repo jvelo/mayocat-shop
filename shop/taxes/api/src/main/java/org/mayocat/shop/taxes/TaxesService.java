@@ -7,6 +7,8 @@
  */
 package org.mayocat.shop.taxes;
 
+import java.math.BigDecimal;
+
 import org.xwiki.component.annotation.Role;
 
 /**
@@ -15,5 +17,7 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface TaxesService
 {
+    BigDecimal getVatRate(Taxable taxable);
+
     PriceWithTaxes getPriceWithTaxes(Taxable taxable);
 }

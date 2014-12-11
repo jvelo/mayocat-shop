@@ -84,7 +84,7 @@ abstract class AbstractCartWebObject
         if (hasShipping) {
             if (cart.selectedShippingOption().isPresent()) {
                 shipping = new PriceWebObject()
-                shipping.withPrice(cart.selectedShippingOption().get().getPrice(), cart.currency(), locale)
+                shipping.withPrice(cart.selectedShippingOption().get().getPrice().incl(), cart.currency(), locale)
 
                 selectedShippingOption = new ShippingOptionWebObject()
                 selectedShippingOption.withOption(shippingService, cart.selectedShippingOption().get(),

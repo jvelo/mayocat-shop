@@ -36,6 +36,7 @@ import org.mayocat.mail.MailTemplate;
 import org.mayocat.mail.MailTemplateService;
 import org.mayocat.shop.billing.event.OrderPaidEvent;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
@@ -47,6 +48,7 @@ import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -249,8 +251,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
     private Map<String, Object> prepareMailContext(Order order, Customer customer, Optional<Address> ba,
             Optional<Address> da, Tenant tenant, Locale locale)
     {
-        Map<String, Object> orderData = order.getOrderData();
-        List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
+        List<OrderItem> items = order.getOrderItems();
         Map<String, Object> context = Maps.newHashMap();
 
         MoneyFormatter formatter = new MoneyFormatterBuilder().appendAmount(MoneyAmountStyle.of(locale))
@@ -264,17 +265,22 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         String itemsTotal = formatter.withLocale(locale)
                 .print(Money.of(currencyUnit, order.getItemsTotal(), RoundingMode.HALF_EVEN));
 
-        for (Map<String, Object> item : items) {
+        List<Map<String, Object>> itemsData = Lists.newArrayList();
+
+        for (OrderItem item : items) {
             // Replace big decimal values by formatted values
-            Double unitPrice = (Double) item.get("unitPrice");
-            Double itemTotal = (Double) item.get("itemTotal");
-            item.put("unitPrice", formatter.withLocale(locale)
-                    .print(Money.of(currencyUnit, unitPrice, RoundingMode.HALF_EVEN)));
-            item.put("itemTotal", formatter.withLocale(locale)
-                    .print(Money.of(currencyUnit, itemTotal, RoundingMode.HALF_EVEN)));
+            Map<String, Object> itemData = Maps.newHashMap();
+            itemData.put("unitPrice", formatter.withLocale(locale)
+                    .print(Money.of(currencyUnit, item.getUnitPrice(), RoundingMode.HALF_EVEN)));
+            itemData.put("itemTotal", formatter.withLocale(locale)
+                    .print(Money.of(currencyUnit, item.getItemTotal(), RoundingMode.HALF_EVEN)));
+            itemData.put("title", item.getTitle());
+            itemData.put("quantity", item.getQuantity());
+            itemData.put("vatRate", item.getVatRate().longValue());
+            itemsData.add(itemData);
         }
 
-        context.put("items", items);
+        context.put("items", itemsData);
 
         if (order.getShipping() != null) {
             String shippingTotal = formatter.withLocale(locale)

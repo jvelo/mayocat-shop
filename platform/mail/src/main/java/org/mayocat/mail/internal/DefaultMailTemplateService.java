@@ -54,7 +54,7 @@ public class DefaultMailTemplateService implements MailTemplateService
                     fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
                             .resolve(mail.locale().get().toLanguageTag())
                             .resolve(mail.template() + ".twig");
-            if (templatePath == null) {
+            if (!templatePath.toFile().isFile()) {
                 templatePath =
                         fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
                                 .resolve(mail.locale().get().getLanguage())
@@ -62,12 +62,12 @@ public class DefaultMailTemplateService implements MailTemplateService
             }
         }
 
-        if (templatePath == null) {
+        if (templatePath == null || !templatePath.toFile().isFile()) {
             templatePath =
                     fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve(mail.template() + ".twig");
         }
 
-        if (templatePath == null) {
+        if (templatePath == null || !templatePath.toFile().isFile()) {
             throw new MailException("Mail template not found");
         }
 

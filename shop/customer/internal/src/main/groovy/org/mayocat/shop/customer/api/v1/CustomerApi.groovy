@@ -102,6 +102,9 @@ class CustomerApi implements Resource
     def getCustomer(@PathParam("customer") String slug)
     {
         Customer customer = customerStore.get().findBySlug(slug)
+        if (!customer) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
         CustomerApiObject customerApiObject = new CustomerApiObject([
                 _href : "${webContext.request.tenantPrefix}/api/customers/${customer.slug}",
                 _links: [

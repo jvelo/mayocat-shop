@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import org.mayocat.shop.taxes.PriceWithTaxes;
+
 import com.google.common.base.Objects;
 
 /**
@@ -22,9 +24,9 @@ public class ShippingOption implements Serializable
 
     private String title;
 
-    private BigDecimal price;
+    private PriceWithTaxes price;
 
-    public ShippingOption(UUID carrierId, String title, BigDecimal price)
+    public ShippingOption(UUID carrierId, String title, PriceWithTaxes price)
     {
         this.carrierId = carrierId;
         this.title = title;
@@ -36,7 +38,7 @@ public class ShippingOption implements Serializable
         return title;
     }
 
-    public BigDecimal getPrice()
+    public PriceWithTaxes getPrice()
     {
         return price;
     }

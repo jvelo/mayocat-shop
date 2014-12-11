@@ -112,6 +112,8 @@ public abstract class AbstractService<C extends AbstractSettings> extends Applic
         bootstrap.getObjectMapper().registerModule(new MayocatLocaleBCP47LanguageTagModule());
         bootstrap.getObjectMapper().registerModule(new TimeZoneModule());
 
+        bootstrap.getObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         // TODO: remove when upgrading DW to 0.8
         bootstrap.getObjectMapper().registerModule(new PermissiveFuzzyEnumModule());
     }
