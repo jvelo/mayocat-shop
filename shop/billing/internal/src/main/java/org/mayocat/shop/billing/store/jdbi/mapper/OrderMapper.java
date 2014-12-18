@@ -66,6 +66,7 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
                             }
                             orderItem.setType((String) map.get("type"));
                             orderItem.setTitle((String) map.get("title"));
+                            orderItem.setMerchant((String) map.get("merchant"));
                             orderItem.setQuantity(((Integer) map.get("quantity")).longValue());
                             orderItem.setUnitPrice(BigDecimal.valueOf((Double) map.get("unit_price")));
                             orderItem.setItemTotal(BigDecimal.valueOf((Double) map.get("item_total")));

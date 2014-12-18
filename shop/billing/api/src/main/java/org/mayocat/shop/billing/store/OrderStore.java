@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.billing.store;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,6 +57,14 @@ public interface OrderStore extends Store<Order, UUID>, EntityStore
      * @return the total count for {@link #findAllPaidOrAwaitingPayment(Integer, Integer)}.
      */
     Integer countAllPaidOrAwaitingPayment();
+
+    /**
+     * Finds all orders paids within a period of time
+     * @param date1 the left bound of the period of time to match
+     * @param date2 the right bound of the period of time to match
+     * @return the found orders for that period of time
+     */
+    List<Order> findAllPaidBetween(Date date1, Date date2);
 
     Order findBySlug(String order);
 }

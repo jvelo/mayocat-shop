@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.billing.store.jdbi;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -143,6 +144,12 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     public List<Order> findAllPaidForCustomer(UUID customerId, Integer number, Integer offset)
     {
         return this.dao.findAllPaidForCustomerPaginated(customerId, number, offset);
+    }
+
+    @Override
+    public List<Order> findAllPaidBetween(Date date1, Date date2)
+    {
+        return this.dao.findAllPaidBetween(date1, date2);
     }
 
     @Override

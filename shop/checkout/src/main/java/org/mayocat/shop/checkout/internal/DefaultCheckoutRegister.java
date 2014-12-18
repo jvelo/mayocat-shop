@@ -20,6 +20,7 @@ import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.entity.EntityDataLoader;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
@@ -69,6 +70,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 {
     @Inject
     private Logger logger;
+
+    @Inject
+    private EntityDataLoader dataLoader;
 
     @Inject
     private PlatformSettings platformSettings;
@@ -175,6 +179,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
             // Items
             List<OrderItem> items = FluentIterable.from(cart.items()).transform(new CartItemToOrderItemTransformer(
+                    dataLoader,
                     platformSettings,
                     productStore.get(),
                     taxesSettings,

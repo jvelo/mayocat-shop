@@ -7,6 +7,7 @@
  */
 package mayoapp.dao;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -72,4 +73,7 @@ public abstract class OrderDAO implements EntityDAO<Order>, Transactional<OrderD
 
     @SqlQuery
     public abstract Integer countAllPaidForCustomer(@Bind("customerId") UUID customerId);
+
+    @SqlQuery
+    public abstract List<Order> findAllPaidBetween(@Bind("date1") Date date1, @Bind("date2") Date date2);
 }

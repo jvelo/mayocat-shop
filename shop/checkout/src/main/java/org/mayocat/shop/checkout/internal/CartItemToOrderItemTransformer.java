@@ -11,10 +11,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.mayocat.accounts.model.Tenant;
 import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.addons.util.AddonUtils;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.entity.EntityData;
+import org.mayocat.entity.EntityDataLoader;
 import org.mayocat.model.AddonGroup;
 import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.cart.CartItem;
@@ -36,6 +39,8 @@ import com.google.common.collect.Maps;
  */
 public class CartItemToOrderItemTransformer implements Function<CartItem, OrderItem>
 {
+    private EntityDataLoader dataLoader;
+
     private PlatformSettings platformSettings;
 
     private ProductStore productStore;
@@ -44,9 +49,11 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
 
     private WebContext webContext;
 
-    public CartItemToOrderItemTransformer(PlatformSettings platformSettings,
+    public CartItemToOrderItemTransformer(
+            EntityDataLoader dataLoader, PlatformSettings platformSettings,
             ProductStore productStore, TaxesSettings taxesSettings, WebContext webContext)
     {
+        this.dataLoader = dataLoader;
         this.platformSettings = platformSettings;
         this.productStore = productStore;
         this.taxesSettings = taxesSettings;
@@ -67,6 +74,8 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
         final String itemTitle = title;
 
         Product product = productStore.findById(p.getId());
+        EntityData<Product> productData = dataLoader.load(product);
+        Optional<Tenant> tenant = productData.getData(Tenant.class);
 
         final BigDecimal vatRate;
         if (product.getVatRateId().isPresent() && getRateDefinition(product.getVatRateId().get()).isPresent()) {
@@ -83,6 +92,7 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
         orderItem.setUnitPrice(cartItem.unitPrice().incl());
         orderItem.setItemTotal(cartItem.total().incl());
         orderItem.setVatRate(vatRate);
+        orderItem.setMerchant(tenant.isPresent() ? tenant.get().getName() : null);
 
         Map<String, Object> data = Maps.newHashMap();
         addOrderAddons(p, data);

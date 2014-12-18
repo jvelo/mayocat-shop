@@ -8,6 +8,7 @@
 package org.mayocat.shop.billing.store.memory;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +65,11 @@ public class MemoryOrderStore extends BaseEntityMemoryStore<Order> implements Or
 
     @Override
     public List<Order> findAllPaidForCustomer(UUID customerId, Integer number, Integer offset)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override public List<Order> findAllPaidBetween(Date date1, Date date2)
     {
         throw new RuntimeException("Not implemented");
     }

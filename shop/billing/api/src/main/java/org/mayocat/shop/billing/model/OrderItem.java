@@ -28,6 +28,8 @@ public class OrderItem
 
     private String title;
 
+    private String merchant;
+
     private Long quantity;
 
     private BigDecimal unitPrice;
@@ -86,6 +88,16 @@ public class OrderItem
     public void setTitle(String title)
     {
         this.title = title;
+    }
+
+    public String getMerchant()
+    {
+        return merchant;
+    }
+
+    public void setMerchant(String merchant)
+    {
+        this.merchant = merchant;
     }
 
     public Long getQuantity()
