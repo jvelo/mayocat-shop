@@ -56,11 +56,11 @@ public interface ThumbnailDAO extends Transactional<ThumbnailDAO>
         "SET    x = :thumbnail.x, " +
         "       y = :thumbnail.y, " +
         "       width = :thumbnail.width, " +
-        "       height = :thumbnail.height " +
+        "       height = :thumbnail.height," +
+        "       ratio = :thumbnail.ratio " +
         "WHERE  thumbnail.attachment_id = :thumbnail.attachmentId " +
         "       AND thumbnail.source = :thumbnail.source " +
-        "       AND thumbnail.hint = :thumbnail.hint " +
-        "       AND thumbnail.ratio = :thumbnail.ratio "
+        "       AND thumbnail.hint = :thumbnail.hint"
     )
     Integer updateThumbnail(@BindBean("thumbnail") Thumbnail thumbnail);
 
