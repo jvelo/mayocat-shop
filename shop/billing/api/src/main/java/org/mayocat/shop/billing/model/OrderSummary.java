@@ -28,6 +28,8 @@ public class OrderSummary implements Entity
 
     public static final String ORDER_DATA_SHIPPING = "shipping";
 
+    public static final String ORDER_DATA_EXTRA = "extra";
+
     /**
      * @deprecated, items have been removed from the order data map.
      * Use {@link Order#setOrderItems(java.util.List)} instead

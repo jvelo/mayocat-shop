@@ -15,5 +15,14 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class CheckoutWebObject
 {
+    /**
+     * Additional information given for this order by the customer
+     */
+
     String additionalInformation
+
+    /**
+     * Extra custom JSON data for this order that can be send by the API client
+     */
+    Map<String, Object> extraData
 }

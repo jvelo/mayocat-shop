@@ -102,6 +102,9 @@ class MarketplaceCheckoutWebView implements Resource
         if (!Strings.isNullOrEmpty(checkoutWebObject.additionalInformation)) {
             otherData.put("additionalInformation", checkoutWebObject.additionalInformation)
         }
+        if (checkoutWebObject.extraData && checkoutWebObject.extraData.size() > 0) {
+            otherData.put("extraData", checkoutWebObject.extraData)
+        }
 
         Cart cart = cartManager.cart
         final Locale locale = generalSettings.locales.mainLocale.value

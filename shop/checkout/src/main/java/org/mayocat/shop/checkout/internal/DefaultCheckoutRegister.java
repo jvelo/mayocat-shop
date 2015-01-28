@@ -176,6 +176,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             if (extraOrderData.containsKey("additionalInformation")) {
                 order.setAdditionalInformation((String) extraOrderData.get("additionalInformation"));
             }
+            if (extraOrderData.containsKey("extraData")) {
+                data.put(Order.ORDER_DATA_EXTRA, (Map<String, Object>) extraOrderData.get("extraData"));
+            }
 
             // Items
             List<OrderItem> items = FluentIterable.from(cart.items()).transform(new CartItemToOrderItemTransformer(
