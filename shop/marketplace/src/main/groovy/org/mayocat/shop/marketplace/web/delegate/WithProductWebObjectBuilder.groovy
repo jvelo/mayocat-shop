@@ -80,8 +80,7 @@ trait WithProductWebObjectBuilder
             types.putAll(catalogSettings.productsSettings.types)
 
             productWebObject.withFeaturesAndVariants(features, variants, [:],
-                    configurationService.getSettings(CatalogSettings.class),
-                    configurationService.getSettings(GeneralSettings.class), types)
+                    catalogSettings, generalSettings, taxesSettings, types)
         }
 
         productWebObject.shop = new MarketplaceShopWebObject().withTenant(tenant)

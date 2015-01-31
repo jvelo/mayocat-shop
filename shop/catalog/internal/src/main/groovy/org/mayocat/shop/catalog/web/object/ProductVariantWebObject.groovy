@@ -25,6 +25,9 @@ class ProductVariantWebObject
     @JsonInclude(JsonInclude.Include.NON_NULL)
     PriceWebObject unitPrice
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    PriceWebObject unitPriceExclusiveOfTaxes
+
     // available -> for sale and in stock
     // not_for_sale
     // out_of_stock

@@ -232,8 +232,7 @@ class ProductWebView implements Resource
             types.putAll(catalogSettings.productsSettings.types)
 
             productWebObject.withFeaturesAndVariants(features, variants, selectedFeatures,
-                    configurationService.getSettings(CatalogSettings.class),
-                    configurationService.getSettings(GeneralSettings.class), types)
+                    catalogSettings, generalSettings, taxesSettings, types)
         }
 
         context.put("product", productWebObject);

@@ -15,4 +15,5 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class TaxesWebObject
 {
+    BigDecimal vatRate;
 }

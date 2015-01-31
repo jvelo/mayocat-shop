@@ -126,6 +126,9 @@ class AbstractProductWebObject
 
             unitPriceExclusiveOfTaxes = new PriceWebObject()
             unitPriceExclusiveOfTaxes.withPrice(product.unitPrice, currency, locale)
+
+            taxes = new TaxesWebObject()
+            taxes.vatRate = vatRate
         }
 
         def inStock = true
@@ -156,7 +159,7 @@ class AbstractProductWebObject
     }
 
     def withFeaturesAndVariants(List<Feature> allFeatures, List<Product> variants, Map<String, String> selectedFeaturesList,
-            CatalogSettings catalogSettings, GeneralSettings generalSettings, Map<String, TypeDefinition> types)
+            CatalogSettings catalogSettings, GeneralSettings generalSettings, TaxesSettings taxesSettings, Map<String, TypeDefinition> types)
     {
         if (!type || !types.containsKey(type)) {
             // For now only product with a type can have variants
@@ -194,6 +197,11 @@ class AbstractProductWebObject
         def currency = catalogSettings.currencies.mainCurrency.value;
         BigDecimal minPrice
         def atLeastOnePriceDiffers = false
+        def vatRate = taxes.vatRate
+        if (!vatRate) {
+            throw new IllegalStateException("VAT rate must be defined before adding features and variants." +
+                    "Call #withProduct before #withFeaturesAndVariants")
+        }
 
         this.variants = []
         variantsWithFeaturesDefined.each({ Product variant ->
@@ -225,10 +233,16 @@ class AbstractProductWebObject
                         slug: feature.featureSlug
                 ])
             })
-            PriceWebObject variantPrice = variant.unitPrice ?
-                    new PriceWebObject().withPrice(variant.unitPrice, currency, locale) : null
+            PriceWebObject variantPriceIncl = null
+            PriceWebObject variantPriceExcl = null
+            if (variant.unitPrice) {
+                variantPriceIncl = new PriceWebObject().
+                        withPrice(variant.unitPrice.multiply(BigDecimal.ONE.add(vatRate)), currency, locale)
+                variantPriceExcl : new PriceWebObject().withPrice(variant.unitPrice, currency, locale)
+            }
             this.variants << new ProductVariantWebObject([
-                    unitPrice: variantPrice,
+                    unitPrice: variantPriceIncl,
+                    unitPriceExclusiveOfTaxes: variantPriceExcl,
                     title: variant.title,
                     slug: variant.slug,
                     availability: variantAvailability,
@@ -242,10 +256,10 @@ class AbstractProductWebObject
         } else if (priceDefinedByVariants && atLeastOnePriceDiffers) {
             unitPrice = null
             unitPriceStartsAt = new PriceWebObject()
-            unitPriceStartsAt.withPrice(minPrice, currency, locale)
+            unitPriceStartsAt.withPrice(minPrice.multiply(BigDecimal.ONE.add(vatRate)), currency, locale)
         } else if (priceDefinedByVariants && minPrice) {
             unitPrice = new PriceWebObject()
-            unitPrice.withPrice(minPrice, currency, locale)
+            unitPrice.withPrice(minPrice.multiply(BigDecimal.ONE.add(vatRate)), currency, locale)
         }
         if (stockDefinedByVariants && anyVariantAvailable) {
             availability = "available"

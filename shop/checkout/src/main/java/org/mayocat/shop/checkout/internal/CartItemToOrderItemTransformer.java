@@ -8,7 +8,7 @@
 package org.mayocat.shop.checkout.internal;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
@@ -31,7 +31,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -62,18 +61,20 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
 
     public OrderItem apply(final CartItem cartItem)
     {
-        final Purchasable p = cartItem.item();
+        Purchasable purchasable = cartItem.item();
+        Purchasable rootPurchasable;
 
         String title;
-        if (p.getParent().isPresent() && p.getParent().get().isLoaded()) {
-            title = p.getParent().get().get().getTitle() + " - " + p.getTitle();
+        if (purchasable.getParent().isPresent() && purchasable.getParent().get().isLoaded()) {
+            rootPurchasable = purchasable.getParent().get().get();
+            title = rootPurchasable.getTitle() + " - " + purchasable.getTitle();
         } else {
-            title = p.getTitle();
+            rootPurchasable = purchasable;
+            title = purchasable.getTitle();
         }
 
-        final String itemTitle = title;
-
-        Product product = productStore.findById(p.getId());
+        final Product product = productStore.findById(rootPurchasable.getId());
+        final Product purchasedProduct = productStore.findById(purchasable.getId());
         EntityData<Product> productData = dataLoader.load(product);
         Optional<Tenant> tenant = productData.getData(Tenant.class);
 
@@ -87,7 +88,7 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
         OrderItem orderItem = new OrderItem();
         orderItem.setPurchasableId(product.getId());
         orderItem.setType("product");
-        orderItem.setTitle(itemTitle);
+        orderItem.setTitle(title);
         orderItem.setQuantity(cartItem.quantity());
         orderItem.setUnitPrice(cartItem.unitPrice().incl());
         orderItem.setItemTotal(cartItem.total().incl());
@@ -95,10 +96,20 @@ public class CartItemToOrderItemTransformer implements Function<CartItem, OrderI
         orderItem.setMerchant(tenant.isPresent() ? tenant.get().getName() : null);
 
         Map<String, Object> data = Maps.newHashMap();
-        addOrderAddons(p, data);
+        addOrderAddons(rootPurchasable, data);
+
+        if (product.isVirtual()) {
+            data.put("variant", new HashMap<String, Object>()
+            {
+                {
+                    put("id", purchasedProduct.getId());
+                    put("slug", purchasedProduct.getSlug());
+                    put("title", purchasedProduct.getTitle());
+                }
+            });
+        }
 
         orderItem.addData(data);
-
         return orderItem;
     }
 
