@@ -90,6 +90,7 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
             resultSet.findColumn("email");
             Customer customer = new Customer();
             customer.setId(order.getCustomerId());
+            customer.setSlug(resultSet.getString("customer_slug"));
             customer.setEmail(resultSet.getString("email"));
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setLastName(resultSet.getString("last_name"));

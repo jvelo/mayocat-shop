@@ -123,6 +123,7 @@ findAllPaidBetween() ::= <<
            json_agg(purchase_order_item.*) as items,
            count(purchase_order_item.id) as number_of_items,
            customer.*,
+           customer_entity.slug as customer_slug,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
            delivery_address.full_name as delivery_address_full_name,
@@ -145,6 +146,7 @@ findAllPaidBetween() ::= <<
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN purchase_order_item on order_id = entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = entity.id
     LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE    entity.type = 'purchase_order'
@@ -153,6 +155,7 @@ findAllPaidBetween() ::= <<
     GROUP BY entity.id,
              purchase_order.entity_id,
              customer.entity_id,
+             customer_entity.slug,
              delivery_address.address_id,
              billing_address.address_id
     ORDER BY purchase_order.creation_date ASC
@@ -173,6 +176,7 @@ findBySlugWithCustomer() ::= <<
            json_agg(purchase_order_item.*) as items,
            count(purchase_order_item.id) as number_of_items,
            customer.*,
+           customer_entity.slug as customer_slug,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
            delivery_address.full_name as delivery_address_full_name,
@@ -195,6 +199,7 @@ findBySlugWithCustomer() ::= <<
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN purchase_order_item on order_id = entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = customer_entity.id
     LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE   entity.type = 'purchase_order'
@@ -203,6 +208,7 @@ findBySlugWithCustomer() ::= <<
     GROUP BY entity.id,
              purchase_order.entity_id,
              customer.entity_id,
+             customer_entity.slug,
              delivery_address.address_id,
              billing_address.address_id
 >>
@@ -213,6 +219,7 @@ findByIdWithCustomer() ::= <<
            json_agg(purchase_order_item.*) as items,
            count(purchase_order_item.id) as number_of_items,
            customer.*,
+           customer_entity.slug as customer_slug,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
            delivery_address.full_name as delivery_address_full_name,
@@ -235,6 +242,7 @@ findByIdWithCustomer() ::= <<
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
     LEFT JOIN purchase_order_item on order_id = entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = entity.id
     LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE   entity.type = 'purchase_order'
@@ -242,6 +250,7 @@ findByIdWithCustomer() ::= <<
     GROUP BY entity.id,
              purchase_order.entity_id,
              customer.entity_id,
+             customer_entity.slug,
              delivery_address.address_id,
              billing_address.address_id
 >>
