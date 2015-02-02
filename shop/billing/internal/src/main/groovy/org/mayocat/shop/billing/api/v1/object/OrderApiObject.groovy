@@ -83,7 +83,11 @@ class OrderApiObject
             _embedded = [:]
         }
 
-        _embedded.put("customer", new CustomerApiObject().withCustomer(customer))
+        CustomerApiObject customerApiObject = new CustomerApiObject().withCustomer(customer)
+        if (customer.addons.isLoaded()) {
+            customerApiObject.withAddons(customer.addons.get())
+        }
+        _embedded.put("customer", customerApiObject)
 
         this
     }
