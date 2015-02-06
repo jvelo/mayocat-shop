@@ -103,22 +103,25 @@ class AbstractProductWebObject
             type = product.type.get()
         }
 
-        // Prices & taxes
+        // Taxes
+        BigDecimal vatRate = null
+        if (product.vatRateId.isPresent()) {
+            vatRate = taxesSettings.vat.value.otherRates.find({ Rate rate ->
+                rate.id == product.vatRateId.get()
+            })?.value
+        }
+        if (!vatRate) {
+            vatRate = taxesSettings.vat.value.defaultRate
+        }
+        taxes = new TaxesWebObject()
+        taxes.vatRate = vatRate
+
+        // Prices
         if (product.unitPrice != null) {
             def locale = generalSettings.locales.mainLocale.value;
             def currency = catalogSettings.currencies.mainCurrency.value;
 
             // Calculate incl. price
-            BigDecimal vatRate = null
-            if (product.vatRateId.isPresent()) {
-                vatRate = taxesSettings.vat.value.otherRates.find({ Rate rate ->
-                    rate.id == product.vatRateId.get()
-                })?.value
-            }
-            if (!vatRate) {
-                vatRate = taxesSettings.vat.value.defaultRate
-            }
-
             def priceInclusiveOfTaxes = product.unitPrice.multiply(BigDecimal.ONE.add(vatRate))
 
             unitPrice = new PriceWebObject()
@@ -126,9 +129,6 @@ class AbstractProductWebObject
 
             unitPriceExclusiveOfTaxes = new PriceWebObject()
             unitPriceExclusiveOfTaxes.withPrice(product.unitPrice, currency, locale)
-
-            taxes = new TaxesWebObject()
-            taxes.vatRate = vatRate
         }
 
         def inStock = true
@@ -197,7 +197,7 @@ class AbstractProductWebObject
         def currency = catalogSettings.currencies.mainCurrency.value;
         BigDecimal minPrice
         def atLeastOnePriceDiffers = false
-        def vatRate = taxes.vatRate
+        def vatRate = taxes?.vatRate
         if (!vatRate) {
             throw new IllegalStateException("VAT rate must be defined before adding features and variants." +
                     "Call #withProduct before #withFeaturesAndVariants")
