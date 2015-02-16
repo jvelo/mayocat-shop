@@ -529,7 +529,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         getImages(collection)
     }
 
-    @GET
+    @DELETE
     @Path("{parent1}/collections/{slug}/images/{imageSlug}")
     @Consumes(MediaType.WILDCARD)
     def detachImageForCollectionWithOneParent(
@@ -541,7 +541,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         detachImages(imageSlug, collection)
     }
 
-    @GET
+    @DELETE
     @Path("{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
     @Consumes(MediaType.WILDCARD)
     def detachImageForCollectionWithTwoParents(
@@ -554,7 +554,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         detachImages(imageSlug, collection)
     }
 
-    @GET
+    @DELETE
     @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/images/{imageSlug}")
     @Consumes(MediaType.WILDCARD)
     def detachImageForCollectionWithThreeParents(
