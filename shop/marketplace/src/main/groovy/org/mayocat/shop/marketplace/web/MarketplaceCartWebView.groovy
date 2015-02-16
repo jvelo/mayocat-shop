@@ -160,7 +160,7 @@ class MarketplaceCartWebView implements Resource, WithMarketplaceCartWebObjectBu
             }
         }
 
-        if (removeIndex) {
+        if (removeIndex != null) {
             cartManager.removeItem(removeIndex)
         } else {
             // Handle update request
