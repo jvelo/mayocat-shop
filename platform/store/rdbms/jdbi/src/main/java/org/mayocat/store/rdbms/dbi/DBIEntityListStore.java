@@ -7,6 +7,7 @@
  */
 package org.mayocat.store.rdbms.dbi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -202,6 +203,9 @@ public class DBIEntityListStore extends DBIEntityStore implements EntityListStor
 
     public List<EntityList> findByIds(List<UUID> ids)
     {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
         return this.dao.findByIds(ENTITY_LIST_TABLE_NAME, ids);
     }
 

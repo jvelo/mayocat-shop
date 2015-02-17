@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.customer.store.jdbi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -110,6 +111,10 @@ public class DBICustomerStore extends DBIEntityStore implements CustomerStore, I
     @Override
     public List<Customer> findByIds(List<UUID> ids)
     {
+        if (ids == null || ids.isEmpty()) {
+            // Garbage in, garbage out
+            return Collections.emptyList();
+        }
         return AddonsHelper.withAddons(this.dao.findByIds(CUSTOMER_TABLE_NAME, ids), this.dao);
     }
 
