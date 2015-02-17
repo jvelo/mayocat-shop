@@ -54,7 +54,8 @@ insertOrderItems() ::= <<
 
 updateOrder() ::= <<
     UPDATE purchase_order
-    SET    status = :order.status
+    SET    status = :order.status,
+           creation_date = :order.creationDate
     WHERE  entity_id = :order.id
 >>
 

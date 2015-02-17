@@ -168,6 +168,7 @@ class TenantOrderApi implements Resource
                 return Response.status(404).build()
             } else {
                 order.setStatus(orderApiObject.getStatus())
+                order.setCreationDate(orderApiObject.getCreationDate().toDate())
                 this.orderStore.get().update(order)
                 return Response.ok().build()
             }
