@@ -25,10 +25,10 @@ public class CorsResponseFilter implements ContainerResponseFilter
     @Override
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse)
     {
+        Response.ResponseBuilder response = Response.fromResponse(containerResponse.getResponse());
         CorsSettings corsSettings = Utils.getComponent(CorsSettings.class);
 
         if (corsSettings.isEnabled()) {
-            Response.ResponseBuilder response = Response.fromResponse(containerResponse.getResponse());
             response.header("Access-Control-Allow-Origin", corsSettings.getAllowOrigin())
                     .header("Access-Control-Allow-Methods", corsSettings.getAllowMethods());
 
@@ -49,10 +49,9 @@ public class CorsResponseFilter implements ContainerResponseFilter
             if (!Strings.isNullOrEmpty(corsSettings.getExposeHeaders())) {
                 response.header("Access-Control-Expose-Headers", corsSettings.getExposeHeaders());
             }
-
-            containerResponse.setResponse(response.build());
         }
 
+        containerResponse.setResponse(response.build());
         return containerResponse;
     }
 }
