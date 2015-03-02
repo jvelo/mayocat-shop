@@ -13,6 +13,7 @@ import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.Slugifier
 import org.mayocat.accounts.AccountsService
+import org.mayocat.accounts.PasswordDoesNotMeetRequirementsException
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.api.v1.object.UserAndTenantApiObject
 import org.mayocat.accounts.model.Role
@@ -217,7 +218,14 @@ class TenantManagerApi implements Resource
                 // Set tenant in context so that user is created for that tenant
                 context.setTenant(tenant)
 
-                accountsService.createInitialUser(userAndTenant.user.toUser())
+                try {
+                    accountsService.createInitialUser(userAndTenant.user.toUser())
+                } catch (EntityAlreadyExistsException e) {
+                    return Response.status(Response.Status.CONFLICT).entity("Initial user already exists\n").build()
+                } catch (PasswordDoesNotMeetRequirementsException e) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity("Password does not meet requirements\n").build()
+                }
             }
 
             return Response.created(new URI(tenant.slug)).build();
