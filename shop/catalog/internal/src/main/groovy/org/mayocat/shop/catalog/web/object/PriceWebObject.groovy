@@ -49,8 +49,6 @@ class PriceWebObject
         CurrencyUnit currencyUnit = CurrencyUnit.of(priceCurrency);
         amount = formatter.withLocale(locale).print(Money.of(currencyUnit, price, RoundingMode.HALF_EVEN));
 
-        currencyUnit.getDecimalPlaces();
-
         currency = new CurrencyWebObject();
         currency.withCurrency(priceCurrency, locale)
 
