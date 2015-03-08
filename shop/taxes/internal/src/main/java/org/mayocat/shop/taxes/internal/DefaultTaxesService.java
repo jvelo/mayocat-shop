@@ -38,22 +38,23 @@ public class DefaultTaxesService implements TaxesService
     public BigDecimal getVatRate(Taxable taxable)
     {
         BigDecimal itemVatRate = null;
+
         TaxesSettings taxesSettings = getTaxesSettings();
         BigDecimal defaultVatRate = taxesSettings.getVat().getValue().getDefaultRate();
 
         final Optional<String> vatRateId = taxable.getVatRateId();
         if (vatRateId.isPresent()) {
-            Optional<Rate> rate =
-                    FluentIterable.from(taxesSettings.getVat().getValue().getOtherRates()).filter(new Predicate<Rate>()
-                    {
-                        @Override
-                        public boolean apply(Rate rate)
-                        {
-                            return rate.getId().equals(vatRateId.get());
-                        }
-                    }).first();
+            Optional<Rate> rate = getRateForId(vatRateId.get());
             if (rate.isPresent()) {
                 itemVatRate = rate.get().getValue();
+            }
+        } else if (taxable.getParent().isPresent() && taxable.getParent().get().isLoaded()) {
+            final Taxable parent = (Taxable) taxable.getParent().get().get();
+            if (parent.getVatRateId().isPresent()) {
+                Optional<Rate> rate = getRateForId(parent.getVatRateId().get());
+                if (rate.isPresent()) {
+                    itemVatRate = rate.get().getValue();
+                }
             }
         }
 
@@ -76,6 +77,19 @@ public class DefaultTaxesService implements TaxesService
         );
 
         return itemUnit;
+    }
+
+    private Optional<Rate> getRateForId(final String id)
+    {
+        TaxesSettings taxesSettings = getTaxesSettings();
+        return FluentIterable.from(taxesSettings.getVat().getValue().getOtherRates()).filter(new Predicate<Rate>()
+        {
+            @Override
+            public boolean apply(Rate rate)
+            {
+                return rate.getId().equals(id);
+            }
+        }).first();
     }
 
     private TaxesSettings getTaxesSettings()

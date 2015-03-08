@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.catalog.api.v1
 
+import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
@@ -92,7 +93,7 @@ class TenantHomePageApi implements Resource
                 def product = products.find({ Product product -> product.id == id})
                 if (product != null) {
                     def ProductApiObject featuredProduct = new ProductApiObject()
-                    featuredProduct.withProduct(taxesSettings, product)
+                    featuredProduct.withProduct(taxesSettings, product, Optional.absent())
                     def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 
                     if (featuredImage) {

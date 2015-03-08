@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.marketplace.api.v1
 
+import com.google.common.base.Optional
 import com.google.common.base.Strings
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
@@ -132,7 +133,7 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
             def productApiObject = new ProductApiObject([
                     _href: "${webContext.request.tenantPrefix}/api/products/${product.slug}"
             ])
-            productApiObject.withProduct(taxesSettings, product)
+            productApiObject.withProduct(taxesSettings, product, Optional.absent())
 
             if (product.addons.isLoaded()) {
                 productApiObject.withAddons(product.addons.get())

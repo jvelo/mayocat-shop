@@ -158,7 +158,7 @@ class HomePageApi implements Resource, AttachmentApiDelegate
                     def Tenant tenant = tenants.find({ Tenant tenant -> tenant.id == product.tenantId })
 
                     def ProductApiObject featuredProduct = new ProductApiObject()
-                    featuredProduct.withProduct(taxesSettings, product)
+                    featuredProduct.withProduct(taxesSettings, product, Optional.absent())
                     featuredProduct.withEmbeddedTenant(tenant, globalTimeZone)
                     def featuredImage = images.find({ Image image -> image.attachment.id == product.featuredImageId })
 

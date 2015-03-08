@@ -84,7 +84,7 @@ class ProductApiObject extends BaseApiObject
     // Helper builder methods
 
     @JsonIgnore
-    ProductApiObject withProduct(TaxesSettings taxesSettings, Product product)
+    ProductApiObject withProduct(TaxesSettings taxesSettings, Product product, Optional<Product> parent)
     {
 
         slug = product.slug
@@ -108,6 +108,10 @@ class ProductApiObject extends BaseApiObject
                 if (product.vatRateId.isPresent()) {
                     vatRate = taxesSettings.vat.value.otherRates
                             .find({ Rate rate -> rate.id == product.vatRateId.get() })?.value;
+                }
+                if (!vatRate && parent.isPresent() && parent.get().vatRateId.isPresent()) {
+                    vatRate = taxesSettings.vat.value.otherRates
+                            .find({ Rate rate -> rate.id == parent.get().vatRateId.get() })?.value;
                 }
                 if (!vatRate) {
                     vatRate = taxesSettings.vat.value.defaultRate
@@ -158,6 +162,11 @@ class ProductApiObject extends BaseApiObject
                         product.setVatRateId(null);
                     }
                 }
+                else if (parent.isPresent() && parent.get().vatRateId.isPresent()) {
+                    // For a variant, if the VAT rate is not defined but the parent product is, we use it
+                    vatRate = taxesSettings.vat.value.otherRates
+                            .find({ Rate rate -> rate.id == parent.get().vatRateId.get() })?.value;
+                }
                 if (!vatRate) {
                     vatRate = taxesSettings.vat.value.defaultRate
                 }
@@ -207,7 +216,7 @@ class ProductApiObject extends BaseApiObject
     }
 
     @JsonIgnore
-    ProductApiObject withEmbeddedVariants(TaxesSettings settings, List<Product> variants, WebRequest webRequest)
+    ProductApiObject withEmbeddedVariants(TaxesSettings settings, List<Product> variants, Product product, WebRequest webRequest)
     {
         if (_embedded == null) {
             _embedded = [:]
@@ -219,7 +228,7 @@ class ProductApiObject extends BaseApiObject
             ProductApiObject object = new ProductApiObject([
                     _href: "${webRequest.tenantPrefix}/api/products/${this.slug}/variants/${variant.slug}"
             ])
-            object.withProduct(settings, variant)
+            object.withProduct(settings, variant, Optional.of(product))
             if (variant.getAddons().isLoaded()) {
                 object.withAddons(variant.getAddons().get())
             }

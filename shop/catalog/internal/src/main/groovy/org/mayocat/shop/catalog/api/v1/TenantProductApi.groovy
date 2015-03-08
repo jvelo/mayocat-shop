@@ -37,6 +37,8 @@ import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
 import org.mayocat.shop.catalog.store.ProductStore
+import org.mayocat.shop.taxes.configuration.Mode
+import org.mayocat.shop.taxes.configuration.Rate
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.*
 import org.mayocat.theme.FeatureDefinition
@@ -50,6 +52,7 @@ import javax.inject.Provider
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import java.math.RoundingMode
 
 @Component("/tenant/{tenant}/api/products")
 @Path("/tenant/{tenant}/api/products")
@@ -140,7 +143,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             def productApiObject = new ProductApiObject([
                     _href: "${webContext.request.tenantPrefix}/api/products/${product.slug}"
             ])
-            productApiObject.withProduct(taxesSettings, product)
+            productApiObject.withProduct(taxesSettings, product, Optional.absent())
 
             if (product.addons.isLoaded()) {
                 productApiObject.withAddons(product.addons.get())
@@ -201,7 +204,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
                 ]
         ])
 
-        productApiObject.withProduct(taxesSettings, product)
+        productApiObject.withProduct(taxesSettings, product, Optional.absent())
         productApiObject.withCollectionRelationships(collections)
         productApiObject.withEmbeddedImages(images, product.featuredImageId, webContext.request.tenantPrefix)
         productApiObject.withEmbeddedTenant(webContext.tenant, globalTimeZone)
@@ -212,7 +215,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
 
         if (product.type.isPresent()) {
             productApiObject.
-                    withEmbeddedVariants(taxesSettings, productStore.get().findVariants(product), webContext.request)
+                    withEmbeddedVariants(taxesSettings, productStore.get().findVariants(product), product, webContext.request)
             productApiObject._links.variants =
                     new LinkApiObject([href: "${webContext.request.tenantPrefix}/api/products/${slug}/variants"])
         }
@@ -258,6 +261,8 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             def id = product.id
             def featuredImageId = product.featuredImageId
 
+            Optional<String> originalVatRateId = product.vatRateId;
+
             product = productApiObject.toProduct(taxesSettings, platformSettings,
                     Optional.<ThemeDefinition> fromNullable(webContext.theme?.definition))
             // ID and slugs are not update-able
@@ -276,6 +281,31 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             }
 
             this.productStore.get().update(product);
+
+            if (taxesSettings.mode.value.equals(Mode.INCLUSIVE_OF_TAXES) && !product.vatRateId.equals(originalVatRateId)) {
+                // In INCL mode, if the VAT rate has changed, we must update all variant EXCL prices according
+                // to the new rate.
+
+                // First get the rate value from settings
+                BigDecimal newRate = getRateFromId(product.vatRateId)
+                BigDecimal oldRate = getRateFromId(originalVatRateId)
+
+                List<Product> variants = productStore.get().findVariants(product)
+                variants.each({ Product variant ->
+                    if (!variant.vatRateId.isPresent()) {
+                        // If the variant itself has a VAT rate defined, ignore. Otherwise convert to new rate.
+
+                        // First convert to inclusive price
+                        BigDecimal inclPrice = BigDecimal.ONE.add(oldRate).multiply(variant.price)
+
+                        // Then convert inclusive to exclusive price with new rate
+                        BigDecimal conversionRate = BigDecimal.ONE.
+                                divide(BigDecimal.ONE.add(newRate), 10, RoundingMode.HALF_UP)
+                        variant.price = inclPrice.multiply(conversionRate)
+                        productStore.get().update(variant)
+                    }
+                })
+            }
 
             // Update variants order if needed
             // TODO : do this in a PUT "{slug}/variants" API instead
@@ -299,6 +329,19 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
         } catch (InvalidEntityException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+    private BigDecimal getRateFromId(Optional<String> id)
+    {
+        BigDecimal vatRate
+        if (id.isPresent()) {
+            vatRate = taxesSettings.vat.value.otherRates
+                    .find({ Rate rate -> rate.id == id.get() })?.value;
+        }
+        if (!vatRate) {
+            vatRate = taxesSettings.vat.value.defaultRate
+        }
+        vatRate
     }
 
     @Path("{slug}")
@@ -384,7 +427,7 @@ class TenantProductApi implements Resource, AttachmentApiDelegate, ImageGalleryA
             ProductApiObject object = new ProductApiObject([
                     _href: "${webContext.request.tenantPrefix}/api/products/${product.slug}/variants/${variant.slug}"
             ])
-            object.withProduct(taxesSettings, variant)
+            object.withProduct(taxesSettings, variant, Optional.of(product))
             if (variant.addons.isLoaded()) {
                 object.withAddons(variant.addons.get())
             }
