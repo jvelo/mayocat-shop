@@ -3,12 +3,21 @@
 # --------------------
 
 logging:
+  level: INFO
   loggers:
-      "org.mayocat": DEBUG
-      # Silence MagicParser verbose INFO logs
-      "net.sf.jmimemagic.MagicParser": WARN
-  file:
-    archive: false
+    net.sf.jmimemagic.MagicParser: WARN
+    # org.mayocat.shop: DEBUG
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+    - type: file
+      threshold: ALL
+      currentLogFilename: ../logs/mayocat.log
+      archivedLogFilenamePattern: ../logs/mayocat-%d.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
 
 database:
   driverClass: org.postgresql.Driver
@@ -22,8 +31,6 @@ database:
   minSize: 8
   maxSize: 32
   checkConnectionWhileIdle: true
-  checkConnectionHealthWhenIdleFor: 10s
-  closeConnectionIfIdleFor: 1 minute
 
 files:
   permanentDirectory: data
@@ -65,7 +72,7 @@ general:
 
 theme:
   active:
-    default: default
+    default: minimal
     configurable: true
 
 catalog:
