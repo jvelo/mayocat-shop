@@ -8,6 +8,7 @@
 package org.mayocat.shop.catalog.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -72,6 +73,8 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
     private BigDecimal weight;
 
     private Integer stock;
+
+    private Date creationDate;
 
     @DoNotIndex
     private UUID featuredImageId;
@@ -310,6 +313,16 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
     public void setStock(Integer stock)
     {
         this.stock = stock;
+    }
+
+    public Date getCreationDate()
+    {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate)
+    {
+        this.creationDate = creationDate;
     }
 
     public void setLocalizedVersions(Map<Locale, Map<String, Object>> versions)

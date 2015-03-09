@@ -9,9 +9,11 @@ package org.mayocat.shop.catalog.api.v1.object
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
 import org.hibernate.validator.constraints.NotEmpty
+import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.model.Tenant
@@ -54,6 +56,21 @@ class ProductApiObject extends BaseApiObject
     String description;
 
     Boolean onShelf;
+
+    @JsonIgnore
+    // Ignored on de-serialization only. See getter and setter
+    DateTime creationDate;
+
+    @JsonProperty("creationDate")
+    public DateTime getCreationDate() {
+        return creationDate;
+    }
+
+    @JsonIgnore
+    public void setCreationDate(DateTime creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     BigDecimal price;
@@ -100,6 +117,11 @@ class ProductApiObject extends BaseApiObject
         _localized = product.localizedVersions
 
         vatRate = product.vatRateId
+
+        if (product.creationDate != null) {
+            def timeZone = DateTimeZone.default //FIXME
+            creationDate = new DateTime(product.creationDate.time, timeZone);
+        }
 
         if (product.price) {
             this.price = product.price

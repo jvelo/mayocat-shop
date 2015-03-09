@@ -16,7 +16,6 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.model.Tenant
 import org.mayocat.configuration.PlatformSettings
-import org.mayocat.context.request.WebRequest
 import org.mayocat.image.model.Image
 import org.mayocat.model.AddonGroup
 import org.mayocat.rest.api.object.AddonGroupApiObject
@@ -24,17 +23,14 @@ import org.mayocat.rest.api.object.BaseApiObject
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.theme.ThemeDefinition
 
-import static org.mayocat.rest.api.object.AddonGroupApiObject.forAddonGroup
-import static org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap
-
 /**
  * API object for a tenant
  *
  * @version $Id$
  */
 @CompileStatic
-class TenantApiObject extends BaseApiObject {
-
+class TenantApiObject extends BaseApiObject
+{
     String slug;
 
     String name;
@@ -59,17 +55,20 @@ class TenantApiObject extends BaseApiObject {
     Map<Locale, Map<String, Object>> _localized;
 
     @JsonProperty("creationDate")
-    public DateTime getCreationDate() {
+    public DateTime getCreationDate()
+    {
         return creationDate;
     }
 
     @JsonIgnore
-    public void setCreationDate(DateTime creationDate) {
+    public void setCreationDate(DateTime creationDate)
+    {
         this.creationDate = creationDate;
     }
 
     @JsonIgnore
-    TenantApiObject withTenant(Tenant tenant, DateTimeZone timeZone) {
+    TenantApiObject withTenant(Tenant tenant, DateTimeZone timeZone)
+    {
         slug = tenant.slug
         name = tenant.name
         description = tenant.description
@@ -84,7 +83,8 @@ class TenantApiObject extends BaseApiObject {
     }
 
     @JsonIgnore
-    TenantApiObject withAddons(Map<String, AddonGroup> entityAddons) {
+    TenantApiObject withAddons(Map<String, AddonGroup> entityAddons)
+    {
         if (!addons) {
             addons = [:]
         }
@@ -129,7 +129,8 @@ class TenantApiObject extends BaseApiObject {
     }
 
     @JsonIgnore
-    TenantApiObject withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix) {
+    TenantApiObject withEmbeddedFeaturedImage(Image featuredImage, String tenantPrefix)
+    {
         if (_embedded == null) {
             _embedded = [:]
         }
@@ -154,10 +155,10 @@ class TenantApiObject extends BaseApiObject {
         }
 
         if (addons) {
-            tenant.addons = org.mayocat.rest.api.object.AddonGroupApiObject.toAddonGroupMap(addons, platformSettings, themeDefinition)
+            tenant.addons = org.mayocat.rest.api.object.AddonGroupApiObject.
+                    toAddonGroupMap(addons, platformSettings, themeDefinition)
         }
 
         tenant
     }
-
 }

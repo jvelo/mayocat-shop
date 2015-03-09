@@ -15,7 +15,8 @@ createProduct() ::= <<
         featured_image_id,
         product_type,
         virtual,
-        features
+        features,
+        creation_date
     )
     VALUES (
         :product.id,
@@ -31,7 +32,8 @@ createProduct() ::= <<
         :product.featuredImageId,
         :product.type,
         :product.virtual,
-        :product.features
+        :product.features,
+        :product.creationDate
     )
 >>
 
