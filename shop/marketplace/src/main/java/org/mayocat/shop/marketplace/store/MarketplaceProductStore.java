@@ -36,7 +36,11 @@ public interface MarketplaceProductStore
 
     List<Product> findAllWithTitleLike(String title, Integer number, Integer offset);
 
+    List<Product> findAllOnShelfWithTitleLike(String title, Integer number, Integer offset);
+
     Integer countAllWithTitleLike(String title);
+
+    Integer countAllOnShelfWithTitleLike(String title);
 
     List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset);
 

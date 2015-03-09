@@ -59,7 +59,7 @@ class MarketplaceProductWebView implements Resource, WithProductWebObjectBuilder
         if (Strings.isNullOrEmpty(query)) {
             return new ErrorWebView().status(404)
         }
-        List<Product> products = productStore.findAllWithTitleLike(query, 200, 0)
+        List<Product> products = productStore.findAllOnShelfWithTitleLike(query, 200, 0)
         List<EntityData<Product>> productsData = dataLoader.
                 load(products, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 

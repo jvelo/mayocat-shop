@@ -97,6 +97,20 @@ public class DBIMarketplaceProductStore implements MarketplaceProductStore, Init
     }
 
     @Override
+    public List<Product> findAllOnShelfWithTitleLike(String title, Integer number, Integer offset)
+    {
+        return AddonsHelper
+                .withAddons(this.marketplaceProductDAO.findAllOnShelfWithTitleLike(title, number, offset),
+                        this.marketplaceProductDAO);
+    }
+
+    @Override
+    public Integer countAllOnShelfWithTitleLike(String title)
+    {
+        return this.marketplaceProductDAO.countAllOnShelfWithTitleLike(title);
+    }
+
+    @Override
     public List<Product> findAllForTenant(Tenant tenant, Integer number, Integer offset)
     {
         return AddonsHelper.withAddons(this.marketplaceProductDAO.findAllForTenant(tenant, number, offset),

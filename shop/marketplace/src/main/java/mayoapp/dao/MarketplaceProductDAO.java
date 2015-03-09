@@ -47,7 +47,15 @@ public abstract class MarketplaceProductDAO implements AddonsDAO<Product>
             @Bind("offset") Integer offset);
 
     @SqlQuery
+    public abstract List<Product> findAllOnShelfWithTitleLike(@Bind("title") String title,
+            @Bind("number") Integer number,
+            @Bind("offset") Integer offset);
+
+    @SqlQuery
     public abstract Integer countAllWithTitleLike(@Bind("title") String title);
+
+    @SqlQuery
+    public abstract Integer countAllOnShelfWithTitleLike(@Bind("title") String title);
 
     @SqlQuery
     public abstract List<Product> findAllForTenant(
