@@ -12,16 +12,22 @@ import com.google.common.base.Strings
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
 import groovy.transform.CompileStatic
+import org.joda.time.DateTimeZone
 import org.mayocat.Slugifier
+import org.mayocat.accounts.model.Tenant
+import org.mayocat.attachment.AttachmentLoadingOptions
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.PlatformSettings
+import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.ImageGallery
 import org.mayocat.model.Entity
+import org.mayocat.model.EntityAndParent
 import org.mayocat.model.PositionedEntity
 import org.mayocat.rest.Reference
 import org.mayocat.rest.Resource
@@ -31,6 +37,7 @@ import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
 import org.mayocat.rest.api.object.LinkApiObject
+import org.mayocat.shop.catalog.CatalogService
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionTreeApiObject
@@ -38,7 +45,9 @@ import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
+import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.marketplace.store.MarketplaceProductStore
+import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.store.EntityAlreadyExistsException
 import org.mayocat.store.InvalidEntityException
 import org.mayocat.theme.ThemeDefinition
@@ -71,6 +80,12 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     Provider<MarketplaceProductStore> productStore
 
     @Inject
+    Provider<ProductStore> tenantProductStore
+
+    @Inject
+    CatalogService catalogService
+
+    @Inject
     Slugifier slugifier
 
     @Inject
@@ -83,7 +98,13 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     PlatformSettings platformSettings
 
     @Inject
+    ConfigurationService configurationService
+
+    @Inject
     Logger logger
+
+    @Inject
+    GeneralSettings generalSettings
 
     EntityApiDelegateHandler handler = new EntityApiDelegateHandler() {
         Entity getEntity(String slug)
@@ -155,7 +176,7 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
                     (item.parentSlugs.size() > 0 ? '/collections/' : '')
             item._href = "/api/collections/${parentsChain}${item.slug}"
             item._links = [
-                    self: new LinkApiObject([href: item._href]),
+                    self    : new LinkApiObject([href: item._href]),
                     products: new LinkApiObject([href: item._href + '/products'])
             ]
 
@@ -435,7 +456,6 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     // -----------------------------------------------------------------------------------------------------------------
 
     // Attachments
-
     @POST
     @Path("{parent1}/collections/{slug}/attachments")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -644,7 +664,6 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
     def removeProductFromCollectionInternal(Reference reference, String... slugsArray)
     {
         Collection collection = getCollectionFromSlugChain(slugsArray);
@@ -726,7 +745,6 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
 
         if (!collection) {
             return Response.status(Response.Status.NOT_FOUND).build()
-
         }
         def slug = collection.slug
 
@@ -754,6 +772,42 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
             collectionApiObject.withAddons(collection.addons.get())
         }
         collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
+
+        final EntityAndParent<Collection> collectionChain = collectionStore.get().findBySlugs(slugsArray)
+
+        List<Product> products = tenantProductStore.get().findAllForCollection(collectionChain)
+        List<ProductApiObject> productList = [];
+        List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
+
+        productsData.each({ EntityData<Product> productData ->
+            Product product = productData.entity
+            def productApiObject = new ProductApiObject([
+                    _href: "${context.request.tenantPrefix}/api/products/${product.slug}"
+            ])
+            productApiObject.withProduct(taxesSettings, product, Optional.absent())
+
+            if (product.addons.isLoaded()) {
+                productApiObject.withAddons(product.addons.get())
+            }
+
+            def productImages = productData.getDataList(Image.class)
+            def featuredImage = productImages.find({ Image image -> image.attachment.id == product.featuredImageId })
+            def tenant = productData.getData(Tenant.class).orNull()
+
+            if (featuredImage) {
+                productApiObject.withEmbeddedFeaturedImage(featuredImage, "/tenant/${tenant.slug}")
+            }
+
+            productApiObject.withEmbeddedTenant(tenant, getGlobalTimeZone())
+
+            productList << productApiObject
+        })
+
+        if (collectionApiObject._embedded == null) {
+            collectionApiObject._embedded = [:]
+        }
+
+        collectionApiObject._embedded.products = productList
 
         collectionApiObject
     }
@@ -788,5 +842,15 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
                 findBySlug(slug, parents.size() > 0 ? parents[-1].id : null);
 
         return collection
+    }
+
+    private def TaxesSettings getTaxesSettings()
+    {
+        return configurationService.getSettings(TaxesSettings.class)
+    }
+
+    private def DateTimeZone getGlobalTimeZone()
+    {
+        return DateTimeZone.forTimeZone(generalSettings.time.timeZone.defaultValue)
     }
 }
