@@ -38,6 +38,8 @@ class AbstractProductWebObject
 
     String slug
 
+    Boolean onShelf
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     EntityModelWebObject model
 
@@ -88,6 +90,7 @@ class AbstractProductWebObject
         description = ContextUtils.safeHtml(product.description)
         url = urlFactory.create(product).path
         slug = product.slug
+        onShelf = product.onShelf
 
         if (product.model.isPresent() && themeFileResolver.resolveModelPath(product.model.get()).isPresent()) {
             model = new EntityModelWebObject([
@@ -139,9 +142,9 @@ class AbstractProductWebObject
             }
         }
 
-        if (product.unitPrice != null && inStock) {
+        if (product.onShelf && product.unitPrice != null && inStock) {
             availability = "available"
-        } else if (product.unitPrice != null) {
+        } else if (product.onShelf && product.unitPrice != null) {
             availability = "out_of_stock"
         } else {
             availability = "not_for_sale"
