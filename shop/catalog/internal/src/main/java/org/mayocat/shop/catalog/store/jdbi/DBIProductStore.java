@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.catalog.store.jdbi;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +78,7 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
 
         UUID entityId = UUID.randomUUID();
         product.setId(entityId);
+        product.setCreationDate(new Date());
 
         if (product.getParentId() != null) {
             this.dao.createChildEntity(product, PRODUCT_TABLE_NAME, getTenant());

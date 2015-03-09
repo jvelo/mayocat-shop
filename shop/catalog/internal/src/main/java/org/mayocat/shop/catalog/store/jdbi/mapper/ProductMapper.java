@@ -41,6 +41,7 @@ public class ProductMapper implements ResultSetMapper<Product>
             product.setSlug(resultSet.getString("slug"));
             product.setTitle(resultSet.getString("title"));
             product.setDescription(resultSet.getString("description"));
+            product.setCreationDate(resultSet.getTimestamp("creation_date"));
             if (resultSet.getObject("on_shelf") != null) {
                 product.setOnShelf(resultSet.getBoolean("on_shelf"));
             }
