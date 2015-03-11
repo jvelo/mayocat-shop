@@ -17,7 +17,7 @@ var Mayocat = (function (Mayocat) {
             actions: {
                 add: "Add",
                 remove: "Remove",
-                cancel: "Cancel"
+                cancel: "Cancel",
                 edit: "Edit",
                 close: "Close",
                 save: "Save"
@@ -526,7 +526,8 @@ var Mayocat = (function (Mayocat) {
                 newPassword: "New password",
                 newPasswordAgain: "Type it again",
                 passwordsDoNotMatch: "Passwords do not match",
-                wrongPassword: "Current password not valid"
+                wrongPassword: "Current password not valid",
+                passwordRequirementsNotMet: "Password is not strong enough"
             }
         }
 

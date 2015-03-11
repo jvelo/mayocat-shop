@@ -14,7 +14,7 @@ var Mayocat = (function (Mayocat) {
             actions: {
                 add: "Ajouter",
                 remove: "Retirer",
-                cancel: "Annuler"
+                cancel: "Annuler",
                 edit: "Modifier",
                 close: "Fermer",
                 save: "Sauvegarder"

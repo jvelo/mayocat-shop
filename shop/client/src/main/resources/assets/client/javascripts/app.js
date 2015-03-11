@@ -118,7 +118,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
             controller: 'SettingsTaxesController',
             titleTranslation: 'settings'
         })
-        when('/me', {
+        .when('/me', {
             templateUrl: 'partials/accountSettings.html?1',
             controller: 'AccountSettings',
             title: 'My Account'

@@ -25,8 +25,6 @@ public interface UserStore extends Store<User, UUID>, EntityStore
 {
     User create(@Valid User user, Role initialRole) throws EntityAlreadyExistsException, InvalidEntityException;
 
-    void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException;
-
     User findUserByEmailOrUserName(String userNameOrEmail);
 
     List<Role> findRolesForUser(User user);

@@ -2,7 +2,7 @@ org.mayocat.accounts.internal.session.DefaultJerseyCookieSessionManager
 org.mayocat.accounts.internal.DefaultAccountsService
 org.mayocat.accounts.store.jdbi.DBIUserStore
 org.mayocat.accounts.store.jdbi.DBITenantStore
-org.mayocat.accounts.passwords.zxcvbn.ZxcvbnPasswordStrengthChecker
+org.mayocat.accounts.passwords.DefaultPasswordStrengthChecker
 org.mayocat.accounts.api.v1.ConfigurationApi
 org.mayocat.accounts.api.v1.TenantConfigurationApi
 org.mayocat.accounts.api.v1.LoginApi

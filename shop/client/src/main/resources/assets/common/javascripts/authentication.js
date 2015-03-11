@@ -60,7 +60,7 @@
                     if ((response.status === 401 || (response.status === 403 && response.data.identifier && response.data.identifier === 'INSUFFICIENT_PRIVILEGES'))
                         && !response.config.ignoreAuthModule
                         && response.config.url.indexOf('/api/login/') < 0
-                        && response.config.url.indexOf('/api/me/password/' < 0)) {
+                        && response.config.url.indexOf('/api/me/password') < 0) {
                         var deferred = $q.defer();
                         httpBuffer.append(response.config, deferred);
                         $rootScope.$broadcast('event:authenticationRequired');
@@ -85,7 +85,8 @@
                     'responseError': function (response) {
                         if ((response.status === 401 || (response.status === 403 && response.data.identifier && response.data.identifier === 'INSUFFICIENT_PRIVILEGES'))
                             && !response.config.ignoreAuthModule
-                            && response.config.url.indexOf('/api/login/') < 0) {
+                            && response.config.url.indexOf('/api/login/') < 0
+                            && response.config.url.indexOf('/api/me/password') < 0) {
                             var deferred = $q.defer();
                             httpBuffer.append(response.config, deferred);
                             $rootScope.$broadcast('event:authenticationRequired');

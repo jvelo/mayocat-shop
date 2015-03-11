@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.mayocat.configuration.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 
 /**
  * @version $Id$
@@ -25,8 +26,15 @@ public class PasswordRequirementsSettings
     @JsonProperty
     private Integer minimalLength = 8;
 
+    private Optional<Integer> minimalEntropyBits = Optional.absent();
+
     public Integer getMinimalLength()
     {
         return minimalLength;
+    }
+
+    public Optional<Integer> getMinimalEntropyBits()
+    {
+        return minimalEntropyBits;
     }
 }

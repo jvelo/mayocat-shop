@@ -31,6 +31,7 @@ import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.passwords.PasswordStrengthChecker;
 import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.accounts.store.UserStore;
 import org.mayocat.configuration.ConfigurationService;
@@ -74,6 +75,9 @@ public class DefaultAccountsService implements AccountsService
 
     @Inject
     private PasswordManager passwordManager;
+
+    @Inject
+    private PasswordStrengthChecker passwordStrengthChecker;
 
     @Inject
     private MultitenancySettings multitenancySettings;
@@ -199,21 +203,6 @@ public class DefaultAccountsService implements AccountsService
     }
 
     @Override
-    public void updateUser(User user) throws EntityDoesNotExistException, InvalidEntityException
-    {
-        this.userStore.get().update(user);
-    }
-
-    @Override
-    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
-    {
-        if (!user.isGlobal()) {
-            throw new InvalidEntityException("User is not global");
-        }
-        this.userStore.get().updateGlobalUser(user);
-    }
-
-    @Override
     public List<Role> findRolesForUser(User user)
     {
         return this.userStore.get().findRolesForUser(user);
@@ -262,9 +251,14 @@ public class DefaultAccountsService implements AccountsService
             throw new WrongPasswordException("Refusing to change password : given current password is incorrect");
         }
 
-        AccountsSettings settings = getSettings();
-        if (newPassword.length() < settings.getPasswordRequirements().getMinimalLength()) {
-            throw new PasswordDoesNotMeetRequirementsException("Provided password does not meet requirements");
+        if (!passwordStrengthChecker.checkLength(newPassword)) {
+            throw new PasswordDoesNotMeetRequirementsException(
+                    "Provided password does not meet requirements : length too short");
+        }
+
+        if (!passwordStrengthChecker.checkEntropy(newPassword)) {
+            throw new PasswordDoesNotMeetRequirementsException(
+                    "Provided password does not meet requirements : not enough bits of entropy");
         }
 
         this.userStore.get().updatePassword(user, passwordManager.hashPassword(newPassword));

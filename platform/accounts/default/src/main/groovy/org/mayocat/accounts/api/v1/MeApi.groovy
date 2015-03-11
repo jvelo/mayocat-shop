@@ -10,21 +10,25 @@ package org.mayocat.accounts.api.v1
 import groovy.transform.CompileStatic
 import org.joda.time.DateTimeZone
 import org.mayocat.accounts.AccountsService
+import org.mayocat.accounts.PasswordDoesNotMeetRequirementsException
+import org.mayocat.accounts.WrongPasswordException
+import org.mayocat.accounts.api.v1.object.PasswordChangeWebObject
 import org.mayocat.accounts.api.v1.object.TenantApiObject
 import org.mayocat.accounts.api.v1.object.UserAndTenantApiObject
 import org.mayocat.accounts.api.v1.object.UserApiObject
+import org.mayocat.accounts.session.JerseyCookieSessionManager
 import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.rest.Resource
+import org.mayocat.rest.error.ErrorUtil
+import org.mayocat.rest.error.StandardError
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
-import javax.ws.rs.Consumes
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
+import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 /**
  * @version $Id$
@@ -35,8 +39,8 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_JSON)
 @Authorized
 @CompileStatic
-class MeApi implements Resource {
-    
+class MeApi implements Resource
+{
     @Inject
     AccountsService accountsService
 
@@ -45,6 +49,9 @@ class MeApi implements Resource {
 
     @Inject
     GeneralSettings generalSettings
+
+    @Inject
+    JerseyCookieSessionManager sessionManager
 
     @GET
     def getCurrentUser()
@@ -67,6 +74,30 @@ class MeApi implements Resource {
         userAndTenantApiObject.user = userApiObject
 
         userAndTenantApiObject
+    }
+
+    @POST
+    @Path("password")
+    @Authorized
+    def updatePassword(PasswordChangeWebObject passwordChange)
+    {
+        if (!context.user) {
+            return ErrorUtil.buildError(Response.Status.UNAUTHORIZED, StandardError.REQUIRES_VALID_USER,
+                    "Can't change the password for nobody");
+        } else {
+            try {
+                accountsService.changePassword(context.user, passwordChange.currentPassword, passwordChange.newPassword)
+            } catch (WrongPasswordException e) {
+                return ErrorUtil.buildError(Response.Status.UNAUTHORIZED, StandardError.INVALID_CREDENTIALS,
+                        "Credentials are not correct");
+            } catch (PasswordDoesNotMeetRequirementsException e) {
+                return ErrorUtil.buildError(Response.Status.BAD_REQUEST,
+                        StandardError.PASSWORD_DOES_NOT_MEET_REQUIREMENTS, e.getMessage());
+            }
+        }
+
+        return Response.noContent()
+                .cookie(sessionManager.getCookies(context.user.slug, passwordChange.newPassword, false)).build()
     }
 
     DateTimeZone getGlobalTimeZone()
