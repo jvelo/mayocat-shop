@@ -34,7 +34,7 @@ public class DefaultPasswordStrengthChecker implements PasswordStrengthChecker
     @Override
     public boolean checkLength(String password)
     {
-        return false;
+        return password.length() >= accountsSettings.getPasswordRequirements().getMinimalLength();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DefaultPasswordStrengthChecker implements PasswordStrengthChecker
         if (!accountsSettings.getPasswordRequirements().getMinimalEntropyBits().isPresent()) {
             return true;
         }
-        return meter.getStrength(password).getEntropy() >
+        return meter.getStrength(password).getEntropy() >=
                 accountsSettings.getPasswordRequirements().getMinimalEntropyBits().get();
     }
 }
