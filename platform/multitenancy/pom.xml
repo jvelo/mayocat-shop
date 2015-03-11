@@ -12,31 +12,16 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-multitenancy</artifactId>
-    <packaging>jar</packaging>
-    <version>0.12-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>Mayocat Platform - Multitenancy</name>
-    <description>Multitenancy related interfaces</description>
+    <name>Mayocat Platform - Multitenancy - Parent POM</name>
+    <description>Multitenancy</description>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-accounts-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- XWiki -->
-        <dependency>
-            <groupId>org.xwiki.commons</groupId>
-            <artifactId>xwiki-commons-component-default</artifactId>
-            <version>${xwiki.version}</version>
-        </dependency>
-
-    </dependencies>
-
+    <modules>
+      <module>api</module>
+      <module>default</module>
+    </modules>
 </project>

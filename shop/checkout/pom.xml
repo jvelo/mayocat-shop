@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-checkout</artifactId>
@@ -23,7 +23,22 @@
     <dependencies>
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-cart</artifactId>
+            <artifactId>mayocat-shop-cart-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-front</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-catalog-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

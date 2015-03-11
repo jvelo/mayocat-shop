@@ -1,0 +1,6 @@
+Refactorings
+============
+
+- Clean the groovy build (plugin management / plugin in root pom)
+- Clean dependencies (with tools : mvn dependency:analyze, etc.)
+- Refactor the way all API and front-end URLS are built

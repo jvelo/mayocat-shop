@@ -7,32 +7,37 @@
  */
 package org.mayocat.shop.front.resources;
 
-import com.google.common.base.Optional;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
-import com.yammer.dropwizard.assets.ResourceURL;
-
-import org.mayocat.context.WebContext;
-import org.mayocat.rest.Resource;
-import org.mayocat.theme.Breakpoint;
-import org.mayocat.theme.ThemeFileResolver;
-import org.mayocat.theme.ThemeResource;
-import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Date;
+import org.mayocat.context.WebContext;
+import org.mayocat.rest.Resource;
+import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeResource;
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+
+import io.dropwizard.servlets.assets.ResourceURL;
 
 /**
  * @version $Id$
@@ -99,7 +104,15 @@ public class ResourceResource implements Resource
         String mimeType = guessMimeType(file).or("application/octet-stream");
 
         if (builder == null) {
-            builder = Response.ok(file, mimeType);
+            if (mimeType.equals("application/javascript")) {
+                // Handle javascript files as a special case. Something (what ?) is serializing them as URIs instead
+                // of file contents.
+                // FIXME: find out what at in Jersey or Jackson or DW is doing that and disable that behavior
+                builder = Response.ok(Files.toString(file, Charsets.UTF_8), mimeType);
+            }
+            else {
+                builder = Response.ok(file, mimeType);
+            }
         }
 
         return builder.cacheControl(cacheControl).lastModified(new Date(lastModified)).build();

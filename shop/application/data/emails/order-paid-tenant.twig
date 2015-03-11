@@ -1,0 +1,51 @@
+{% extends 'base-mail.twig' %}
+
+{% block subject %}
+    New purchase order on {{ siteName }}
+{% endblock %}
+
+{% block html_content %}
+    Hello,<br/>
+    <br/>
+    You've received a new order on {{ siteName }}.<br/>
+    <br/>
+    You can handle it in your back-office here :<br/>
+    <br/>
+    {{ siteUrl }}/admin/#/orders/{{ orderId }}<br/>
+    <br/>
+    Order details:<br/>
+    {% for item in items %}
+        - {{ item.title }}<br/>
+        Quantity: {{ item.quantity }}<br/>
+        Unit price: {{ item.unitPrice }}<br/>
+        <br/>
+    {% endfor %}
+    Items total: {{ itemsTotal }}<br/>
+    <br/>
+    {% if shippingTotal -%}
+        Shipping: {{ shipping.title }} {{ shippingTotal }}<br/>
+        <br/>
+    {% endif %}
+    Total: {{ grandTotal }}<br/>
+    <br/>
+    Your information:<br/>
+    <br/>
+    {{ customer.firstName }} {{ customer.lastName }}<br/>
+    {{ customer.email }}<br/>
+    {% if customer.phone %}{{ customer.phone }}<br/>{% endif %}
+    <br/>
+    {% if deliveryAddress %}
+        Shipping Address:<br/>
+        {{ deliveryAddress.street }}<br/>
+        {{ deliveryAddress.zip }} {{ deliveryAddress.city }}<br/>
+        {{ deliveryAddress.country }}<br/>
+        <br/>
+    {%- endif %}
+    {% if billingAddress %}
+        Billing Address:<br/>
+        {{ billingAddress.street }}<br/>
+        {{ billingAddress.zip }} {{ billingAddress.city }}<br/>
+        {{ billingAddress.country }}<br/>
+        <br/>
+    {%- endif %}
+{% endblock %}

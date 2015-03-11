@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-billing</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-billing-api</artifactId>
@@ -37,6 +37,16 @@
             <artifactId>mayocat-platform-model</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-store-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

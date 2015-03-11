@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.rest.Resource;
+import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.shipping.Strategy;
 import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.shop.shipping.store.CarrierStore;
@@ -32,10 +33,11 @@ import org.xwiki.component.annotation.Component;
 /**
  * @version $Id$
  */
-@Component("/api/shipping/carrier/")
-@Path("/api/shipping/carrier/")
+@Component("/tenant/{tenant}/api/shipping/carrier/")
+@Path("/tenant/{tenant}/api/shipping/carrier/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ExistingTenant
 public class CarrierResource implements Resource
 {
     @Inject

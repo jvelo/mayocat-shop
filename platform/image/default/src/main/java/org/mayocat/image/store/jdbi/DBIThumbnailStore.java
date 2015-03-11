@@ -13,7 +13,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.mayocat.image.store.ThumbnailStore;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.image.model.Thumbnail;
 import mayoapp.dao.ThumbnailDAO;
 import org.mayocat.store.rdbms.dbi.DBIProvider;

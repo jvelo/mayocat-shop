@@ -16,7 +16,7 @@ import org.mayocat.shop.shipping.Strategy;
  */
 public class ShippingSettings implements ExposedSettings
 {
-    private Configurable<Strategy> strategy = new Configurable<Strategy>(Strategy.NONE);
+    private Configurable<Strategy> strategy = new Configurable<>(Strategy.NONE);
 
     public String getKey()
     {

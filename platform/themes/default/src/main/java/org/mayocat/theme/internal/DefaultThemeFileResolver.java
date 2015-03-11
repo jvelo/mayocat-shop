@@ -20,6 +20,7 @@ import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.Theme;
 import org.mayocat.theme.ThemeDefinition;
 import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
 import org.mayocat.theme.ThemeResource;
 import org.mayocat.views.Template;
 import org.slf4j.Logger;
@@ -69,6 +70,19 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     }
 
     @Override
+    public Template getTemplate(Theme theme, String name, Optional<Breakpoint> breakpoint)
+            throws TemplateNotFoundException
+    {
+        try {
+            String content = this.getTemplateContent(theme, name, breakpoint);
+            Template template = new Template(generateTemplateId(name, breakpoint), content, true);
+            return template;
+        } catch (IOException e) {
+            throw new TemplateNotFoundException(e);
+        }
+    }
+
+    @Override
     public ThemeResource getResource(String name, Optional<Breakpoint> breakpoint)
     {
         try {
@@ -83,6 +97,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
     @Override
     public Optional<String> resolveModelPath(String id)
     {
+        if (getThemeDefinition() == null) {
+            return Optional.absent();
+        }
         Map<String, Model> models = getThemeDefinition().getModels();
         if (models.containsKey(id)) {
             return Optional.fromNullable(models.get(id).getFile());
@@ -123,6 +140,11 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeResource getResource(Theme theme, String name, Optional<Breakpoint> breakpoint) throws IOException
     {
+        if (theme == null) {
+            // Garbage in, garbage out
+            return null;
+        }
+
         Path path = theme.getPath();
         if (breakpoint.isPresent()) {
             path = path.resolve(breakpoint.get().getFolder());
@@ -192,6 +214,9 @@ public class DefaultThemeFileResolver implements ThemeFileResolver
 
     private ThemeDefinition getThemeDefinition()
     {
+        if (context.getTheme() == null) {
+            return null;
+        }
         return context.getTheme().getDefinition();
     }
 

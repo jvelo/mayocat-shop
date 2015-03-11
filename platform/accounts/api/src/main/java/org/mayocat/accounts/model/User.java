@@ -24,24 +24,30 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class User implements Entity
 {
     @JsonIgnore
-    UUID id;
+    private UUID id;
 
     @Index
     @NotNull
     @Size(min = 1)
-    String slug;
+    private String slug;
 
     @Index
     @Pattern(regexp = "^(([^@\\s]+)@((?:[-a-zA-Z0-9]+\\.)+[a-zA-Z]{2,}))?$", message = "Not a valid email")
     @NotNull
-    String email;
+    private String email;
 
     /**
      * The password hash.
      */
     @NotNull
     @JsonSerialize(using = PasswordSerializer.class)
-    String password;
+    private String password;
+
+    @NotNull
+    private Boolean active;
+
+    @JsonIgnore
+    private String validationKey;
 
     @JsonIgnore
     private boolean global = false;
@@ -97,6 +103,31 @@ public class User implements Entity
     public void setSlug(String slug)
     {
         this.slug = slug;
+    }
+
+    public Boolean isActive()
+    {
+        return active;
+    }
+
+    public Boolean getActive()
+    {
+        return active;
+    }
+
+    public void setActive(Boolean active)
+    {
+        this.active = active;
+    }
+
+    public String getValidationKey()
+    {
+        return validationKey;
+    }
+
+    public void setValidationKey(String validationKey)
+    {
+        this.validationKey = validationKey;
     }
 
     public boolean isGlobal()

@@ -72,10 +72,10 @@ describe('Addons', function () {
                 expect(returnedAddons.length).toBe(1);
                 expect(returnedAddons[0].key).toBe("extra");
                 expect(returnedAddons[0].fields.length).toBe(1);
-                expect(returnedAddons[0].fields[0].index).toBe(0);
 
-                expect(todo.addons.length).toBe(1);
-                expect(todo.addons[0].value).toBe(null);
+                expect(todo.addons.extra).toBeDefined();
+                expect(todo.addons.extra.value.delegate_to).toBeDefined();
+                expect(todo.addons.extra.value.delegate_to).toBe(null);
             });
 
             httpBackend.flush();
@@ -87,15 +87,16 @@ describe('Addons', function () {
                 returnedAddons,
                 todo = {
                     title: "My todo",
-                    addons: [
-                        {
-                            'key': "delegate_to",
-                            'group': "extra",
+                    addons: {
+                        extra: {
+                            group: "extra",
                             source: "platform",
-                            type: "string",
-                            value: "Somebody better"
+                            value: {
+                                delegate_to: "Somebody better"
+                            }
+
                         }
-                    ]
+                    }
                 };
 
             addonsService.initializeEntityAddons("todo", todo).then(function (addons) {
@@ -112,10 +113,8 @@ describe('Addons', function () {
                 expect(returnedAddons.length).toBe(1);
                 expect(returnedAddons[0].key).toBe("extra");
                 expect(returnedAddons[0].fields.length).toBe(1);
-                expect(returnedAddons[0].fields[0].index).toBe(0);
-
-                expect(todo.addons.length).toBe(1);
-                expect(todo.addons[0].value).toBe("Somebody better");
+                expect(todo.addons.extra).toBeDefined();
+                expect(todo.addons.extra.value.delegate_to).toBe("Somebody better");
             });
 
             httpBackend.flush();
@@ -143,7 +142,7 @@ describe('Addons', function () {
             expect(
                 addonsService.editor("string", {})
             ).toBe(
-                "<input ng-model=object.value type='text' >"
+                "<input ng-model=object[key] type='text' >"
             );
 
             // Simple string, disabled
@@ -154,7 +153,7 @@ describe('Addons', function () {
                     }
                 })
             ).toBe(
-                "<input ng-model=object.value type='text' disabled='disabled' >"
+                "<input ng-model=object[key] type='text' disabled='disabled' >"
             );
 
             // Textarea
@@ -163,7 +162,7 @@ describe('Addons', function () {
                     "editor" : "textarea"
                 })
             ).toBe(
-                "<textarea ng-model=object.value ></textarea>"
+                "<textarea ng-model=object[key] ></textarea>"
             );
 
             // With placeholder

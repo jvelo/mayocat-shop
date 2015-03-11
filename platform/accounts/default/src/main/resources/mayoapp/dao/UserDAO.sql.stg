@@ -4,22 +4,48 @@ create() ::= <<
     INSERT INTO agent
                 (entity_id,
                  email,
-                 password)
+                 password,
+                 active,
+                 validation_key)
     VALUES      (:user.id,
                  :user.email,
-                 :user.password)
+                 :user.password,
+                 :user.active,
+                 :user.validationKey)
 >>
 
 update() ::= <<
     UPDATE agent
-    SET    password = :u.password
+    SET    email = :u.email,
+           active = :u.active,
+           validation_key = :u.validationKey
     WHERE  entity_id = :u.id
 >>
 
-updateGlobalUser() ::= <<
+changePassword() ::= <<
     UPDATE agent
-    SET    password = :user.password
+    SET    password = :hash
     WHERE  entity_id = :user.id
+>>
+
+createPasswordResetRequest() ::= <<
+    INSERT INTO password_reset_request
+                (agent_id,
+                 reset_key)
+    VALUES      (:user.id,
+                 :resetKey)
+>>
+
+deletePasswordResetRequest() ::= <<
+    DELETE
+    FROM    password_reset_request
+    WHERE   reset_key =:resetKey
+>>
+
+findUserIdForPasswordResetKey() ::= <<
+    SELECT  agent_id
+    FROM    password_reset_request
+    WHERE   reset_key = :resetKey
 >>
 
 addRoleToUser() ::= <<
@@ -48,7 +74,7 @@ findByEmailOrUserNameAndTenant() ::= <<
                    ON entity.id = agent.entity_id
     WHERE  ( agent.email = :userNameOrEmail
               OR entity.slug = :userNameOrEmail )
-           AND entity.tenant_id = :t.id
+           AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
            AND entity.type = 'user'
 >>
 
@@ -64,7 +90,7 @@ findAllUsers() ::= <<
            INNER JOIN agent
                    ON entity.id = agent.entity_id
     WHERE  entity.type = 'user'
-           AND entity.tenant_id = :tenant.id
+           AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
     LIMIT  :number
     OFFSET :offset
 >>
@@ -80,7 +106,6 @@ findAllGlobalUsers() ::= <<
     OFFSET :offset
 >>
 
-
 findUserBySlug() ::= <<
     SELECT *
     FROM   entity
@@ -88,5 +113,23 @@ findUserBySlug() ::= <<
                    ON entity.id = agent.entity_id
     WHERE entity.slug = :slug
            AND entity.type = 'user'
-           AND entity.tenant_id = :tenant.id
+           AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+>>
+
+findGlobalUserBySlug() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE entity.slug = :slug
+           AND entity.type = 'user'
+           AND entity.tenant_id IS NULL
+>>
+
+findByValidationKey() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN agent
+                   ON entity.id = agent.entity_id
+    WHERE validation_key = :validationKey
 >>

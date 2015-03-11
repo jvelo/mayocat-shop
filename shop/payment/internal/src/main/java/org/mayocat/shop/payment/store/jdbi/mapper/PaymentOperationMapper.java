@@ -32,21 +32,25 @@ public class PaymentOperationMapper implements ResultSetMapper<PaymentOperation>
     public PaymentOperation map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         PaymentOperation operation = new PaymentOperation();
-        operation.setId((UUID) resultSet.getObject("id"));
+        operation.setId((UUID) resultSet.getObject("operation_id"));
         operation.setOrderId((UUID) resultSet.getObject("order_id"));
-        operation.setExternalId(resultSet.getString("id"));
+        operation.setExternalId(resultSet.getString("external_id"));
         operation.setGatewayId(resultSet.getString("gateway_id"));
         operation.setResult(PaymentOperation.Result.valueOf(resultSet.getString("result")));
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
-        try {
-            Map<String, Object> data = mapper.readValue(resultSet.getString("memo"),
-                    new TypeReference<Map<String, Object>>(){});
-            operation.setMemo(data);
-        } catch (IOException e) {
-            final Logger logger = LoggerFactory.getLogger(PaymentOperationMapper.class);
-            logger.error("Failed to de-serialize payment operation memo", e);
+        if (resultSet.getString("memo") != null) {
+            try {
+                Map<String, Object> data = mapper.readValue(resultSet.getString("memo"),
+                        new TypeReference<Map<String, Object>>()
+                        {
+                        });
+                operation.setMemo(data);
+            } catch (IOException e) {
+                final Logger logger = LoggerFactory.getLogger(PaymentOperationMapper.class);
+                logger.error("Failed to de-serialize payment operation memo", e);
+            }
         }
 
         return operation;

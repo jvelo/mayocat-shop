@@ -42,6 +42,8 @@ public class Carrier implements Identifiable
 
     private BigDecimal perAdditionalUnit;
 
+    private BigDecimal vatRate = BigDecimal.ZERO;
+
     private List<CarrierRule> rules = new ArrayList<CarrierRule>();
 
     public UUID getId()
@@ -162,6 +164,16 @@ public class Carrier implements Identifiable
     public void setPerAdditionalUnit(BigDecimal perAdditionalUnit)
     {
         this.perAdditionalUnit = perAdditionalUnit;
+    }
+
+    public BigDecimal getVatRate()
+    {
+        return vatRate;
+    }
+
+    public void setVatRate(BigDecimal vatRate)
+    {
+        this.vatRate = vatRate;
     }
 
     @Override

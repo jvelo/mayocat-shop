@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.flyway.migrations.AbstractJdbcMigration;
+import org.mayocat.flyway.migrations.PG_UUID;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
  *
  * @version $Id$
  */
-public class V0075_0003__update_tenant_configurations extends AbstractJdbcMigration implements JdbcMigration
+public class V0075_0003__update_tenant_configurations implements JdbcMigration
 {
     private class ConfigurationAndName {
         private String configuration;

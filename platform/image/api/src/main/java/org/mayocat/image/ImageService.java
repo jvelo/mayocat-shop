@@ -8,11 +8,10 @@
 package org.mayocat.image;
 
 import java.awt.*;
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.xwiki.component.annotation.Role;
 
 import com.google.common.base.Optional;

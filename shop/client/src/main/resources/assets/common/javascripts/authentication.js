@@ -42,12 +42,14 @@
             };
         }])
 
-        /**
-        * $http interceptor.
-        * On 401 response (without 'ignoreAuthModule' option) stores the request
-        * and broadcasts 'event:angular-auth-loginRequired'.
-        */
-        .config(['$httpProvider', function ($httpProvider) {
+    /**
+     * $http interceptor.
+     * On 401 response (without 'ignoreAuthModule' option) stores the request
+     * and broadcasts 'event:angular-auth-loginRequired'.
+     */
+        .config(['$httpProvider', '$provide', function ($httpProvider, $provide) {
+
+            /* Angular 1.2 */
 
             var interceptor = ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
                 function success(response) {
@@ -55,8 +57,10 @@
                 }
 
                 function error(response) {
-                    if (response.status === 401 && !response.config.ignoreAuthModule
-                        && response.config.url != '/api/login/' && response.config.url != '/api/me/password/') {
+                    if ((response.status === 401 || (response.status === 403 && response.data.identifier && response.data.identifier === 'INSUFFICIENT_PRIVILEGES'))
+                        && !response.config.ignoreAuthModule
+                        && response.config.url.indexOf('/api/login/') < 0
+                        && response.config.url.indexOf('/api/me/password/' < 0)) {
                         var deferred = $q.defer();
                         httpBuffer.append(response.config, deferred);
                         $rootScope.$broadcast('event:authenticationRequired');
@@ -71,7 +75,30 @@
                 };
 
             }];
-            $httpProvider.responseInterceptors.push(interceptor);
+
+            $httpProvider.responseInterceptors && $httpProvider.responseInterceptors.push(interceptor);
+
+            /* Angular 1.3 */
+
+            $provide.factory('authenticationInterceptor', ['$rootScope', '$q', 'httpBuffer', function ($rootScope, $q, httpBuffer) {
+                return {
+                    'responseError': function (response) {
+                        if ((response.status === 401 || (response.status === 403 && response.data.identifier && response.data.identifier === 'INSUFFICIENT_PRIVILEGES'))
+                            && !response.config.ignoreAuthModule
+                            && response.config.url.indexOf('/api/login/') < 0) {
+                            var deferred = $q.defer();
+                            httpBuffer.append(response.config, deferred);
+                            $rootScope.$broadcast('event:authenticationRequired');
+                            return deferred.promise;
+                        }
+                        // otherwise, default behaviour
+                        return $q.reject(response);
+                    }
+                };
+            }]);
+
+            $httpProvider.interceptors && $httpProvider.interceptors.push('authenticationInterceptor');
+
         }]);
 
 

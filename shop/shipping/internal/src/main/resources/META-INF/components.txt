@@ -1,4 +1,5 @@
 org.mayocat.shop.shipping.rest.resource.DestinationsResource
+org.mayocat.shop.shipping.rest.resource.TenantDestinationsResource
 org.mayocat.shop.shipping.rest.resource.CarrierResource
 org.mayocat.shop.shipping.configuration.ShippingGestaltConfigurationSource
 org.mayocat.shop.shipping.store.jdbi.DBICarrierStore

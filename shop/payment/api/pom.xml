@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-payment</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-payment-api</artifactId>
@@ -31,6 +31,11 @@
             <groupId>org.xwiki.commons</groupId>
             <artifactId>xwiki-commons-component-api</artifactId>
             <version>${xwiki.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mayocat.shop</groupId>

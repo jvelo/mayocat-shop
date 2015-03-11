@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-configuration</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-configuration-platform</artifactId>
     <packaging>jar</packaging>
@@ -26,7 +26,6 @@
             <artifactId>mayocat-platform-addons-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.mayocat.platform</groupId>

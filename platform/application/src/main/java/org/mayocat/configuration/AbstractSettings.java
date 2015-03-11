@@ -10,11 +10,15 @@ package org.mayocat.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.mayocat.accounts.AccountsSettings;
 import org.mayocat.configuration.general.FilesSettings;
 import org.mayocat.mail.SmtpSettings;
+import org.mayocat.rest.CorsSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
+
+import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
 
 /**
  * @version $Id$
@@ -25,6 +29,11 @@ public class AbstractSettings extends Configuration
     @NotNull
     @JsonProperty
     private PlatformSettings platform = new PlatformSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private AccountsSettings accounts = new AccountsSettings();
 
     @Valid
     @NotNull
@@ -40,7 +49,6 @@ public class AbstractSettings extends Configuration
     @NotNull
     @JsonProperty
     private FilesSettings files = new FilesSettings();
-
 
     @Valid
     @NotNull
@@ -60,6 +68,15 @@ public class AbstractSettings extends Configuration
     @Valid
     @JsonProperty
     private LocalizationFilterSettings localizationFilter = new LocalizationFilterSettings();
+
+    @Valid
+    @JsonProperty
+    private CorsSettings cors = new CorsSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
     public MultitenancySettings getMultitenancySettings()
     {
@@ -99,5 +116,20 @@ public class AbstractSettings extends Configuration
     public LocalizationFilterSettings getLocalizationFilterSettings()
     {
         return localizationFilter;
+    }
+
+    public CorsSettings getCorsSettings()
+    {
+        return cors;
+    }
+
+    public AccountsSettings getAccountsSettings()
+    {
+        return accounts;
+    }
+
+    public JerseyClientConfiguration getJerseyClientConfiguration()
+    {
+        return httpClient;
     }
 }

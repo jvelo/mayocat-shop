@@ -8,14 +8,9 @@
 package org.mayocat.shop.front.resources;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-
-import org.mayocat.model.Attachment;
-import org.mayocat.shop.front.WebViewTransformer;
+import org.mayocat.attachment.model.Attachment;
 
 /**
  * @version $Id$

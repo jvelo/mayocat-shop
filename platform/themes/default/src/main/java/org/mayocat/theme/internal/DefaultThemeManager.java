@@ -7,34 +7,36 @@
  */
 package org.mayocat.theme.internal;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.base.Optional;
-import com.google.common.io.Resources;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
-
-import org.mayocat.accounts.model.Tenant;
-import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.general.FilesSettings;
-import org.mayocat.configuration.theme.ThemeSettings;
-import org.mayocat.context.WebContext;
-import org.mayocat.theme.*;
-import org.slf4j.Logger;
-import org.xwiki.component.annotation.Component;
-
-import javax.inject.Inject;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.general.FilesSettings;
+import org.mayocat.configuration.theme.ThemeSettings;
+import org.mayocat.context.WebContext;
+import org.mayocat.theme.Theme;
+import org.mayocat.theme.ThemeDefinition;
+import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
+import org.slf4j.Logger;
+import org.xwiki.component.annotation.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 /**
  * @version $Id$
@@ -68,7 +70,7 @@ public class DefaultThemeManager implements ThemeManager
     private final static String TENANTS_FOLDER_NAME = "tenants";
 
     @Inject
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectMapper mapper;
 
     @Inject
     private Logger logger;
@@ -83,7 +85,22 @@ public class DefaultThemeManager implements ThemeManager
     private FilesSettings filesSettings;
 
     @Inject
+    private ThemeSettings themeSettings;
+
+    @Inject
     private WebContext context;
+
+
+    public Theme getDefaultTheme()
+    {
+        return getTheme(themeSettings.getActive().getDefaultValue(), Optional.<Tenant>absent(),
+                Collections.<Level>emptyList());
+    }
+
+    public Theme getTheme(String themeName)
+    {
+        return getTheme(themeName, Optional.<Tenant>absent(), Collections.<Level>emptyList());
+    }
 
     public Theme getTheme()
     {
@@ -99,7 +116,6 @@ public class DefaultThemeManager implements ThemeManager
     private Theme getTheme(String themeId, Optional<Tenant> tenant, List<Level> ignore)
     {
         Level level = Level.TENANT_DIRECTORY;
-        ObjectMapper mapper = objectMapperFactory.build(new YAMLFactory());
         JsonNode node;
 
         Path themeDirectory = null;
@@ -123,12 +139,12 @@ public class DefaultThemeManager implements ThemeManager
                     ThemeDefinition definition =
                             mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
 
-                    Theme theme = new Theme(path.get(), definition, null, Theme.Type.CLASSPATH);
-                    return theme;
+                    return new Theme(path.get(), definition, null, Theme.Type.CLASSPATH);
                 } catch (JsonProcessingException e) {
                     Theme theme = new Theme(path.get(), null, null, Theme.Type.CLASSPATH, false);
                 } catch (IOException e) {
                     // Surrender
+                    logger.error("Could not resolve theme", e);
                     return null;
                 }
             } else {
@@ -137,16 +153,24 @@ public class DefaultThemeManager implements ThemeManager
             }
         }
 
+        if (themeDirectory == null || !themeDirectory.resolve("theme.yml").toFile().isFile()) {
+            // Theme not found
+            return null;
+        }
+
         ThemeDefinition definition = null;
         Theme parent = null;
         boolean definitionValid = true;
+        logger.debug("Theme directory resolved to [{}]", themeDirectory.toString());
         try {
             node = mapper.readTree(themeDirectory.resolve("theme.yml").toFile());
             definition = mapper.readValue(new TreeTraversingParser(node), ThemeDefinition.class);
         } catch (JsonProcessingException e) {
             definition = null;
             definitionValid = false;
+            logger.warn("Trying to load invalid theme. Error: {}", e.getMessage());
         } catch (IOException e) {
+            logger.error("I/O exception parsing theme", e);
             // theme.yml file not found -> theme might have a parent
             if (tenant.isPresent()) {
                 parent = getTheme(themeId, Optional.<Tenant>absent(), Arrays.asList(level));
@@ -192,6 +216,7 @@ public class DefaultThemeManager implements ThemeManager
     private String getActiveThemeId(Tenant tenant)
     {
         ThemeSettings settings = configurationService.getSettings(ThemeSettings.class, tenant);
+        logger.debug("Get active theme id, {}, {}", tenant, settings.getActive().getValue());
         return settings.getActive().getValue();
     }
 }

@@ -33,11 +33,15 @@
             }
         ])
 
+        // FIXME
+        // Ideally this entityBaseMixin (actually the whole "common" module) should not depend on $routeParams as
+        // consumers might use something else for routing (like ui-router for example).
+
         .factory('entityBaseMixin', ["$routeParams" , "$rootScope", function ($routeParams, $rootScope) {
             return function (entityType, options) {
                 options = typeof options === "undefined" ? {} : options;
 
-                var slug = $routeParams[entityType];
+                var slug = $routeParams[entityType] || options.slug;
 
                 var mixin = {
                     slug: slug,
@@ -51,6 +55,11 @@
                         scope.initializeAddons && scope.initializeAddons();
                         scope.initializeModels && scope.initializeModels();
                         scope.initializeLocalization && scope.initializeLocalization();
+                        scope.initializeImages && scope.initializeImages();
+                        $rootScope.$broadcast("entity:initialized", {
+                            type: entityType,
+                            uri: (options.apiBase || "/api/" + entityType + "s/") + scope.slug + "/"
+                        });
                     }
                 };
 
@@ -111,6 +120,30 @@
                     });
                 }
 
+                mixin.removeSequenceAddonItem = function (group, index) {
+                    var $scope = this,
+                        localizedKey = "localized" + capitalize(entityType);
+                    $scope[entityType].addons[group.key].value.splice(index, 1);
+
+                    if (typeof $scope[entityType]._localized !== 'undefined') {
+                        Object.keys($scope[entityType]._localized).forEach(function (locale) {
+                            $scope[entityType]._localized[locale].addons[group.key].value.splice(index, 1);
+                        });
+                    }
+                }
+
+                mixin.addSequenceAddonItem = function (group) {
+                    var $scope = this,
+                        localizedKey = "localized" + capitalize(entityType);
+                    $scope[entityType].addons[group.key].value.push(group.getValueShell());
+
+                    if (typeof $scope[entityType]._localized !== 'undefined') {
+                        Object.keys($scope[entityType]._localized).forEach(function (locale) {
+                            $scope[entityType]._localized[locale].addons[group.key].value.push(group.getValueShell());
+                        });
+                    }
+                }
+
                 return mixin;
             }
         }])
@@ -132,7 +165,6 @@
                     scope[localizedKey] = scope[entityType];
                     scope.$on("entity:editedLocaleChanged", function (event, data) {
                         // Save edited version if necessary
-
                         if (typeof scope[entityType] === "undefined" ||
                             (typeof scope[entityType].$resolved !== 'undefined' && !scope[entityType].$resolved)) {
                             // We are not ready
@@ -146,16 +178,18 @@
                         if (typeof scope[entityType]._localized[data.locale] !== 'undefined' && !data.isMainLocale) {
                             // If there is a localized version with the new locale to be edited, then use it
                             scope[localizedKey] = scope[entityType]._localized[data.locale];
-
+                            scope.editedLocalePrefix = '/' + data.locale;
                         }
                         else if (!data.isMainLocale) {
                             // Else if it's not the main locale to be edited, edit it
                             scope[entityType]._localized[data.locale] = {};
                             scope[localizedKey] = scope[entityType]._localized[data.locale];
+                            scope.editedLocalePrefix = '/' + data.locale;
 
                         } else {
                             // Else edit the main locale
                             scope[localizedKey] = scope[entityType];
+                            scope.editedLocalePrefix = ''
                         }
                     });
 
@@ -165,21 +199,60 @@
             }
         }])
 
-        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', 'entityLocalizationMixin',
-            function ($http, $rootScope, $modal, entityLocalizationMixin) {
+        .factory('entityImageMixin', ['$http', '$rootScope', '$modal', '$location', '$translate', 'notificationService',
+            function ($http, $rootScope, $modal, $location, $translate, notificationService) {
             return function (entityType, options) {
                 var mixin = {};
 
                 options = typeof options === "undefined" ? {} : options;
 
+                mixin.initializeImages = function () {
+                    var $scope = this;
+                    $rootScope.$on("upload:done", function(event, memo) {
+                        if (memo.entityUri == $location.path() && memo.id == 'image-gallery') {
+                            $scope.reloadImages();
+                        }
+                    });
+                }
+
+                mixin.getImagesSortableOptions = function () {
+                    var $scope = this;
+                    return {
+                        update: function (e, ui) {
+                            $scope.saveImagesGallery();
+                        }
+                    }
+                };
+
+                mixin.saveImagesGallery = function () {
+                    var $scope = this;
+                    $http.post($scope[entityType]._links.images.href, {
+                        images: $scope[entityType]._embedded.images
+                    }).success(function () {
+                        $scope.imagesDirty = false;
+                        notificationService.notify($translate('image.status.moved'));
+                    });
+                }
+
+                mixin.getNumberOfImages = function () {
+                    var $scope = this;
+                    if (typeof $scope[entityType] !== 'undefined' &&
+                        typeof $scope[entityType]._embedded !== 'undefined' &&
+                        typeof $scope[entityType]._embedded.images !== 'undefined') {
+
+                        return $scope[entityType]._embedded.images.length;
+                    }
+                    return 0;
+                }
+
                 mixin.editImage = function (image) {
                     var scope = this,
-                        modalScope = $rootScope.$new(true);
+                        modalScope = $rootScope.$new();
                     modalScope.entityType = entityType;
                     modalScope.image = image;
 
                     scope.modalInstance = $modal.open({
-                        templateUrl: '/common/partials/editImage.html?3',
+                        templateUrl: '/common/partials/editImage.html',
                         windowClass: 'editImage',
                         controller: 'ImageEditorController',
                         scope: modalScope
@@ -193,10 +266,6 @@
                     var scope = this;
                     $http.get($rootScope.entity.uri + "/images")
                         .success(function (data) {
-
-                            // TODO
-                            // remove when all entities have adopted the new API model (_embedded images, see below)
-                            scope[entityType].images = data;
 
                             if (typeof scope[entityType]._embedded !== "undefined") {
                                 scope[entityType]._embedded.images = data;
@@ -212,34 +281,18 @@
                     var scope = this,
                         entity = scope[entityType];
 
-                    if (typeof entity._embedded === 'undefined') {
-                        // TODO
-                        // remove when all entities have adopted the new API model (_embedded images, see below)
-                        for (var img in entity.images) {
-                            if (entity.images.hasOwnProperty(img)) {
-                                if (entity.images[img].href === image.href) {
-                                    entity.images[img].featured = true;
-                                    entity.featuredImage = entity.images[img];
-                                }
-                                else {
-                                    entity.images[img].featured = false;
-                                }
+                    for (var img in entity._embedded.images) {
+                        if (entity._embedded.images.hasOwnProperty(img)) {
+                            if (entity._embedded.images[img]._href === image._href) {
+                                entity._embedded.images[img].featured = true;
+                            }
+                            else {
+                                entity._embedded.images[img].featured = false;
                             }
                         }
                     }
-                    else {
-                        for (var img in entity._embedded.images) {
-                            if (entity._embedded.images.hasOwnProperty(img)) {
-                                if (entity._embedded.images[img]._href === image._href) {
-                                    entity._embedded.images[img].featured = true;
-                                    entity._embedded.featuredImage = entity.images[img];
-                                }
-                                else {
-                                    entity._embedded.images[img].featured = false;
-                                }
-                            }
-                        }
-                    }
+
+                    scope.saveImagesGallery();
                 }
 
                 mixin.removeImage = function (image) {
@@ -312,9 +365,9 @@
                     '<div class="locales-wrapper input-append"><div ng-transclude></div>' +
                     '<span class="locales-switch add-on">' +
                     '<div class="btn-group"><a class="btn dropdown-toggle" data-toggle="dropdown">' +
-                    '<img src="/common/images/flags/{{selectedLocale}}.png"/> <span class="caret"></span></a>' +
+                    '<img ng-src="/common/images/flags/{{selectedLocale}}.png"/> <span class="caret"></span></a>' +
                     '<ul class="dropdown-menu">' +
-                    '<li ng-repeat="locale in locales" ng-click="select(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>' +
+                    '<li ng-repeat="locale in locales" ng-click="select(locale)"><img ng-src="/common/images/flags/{{locale}}.png" /></li>' +
                     '</ul>' +
                     '</div>',
                 compile:function (element, attrs, transclude) {

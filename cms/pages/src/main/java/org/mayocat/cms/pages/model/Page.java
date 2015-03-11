@@ -7,7 +7,6 @@
  */
 package org.mayocat.cms.pages.model;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -15,7 +14,7 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
 import org.mayocat.model.Entity;
@@ -55,7 +54,7 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     @Index
     private String content;
 
-    private Association<List<Addon>> addons = Association.notLoaded();
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     private Optional<String> model = Optional.absent();
 
@@ -137,14 +136,15 @@ public class Page implements Entity, Localized, Child, HasAddons, HasModel, HasF
     }
 
     @Override
-    public Association<List<Addon>> getAddons()
+    public Association<Map<String, AddonGroup>> getAddons()
     {
         return addons;
     }
 
-    public void setAddons(List<Addon> addons)
+    @Override
+    public void setAddons(Map<String, AddonGroup> addons)
     {
-        this.addons = new Association<List<Addon>>(addons);
+        this.addons = new Association(addons);
     }
 
     public void setModel(String model)

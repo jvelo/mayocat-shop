@@ -13,7 +13,6 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.jdbi.mapper.TenantMapper;
 import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.store.rdbms.dbi.argument.DateAsTimestampArgumentFactory;
-import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;

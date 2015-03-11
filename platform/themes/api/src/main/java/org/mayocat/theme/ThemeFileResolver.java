@@ -39,6 +39,17 @@ public interface ThemeFileResolver
     Template getTemplate(String name, Optional<Breakpoint> breakpoint) throws TemplateNotFoundException;
 
     /**
+     * Gets the template with the given name for a given breakpoint and a given theme
+     *
+     * @param theme the theme to get the template from
+     * @param name the name of the template to get. For example "product.html.tpl" or "user.mustache", etc.
+     * @param breakpoint the optional breakpoint to get the template for (none, or mobile, or tablet, etc.)
+     * @return the found template
+     * @throws TemplateNotFoundException when the template is not found
+     */
+    Template getTemplate(Theme theme, String name, Optional<Breakpoint> breakpoint) throws TemplateNotFoundException;
+
+    /**
      * Gets a resource (an image, a font, a CSS file, the theme.yml file, etc.) with a given name and for a given
      * breakpoint.
      *

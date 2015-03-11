@@ -8,12 +8,12 @@
 package org.mayocat.flyway;
 
 import com.googlecode.flyway.core.Flyway;
-import com.yammer.dropwizard.cli.ConfiguredCommand;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
 
+import io.dropwizard.Configuration;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.DatabaseConfiguration;
+import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
@@ -23,12 +23,11 @@ public class FlywayMigrateCommand<T extends Configuration> extends ConfiguredCom
 {
     public static final String MAYOAPP_MIGRATIONS = "mayoapp/migrations";
 
-    private final ConfigurationStrategy<T> strategy;
+    private final DatabaseConfiguration<T> strategy;
 
     private final Class<T> configurationClass;
 
-    public FlywayMigrateCommand(ConfigurationStrategy<T> strategy,
-            Class<T> configurationClass)
+    public FlywayMigrateCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass)
     {
         super("flyway-migrate", "Migrate database with Flyway");
 
@@ -37,14 +36,16 @@ public class FlywayMigrateCommand<T extends Configuration> extends ConfiguredCom
     }
 
     @Override
-    protected Class<T> getConfigurationClass() {
+    protected Class<T> getConfigurationClass()
+    {
         return configurationClass;
     }
 
     @Override
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception
     {
-        final DatabaseConfiguration dbConfig = strategy.getDatabaseConfiguration(configuration);
+        final DataSourceFactory dbConfig = strategy.getDataSourceFactory(configuration);
+
         dbConfig.setMaxSize(1);
         dbConfig.setMinSize(1);
 

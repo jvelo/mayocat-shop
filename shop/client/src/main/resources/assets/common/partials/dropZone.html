@@ -1,0 +1,30 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="drop-zones-container" ng-class="{ active: visible, 'with-addons': hasAddons }">
+
+    <div drop-zone
+         ng-repeat="dropZone in dropZones"
+         ng-show="!dropZone.noDropZone"
+         ng-class="{ active: highlighted, addon: dropZone.isAddon }"
+         class="drop-zone">
+
+        <p ng-if="!dropZone.isAddon" class="text">
+            {{dropZone.dropText}}
+        </p>
+
+        <div ng-if="dropZone.isAddon" class="text">
+            <h1 class="title">{{dropZone.dropTitle}}</h1>
+
+            <p>{{dropZone.dropText}}</p>
+        </div>
+
+    </div>
+
+</div>

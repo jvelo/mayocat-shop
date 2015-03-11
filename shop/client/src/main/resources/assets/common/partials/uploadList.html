@@ -1,0 +1,25 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<ul ng-repeat="upload in uploadQueue" class="thumbnails thumbnails-small entities upload-list">
+    <li ng-repeat="image in upload.files">
+        <div class="wrapper">
+            <img ng-src="{{image.preview.src}}" width="{{image.preview.width}}" height="{{image.preview.height}}">
+
+            <div class="upload-progress">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke="none"
+                          fill="#3e7270"
+                          ng-attr-d="M 22 22 L 22 0 A 22 22 0 {{image.progress.arcFlag}} 1 {{image.progress.arcX}} {{image.progress.arcY}} Z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </li>
+</ul>

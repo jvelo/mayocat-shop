@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-configuration</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-configuration-default</artifactId>
     <packaging>jar</packaging>
@@ -45,6 +45,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+
         <!-- Testing dependencies -->
         <dependency>
             <groupId>org.xwiki.commons</groupId>
@@ -52,6 +58,5 @@
             <version>${xwiki.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 </project>

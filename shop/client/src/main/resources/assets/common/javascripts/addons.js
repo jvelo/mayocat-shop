@@ -9,6 +9,32 @@
 
     'use strict'
 
+    /**
+     * Helper function that creates an "extended" group definition from an actual server provided group definition.
+     * This extended definition is used when listing groups on entity pages.
+     *
+     * @param group the group definition to get the extended group definition for
+     * @param groupKey the key of the group
+     * @param sourceName the name of the source for this group definition (for example "platform" or "theme"
+     * @returns {Object} the extended group definition
+     */
+    function getExtendedGroupDefinition(group, groupKey, sourceName) {
+        var definition = angular.copy(group);
+        definition.key = groupKey;
+        definition.source = sourceName;
+        definition.fields = [];
+        definition.getValueShell = function() {
+            // Used for sequence addons, to get a "shell" value with all fields having a
+            // null value when adding a new item in the sequence
+            var object = {};
+            Object.keys(group.fields).forEach(function(key){
+                object[key] = null;
+            });
+            return object;
+        }
+        return definition
+    }
+
     angular.module('mayocat.addons', ['ngResource'])
 
         .factory('addonsService', function ($resource, $q, configurationService) {
@@ -54,35 +80,15 @@
             registerEditor("selectBox", {
                 tagName:"select",
                 type:"string",
-                extraAttributes:"ng-options='value.key || value as value.name || value for value in addon.properties.listValues'",
+                extraAttributes:"ng-options='value.key || value as value.name || value for value in addon.properties[\"list.values\"]'",
                 postProcess:function (string) {
                     return "<div>" + string + "</div>"
                 }
             });
-
-            /**
-             * Finds the index of an addon with a certain group+field+source in an array of addons.
-             *
-             * @param {array} addons the array of addons to find the addon in
-             * @param {string} group the group of the addon to find
-             * @param {string} field the field of the addon to find
-             * @param {string} source the source of the addon to find. E.g. "platform" or "theme"
-             * @returns {number} the index at which the addon has been found, -1 if not found.
-             */
-            var getAddonIndex = function (addons, group, field, source) {
-                if (typeof addons === "undefined") {
-                    return -1;
-                }
-                for (var i = 0; i < addons.length; i++) {
-                    var addon = addons[i];
-                    if (addon.key == field
-                        && addon.source == source
-                        && addon.group == group) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
+            registerEditor("image", {
+                tagName:"addon-image",
+                type:"image"
+            });
 
             return {
 
@@ -127,7 +133,7 @@
                     definition = typeof definition !== "undefined" ? definition : {};
                     options = typeof options !== "undefined" ? options : {};
 
-                    var editor = definition.editor,
+                    var editor = definition.editor || type,
                         output = "",
                         tagName;
 
@@ -140,10 +146,10 @@
                     output += "<" + tagName;
 
                     if (typeof definition.properties !== "undefined" && !!definition.properties.localized) {
-                        output += " ng-model=localizedObject.value ";
+                        output += " ng-model=localizedObject[key] ";
                     }
                     else {
-                        output += " ng-model=object.value ";
+                        output += " ng-model=object[key] ";
                     }
 
                     if (typeof editors[editor].extraAttributes !== "undefined") {
@@ -208,7 +214,6 @@
                         var entities = configuration.entities,
                             locales = configuration.general.locales.others || [];
 
-
                         if (typeof entities === 'undefined' || typeof entities[entityType] === 'undefined') {
                             deferred.resolve(entityAddons);
                         }
@@ -221,7 +226,7 @@
                                 entity._localized[locale] = {};
                             }
                             if (typeof entity._localized[locale].addons === "undefined") {
-                                entity._localized[locale].addons = [];
+                                entity._localized[locale].addons = {};
                             }
                         });
 
@@ -232,74 +237,139 @@
                             addons = entities[entityType].addons
                         }
 
-                        var addonKeys = addons ? Object.keys(addons) : [];
-                        for (var i=0; i<addonKeys.length; i++) {
-                            var sourceName = addonKeys[i],
-                                source = addons[sourceName],
-                                groupKeys = Object.keys(source);
-                            for (var j=0; j<groupKeys.length; j++) {
-                                var groupKey = groupKeys[j],
-                                    group = source[groupKey],
+                        addons && Object.keys(addons).forEach(function(sourceName) {
+                            var source = addons[sourceName];
+                            Object.keys(source).forEach(function(groupKey){
+                                var group = source[groupKey],
                                     definitions = group.fields,
+                                    sequence = group.sequence,
                                     definitionKeys = Object.keys(definitions),
-                                    currentGroupIndex = entityAddons.push({
-                                        key:groupKey,
-                                        source:sourceName,
-                                        name:group.name,
-                                        text:group.text,
-                                        properties:group.properties,
-                                        fields:[]
-                                    }) - 1;
-                                for (var k = 0; k < definitionKeys.length; k++) {
-                                    var key = definitionKeys[k],
-                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName),
-                                        definition = definitions[key];
-                                    if (index < 0) {
-                                        // Create addon container lazily
-                                        entity.addons.push({
-                                            key:key,
-                                            group:groupKey,
-                                            source:sourceName,
-                                            type:definition.type,
-                                            value:null
-                                        });
-                                        index = getAddonIndex(entity.addons, groupKey, key, sourceName);
+                                    addonGroupDefinition = getExtendedGroupDefinition(group, groupKey, sourceName);
+
+                                entityAddons.push(addonGroupDefinition);
+
+                                if (typeof entity.addons[groupKey] === "undefined") {
+                                    entity.addons[groupKey] = {
+                                        group: groupKey,
+                                        source: sourceName,
+                                        value: sequence ? [] : {},
+                                        model: {}
                                     }
-                                    entityAddons[currentGroupIndex].fields.push({
-                                        key:key,
-                                        definition:definition,
-                                        index:index
+                                }
+                                else if (sequence && !entity.addons[groupKey].value instanceof Array) {
+                                    // If the addon definition says it's a sequence and the value is not a list, put
+                                    // it as a first item of the list.
+                                    // (This could happen if the theme developer changes the definition after setting a
+                                    // value).
+
+                                    entity.addons[groupKey].value = [ entity.addons[groupKey].value ];
+                                }
+                                else if (!sequence && entity.addons[groupKey].value instanceof Array) {
+                                    // Same: if the addon definition says it's a not sequence and the value is a list,
+                                    // take the first object in the list if there's one, or put an empty object.
+
+                                    if (entity.addons[groupKey].value.length > 0) {
+                                        entity.addons[groupKey].value = entity.addons[groupKey].value[0];
+                                    }
+                                    else {
+                                        entity.addons[groupKey].value = {};
+                                    }
+                                }
+
+                                var fieldSequence = sequence ?
+                                    entity.addons[groupKey].value : [ entity.addons[groupKey].value ];
+
+                                fieldSequence.forEach(function (sequence) {
+                                    // Initialize all field values with "null" if not present
+
+                                    definitionKeys.forEach(function (key) {
+                                        if (typeof sequence[key] === 'undefined') {
+                                            sequence[key] = null;
+                                        }
+                                    });
+                                });
+
+                                definitionKeys.forEach(function (key) {
+                                    var definition = definitions[key];
+
+                                    if (typeof definition.properties !== 'undefined'
+                                        && typeof definition.properties.listValues !== 'undefined') {
+                                        // Backward compatibility : "list.values" property used to be "listValues"
+                                        definition.properties['list.values'] = definition.properties.listValues;
+                                    }
+
+                                    if (typeof entity.addons[groupKey].model === 'undefined') {
+                                        entity.addons[groupKey].model = {}
+                                    }
+
+                                    entity.addons[groupKey].model[key] = { "type": definition.type };
+
+                                    addonGroupDefinition.fields.push({
+                                        key: key,
+                                        definition: definition
+                                    });
+                                });
+                            });
+                        });
+
+                        // Initialize localized copies
+
+                        if (typeof entity.addons === "undefined") {
+                            entity.addons = {};
+                        }
+
+                        Object.keys(entity.addons).forEach(function (groupKey) {
+
+                            var group = entity.addons[groupKey];
+                            locales.forEach(function (locale) {
+                                if (typeof entity._localized[locale].addons === 'undefined') {
+                                    entity._localized[locale].addons = {};
+                                }
+
+                                var localizedGroup = entity._localized[locale].addons[groupKey];
+                                if (typeof localizedGroup === 'undefined') {
+                                    localizedGroup = angular.copy(group);
+
+                                    // Localized version of the addon does not exist yet : we create it
+
+                                    if (!localizedGroup.value instanceof Array) {
+                                        // Non-sequence
+                                        Object.keys(localizedGroup.value).forEach(function (key) {
+                                            localizedGroup.value[key] = null;
+                                        });
+                                    }
+                                    else {
+                                        // Sequence
+                                        localizedGroup.value = [];
+                                    }
+                                } else {
+                                    // Localized version already exist. Check if consistent
+
+                                    if (group.value instanceof Array && !(localizedGroup.value instanceof Array)) {
+                                        // The localized version is not an array, but the actual version is, let's fix it
+                                        localizedGroup.value = [ localizedGroup.value ];
+                                    }
+
+                                    else if (!(group.value instanceof Array) && localizedGroup.value instanceof Array) {
+                                        // The localized version is an array but the actual version is not, let's fix it
+                                        localizedGroup.value = localizedGroup.value[0] || {};
+                                    }
+                                }
+
+                                if (typeof localizedGroup.value === 'undefined') {
+                                    localizedGroup.value = {};
+                                }
+                                if (!group.value instanceof Array) {
+                                    Object.keys(group.value).forEach(function (key) {
+                                        if (typeof localizedGroup.value[key] === 'undefined') {
+                                            localizedGroup.value[key] = null;
+                                        }
                                     });
                                 }
-                            }
 
-                        }
-                        // Initialize localized copies
-                        if (typeof entity.addons == "undefined") {
-                            entity.addons = []
-                        }
-                        for (var i = 0; i < entity.addons.length; i++) {
-                            var addon = entity.addons[i];
-                            locales.forEach(function (locale) {
-                                var localIndex = getAddonIndex(
-                                        entity._localized[locale].addons,
-                                        addon.group,
-                                        addon.key,
-                                        addon.source
-                                    ),
-                                    localizedValue = null
-
-                                if (localIndex > 0) {
-                                    // We found a value for this addon for this locale, so get it
-                                    localizedValue = entity._localized[locale].addons[localIndex].value
-                                }
-
-                                // We always push the localized version of an addon at the exact same index as the "main"
-                                // one, effectively ignoring the local one's index
-                                entity._localized[locale].addons[i] = angular.copy(entity.addons[i]);
-                                entity._localized[locale].addons[i].value = localizedValue;
                             });
-                        }
+                        });
+
                         deferred.resolve(entityAddons);
                     });
                     return deferred.promise;
@@ -308,31 +378,227 @@
             }
         })
 
+        .directive("addonImage", ['$rootScope', function ($rootScope) {
+            return {
+                templateUrl: '/common/partials/addonImage.html',
+                require : 'ngModel',
+                restrict: 'E',
+                controller: ['$scope', function ($scope) {
+                    $scope.getImageUploadUri = function () {
+                        return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
+                    }
+
+                    $rootScope.$on("upload:progress", function(event, memo) {
+                        var index = memo.queue.findIndex(function (upload) {
+                            return upload.id == $scope.id;
+                        });
+                        if (index >= 0) {
+                            $scope.uploading = true;
+                        }
+                    });
+
+                    $rootScope.$on("upload:done", function(event, memo) {
+                        if (memo.id == $scope.id) {
+                            var parts = memo.fileUri.split('/');
+                            $scope.internalModel = parts[parts.length - 1];
+                            $scope.uploading = false;
+                        }
+                    });
+                }],
+                link: function (scope, element, attrs, ngModel) {
+                    // Generate a random image list/upload id
+                    scope.id = Math.random().toString(36).substring(8);
+                    scope.uploading = false;
+                    scope.server = $rootScope.server;
+                    var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
+                        scope.internalModel = ngModel.$modelValue;
+                        clear();
+                        scope.$watch("internalModel", function (newValue) {
+                            ngModel.$setViewValue(newValue);
+                        });
+                    });
+                }
+            }
+        }])
+
+        .directive('addonList', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+            return {
+                restrict: 'E',
+                scope: {
+                    addons: '=',
+                    entity: '=',
+                    localized: '=localizedEntity',
+                    server: '='
+                },
+                templateUrl: '/common/partials/addonList.html',
+                controller: function ($scope) {
+
+                    $scope.server = $rootScope.server;
+
+                    // The collapsed index hash maps an array of collapsed sequence items positions to a sequenced addon group
+                    $scope.collapsedIndexes = {}
+
+                    // Initialize the collapsed index state : by default all items are collapsed, so for all sequenced
+                    // groups, we fill the index with all existing positions
+                    Object.keys($scope.entity.addons).forEach(function (key) {
+                        if ($scope.entity.addons[key].value instanceof Array) {
+                            $scope.collapsedIndexes[key] = Array.apply(null, {length: $scope.entity.addons[key].value.length}).map(Number.call, function (n) {
+                                return n;
+                            });
+                        }
+                    });
+
+                    // Filters the addons for the current entity.
+                    $scope.filterAddons = function(addon) {
+                        return !addon.models || addon.models.indexOf($scope.entity.model) >= 0;
+                    };
+
+                    /**
+                     * Get the sortable options for a sequenced group. On update after a drag and drop, the we rearranged collapsed positions
+                     * to match the moved elements.
+                     *
+                     * @param group
+                     * @returns the angular-ui sortable options (See https://github.com/angular-ui/ui-sortable)
+                     *
+                     */
+                    $scope.getSortableOptions = function (group) {
+                        return {
+                            update: function (e, ui) {
+                                var indexBefore = ui.item.scope().$index;
+                                $timeout(function () {
+                                    var indexAfter = ui.item.scope().$index,
+                                        groupIndexes = $scope.collapsedIndexes[group];
+
+                                    if (groupIndexes.indexOf(indexBefore) >= 0 && groupIndexes.indexOf(indexAfter) >= 0) {
+                                        // If both index before and after are present, it means we swapped collapsed items
+                                        // No need to do anything
+                                    }
+                                    else if (groupIndexes.indexOf(indexAfter) >= 0) {
+                                        groupIndexes.splice(groupIndexes.indexOf(indexAfter), 1);
+                                        groupIndexes.push(indexBefore);
+                                    }
+                                    else if (groupIndexes.indexOf(indexBefore) >= 0) {
+                                        groupIndexes.splice(groupIndexes.indexOf(indexBefore), 1);
+                                        groupIndexes.push(indexAfter);
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    function getCollapsedElement(type){
+                        return function(group, index) {
+                            var item = $scope.entity.addons[group].value[index],
+                                model = $scope.entity.addons[group].model;
+                            var result;
+                            Object.keys(item).forEach(function(key){
+                                if (typeof result === 'undefined' && typeof model[key] !== 'undefined' && model[key].type === type) {
+                                    result = item[key];
+                                }
+                            });
+                            return result || "";
+                        }
+                    }
+
+                    $scope.getCollapsedText = getCollapsedElement('string');
+                    $scope.getCollapsedImage = getCollapsedElement('image');
+
+                    $scope.hasOneImageAddon = function (group) {
+                        var model = $scope.entity.addons[group].model;
+                        return Object.keys(model).find(function (key) {
+                            return model[key].type === 'image';
+                        })
+                    }
+
+                    $scope.toggleCollapse = function(group, index) {
+                        if ($scope.isCollapsed(group, index)) {
+                            $scope.collapsedIndexes[group].splice($scope.collapsedIndexes[group].indexOf(index), 1);
+                        }
+                        else {
+                            $scope.collapsedIndexes[group].push(index);
+                        }
+                    }
+
+                    $scope.isCollapsed = function(group, index) {
+                        if (typeof $scope.collapsedIndexes[group] === 'undefined') {
+                            return true;
+                        }
+                        return $scope.collapsedIndexes[group].indexOf(index) >= 0;
+                    }
+
+                    $scope.removeSequenceAddonItem = function (group, index) {
+                        $scope.entity.addons[group.key].value.splice(index, 1);
+
+                        if (typeof $scope.entity._localized !== 'undefined') {
+                            Object.keys($scope.entity._localized).forEach(function (locale) {
+                                try {
+                                    typeof $scope.entity._localized[locale].addons[group.key].value.splice === 'function'
+                                    && $scope.entity._localized[locale].addons[group.key].value.splice(index, 1);
+                                } catch (err) {
+                                    // Ignore (locale not used anymore, etc.)
+                                }
+                            });
+                        }
+                    }
+
+                    $scope.addSequenceAddonItem = function (group) {
+                        // First, find out if we want to add at the top or the bottom of the array, checking the conf
+                        var insertPosition = typeof group.properties['sequence.newElementPosition'] !== 'undefined' ?
+                                group.properties['sequence.newElementPosition'] : 'last',
+                            method = insertPosition === 'last' ? 'push' : 'unshift';
+
+                        // Add the element to the addon value array
+                        $scope.entity.addons[group.key].value[method](group.getValueShell());
+
+                        // Shift collapsed indexes if necessary
+                        if (insertPosition !== 'last') {
+                            $scope.collapsedIndexes[group.key] = $scope.collapsedIndexes[group.key].map(function(index){
+                                return index + 1;
+                            });
+                        }
+
+                        // Add it also to all localized versions of the addon value
+                        if (typeof $scope.entity._localized !== 'undefined') {
+                            Object.keys($scope.entity._localized).forEach(function (locale) {
+                                try {
+                                    typeof $scope.entity._localized[locale].addons[group.key].value[method] === 'function'
+                                    && $scope.entity._localized[locale].addons[group.key].value[method](group.getValueShell());
+                                } catch (err) {
+                                    // Ignore (locale not used anymore, etc.)
+                                }
+                            });
+                        }
+                    }
+                }
+            };
+        }])
+
         .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
         return {
             scope:{
-                addon:'=definition',
-                object:'=',
-                localizedObject:"="
+                addon: '=definition',
+                object: '=',
+                localizedObject: '=',
+                key: '=',
+                noDropZone: '='
             },
             restrict:"E",
             link:function (scope, element, attrs) {
-
                 scope.$watch(
                     'addon',
                     function (definition) {
                         scope.type = addonsService.type(definition.type, definition.editor);
 
-                        var editor = addonsService.editor(scope.object.type, definition, {
+                        var editor = addonsService.editor(definition.type, definition, {
                             "ignoreReadOnly":typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
                         });
-
                         // The "template" option allow to override default behavior
                         if (typeof definition.template !== 'undefined') {
                             editor = definition.template;
                         }
 
                         element.html(editor);
+
                         $compile(element.contents())(scope);
                     }
                 );

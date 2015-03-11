@@ -11,6 +11,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'account',
     'search',
     'money',
+    'taxes',
     'shipping',
     'product',
     'collection',
@@ -26,30 +27,105 @@ var MayocatShop = angular.module('MayocatShop', [
     '$strap.directives', // Used for the date picker bs-datepicker directive
                          // TODO rationalize on ui-bootstrap
     'ui.bootstrap',
-    'ui.sortable',
+    'ui.sortable'
 ]);
 
 MayocatShop.config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.
-        when('/', {templateUrl: 'partials/dashboard.html', controller: 'DashboardController', title: 'Home'}).
-        when('/contents', {templateUrl: 'partials/contents.html', title: 'Contents'}).
-        when('/orders', {templateUrl: 'partials/orders.html', controller: 'OrdersController', title: 'Orders'}).
-        when('/orders/:order', {templateUrl: 'partials/order.html', controller: 'OrderController', title: 'Orders'}).
-        when('/customers', {templateUrl: 'partials/customers.html', title: 'Customers'}).
-        when('/home', {templateUrl: 'partials/homePage.html', controller: 'HomePageController', title: 'Home page'}).
-        when('/news', {templateUrl: 'partials/news.html', title: 'News'}).
-        when('/pages/:page', {templateUrl: 'partials/page.html', controller: 'PageController', title: 'Pages'}).
-        when('/news/:article', {templateUrl: 'partials/article.html', controller: 'ArticleController', title: 'News'}).
-        when('/catalog', {templateUrl: 'partials/products.html', title: 'Catalog'}).
-        when('/collections/', {templateUrl: 'partials/collections.html', controller: 'CatalogController', title: 'Catalog'}).
-        when('/products/:product', {templateUrl: 'partials/product.html', controller: 'ProductController', title: 'Products'}).
-        when('/collections/:collection', {templateUrl: 'partials/collection.html', controller: 'CollectionController', title: 'Catalog'}).
-        when('/settings/', {templateUrl: 'partials/settingsGeneral.html', controller: 'SettingsController', title: 'Settings'}).
-        when('/settings/tenant', {templateUrl: 'partials/settingsTenant.html', controller: 'SettingsTenantController', title: 'Settings'}).
-        when('/settings/catalog', {templateUrl: 'partials/settingsCatalog.html', controller: 'SettingsController', title: 'Settings'}).
-        when('/settings/shipping', {templateUrl: 'partials/settingsShipping.html', controller: 'SettingsShippingController', title: 'Settings'}).
-        when('/me', {templateUrl: 'partials/accountSettings.html?1', controller: 'AccountSettings', title: 'My Account'}).
-        otherwise({redirectTo: '/'});
+    $routeProvider
+        .when('/', {
+            templateUrl: 'partials/dashboard.html',
+            controller: 'DashboardController',
+            titleTranslation: 'home'
+        })
+        .when('/contents', {
+            templateUrl: 'partials/contents.html',
+            titleTranslation: 'pages'
+        })
+        .when('/orders', {
+            templateUrl: 'partials/orders.html',
+            controller: 'OrdersController',
+            titleTranslation: 'orders'
+        })
+        .when('/orders/:order', {
+            templateUrl: 'partials/order.html',
+            controller: 'OrderController',
+            titleTranslation: 'orders'
+        })
+        .when('/customers', {
+            templateUrl: 'partials/customers.html',
+            titleTranslation: 'customers'
+        })
+        .when('/home', {
+            templateUrl: 'partials/homePage.html',
+            controller: 'HomePageController',
+            titleTranslation: 'homepage'
+        })
+        .when('/news', {
+            templateUrl: 'partials/news.html',
+            titleTranslation: 'news'
+        })
+        .when('/pages/:page', {
+            templateUrl: 'partials/page.html',
+            controller: 'PageController',
+            titleTranslation: 'pages'
+        })
+        .when('/news/:article', {
+            templateUrl: 'partials/article.html',
+            controller: 'ArticleController',
+            titleTranslation: 'news'
+        })
+        .when('/catalog', {
+            templateUrl: 'partials/products.html',
+            titleTranslation: 'catalog'
+        })
+        .when('/collections/', {
+            templateUrl: 'partials/collections.html',
+            controller: 'CatalogController',
+            titleTranslation: 'catalog'
+        })
+        .when('/products/:product', {
+            templateUrl: 'partials/product.html',
+            controller: 'ProductController',
+            titleTranslation: 'products'
+        })
+        .when('/collections/:collection', {
+            templateUrl: 'partials/collection.html',
+            controller: 'CollectionController',
+            titleTranslation: 'catalog'
+        })
+        .when('/settings/', {
+            templateUrl: 'partials/settingsGeneral.html',
+            controller: 'SettingsController',
+            titleTranslation: 'settings'
+        })
+        .when('/settings/tenant', {
+            templateUrl: 'partials/settingsTenant.html',
+            controller: 'SettingsTenantController',
+            titleTranslation: 'settings'
+        })
+        .when('/settings/catalog', {
+            templateUrl: 'partials/settingsCatalog.html',
+            controller: 'SettingsController',
+            titleTranslation: 'settings'
+        })
+        .when('/settings/shipping', {
+            templateUrl: 'partials/settingsShipping.html',
+            controller: 'SettingsShippingController',
+            titleTranslation: 'settings'
+        })
+        .when('/settings/taxes', {
+            templateUrl: 'partials/settingsTaxes.html',
+            controller: 'SettingsTaxesController',
+            titleTranslation: 'settings'
+        })
+        when('/me', {
+            templateUrl: 'partials/accountSettings.html?1',
+            controller: 'AccountSettings',
+            title: 'My Account'
+        })
+        .otherwise({
+            redirectTo: '/'
+        });
 }]);
 
 mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
@@ -102,19 +178,24 @@ mayocat.controller('MenuController', ['$rootScope', '$scope', '$location',
 /**
  * TODO: move this in the AppController
  */
-MayocatShop.run(['$rootScope', '$modal',
-    function (scope, $modal) {
+MayocatShop.run(['$rootScope', '$route', '$translate', '$modal',
+    function ($rootScope, $route, $translate, $modal) {
 
         /**
          * Set up a default page title and update it when changing route.
          * Update title when changing root
          */
-        scope.page_title = Mayocat.applicationName + ' | Home';
-        scope.$on('$routeChangeSuccess', function (event, current) {
-            scope.page_title = Mayocat.applicationName + ' | ' + current.$$route.title;
-        });
 
-        scope.$on('event:serverError', function () {
+        function updatePageTitle() {
+            $rootScope.page_title = Mayocat.applicationName + ' | ' + $translate('routes.title.' + $route.current.titleTranslation);
+        }
+
+        $rootScope.page_title = Mayocat.applicationName + ' | Home';
+
+        $rootScope.$on('$routeChangeSuccess', updatePageTitle);
+        $rootScope.$on('$translateChangeEnd', updatePageTitle);
+
+        $rootScope.$on('event:serverError', function () {
             $modal.open({ templateUrl: 'serverError.html' });
         });
 

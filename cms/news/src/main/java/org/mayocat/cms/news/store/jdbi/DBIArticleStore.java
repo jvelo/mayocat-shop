@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 import org.mayocat.cms.news.model.Article;
 import org.mayocat.cms.news.store.ArticleStore;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -25,6 +25,8 @@ import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 /**
  * @version $Id$
@@ -117,8 +119,8 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     {
         Article article = this.dao.findBySlug(ARTICLE_TABLE_NAME, slug, getTenant());
         if (article != null) {
-            List<Addon> addons = this.dao.findAddons(article);
-            article.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(article);
+            article.setAddons(asMap(addons));
         }
         return article;
     }
@@ -139,8 +141,10 @@ public class DBIArticleStore extends DBIEntityStore implements ArticleStore, Ini
     public Article findById(UUID id)
     {
         Article article = this.dao.findById(ARTICLE_TABLE_NAME, id);
-        List<Addon> addons = this.dao.findAddons(article);
-        article.setAddons(addons);
+        if (article != null) {
+            List<AddonGroup> addons = this.dao.findAddons(article);
+            article.setAddons(asMap(addons));
+        }
         return article;
     }
 

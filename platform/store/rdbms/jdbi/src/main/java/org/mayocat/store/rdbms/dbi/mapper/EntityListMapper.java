@@ -30,6 +30,7 @@ public class EntityListMapper implements ResultSetMapper<EntityList>
         EntityList list = new EntityList();
 
         list.setId((UUID) resultSet.getObject("id"));
+        list.setParentId((UUID) resultSet.getObject("parent_id"));
         list.setSlug(resultSet.getString("slug"));
         list.setHint(resultSet.getString("hint"));
         list.setType(resultSet.getString("entity_type"));

@@ -109,24 +109,18 @@ ul li.hoverable:hover .visible-when-hover {
      line-height: 15px;
   }
 
-  &:after {
-    /* Entities thumbnail lists must be cleared manually */
-    clear: none;
-  }
-
   .menu-wrapper {
     display: none;
     position: absolute;
+    top: 0;
     width: 150px;
     height: 150px;
-    top: 4px;
     text-align: center;
   }
 
   ul.menu {
     display: table-cell;
-    background: white;
-    opacity: 0.9;
+    background: fade(#000, 70%);
     vertical-align: middle;
 
     li {
@@ -139,6 +133,12 @@ ul li.hoverable:hover .visible-when-hover {
 
   .wrapper {
     position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    height: 150px;
+    width: 150px;
+    background-color: #eee;
+    z-index: 100;
   }
 
   li:not(.ui-sortable-helper) {
@@ -149,22 +149,150 @@ ul li.hoverable:hover .visible-when-hover {
     }
   }
 
+  a {
+    color: white;
+  }
 
-  .thumbnail.add {
+}
 
-    opacity: 0.8;
+.entities.thumbnails.thumbnails-small {
 
-    .wrapper {
-      background-color: white;
-      background-position: center center;
-      background-image: url(/common/images/plus.png);
-      background-repeat: no-repeat;
+  &.reduce {
+    max-height: 105px;
+    overflow: hidden;
+  }
+
+  .wrapper {
+    display: block;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+
+    &:hover .featured:before {
+      display: none;
     }
   }
+
+  .menu-wrapper {
+    width: 100px;
+    height: 100px;
+    cursor: move;
+  }
+
+  .upload-progress {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: fade(#000, 70%);
+
+    svg {
+      position: absolute;
+      top: 50%; left: 50%;
+      margin: -22px 0 0 -22px;
+      width: 44px; height: 44px;
+    }
+  }
+
+  .featured-star {
+    position: absolute;
+    top: 0; right: 0;
+    width: 15px; height: 16px;
+    z-index: 500;
+
+    &:before, &:after {
+      position: absolute;
+    }
+
+    &:after {
+      bottom: 0; left: 0;
+      width: 13px; height: 13px;
+      background: url("../images/featured-star.png") 0 26px;
+      content: '';
+    }
+
+    &.featured {
+      cursor: auto;
+
+      &:before {
+        top: 0; right: 0;
+        width: 33px; height: 34px;
+        background: url("../images/featured-star.png") 0 0;
+        content: '';
+      }
+
+      &:after {
+        background: url("../images/featured-star.png") 0 13px;
+      }
+    }
+  }
+
+}
+
+.trigger-reduce {
+  display: inline-block;
+  margin: 5px 0 7px 0;
+  cursor: pointer;
+}
+
+/* Entity list */
+
+ul.entity-list li {
+  padding-top: 10px;
+  border-bottom: 1px dashed #d3d3d3;
+}
+
+ul.entity-list li:last-child {
+  border: none;
+}
+
+ul.entity-list li .icon-delete:hover {
+  cursor: pointer;
+}
+
+ul.entity-list li img:first-of-type {
+  margin-bottom: 8px;
+  margin-right: 5px;
+}
+
+/* Addons */
+
+.addon-sequence .icon-delete:hover {
+  cursor: pointer;
+}
+
+.addon-sequence .sequence-item {
+  padding-top: 10px;
+  border-bottom: 1px dashed #d3d3d3;
+}
+
+.addon-sequence .sequence-item:last-child {
+  border: none;
+}
+
+.addon-sequence .sequence-item .collapsed {
+  margin-top: -16px;
+  min-height: 25px;
+  max-width: 410px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.addon-sequence .sequence-item .collapsed img {
+  margin-bottom: 8px;
+  margin-right: 5px;
+}
+
+.addon-sequence .add-element.top {
+  margin-bottom: 7px;
 }
 
 
- /* Thumbnail editor */
+.addon-sequence .add-element.bottom {
+  margin-top: 7px;
+}
+
+/* Thumbnail editor */
 
 .editImage {
   width: 850px;
@@ -228,6 +356,12 @@ div.thumbnails-list ul li {
   color: @fontColor;
   font-size: 11px;
   padding:2px;
+  position: relative;
+}
+
+div.thumbnails-list ul li div.caption {
+  position: absolute;
+  top: 0;
 }
 
 div.thumbnails-list ul li.active,
@@ -235,87 +369,222 @@ div.thumbnails-list ul li.active {
   background-color: #eeeeee;
 }
 
-/* File upload widget */
+/* Notifications */
 
-image-upload .well {
-  min-height:120px;
+.notifications {
+  position: fixed;
+  top: 0; right: 0; left: 239px;
+  font-size: 12px;
+  z-index: 1050;
+
+  &.reduce {
+    left: 418px;
+  }
 }
 
-image-upload .fileinput-button {
-  float: left;
-  margin-top: 5px;
-}
+.notification {
+  position: relative;
+  padding: 0 15px;
+  height: 40px;
+  color: #fff;
 
-image-upload .fileinput-button input[type=file] {
-  height: 42px;
-}
-
-image-upload .editor ul li {
-  min-height: 185px;
-}
-
-image-upload .editor ul li span.preview .meta .name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100px;
-}
-
-image-upload .editor ul li span.preview > span {
-  height: 100px;
-  width: 100px;
-  display: table-cell;
-  border: 1px solid lightgray;
-  text-align: center;
-  vertical-align: middle;
-}
-
-image-upload .editor ul li span.preview > div {
-  font-size: 10px;
-  text-align: center;
-}
-
-image-upload span.preview {
-  float: left;
-}
-
-image-upload .editor ul li .progress {
-  height: 6px;
-}
-
-image-upload .size input, image-upload .size textarea {
-  width: -webkit-calc(~"100% - 120px") !important;
-  width: -moz-calc(~"100% - 120px") !important;
-  width: calc(~"100% - 120px") !important;
-  margin-left: 10px;
-}
-
-/* Featured image selector */
-span.featured-star {
-
-  display: inline-block;
-  float: left;
-  padding-top: 7px;
-  color: @borderStrong;
-  cursor: pointer;
-
-  &:hover {
-    color: #FDD017;
+  &:before, .text {
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
   }
 
   &:before {
-    content: "\2606";
-    font-size: 26px;
+    height: 100%;
+    content: '';
   }
 
-  &.featured {
-    cursor: auto;
-    color: #FDD017;
-    &:before {
-      content: "\2605";
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.notification-info {
+  background: @successColor;
+}
+
+.notification-error {
+  background: @errorColor;
+}
+
+.notification-progress {
+  background: fade(@backgroundDarkGreen, 93%);
+  color: #fff;
+
+  &.minified {
+    height: 10px;
+
+    .text {
+      display: none;
     }
   }
 
+  .progression {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: fade(@linkColor, 50%);
+  }
+}
+
+/* Drop zone animations **/
+
+@-webkit-keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@-webkit-keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
+@keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
+/* Drop zone directive **/
+
+.drop-zones-container {
+  @padding: 100px;
+
+  position: fixed;
+  top: 0; left: 0;
+  display: none;
+  width: 100%; height: 100%;
+  padding: @padding;
+  background: fade(@backgroundDarkGreen, 93%);
+  z-index: 1100;
+
+  &.active {
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+  }
+
+  &.with-addons .drop-zone:not(.addon) .text {
+    top: 35%;
+  }
+
+  .drop-zone {
+    position: relative;
+
+    &:not(.addon) {
+      position: absolute;
+      top: @padding; right: @padding; bottom: @padding; left: @padding;
+      font-size: 28px;
+    }
+
+    &.addon {
+      @margin: 35px;
+
+      -webkit-align-self: flex-end;
+      -ms-align-self: flex-end;
+      align-self: flex-end;
+
+      -webkit-flex-grow: 1;
+      -ms-flex-grow: 1;
+      flex-grow: 1;
+
+      margin: 0 0 @margin @margin;
+      height: 185px;
+      font-size: 18px;
+
+      &:last-child {
+        margin-right: @margin;
+      }
+    }
+
+    &:after {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        url('/common/images/drop-border-h.png') center top repeat-x,
+        url('/common/images/drop-border-h.png') center bottom repeat-x,
+        url('/common/images/drop-border-v.png') left center repeat-y,
+        url('/common/images/drop-border-v.png') right center repeat-y;
+      content: '';
+    }
+
+    &.active:after {
+      background:
+        url('/common/images/drop-border-h-hover.png') center top repeat-x,
+        url('/common/images/drop-border-h-hover.png') center bottom repeat-x,
+        url('/common/images/drop-border-v-hover.png') left center repeat-y,
+        url('/common/images/drop-border-v-hover.png') right center repeat-y;
+    }
+
+    &.active:not(.addon):after {
+      -webkit-animation: drop-zone-bounce 200ms ease-in-out;
+      animation: drop-zone-bounce 200ms ease-in-out;
+    }
+
+    &.active.addon:after {
+      -webkit-animation: drop-zone-addon-bounce 200ms ease-in-out;
+      animation: drop-zone-addon-bounce 200ms ease-in-out;
+    }
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .title + p {
+    font-size: 14px;
+  }
+
+  .text {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'latolight', sans-serif;
+    color: #fff;
+
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
 }
 
 /* Switch button */

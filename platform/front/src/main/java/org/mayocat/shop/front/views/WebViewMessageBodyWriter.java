@@ -29,6 +29,7 @@ import org.mayocat.context.WebContext;
 import org.mayocat.shop.front.WebDataSupplier;
 import org.mayocat.theme.TemplateNotFoundException;
 import org.mayocat.theme.ThemeFileResolver;
+import org.mayocat.theme.ThemeManager;
 import org.mayocat.views.Template;
 import org.mayocat.views.TemplateEngine;
 import org.mayocat.views.TemplateEngineException;
@@ -51,6 +52,9 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
 {
     @Inject
     private Provider<TemplateEngine> engine;
+
+    @Inject
+    private ThemeManager themeManager;
 
     @Inject
     private ThemeFileResolver themeFileResolver;
@@ -84,7 +88,10 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
     {
         try {
 
-            if (!webContext.getTheme().isValidDefinition()) {
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)
+                    && webContext.getTheme() != null
+                    && !webContext.getTheme().isValidDefinition())
+            {
                 // Fail fast with invalid theme error page, so that the developer knows ASAP and can correct it.
                 writeHttpError("Invalid theme definition", entityStream);
                 return;
@@ -102,44 +109,52 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             }
 
             Template template = null;
+            String jsonContext = null;
 
-            if (webView.model().isPresent()) {
-                Optional<String> path = themeFileResolver.resolveModelPath(webView.model().get());
-                if (path.isPresent()) {
-                    try {
-                        template = themeFileResolver.getTemplate(path.get(), webContext.getRequest().getBreakpoint());
-                    } catch (TemplateNotFoundException e) {
-                        // Keep going
+            if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
+                if (webView.model().isPresent()) {
+                    // Check for a model
+
+                    Optional<String> path = themeFileResolver.resolveModelPath(webView.model().get());
+                    if (path.isPresent()) {
+                        try {
+                            template =
+                                    themeFileResolver.getTemplate(path.get(), webContext.getRequest().getBreakpoint());
+                        } catch (TemplateNotFoundException e) {
+                            // Keep going
+                        }
                     }
+                    // else just fallback on the default model
                 }
-                // else just fallback on the default model
-            }
 
-            if (template == null) {
-                try {
-                    template = themeFileResolver
-                            .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
-                } catch (TemplateNotFoundException e) {
-                    if (webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
-                        template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
-                                webContext.getRequest().getBreakpoint());
-                    } else {
-                        if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
-                            // For JSON API calls, we don't care if the template is found or not.
-                            // For other calls, raise the exception
-                            throw e;
+                if (template == null) {
+                    try {
+                        template = themeFileResolver
+                                .getTemplate(webView.template().toString(), webContext.getRequest().getBreakpoint());
+                    } catch (TemplateNotFoundException e) {
+                        if (webView.hasOption(WebView.Option.FALLBACK_ON_DEFAULT_THEME)) {
+                            try {
+                                template = themeFileResolver.getTemplate(themeManager.getDefaultTheme(),
+                                        webView.template().toString(), webContext.getRequest().getBreakpoint());
+                            } catch (TemplateNotFoundException e1) {
+                                // continue
+                            }
+                        }
+                        if (template == null && webView.hasOption(WebView.Option.FALLBACK_ON_GLOBAL_TEMPLATES)) {
+                            template = themeFileResolver.getGlobalTemplate(webView.template().toString(),
+                                    webContext.getRequest().getBreakpoint());
                         }
                     }
                 }
             }
 
-            String jsonContext = null;
-
             if (!mediaType.equals(MediaType.APPLICATION_JSON_TYPE) ||
                     httpHeaders.containsKey("X-Mayocat-Full-Context"))
             {
-                webView.data().put("templateContent", template.getId());
-                webView.data().put("template", FilenameUtils.getBaseName(webView.template().toString()));
+                if (template != null) {
+                    webView.data().put("templateContent", template.getId());
+                    webView.data().put("template", FilenameUtils.getBaseName(webView.template().toString()));
+                }
 
                 for (WebDataSupplier supplier : dataSuppliers.values()) {
                     supplier.supply(webView.data());
@@ -152,6 +167,10 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
                 if (mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
                     mapper.writeValue(entityStream, webView.data());
                     return;
+                }
+
+                if (template == null) {
+                    throw new TemplateNotFoundException();
                 }
 
                 jsonContext = mapper.writeValueAsString(webView.data());
@@ -177,6 +196,12 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
             Template error;
+            Template masterTemplate = null;
+            try {
+                masterTemplate = themeFileResolver.getIndexTemplate(webContext.getRequest().getBreakpoint());
+            } catch (TemplateNotFoundException e) {
+                // Nothing doing
+            }
             try {
                 error = themeFileResolver.getTemplate("500.html", webContext.getRequest().getBreakpoint());
             } catch (TemplateNotFoundException notFound) {
@@ -188,7 +213,18 @@ public class WebViewMessageBodyWriter implements MessageBodyWriter<WebView>, org
             errorContext.put("error", message);
 
             engine.get().register(error);
-            String rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+
+            String rendered;
+
+            if (masterTemplate != null) {
+                errorContext.put("templateContent", error.getId());
+                errorContext.put("template", "500");
+                engine.get().register(masterTemplate);
+                rendered = engine.get().render(masterTemplate.getId(), mapper.writeValueAsString(errorContext));
+            } else {
+                rendered = engine.get().render(error.getId(), mapper.writeValueAsString(errorContext));
+            }
+
             entityStream.write(rendered.getBytes());
         } catch (Exception e1) {
             throw new RuntimeException(e1);

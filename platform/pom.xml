@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.mayocat</groupId>
         <artifactId>mayocat-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.platform</groupId>
     <artifactId>mayocat-platform-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.12-SNAPSHOT</version>
+    <version>0.40-SNAPSHOT</version>
 
     <name>Mayocat Platform - Parent POM</name>
     <description>The platform to build applications upon</description>
@@ -28,6 +28,7 @@
         <module>base</module>
         <module>store</module>
         <module>context</module>
+        <module>entity</module>
         <module>url</module>
         <module>files</module>
         <module>mail</module>
@@ -37,6 +38,7 @@
         <module>authorization</module>
         <module>localization</module>
         <module>addons</module>
+        <module>templating</module>
         <module>views</module>
         <module>themes</module>
         <module>attachments</module>

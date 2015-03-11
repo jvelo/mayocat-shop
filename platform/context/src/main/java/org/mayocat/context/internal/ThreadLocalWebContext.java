@@ -80,7 +80,7 @@ public class ThreadLocalWebContext implements WebContext
     }
 
     @Override
-    public void setSettings(Map<Class, Object> settings)
+    public void setSettings(Map<Class, Serializable> settings)
     {
         getContext().setSettings(settings);
     }

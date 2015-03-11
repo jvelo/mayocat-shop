@@ -7,6 +7,7 @@
  */
 package org.mayocat.accounts.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -17,9 +18,9 @@ import com.google.common.collect.Maps;
 /**
  * @version $Id$
  */
-public class TenantConfiguration implements Map<String, Object>
+public class TenantConfiguration implements Map<String, Serializable>
 {
-    private Map<String, Object> data;
+    private Map<String, Serializable> data;
 
     private final Integer version;
 
@@ -34,10 +35,10 @@ public class TenantConfiguration implements Map<String, Object>
 
     public TenantConfiguration(final Integer version)
     {
-        this(version, Maps.<String, Object>newHashMap());
+        this(version, Maps.<String, Serializable>newHashMap());
     }
 
-    public TenantConfiguration(final Integer version, final Map<String, Object> data)
+    public TenantConfiguration(final Integer version, final Map<String, Serializable> data)
     {
         this.version = version;
         this.data = data;
@@ -50,9 +51,9 @@ public class TenantConfiguration implements Map<String, Object>
         return this.version;
     }
 
-    public Map<String, Object> getData()
+    public Map<String, Serializable> getData()
     {
-        return ImmutableMap.<String, Object>builder().putAll(data).build();
+        return ImmutableMap.<String, Serializable>builder().putAll(data).build();
     }
 
     @Override
@@ -80,25 +81,25 @@ public class TenantConfiguration implements Map<String, Object>
     }
 
     @Override
-    public Object get(Object o)
+    public Serializable get(Object o)
     {
         return this.data.get(o);
     }
 
     @Override
-    public Object put(String s, Object o)
+    public Serializable put(String s, Serializable o)
     {
         return this.data.put(s, o);
     }
 
     @Override
-    public Object remove(Object o)
+    public Serializable remove(Object o)
     {
         return this.data.remove(o);
     }
 
     @Override
-    public void putAll(Map<? extends String, ?> map)
+    public void putAll(Map<? extends String, ? extends Serializable> map)
     {
         this.data.putAll(map);
     }
@@ -116,13 +117,13 @@ public class TenantConfiguration implements Map<String, Object>
     }
 
     @Override
-    public Collection<Object> values()
+    public Collection<Serializable> values()
     {
         return this.data.values();
     }
 
     @Override
-    public Set<Entry<String, Object>> entrySet()
+    public Set<Entry<String, Serializable>> entrySet()
     {
         return this.data.entrySet();
     }

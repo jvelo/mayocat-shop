@@ -26,11 +26,11 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.mayocat.configuration.SiteSettings;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.search.SearchEngine;
 import org.mayocat.search.elasticsearch.ElasticSearchSearchEngine;
+import org.mayocat.url.URLHelper;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
@@ -45,7 +45,7 @@ import com.google.common.collect.Maps;
 public class MarketplaceResource implements Resource
 {
     @Inject
-    private SiteSettings siteSettings;
+    private URLHelper urlHelper;
 
     @Inject
     private ComponentManager componentManager;
@@ -72,9 +72,8 @@ public class MarketplaceResource implements Resource
         for (SearchHit hit : response.getHits()) {
             result.add(hit.getSource());
         }
-        String thisAPIHref =
-                "http://" + siteSettings.getDomainName() + "/marketplace/api/products?number=" + number + "&offset=" +
-                        offset;
+        String thisAPIHref = urlHelper.getContextPlatformURL("/marketplace/api/products?number=" + number + "&offset=" +
+                offset).toString();
         ResultSetRepresentation<List<Map<String, Object>>> resultSet =
                 new ResultSetRepresentation(thisAPIHref, number, offset, result,
                         Long.valueOf(response.getHits().getTotalHits()).intValue());
@@ -101,9 +100,8 @@ public class MarketplaceResource implements Resource
         for (SearchHit hit : response.getHits()) {
             result.add(hit.getSource());
         }
-        String thisAPIHref =
-                "http://" + siteSettings.getDomainName() + "/marketplace/api/shops/?number=" + number + "&offset=" +
-                        offset;
+        String thisAPIHref = urlHelper.getContextPlatformURL("/marketplace/api/shops/?number=" + number + "&offset=" +
+                offset).toString();
         ResultSetRepresentation<List<Map<String, Object>>> resultSet =
                 new ResultSetRepresentation(thisAPIHref, number, offset, result,
                         Long.valueOf(response.getHits().getTotalHits()).intValue());
@@ -157,9 +155,9 @@ public class MarketplaceResource implements Resource
         for (SearchHit hit : response.getHits()) {
             result.add(hit.getSource());
         }
-        String thisAPIHref =
-                "http://" + siteSettings.getDomainName() + "/marketplace/api/shops/" + shop + "/products?number=" +
-                        number + "&offset=" + offset;
+        String thisAPIHref = urlHelper.getContextPlatformURL("/marketplace/api/shops/" + shop + "/products?number=" +
+                number + "&offset=" + offset).toString();
+
         ResultSetRepresentation<List<Map<String, Object>>> resultSet =
                 new ResultSetRepresentation(thisAPIHref, number, offset, result,
                         Long.valueOf(response.getHits().getTotalHits()).intValue());

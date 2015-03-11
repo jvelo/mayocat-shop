@@ -9,6 +9,8 @@ package org.mayocat.shop.checkout;
 
 import javax.validation.Valid;
 
+import org.mayocat.configuration.Configurable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -18,10 +20,19 @@ public class CheckoutSettings
 {
     @Valid
     @JsonProperty
+    private Configurable<Boolean> guestCheckout = new Configurable<>(Boolean.TRUE);
+
+    @Valid
+    @JsonProperty
     private String defaultPaymentGateway = "paypaladaptivepayments";
 
     public String getDefaultPaymentGateway()
     {
         return defaultPaymentGateway;
+    }
+
+    public Configurable<Boolean> isGuestCheckoutEnabled()
+    {
+        return guestCheckout;
     }
 }

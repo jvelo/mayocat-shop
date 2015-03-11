@@ -8,65 +8,69 @@
 'use strict'
 
 angular.module('catalog', [])
-    .service('catalogService', function ($http, configurationService) {
-        return {
-            hasCollections: function (callback) {
-                configurationService.get("catalog.products.collections", function (hasCollections) {
-                    callback && callback.call(this, hasCollections);
-                });
-            },
+    .service('catalogService',['$http', '$translate', 'configurationService', 'notificationService',
+        function($http, $translate, configurationService, notificationService) {
+            return {
+                hasCollections: function (callback) {
+                    configurationService.get("catalog.products.collections", function (hasCollections) {
+                        callback && callback.call(this, hasCollections);
+                    });
+                },
 
-            listProducts: function (callback) {
-                this.hasCollections(function (hasCollections) {
-                    if (!hasCollections) {
-                        $http.get('/api/products/').success(function (data) {
-                            callback && callback.call(this, data);
+                listProducts: function (callback) {
+                    this.hasCollections(function (hasCollections) {
+                        if (!hasCollections) {
+                            $http.get('/api/products/').success(function (data) {
+                                callback && callback.call(this, data);
+                            });
+                        }
+                        else {
+                            $http.get('/api/products/?filter=uncategorized').success(function (data) {
+                                callback && callback.call(this, data.products);
+                            });
+                        }
+                    });
+                },
+
+                listProductsForCollection: function (collection, callback) {
+                    $http.get('/api/collections/' + collection + "?expand=products").success(function (data) {
+                        callback && callback.call(this, data._relationships.products);
+                    });
+                },
+
+                listCollections: function (callback) {
+                    this.hasCollections(function (hasCollections) {
+                        if (!hasCollections) {
+                            callback && callback.call(this, []);
+                        }
+                        $http.get('/api/collections/?expand=productCount').success(function (data) {
+                            callback && callback.call(this, data.collections);
                         });
-                    }
-                    else {
-                        $http.get('/api/products/?filter=uncategorized').success(function (data) {
-                            callback && callback.call(this, data.products);
+                    });
+                },
+                moveProduct: function (path, slug, target, position) {
+                    $http.post('/api/collections/' + path + '/moveProduct',
+                        "product=" + slug + "&" + position + "=" + target,
+                        { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
+                        .success(function (data) {
+                            notificationService.notify($translate('product.status.moved'));
                         });
-                    }
-                });
-            },
+                },
+                move: function (path, slug, target, position) {
+                    $http.post("/api/" + path + "/"  + slug + "/move",
+                        position + "=" + target,
+                        { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
+                        .success(function (data) {
+                            if (path == 'collections') {
+                                notificationService.notify($translate('product.status.collectionMoved'));
+                            } else if (path == 'products') {
+                                notificationService.notify($translate('product.status.productMoved'));
+                            }
+                        });
+                }
 
-            listProductsForCollection: function (collection, callback) {
-                $http.get('/api/collections/' + collection + "?expand=products").success(function (data) {
-                    callback && callback.call(this, data._relationships.products);
-                });
-            },
-
-            listCollections: function (callback) {
-                this.hasCollections(function (hasCollections) {
-                    if (!hasCollections) {
-                        callback && callback.call(this, []);
-                    }
-                    $http.get('/api/collections/?expand=productCount').success(function (data) {
-                        callback && callback.call(this, data.collections);
-                    });
-                });
-            },
-            moveProduct: function (path, slug, target, position) {
-                $http.post('/api/collections/' + path + '/moveProduct',
-                    "product=" + slug + "&" + position + "=" + target,
-                    { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
-                    .success(function (data) {
-                    });
-            },
-            move: function (path, slug, target, position) {
-                $http.post("/api/" + path + "/"  + slug + "/move",
-                    position + "=" + target,
-                    { "headers": {'Content-Type': 'application/x-www-form-urlencoded'} })
-                    .success(function (data) {
-                    })
-                    .error(function (data, status) {
-
-                    });
-            }
-
-        };
-    })
+            };
+        }])
     .controller('CatalogController', ['$scope', '$location', 'catalogService', 'configurationService',
         function ($scope, $location, catalogService, configurationService) {
 

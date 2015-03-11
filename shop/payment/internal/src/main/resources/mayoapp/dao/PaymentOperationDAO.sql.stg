@@ -9,3 +9,9 @@ createPaymentOperation() ::= <<
             :operation.result,
             :operation.memo)
 >>
+
+findAllForOrderId() ::= <<
+    SELECT *
+    FROM   payment_operation
+    WHERE  order_id = :orderId
+>>

@@ -1,7 +1,7 @@
 group AddressDAO;
 
 createAddress() ::= <<
-    INSERT INTO address (address_id, company, full_name, street, street_complement, zip, city, country)
+    INSERT INTO address (address_id, company, full_name, street, street_complement, zip, city, country, note, type, customer_id)
     VALUES (:address.id,
             :address.company,
             :address.fullName,
@@ -9,5 +9,41 @@ createAddress() ::= <<
             :address.streetComplement,
             :address.zip,
             :address.city,
-            :address.country)
+            :address.country,
+            :address.note,
+            :address.type,
+            :address.customerId)
+>>
+
+updateAddress() ::= <<
+    UPDATE address
+    SET    company = :address.company,
+           full_name = :address.fullName,
+           street = :address.street,
+           street_complement = :address.streetComplement,
+           zip = :address.zip,
+           city = :address.city,
+           country = :address.country,
+           note =: address.note,
+           type = :address.type,
+           customer_id = :address.customerId
+    WHERE  address_id = :address.id
+>>
+
+deleteAddress() ::= <<
+    DELETE FROM address
+    WHERE  address_id = :address.id
+>>
+
+findById() ::= <<
+    SELECT  *
+    FROM    address
+    WHERE   address_id = :id
+>>
+
+findByCustomerIdAndType() ::= <<
+    SELECT  *
+    FROM    address
+    WHERE   customer_id = :customerId
+        AND type = :type
 >>

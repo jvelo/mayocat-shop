@@ -16,6 +16,8 @@ var mayocat = angular.module('mayocat', [
     'mayocat.mixins',
     'mayocat.entities',
     'mayocat.locales',
+    'mayocat.upload',
+    'mayocat.notifications',
     'pascalprecht.translate'
 ]);
 
@@ -41,9 +43,8 @@ mayocat.config(function ($httpProvider) {
             return promise.then(success, error);
         }
     }];
-    $httpProvider.responseInterceptors.push(interceptor);
+    $httpProvider.responseInterceptors && $httpProvider.responseInterceptors.push(interceptor);
 });
-
 
 /**
  * Simple list picker directive to manage a list of elements
@@ -95,185 +96,6 @@ mayocat.directive('listPicker', ['$parse', function ($parse) {
 }]);
 
 /**
- * Image upload directive.
- */
-mayocat.directive('imageUpload', ['$location', '$timeout', '$q', function factory($location, $timeout, $q) {
-    return {
-        restrict: "E",
-        templateUrl: "/common/partials/imageUpload.html",
-        scope: {
-            'headerText': "@",
-            'dragAndDrop': '&',
-            'multiple': '&',
-            'requestedDropZone': '&dropZone',
-            'requestedUploadUri': '&uploadUri',
-            'onUpload': '&onUpload'
-        },
-        controller: function ($scope, $element, $attrs) {
-            // Initialize default value for attributes
-
-            // Get the upload URI the directive customer requested. It is either provided as a function,
-            // which we need to evaluate, or as a raw string.
-            $scope.uploadUri = typeof $scope.requestedUploadUri === "function"
-                ? $scope.requestedUploadUri()
-                : $scope.requestedUploadUri;
-
-            // DND default value
-            if (typeof $scope.dragAndDrop === "function") {
-                $scope.dragAndDrop = $scope.dragAndDrop();
-                if (typeof $scope.dragAndDrop === "undefined") {
-                    $scope.dragAndDrop = true;
-                }
-            }
-
-            // Multiple default value
-            if (typeof $scope.multiple === "function") {
-                $scope.multiple = $scope.multiple();
-                if (typeof $scope.multiple === "undefined") {
-                    $scope.multiple = true;
-                }
-            }
-
-            // Custom dropzone option
-            $scope.dropzone = typeof $scope.requestedDropZone === "string"
-                ? $($scope.requestedDropZone)
-                : $element.find('.dropzone');
-
-            if ($scope.dropzone && typeof $scope.dropzone.length !== "undefined") {
-                // The file upload widget expects an element, not a jQuery-style array
-                $scope.dropzone = $scope.dropzone[0];
-            }
-
-        },
-        compile: function compile(tElement, tAttrs, transclude) {
-            return {
-                post: function postLink($scope, element, attrs) {
-
-                    $scope.files = [];
-
-                    $scope.getPreviewUri = function (file, index) {
-                        var deferred = $q.defer();
-                        loadImage(file, function (preview) {
-                            deferred.resolve({
-                                index: index,
-                                preview: preview
-                            });
-                            $scope.$apply();
-                        }, {
-                            maxWidth: 100,
-                            maxHeight: 100,
-                            canvas: false,
-                            noRevoke: true
-                        });
-                        return deferred.promise;
-                    }
-
-                    $scope.remove = function (index) {
-                        $scope.files[index] = null;
-                    }
-
-                    $scope.fileUploadFailed = function (index) {
-                        $scope.$apply(function ($scope) {
-                            $scope.files[index].failed = true;
-                        });
-                    }
-
-                    $scope.fileUploading = function (index, loaded, total) {
-                        $scope.$apply(function ($scope) {
-                            $scope.files[index].progress = Math.round(loaded * 100 / total);
-                        });
-                    }
-
-                    $scope.fileUploaded = function (index) {
-                        $scope.$apply(function ($scope) {
-                            if (typeof $scope.onUpload === "function") {
-                                $scope.onUpload($scope.files[index]);
-                            }
-                            // Remove the file from list
-                            $scope.files[index] = null;
-                        });
-                    }
-
-                    $scope.submit = function () {
-                        for (var i = 0; i < $scope.files.length; i++) {
-                            if ($scope.files[i] !== null) {
-                                $scope.files[i].progress = 0;
-                                var data = {};
-                                if (typeof $scope.files[i].title !== 'undefined') {
-                                    data["title"] = $scope.files[i].title;
-                                }
-                                if (typeof $scope.files[i].description !== 'undefined') {
-                                    data["description"] = $scope.files[i].description;
-                                }
-                                if (typeof $scope.files[i].name !== 'undefined') {
-                                    data["filename"] = $scope.files[i].name;
-                                }
-                                $(element).fileupload('send', {
-                                    files: $scope.files[i],
-                                    formData: data
-                                });
-                            }
-                        }
-                    }
-
-                    $scope.hasFiles = function () {
-                        for (var i = 0; i < $scope.files.length; i++) {
-                            if ($scope.files[i] !== null) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-
-                    // Extend the directive element with the jQuery file upload plugin
-                    $(element).fileupload({
-                        dropZone: $scope.dropzone || undefined,
-                        url: $scope.uploadUri,
-                        add: function (e, data) {
-                            $scope.$apply(function ($scope) {
-                                for (var i = 0; i < data.files.length; i++) {
-                                    if (!$scope.multiple) {
-                                        // If we are in "mono-upload" mode, we always put the image as first one of
-                                        // the array
-                                        $scope.files[0] = data.files[i];
-                                        index = 0;
-                                    }
-                                    else {
-                                        // In "multi-upload" mode, we append the file to the array
-                                        var index = $scope.files.push(data.files[i]) - 1;
-                                    }
-                                    $scope.files[index].index = index;
-                                    $scope.getPreviewUri($scope.files[index], index).then(function (result) {
-                                        $scope.files[result.index].previewUri = result.preview.src;
-                                        $scope.files[result.index].previewWidth = result.preview.width;
-                                        $scope.files[result.index].previewHeight = result.preview.height;
-                                    });
-                                }
-                            });
-                        },
-                        done: function (e, data) {
-                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                                $scope.fileUploaded(data.files[0].index);
-                            }
-                        },
-                        fail: function (e, data) {
-                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                                $scope.fileUploadFailed(data.files[0].index);
-                            }
-                        },
-                        progress: function (e, data) {
-                            if (typeof data.files !== 'undefined' && typeof data.files[0].index !== 'undefined') {
-                                $scope.fileUploading(data.files[0].index, data.loaded, data.total);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }
-}]);
-
-/**
  * Thumbnail editor directive
  */
 mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope) {
@@ -307,7 +129,7 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
 
                             $(imageElement).Jcrop({
                                 boxWidth: 400,
-                                boxHeight: 600,
+                                boxHeight: 400,
                                 setSelect: $scope.selection(),
                                 aspectRatio: aspectRatio,
                                 onSelect: function (coordinates) {
@@ -409,10 +231,11 @@ mayocat.directive('thumbnailEditor', ['$rootScope', function factory($rootScope)
  * See http://stackoverflow.com/questions/11997246/bind-ckeditor-value-to-model-text-in-angularjs-and-rails
  * and http://stackoverflow.com/questions/15483579/angularjs-ckeditor-directive-sometimes-fails-to-load-data-from-a-service
  */
-mayocat.directive('ckEditor', function () {
+mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
     return {
         require: '?ngModel',
         link: function (scope, elm, attr, ngModel) {
+            CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
             var ckOptions = {
                 language: localStorage.locale || Mayocat.defaultLocale,
                 toolbarGroups: [
@@ -467,11 +290,17 @@ mayocat.directive('ckEditor', function () {
                 removePlugins: 'elementspath,horizontalrule,image',
                 removeButtons: "Subscript,Superscript",
                 height: '290px',
-                width: '99%'
+                width: '99%',
+                removeDialogTabs: '',
+                extraPlugins: 'mayoimage'
             };
 
-            var textarea = elm[0],
-                ck = CKEDITOR.replace(textarea, ckOptions);
+            CKEDITOR.plugins.addExternal('imagebrowser', 'plugins/imagebrowser/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
+
+            CKEDITOR.config.mayocat_server = $rootScope.server;
+            CKEDITOR.config.mayocat_entity_uri = $rootScope.entity.uri;
+            var ck = CKEDITOR.replace(elm[0], ckOptions);
 
             if (!ngModel) return;
 
@@ -498,8 +327,8 @@ mayocat.directive('ckEditor', function () {
                 ck.setData(ngModel.$viewValue);
             };
 
-            scope.$on('entity:initialized', function (event, entity) {
-                CKEDITOR.config.mayocat_entityUri = entity.uri;
+            scope.$on('entity:initialized', function(event, entity){
+                CKEDITOR.config.mayocat_entityUri = $rootScope.server + entity.uri;
             });
 
             // Create a new ckEditor with a new locale when this last one is changed
@@ -514,12 +343,12 @@ mayocat.directive('ckEditor', function () {
                 };
 
                 ck.destroy();
-                ck = CKEDITOR.replace(textarea, ckOptions);
+                ck = CKEDITOR.replace(elm[0], ckOptions);
             });
 
         }
     };
-});
+}]);
 
 /**
  * Scroll directive.
@@ -668,20 +497,61 @@ mayocat.directive('activeClass', ['$location', function (location) {
  *
  * Inspired by http://stackoverflow.com/questions/15798594/angularjs-forms-validate-fields-after-user-has-left-field
  */
-mayocat.directive('validateOnBlur', function () {
-    return {
-        restrict: 'AC',
-        link: function (scope, element, attrs) {
-            var inputs = $(element).find('input, select, textarea');
+mayocat.directive("percent", function ($filter) {
+    var p = function (viewValue) {
+        var m = viewValue.match(/^(\d+)\/(\d+)/);
+        if (m != null)
+            return $filter('number')(parseInt(m[1]) / parseInt(m[2]), 2);
+        return $filter('number')(parseFloat(viewValue) / 100, 2);
+    };
 
-            inputs.on('blur', function () {
-                $(this).addClass('has-visited');
-                $(this).siblings(".validation").addClass('has-visited');
+    var f = function (modelValue) {
+        return $filter('number')(parseFloat(modelValue) * 100, 2);
+    };
+
+    return {
+        require: 'ngModel',
+        link: function (scope, ele, attr, ctrl) {
+            ctrl.$parsers.unshift(p);
+            ctrl.$formatters.unshift(f);
+        }
+    };
+});
+
+/**
+ * Displays a value as percentage
+ *
+ * Adapted from http://jsfiddle.net/gronky/GnTDJ/
+ */
+mayocat.directive("displayAsPercentage", function ($filter) {
+    var p = function (viewValue) {
+        return (parseFloat(viewValue) / 100).toFixed(6);
+    };
+
+    var f = function (modelValue) {
+        // TODO check number of decimals in modelValue and round according to it if necessary
+        return (parseFloat(modelValue) * 100).toFixed(2);
+    };
+    return {
+        require: 'ngModel',
+        link: function (scope, ele, attr, ctrl) {
+            ctrl.$parsers.unshift(p);
+            ctrl.$formatters.unshift(f);
+        }
+    };
+});
+
+
+mayocat.directive('loginAnimate', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            scope.$on("event:authenticationFailure", function () {
+                $(element).addClass('login-animate');
             });
 
-            element.on('submit', function () {
-                inputs.addClass('has-visited');
-                inputs.siblings(".validation").addClass('has-visited');
+            $(element).on('animationend webkitAnimationEnd', function () {
+                $(this).removeClass('login-animate');
             });
         }
     };
@@ -703,21 +573,6 @@ mayocat.controller('LoginController', ['$rootScope', '$scope',
             $scope.authenticationFailed = true;
         });
     }]);
-
-mayocat.directive('loginAnimate', function() {
-    return {
-        restrict: 'A',
-        link: function (scope, element) {
-            scope.$on("event:authenticationFailure", function () {
-                $(element).addClass('login-animate');
-            });
-
-            $(element).on('animationend webkitAnimationEnd', function () {
-                $(this).removeClass('login-animate');
-            });
-        }
-    };
-});
 
 mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http', '$translate', 'authenticationService',
     'configurationService',
@@ -766,31 +621,37 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
         $scope.ping = function () {
             $http.get('/api/tenant')
                 .success(function (data, status, headers, config) {
-                    if (status === 200) {
+                    // In angular 1.2, 4xx are successes
+                    if (status !== 404) {
                         $scope.tenant = data;
-                    }
-                    else if (status === 404) {
+                    } else {
                         $scope.tenant = undefined;
                     }
-
                 })
                 .error(function (data, status, headers, config) {
-                    $scope.$parent.$broadcast('event:serverError');
+                    // In angular 1.3, 4xx are errors
+                    if (status === 404) {
+                        $scope.tenant = undefined;
+                    }
+                    else {
+                        $scope.$parent.$broadcast('event:serverError');
+                    }
                 });
             $http.get('/api/me')
                 .success(function (data, status, headers, config) {
-                    if (status === 200) {
+                    // In angular 1.2, 4xx are successes
+                    if (status !== 404) {
                         authenticationService.loginConfirmed(data);
                     }
-                    else if (status === 404) {
-                        $scope.tenant = undefined;
-                    }
-
                 })
                 .error(function (data, status, headers, config) {
-                    $scope.$parent.$broadcast('event:serverError');
+                    // In angular 1.3, 4xx are errors
+                    if (status !== 404) {
+                        $scope.$parent.$broadcast('event:serverError');
+                    }
                 });
         }
+
 
         // Ensure authenticated
         $scope.ping();
@@ -834,4 +695,9 @@ mayocat.controller('AppController', ['$rootScope', '$scope', '$location', '$http
             $translate.uses(locale);
         };
 
+        // $rootScope.server is a global variable to be used when the back-office and the mayocat server are not hosted
+        // on the same domain.
+        // When the back-office and the server are hosted on the same domain, it is superfluous to set, and we can be
+        // left to the empty string.
+        $rootScope.server = "";
     }]);

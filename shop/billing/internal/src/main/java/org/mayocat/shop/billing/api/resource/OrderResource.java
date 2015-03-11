@@ -32,7 +32,6 @@ import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.rest.representations.ResultSetRepresentation;
 import org.mayocat.shop.billing.api.representation.OrderRepresentation;
-import org.mayocat.shop.billing.meta.OrderEntity;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -41,20 +40,17 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.yammer.metrics.annotation.Timed;
 
 /**
  * @version $Id$
  */
-@Component(OrderResource.PATH)
-@Path(OrderResource.PATH)
+@Component("/tenant/{tenant}/api/orders")
+@Path("/tenant/{tenant}/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class OrderResource implements Resource
 {
-    public static final String PATH = API_ROOT_PATH + OrderEntity.PATH;
-
     @Inject
     private Provider<OrderStore> orderStore;
 
@@ -62,7 +58,6 @@ public class OrderResource implements Resource
     private ConfigurationService configurationService;
 
     @GET
-    @Timed
     @Authorized
     public ResultSetRepresentation<OrderRepresentation> getAllOrders(
             @QueryParam("number") @DefaultValue("50") Integer number,
@@ -82,12 +77,12 @@ public class OrderResource implements Resource
                     }
                 });
 
-        Integer total = this.orderStore.get().countAll();
-        ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<OrderRepresentation>(
-                PATH,
+        Integer total = this.orderStore.get().countAllPaidOrAwaitingPayment();
+        ResultSetRepresentation<OrderRepresentation> resultSet = new ResultSetRepresentation<>(
+                "/api/orders",
                 number,
                 offset,
-                new ArrayList<OrderRepresentation>(representations),
+                new ArrayList<>(representations),
                 total
         );
 
@@ -110,7 +105,6 @@ public class OrderResource implements Resource
 
     @Path("{slug}")
     @POST
-    @Timed
     @Authorized
     // Partial update : NOT idempotent
     public Response updateOrder(@PathParam("slug") String slug,
@@ -126,7 +120,7 @@ public class OrderResource implements Resource
                 return Response.ok().build();
             }
         } catch (InvalidEntityException e) {
-            throw new com.yammer.dropwizard.validation.InvalidEntityException(e.getMessage(), e.getErrors());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("No product with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build();

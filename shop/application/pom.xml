@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-application</artifactId>
@@ -49,6 +49,30 @@
 
         <dependency>
             <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-taxes-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-taxes-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-cart-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-shipping-internal</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -56,6 +80,12 @@
         <dependency>
             <groupId>org.mayocat.shop</groupId>
             <artifactId>mayocat-shop-payment-internal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-catalog-internal</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -98,6 +128,12 @@
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-configuration-default</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-localization-default</artifactId>
             <version>${project.version}</version>
         </dependency>
 

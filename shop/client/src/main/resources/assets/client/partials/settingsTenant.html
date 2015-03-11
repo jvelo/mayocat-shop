@@ -34,37 +34,30 @@
 
                         <!-- Shop logo -->
                         <p>{{'settings.tenant.shopLogo' | translate}}</p>
-                        <div ng-show="tenant.featuredImage">
-                                <img ng-src="{{tenant.featuredImage.file.href}}?height=100"/>
+                        <p ng-show="tenant._embedded.featuredImage && !uploadingLogo">
+                                <img ng-src="{{tenant._embedded.featuredImage.file._href}}?height=100"/>
+                        </p>
+
+                        <div>
+                            <upload-list id="'logo'"></upload-list>
+                            <div class="clearfix"></div>
                         </div>
-                        <image-upload upload-uri="'/api/tenant/attachments?featuredImage=true'"
-                                      on-upload="reloadImages()"
-                                      drag-and-drop="false"
-                                      multiple="false">
-                        </image-upload>
 
-                    </div>
-
-                    <!-- Shop addons (if any) -->
-                    <div ng-show="addons.length > 0 && !isNew()">
-                        <div class="block" ng-repeat="group in addons">
-                            <h3>{{group.name}}</h3>
-
-                            <p ng-show="group.text && group.text != ''">
-                                {{group.text}}
-                            </p>
-                            <ul>
-                                <li ng-repeat="addon in group.fields">
-                                    {{addon.definition.name}}
-
-                                    <addon definition="addon.definition"
-                                           value="tenant.addons[addon.index].value"
-                                           type="tenant.addons[addon.index].type"></addon>
-                                </li>
-                            </ul>
+                        <div ng-show="!uploadingLogo">
+                            <image-upload upload-uri="/api/tenant/attachments"
+                                          multiple="false"
+                                          drop-text="'upload.explanation.dropLogo' | translate"
+                                          target="logo"
+                                          label="upload.action.select"
+                                          id="'logo'">
+                            </image-upload>
                         </div>
                     </div>
 
+                    <!-- Addons -->
+                    <div ng-if="addons.length > 0 && !isNew()">
+                        <addon-list addons="addons" entity="tenant" />
+                    </div>
                 </div>
 
                 <!-- Save button -->

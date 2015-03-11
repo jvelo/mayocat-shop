@@ -12,8 +12,7 @@ import java.util.UUID;
 import org.mayocat.shop.payment.model.GatewayCustomerData;
 import org.mayocat.shop.payment.model.GatewayTenantData;
 import org.mayocat.shop.payment.store.jdbi.mapper.GatewayCustomerDataMapper;
-import org.mayocat.shop.payment.store.jdbi.mapper.PaymentOperationMapper;
-import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.MapAsJsonStringArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -29,7 +28,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  * @version $Id$
  */
 @RegisterMapper(GatewayCustomerDataMapper.class)
-@RegisterArgumentFactory({ MapAsJsonArgumentFactory.class })
+@RegisterArgumentFactory({ MapAsJsonStringArgumentFactory.class })
 @UseStringTemplate3StatementLocator
 public abstract class GatewayDataDAO implements Transactional<GatewayDataDAO>
 {

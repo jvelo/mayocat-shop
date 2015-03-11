@@ -10,7 +10,7 @@ package org.mayocat.shop.payment.store.jdbi;
 import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
-import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.payment.InvalidGatewayDataException;
 import org.mayocat.shop.payment.model.GatewayCustomerData;
 import org.mayocat.shop.payment.model.GatewayTenantData;

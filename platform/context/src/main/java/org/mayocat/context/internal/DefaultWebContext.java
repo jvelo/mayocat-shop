@@ -46,7 +46,7 @@ public class DefaultWebContext implements WebContext
 
     private Boolean alternativeLocale;
 
-    private Map<Class, Object> settings = null;
+    private Map<Class, Serializable> settings = null;
 
     private WebRequest webRequest;
 
@@ -103,7 +103,7 @@ public class DefaultWebContext implements WebContext
     }
 
     @Override
-    public void setSettings(Map<Class, Object> settings)
+    public void setSettings(Map<Class, Serializable> settings)
     {
         if (this.settings != null) {
             throw new RuntimeException("Illegal attempt at replacing already initialized settings");

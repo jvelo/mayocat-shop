@@ -13,6 +13,9 @@ import com.google.common.math.IntMath
 import com.googlecode.flyway.core.util.StringUtils
 import groovy.transform.CompileStatic
 import org.apache.commons.lang3.text.StrSubstitutor
+import org.mayocat.addons.web.AddonsWebObjectBuilder
+import org.mayocat.attachment.AttachmentLoadingOptions
+import org.mayocat.attachment.store.AttachmentStore
 import org.mayocat.cms.news.NewsSettings
 import org.mayocat.cms.news.model.Article
 import org.mayocat.cms.news.store.ArticleStore
@@ -21,19 +24,18 @@ import org.mayocat.cms.news.web.object.ArticleWebObject
 import org.mayocat.configuration.ConfigurationService
 import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
+import org.mayocat.entity.EntityData
+import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
-import org.mayocat.image.model.Thumbnail
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.image.store.ThumbnailStore
-import org.mayocat.localization.EntityLocalizationService
-import org.mayocat.model.Attachment
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
-import org.mayocat.rest.web.AbstractWebView
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.front.context.ContextConstants
 import org.mayocat.shop.front.views.ErrorWebView
 import org.mayocat.shop.front.views.WebView
-import org.mayocat.store.AttachmentStore
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
@@ -52,11 +54,11 @@ import java.text.MessageFormat
  */
 @Component("/news")
 @Path("/news")
-@Produces([ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON ])
+@Produces([MediaType.TEXT_HTML, MediaType.APPLICATION_JSON])
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @ExistingTenant
 @CompileStatic
-class NewsWebView extends AbstractWebView implements Resource
+class NewsWebView implements Resource
 {
     @Inject
     Provider<ArticleStore> articleStore
@@ -74,17 +76,20 @@ class NewsWebView extends AbstractWebView implements Resource
     EntityURLFactory urlFactory
 
     @Inject
-    EntityLocalizationService entityLocalizationService
+    ConfigurationService configurationService
 
     @Inject
-    ConfigurationService configurationService
+    AddonsWebObjectBuilder addonsWebObjectBuilder
+
+    @Inject
+    EntityDataLoader dataLoader
 
     @GET
     def getNews(@QueryParam("page") @DefaultValue("1") Integer page)
     {
         final int currentPage = page < 1 ? 1 : page
         Integer numberOfArticlesPerPAge =
-            context.theme.definition.getPaginationDefinition("news").getItemsPerPage()
+                context.theme.definition.getPaginationDefinition("news").getItemsPerPage()
 
         Integer offset = (page - 1) * numberOfArticlesPerPAge
         Integer totalCount = this.articleStore.get().countAllPublished()
@@ -105,38 +110,18 @@ class NewsWebView extends AbstractWebView implements Resource
         ThemeDefinition theme = this.context.theme?.definition;
         GeneralSettings generalSettings = configurationService.getSettings(GeneralSettings.class) // <o
 
-        List<UUID> featuredImageIds = articles.collect({ Article a -> a.featuredImageId })
-                .findAll({ UUID id -> id != null }) as List<UUID>
+        List<EntityData<Article>> articlesData = dataLoader.
+                load(articles, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
 
-        List<Attachment> allImages;
-        List<Thumbnail> allThumbnails;
+        articlesData.each({ EntityData<Article> articleData ->
 
-        if (featuredImageIds.isEmpty()) {
-            allImages = [];
-            allThumbnails = [];
-        } else {
-            allImages = this.attachmentStore.get().findByIds(featuredImageIds);
-            allThumbnails = this.thumbnailStore.get().findAllForIds(featuredImageIds);
-        }
-
-        articles.each({ Article article ->
-
-            def featuredImage
-            def featuredImageAttachment = allImages.find({ Attachment attachment -> attachment.id == article.featuredImageId })
-            if (featuredImageAttachment) {
-                featuredImage = new Image(featuredImageAttachment, allThumbnails.findAll({
-                    Thumbnail thumbnail -> thumbnail.attachmentId == featuredImageAttachment.id
-                }) as List<Thumbnail>)
-            }
+            Article article = articleData.entity
+            List<Image> images = articleData.getDataList(Image.class)
 
             ArticleWebObject articleWebObject = new ArticleWebObject()
-            articleWebObject.withArticle(article, urlFactory, generalSettings.locales.mainLocale.getValue(),
-                    Optional.fromNullable(this.context.theme?.definition))
-
-            if (featuredImage) {
-                articleWebObject.withImages([featuredImage] as List<Image>, article.featuredImageId,
-                        Optional.fromNullable(theme))
-            }
+            articleWebObject.withArticle(article, urlFactory, generalSettings.locales.mainLocale.getValue())
+            articleWebObject.withAddons(addonsWebObjectBuilder.build(articleData))
+            articleWebObject.withImages(images as List<Image>, article.featuredImageId, Optional.fromNullable(theme))
 
             list << articleWebObject
         })
@@ -148,7 +133,7 @@ class NewsWebView extends AbstractWebView implements Resource
 
         context.put("articles", new ArticleListWebObject([
                 pagination: pagination,
-                list: list
+                list      : list
         ]));
 
         return new WebView().template("news.html").data(context);
@@ -169,33 +154,26 @@ class NewsWebView extends AbstractWebView implements Resource
         }
 
         def context = new HashMap<String, Object>([
-                "title": article.title,
+                "title"  : article.title,
                 "content": article.content
         ])
 
         ThemeDefinition theme = this.context.theme?.definition
 
-        List<Attachment> attachments = this.attachmentStore.get().findAllChildrenOf(article)
-        List<Image> images = []
+        EntityData<Article> data = dataLoader.load(article, StandardOptions.LOCALIZE)
 
-        attachments.each({ Attachment attachment ->
-            if (isImage(attachment)) {
-                def thumbnails = thumbnailStore.get().findAll(attachment)
-                Image image = new Image(entityLocalizationService.localize(attachment) as Attachment, thumbnails)
-                images.add(image)
-            }
-        })
+        Optional<ImageGallery> gallery = data.getData(ImageGallery.class);
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class)
 
         ArticleWebObject articleWebObject = new ArticleWebObject()
-        articleWebObject.withArticle(article, urlFactory, settings.locales.mainLocale.getValue(),
-                Optional.fromNullable(this.context.theme?.definition))
+        articleWebObject.withArticle(article, urlFactory, settings.locales.mainLocale.getValue())
+        articleWebObject.withAddons(addonsWebObjectBuilder.build(data))
         articleWebObject.withImages(images, article.featuredImageId, Optional.fromNullable(theme))
 
         context.put("article", articleWebObject)
 
         return new WebView().template("article.html").model(article.model).data(context)
     }
-
 }

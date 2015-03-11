@@ -13,20 +13,23 @@
   <parent>
     <groupId>org.mayocat</groupId>
     <artifactId>mayocat-parent</artifactId>
-    <version>0.12-SNAPSHOT</version>
+    <version>0.40-SNAPSHOT</version>
   </parent>
   <groupId>org.mayocat.shop</groupId>
   <artifactId>mayocat-shop-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.12-SNAPSHOT</version>
+  <version>0.40-SNAPSHOT</version>
 
   <name>Mayocat Shop - Parent POM</name>
   <description>Parent POM for the shop application</description>
 
   <modules>
+    <module>model</module>
     <module>catalog</module>
     <module>shipping</module>
+    <module>taxes</module>
     <module>cart</module>
+    <module>customer</module>
     <module>payment</module>
     <module>billing</module>
     <module>checkout</module>

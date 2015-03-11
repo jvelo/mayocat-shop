@@ -44,10 +44,10 @@ public interface CarrierDAO extends Transactional<CarrierDAO>
     public Set<Carrier> findById(@Bind("id") UUID id);
 
     @SqlQuery
-    public Set<Carrier> findAll(@BindBean("tenant") Tenant tenant);
+    public Set<Carrier> findAll(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    public Set<Carrier> findAllWithStrategy(@BindBean("tenant") Tenant tenant, @Bind("strategy") Strategy strategy);
+    public Set<Carrier> findAllWithStrategy(@Bind("tenantId") UUID tenant, @Bind("strategy") Strategy strategy);
 
     @SqlUpdate
     public abstract void create(@BindCarrier("carrier") Carrier carrier);

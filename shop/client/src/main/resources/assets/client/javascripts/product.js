@@ -18,21 +18,13 @@ angular.module('product', ['ngResource'])
         '$location',
         '$modal',
         'catalogService',
+        'taxesService',
         'configurationService',
         'addonsService',
         'entityMixins',
 
-        function ($scope,
-                  $rootScope,
-                  $routeParams,
-                  $resource,
-                  $http,
-                  $location,
-                  $modal,
-                  catalogService,
-                  configurationService,
-                  addonsService,
-                  entityMixins) {
+        function ($scope, $rootScope, $routeParams, $resource, $http, $location, $modal,
+                  catalogService, taxesService, configurationService, addonsService, entityMixins) {
 
             entityMixins.extendAll($scope, "product");
 
@@ -72,6 +64,7 @@ angular.module('product', ['ngResource'])
                     $scope.isSaving = true;
                     $scope.ProductResource.save({ "slug": $scope.slug }, $scope.product, function () {
                         $scope.isSaving = false;
+                        $rootScope.$broadcast('catalog:refreshCatalog');
                     });
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
@@ -150,7 +143,7 @@ angular.module('product', ['ngResource'])
 
             $scope.confirmDeletionOfVariant = function (variant) {
                 $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionVariant.html' });
-                $scope.modalInstance.result.then(function(){
+                $scope.modalInstance.result.then(function () {
                     $scope.deleteVariant(variant)
                 });
             }
@@ -221,14 +214,14 @@ angular.module('product', ['ngResource'])
                 });
             }
 
-            $scope.initializeVariants = function() {
+            $scope.initializeVariants = function () {
                 if ($scope.hasTypes) {
                     var variants = $scope.product._embedded.variants;
 
                     variants.forEach(function (variant) {
 
                         if (typeof variant.addons === "undefined") {
-                            variant.addons = [];
+                            variant.addons = {};
                         }
 
                         addonsService.initializeEntityAddons("product", variant, {
@@ -241,19 +234,43 @@ angular.module('product', ['ngResource'])
                                 };
                             }
                         }).then(function (addons) {
-                            if (typeof $scope.variantAddons === "undefined") {
-                                $scope.variantAddons = addons;
-                            }
-                        });
+                                if (typeof $scope.variantAddons === "undefined") {
+                                    $scope.variantAddons = addons;
+                                }
+                            });
                     });
                 }
             }
+
+            $scope.initializeTaxes = function() {
+                $scope.calculatePrices();
+            }
+
+            $scope.calculatePrices = function() {
+                if (!$scope.product.price) {
+                    return;
+                }
+                taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
+                    $scope.excl = excl;
+                });
+            }
+
+            $scope.$watch("product.price", function () {
+                // When product price changes, recalculates taxes etc.
+                $scope.calculatePrices();
+            });
 
             configurationService.get("catalog", function (catalogConfiguration) {
                 $scope.hasWeight = catalogConfiguration.products.weight;
                 $scope.weightUnit = catalogConfiguration.products.weightUnit;
                 $scope.hasStock = catalogConfiguration.products.stock;
                 $scope.mainCurrency = catalogConfiguration.currencies.main;
+
+            });
+
+            configurationService.get("taxes", function (taxes) {
+                $scope.taxesSettings = taxes;
+                $scope.initializeTaxes();
             });
 
             // We initialize the "hasTypes" flag to true because the flickering it creates (for the time the AJAX
@@ -266,7 +283,7 @@ angular.module('product', ['ngResource'])
             // Initialize types
             configurationService.get("entities", function (entities) {
                 if (typeof entities.product !== 'undefined') {
-                    $scope.types = entities.product.types;
+                    $scope.types = entities.product.types || {};
                     $scope.hasTypes = !!(Object.keys(angular.copy($scope.types)).length > 0);
 
                     $scope.initializeVariants();
@@ -301,6 +318,9 @@ angular.module('product', ['ngResource'])
                     // Same for addons
                     $scope.initializeEntity();
 
+                    // Initialize taxes
+                    $scope.initializeTaxes();
+
                     if ($scope.product.onShelf == null) {
                         // "null" does not seem to be evaluated properly in angular directives
                         // (like ng-show="something != null")
@@ -308,6 +328,8 @@ angular.module('product', ['ngResource'])
                         // state in angular directives.
                         $scope.product.onShelf = undefined;
                     }
+
+
                 });
             }
             else {
@@ -317,8 +339,8 @@ angular.module('product', ['ngResource'])
             }
 
             $scope.confirmDeletion = function () {
-                    $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
-                    $scope.modalInstance.result.then($scope.deleteProduct);
+                $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
+                $scope.modalInstance.result.then($scope.deleteProduct);
             }
 
             $scope.deleteProduct = function () {
@@ -333,7 +355,8 @@ angular.module('product', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
-                    imagesLength: (($scope.product || {}).images || {}).length || 0,
+                    productTitle: $scope.localizedProduct.title,
+                    imagesLength: $scope.getNumberOfImages(),
                     variantTitle: ($scope.variant || {}).title
                 };
             };

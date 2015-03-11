@@ -1,0 +1,176 @@
+group CollectionDAO;
+
+create() ::= <<
+    INSERT INTO collection
+                (entity_id,
+                 position,
+                 title,
+                 description,
+                 featured_image_id)
+    VALUES      (:collection.id,
+                 :position,
+                 :collection.title,
+                 :collection.description,
+                 :collection.featuredImageId)
+>>
+
+update() ::= <<
+    UPDATE collection
+    SET    title = :collection.title,
+           description = :collection.description,
+           featured_image_id = :collection.featuredImageId
+    WHERE  entity_id = :collection.id
+>>
+
+lastPosition() ::= <<
+    SELECT collection.position
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+findAllOrderedByParentAndPosition() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND tenant_id IS NOT DISTINCT FROM :tenantId
+    ORDER
+    BY     entity.parent_id, position;
+>>
+
+findAllForProduct() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                      FROM   collection_product
+                                      WHERE  product_id = :product.id)
+>>
+
+findAllChildrenOfCollection() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND entity.parent_id = :collection.id
+>>
+
+findAllForProductIds(ids) ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                      FROM   collection_product
+                                      WHERE  product_id in (<ids>))
+>>
+
+findAllProductsCollectionsForIds(ids) ::= <<
+    SELECT collection_id, product_id
+    FROM   collection_product
+    WHERE  product_id in (<ids>)
+>>
+
+lastProductPosition() ::= <<
+    SELECT position
+    FROM   collection_product
+    WHERE  collection_id = :collection.id
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+addProduct() ::= <<
+    INSERT INTO collection_product
+                (collection_id,
+                 product_id,
+                 position)
+    VALUES      (:collection.id,
+                 :product.id,
+                 :position)
+>>
+
+lastEntityPosition() ::= <<
+    SELECT position
+    FROM   collection_entity
+    WHERE  collection_id = :collection.id
+    ORDER  BY position DESC
+    LIMIT  1
+>>
+
+addEntityToCollection() ::= <<
+    INSERT INTO collection_entity
+                (entity_id,
+                 collection_id,
+                 path,
+                 position)
+    VALUES      (:entity.id,
+                 :collection.id,
+                 CAST(:collectionPath AS ltree),
+                 :position)
+>>
+
+removeEntityFromCollection() ::= <<
+    DELETE FROM collection_entity
+    WHERE  collection_id = :collection.id
+           AND entity_id = :entity.id
+>>
+
+findCollectionsForEntity() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+    WHERE  entity.type = 'collection'
+           AND collection.entity_id IN (SELECT collection_id
+                                        FROM   collection_entity
+                                        WHERE  entity_id = :entity.id)
+>>
+
+removeProduct() ::= <<
+    DELETE FROM collection_product
+    WHERE  collection_id = :collection.id
+           AND product_id = :product.id
+>>
+
+findWithProductCountRows() ::= <<
+    SELECT entity.*, collection.*, localization_data(entity_id),
+           COALESCE(_count_collections.count, 0) AS _count
+    FROM   entity
+           INNER JOIN collection
+                   ON entity.id = collection.entity_id
+           LEFT JOIN (SELECT collection_product.collection_id,
+                             COUNT(collection_product.product_id) AS count
+                      FROM   collection_product
+                      GROUP  BY collection_product.collection_id) _count_collections
+                 ON _count_collections.collection_id = collection.entity_id
+    WHERE  entity.tenant_id IS NOT DISTINCT FROM :tenantId
+    ORDER BY collection.position
+>>
+
+updateProductPosition() ::= <<
+    UPDATE collection_product
+    SET    position = :position
+    WHERE  product_id = :product.id
+>>
+
+updateCollectionPosition() ::= <<
+    UPDATE collection
+    SET    position = :position
+    WHERE  entity_id = :collection.id
+>>
+
+updateCollectionParent() ::= <<
+    UPDATE entity
+    SET    parent_id = :collection.parentId
+    WHERE  id = :collection.id
+>>

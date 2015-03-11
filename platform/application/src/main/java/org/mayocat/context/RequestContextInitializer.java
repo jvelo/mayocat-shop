@@ -7,6 +7,7 @@
  */
 package org.mayocat.context;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.mayocat.configuration.general.LocalesSettings;
 import org.mayocat.context.internal.DefaultWebContext;
 import org.mayocat.context.internal.ThreadLocalWebContext;
 import org.mayocat.context.internal.request.DefaultWebRequest;
+import org.mayocat.context.internal.request.DefaultWebRequestBuilder;
 import org.mayocat.event.EventListener;
 import org.mayocat.multitenancy.TenantResolver;
 import org.mayocat.theme.Breakpoint;
@@ -108,23 +110,40 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
             return;
         }
 
+        DefaultWebRequestBuilder requestBuilder = new DefaultWebRequestBuilder();
+
         // 1. Tenant
 
         String host = getHost(servletRequestEvent);
-        Tenant tenant = this.tenantResolver.get().resolve(host);
+        String path = getPath(servletRequestEvent);
 
+        Tenant tenant = this.tenantResolver.get().resolve(host, path);
         DefaultWebContext context = new DefaultWebContext(tenant, null);
 
         // Set the context in the context already, even if we haven't figured out if there is a valid user yet.
         // The context tenant is actually needed to find out the context user and to initialize tenant configurations
         ((ThreadLocalWebContext) this.context).setContext(context);
 
-        // 2. Configurations
 
         if (tenant != null) {
-            Map<Class, Object> configurations = configurationService.getSettings();
-            context.setSettings(configurations);
+            requestBuilder.tenantRequest(true);
+            if (path.indexOf("/tenant/" + tenant.getSlug()) == 0) {
+                path = StringUtils.substringAfter(path, "/tenant/" + tenant.getSlug());
+                requestBuilder.tenantPrefix("/tenant/" + tenant.getSlug());
+            }
         }
+        else {
+            requestBuilder.tenantRequest(false);
+        }
+
+        requestBuilder.apiRequest(path.indexOf("/api/") == 0);
+
+        // 2. Configurations
+
+        //if (tenant != null) {
+            Map<Class, Serializable> configurations = configurationService.getSettings();
+            context.setSettings(configurations);
+        //}
 
         // 3. User
 
@@ -144,43 +163,47 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         if (tenant != null) {
             // 4. ThemeDefinition
             context.setTheme(themeManager.getTheme());
+        }
+        // 5. Locale
+        LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
+        boolean localeSet = false;
+        List<Locale> alternativeLocales =
+                FluentIterable.from(localesSettings.getOtherLocales().getValue())
+                        .filter(Predicates.notNull()).toList();
 
-            // 5. Locale
-            LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
-            boolean localeSet = false;
-            List<Locale> alternativeLocales =
-                    FluentIterable.from(localesSettings.getOtherLocales().getValue())
-                            .filter(Predicates.notNull()).toList();
-
-            String path = getPath(servletRequestEvent);
-            String canonicalPath = path;
-            if (!alternativeLocales.isEmpty()) {
-                for (Locale locale : alternativeLocales) {
-                    List<String> fragments = ImmutableList
-                            .copyOf(Collections2
-                                    .filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
-                    if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
-                        context.setLocale(locale);
-                        context.setAlternativeLocale(true);
-                        canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
-                        localeSet = true;
-                        break;
-                    }
+        String canonicalPath = path;
+        if (!alternativeLocales.isEmpty()) {
+            for (Locale locale : alternativeLocales) {
+                List<String> fragments = ImmutableList
+                        .copyOf(Collections2
+                                .filter(Arrays.asList(path.split("/")), Predicates.not(IS_NULL_OR_BLANK)));
+                if (fragments.size() > 0 && fragments.get(0).equals(locale.toLanguageTag())) {
+                    context.setLocale(locale);
+                    context.setAlternativeLocale(true);
+                    canonicalPath = StringUtils.substringAfter(canonicalPath, "/" + locale);
+                    localeSet = true;
+                    break;
                 }
             }
-            if (!localeSet) {
-                context.setLocale(localesSettings.getMainLocale().getValue());
-                context.setAlternativeLocale(false);
-            }
-
-            if (context.isAlternativeLocale()) {
-                path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
-            }
-
-            // 6. Request
-            Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
-            context.setRequest(new DefaultWebRequest(getBaseURI(servletRequestEvent), canonicalPath, path, breakpoint));
         }
+        if (!localeSet) {
+            context.setLocale(localesSettings.getMainLocale().getValue());
+            context.setAlternativeLocale(false);
+        }
+
+        if (context.isAlternativeLocale()) {
+            path = StringUtils.substringAfter(path, context.getLocale().toLanguageTag());
+        }
+
+        // 6. Request
+        Optional<Breakpoint> breakpoint = this.breakpointDetector.getBreakpoint(getUserAgent(servletRequestEvent));
+
+        requestBuilder.baseURI(getBaseURI(servletRequestEvent))
+                .canonicalPath(canonicalPath)
+                .path(path)
+                .breakpoint(breakpoint);
+
+        context.setRequest(requestBuilder.build());
     }
 
     private URI getBaseURI(ServletRequestEvent event)

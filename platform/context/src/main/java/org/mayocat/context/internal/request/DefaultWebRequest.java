@@ -21,19 +21,29 @@ import com.google.common.base.Optional;
  */
 public class DefaultWebRequest implements WebRequest
 {
-    private String canonicalPath;
+    private final String canonicalPath;
 
-    private String path;
+    private final String path;
 
-    private URI baseURI;
+    private final URI baseURI;
 
-    private Optional<Breakpoint> breakpoint = Optional.<Breakpoint>absent();
+    private final boolean isApiRequest;
 
-    public DefaultWebRequest(URI baseURI, String canonicalPath, String path, Optional<Breakpoint> breakpoint)
+    private final boolean isTenantRequest;
+
+    private final String tenantPrefix;
+
+    private final Optional<Breakpoint> breakpoint;
+
+    public DefaultWebRequest(URI baseURI, String canonicalPath, String path, boolean isTenantRequest,
+            String tenantPrefix, boolean isApiRequest, Optional<Breakpoint> breakpoint)
     {
+        this.tenantPrefix = tenantPrefix;
+        this.isTenantRequest = isTenantRequest;
+        this.isApiRequest = isApiRequest;
         this.baseURI = baseURI;
-        this.canonicalPath = canonicalPath;
         this.path = path;
+        this.canonicalPath = canonicalPath;
         this.breakpoint = breakpoint;
     }
 
@@ -56,8 +66,26 @@ public class DefaultWebRequest implements WebRequest
     }
 
     @Override
+    public boolean isApiRequest()
+    {
+        return isApiRequest;
+    }
+
+    @Override
+    public boolean isTenantRequest()
+    {
+        return isTenantRequest;
+    }
+
+    @Override
     public URI getBaseUri()
     {
         return baseURI;
+    }
+
+    @Override
+    public String getTenantPrefix()
+    {
+        return tenantPrefix;
     }
 }

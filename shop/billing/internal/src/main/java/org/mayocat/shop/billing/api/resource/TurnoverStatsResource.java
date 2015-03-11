@@ -8,6 +8,7 @@
 package org.mayocat.shop.billing.api.resource;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -33,15 +34,13 @@ import mayoapp.dao.TurnoverStatsDAO;
 /**
  * @version $Id$
  */
-@Component(TurnoverStatsResource.PATH)
-@Path(TurnoverStatsResource.PATH)
+@Component("/tenant/{tenant}/api/billing/stats")
+@Path("/tenant/{tenant}/api/billing/stats")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 public class TurnoverStatsResource implements Resource, Initializable
 {
-    public static final String PATH = API_ROOT_PATH + "billing/stats";
-
     @Inject
     private DBIProvider dbi;
 
@@ -56,10 +55,12 @@ public class TurnoverStatsResource implements Resource, Initializable
     {
         Map<String, Object> stats = Maps.newHashMap();
 
-        stats.put("daily", statsDAO.daily(webContext.getTenant()));
-        stats.put("weekly", statsDAO.weekly(webContext.getTenant()));
-        stats.put("monthly", statsDAO.monthly(webContext.getTenant()));
-        stats.put("forever", statsDAO.forever(webContext.getTenant()));
+        UUID tenantId = webContext.getTenant() != null ? webContext.getTenant().getId() : null;
+
+        stats.put("daily", statsDAO.daily(tenantId));
+        stats.put("weekly", statsDAO.weekly(tenantId));
+        stats.put("monthly", statsDAO.monthly(tenantId));
+        stats.put("forever", statsDAO.forever(tenantId));
 
         return Response.ok(stats).build();
     }

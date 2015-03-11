@@ -12,7 +12,9 @@ import java.util.UUID;
 /**
  * @version $Id$
  */
-public interface HasFeaturedImage
+public interface HasFeaturedImage extends Entity
 {
     public UUID getFeaturedImageId();
+
+    void setFeaturedImageId(UUID id);
 }

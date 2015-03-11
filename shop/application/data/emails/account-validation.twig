@@ -1,0 +1,17 @@
+{% extends 'base-mail.twig' %}
+
+{% block subject %}
+    Validate your account
+{% endblock %}
+
+{% block html_content %}
+    Hello, <br/>
+    <br/>
+    You've created an account on {{ siteName }}.<br/>
+    <br/>
+    Please open the link below to validate your email address and finish the process :<br/>
+    <br/>
+    {{ validationLink }}<br/>
+    <br/>
+    Thanks.<br/>
+{% endblock %}

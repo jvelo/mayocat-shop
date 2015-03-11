@@ -1,0 +1,7 @@
+org.mayocat.rest.jersey.BreakpointProvider
+org.mayocat.rest.jersey.ImageOptionsProvider
+org.mayocat.rest.jersey.LocaleProvider
+org.mayocat.rest.resources.AttachmentResource
+org.mayocat.rest.resources.TenantImageApi
+org.mayocat.rest.resources.LocalesResource
+org.mayocat.rest.resources.TenantLocalesResource

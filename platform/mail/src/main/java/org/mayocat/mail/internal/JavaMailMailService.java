@@ -7,7 +7,6 @@
  */
 package org.mayocat.mail.internal;
 
-import java.util.Objects;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -29,7 +28,6 @@ import org.mayocat.mail.SmtpSettings;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link org.mayocat.mail.MailService} based on JavaMail/SMTP
@@ -63,8 +61,6 @@ public class JavaMailMailService implements MailService
         properties.put("mail.transport.protocol", "smtp");
         properties.put("mail.smtp.host", smtpSettings.getServer());
         properties.put("mail.smtp.port", smtpSettings.getPort());
-        properties.put("mail.smtp.timeout", 1000);
-        properties.put("mail.smtp.connectiontimeout", 1000);
 
         for (String key : smtpSettings.getProperties().keySet()) {
             properties.put(key, smtpSettings.getProperties().get(key));
@@ -97,20 +93,17 @@ public class JavaMailMailService implements MailService
 
             // To:
             for (String to : mail.getTo()) {
-                message.addRecipient(Message.RecipientType.TO,
-                        new InternetAddress(to));
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             }
 
             // Cc:
             for (String cc : mail.getCc()) {
-                message.addRecipient(Message.RecipientType.CC,
-                        new InternetAddress(cc));
+                message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
             }
 
             // Bcc:
             for (String bcc : mail.getBcc()) {
-                message.addRecipient(Message.RecipientType.BCC,
-                        new InternetAddress(bcc));
+                message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
             }
 
             // Subject:
@@ -119,6 +112,10 @@ public class JavaMailMailService implements MailService
             // Body text
             if (mail.getText() != null) {
                 message.setText(mail.getText());
+            }
+
+            if (mail.getHtml() != null) {
+                message.setContent(mail.getHtml(), "text/html; charset=utf-8");
             }
 
             // Boom goes the dynamite

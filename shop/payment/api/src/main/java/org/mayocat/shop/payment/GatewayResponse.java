@@ -7,7 +7,11 @@
  */
 package org.mayocat.shop.payment;
 
+import java.util.Map;
+
 import org.mayocat.shop.payment.model.PaymentOperation;
+
+import com.google.common.collect.Maps;
 
 /**
  * Represents the response returned by {@link PaymentGateway} operations.
@@ -35,6 +39,11 @@ public final class GatewayResponse
      * @see {@link #getResponseText()}
      */
     private String responseText;
+
+    /**
+     * @see {@link #getData()}
+     */
+    private Map<String, Object> data = Maps.newHashMap();
 
     /**
      * Constructor.
@@ -125,5 +134,23 @@ public final class GatewayResponse
     public void setResponseText(String responseText)
     {
         this.responseText = responseText;
+    }
+
+    /**
+     * @return returns optional data associated with this gateway response.
+     */
+    public Map<String, Object> getData()
+    {
+        return data;
+    }
+
+    /**
+     * Sets optional data associated with this response.
+     *
+     * @param data the associated data
+     */
+    public void setData(Map<String, Object> data)
+    {
+        this.data = data;
     }
 }

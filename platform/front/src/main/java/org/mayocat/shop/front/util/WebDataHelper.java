@@ -12,7 +12,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.mayocat.image.model.Thumbnail;
-import org.mayocat.model.Attachment;
+import org.mayocat.attachment.model.Attachment;
 import org.mayocat.model.HasFeaturedImage;
 
 import com.google.common.base.Function;

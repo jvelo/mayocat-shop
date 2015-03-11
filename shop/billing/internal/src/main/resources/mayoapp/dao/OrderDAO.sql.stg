@@ -3,7 +3,7 @@ group OrderDAO;
 createOrder() ::= <<
     INSERT INTO purchase_order (entity_id, customer_id, delivery_address_id, billing_address_id, creation_date,
         update_date, currency, number_of_items, items_total, shipping, grand_total, status, additional_information,
-        order_data)
+        order_data, items_total_excl, shipping_excl, grand_total_excl)
     VALUES (:order.id,
             :order.customerId,
             :order.deliveryAddressId,
@@ -17,31 +17,114 @@ createOrder() ::= <<
             :order.grandTotal,
             :order.status,
             :order.additionalInformation,
-            :order.orderData)
+            CAST(:order.orderData AS json),
+            :order.itemsTotalExcl,
+            :order.shippingExcl,
+            :order.grandTotalExcl)
+>>
+
+insertOrderItems() ::= <<
+    INSERT INTO purchase_order_item (
+        id,
+        order_id,
+        purchasable_id,
+        type,
+        title,
+        merchant,
+        quantity,
+        unit_price,
+        item_total,
+        vat_rate,
+        data
+    )
+    VALUES (
+        :orderItem.id,
+        :orderItem.orderId,
+        :orderItem.purchasableId,
+        :orderItem.type,
+        :orderItem.title,
+        :orderItem.merchant,
+        :orderItem.quantity,
+        :orderItem.unitPrice,
+        :orderItem.itemTotal,
+        :orderItem.vatRate,
+        CAST (:orderItem.data AS json)
+    )
 >>
 
 updateOrder() ::= <<
     UPDATE purchase_order
-    SET    status = :order.status
+    SET    status = :order.status,
+           creation_date = :order.creationDate
     WHERE  entity_id = :order.id
 >>
 
 findAllPaidOrAwaitingPayment() ::= <<
-    SELECT *
+    SELECT entity.*,
+           purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
     WHERE   entity.type = 'purchase_order'
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
         AND purchase_order.status NOT IN ('NONE', 'PAYMENT_PENDING')
+    GROUP BY entity.id, purchase_order.entity_id
     ORDER BY purchase_order.creation_date DESC
     LIMIT  :number
     OFFSET :offset
 >>
 
-findBySlugWithCustomer() ::= <<
+findAllPaidForCustomer() ::= <<
     SELECT entity.*,
            purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+    GROUP BY entity.id, purchase_order.entity_id
+    ORDER BY purchase_order.creation_date DESC
+>>
+
+countAllPaidForCustomer() ::= <<
+    SELECT count(entity.id)
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+>>
+
+
+findAllPaidForCustomerPaginated() ::= <<
+    SELECT entity.*,
+           purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND purchase_order.customer_id = :customerId
+    GROUP BY entity.id, purchase_order.entity_id
+    ORDER BY purchase_order.creation_date DESC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+findAllPaidBetween() ::= <<
+    SELECT entity.*,
+           purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items,
            customer.*,
+           customer_entity.slug as customer_slug,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
            delivery_address.full_name as delivery_address_full_name,
@@ -50,6 +133,7 @@ findBySlugWithCustomer() ::= <<
            delivery_address.zip as delivery_address_zip,
            delivery_address.city as delivery_address_city,
            delivery_address.country as delivery_address_country,
+           delivery_address.note as delivery_address_note,
            billing_address.address_id as billing_address_id,
            billing_address.company as billing_address_company,
            billing_address.full_name as billing_address_full_name,
@@ -57,21 +141,86 @@ findBySlugWithCustomer() ::= <<
            billing_address.street_complement as billing_address_street_complement,
            billing_address.zip as billing_address_zip,
            billing_address.city as billing_address_city,
-           billing_address.country as billing_address_country
+           billing_address.country as billing_address_country,
+           billing_address.note as billing_address_note
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = entity.id
+    LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
+    LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
+    WHERE    entity.type = 'purchase_order'
+         AND purchase_order.status IN ('PAID', 'PREPARED', 'SHIPPED')
+         AND creation_date BETWEEN :date1 AND :date2
+    GROUP BY entity.id,
+             purchase_order.entity_id,
+             customer.entity_id,
+             customer_entity.slug,
+             delivery_address.address_id,
+             billing_address.address_id
+    ORDER BY purchase_order.creation_date ASC
+>>
+
+countAllPaidOrAwaitingPayment() ::= <<
+    SELECT count(entity_id)
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    WHERE   entity.type = 'purchase_order'
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+        AND purchase_order.status NOT IN ('NONE', 'PAYMENT_PENDING')
+>>
+
+findBySlugWithCustomer() ::= <<
+    SELECT entity.*,
+           purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items,
+           customer.*,
+           customer_entity.slug as customer_slug,
+           delivery_address.address_id as delivery_address_id,
+           delivery_address.company as delivery_address_company,
+           delivery_address.full_name as delivery_address_full_name,
+           delivery_address.street as delivery_address_street,
+           delivery_address.street_complement as delivery_address_street_complement,
+           delivery_address.zip as delivery_address_zip,
+           delivery_address.city as delivery_address_city,
+           delivery_address.country as delivery_address_country,
+           delivery_address.note as delivery_address_note,
+           billing_address.address_id as billing_address_id,
+           billing_address.company as billing_address_company,
+           billing_address.full_name as billing_address_full_name,
+           billing_address.street as billing_address_street,
+           billing_address.street_complement as billing_address_street_complement,
+           billing_address.zip as billing_address_zip,
+           billing_address.city as billing_address_city,
+           billing_address.country as billing_address_country,
+           billing_address.note as billing_address_note
+    FROM entity
+    INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
+    LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = customer_entity.id
     LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE   entity.type = 'purchase_order'
         AND entity.slug = :slug
-        AND entity.tenant_id = :tenant.id
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+    GROUP BY entity.id,
+             purchase_order.entity_id,
+             customer.entity_id,
+             customer_entity.slug,
+             delivery_address.address_id,
+             billing_address.address_id
 >>
 
 findByIdWithCustomer() ::= <<
     SELECT entity.*,
            purchase_order.*,
+           json_agg(purchase_order_item.*) as items,
+           count(purchase_order_item.id) as number_of_items,
            customer.*,
+           customer_entity.slug as customer_slug,
            delivery_address.address_id as delivery_address_id,
            delivery_address.company as delivery_address_company,
            delivery_address.full_name as delivery_address_full_name,
@@ -80,6 +229,7 @@ findByIdWithCustomer() ::= <<
            delivery_address.zip as delivery_address_zip,
            delivery_address.city as delivery_address_city,
            delivery_address.country as delivery_address_country,
+           delivery_address.note as delivery_address_note,
            billing_address.address_id as billing_address_id,
            billing_address.company as billing_address_company,
            billing_address.full_name as billing_address_full_name,
@@ -87,20 +237,28 @@ findByIdWithCustomer() ::= <<
            billing_address.street_complement as billing_address_street_complement,
            billing_address.zip as billing_address_zip,
            billing_address.city as billing_address_city,
-           billing_address.country as billing_address_country
+           billing_address.country as billing_address_country,
+           billing_address.note as billing_address_note
     FROM entity
     INNER JOIN purchase_order ON entity.id = purchase_order.entity_id
+    LEFT JOIN purchase_order_item on order_id = entity_id
     LEFT JOIN customer ON customer.entity_id = purchase_order.customer_id
+    LEFT JOIN entity customer_entity ON customer.entity_id = entity.id
     LEFT JOIN address delivery_address ON purchase_order.delivery_address_id = delivery_address.address_id
     LEFT JOIN address billing_address ON purchase_order.billing_address_id = billing_address.address_id
     WHERE   entity.type = 'purchase_order'
         AND entity.id = :id
+    GROUP BY entity.id,
+             purchase_order.entity_id,
+             customer.entity_id,
+             customer_entity.slug,
+             delivery_address.address_id,
+             billing_address.address_id
 >>
-
 
 lastOrderNumber() ::= <<
     SELECT MAX(TO_NUMBER(SUBSTRING(slug from '([0-9].*)'),'99999999999'))
     FROM entity
     WHERE   entity.type='purchase_order'
-        AND entity.tenant_id = :tenant.id;
+        AND entity.tenant_id IS NOT DISTINCT FROM :tenantId;
 >>

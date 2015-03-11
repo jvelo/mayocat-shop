@@ -15,18 +15,17 @@ import javax.validation.Valid;
 import org.mayocat.accounts.model.Role;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
+import org.mayocat.accounts.store.UserStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
 import org.mayocat.store.StoreException;
-import org.mayocat.accounts.store.UserStore;
-
-import mayoapp.dao.UserDAO;
-
 import org.mayocat.store.rdbms.dbi.DBIEntityStore;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import mayoapp.dao.UserDAO;
 
 @Component(hints = { "jdbi", "default" })
 public class DBIUserStore extends DBIEntityStore implements UserStore, Initializable
@@ -46,7 +45,11 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
         UUID entityId = UUID.randomUUID();
         user.setId(entityId);
 
-        this.dao.createEntity(user, USER_ENTITY_TYPE, getTenant());
+        if (getTenant() == null && user.isGlobal()) {
+            this.dao.createEntity(user, USER_ENTITY_TYPE);
+        } else {
+            this.dao.createEntity(user, USER_ENTITY_TYPE, getTenant());
+        }
         this.dao.create(user);
         this.dao.addRoleToUser(entityId, initialRole.toString());
 
@@ -58,23 +61,6 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     public User create(User user) throws EntityAlreadyExistsException, InvalidEntityException
     {
         return this.create(user, Role.ADMIN);
-    }
-
-    public void update(User user, Tenant tenant) throws EntityDoesNotExistException, InvalidEntityException,
-            StoreException
-    {
-        if (this.dao.findBySlug(user.getSlug(), tenant) != null) {
-            throw new EntityDoesNotExistException();
-        }
-        this.dao.update(user, tenant);
-    }
-
-    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
-    {
-        if (this.dao.findGlobalUserByEmailOrUserName(user.getSlug()) == null) {
-            throw new EntityDoesNotExistException();
-        }
-        this.dao.updateGlobalUser(user);
     }
 
     public User findById(UUID id)
@@ -115,17 +101,45 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
 
     public void update(User user) throws EntityDoesNotExistException, InvalidEntityException
     {
-        this.dao.begin();
-
-        User existingUser = this.dao.findBySlug(user.getSlug(), getTenant());
-
-        if (existingUser == null) {
-            this.dao.commit();
+        if (this.findById(user.getId()) == null) {
             throw new EntityDoesNotExistException();
         }
+        this.dao.update(user);
+    }
 
-        this.dao.update(user, getTenant());
-        this.dao.commit();
+    public void updatePassword(User user, String hash)
+    {
+        this.dao.changePassword(user, hash);
+    }
+
+    @Override
+    public void createPasswordResetRequest(User user, String resetKey)
+    {
+        this.dao.createPasswordResetRequest(user, resetKey);
+    }
+
+    @Override
+    public void deletePasswordResetRequest(String key)
+    {
+        this.dao.deletePasswordResetRequest(key);
+    }
+
+    @Override
+    public User findUserByPasswordResetRequest(String resetKey)
+    {
+        String userIdAsString = this.dao.findUserIdForPasswordResetKey(resetKey);
+        UUID userId = null;
+        if (userIdAsString != null) {
+            try {
+                userId = UUID.fromString(userIdAsString);
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
+        }
+        if (userId == null) {
+            return null;
+        }
+        return findById(userId);
     }
 
     @Override
@@ -143,6 +157,12 @@ public class DBIUserStore extends DBIEntityStore implements UserStore, Initializ
     public List<Role> findRolesForUser(User user)
     {
         return this.dao.findRolesForUser(user);
+    }
+
+    @Override
+    public User findByValidationKey(String validationKey)
+    {
+        return this.dao.findByValidationKey(validationKey);
     }
 
     public void initialize() throws InitializationException

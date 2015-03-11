@@ -6,23 +6,32 @@ createAttachment() ::= <<
              extension,
              title,
              description,
-             data)
+             data,
+             metadata)
     VALUES   (:entity,
              :attachment.extension,
              :attachment.title,
              :attachment.description,
-             :data)
+             :data,
+             :attachment.metadata)
 >>
 
 updateAttachment() ::= <<
     UPDATE attachment
     SET    title = :attachment.title,
-           description = :attachment.description
+           description = :attachment.description,
+           metadata = :attachment.metadata
     WHERE  entity_id = :attachment.id
 >>
 
 findAttachmentsOfEntity() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -30,17 +39,29 @@ findAttachmentsOfEntity() ::= <<
        AND entity.parent_id = :entity.id
 >>
 
-findAttachmentsOfEntities() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+findAttachmentsOfEntities(ids) ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.parent_id (<ids>)
+       AND entity.parent_id in (<ids>)
 >>
 
-findAttachmentsOfEntityWithExtensions() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+findAttachmentsOfEntityWithExtensions(extensions) ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -49,8 +70,14 @@ findAttachmentsOfEntityWithExtensions() ::= <<
        AND entity.parent_id = :entity.id
 >>
 
-findAttachmentsOfEntitiesWithExtensions() ::= <<
-    SELECT entity.*, attachment.*, localization_data(entity_id)
+findAttachmentsOfEntitiesWithExtensions(ids, extensions) ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
@@ -59,23 +86,111 @@ findAttachmentsOfEntitiesWithExtensions() ::= <<
        AND entity.parent_id in (<ids>)
 >>
 
+findAttachmentsByIds(ids) ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+    WHERE  entity.type = 'attachment'
+       AND entity.id in (<ids>)
+>>
+
+findAndLoadById() ::= <<
+    SELECT entity.*, attachment.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+    WHERE  entity.type = 'attachment'
+       AND entity.id = :id
+>>
+
+findById() ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+    WHERE  entity.type = 'attachment'
+       AND entity.id = :id
+>>
+
 findBySlug() ::= <<
     SELECT entity.*, attachment.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.tenant_id = :tenant.id 
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
        AND entity.slug = :slug
 >>
 
 findByFileNameAndExtension() ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+    WHERE  entity.type = 'attachment'
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
+       AND entity.slug = :filename
+       AND attachment.extension = :extension
+>>
+
+findByTenantAndFileNameAndExtension() ::= <<
+    SELECT entity.*,
+           attachment.entity_id,
+           attachment.extension,
+           attachment.title,
+           attachment.description,
+           attachment.metadata,
+           localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+           INNER JOIN entity AS entity_tenant
+                   ON entity.tenant_id = entity_tenant.id
+    WHERE  entity.type = 'attachment'
+       AND entity.slug = :filename
+       AND attachment.extension = :extension
+       AND entity_tenant.slug = :tenant
+>>
+
+findAndLoadByFileNameAndExtension() ::= <<
     SELECT entity.*, attachment.*, localization_data(entity_id)
     FROM   entity
            INNER JOIN attachment
                    ON entity.id = attachment.entity_id
     WHERE  entity.type = 'attachment'
-       AND entity.tenant_id = :tenant.id
+       AND entity.tenant_id IS NOT DISTINCT FROM :tenantId
        AND entity.slug = :filename
        AND attachment.extension = :extension
+>>
+
+findAndLoadByTenantAndFileNameAndExtension() ::= <<
+    SELECT entity.*, attachment.*, localization_data(entity_id)
+    FROM   entity
+           INNER JOIN attachment
+                   ON entity.id = attachment.entity_id
+           INNER JOIN entity AS entity_tenant
+                   ON entity.tenant_id = entity_tenant.id
+    WHERE  entity.type = 'attachment'
+       AND entity.slug = :filename
+       AND attachment.extension = :extension
+       AND entity_tenant.slug = :tenant
 >>

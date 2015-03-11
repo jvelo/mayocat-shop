@@ -1,0 +1,52 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mayocat.platform</groupId>
+        <artifactId>mayocat-platform-entity</artifactId>
+        <version>0.40-SNAPSHOT</version>
+    </parent>
+    <artifactId>mayocat-platform-entity-api</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Mayocat Platform - Entity - API</name>
+    <description>Entity API module</description>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- XWiki -->
+        <dependency>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-component-default</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
+
+        <!-- Testing dependencies -->
+        <dependency>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-test-component</artifactId>
+            <version>${xwiki.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

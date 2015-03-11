@@ -12,11 +12,11 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-url</artifactId>
     <packaging>jar</packaging>
-    <version>0.12-SNAPSHOT</version>
+    <version>0.40-SNAPSHOT</version>
 
     <name>Mayocat Platform - URL</name>
     <description>URL factories</description>
@@ -32,6 +32,18 @@
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-configuration-platform</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-context</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-accounts-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

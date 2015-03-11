@@ -20,7 +20,13 @@ import com.google.common.base.Optional;
  */
 public interface WebRequest
 {
+    boolean isApiRequest();
+
+    boolean isTenantRequest();
+
     URI getBaseUri();
+
+    String getTenantPrefix();
 
     String getPath();
 

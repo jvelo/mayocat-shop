@@ -7,59 +7,51 @@
  */
 package org.mayocat.addons.util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mayocat.addons.model.AddonField;
-import org.mayocat.addons.model.AddonGroup;
-import org.mayocat.model.Addon;
+import org.mayocat.addons.model.AddonFieldDefinition;
+import org.mayocat.addons.model.AddonGroupDefinition;
+import org.mayocat.model.AddonGroup;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 /**
  * @version $Id$
  */
 public class AddonUtils
 {
-    /**
-     * Finds an addon with passed group and key in a list of addons.
-     * @param addons the list of addons to search in
-     * @param group the addon group to search for
-     * @param key the key of the addon to search for
-     * @return an option with the found addon or an absent option if not found
-     */
-    public static Optional<Addon> findAddon(List<Addon> addons, String group, String key)
+    public static Map<String, AddonGroup> asMap(List<AddonGroup> addons)
     {
-        for (Addon addon : addons) {
-            if (addon.getGroup().equals("tenant") && addon.getKey().equals("type")) {
-                return Optional.of(addon);
-            }
+        Map<String, AddonGroup> addonsAsMap = new HashMap<>();
+        for (AddonGroup addonGroup : addons) {
+            addonsAsMap.put(addonGroup.getGroup(), addonGroup);
         }
-        return Optional.absent();
+        return addonsAsMap;
     }
 
     /**
-     * Finds a addon in an addon group map
+     * Finds a addon group definition in a list of group definitions. The priority of the group definitions is order in
+     * which they are passed : first passed has the highest priority, last passed the lowest.
      *
-     * @param addonToFind the addon to find in the group map
-     * @param inGroup the map to find the addon in
-     * @return an option, present with the addon if the addon is found in the map, absent otherwise
+     * @param name the name of the addon group definition to find
+     * @param groupDefinitions the list of group definitions
+     * @return the first definition found, or absent if none is found
      */
-    public static Optional<AddonField> findAddonDefinition(Addon addonToFind, Map<String, AddonGroup> inGroup)
+    public static Optional<AddonGroupDefinition> findAddonGroupDefinition(String name,
+            Map<String, AddonGroupDefinition>... groupDefinitions)
     {
-        for (String group : inGroup.keySet()) {
-            if (group.equals(addonToFind.getGroup())) {
-                for (String addon : inGroup.get(group).getFields().keySet()) {
-                    if (addon.equals(addonToFind.getKey())) {
-                        return Optional.of(inGroup.get(group).getFields().get(addon));
-                    }
-                }
+        for (Map<String, AddonGroupDefinition> groupDefinition : groupDefinitions) {
+            if (groupDefinition.containsKey(name)) {
+                return Optional.of(groupDefinition.get(name));
             }
         }
         return Optional.absent();
     }
 
-    public static boolean isListWithKeyAndDisplayValues(AddonField field)
+    public static boolean isListWithKeyAndDisplayValues(AddonFieldDefinition field)
     {
         return isListWithKeyAndDisplayValues(field.getProperties());
     }
@@ -69,7 +61,11 @@ public class AddonUtils
         if (properties == null) {
             return false;
         }
-        Object listValues = properties.get("listValues");
+        Object listValues = properties.get("list.values");
+        if (listValues == null) {
+            // For backward compatibility
+            listValues = properties.get("listValues");
+        }
         if (listValues == null) {
             return false;
         }
@@ -83,5 +79,25 @@ public class AddonUtils
             return false;
         }
         return true;
+    }
+
+    public static List<Map<String, Object>> getListValues(AddonFieldDefinition fieldDefinition)
+    {
+        if (fieldDefinition.getProperties().containsKey("list.values")) {
+            return (List<Map<String, Object>>) fieldDefinition.getProperties().get("list.values");
+        }
+        // Backward compatibility
+        return (List<Map<String, Object>>) fieldDefinition.getProperties().get("listValues");
+    }
+
+    public static Object emptyToNull(Object value)
+    {
+        if (value == null) {
+            return null;
+        }
+        if (String.class.isAssignableFrom(value.getClass())) {
+            return Strings.emptyToNull((String) value);
+        }
+        return value;
     }
 }

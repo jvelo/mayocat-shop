@@ -1,3 +1,2 @@
-org.mayocat.store.rdbms.dbi.DBIAttachmentStore
 org.mayocat.store.rdbms.dbi.DBIEntityStore
 org.mayocat.store.rdbms.dbi.DBIEntityListStore

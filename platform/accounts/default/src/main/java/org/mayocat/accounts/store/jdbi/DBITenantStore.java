@@ -18,8 +18,9 @@ import org.mayocat.accounts.model.TenantConfiguration;
 import org.mayocat.accounts.store.TenantStore;
 import mayoapp.dao.TenantDAO;
 
+import org.mayocat.addons.store.dbi.AddonsHelper;
 import org.mayocat.context.WebContext;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
@@ -31,6 +32,8 @@ import org.xwiki.component.phase.InitializationException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 @Component(hints = { "jdbi", "default" })
 public class DBITenantStore implements TenantStore, Initializable
@@ -97,7 +100,7 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public void delete(@Valid Tenant entity) throws EntityDoesNotExistException
     {
-        throw new RuntimeException("Not implemented");
+        this.dao.deleteEntityAndChildrenById(entity.getId());
     }
 
     @Override
@@ -120,19 +123,24 @@ public class DBITenantStore implements TenantStore, Initializable
     @Override
     public List<Tenant> findAll(Integer number, Integer offset)
     {
-        return this.dao.findAll(number, offset);
+        return AddonsHelper.withAddons(this.dao.findAll(number, offset), dao);
     }
 
     @Override
     public List<Tenant> findByIds(List<UUID> ids)
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return AddonsHelper.withAddons(this.dao.findByIds(TENANT_TABLE_NAME, ids), dao);
     }
 
     @Override
     public Tenant findById(UUID id)
     {
-        throw new UnsupportedOperationException("Not implemented");
+        Tenant tenant = this.dao.findById(TENANT_TABLE_NAME, id);
+        if (tenant != null) {
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
+        }
+        return tenant;
     }
 
     @Override
@@ -140,8 +148,8 @@ public class DBITenantStore implements TenantStore, Initializable
     {
         Tenant tenant = this.dao.findBySlug("tenant", slug);
         if (tenant != null) {
-            List<Addon> addons = this.dao.findAddons(tenant);
-            tenant.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
         }
         return tenant;
     }
@@ -151,8 +159,8 @@ public class DBITenantStore implements TenantStore, Initializable
     {
         Tenant tenant = this.dao.findByDefaultHost(host);
         if (tenant != null) {
-            List<Addon> addons = this.dao.findAddons(tenant);
-            tenant.setAddons(addons);
+            List<AddonGroup> addons = this.dao.findAddons(tenant);
+            tenant.setAddons(asMap(addons));
         }
         return tenant;
     }

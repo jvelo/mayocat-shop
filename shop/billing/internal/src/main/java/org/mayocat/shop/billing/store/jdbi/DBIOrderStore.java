@@ -7,12 +7,14 @@
  */
 package org.mayocat.shop.billing.store.jdbi;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
@@ -23,6 +25,8 @@ import mayoapp.dao.OrderDAO;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.phase.Initializable;
 import org.xwiki.component.phase.InitializationException;
+
+import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
@@ -46,6 +50,13 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
 
         this.dao.createEntity(order, ORDER_TABLE_NAME, getTenant());
         this.dao.createOrder(order);
+
+        for (OrderItem item : order.getOrderItems()) {
+            item.setId(UUID.randomUUID());
+            item.setOrderId(order.getId());
+        }
+
+        this.dao.insertOrderItems(order.getOrderItems());
 
         this.dao.commit();
 
@@ -121,6 +132,36 @@ public class DBIOrderStore extends DBIEntityStore implements OrderStore, Initial
     public List<Order> findAllPaidOrAwaitingPayment(Integer number, Integer offset)
     {
         return this.dao.findAllPaidOrAwaitingPayment(number, offset, getTenant());
+    }
+
+    @Override
+    public List<Order> findAllPaidForCustomer(UUID customerId)
+    {
+        return this.dao.findAllPaidForCustomer(customerId);
+    }
+
+    @Override
+    public List<Order> findAllPaidForCustomer(UUID customerId, Integer number, Integer offset)
+    {
+        return this.dao.findAllPaidForCustomerPaginated(customerId, number, offset);
+    }
+
+    @Override
+    public List<Order> findAllPaidBetween(Date date1, Date date2)
+    {
+        return this.dao.findAllPaidBetween(date1, date2);
+    }
+
+    @Override
+    public Integer countAllPaidForCustomer(UUID customerId)
+    {
+        return this.dao.countAllPaidForCustomer(customerId);
+    }
+
+    @Override
+    public Integer countAllPaidOrAwaitingPayment()
+    {
+        return this.dao.countAllPaidOrAwaitingPayment(getTenant());
     }
 
     @Override

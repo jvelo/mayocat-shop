@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function (Mayocat) {
+var Mayocat = (function (Mayocat) {
     'use strict';
 
     var frLocalization = {
@@ -14,8 +14,10 @@
             actions: {
                 add: "Ajouter",
                 remove: "Retirer",
-                close: "Fermer",
                 cancel: "Annuler"
+                edit: "Modifier",
+                close: "Fermer",
+                save: "Sauvegarder"
             },
             validation: {
                 required : "Requis"
@@ -24,6 +26,21 @@
             filter: "Filtrer",
             select: "Selectionner"
         },
+
+        routes: {
+            title: {
+                home: "Accueil",
+                orders: "Commandes",
+                customers: "Clients",
+                homepage: "Page d'accueil",
+                news: "Actualités",
+                pages: "Pages",
+                products: "Produits",
+                catalog: "Catalogue",
+                settings: "Paramètres"
+            }
+        },
+
         entity: {
             misc: {
                 defaultModel: "Modèle par défaut"
@@ -42,12 +59,15 @@
                 publish: "Mettre en ligne",
                 cancel: "Annuler",
                 remove: "Retirer",
-                back: "Retour",
-                editImage: "Modifier l'image"
+                back: "Retour"
             },
 
             alert: {
                 notFound: "Il n'y a rien à voir ici."
+            },
+
+            addons: {
+                sequenceAddElementText: "Ajouter un element"
             }
         },
 
@@ -77,32 +97,38 @@
         },
 
         upload: {
-            misc: {
-                uploading: "En cours de téléchargement...",
-                uploaded: "Téléchargement terminé !",
-                failed: "Échec"
+            explanation: {
+                dropCollection: "Déposez vos fichiers pour les ajouter à la collection « {collectionTitle} »",
+                dropProduct: "Déposez vos fichiers pour les ajouter au produit « {productTitle} »",
+                dropPage: "Déposez vos fichiers pour les ajouter à la page « {pageTitle} »",
+                dropArticle: "Déposez vos fichiers pour les ajouter à l'actualité « {articleTitle} »",
+                dropLogo: "Déposez votre logo"
             },
 
-            explanation: {
-                dropHere: "Déplacez des images de votre ordinateur et déposez-les dans cette zone"
+            status: {
+                progress: "Téléchargement de {filesNumber} images en cours",
+                success: "Vos images ont été téléchargées avec succès"
+            },
+
+            action: {
+                add: "Ajouter une image",
+                select: "Choisir un fichier"
+            }
+        },
+
+        imageEditor: {
+            misc: {
+                width: "de largeur",
+                height: "de hauteur"
+            },
+
+            title: {
+                editImage: "Editer l'image"
             },
 
             placeholder: {
                 title: "Titre de l'image (texte alternatif)",
                 description: "Description (facultatif)"
-            },
-
-            action: {
-                browse: "Parcourir...",
-                dismiss: "Abandonner",
-                upload: "Envoyer",
-                uploadAll: "Tout envoyer"
-            }
-        },
-
-        imageEditor: {
-            title: {
-                editImage: "Editer l'image"
             },
 
             action: {
@@ -154,13 +180,24 @@
                 waitingForPayment: "En attente de paiement",
                 paid: "Payée",
                 prepared: "Préparée",
-                shipped: "Expédiée"
+                shipped: "Expédiée",
+                cancelled: "Annulée"
             },
 
             action: {
                 paymentReceived: "Paiement reçu",
                 commandPrepared: "Colis préparé",
                 commandShipped: "Colis expédié"
+            },
+
+            paymentDetails: {
+                title: "Détails paiement",
+                toggle: "Afficher les détails liés au paiement",
+                gateway: "Passerelle",
+                externalId: "Id externe",
+                internalId: "Id interne",
+                result: "Résultat",
+                memo: "Memo"
             },
 
             alert: {
@@ -203,8 +240,10 @@
             },
 
             status: {
-                onShelf: "En rayon",
-                withdrawnFromSale: "Retiré de la vente"
+                onShelf: "En vente",
+                withdrawnFromSale: "Retiré de la vente",
+                productMoved: "Le produit a bien été déplacé",
+                collectionMoved: "La collection a bien été déplacée"
             },
 
             action: {
@@ -220,6 +259,11 @@
                 confirmCollectionDeletion: "Veuillez confirmer la suppression de cette collection. Cette opération ne peut pas être annulée !"
             },
 
+            type: {
+                title: "Type",
+                noType: "Aucun type"
+            },
+
             variants: {
                 title: "Déclinaisons",
                 price: "Prix",
@@ -233,28 +277,29 @@
                 conflict: "Cette déclinaison existe déjà.",
                 confirmVariantDeletion: "Veuillez confirmer la suppression de cette déclinaison. Cette opération ne peut pas être annulée !",
                 deleteVariant: "Supprimer la déclinaison"
+            },
+
+            taxes: {
+                title: "Taxes",
+                vat: "TVA",
+                excl: "HT",
+                incl: "TTC",
+                standardRate: "Taux standard"
             }
         },
 
         image: {
-            misc: {
-                actions: "Actions"
-            },
-
             title: {
                 images: "Images ({imagesLength})"
             },
 
-            explanation: {
-                noImage: "- utiliser la section ci-dessous pour ajouter de nouvelles images à ce produit."
+            status: {
+                moved: "L'image a bien été déplacée"
             },
 
             action: {
-                editMetadata: "Éditer les métadonnées"
-            },
-
-            alert: {
-                noImage: "Aucune image"
+                less: "Voir moins d'images",
+                more: "Voir plus d'images"
             }
         },
 
@@ -443,4 +488,6 @@
     // Expose the localization to the Mayocat settings
     Mayocat.localization.fr = frLocalization;
 
-})(Mayocat);
+    return Mayocat;
+
+})(Mayocat || {});

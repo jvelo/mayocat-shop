@@ -1,0 +1,126 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">{{'settings.title.taxes' | translate}}</h1>
+        </div>
+
+        <fieldset ng-show="isVisible('taxes.vat')">
+            <legend>TVA</legend>
+
+            <div ng-if="!vat.geo">
+                <label>
+                    Taux par défaut <br>
+                    <input type="number" step="any" ng-model="vat.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"
+                            display-as-percentage> %
+                </label>
+
+                <div ng-repeat="rate in vat.otherRates">
+                    <label>
+                        Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
+                        <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"
+                            display-as-percentage> % {{rate.value}}
+                    </label>
+                    <input class="btn" type="button" value="Supprimer"
+                           ng-click="deleteVatRate($index)"
+                           ng-show="isConfigurable('taxes.vat')">
+                </div>
+            </div>
+
+            <div ng-if="vat.geo">
+                <div class="block" ng-repeat="area in vat.areas">
+                    <p>Zone : <strong>{{ area.name }}</strong></p>
+                    <label>
+                        Taux par défaut <br>
+                        <input type="number" step="any" ng-model="area.defaultRate" ng-disabled="!isConfigurable('taxes.vat')"> %
+                    </label>
+
+                    <div ng-repeat="rate in area.otherRates">
+                        <label>
+                            Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
+                            <input type="number" step="any" ng-model="rate.value" ng-disabled="!isConfigurable('taxes.vat')"> %
+                        </label>
+                        <input class="btn" type="button" value="Supprimer" ng-click="deleteVatRate($index)"
+                               ng-show="isConfigurable('taxes.vat')">
+                    </div>
+
+                    <input class="btn" type="button"
+                           ng-click="editVatArea(area)"
+                           ng-show="isConfigurable('taxes.vat')"
+                           value="Modifier la zone géographique">
+
+                    <input class="btn" type="button"
+                           ng-click="deleteVatArea(area)"
+                           ng-show="isConfigurable('taxes.vat') && !($first && $last)"
+                           value="Supprimer la zone géographique">
+                </div>
+            </div>
+
+            <div ng-show="isConfigurable('taxes.vat')">
+                <input class="btn" type="button" ng-click="addVatRate()" value="Ajouter un autre taux">
+                <input class="btn" type="button" ng-if="!vat.geo"
+                       ng-click="enableVatGeo()" value="Gérer les taxes par zones géographiques">
+
+            <span ng-if="vat.geo">
+                <input class="btn" type="button" ng-click="addVatArea()" value="Ajouter une zone géographique">
+                <input class="btn" type="button" ng-click="disableVatGeo()"
+                       value="Ne plus gérer la TVA par zones géographiques">
+            </span>
+            </div>
+
+            <div class="buttons hasLoading">
+                <button ng-click="updateSettings()" class="btn btn-large btn-primary">
+                    {{'entity.action.update' | translate}}
+                </button>
+                <span ng-class="{'loading': isSaving}"></span>
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+
+<script type="text/ng-template" id="settingsTaxesEditZoneModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Gérer les taxes par zones géographiques</h3>
+    </div>
+
+    <div class="modal-body">
+        <p>La gestion des taux par zones vous permet de gérer les taxes en fonction de la zone de livraison.</p>
+        <p>Attribuer une zone aux taux existants :</p>
+
+        <label>
+            Nom de la zone
+            <input type="text" ng-model="area.name">
+        </label>
+
+        <destination-picker model="area.codes"></destination-picker>
+
+        <div ng-if="newEntity">
+            <label>
+                Taux par défaut <br>
+                <input type="number" step="any" ng-model="area.defaultRate"> %
+            </label>
+
+            <div ng-repeat="rate in area.otherRates">
+                <label>
+                    Taux réduit <span ng-if="!($first && $last)">{{ $index + 1 }}</span> <br>
+                    <input type="number" step="any" ng-model="rate.value"> %
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">Annuler</button>
+        <button class="btn btn-primary" ng-click="$close()">Valider</button>
+    </div>
+</script>

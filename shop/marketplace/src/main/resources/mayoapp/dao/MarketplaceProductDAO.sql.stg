@@ -1,0 +1,133 @@
+group MarketplaceProductDAO;
+
+findBySlugAndTenant() ::= <<
+  SELECT entity.*, product.*,
+         localization_data(product.entity_id)
+  FROM   entity
+         INNER JOIN product
+                 ON entity.id = product.entity_id
+         INNER JOIN entity as tenant_entity
+                 ON entity.tenant_id = tenant_entity.id
+         INNER JOIN tenant
+                 ON tenant_entity.id = tenant.entity_id
+  WHERE  entity.slug = :slug
+  AND    tenant_entity.slug = :tenantSlug
+>>
+
+findAllNotVariants(orderby) ::= <<
+    SELECT entity.*, product.*,
+           localization_data(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+           INNER JOIN entity as tenant_entity
+                   ON entity.tenant_id = tenant_entity.id
+           INNER JOIN tenant
+                   ON tenant_entity.id = tenant.entity_id
+    WHERE  (entity.parent_id IS NULL OR product.virtual)
+    ORDER  BY <orderby> ASC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllNotVariants() ::= <<
+    SELECT count(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+    AND    (entity.parent_id IS NULL OR product.virtual)
+>>
+
+findAllWithTitleLike() ::= <<
+    SELECT entity.*, product.*,
+           localization_data(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+           INNER JOIN entity as tenant_entity
+                   ON entity.tenant_id = tenant_entity.id
+           INNER JOIN tenant
+                   ON tenant_entity.id = tenant.entity_id
+    WHERE  entity.type = 'product'
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(:title)) || '%')
+    ORDER  BY product.title ASC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllWithTitleLike() ::= <<
+    SELECT count(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(':title')) || '%')
+>>
+
+findAllOnShelfWithTitleLike() ::= <<
+    SELECT entity.*, product.*,
+           localization_data(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+           INNER JOIN entity as tenant_entity
+                   ON entity.tenant_id = tenant_entity.id
+           INNER JOIN tenant
+                   ON tenant_entity.id = tenant.entity_id
+    WHERE  entity.type = 'product'
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(:title)) || '%')
+           AND product.on_shelf
+    ORDER  BY product.title ASC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllOnShelfWithTitleLike() ::= <<
+    SELECT count(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+    WHERE  entity.type = 'product'
+           AND (entity.parent_id IS NULL OR product.virtual)
+           AND lower(m_unaccent(product.title)) LIKE ('%' || lower(m_unaccent(':title')) || '%')
+           AND product.on_shelf
+>>
+
+findAllForTenant() ::= <<
+    SELECT entity.*, product.*,
+           localization_data(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+           INNER JOIN entity as tenant_entity
+                   ON entity.tenant_id = tenant_entity.id
+           INNER JOIN tenant
+                   ON tenant_entity.id = tenant.entity_id
+    WHERE  (entity.parent_id IS NULL OR product.virtual)
+           AND tenant.entity_id = :tenant.id
+    ORDER  BY product.title ASC
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+findAllForTenantOnShelf() ::= <<
+    SELECT entity.*, product.*,
+           localization_data(product.entity_id)
+    FROM   entity
+           INNER JOIN product
+                   ON entity.id = product.entity_id
+           INNER JOIN entity as tenant_entity
+                   ON entity.tenant_id = tenant_entity.id
+           INNER JOIN tenant
+                   ON tenant_entity.id = tenant.entity_id
+    WHERE  (entity.parent_id IS NULL OR product.virtual)
+           AND tenant.entity_id = :tenant.id
+           AND product.on_shelf
+    ORDER  BY product.title ASC
+    LIMIT  :number
+    OFFSET :offset
+>>

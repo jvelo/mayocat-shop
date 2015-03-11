@@ -30,4 +30,14 @@ public interface UserStore extends Store<User, UUID>, EntityStore
     User findUserByEmailOrUserName(String userNameOrEmail);
 
     List<Role> findRolesForUser(User user);
+
+    User findByValidationKey(String validationKey);
+
+    void updatePassword(User user, String hash);
+
+    void createPasswordResetRequest(User user, String key);
+
+    void deletePasswordResetRequest(String key);
+
+    User findUserByPasswordResetRequest(String resetKey);
 }

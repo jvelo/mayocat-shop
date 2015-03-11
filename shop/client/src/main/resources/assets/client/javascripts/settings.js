@@ -21,9 +21,9 @@ angular.module('settings', ['ngResource'])
             // Scope functions -----------------------------------------------------------------------------------------
 
             $scope.updateSettings = function () {
-                $scope.isLoading = true;
+                $scope.isSaving = true;
                 configurationService.put($scope.settings, function () {
-                    $scope.isLoading = false;
+                    $scope.isSaving = false;
                     $rootScope.$broadcast("catalog:refreshCatalog");
                 });
             };
@@ -83,12 +83,12 @@ angular.module('settings', ['ngResource'])
     // Controller for the tenant (shop information) settings UI
     // See partials/settingsTenant.html
     //
-    .controller('SettingsTenantController', ['$scope', '$resource', '$http', 'addonsService', 'entityMixins',
-        function ($scope, $resource, $http, addonsService, entityMixins) {
+    .controller('SettingsTenantController', ['$scope', '$rootScope', '$location', '$resource', '$http', 'addonsService', 'entityMixins',
+        function ($scope, $rootScope, $location, $resource, $http, addonsService, entityMixins) {
 
             entityMixins.extend(["base", "addons", "image"], $scope, "tenant", {
                 "base": {
-                    "apiBase": "/api/tenant/",
+                    "apiBase": "/api/tenant",
                     "noSlug" : true
                 },
                 "image" : {
@@ -98,13 +98,31 @@ angular.module('settings', ['ngResource'])
                     "afterReloadingImages": function () {
                         $scope.updatedTenant = $scope.TenantResource.get({
                         }, function () {
-                            $scope.tenant.featuredImage = $scope.updatedTenant.featuredImage;
+                            $scope.tenant._embedded.featuredImage = $scope.updatedTenant._embedded.featuredImage;
                         });
                     }
                 }
             });
 
-            $scope.TenantResource = $resource("/api/tenant/");
+            // Refresh logo when a new one is uploaded -----------------------------------------------------------------
+
+            $rootScope.$on("upload:done", function(event, memo) {
+                if (memo.entityUri == $location.path() && memo.id == 'logo') {
+                    $scope.reloadImages();
+                    $scope.uploadingLogo = false;
+                }
+            });
+
+            $rootScope.$on("upload:progress", function(event, memo) {
+                var index = memo.queue.findIndex(function (upload) {
+                    return upload.id == 'logo';
+                });
+                if (index >= 0) {
+                    $scope.uploadingLogo = true;
+                }
+            });
+
+            $scope.TenantResource = $resource("/api/tenant");
 
             // Scope functions -----------------------------------------------------------------------------------------
 
@@ -157,7 +175,7 @@ angular.module('settings', ['ngResource'])
             }
 
             $scope.isValidFloat = function (numberAsString) {
-                return !isNaN(numberAsString);
+                return typeof numberAsString == 'undefined' || !isNaN(numberAsString);
             }
 
             $scope.validShippingDurationRange = function (carrier) {
@@ -175,6 +193,7 @@ angular.module('settings', ['ngResource'])
 
             $scope.editCarrier = function (carrier) {
                 $scope.editedCarrier = carrier;
+                $scope.addFirstRule(carrier);
             }
 
             $scope.newCarrierForm = function (strategy) {
@@ -183,14 +202,22 @@ angular.module('settings', ['ngResource'])
                     strategy: strategy,
                     rules: []
                 };
+
+                $scope.addFirstRule($scope.editedCarrier);
             }
+
+            $scope.addFirstRule = function (carrier) {
+                if (carrier.strategy == 'weight' || carrier.strategy == 'price') {
+                    carrier.rules.push({});
+                }
+            };
 
             $scope.createOrUpdateCarrier = function () {
                 if ($scope.editedCarrier.isNew) {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $http.post("/api/shipping/carrier/", $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
                         })
@@ -199,10 +226,10 @@ angular.module('settings', ['ngResource'])
                         });
                 }
                 else {
-                    $scope.isLoading = true;
+                    $scope.isSaving = true;
                     $http.put("/api/shipping/carrier/" + $scope.editedCarrier.id, $scope.editedCarrier)
                         .success(function (data, status, headers, config) {
-                            $scope.isLoading = false;
+                            $scope.isSaving = false;
                             $scope.stopEditingCarrier();
                             $scope.loadCarriers();
 
@@ -294,6 +321,174 @@ angular.module('settings', ['ngResource'])
             });
 
             $scope.loadCarriers();
+        }])
+
+    //==================================================================================================================
+    //
+    // Controller for the taxes settings UI
+    // See partials/settingsTaxes.html
+    //
+    .controller('SettingsTaxesController', ['$scope', '$modal', 'configurationService',
+        function ($scope, $modal, configurationService) {
+
+            function randomID() {
+                var result = '',
+                    chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+                for (var i = 0 ; i < 8 ; i++) {
+                    result += chars[Math.round(Math.random() * (chars.length - 1))];
+                }
+
+                return result;
+            }
+
+            function newModal(properties, newEntity) {
+                var scope = $scope.$new(true);
+                    scope.newEntity = newEntity;
+
+                $.each(properties, function(key, value) {
+                    scope[key] = value;
+                });
+
+                return $modal.open({
+                    templateUrl: 'settingsTaxesEditZoneModal.html',
+                    scope: scope
+                });
+            }
+
+            // Generic configuration helpers ---------------------------------------------------------------------------
+
+            $scope.isVisible = function (path) {
+                return configurationService.isVisible($scope.settings, path);
+            }
+
+            $scope.isConfigurable = function (path) {
+                return configurationService.isConfigurable($scope.settings, path);
+            }
+
+            $scope.isDefaultValue = function (path) {
+                return configurationService.isDefaultValue($scope.settings, path);
+            };
+
+            // Scope functions -----------------------------------------------------------------------------------------
+
+            $scope.addVatRate = function() {
+                var vat = $scope.vat;
+
+                if (!vat.geo) {
+                    vat.otherRates.push({ id: randomID() , value: 0 });
+                } else {
+                    vat.areas = vat.areas.map(function(area) {
+                        area.otherRates.push({ id: randomID() , value: 0 });
+                        return area;
+                    });
+                }
+            };
+
+            $scope.deleteVatRate = function(rateIndex) {
+                var vat = $scope.vat;
+
+                if (!vat.geo) {
+                    vat.otherRates.splice(rateIndex, 1);
+                } else {
+                    vat.areas = vat.areas.map(function(area) {
+                        area.otherRates.splice(rateIndex, 1);
+                        return area;
+                    });
+                }
+            };
+
+            $scope.enableVatGeo = function() {
+                var vat = $scope.vat;
+
+                $scope.mode = 'excl';
+                vat.geo = true;
+
+                // If there is no area, create a new one and fill it with the VAT values.
+                if (!vat.areas.length) {
+                    vat.areas.push({
+                        defaultRate: vat.defaultRate,
+                        otherRates: vat.otherRates.slice(0) // We want a copy, not a reference.
+                    });
+
+                    // Trigger the modal for area edition.
+                    newModal({
+                        area: vat.areas[0]
+                    }).result.then(null, function() {
+                        // If the modal is cancelled, delete and disable the VAT areas.
+                        vat.areas = [];
+                        $scope.disableVatGeo();
+                    });
+                }
+            };
+
+            $scope.disableVatGeo = function() {
+                $scope.vat.geo = false;
+            };
+
+            $scope.addVatArea = function() {
+                var areas = $scope.vat.areas;
+
+                // Take as much rates as the first area and set them to 0.
+                var otherRates = areas[0].otherRates.slice(0).map(function(rate) {
+                    rate.value = 0;
+                    return rate;
+                });
+
+                var area = areas[areas.push({
+                    defaultRate: 0,
+                    otherRates: otherRates
+                }) - 1];
+
+                // Trigger the modal for area creation.
+                newModal({
+                    area: area
+                }, true).result.then(null, function() {
+                    // If the modal is cancelled, delete the new area.
+                    areas.splice(areas.length - 1, 1);
+                });
+            };
+
+            $scope.editVatArea = function(area) {
+                var area = $scope.vat.areas[$scope.vat.areas.indexOf(area)],
+                    oldCodes = area.codes.slice(0);
+
+                // Trigger the modal for area creation.
+                newModal({
+                    area: area
+                }).result.then(null, function() {
+                    // If the modal is cancelled, restore the old codes.
+                    area.codes = oldCodes;
+                });
+            };
+
+            $scope.deleteVatArea = function(area) {
+                var index = $scope.vat.areas.indexOf(area);
+                $scope.vat.areas.splice(index, 1);
+            };
+
+            $scope.updateSettings = function () {
+                $scope.isSaving = true;
+                configurationService.getSettings(function (settings) {
+                    settings.taxes.vat.value = $scope.vat;
+                    //settings.taxes.others.value = $scope.others;
+                    //settings.taxes.mode.value = $scope.mode;
+
+                    configurationService.put(settings, function () {
+                        $scope.isSaving = false;
+                    });
+                });
+            };
+
+            // Initialization ------------------------------------------------------------------------------------------
+
+            configurationService.getSettings(function (settings) {
+                $scope.settings = settings;
+                $scope.vat = settings.taxes.vat.value;
+                // $scope.others = settings.taxes.others.value;
+                // $scope.mode = settings.taxes.mode.value;
+            });
+
         }])
 
     //==================================================================================================================

@@ -59,24 +59,20 @@ public class BasicAuthenticator implements Authenticator
     {
         final int space = value.indexOf(' ');
         if (space > 0) {
-            try {
-                final String decoded = B64Code.decode(value.substring(space + 1), StringUtil.__ISO_8859_1);
-                final int i = decoded.indexOf(':');
-                if (i > 0) {
-                    final String username = decoded.substring(0, i);
-                    final String password = decoded.substring(i + 1);
-                    User user = userStore.get().findUserByEmailOrUserName(username);
-                    if (user != null) {
-                        if (this.passwordManager.verifyPassword(password, user.getPassword())) {
-                            return Optional.of(user);
-                        }
+
+            final String decoded = B64Code.decode(value.substring(space + 1), StringUtil.__ISO_8859_1);
+            final int i = decoded.indexOf(':');
+            if (i > 0) {
+                final String username = decoded.substring(0, i);
+                final String password = decoded.substring(i + 1);
+                User user = userStore.get().findUserByEmailOrUserName(username);
+                if (user != null) {
+                    if (this.passwordManager.verifyPassword(password, user.getPassword())) {
+                        return Optional.of(user);
                     }
                 }
-            } catch (UnsupportedEncodingException e) {
-                this.logger.debug("Failed to decode basic auth credentials");
             }
         }
         return Optional.absent();
     }
-
 }

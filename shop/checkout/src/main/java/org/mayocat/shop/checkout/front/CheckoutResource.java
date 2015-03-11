@@ -48,17 +48,16 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
-import org.mayocat.shop.cart.CartAccessor;
-import org.mayocat.shop.cart.model.Cart;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.RegularCheckoutException;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.front.views.WebView;
+import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -89,10 +88,10 @@ public class CheckoutResource implements Resource
     private CheckoutRegister checkoutRegister;
 
     @Inject
-    private CartAccessor cartAccessor;
+    private SiteSettings siteSettings;
 
     @Inject
-    private SiteSettings siteSettings;
+    private URLHelper urlHelper;
 
     @Inject
     private MultitenancySettings multitenancySettings;
@@ -251,9 +250,8 @@ public class CheckoutResource implements Resource
         }
 
         try {
-            Cart cart = cartAccessor.getCart();
             CheckoutResponse response =
-                    checkoutRegister.checkout(cart, customer, deliveryAddress, billingAddress, otherOrderData);
+                    checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
             } else {
@@ -289,9 +287,8 @@ public class CheckoutResource implements Resource
                     .data(bindings);
         } else {
             try {
-                Cart cart = cartAccessor.getCart();
                 CheckoutResponse response =
-                        checkoutRegister.checkout(cart, null, null, null, Maps.<String, Object>newHashMap());
+                        checkoutRegister.checkout(null, null, null, Maps.<String, Object>newHashMap());
 
                 if (response.getRedirectURL().isPresent()) {
                     return Response.seeOther(new URI(response.getRedirectURL().get())).build();
@@ -321,12 +318,12 @@ public class CheckoutResource implements Resource
         if (StringUtils.isNotBlank(orderId)) {
             Order order = orderStore.get().findById(UUID.fromString(orderId));
             if (order != null) {
-                Optional<Address> da = order.getDeliveryAddress().isLoaded() ?
-                        Optional.fromNullable(order.getDeliveryAddress().get()) : Optional.<Address>absent();
-                Optional<Address> ba = order.getBillingAddress().isLoaded() ?
-                        Optional.fromNullable(order.getBillingAddress().get()) : Optional.<Address>absent();
+                Optional<Address> da = order.getDeliveryAddress() != null ?
+                        Optional.fromNullable(order.getDeliveryAddress()) : Optional.<Address>absent();
+                Optional<Address> ba = order.getBillingAddress() != null ?
+                        Optional.fromNullable(order.getBillingAddress()) : Optional.<Address>absent();
                 bindings.putAll(
-                        prepareMailContext(order, order.getCustomer().get(), ba, da, webContext.getTenant(),
+                        prepareMailContext(order, order.getCustomer(), ba, da, webContext.getTenant(),
                                 configurationService.getSettings(GeneralSettings.class).getLocales().getMainLocale()
                                         .getValue()));
             }
@@ -336,7 +333,7 @@ public class CheckoutResource implements Resource
     }
 
     @GET
-    @Path("{orderId}/" + PAYMENT_CANCEL_PATH)
+    @Path(PAYMENT_CANCEL_PATH + "/{orderId}")
     public WebView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId)
     {
         try {
@@ -449,7 +446,7 @@ public class CheckoutResource implements Resource
             context.put("deliveryAddress", prepareAddressContext(da.get()));
         }
 
-        context.put("siteUrl", getSiteUrl(tenant));
+        context.put("siteUrl", urlHelper.getContextWebURL("").toString());
 
         return context;
     }
@@ -470,21 +467,6 @@ public class CheckoutResource implements Resource
         addressContext.put("country", address.getCountry());
         addressContext.put("company", address.getCompany());
         return addressContext;
-    }
-
-    /**
-     * Returns the site URL for a tenant
-     *
-     * @param tenant the tenant to get the site URL from
-     * @return the site URL for the tenant
-     */
-    private String getSiteUrl(Tenant tenant)
-    {
-        if (multitenancySettings.isActivated()) {
-            return "http://" + tenant.getSlug() + "." + siteSettings.getDomainName();
-        } else {
-            return "http://" + siteSettings.getDomainName();
-        }
     }
 }
 

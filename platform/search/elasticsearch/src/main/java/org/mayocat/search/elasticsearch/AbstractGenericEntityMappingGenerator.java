@@ -13,8 +13,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.addons.model.AddonField;
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonFieldDefinition;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.model.Slug;
 import org.slf4j.Logger;
@@ -156,7 +156,7 @@ public abstract class AbstractGenericEntityMappingGenerator implements EntityMap
         addonsMapping.put("properties", properties);
 
         for (String groupKey : platformSettings.getAddons().keySet()) {
-            AddonGroup group = platformSettings.getAddons().get(groupKey);
+            AddonGroupDefinition group = platformSettings.getAddons().get(groupKey);
 
             Map<String, Object> groupMapping;
             Map<String, Object> groupMappingProperties;
@@ -172,7 +172,7 @@ public abstract class AbstractGenericEntityMappingGenerator implements EntityMap
             }
 
             for (String key : group.getFields().keySet()) {
-                AddonField addon = group.getFields().get(key);
+                AddonFieldDefinition addon = group.getFields().get(key);
 
                 Map<String, Object> addonMapping;
 

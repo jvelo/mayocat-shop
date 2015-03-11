@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.mayocat.accounts.model.Role;
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.model.User;
 import org.mayocat.accounts.store.jdbi.mapper.RoleMapper;
 import org.mayocat.accounts.store.jdbi.mapper.UserMapper;
@@ -37,14 +36,27 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract void addRoleToUser(@Bind("userId") UUID userId, @Bind("role") String role);
 
     @SqlUpdate
-    public abstract void update(@BindBean("u") User user, @BindBean("tenant") Tenant tenant);
+    public abstract void update(@BindBean("u") User user);
+
+    @SqlUpdate
+    public abstract void changePassword(@BindBean("user") User user, @Bind("hash") String hash);
+
+    @SqlUpdate
+    public abstract void createPasswordResetRequest(@BindBean("user") User user, @Bind("resetKey") String resetKey);
+
+    // TODO try and register a generic UUID mapper that can extract a UUID from the first result like StringMapper etc.
+    @SqlQuery
+    public abstract String findUserIdForPasswordResetKey(@Bind("resetKey") String resetKey);
+
+    @SqlUpdate
+    public abstract void deletePasswordResetRequest(@Bind("resetKey") String resetKey);
 
     @SqlUpdate
     public abstract void updateGlobalUser(@BindBean("user") User user);
 
     @SqlQuery
     public abstract User findByEmailOrUserNameAndTenant(@Bind("userNameOrEmail") String userNameOrEmail,
-            @BindBean("t") Tenant tenant);
+            @Bind("tenantId") UUID tenant);
 
     @SqlQuery
     public abstract User findGlobalUserByEmailOrUserName(@Bind("userNameOrEmail") String userNameOrEmail);
@@ -54,34 +66,37 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     public abstract List<Role> findRolesForUser(@BindBean("user") User user);
 
     @SqlQuery
-    public abstract List<User> findAllUsers(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    public abstract List<User> findAllUsers(@Bind("tenantId") UUID tenantId, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
     public abstract List<User> findAllGlobalUsers(@Bind("number") Integer number, @Bind("offset") Integer offset);
 
     @SqlQuery
-    protected abstract User findUserBySlug(@Bind("slug") String slug, @BindBean("tenant") Tenant tenant);
+    public abstract User findByValidationKey(@Bind("validationKey") String validationKey);
+
+    @SqlQuery
+    protected abstract User findUserBySlug(@Bind("slug") String slug, @Bind("tenantId") UUID tenant);
 
     public User findById(UUID id)
     {
         return this.findById(USER_TABLE_NAME, id);
     }
 
-    public User findBySlug(String slug, Tenant tenant)
+    public User findBySlug(String slug, UUID tenant)
     {
         return this.findUserBySlug(slug, tenant);
     }
 
-    public List<User> findAll(Tenant tenant, Integer number, Integer offset)
+    public List<User> findAll(UUID tenantId, Integer number, Integer offset)
     {
-        return this.findAllUsers(tenant, number, offset);
+        return this.findAllUsers(tenantId, number, offset);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public Integer countAll(@Define("type") String type, @BindBean("tenant") Tenant tenant)
+    public Integer countAll(@Define("type") String type, @Bind("tenantId") UUID tenantId)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
         // where the table name (agent) is different than the entity type name (user)
@@ -89,7 +104,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     }
 
     @Override
-    public List<User> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant,
+    public List<User> findAll(@Define("type") String type, @Bind("tenantId") UUID tenantId,
             @Bind("number") Integer number, @Bind("offset") Integer offset)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
@@ -99,7 +114,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     @Override
     public List<User> findAll(@Define("type") String type, @Define("order") String order,
-            @BindBean("tenant") Tenant tenant)
+            @Bind("tenantId") UUID tenantId)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
         // where the table name (agent) is different than the entity type name (user)
@@ -107,7 +122,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
     }
 
     @Override
-    public List<User> findAll(@Define("type") String type, @BindBean("tenant") Tenant tenant)
+    public List<User> findAll(@Define("type") String type, @Bind("tenantId") UUID tenantId)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
         // where the table name (agent) is different than the entity type name (user)
@@ -124,7 +139,7 @@ public abstract class UserDAO implements EntityDAO<User>, Transactional<UserDAO>
 
     @Override
     public List<User> findAll(@Define("type") String type, @Define("order") String order,
-            @BindBean("tenant") Tenant tenant, @Bind("number") Integer number, @Bind("offset") Integer offset)
+            @Bind("tenantId") UUID tenantId, @Bind("number") Integer number, @Bind("offset") Integer offset)
     {
         // Make sure nobody uses the generic Entity DAO version since it does not work for the user case
         // where the table name (agent) is different than the entity type name (user)

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.HasAddons;
 import org.mayocat.model.Identifiable;
 
@@ -23,6 +23,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 
 import mayoapp.dao.AddonsDAO;
+
+import static org.mayocat.addons.util.AddonUtils.asMap;
 
 /**
  * @version $Id$
@@ -44,17 +46,17 @@ public class AddonsHelper
         if (ids.size() <= 0) {
             return entities;
         }
-        List<Addon> addons = dao.findAllAddonsForIds(new ArrayList(ids));
-        Map<UUID, ArrayList<Addon>> addonsForEntity = Maps.newHashMap();
-        for (Addon addon : addons) {
+        List<AddonGroup> addons = dao.findAllAddonsForIds(new ArrayList(ids));
+        Map<UUID, List<AddonGroup>> addonsForEntity = Maps.newHashMap();
+        for (AddonGroup addon : addons) {
             if (!addonsForEntity.containsKey(addon.getEntityId())) {
-                addonsForEntity.put(addon.getEntityId(), new ArrayList<Addon>());
+                addonsForEntity.put(addon.getEntityId(), new ArrayList<AddonGroup>());
             }
             addonsForEntity.get(addon.getEntityId()).add(addon);
         }
         for (T entity : entities) {
             if (addonsForEntity.containsKey(entity.getId())) {
-                entity.setAddons(addonsForEntity.get(entity.getId()));
+                entity.setAddons(asMap(addonsForEntity.get(entity.getId())));
             }
         }
         return entities;
@@ -65,26 +67,15 @@ public class AddonsHelper
         if (!entity.getAddons().isLoaded()) {
             return;
         }
-        List<Addon> existing = dao.findAddons(entity);
-        for (Addon addon : entity.getAddons().get()) {
-            Optional<Addon> original = findAddon(existing, addon);
-            if (original.isPresent()) {
-                dao.updateAddon(entity, addon);
-            } else {
-                dao.createAddon(entity, addon);
-            }
-        }
-    }
+        Map<String, AddonGroup> existing = asMap(dao.findAddons(entity));
 
-    public static Optional<Addon> findAddon(List<Addon> existing, Addon addon)
-    {
-        for (Addon a : existing) {
-            if (a.getSource().equals(addon.getSource())
-                    && a.getKey().equals(addon.getKey()) && a.getGroup().equals(addon.getGroup()))
-            {
-                return Optional.of(a);
+        for (String group : entity.getAddons().get().keySet()) {
+            AddonGroup addonGroup = entity.getAddons().get().get(group);
+            if (existing.containsKey(group)) {
+                dao.updateAddonGroup(entity, addonGroup);
+            } else {
+                dao.createAddonGroup(entity, addonGroup);
             }
         }
-        return Optional.absent();
     }
 }

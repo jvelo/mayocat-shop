@@ -12,19 +12,16 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-attachments</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Mayocat Platform - Attachments</name>
-    <description>Attachments entities in Mayocat</description>
+    <description>Attachments API</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-url</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>api</module>
+        <module>default</module>
+    </modules>
 </project>

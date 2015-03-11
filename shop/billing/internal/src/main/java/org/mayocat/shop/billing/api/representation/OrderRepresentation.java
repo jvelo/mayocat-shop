@@ -16,8 +16,6 @@ import org.joda.time.DateTimeZone;
 import org.mayocat.shop.billing.model.Order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @version $Id$
@@ -79,14 +77,14 @@ public class OrderRepresentation
         this.additionalInformation = order.getAdditionalInformation();
         this.data = order.getOrderData();
 
-        if (order.getBillingAddress().isLoaded()) {
-            this.setBillingAddress(new AddressRepresentation(order.getBillingAddress().get()));
+        if (order.getBillingAddress() != null) {
+            this.setBillingAddress(new AddressRepresentation(order.getBillingAddress()));
         }
-        if (order.getDeliveryAddress().isLoaded()) {
-            this.setDeliveryAddress(new AddressRepresentation(order.getDeliveryAddress().get()));
+        if (order.getDeliveryAddress() != null) {
+            this.setDeliveryAddress(new AddressRepresentation(order.getDeliveryAddress()));
         }
-        if (order.getCustomer().isLoaded()) {
-            this.setCustomer(new CustomerRepresentation(order.getCustomer().get()));
+        if (order.getCustomer() != null) {
+            this.setCustomer(new CustomerRepresentation(order.getCustomer()));
         }
     }
 

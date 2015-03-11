@@ -12,8 +12,9 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.images.ImageFormatDefinition;
+import org.mayocat.theme.Model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
@@ -23,21 +24,29 @@ import com.google.common.collect.Maps;
  */
 public class PlatformSettings
 {
-    @Valid
     @JsonProperty
-    private Map<String, ImageFormatDefinition> thumbnails = Maps.newHashMap();
+    private Map<String, Model> models = Maps.newLinkedHashMap();
 
     @Valid
     @JsonProperty
-    private Map<String, AddonGroup> addons = Collections.emptyMap();
+    private Map<String, ImageFormatDefinition> images = Maps.newHashMap();
 
-    public Map<String, ImageFormatDefinition> getThumbnails()
+    @Valid
+    @JsonProperty
+    private Map<String, AddonGroupDefinition> addons = Collections.emptyMap();
+
+    public Map<String, ImageFormatDefinition> getImages()
     {
-        return thumbnails;
+        return images;
     }
 
-    public Map<String, AddonGroup> getAddons()
+    public Map<String, AddonGroupDefinition> getAddons()
     {
         return this.addons;
+    }
+
+    public Map<String, Model> getModels()
+    {
+        return models;
     }
 }

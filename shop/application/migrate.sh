@@ -11,8 +11,10 @@ if [ -z $JAR_NAME ]; then
   exit
 fi
 
+export JAVA_OPTS="-server -Xms128m -Xmx2048m -XX:MaxPermSize=192m -Dfile.encoding=utf-8 -Djava.awt.headless=true -XX:+UseParallelGC -XX:MaxGCPauseMillis=100"
+
 DEBUG=""
 DEBUG_PORT=5005
 # DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=$DEBUG_PORT"
 
-java $DEBUG -jar target/$JAR_NAME flyway-migrate mayocat.yml
+java $JAVA_OPTS $DEBUG -jar target/$JAR_NAME flyway-migrate mayocat.yml

@@ -78,7 +78,8 @@ angular.module('collection', ['ngResource'])
 
             $scope.getTranslationProperties = function () {
                 return {
-                    imagesLength: (($scope.product || {}).images || {}).length || 0
+                    collectionTitle: $scope.localizedCollection.title,
+                    imagesLength: $scope.getNumberOfImages()
                 };
             };
 

@@ -8,64 +8,94 @@
 package org.mayocat.shop.billing.store.jdbi.mapper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Currency;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.mayocat.model.Association;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 
 /**
  * @version $Id$
  */
-public class OrderMapper implements ResultSetMapper<Order>
+public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<Order>
 {
     @Override
     public Order map(int index, ResultSet resultSet, StatementContext ctx) throws SQLException
     {
         Order order = new Order();
+        fillOrderSummary(resultSet, order);
 
-        order.setId((UUID) resultSet.getObject("id"));
-        order.setSlug(resultSet.getString("slug"));
+        ObjectMapper mapper = new ObjectMapper();
+        //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            List<Map<String, Object>> itemsData = mapper.readValue(resultSet.getString("items"),
+                    new TypeReference<List<Map<String, Object>>>() {});
 
-        order.setBillingAddressId((UUID) resultSet.getObject("billing_address_id"));
-        order.setDeliveryAddressId((UUID) resultSet.getObject("delivery_address_id"));
-        order.setCustomerId((UUID) resultSet.getObject("customer_id"));
-
-        order.setCreationDate(resultSet.getTimestamp("creation_date"));
-        order.setUpdateDate(resultSet.getTimestamp("update_date"));
-
-        order.setNumberOfItems(resultSet.getLong("number_of_items"));
-        order.setCurrency(Currency.getInstance(resultSet.getString("currency")));
-
-        order.setItemsTotal(resultSet.getBigDecimal("items_total"));
-        order.setShipping(resultSet.getBigDecimal("shipping"));
-        order.setGrandTotal(resultSet.getBigDecimal("grand_total"));
-
-        order.setStatus(Order.Status.valueOf(resultSet.getString("status")));
-        order.setAdditionalInformation(resultSet.getString("additional_information"));
+            List<OrderItem> items = FluentIterable.from(itemsData).transform(
+                    new Function<Map<String, Object>, OrderItem>()
+                    {
+                        public OrderItem apply(Map<String, Object> map)
+                        {
+                            OrderItem orderItem = new OrderItem();
+                            orderItem.setId(UUID.fromString((String) map.get("id")));
+                            orderItem.setOrderId(UUID.fromString((String) map.get("order_id")));
+                            if (map.containsKey("purchasable_id") && map.get("purchasable_id") != null) {
+                                // There might not be a purchasable id
+                                orderItem.setPurchasableId(UUID.fromString((String) map.get("purchasable_id")));
+                            }
+                            orderItem.setType((String) map.get("type"));
+                            orderItem.setTitle((String) map.get("title"));
+                            orderItem.setMerchant((String) map.get("merchant"));
+                            orderItem.setQuantity(((Integer) map.get("quantity")).longValue());
+                            orderItem.setUnitPrice(BigDecimal.valueOf((Double) map.get("unit_price")));
+                            orderItem.setItemTotal(BigDecimal.valueOf((Double) map.get("item_total")));
+                            if (map.containsKey("vat_rate") && map.get("vat_rate") != null) {
+                                // There might not be a VAT rate
+                                orderItem.setVatRate(BigDecimal.valueOf((Double) map.get("vat_rate")));
+                            }
+                            if (map.containsKey("data") && map.get("data") != null) {
+                                // There might not be data
+                                orderItem.addData((Map<String, Object>) map.get("data"));
+                            }
+                            return orderItem;
+                        }
+                    }).toList();
+            order.setOrderItems(items);
+        } catch (IOException e) {
+            logger.error("Failed to deserialize order data", e);
+        }
 
         try {
             resultSet.findColumn("email");
             Customer customer = new Customer();
             customer.setId(order.getCustomerId());
+            customer.setSlug(resultSet.getString("customer_slug"));
             customer.setEmail(resultSet.getString("email"));
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setLastName(resultSet.getString("last_name"));
             customer.setPhoneNumber(resultSet.getString("phone_number"));
-            order.setCustomer(new Association(customer));
+            order.setCustomer(customer);
         } catch (SQLException e) {
             // Nevermind
         }
@@ -81,7 +111,8 @@ public class OrderMapper implements ResultSetMapper<Order>
                 billing.setZip(resultSet.getString("billing_address_zip"));
                 billing.setCity(resultSet.getString("billing_address_city"));
                 billing.setCountry(resultSet.getString("billing_address_country"));
-                order.setBillingAddress(new Association<>(billing));
+                billing.setNote(resultSet.getString("billing_address_note"));
+                order.setBillingAddress(billing);
             }
         } catch (SQLException e) {
             // Nevermind
@@ -98,21 +129,11 @@ public class OrderMapper implements ResultSetMapper<Order>
                 delivery.setZip(resultSet.getString("delivery_address_zip"));
                 delivery.setCity(resultSet.getString("delivery_address_city"));
                 delivery.setCountry(resultSet.getString("delivery_address_country"));
-                order.setDeliveryAddress(new Association<>(delivery));
+                delivery.setNote(resultSet.getString("delivery_address_note"));
+                order.setDeliveryAddress(delivery);
             }
         } catch (SQLException e) {
             // Nevermind
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new GuavaModule());
-        try {
-            Map<String, Object> data = mapper.readValue(resultSet.getString("order_data"),
-                    new TypeReference<Map<String, Object>>(){});
-            order.setOrderData(data);
-        } catch (IOException e) {
-            final Logger logger = LoggerFactory.getLogger(OrderMapper.class);
-            logger.error("Failed to deserialize order data", e);
         }
 
         return order;

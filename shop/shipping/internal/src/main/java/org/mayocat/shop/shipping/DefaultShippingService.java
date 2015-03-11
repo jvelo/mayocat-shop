@@ -20,11 +20,11 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.shop.catalog.model.Product;
 import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.shipping.configuration.ShippingSettings;
 import org.mayocat.shop.shipping.model.Carrier;
 import org.mayocat.shop.shipping.store.CarrierStore;
+import org.mayocat.shop.taxes.PriceWithTaxes;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
@@ -153,7 +153,12 @@ public class DefaultShippingService implements ShippingService
             StrategyPriceCalculator priceCalculator =
                     componentManager.getInstance(StrategyPriceCalculator.class, carrier.getStrategy().toJson());
             BigDecimal optionPrice = priceCalculator.getPrice(carrier, items);
-            return new ShippingOption(carrier.getId(), carrier.getTitle(), optionPrice);
+            BigDecimal vat = optionPrice.multiply(carrier.getVatRate());
+            BigDecimal optionPriceIncl = optionPrice.add(vat);
+
+            PriceWithTaxes price = new PriceWithTaxes(optionPriceIncl, optionPrice, carrier.getVatRate());
+
+            return new ShippingOption(carrier.getId(), carrier.getTitle(), price);
         } catch (ComponentLookupException e) {
             throw new RuntimeException("Failed to calculate price for strategy " + strategy.toJson()
                     + " : no such strategy calculator");

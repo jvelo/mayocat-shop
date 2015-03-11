@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.mayocat.addons.model.AddonGroup;
+import org.mayocat.addons.model.AddonGroupDefinition;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.images.ImageFormatDefinition;
@@ -42,6 +42,9 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     private EntityMetaRegistry entityMetaRegistry;
 
     @Inject
+    private Map<String, EntityConfigurationContributor> contributors;
+
+    @Inject
     private WebContext context;
 
     @Override
@@ -58,11 +61,21 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         if (theme != null) {
             addAddons(entities, theme.getDefinition().getAddons(), AddonSource.THEME);
             addModels(entities, theme.getDefinition().getModels());
-            addImageFormats(entities, theme.getDefinition().getImageFormats());
+            addImageFormats(entities, theme.getDefinition().getImageFormats(), AddonSource.THEME);
             addTypes(entities, theme.getDefinition().getProductTypes());
         }
 
         addAddons(entities, platformSettings.getAddons(), AddonSource.PLATFORM);
+        addImageFormats(entities, platformSettings.getImages(), AddonSource.PLATFORM);
+        addModels(entities, platformSettings.getModels());
+
+        for (String entity : entities.keySet()) {
+            for (EntityConfigurationContributor contributor : contributors.values()) {
+                if (contributor.contributesTo().equals(entity)) {
+                    contributor.contribute(entities.get(entity));
+                }
+            }
+        }
 
         return entities;
     }
@@ -70,11 +83,14 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     private void addTypes(Map<String, Map<String, Object>> entities, Map<String, TypeDefinition> productTypes)
     {
         // Right now we support only products, but ultimately, other entities could have types too.
-        entities.get("product").put("types", productTypes);
+        if (!entities.get("product").containsKey("types")) {
+            entities.get("product").put("types", Maps.newHashMap());
+        }
+        ((Map<String, TypeDefinition>) entities.get("product").get("types")).putAll(productTypes);
     }
 
     private void addImageFormats(Map<String, Map<String, Object>> entities,
-            Map<String, ImageFormatDefinition> formats)
+            Map<String, ImageFormatDefinition> formats, AddonSource source)
     {
         // Step 1 : add image formats defined explicitly for some entities
         for (String formatKey : formats.keySet()) {
@@ -119,12 +135,12 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         }
     }
 
-    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroup> addons,
+    private void addAddons(Map<String, Map<String, Object>> entities, Map<String, AddonGroupDefinition> addons,
             AddonSource source)
     {
         // Step 1 : add addon groups defined explicitly for some entities
         for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
+            AddonGroupDefinition group = addons.get(groupKey);
             if (group.getEntities().isPresent()) {
                 for (String entity : group.getEntities().get()) {
                     addAddonGroupToEntity(entities, entity, groupKey, group, source);
@@ -133,7 +149,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
         }
         // Step 2 add addon groups for all entities
         for (String groupKey : addons.keySet()) {
-            AddonGroup group = addons.get(groupKey);
+            AddonGroupDefinition group = addons.get(groupKey);
             if (!group.getEntities().isPresent()) {
                 for (String entity : entities.keySet()) {
                     addAddonGroupToEntity(entities, entity, groupKey, group, source);
@@ -190,7 +206,7 @@ public class EntitiesGestaltConfigurationSource implements GestaltConfigurationS
     }
 
     private void addAddonGroupToEntity(Map<String, Map<String, Object>> entities, String entity, String groupKey,
-            AddonGroup group, AddonSource source)
+            AddonGroupDefinition group, AddonSource source)
     {
         this.transformEntitiesMap(entities, entity, new EntitiesMapTransformation()
         {

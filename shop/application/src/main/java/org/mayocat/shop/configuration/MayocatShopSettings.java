@@ -18,9 +18,11 @@ import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.shipping.configuration.ShippingSettings;
+import org.mayocat.shop.taxes.configuration.TaxesSettings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
+
+import io.dropwizard.db.DataSourceFactory;
 
 /**
  * @version $Id$
@@ -34,7 +36,7 @@ public class MayocatShopSettings extends AbstractSettings
     @Valid
     @NotNull
     @JsonProperty
-    private DatabaseConfiguration database = new DatabaseConfiguration();
+    private DataSourceFactory database = new DataSourceFactory();
 
     @Valid
     @NotNull
@@ -64,9 +66,14 @@ public class MayocatShopSettings extends AbstractSettings
     @Valid
     @NotNull
     @JsonProperty
+    private TaxesSettings taxes = new TaxesSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
     private NewsSettings news = new NewsSettings();
 
-    public DatabaseConfiguration getDatabaseConfiguration()
+    public DataSourceFactory getDataSourceFactory()
     {
         return database;
     }
@@ -94,6 +101,11 @@ public class MayocatShopSettings extends AbstractSettings
     public ShippingSettings getShippingSettings()
     {
         return shipping;
+    }
+
+    public TaxesSettings getTaxesSettings()
+    {
+        return taxes;
     }
 
     public NewsSettings getNewsSettings()

@@ -17,7 +17,7 @@ updateCustomerData() ::= <<
 >>
 
 getTenantData() ::= <<
-    SELECT * FROM gateway_tenant_data WHERE tenant_id = :tenantId
+    SELECT * FROM gateway_tenant_data WHERE tenant_id IS NOT DISTINCT FROM :tenantId
 >>
 
 createTenantData() ::= <<

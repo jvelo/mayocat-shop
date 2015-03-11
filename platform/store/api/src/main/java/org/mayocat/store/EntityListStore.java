@@ -21,5 +21,13 @@ import org.xwiki.component.annotation.Role;
 @Role
 public interface EntityListStore extends Store<EntityList, UUID>, EntityStore
 {
+    EntityList getOrCreate(EntityList entityList) throws InvalidEntityException;
+
     List<EntityList> findListsByHint(String hint);
+
+    EntityList findListByHintAndParentId(String hint, UUID parentId);
+
+    void addEntityToList(EntityList list, UUID entity) throws EntityDoesNotExistException;
+
+    void removeEntityFromList(EntityList list, UUID entity) throws EntityDoesNotExistException;
 }

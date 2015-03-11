@@ -33,7 +33,7 @@
                             <thumbnail-editor
                                     width="size.width"
                                     height="size.height"
-                                    image="image.file._href"
+                                    image="server + image.file._href"
                                     selection="getSelection(source, size)">
                             </thumbnail-editor>
                             <p>
@@ -52,11 +52,11 @@
         <div class="pull-left metadata">
             <div>
                 <input type="text" ng-model="localizedImage.title"
-                       placeholder="{{'upload.placeholder.title' | translate}}" localized/>
+                       placeholder="{{'imageEditor.placeholder.title' | translate}}" localized/>
             </div>
             <div>
                 <textarea rows="5" ng-model="localizedImage.description"
-                          placeholder="{{'upload.placeholder.description' | translate}}" localized></textarea>
+                          placeholder="{{'imageEditor.placeholder.description' | translate}}" localized></textarea>
             </div>
         </div>
 

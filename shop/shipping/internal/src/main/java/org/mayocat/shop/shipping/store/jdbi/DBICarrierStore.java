@@ -68,7 +68,7 @@ public class DBICarrierStore implements CarrierStore, Initializable
     {
         carrierDAO.begin();
         carrier.setId(UUID.randomUUID());
-        carrier.setTenantId(getTenant().getId());
+        carrier.setTenantId(getTenant());
         this.carrierDAO.create(carrier);
         for (CarrierRule rule : carrier.getRules()) {
             carrierDAO.addRule(carrier.getId(), rule);
@@ -107,9 +107,9 @@ public class DBICarrierStore implements CarrierStore, Initializable
         // Note: rules deletion is cascaded from carrier
     }
 
-    protected Tenant getTenant()
+    protected UUID getTenant()
     {
-        return this.context.getTenant();
+        return this.context.getTenant() != null ? this.context.getTenant().getId() : null;
     }
 
     @Override

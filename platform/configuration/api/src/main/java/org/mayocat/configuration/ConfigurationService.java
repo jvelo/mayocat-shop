@@ -7,6 +7,7 @@
  */
 package org.mayocat.configuration;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.mayocat.accounts.model.Tenant;
@@ -23,7 +24,7 @@ public interface ConfigurationService
     /**
      * Same as {@link #getSettings(org.mayocat.accounts.model.Tenant)}, for the context's tenant
      */
-    Map<Class, Object> getSettings();
+    Map<Class, Serializable> getSettings();
 
     /**
      * @param tenant the tenant to get the settings for
@@ -31,7 +32,7 @@ public interface ConfigurationService
      *         platform defaults when they exists/are defined). Keys are individual settings classes, and values their
      *         corresponding (merged) instance.
      */
-    Map<Class, Object> getSettings(Tenant tenant);
+    Map<Class, Serializable> getSettings(Tenant tenant);
 
     /**
      * @param c the class of the settings to get.
@@ -53,7 +54,7 @@ public interface ConfigurationService
      *
      * @param configuration the configuration to set for the context tenant.
      */
-    void updateSettings(Map<String, Object> configuration);
+    void updateSettings(Map<String, Serializable> configuration);
 
     /**
      * Updates a single module in the per-tenant settings for the context tenant, with the passed configuration.
@@ -61,14 +62,14 @@ public interface ConfigurationService
      * @param module the module to update, which is the key in the global settings map
      * @param configuration the configuration of the module to set for the context tenant.
      */
-    void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException;
+    void updateSettings(String module, Map<String, Serializable> configuration) throws NoSuchModuleException;
 
     /**
      * @see {@link #getSettingsAsJson()}
      *
      * Returns settings as JSON for the context tenant
      */
-    Map<String, Object> getSettingsAsJson();
+    Map<String, Serializable> getSettingsAsJson();
 
     /**
      * Same behavior as {@link #getSettings()}, but ready for JSON serialization
@@ -76,7 +77,7 @@ public interface ConfigurationService
      * @param tenant the tenant to get the settings for
      * @return the settings as a map ready for JSON serialization
      */
-    Map<String, Object> getSettingsAsJson(Tenant tenant);
+    Map<String, Serializable> getSettingsAsJson(Tenant tenant);
 
     /**
      * Same behavior as {@link #getSettings()}, but ready for JSON serialization
@@ -84,7 +85,7 @@ public interface ConfigurationService
      * @return the settings as a map ready for JSON serialization
      * @throws NoSuchModuleException when the desired module does not exist.
      */
-    Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException;
+    Map<String, Serializable> getSettingsAsJson(String moduleName) throws NoSuchModuleException;
 
     /**
      * @return the gestalt configuration as a map ready for JSON serialization. The gestalt configuration differes from
@@ -92,5 +93,5 @@ public interface ConfigurationService
      *         including but not limited to sources based on settings.
      * @see {@link GestaltConfigurationSource}
      */
-    Map<String, Object> getGestaltConfiguration();
+    Map<String, Serializable> getGestaltConfiguration();
 }

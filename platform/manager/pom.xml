@@ -12,29 +12,25 @@
     <parent>
         <groupId>org.mayocat.platform</groupId>
         <artifactId>mayocat-platform-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <artifactId>mayocat-platform-manager</artifactId>
     <packaging>jar</packaging>
-    <version>0.12-SNAPSHOT</version>
+    <version>0.40-SNAPSHOT</version>
 
     <name>Mayocat Platform - Manager</name>
     <description>Tenant manager API</description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.mayocat.platform</groupId>
-            <artifactId>mayocat-platform-rest</artifactId>
+            <artifactId>mayocat-platform-rest-default</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mayocat.platform</groupId>
             <artifactId>mayocat-platform-accounts-default</artifactId>
             <version>${project.version}</version>
         </dependency>
-
     </dependencies>
-
 </project>

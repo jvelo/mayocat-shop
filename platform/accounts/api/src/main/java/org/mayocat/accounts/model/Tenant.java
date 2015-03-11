@@ -8,7 +8,7 @@
 package org.mayocat.accounts.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.mayocat.image.model.Image;
-import org.mayocat.model.Addon;
+import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Entity;
 import org.mayocat.model.HasAddons;
@@ -57,7 +57,7 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     private TenantConfiguration configuration;
 
     @Index
-    private Association<List<Addon>> addons = Association.notLoaded();
+    private Association<Map<String, AddonGroup>> addons = Association.notLoaded();
 
     @JsonIgnore
     private Association<Image> featuredImage = Association.notLoaded();
@@ -158,15 +158,15 @@ public class Tenant implements Entity, HasAddons, HasFeaturedImage
     }
 
     @Override
-    public Association<List<Addon>> getAddons()
+    public Association<Map<String, AddonGroup>> getAddons()
     {
-        return this.addons;
+        return addons;
     }
 
     @Override
-    public void setAddons(List<Addon> addons)
+    public void setAddons(Map<String, AddonGroup> addons)
     {
-        this.addons = new Association<List<Addon>>(addons);
+        this.addons = new Association(addons);
     }
 
     public UUID getFeaturedImageId()

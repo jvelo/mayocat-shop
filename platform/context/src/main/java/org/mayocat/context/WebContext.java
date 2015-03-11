@@ -43,7 +43,7 @@ public interface WebContext
 
     void setTheme(Theme theme);
 
-    void setSettings(Map<Class, Object> settings);
+    void setSettings(Map<Class, Serializable> settings);
 
     <T extends ExposedSettings> T getSettings(Class<T> c);
 

@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mayocat.shop</groupId>
         <artifactId>mayocat-shop-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <version>0.40-SNAPSHOT</version>
     </parent>
     <groupId>org.mayocat.shop</groupId>
     <artifactId>mayocat-shop-client</artifactId>
@@ -61,6 +61,8 @@
                         <include>assets/common/javascripts/configuration.js</include>
                         <include>assets/common/javascripts/mixins.js</include>
                         <include>assets/common/javascripts/entities.js</include>
+                        <include>assets/common/javascripts/notifications.js</include>
+                        <include>assets/common/javascripts/upload.js</include>
                         <include>assets/client/javascripts/appsettings.js</include>
                         <include>assets/client/javascripts/settings.js</include>
                         <include>assets/client/javascripts/controllers.js</include>
@@ -73,6 +75,7 @@
                         <include>assets/client/javascripts/page.js</include>
                         <include>assets/client/javascripts/catalog.js</include>
                         <include>assets/client/javascripts/money.js</include>
+                        <include>assets/client/javascripts/taxes.js</include>
                         <include>assets/client/javascripts/dashboard.js</include>
                         <include>assets/client/javascripts/orders.js</include>
                         <include>assets/client/javascripts/order.js</include>

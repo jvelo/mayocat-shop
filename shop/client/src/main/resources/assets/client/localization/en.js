@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function (Mayocat) {
+var Mayocat = (function (Mayocat) {
     'use strict';
 
     var enLocalization = {
@@ -17,8 +17,10 @@
             actions: {
                 add: "Add",
                 remove: "Remove",
-                close: "Close",
                 cancel: "Cancel"
+                edit: "Edit",
+                close: "Close",
+                save: "Save"
             },
             validation: {
                 required : "Required"
@@ -26,6 +28,23 @@
             conflict: "Conflict",
             filter: "Filter",
             select: "Select"
+        },
+
+        /**
+         * All the titles used for the routes
+         */
+        routes: {
+            title: {
+                home: "Home",
+                orders: "Orders",
+                customers: "Customers",
+                homepage: "Home page",
+                news: "News",
+                pages: "Pages",
+                products: "Products",
+                catalog: "Catalog",
+                settings: "Settings"
+            }
         },
 
         /**
@@ -49,12 +68,15 @@
                 publish: "Publish online",
                 cancel: "Cancel",
                 remove: "Remove",
-                back: "Back",
-                editImage: "Edit image"
+                back: "Back"
             },
 
             alert: {
                 notFound: "Nothing to see here."
+            },
+
+            addons: {
+                sequenceAddElementText: "Add element"
             }
         },
 
@@ -75,7 +97,7 @@
 
         authentication: {
             misc: {
-                title: "Welcome on Mayocat Shop",
+                title: "Welcome to Mayocat Shop",
                 username: "Username",
                 password: "Password",
                 remember: "Remember me"
@@ -96,26 +118,22 @@
          */
 
         upload: {
-            misc: {
-                uploading: "Uploading...",
-                uploaded: "Uploaded!",
-                failed: "Failed"
-            },
-
             explanation: {
-                dropHere: "Drag images from your computer and drop them in this area",
+                dropCollection: "Drop your files to add theme to “{collectionTitle}” collection",
+                dropProduct: "Drop your files to add theme to “{productTitle}” product",
+                dropPage: "Drop your files to add theme to “{pageTitle}” page",
+                dropArticle: "Drop your files to add theme to “{articleTitle}” article",
+                dropLogo: "Drop your logo"
             },
 
-            placeholder: {
-                title: "Image's title (alternative text)",
-                description: "Description (optional)"
+            status: {
+                progress: "Upload of {filesNumber} images in progress",
+                success: "Your images have been successfully uploaded"
             },
 
             action: {
-                browse: "Browse...",
-                dismiss: "Dismiss",
-                upload: "Upload",
-                uploadAll: "Upload all"
+                add: "Add an image",
+                select: "Select file"
             }
         },
 
@@ -124,8 +142,18 @@
          */
 
         imageEditor: {
+            misc: {
+                width: "width",
+                height: "height"
+            },
+
             title: {
                 editImage: "Edit image"
+            },
+
+            placeholder: {
+                title: "Image's title (alternative text)",
+                description: "Description (optional)"
             },
 
             action: {
@@ -181,13 +209,24 @@
                 waitingForPayment: "Waiting for payment",
                 paid: "Paid",
                 prepared: "Prepared",
-                shipped: "Shipped"
+                shipped: "Shipped",
+                cancelled: "Cancelled"
             },
 
             action: {
                 paymentReceived: "Payment received",
                 commandPrepared: "Command prepared",
                 commandShipped: "Command shipped"
+            },
+
+            paymentDetails: {
+                title: "Payment details",
+                toggle: "Display payment details",
+                gateway: "Gateway",
+                externalId: "External Id",
+                internalId: "Internal Id",
+                result: "Result",
+                memo: "Memo"
             },
 
             alert: {
@@ -235,7 +274,9 @@
 
             status: {
                 onShelf: "On shelf",
-                withdrawnFromSale: "Withdrawn from sale"
+                withdrawnFromSale: "Withdrawn from sale",
+                productMoved: "The product has been moved",
+                collectionMoved: "The collection has been moved"
             },
 
             action: {
@@ -251,6 +292,11 @@
                 confirmCollectionDeletion: "Please confirm you want to delete this collection. There's no coming back!"
             },
 
+            type: {
+                title: "Type",
+                noType: "No type"
+            },
+
             variants: {
                 title: "Variants",
                 price: "Price",
@@ -264,6 +310,14 @@
                 conflict: "This variant already exists.",
                 confirmVariantDeletion: "Please confirm you want to delete this variant. There's no coming back!",
                 deleteVariant: "Delete variant"
+            },
+
+            taxes: {
+                title: "Taxes",
+                vat: "VAT",
+                excl: "excl.",
+                incl: "incl.",
+                standardRate: "Standard rate"
             }
         },
 
@@ -272,24 +326,17 @@
          */
 
         image: {
-            misc: {
-                actions: "Actions"
-            },
-
             title: {
                 images: "Images ({imagesLength})"
             },
 
-            explanation: {
-                noImage: "- use the area below to add images to this product."
+            status: {
+                moved: "The image has been moved"
             },
 
             action: {
-                editMetadata: "Edit metadata"
-            },
-
-            alert: {
-                noImage: "No image yet"
+                less: "Display less images",
+                more: "Display more images"
             }
         },
 
@@ -490,4 +537,6 @@
     // Expose the localization to the Mayocat settings
     Mayocat.localization.en = enLocalization;
 
-})(Mayocat);
+    return Mayocat;
+
+})(Mayocat || {});

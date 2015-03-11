@@ -1,0 +1,4 @@
+org.mayocat.shop.customer.store.jdbi.DBIAddressStore
+org.mayocat.shop.customer.store.jdbi.DBICustomerStore
+org.mayocat.shop.customer.data.CustomerDataSupplier
+org.mayocat.shop.customer.api.v1.CustomerApi

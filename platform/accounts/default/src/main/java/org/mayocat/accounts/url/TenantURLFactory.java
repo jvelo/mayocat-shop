@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.context.WebContext;
-import org.mayocat.url.AbstractEntityURLFactory;
 import org.mayocat.url.EntityURLFactory;
+import org.mayocat.url.URLHelper;
 import org.mayocat.url.URLType;
 import org.xwiki.component.annotation.Component;
 
@@ -23,8 +23,11 @@ import org.xwiki.component.annotation.Component;
  * @version $Id$
  */
 @Component
-public class TenantURLFactory extends AbstractEntityURLFactory<Tenant> implements EntityURLFactory<Tenant>
+public class TenantURLFactory implements EntityURLFactory<Tenant>
 {
+    @Inject
+    private URLHelper urlHelper;
+
     @Inject
     private WebContext context;
 
@@ -42,16 +45,12 @@ public class TenantURLFactory extends AbstractEntityURLFactory<Tenant> implement
     @Override
     public URL create(Tenant entity, Tenant tenant, URLType type)
     {
-        try {
-            switch (type) {
-                case API:
-                    return new URL(getSchemeAndDomain(tenant) + "/api/tenant/");
-                case PUBLIC:
-                default:
-                    return new URL(getSchemeAndDomain(tenant));
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+        switch (type) {
+            case API:
+                return urlHelper.getTenantPlatformURL(tenant, "/api/tenant/");
+            case PUBLIC:
+            default:
+                return urlHelper.getTenantPlatformURL(tenant, "");
         }
     }
 }

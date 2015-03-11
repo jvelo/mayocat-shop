@@ -8,8 +8,8 @@
 package mayoapp.dao;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.mayocat.accounts.model.Tenant;
 import org.mayocat.model.EntityList;
 import org.mayocat.store.rdbms.dbi.mapper.EntityListMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -36,5 +36,14 @@ public interface EntityListDAO extends EntityDAO<EntityList>, Transactional<Enti
     Integer updateEntityList(@BindBean("list") EntityList list);
 
     @SqlQuery
-    List<EntityList> findByHint(@Bind("hint") String hint, @BindBean("tenant") Tenant tenant);
+    List<EntityList> findByHint(@Bind("hint") String hint, @Bind("tenantId") UUID tenant);
+
+    @SqlQuery
+    EntityList findByHintAndParentId(@Bind("hint") String hint, @Bind("parent") UUID parent);
+
+    @SqlUpdate
+    void addEntityToList(@Bind("listId") UUID listId, @Bind("entityId") UUID entityId);
+
+    @SqlUpdate
+    void removeEntityFromList(@Bind("listId") UUID listId, @Bind("entityId") UUID entityId);
 }

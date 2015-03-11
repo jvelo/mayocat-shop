@@ -7,11 +7,16 @@
  */
 package mayoapp.dao;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.jdbi.mapper.PaymentOperationMapper;
-import org.mayocat.store.rdbms.dbi.argument.MapAsJsonArgumentFactory;
+import org.mayocat.store.rdbms.dbi.argument.MapAsJsonStringArgumentFactory;
 import org.mayocat.shop.payment.store.jdbi.argument.PaymentOperationResultArgumentFactory;
+import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -22,10 +27,13 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  * @version $Id$
  */
 @RegisterMapper(PaymentOperationMapper.class)
-@RegisterArgumentFactory({ MapAsJsonArgumentFactory.class, PaymentOperationResultArgumentFactory.class })
+@RegisterArgumentFactory({ MapAsJsonStringArgumentFactory.class, PaymentOperationResultArgumentFactory.class })
 @UseStringTemplate3StatementLocator
 public abstract class PaymentOperationDAO implements Transactional<PaymentOperationDAO>
 {
     @SqlUpdate
     public abstract void createPaymentOperation(@BindBean("operation") PaymentOperation operation);
+
+    @SqlQuery
+    public abstract List<PaymentOperation> findAllForOrderId(@Bind("orderId") UUID order);
 }

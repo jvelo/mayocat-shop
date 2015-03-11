@@ -8,6 +8,7 @@
 package mayoapp.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.cms.news.model.Article;
@@ -39,15 +40,15 @@ public abstract class ArticleDAO
     public abstract Integer updateArticle(@BindBean("article") Article article);
 
     @SqlQuery
-    public abstract List<Article> findAllPublished(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    public abstract List<Article> findAllPublished(@Bind("tenantId") UUID tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
-    public abstract List<Article> findAllLatestFirst(@BindBean("tenant") Tenant tenant, @Bind("number") Integer number,
+    public abstract List<Article> findAllLatestFirst(@Bind("tenantId") UUID tenant, @Bind("number") Integer number,
             @Bind("offset") Integer offset);
 
     @SqlQuery
-    public abstract Integer countAllPublished(@BindBean("tenant") Tenant tenant);
+    public abstract Integer countAllPublished(@Bind("tenantId") UUID tenant);
 
     public void createOrUpdateAddons(Article entity)
     {

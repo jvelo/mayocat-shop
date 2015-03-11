@@ -1,0 +1,92 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div class="block" ng-repeat="group in addons | filter:filterAddons">
+
+    <h3>{{group.name}}</h3>
+
+    <p ng-if="group.text && group.text != ''">
+        {{group.text}}
+    </p>
+
+    <!-- Sequence addons -->
+    <div ng-if="group.sequence" class="addon-sequence">
+
+        <!-- Add element button when positioned at the bottom -->
+        <div ng-if="group.properties['sequence.newElementPosition'] == 'first'" class="add-element top">
+            <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
+
+            <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
+            <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
+        </div>
+
+        <ul ng-model="entity.addons[group.key].value" ui-sortable="getSortableOptions(group.key)">
+            <li class="sequence-item" ng-repeat="item in entity.addons[group.key].value">
+
+                <!-- Collapse / expand icon -->
+                <div class="pull-right"
+                     ng-class="{'icon-collapse': !isCollapsed(group.key, $index), 'icon-expand': isCollapsed(group.key, $index)}"
+                     ng-click="toggleCollapse(group.key, $index)"></div>
+
+                <div class="icon-delete pull-right" ng-click="removeSequenceAddonItem(group, $index)"></div>
+                <div class="clearfix"></div>
+
+                <ul class="fields" ng-if="!isCollapsed(group.key, $index)">
+                    <li ng-repeat="addon in group.fields">
+                        <div>
+                            {{addon.definition.name}}
+
+                            <addon definition="addon.definition"
+                                   type="entity.addons[group.key].model[addon.key]"
+                                   object="item"
+                                   localized-object="localized.addons[group.key].value[$parent.$index]"
+                                   key="addon.key"
+                                   no-drop-zone="true"></addon>
+                        </div>
+                    </li>
+                </ul>
+                <div class='collapsed' ng-if="isCollapsed(group.key, $index)">
+                    <!-- Image preview -->
+                    <img ng-src="{{server}}/images/{{getCollapsedImage(group.key, $index)}}?width=40&height=40"
+                         ng-if="getCollapsedImage(group.key, $index)" />
+                    <!-- Placeholder if group has one image field definition but element image is not defined -->
+                    <img ng-src="/common/images/addon-image-placeholder.jpg"
+                         ng-if="!getCollapsedImage(group.key, $index) && hasOneImageAddon(group.key)"/>
+
+                    {{getCollapsedText(group.key, $index)}}
+                </div>
+            </li>
+        </ul>
+
+        <!-- Add element button when positioned at the bottom -->
+        <div ng-if="!group.properties['sequence.newElementPosition'] || group.properties['sequence.newElementPosition'] == 'last'"
+             class="add-element bottom">
+            <div class="btn btn-add" ng-click="addSequenceAddonItem(group)">+</div>
+
+            <span ng-if="group.properties['sequence.addElementText']">{{group.properties['sequence.addElementText']}}</span>
+            <span ng-if="!group.properties['sequence.addElementText']">{{'entity.addons.sequenceAddElementText' | translate}}</span>
+        </div>
+    </div>
+
+    <!-- Non sequence addons -->
+    <ul ng-if="!group.sequence">
+
+        <li ng-repeat="addon in group.fields">
+            {{addon.definition.name}}
+
+            <addon definition="addon.definition"
+                   type="entity.addons[group.key].model[addon.key]"
+                   object="entity.addons[group.key].value"
+                   localized-object="localized.addons[group.key].value"
+                   key="addon.key"
+                   no-drop-zone="false"></addon>
+        </li>
+    </ul>
+</div>
+

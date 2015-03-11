@@ -1,0 +1,47 @@
+{% extends 'base-mail.twig' %}
+
+{% block subject %}
+    Your order on {{ siteName }}
+{% endblock %}
+
+{% block html_content %}
+    Hello,<br/>
+    <br/>
+    Your order with order number {{ orderId }} on {{ siteName }} has been validated and will be processed soon.<br/>
+    <br/>
+    Here's the items you've ordered :<br/>
+    {% for item in items %}<br/>
+        - {{ item.title }}<br/>
+        Quantity: {{ item.quantity }}<br/>
+        Unit price: {{ item.unitPrice }}<br/>
+    {% endfor %}
+    <br/>
+    Items total: {{ itemsTotal }}<br/>
+    <br/>
+    {% if shippingTotal -%}
+        Shipping: {{ shipping.title }} {{ shippingTotal }}<br/>
+        <br/>
+    {% endif %}
+    Total: {{ grandTotal }}<br/>
+    <br/>
+    Your information:<br/>
+    <br/>
+    {{ customer.firstName }} {{ customer.lastName }}<br/>
+    {{ customer.email }}<br/>
+    {% if customer.phone %}{{ customer.phone }}{% endif %}<br/>
+    {% if deliveryAddress %}
+        <br/>
+        Shipping Address:<br/>
+        {{ deliveryAddress.street }}<br/>
+        {{ deliveryAddress.zip }} {{ deliveryAddress.city }}<br/>
+        {{ deliveryAddress.country }}<br/>
+        <br/>
+    {% endif %}
+    {% if billingAddress %}
+        Billing Address:<br/>
+        {{ billingAddress.street }}<br/>
+        {{ billingAddress.zip }} {{ billingAddress.city }}<br/>
+        {{ billingAddress.country }}<br/>
+        <br/>
+    {% endif %}
+{% endblock %}

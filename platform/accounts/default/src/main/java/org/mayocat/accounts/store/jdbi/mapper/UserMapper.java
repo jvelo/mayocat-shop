@@ -24,6 +24,13 @@ public class UserMapper implements ResultSetMapper<User>
         user.setEmail(result.getString("email"));
         user.setPassword(result.getString("password"));
         user.setSlug(result.getString("slug"));
+        user.setValidationKey(result.getString("validation_key"));
+
+        if (result.getObject("active") != null) {
+            user.setActive(result.getBoolean("active"));
+        } else {
+            user.setActive(false);
+        }
 
         if (result.getObject("tenant_id") == null) {
             user.setGlobal(true);

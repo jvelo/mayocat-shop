@@ -1,0 +1,33 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div>
+    <p>
+        <upload-list id="id"></upload-list>
+    </p>
+
+    <p ng-show="!uploading">
+        <img ng-src="{{server}}/images/{{internalModel}}?width=100&height=100" width="100" height="100"
+             ng-if="internalModel && internalModel != ''"/>
+    </p>
+
+    <div class="clearfix"></div>
+
+    <div ng-show="!uploading">
+        <image-upload upload-uri="{{getImageUploadUri()}}"
+                      drop-title="addon.name"
+                      drop-text="addon.properties['upload.dropZoneLabel']"
+                      target="addon"
+                      id="id"
+                      multiple="false"
+                      no-drop-zone="noDropZone"
+                      label="upload.action.select">
+        </image-upload>
+    </div>
+</div>

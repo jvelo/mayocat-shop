@@ -10,8 +10,6 @@ package org.mayocat.cms.news.web.object
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
-import org.mayocat.addons.front.builder.AddonContextBuilder
-import org.mayocat.addons.model.AddonGroup
 import org.mayocat.cms.news.model.Article
 import org.mayocat.image.model.Image
 import org.mayocat.rest.api.object.DateWebObject
@@ -46,10 +44,17 @@ class ArticleWebObject {
 
     DateWebObject publicationDate
 
+    /**
+     * @deprecated use #addons
+     */
+    @Deprecated
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Map theme_addons
+    Map<String, Object> theme_addons
 
-    def withArticle(Article article, EntityURLFactory urlFactory, Locale locale,  Optional<ThemeDefinition> theme)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Map <String, Object> addons
+
+    def withArticle(Article article, EntityURLFactory urlFactory, Locale locale)
     {
         title = ContextUtils.safeString(article.title)
         content = ContextUtils.safeHtml(article.content)
@@ -58,13 +63,11 @@ class ArticleWebObject {
 
         publicationDate = new DateWebObject()
         publicationDate.withDate(article.publicationDate, locale)
+    }
 
-        // Addons
-        if (article.addons.isLoaded() && theme.isPresent()) {
-            def addonContextBuilder = new AddonContextBuilder();
-            Map<String, AddonGroup> themeAddons = theme.get().addons
-            theme_addons = addonContextBuilder.build(themeAddons, article.addons.get());
-        }
+    def withAddons(Map<String, Object> addons) {
+        theme_addons = addons
+        this.addons = addons
     }
 
     def withImages(List<Image> imagesList, UUID featuredImageId, Optional<ThemeDefinition> theme)

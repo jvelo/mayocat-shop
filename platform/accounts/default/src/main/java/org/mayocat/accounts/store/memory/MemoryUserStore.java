@@ -49,6 +49,17 @@ public class MemoryUserStore extends BaseEntityMemoryStore<User> implements User
         };
     }
 
+    private Predicate<User> withValidationKey(final String validationKey)
+    {
+        return new Predicate<User>()
+        {
+            public boolean apply(@Nullable User input)
+            {
+                return input.getValidationKey().equals(validationKey);
+            }
+        };
+    }
+
     public User create(@Valid User user, Role initialRole)
             throws EntityAlreadyExistsException, InvalidEntityException
     {
@@ -72,7 +83,30 @@ public class MemoryUserStore extends BaseEntityMemoryStore<User> implements User
         return userRoles.containsKey(user) ? userRoles.get(user) : new ArrayList<Role>();
     }
 
-    public void updateGlobalUser(User user) throws EntityDoesNotExistException, InvalidEntityException
+    public User findByValidationKey(String validationKey)
+    {
+        return FluentIterable.from(findAll(0, 0)).filter(withValidationKey(validationKey)).first().orNull();
+    }
+
+    public void updatePassword(User user, String hash)
+    {
+        this.findById(user.getId()).setPassword(hash);
+    }
+
+    @Override
+    public void createPasswordResetRequest(User user, String key)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void deletePasswordResetRequest(String key)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public User findUserByPasswordResetRequest(String resetKey)
     {
         throw new RuntimeException("Not implemented");
     }

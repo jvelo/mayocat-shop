@@ -1,6 +1,3 @@
-# Data dir
-data
-
 # Eclipse
 target
 target-eclipse
@@ -18,9 +15,15 @@ stacktrace.log
 .groovy
 web-app/WEB-INF/classes/
 
-# conf
+# conf & application data
 shop/application/config-postgres.yml
 shop/application/mayocat.yml
+shop/application/data/elasticsearch
+shop/application/data/imagecache
+shop/application/data/themes
+shop/application/data/tenants
+shop/application/data/payments
 
 # misc
-classes
+/classes
+shop/logs/mayocat.log

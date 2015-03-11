@@ -1,0 +1,2 @@
+org.mayocat.attachment.store.jdbi.DBIAttachmentStore
+org.mayocat.attachment.store.memory.AttachmentMemoryStore

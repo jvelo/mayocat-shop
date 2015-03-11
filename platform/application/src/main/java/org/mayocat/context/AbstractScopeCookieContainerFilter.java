@@ -92,9 +92,7 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
             if (scope != null) {
                 setScope(context, scope);
             }
-        } catch (IOException e) {
-            LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
-        } catch (EncryptionException e) {
+        } catch (IOException | EncryptionException e) {
             LOGGER.error("Failed to get {} from cookies", getScopeAndCookieName(), e);
         }
         return containerRequest;
@@ -171,8 +169,8 @@ public abstract class AbstractScopeCookieContainerFilter<T extends WebScope>
 
                 T scope = cast(deserialize(cookieData));
                 return scope;
-            } catch (GeneralSecurityException | ClassNotFoundException e) {
-                LOGGER.error("Failed to de-serialize {} from cookies", getScopeAndCookieName(), e);
+            } catch (GeneralSecurityException | ClassNotFoundException | IOException e) {
+                LOGGER.warn("Failed to de-serialize {} from cookies", getScopeAndCookieName());
             } catch (ClassCastException e2) {
                 // Ignore and return null -> scope will be destroyed
             }

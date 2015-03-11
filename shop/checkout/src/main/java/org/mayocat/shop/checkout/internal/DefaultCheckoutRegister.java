@@ -7,7 +7,6 @@
  */
 package org.mayocat.shop.checkout.internal;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,29 +16,30 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.mayocat.addons.model.AddonField;
-import org.mayocat.addons.util.AddonUtils;
+import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
+import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
-import org.mayocat.model.Addon;
-import org.mayocat.shop.billing.model.Address;
-import org.mayocat.shop.billing.model.Customer;
+import org.mayocat.entity.EntityDataLoader;
 import org.mayocat.shop.billing.model.Order;
-import org.mayocat.shop.billing.store.AddressStore;
-import org.mayocat.shop.billing.store.CustomerStore;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
-import org.mayocat.shop.cart.CartAccessor;
-import org.mayocat.shop.cart.model.Cart;
-import org.mayocat.shop.catalog.model.Product;
-import org.mayocat.shop.catalog.model.Purchasable;
+import org.mayocat.shop.cart.Cart;
+import org.mayocat.shop.cart.CartManager;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutResponse;
 import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
+import org.mayocat.shop.customer.model.Address;
+import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.AddressStore;
+import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.payment.BasePaymentData;
-import org.mayocat.shop.payment.GatewayException;import org.mayocat.shop.payment.GatewayFactory;
+import org.mayocat.shop.payment.GatewayException;
+import org.mayocat.shop.payment.GatewayFactory;
 import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.PaymentData;
 import org.mayocat.shop.payment.PaymentGateway;
@@ -48,16 +48,18 @@ import org.mayocat.shop.payment.model.PaymentOperation;
 import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.shipping.model.Carrier;
+import org.mayocat.shop.taxes.configuration.TaxesSettings;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.ObservationManager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 /**
@@ -70,10 +72,16 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private Logger logger;
 
     @Inject
+    private EntityDataLoader dataLoader;
+
+    @Inject
     private PlatformSettings platformSettings;
 
     @Inject
     private CheckoutSettings checkoutSettings;
+
+    @Inject
+    private TaxesSettings taxesSettings;
 
     @Inject
     private Provider<OrderStore> orderStore;
@@ -83,6 +91,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private Provider<AddressStore> addressStore;
+
+    @Inject
+    private Provider<ProductStore> productStore;
 
     @Inject
     private Map<String, GatewayFactory> gatewayFactories;
@@ -97,18 +108,29 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private ObservationManager observationManager;
 
     @Inject
-    private CartAccessor cartAccessor;
+    private CartManager cartManager;
 
     @Inject
     private WebContext webContext;
 
+    @Inject
+    private SiteSettings siteSettings;
+
+    @Inject
+    private URLHelper urlHelper;
+
+    @Inject
+    private MultitenancySettings multitenancySettings;
+
     @Override
-    public CheckoutResponse checkout(final Cart cart, Customer customer, Address deliveryAddress,
+    public CheckoutResponse checkout(Customer customer, Address deliveryAddress,
             Address billingAddress, Map<String, Object> extraOrderData) throws CheckoutException
     {
         Preconditions.checkNotNull(customer);
         Order order;
         Customer actualCustomer;
+
+        final Cart cart = cartManager.getCart();
 
         try {
             UUID customerId;
@@ -116,26 +138,35 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             UUID billingAddressId = null;
             Map<String, Object> data = Maps.newHashMap(); // Order JSON data
 
-            customer.setSlug(customer.getEmail());
-            if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
-                actualCustomer = this.customerStore.get().create(customer);
-            } else {
-                Customer existingCustomer = this.customerStore.get().findBySlug(customer.getEmail());
-                boolean update = updateCustomerIfNecessary(existingCustomer, customer);
-                if (update) {
-                    this.customerStore.get().update(existingCustomer);
+            if (customer.getId() == null) {
+                customer.setSlug(customer.getEmail());
+                if (this.customerStore.get().findBySlug(customer.getEmail()) == null) {
+                    actualCustomer = this.customerStore.get().create(customer);
+                } else {
+                    Customer existingCustomer = this.customerStore.get().findBySlug(customer.getEmail());
+                    boolean update = updateCustomerIfNecessary(existingCustomer, customer);
+                    if (update) {
+                        this.customerStore.get().update(existingCustomer);
+                    }
+                    actualCustomer = existingCustomer;
                 }
-                actualCustomer = existingCustomer;
-            }
-            customerId = actualCustomer.getId();
+                customerId = actualCustomer.getId();
 
-            if (deliveryAddress != null) {
-                deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                if (deliveryAddress != null) {
+                    deliveryAddress = this.addressStore.get().create(deliveryAddress);
+                    deliveryAddressId = deliveryAddress.getId();
+                }
+                if (billingAddress != null) {
+                    billingAddress = this.addressStore.get().create(billingAddress);
+                    billingAddressId = billingAddress.getId();
+                }
+            } else {
+                actualCustomer = customer;
+                customerId = customer.getId();
                 deliveryAddressId = deliveryAddress.getId();
-            }
-            if (billingAddress != null) {
-                billingAddress = this.addressStore.get().create(billingAddress);
-                billingAddressId = billingAddress.getId();
+                if (billingAddress != null) {
+                    billingAddressId = billingAddress.getId();
+                }
             }
 
             order = new Order();
@@ -145,88 +176,36 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             if (extraOrderData.containsKey("additionalInformation")) {
                 order.setAdditionalInformation((String) extraOrderData.get("additionalInformation"));
             }
+            if (extraOrderData.containsKey("extraData")) {
+                data.put(Order.ORDER_DATA_EXTRA, (Map<String, Object>) extraOrderData.get("extraData"));
+            }
 
             // Items
-            Long numberOfItems = 0l;
-            final Map<Purchasable, Long> items = cart.getItems();
-            List<Map<String, Object>> orderItems = Lists.newArrayList();
-
-            for (final Purchasable p : items.keySet()) {
-                numberOfItems += items.get(p);
-                BigDecimal unitPrice = p.getUnitPrice();
-
-                if (unitPrice == null && p.getParent().isPresent() && p.getParent().get().isLoaded()) {
-                    unitPrice = p.getParent().get().get().getUnitPrice();
-                }
-                if (unitPrice == null) {
-                    throw new RuntimeException("Can't checkout this item");
-                }
-
-                String title;
-                if (p.getParent().isPresent() && p.getParent().get().isLoaded()) {
-                    title = p.getParent().get().get().getTitle() + " - " + p.getTitle();
-                } else {
-                    title = p.getTitle();
-                }
-
-                final String itemTitle = title;
-                final BigDecimal price = unitPrice;
-
-                Map<String, Object> itemData = new HashMap<String, Object>()
-                {
-                    {
-                        put("type", "product");
-                        put("id", p.getId());
-                        put("title", itemTitle);
-                        put("quantity", items.get(p));
-                        put("unitPrice", price);
-                        put("itemTotal", price.multiply(BigDecimal.valueOf(items.get(p))));
-                    }
-                };
-
-                if (Product.class.isAssignableFrom(p.getClass())) {
-                    Product product = (Product) p;
-
-                    if (product.getAddons().isLoaded()) {
-                        List<Map<String, Object>> itemAddons = Lists.newArrayList();
-
-                        List<Addon> addons = product.getAddons().get();
-                        for (Addon addon : addons) {
-                            Optional<AddonField> definition = findAddonDefinition(addon);
-                            if (definition.isPresent()) {
-                                if (definition.get().getProperties().containsKey("checkout.includeInOrder")) {
-                                    Map<String, Object> addonMap = Maps.newHashMap();
-                                    addonMap.put("value", addon.getValue());
-                                    addonMap.put("name", definition.get().getName());
-                                    addonMap.put("group", addon.getGroup());
-                                    itemAddons.add(addonMap);
-                                }
-                            }
-                        }
-
-                        if (!itemAddons.isEmpty()) {
-                            itemData.put("addons", itemAddons);
-                        }
-                    }
-                }
-
-                orderItems.add(itemData);
-            }
-            order.setNumberOfItems(numberOfItems);
-            order.setItemsTotal(cart.getItemsTotal());
-
-            data.put(Order.ORDER_DATA_ITEMS, orderItems);
+            List<OrderItem> items = FluentIterable.from(cart.items()).transform(new CartItemToOrderItemTransformer(
+                    dataLoader,
+                    platformSettings,
+                    productStore.get(),
+                    taxesSettings,
+                    webContext
+            )).toList();
+            order.setItemsTotal(cart.itemsTotal().incl());
+            order.setItemsTotalExcl(cart.itemsTotal().excl());
+            order.setOrderItems(items);
+            order.setNumberOfItems(Long.valueOf(items.size()));
 
             // Shipping
-            if (cart.getSelectedShippingOption() != null) {
-                final Carrier carrier = shippingService.getCarrier(cart.getSelectedShippingOption().getCarrierId());
-                order.setShipping(cart.getSelectedShippingOption().getPrice());
+            if (cart.selectedShippingOption().isPresent()) {
+                final Carrier carrier = shippingService.getCarrier(
+                        cart.selectedShippingOption().get().getCarrierId());
+                order.setShipping(cart.selectedShippingOption().get().getPrice().incl());
+                order.setShippingExcl(cart.selectedShippingOption().get().getPrice().excl());
                 data.put(Order.ORDER_DATA_SHIPPING, new HashMap<String, Object>()
                 {
                     {
                         put("carrierId", carrier.getId());
                         put("title", carrier.getTitle());
                         put("strategy", carrier.getStrategy());
+                        put("vatRate", carrier.getVatRate().doubleValue());
                     }
                 });
             }
@@ -234,11 +213,12 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             // Dates, currency, status
             order.setCreationDate(new Date());
             order.setUpdateDate(order.getCreationDate());
-            order.setCurrency(cart.getCurrency());
+            order.setCurrency(cart.currency());
             order.setStatus(Order.Status.NONE);
 
             // Grand total
-            order.setGrandTotal(cart.getTotal());
+            order.setGrandTotal(cart.total().incl());
+            order.setGrandTotalExcl(cart.total().excl());
 
             // JSON data
             order.setOrderData(data);
@@ -263,26 +243,29 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException("Gateway could not be created.");
         }
 
-        String localePath = "";
-        if (webContext.isAlternativeLocale()) {
-            localePath += webContext.getLocale() + "/";
-        }
+        Map<PaymentData, Object> data = Maps.newHashMap();
 
-        Map<PaymentData, Object> options = Maps.newHashMap();
-        String baseUri = webContext.getRequest().getBaseUri().toString() + localePath;
-        options.put(BasePaymentData.BASE_URL, baseUri);
-        options.put(BasePaymentData.CANCEL_URL, baseUri + CheckoutResource.PATH + "/" + order.getId() + "/"
-                + CheckoutResource.PAYMENT_CANCEL_PATH);
-        options.put(BasePaymentData.RETURN_URL, baseUri + CheckoutResource.PATH + "/"
-                + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId());
-        options.put(BasePaymentData.CURRENCY, cart.getCurrency());
-        options.put(BasePaymentData.ORDER_ID, order.getId());
-        options.put(BasePaymentData.CUSTOMER, actualCustomer);
+        data.put(BasePaymentData.BASE_WEB_URL, urlHelper.getContextWebBaseURL());
+        data.put(BasePaymentData.BASE_PLATFORM_URL, urlHelper.getContextPlatformBaseURL());
+        data.put(BasePaymentData.CANCEL_URL,
+                urlHelper.getContextWebURL(CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH + "/"
+                        + order.getId()).toString());
+        data.put(BasePaymentData.RETURN_URL, urlHelper.getContextWebURL(CheckoutResource.PATH + "/"
+                + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
+        data.put(BasePaymentData.CURRENCY, cart.currency());
+        data.put(BasePaymentData.ORDER_ID, order.getId());
+        data.put(BasePaymentData.CUSTOMER, actualCustomer);
+        if (billingAddress != null) {
+            data.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
+        }
+        data.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
+        data.put(BasePaymentData.ORDER, order);
 
         try {
             CheckoutResponse response = new CheckoutResponse();
             response.setOrder(order);
-            GatewayResponse gatewayResponse = gateway.purchase(cart.getTotal(), options);
+            GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), data);
+            response.setData(gatewayResponse.getData());
 
             if (gatewayResponse.isSuccessful()) {
 
@@ -290,8 +273,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                     response.setRedirectURL(Optional.fromNullable(gatewayResponse.getRedirectURL()));
                 }
 
-                cart.empty();
-                cartAccessor.setCart(cart);
+                cartManager.discardCart();
 
                 if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
                     order.setStatus(Order.Status.PAID);
@@ -364,21 +346,5 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
         return update;
-    }
-
-    private Optional<AddonField> findAddonDefinition(Addon addonToFind)
-    {
-        Optional option;
-
-        // 1. Find in platform
-        option = AddonUtils.findAddonDefinition(addonToFind, platformSettings.getAddons());
-
-        if (!option.isPresent() && webContext.getTheme() != null) {
-            // 2. Find in theme
-            option = AddonUtils
-                    .findAddonDefinition(addonToFind, webContext.getTheme().getDefinition().getAddons());
-        }
-
-        return option;
     }
 }

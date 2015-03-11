@@ -17,24 +17,26 @@ angular.module('orders', [])
                     var $scope = this;
                     $scope.ordersPerPage = options.ordersPerPage || 15;
                     $scope.isLoading = true;
-                    $scope.currentPage = 0;
+                    $scope.currentPage = 1;
                     $scope.fetchOrders();
                 },
 
-                fetchOrders: function(){
+                pageChanged: function () {
+                    var $scope = this;
+                    $scope.fetchOrders();
+                },
+
+                fetchOrders: function () {
                     var $scope = this;
                     $resource("/api/orders").get({
-                        "offset" : $scope.currentPage * $scope.ordersPerPage,
-                        "number" : $scope.ordersPerPage
-                    }, function (orders) {
+                        "offset": (($scope.currentPage - 1) * $scope.ordersPerPage),
+                        "number": $scope.ordersPerPage
+                    }, function (result) {
 
                         // Prepare pagination variables
-                        $scope.pages = Math.floor(orders.total / orders.number);
-                        if (orders.total % orders.number === 0) {
-                            $scope.pages--;
-                        }
+                        $scope.totalItems = result._pagination.totalItems;
 
-                        $scope.orders = orders.items;
+                        $scope.orders = result.orders;
                         $scope.isLoading = false;
                     });
                 },
@@ -47,7 +49,7 @@ angular.module('orders', [])
 
                 getStatus: function(status) {
                     var $scope = this;
-                    var camelCaseStatus = status.toLowerCase().replace(/-(.)/g, function(match, grp1) {
+                    var camelCaseStatus = status.toLowerCase().replace(/_(.)/g, function(match, grp1) {
                         return grp1.toUpperCase();
                     });
 

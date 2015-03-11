@@ -20,7 +20,6 @@ import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 /**
  * @version $Id$
@@ -36,9 +35,6 @@ public class SiteGestaltConfigurationSource implements GestaltConfigurationSourc
 
     @Inject
     private WebContext context;
-
-    @Inject
-    private ObjectMapperFactory objectMapperFactory;
 
     @Override
     public Object get()

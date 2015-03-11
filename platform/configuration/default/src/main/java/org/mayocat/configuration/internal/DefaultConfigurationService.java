@@ -8,6 +8,7 @@
 package org.mayocat.configuration.internal;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import org.mayocat.configuration.ExposedSettings;
 import org.mayocat.configuration.GestaltConfigurationSource;
 import org.mayocat.configuration.NoSuchModuleException;
 import org.mayocat.configuration.jackson.GestaltConfigurationModule;
+import org.mayocat.configuration.jackson.TimeZoneModule;
 import org.mayocat.context.WebContext;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -32,10 +34,13 @@ import org.xwiki.component.annotation.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
+
+import io.dropwizard.jackson.GuavaExtrasModule;
 
 /**
  * @version $Id$
@@ -53,9 +58,6 @@ public class DefaultConfigurationService implements ConfigurationService
     private Map<String, GestaltConfigurationSource> gestaltConfigurationSources;
 
     @Inject
-    private ObjectMapperFactory objectMapperFactory;
-
-    @Inject
     private WebContext context;
 
     @Inject
@@ -68,65 +70,97 @@ public class DefaultConfigurationService implements ConfigurationService
      *
      * An event listener flushed their entry when a tenant entity event is received.
      */
-    private Cache<UUID, Map<String, Object>> configurations = CacheBuilder.newBuilder().maximumSize(1000).build();
+    private Cache<UUID, Map<String, Serializable>> configurations = CacheBuilder.newBuilder().maximumSize(1000).build();
+
+    private Object lock = new Object();
 
     /**
      * Exposed settings, as provided by the platform
      */
-    private Map<String, Object> exposedPlatformSettingsAsJson;
+    private Map<String, Serializable> exposedPlatformSettingsAsJson;
 
-    public Map<Class, Object> getSettings()
+    public Map<Class, Serializable> getSettings()
     {
         return this.getSettings(this.context.getTenant());
     }
 
-    public Map<Class, Object> getSettings(Tenant tenant)
+    public Map<Class, Serializable> getSettings(Tenant tenant)
     {
         ObjectMapper mapper = getObjectMapper();
-        Map<String, Object> mergedConfiguration = getSettingsAsJson(tenant);
-        Map<Class, Object> configurations = Maps.newHashMap();
-        for (String source : exposedSettings.keySet()) {
-            Map<String, Object> merged = (Map<String, Object>) mergedConfiguration.get(source);
-            Class c = exposedSettings.get(source).getClass();
-            try {
-                String json = mapper.writeValueAsString(merged);
-                Object result = mapper.readValue(json, c);
-                configurations.put(c, result);
-            } catch (JsonProcessingException e) {
-                this.logger.error("Error while converting configuration to JSON string", e);
-            } catch (IOException e) {
-                this.logger.error("Error while converting configuration to JSON string", e);
+        Map<Class, Serializable> configurations = Maps.newHashMap();
+        if (tenant != null) {
+            // For a tenant : merge global configuration with tenant own overrides
+            Map<String, Serializable> mergedConfiguration = getSettingsAsJson(tenant);
+
+            for (String source : exposedSettings.keySet()) {
+                Map<String, Serializable> merged = (Map<String, Serializable>) mergedConfiguration.get(source);
+                Class c = exposedSettings.get(source).getClass();
+                try {
+                    String json = mapper.writeValueAsString(merged);
+                    Serializable result = (Serializable) mapper.readValue(json, c);
+                    configurations.put(c, result);
+                } catch (IOException e) {
+                    this.logger.error("Error while converting configuration to JSON string", e);
+                }
+            }
+        } else {
+            // Not for a tenant : just return the global configuration
+
+            for (ExposedSettings settings : exposedSettings.values()) {
+                configurations.put(settings.getClass(), settings);
             }
         }
+
         return configurations;
     }
 
     public <T extends ExposedSettings> T getSettings(Class<T> c, Tenant tenant)
     {
-        return (T) this.getSettings(tenant).get(c);
+        if (tenant != null) {
+            return (T) this.getSettings(tenant).get(c);
+        } else {
+            for (ExposedSettings settings : exposedSettings.values()) {
+                if (c.isAssignableFrom(settings.getClass())) {
+                    return (T) settings;
+                }
+            }
+        }
+        return null;
     }
 
     public <T extends ExposedSettings> T getSettings(Class<T> c)
     {
-        return (T) this.getSettings().get(c);
+        if (this.context.getTenant() != null) {
+            return (T) this.getSettings().get(c);
+        } else {
+            for (ExposedSettings settings : exposedSettings.values()) {
+                if (c.isAssignableFrom(settings.getClass())) {
+                    return (T) settings;
+                }
+            }
+        }
+        return null;
     }
 
-    public Map<String, Object> getSettingsAsJson(final Tenant tenant)
+    public Map<String, Serializable> getSettingsAsJson(final Tenant tenant)
     {
         if (tenant == null) {
             return Collections.emptyMap();
         }
         try {
-            return configurations.get(tenant.getId(), new Callable<Map<String, Object>>()
+            return configurations.get(tenant.getId(), new Callable<Map<String, Serializable>>()
             {
                 @Override
-                public Map<String, Object> call()
+                public Map<String, Serializable> call()
                 {
-                    Map<String, Object> tenantConfiguration = tenant.getConfiguration();
-                    Map<String, Object> platformConfiguration = getExposedPlatformSettingsAsJson();
-                    ConfigurationJsonMerger merger =
-                            new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
-                    return merger.merge();
+                    synchronized (lock) {
+                        logger.debug("loading cache configuration value for tenant {}", tenant.getSlug());
+                        Map<String, Serializable> tenantConfiguration = tenant.getConfiguration();
+                        Map<String, Serializable> platformConfiguration = getExposedPlatformSettingsAsJson();
+                        ConfigurationJsonMerger merger =
+                                new ConfigurationJsonMerger(platformConfiguration, tenantConfiguration);
+                        return merger.merge();
+                    }
                 }
             });
         } catch (ExecutionException e) {
@@ -134,26 +168,26 @@ public class DefaultConfigurationService implements ConfigurationService
         }
     }
 
-    public Map<String, Object> getSettingsAsJson()
+    public Map<String, Serializable> getSettingsAsJson()
     {
         return this.getSettingsAsJson(context.getTenant());
     }
 
-    public Map<String, Object> getSettingsAsJson(String moduleName) throws NoSuchModuleException
+    public Map<String, Serializable> getSettingsAsJson(String moduleName) throws NoSuchModuleException
     {
         if (!this.exposedSettings.containsKey(moduleName)) {
             throw new NoSuchModuleException();
         }
 
         try {
-            return (Map<String, Object>) getSettingsAsJson().get(moduleName);
+            return (Map<String, Serializable>) getSettingsAsJson().get(moduleName);
         } catch (ClassCastException e) {
             this.logger.warn("Attempt at accessing a configuration that is not an object");
         }
         return Collections.emptyMap();
     }
 
-    public void updateSettings(Map<String, Object> data)
+    public void updateSettings(Map<String, Serializable> data)
     {
         ValidConfigurationEnforcer enforcer = new ValidConfigurationEnforcer(getExposedPlatformSettingsAsJson(), data);
         ValidConfigurationEnforcer.ValidationResult result = enforcer.enforce();
@@ -170,7 +204,7 @@ public class DefaultConfigurationService implements ConfigurationService
         // REST accounts consumer ? (meaning the operation has been partially successful only)
     }
 
-    public void updateSettings(String module, Map<String, Object> configuration) throws NoSuchModuleException
+    public void updateSettings(String module, Map<String, Serializable> configuration) throws NoSuchModuleException
     {
         if (!this.exposedSettings.containsKey(module)) {
             throw new NoSuchModuleException();
@@ -178,13 +212,13 @@ public class DefaultConfigurationService implements ConfigurationService
 
         Tenant tenant = this.context.getTenant();
         TenantConfiguration currentConfiguration = tenant.getConfiguration();
-        Map<String, Object> data = Maps.newHashMap(currentConfiguration.getData());
+        Map<String, Serializable> data = Maps.newHashMap(currentConfiguration.getData());
 
-        data.put(module, configuration);
+        data.put(module, Maps.newHashMap(configuration));
         this.updateSettings(data);
     }
 
-    public Map<String, Object> getGestaltConfiguration()
+    public Map<String, Serializable> getGestaltConfiguration()
     {
         ObjectMapper mapper = getObjectMapper();
         mapper.registerModule(new GestaltConfigurationModule());
@@ -192,7 +226,7 @@ public class DefaultConfigurationService implements ConfigurationService
         Map<String, Object> result = Maps.newHashMap();
         for (String key : this.gestaltConfigurationSources.keySet()) {
             Object value = this.gestaltConfigurationSources.get(key).get();
-            if (ExposedSettings.class.isAssignableFrom(value.getClass())) {
+            if (ExposedSettings.class.isAssignableFrom(value.getClass()) && this.context.getTenant() != null) {
                 // If the gestalt source returns an "exposed setting", then we get the version merged with the tenant
                 // configuration.
                 Class<? extends ExposedSettings> configurationClass =
@@ -216,17 +250,17 @@ public class DefaultConfigurationService implements ConfigurationService
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private Map<String, Object> getExposedPlatformSettingsAsJson()
+    private Map<String, Serializable> getExposedPlatformSettingsAsJson()
     {
         if (exposedPlatformSettingsAsJson != null) {
             return exposedPlatformSettingsAsJson;
         }
-        ObjectMapper mapper = getObjectMapper();
-        Map configurationsToSerialize = Maps.newHashMap();
+        Map<String, ExposedSettings> configurationsToSerialize = Maps.newHashMap();
         for (String hint : exposedSettings.keySet()) {
             configurationsToSerialize.put(hint, exposedSettings.get(hint));
         }
         try {
+            ObjectMapper mapper = getObjectMapper();
             String json = mapper.writeValueAsString(configurationsToSerialize);
             exposedPlatformSettingsAsJson = mapper.readValue(json, new TypeReference<Map<String, Object>>()
             {
@@ -240,8 +274,14 @@ public class DefaultConfigurationService implements ConfigurationService
         return Collections.emptyMap();
     }
 
-    private ObjectMapper getObjectMapper()
+    public ObjectMapper getObjectMapper()
     {
-        return objectMapperFactory.build();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new GuavaModule());
+        mapper.registerModule(new JodaModule());
+        mapper.registerModule(new GuavaExtrasModule());
+        mapper.registerModule(new TimeZoneModule());
+
+        return mapper;
     }
 }

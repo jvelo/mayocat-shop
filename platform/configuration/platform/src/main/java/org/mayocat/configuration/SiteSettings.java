@@ -10,6 +10,9 @@ package org.mayocat.configuration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
+
 /**
  * @version $Id$
  */
@@ -19,14 +22,50 @@ public class SiteSettings
      * The domain this web site runs under. Here the term "domain" is a language abuse since it does not correspond
      * exactly to what an internet domain name is (for example here the default value contains a port specification).
      *
-     * This is use for all absolute URL creation.
+     * This is used for all absolute URL creation.
      */
     @Valid
-    @NotNull
+    @JsonProperty
     private String domainName = "localhost:8080";
+
+    @Valid
+    @JsonProperty
+    private String name = "Mayocat";
+
+    @Valid
+    @JsonProperty
+    private Optional<String> web = Optional.absent();
+
+    @Valid
+    @JsonProperty
+    private Optional<String> backOffice = Optional.absent();
+
+    @Valid
+    @JsonProperty
+    private String contactEmail = "contact@example.com";
 
     public String getDomainName()
     {
         return domainName;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getContactEmail()
+    {
+        return contactEmail;
+    }
+
+    public Optional<String> getWebDomainName()
+    {
+        return web;
+    }
+
+    public Optional<String> getBackOfficeDomainName()
+    {
+        return backOffice;
     }
 }

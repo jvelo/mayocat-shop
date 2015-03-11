@@ -8,13 +8,14 @@
 package org.mayocat.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Id$
  */
 public interface HasAddons
 {
-    Association<List<Addon>> getAddons();
+    Association<Map<String, AddonGroup>> getAddons();
 
-    void setAddons(List<Addon> addons);
+    void setAddons(Map<String, AddonGroup> addons);
 }
