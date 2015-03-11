@@ -37,11 +37,13 @@ import org.mayocat.rest.api.delegate.ImageGalleryApiDelegate
 import org.mayocat.rest.api.object.ImageApiObject
 import org.mayocat.rest.api.object.ImageGalleryApiObject
 import org.mayocat.rest.api.object.LinkApiObject
+import org.mayocat.rest.api.object.Pagination
 import org.mayocat.shop.catalog.CatalogService
 import org.mayocat.shop.catalog.api.v1.object.CollectionApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionItemApiObject
 import org.mayocat.shop.catalog.api.v1.object.CollectionTreeApiObject
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
+import org.mayocat.shop.catalog.api.v1.object.ProductListApiObject
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.store.CollectionStore
@@ -664,6 +666,48 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    // Products
+
+    @GET
+    @Path("{slug}/products")
+    def getProductsForCollection(@PathParam("slug") String slug)
+    {
+        getProducts(slug);
+    }
+
+    @GET
+    @Path("{parent1}/collections/{slug}/products")
+    def getProductsForCollectionWithOneParent(
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getProducts(parent1, slug);
+    }
+
+    @GET
+    @Path("{parent2}/collections/{parent1}/collections/{slug}/products")
+    def getProductsForCollectionWithTwoParents(
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getProducts(parent2, parent1, slug);
+    }
+
+    @GET
+    @Path("{parent3}/collections/{parent2}/collections/{parent1}/collections/{slug}/products")
+    def getProductsForCollectionWithThreeParents(
+            @PathParam("parent3") String parent3,
+            @PathParam("parent2") String parent2,
+            @PathParam("parent1") String parent1,
+            @PathParam("slug") String slug)
+    {
+        getProducts(parent3, parent2, parent1, slug);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     def removeProductFromCollectionInternal(Reference reference, String... slugsArray)
     {
         Collection collection = getCollectionFromSlugChain(slugsArray);
@@ -739,42 +783,14 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
         return Response.ok().build()
     }
 
-    def getCollectionInternal(String... slugsArray)
+    def getProducts(String... slugsArray)
     {
         def org.mayocat.shop.catalog.model.Collection collection = getCollectionFromSlugChain(slugsArray);
-
         if (!collection) {
             return Response.status(Response.Status.NOT_FOUND).build()
         }
-        def slug = collection.slug
-
-        EntityData<org.mayocat.shop.catalog.model.Collection> collectionData = dataLoader.load(collection)
-
-        def gallery = collectionData.getData(ImageGallery)
-        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
-
-        if (collection == null) {
-            return Response.status(404).build();
-        }
-
-        // TODO fix links : parent chain is missing
-        CollectionApiObject collectionApiObject = new CollectionApiObject([
-                _href : "/api/collections/${slug}/",
-                _links: [
-                        self  : new LinkApiObject([href: "/api/collections/${slug}/"]),
-                        images: new LinkApiObject(
-                                [href: "/api/collections/${slug}/images"])
-                ]
-        ])
-
-        collectionApiObject.withCollection(collection)
-        if (collection.addons.isLoaded()) {
-            collectionApiObject.withAddons(collection.addons.get())
-        }
-        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         final EntityAndParent<Collection> collectionChain = collectionStore.get().findBySlugs(slugsArray)
-
         List<Product> products = tenantProductStore.get().findAllForCollection(collectionChain)
         List<ProductApiObject> productList = [];
         List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
@@ -803,11 +819,55 @@ class CollectionApi implements Resource, AttachmentApiDelegate, ImageGalleryApiD
             productList << productApiObject
         })
 
-        if (collectionApiObject._embedded == null) {
-            collectionApiObject._embedded = [:]
+        def productListResult = new ProductListApiObject([
+                _pagination: new Pagination([
+                        numberOfItems: productList.size(),
+                        returnedItems: productList.size(),
+                        offset       : 0,
+                        totalItems   : productList.size(),
+                        urlTemplate: "/api/collections/${collection.slug}/images"
+                ]),
+                products   : productList
+        ])
+
+        productListResult
+    }
+
+    def getCollectionInternal(String... slugsArray)
+    {
+        def org.mayocat.shop.catalog.model.Collection collection = getCollectionFromSlugChain(slugsArray);
+
+        if (!collection) {
+            return Response.status(Response.Status.NOT_FOUND).build()
+        }
+        def slug = collection.slug
+
+        EntityData<org.mayocat.shop.catalog.model.Collection> collectionData = dataLoader.load(collection)
+
+        def gallery = collectionData.getData(ImageGallery)
+        List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
+
+        if (collection == null) {
+            return Response.status(404).build();
         }
 
-        collectionApiObject._embedded.products = productList
+        // TODO fix links : parent chain is missing
+        CollectionApiObject collectionApiObject = new CollectionApiObject([
+                _href : "/api/collections/${slug}/",
+                _links: [
+                        self  : new LinkApiObject([href: "/api/collections/${slug}/"]),
+                        images: new LinkApiObject(
+                                [href: "/api/collections/${slug}/images"]),
+                        products: new LinkApiObject(
+                                [href: "/api/collections/${slug}/products"])
+                ]
+        ])
+
+        collectionApiObject.withCollection(collection)
+        if (collection.addons.isLoaded()) {
+            collectionApiObject.withAddons(collection.addons.get())
+        }
+        collectionApiObject.withEmbeddedImages(images, collection.featuredImageId, context.request.tenantPrefix)
 
         collectionApiObject
     }
