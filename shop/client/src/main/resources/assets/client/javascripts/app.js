@@ -121,7 +121,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
         .when('/me', {
             templateUrl: 'partials/accountSettings.html?1',
             controller: 'AccountSettings',
-            title: 'My Account'
+            titleTranslation: 'account'
         })
         .otherwise({
             redirectTo: '/'

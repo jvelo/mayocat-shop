@@ -37,7 +37,8 @@ var Mayocat = (function (Mayocat) {
                 pages: "Pages",
                 products: "Produits",
                 catalog: "Catalogue",
-                settings: "Paramètres"
+                settings: "Paramètres",
+                account: "Mon compte"
             }
         },
 
