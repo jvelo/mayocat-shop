@@ -47,7 +47,12 @@ public class PageMapper implements ResultSetMapper<Page>
                 Map<Locale, Map<String, Object>> localizedVersions = Maps.newHashMap();
                 Map[] data = mapper.readValue(resultSet.getString("localization_data"), Map[].class);
                 for (Map map : data) {
-                    localizedVersions.put(LocaleUtils.toLocale((String) map.get("locale")), (Map) map.get("entity"));
+                    try {
+                        localizedVersions
+                                .put(LocaleUtils.toLocale((String) map.get("locale")), (Map) map.get("entity"));
+                    } catch (IllegalArgumentException e) {
+                        // Invalid locale, just ignore it
+                    }
                 }
                 page.setLocalizedVersions(localizedVersions);
             } catch (IOException e) {
