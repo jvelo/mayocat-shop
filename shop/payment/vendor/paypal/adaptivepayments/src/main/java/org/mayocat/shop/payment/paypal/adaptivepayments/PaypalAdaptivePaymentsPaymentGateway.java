@@ -94,7 +94,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         //request.setTrackingId(orderId);
 
         request.setIpnNotificationUrl(
-                baseURI + PaymentResource.PATH + "/" + orderId + "/" + PaymentResource.ACKNOWLEDGEMENT_PATH + "/" +
+                baseURI + "/" + PaymentResource.PATH + "/" + orderId + "/" + PaymentResource.ACKNOWLEDGEMENT_PATH + "/" +
                         PaypalAdaptivePaymentsGatewayFactory.ID);
 
         try {
