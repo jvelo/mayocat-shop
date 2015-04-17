@@ -8,9 +8,9 @@ if [ ! -d "target" ]; then
   exit
 fi
 
-JAR_NAME=`ls target | grep "^mayocat-shop" | grep -v postgre`
+JAR_NAME=`ls target | grep "^mayocat-shop" | grep -v postgre | grep -v sources`
 
-if [ -z $JAR_NAME ]; then
+if [ -z "$JAR_NAME" ]; then
   echo "You must build first: 'mvn install'"
   exit
 fi
