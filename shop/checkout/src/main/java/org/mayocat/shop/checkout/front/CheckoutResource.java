@@ -49,6 +49,7 @@ import org.mayocat.context.WebContext;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.billing.model.Order;
+import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
@@ -66,6 +67,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -386,7 +388,7 @@ public class CheckoutResource implements Resource
             Optional<Address> da, Tenant tenant, Locale locale)
     {
         Map<String, Object> orderData = order.getOrderData();
-        List<Map<String, Object>> items = (List<Map<String, Object>>) orderData.get("items");
+        List<OrderItem> items = order.getOrderItems();
         Map<String, Object> context = Maps.newHashMap();
 
         MoneyFormatter formatter = new MoneyFormatterBuilder().appendAmount(MoneyAmountStyle.of(locale))
@@ -400,25 +402,25 @@ public class CheckoutResource implements Resource
         String itemsTotal = formatter.withLocale(locale)
                 .print(Money.of(currencyUnit, order.getItemsTotal(), RoundingMode.HALF_EVEN));
 
-        for (Map<String, Object> item : items) {
-            // Replace big decimal values by formatted values
-            Double unitPrice;
-            Double itemTotal;
-            if (BigDecimal.class.isAssignableFrom(item.get("unitPrice").getClass())) {
-                unitPrice = ((BigDecimal) item.get("unitPrice")).doubleValue();
-                itemTotal = ((BigDecimal) item.get("itemTotal")).doubleValue();
-            } else {
-                unitPrice = (Double) item.get("unitPrice");
-                itemTotal = (Double) item.get("itemTotal");
-            }
+        List<Map<String, Object>> orderItems = Lists.newArrayList();
+        for (OrderItem item : items) {
+            Map<String, Object> orderItem = Maps.newHashMap();
+            orderItem.put("title", item.getTitle());
+            orderItem.put("quantity", item.getQuantity());
 
-            item.put("unitPrice", formatter.withLocale(locale)
+            // Replace big decimal values by formatted values
+            Double unitPrice = item.getUnitPrice().doubleValue();
+            Double itemTotal = item.getItemTotal().doubleValue();
+
+            orderItem.put("unitPrice", formatter.withLocale(locale)
                     .print(Money.of(currencyUnit, unitPrice, RoundingMode.HALF_EVEN)));
-            item.put("itemTotal", formatter.withLocale(locale)
+            orderItem.put("itemTotal", formatter.withLocale(locale)
                     .print(Money.of(currencyUnit, itemTotal, RoundingMode.HALF_EVEN)));
+
+            orderItems.add(orderItem);
         }
 
-        context.put("items", items);
+        context.put("items", orderItems);
 
         if (order.getShipping() != null) {
             String shippingTotal = formatter.withLocale(locale)
