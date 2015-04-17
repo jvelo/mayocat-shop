@@ -180,7 +180,7 @@ class CartWebView implements Resource
     WebView getCart()
     {
         Cart cart = cartManager.getCart()
-        if (!cart.isEmpty() && shippingService.isShippingEnabled() && cart.selectedShippingOption() == null) {
+        if (!cart.isEmpty() && shippingService.isShippingEnabled() && !cart.selectedShippingOption().isPresent()) {
             Map<Purchasable, Long> items = Maps.newHashMap()
             List<ShippingOption> options = shippingService.getOptions(items)
             if (!options.isEmpty()) {
