@@ -134,7 +134,7 @@ public class DBIHomePageStore extends DBIEntityStore implements HomePageStore, I
 
     private HomePage find()
     {
-        HomePage page = this.dao.find();
+        HomePage page = this.dao.find(getTenant());
         if (page != null) {
             List<AddonGroup> addons = this.dao.findAddons(page);
             page.setAddons(asMap(addons));

@@ -69,6 +69,27 @@
     </div>
 
 
+    <!--
+      -- Addons
+      -->
+
+    <div ng-if="addons.length > 0">
+        <addon-list addons="addons" entity="home" localized-entity="localizedProduct"/>
+    </div>
+
+
+    <!--
+      -- Save button
+      -->
+    <div class="buttons">
+        <span ng-class="{'loading': isLoading}"></span>
+        <div class="hasLoading">
+            <button ng-click="save()" class="btn btn-large btn-primary">
+                {{'entity.action.save' | translate}}
+            </button>
+        </div>
+    </div>
+
 </article>
 
 <aside>
@@ -77,7 +98,7 @@
 
 </aside>
 
-<!-- Add variant modal -->
+<!-- Add featured product modal -->
 <script type="text/ng-template" id="addFeaturedProduct.html">
 
     <div class="modal-header">

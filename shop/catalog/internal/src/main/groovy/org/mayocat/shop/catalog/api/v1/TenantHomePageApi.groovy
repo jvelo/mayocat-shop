@@ -8,17 +8,26 @@
 package org.mayocat.shop.catalog.api.v1
 
 import com.google.common.base.Optional
+import com.sun.jersey.core.header.FormDataContentDisposition
+import com.sun.jersey.multipart.FormDataParam
 import groovy.transform.CompileStatic
 import org.mayocat.attachment.model.Attachment
 import org.mayocat.attachment.store.AttachmentStore
+import org.mayocat.authorization.annotation.Authorized
+import org.mayocat.cms.home.model.HomePage
+import org.mayocat.cms.home.store.HomePageStore
 import org.mayocat.configuration.ConfigurationService
+import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.store.ThumbnailStore
+import org.mayocat.model.Entity
 import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
+import org.mayocat.rest.api.delegate.AttachmentApiDelegate
+import org.mayocat.rest.api.delegate.EntityApiDelegateHandler
 import org.mayocat.shop.catalog.api.v1.object.ProductApiObject
 import org.mayocat.shop.catalog.api.v1.object.ShopHomePageApiObject
 import org.mayocat.shop.catalog.model.Product
@@ -30,7 +39,9 @@ import org.xwiki.component.annotation.Component
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.*
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.UriInfo
 
 /**
  * /api/home/ API
@@ -43,7 +54,7 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_JSON)
 @ExistingTenant
 @CompileStatic
-class TenantHomePageApi implements Resource
+class TenantHomePageApi implements Resource, AttachmentApiDelegate
 {
     @Inject
     Provider<ProductStore> productStore
@@ -62,6 +73,36 @@ class TenantHomePageApi implements Resource
 
     @Inject
     ConfigurationService configurationService
+
+    @Inject
+    PlatformSettings platformSettings
+
+    @Inject
+    Provider<HomePageStore> homePageStore
+
+    EntityApiDelegateHandler getHandler()
+    {
+        return new EntityApiDelegateHandler() {
+            Entity getEntity(String slug)
+            {
+                homePageStore.get().getOrCreate(new HomePage())
+            }
+
+            void updateEntity(Entity entity)
+            {
+                homePageStore.get().update(entity as HomePage)
+            }
+
+            String type()
+            {
+                "home"
+            }
+        }
+    }
+
+    Closure doAfterAttachmentAdded = { String target, Entity entity, String fileName, Attachment created ->
+        // Nothing
+    }
 
     @GET
     def getHomePage()
@@ -106,6 +147,14 @@ class TenantHomePageApi implements Resource
             homePageApiObject.featuredProducts = featuredProducts
         }
 
+        // Home
+
+        HomePage homePage = homePageStore.get().getOrCreate(new HomePage())
+
+        if (homePage.getAddons().isLoaded()) {
+            homePageApiObject.withAddons(homePage.addons.get())
+        }
+
         homePageApiObject
     }
 
@@ -129,6 +178,27 @@ class TenantHomePageApi implements Resource
 
         homeFeaturedList.entities = ids.findAll({UUID id -> id != null}).toList()
 
+        HomePage homePage = homePageApiObject.toHomePage(platformSettings, Optional.fromNullable(this.context.theme?.definition))
+        homePageStore.get().update(homePage)
+
         entityListStore.get().update(homeFeaturedList)
+    }
+
+    // Delegate to attachments and images API delegates, but without their {{slug}} prefixes (meant for product, pages, etc.)
+    @Path("attachments")
+    @Authorized
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    def addAttachment(@FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("filename") String sentFilename,
+            @FormDataParam("title") String title,
+            @FormDataParam("description") String description,
+            @FormDataParam("target") String target,
+            @Context UriInfo uriInfo)
+    {
+        addAttachment('home', uploadedInputStream, fileDetail, sentFilename, title, description, target,
+                uriInfo)
     }
 }

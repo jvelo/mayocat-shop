@@ -239,6 +239,11 @@
 
                         addons && Object.keys(addons).forEach(function(sourceName) {
                             var source = addons[sourceName];
+
+                            if (typeof entity.addons === "undefined") {
+                                entity.addons = {};
+                            }
+
                             Object.keys(source).forEach(function(groupKey){
                                 var group = source[groupKey],
                                     definitions = group.fields,

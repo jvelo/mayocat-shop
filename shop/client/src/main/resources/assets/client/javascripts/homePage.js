@@ -9,8 +9,16 @@
 
 angular.module('homePage', [])
 
-    .controller('HomePageController', ['$scope', '$http', '$modal',
-        function ($scope, $http, $modal) {
+    .controller('HomePageController', ['$scope', '$http', '$modal', 'entityMixins',
+        function ($scope, $http, $modal, entityMixins) {
+
+            entityMixins.extend(["base", "addons"], $scope, "home", {
+                "base": {
+                    'slug': 'home',
+                    'apiBase': '/api/home',
+                    'noSlug': true
+                }
+            });
 
             $scope.featuredProducts = [];
 
@@ -19,6 +27,10 @@ angular.module('homePage', [])
             $scope.isLoading = true;
             $http.get('/api/home').success(function (data) {
                 $scope.featuredProducts = data.featuredProducts;
+
+                $scope.home = data;
+                $scope.initializeEntity();
+
                 $scope.isLoading = false;
             });
 
@@ -56,7 +68,8 @@ angular.module('homePage', [])
             $scope.save = function () {
                 $scope.isLoading = true;
                 $http.post('/api/home', {
-                    featuredProducts: $scope.featuredProducts
+                    featuredProducts: $scope.featuredProducts,
+                    addons: $scope.home.addons
                 }).success(function () {
                         $scope.isLoading = false;
                         $scope.isDirty = false;

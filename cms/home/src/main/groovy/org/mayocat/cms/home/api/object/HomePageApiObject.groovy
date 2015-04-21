@@ -46,11 +46,7 @@ class HomePageApiObject extends BaseApiObject
     HomePage toHomePage(PlatformSettings platformSettings, Optional<ThemeDefinition> themeDefinition)
     {
         HomePage homePage = new HomePage()
-
-        if (homePage) {
-            homePage.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
-        }
-
+        homePage.addons = toAddonGroupMap(addons, platformSettings, themeDefinition)
         homePage
     }
 

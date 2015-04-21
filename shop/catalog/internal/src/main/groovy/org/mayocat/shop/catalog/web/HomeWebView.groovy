@@ -12,6 +12,8 @@ import com.google.common.math.IntMath
 import groovy.transform.CompileStatic
 import org.mayocat.addons.web.AddonsWebObjectBuilder
 import org.mayocat.attachment.AttachmentLoadingOptions
+import org.mayocat.cms.home.model.HomePage
+import org.mayocat.cms.home.store.HomePageStore
 import org.mayocat.cms.news.model.Article
 import org.mayocat.cms.news.store.ArticleStore
 import org.mayocat.cms.news.web.object.ArticleListWebObject
@@ -104,12 +106,21 @@ class HomeWebView implements Resource
     @Delegate
     ProductListWebViewDelegate listWebViewDelegate
 
+    @Inject
+    Provider<HomePageStore> homePageStore
+
     @GET
     def getHomePage()
     {
         Map<String, Object> context = new HashMap<>();
 
         ThemeDefinition theme = this.webContext.theme?.definition
+
+        // Home data
+
+        HomePage homePage = homePageStore.get().getOrCreate(new HomePage())
+        EntityData<HomePage> homeData = dataLoader.load(homePage, StandardOptions.LOCALIZE)
+        context.addons = addonsWebObjectBuilder.build(homeData)
 
         // Featured products
 
