@@ -201,7 +201,7 @@ class AbstractProductWebObject
         BigDecimal minPrice
         def atLeastOnePriceDiffers = false
         def vatRate = taxes?.vatRate
-        if (!vatRate) {
+        if (vatRate == null) {
             throw new IllegalStateException("VAT rate must be defined before adding features and variants." +
                     "Call #withProduct before #withFeaturesAndVariants")
         }
