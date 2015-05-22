@@ -90,7 +90,7 @@ public class DefaultCipher implements Cipher
 
         } catch (BadPaddingException e) {
             this.logger.warn("Bad padding when attempting to decipher cookies. Key changed ?");
-            throw new EncryptionException();
+            throw new EncryptionException(e);
         } catch (Exception e) {
             this.logger.error("Fail to perform cookie crypt or decrypt operation", e);
             throw new EncryptionException(e);
