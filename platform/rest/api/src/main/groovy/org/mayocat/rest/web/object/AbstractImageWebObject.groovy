@@ -12,13 +12,15 @@ import groovy.transform.CompileStatic
 import org.mayocat.image.model.Image
 import org.mayocat.image.model.Thumbnail
 import org.mayocat.image.util.ImageUtils
-
 /**
  * @version $Id$
  */
 @CompileStatic
-class AbstractImageWebObject extends HashMap<String, Object>
+class AbstractImageWebObject
 {
+    @Delegate
+    HashMap map = new HashMap();
+
     protected def Optional<Thumbnail> findBestFit(Image image, Integer width, Integer height)
     {
         if (!width || !height) {
