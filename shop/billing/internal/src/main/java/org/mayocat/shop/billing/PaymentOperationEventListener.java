@@ -7,12 +7,19 @@
  */
 package org.mayocat.shop.billing;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mayocat.configuration.SiteSettings;
+import org.mayocat.mail.Mail;
+import org.mayocat.mail.MailException;
+import org.mayocat.mail.MailService;
 import org.mayocat.shop.billing.event.OrderPaidEvent;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
@@ -55,6 +62,12 @@ public class PaymentOperationEventListener implements EventListener
     @Inject
     private ComponentManager componentManager;
 
+    @Inject
+    private MailService mailService;
+
+    @Inject
+    private SiteSettings siteSettings;
+
     /**
      * The observation manager used to notify events. Not injected, as it would create a cycling dependency with this
      * event component.
@@ -95,6 +108,25 @@ public class PaymentOperationEventListener implements EventListener
                 this.logger.error("Failed to update order status", e);
             }
             //}
+        }
+
+        if (operation.getResult().equals(PaymentOperation.Result.FAILED)) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String body = MessageFormat.format(
+                        "A payment failed for gateway {0} and order ID {1} : \n\n{2}",
+                        operation.getGatewayId(), operation.getOrderId(), mapper.writeValueAsString(operation.getMemo()));
+
+                Mail mail = new Mail()
+                        .to(siteSettings.getAdministratorEmail())
+                        .from(siteSettings.getContactEmail())
+                        .subject("WARNING: Payment failed")
+                        .text(body);
+
+                mailService.sendEmail(mail);
+            } catch (JsonProcessingException | MailException e) {
+                logger.warn("Failed to send payment failed email", e);
+            }
         }
     }
 

@@ -44,6 +44,10 @@ public class SiteSettings
     @JsonProperty
     private String contactEmail = "contact@example.com";
 
+    @Valid
+    @JsonProperty
+    private String administratorEmail = "admin@example.com";
+
     public String getDomainName()
     {
         return domainName;
@@ -57,6 +61,10 @@ public class SiteSettings
     public String getContactEmail()
     {
         return contactEmail;
+    }
+
+    public String getAdministratorEmail() {
+        return administratorEmail;
     }
 
     public Optional<String> getWebDomainName()
