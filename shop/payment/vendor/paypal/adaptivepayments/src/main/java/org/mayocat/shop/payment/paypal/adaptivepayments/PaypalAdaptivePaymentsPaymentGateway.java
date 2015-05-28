@@ -7,14 +7,10 @@
  */
 package org.mayocat.shop.payment.paypal.adaptivepayments;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.mayocat.shop.payment.BasePaymentData;
 import org.mayocat.shop.payment.GatewayException;
@@ -56,6 +52,8 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 
     private String receiverEmail;
 
+    private Properties configProperties;
+
     public PaypalAdaptivePaymentsPaymentGateway(InputStream configInputStream, String receiverEmail)
     {
         Preconditions.checkNotNull(configInputStream);
@@ -71,6 +69,7 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         PayRequest request = new PayRequest();
 
         RequestEnvelope requestEnvelope = new RequestEnvelope("en_US"); // locale -> errorLanguage
+
         List<Receiver> receivers = new ArrayList<Receiver>();
         Receiver receiver = new Receiver();
         receiver.setAmount(amount.doubleValue());
@@ -86,19 +85,21 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
         request.setActionType(ACTION_TYPE_CREATE);
         request.setCurrencyCode(((Currency) options.get(BasePaymentData.CURRENCY)).getCurrencyCode());
 
-        String baseURI = (String) options.get(BasePaymentData.BASE_WEB_URL);
+        // Set the IPN callback URL
+        String baseURI = (String) options.get(BasePaymentData.BASE_PLATFORM_URL);
         String orderId = options.get(BasePaymentData.ORDER_ID).toString();
+        request.setIpnNotificationUrl(
+                baseURI + "/" + PaymentResource.PATH + "/" + orderId + "/" + PaymentResource.ACKNOWLEDGEMENT_PATH + "/" +
+                        PaypalAdaptivePaymentsGatewayFactory.ID);
 
         // -> FIXME determine if we want to set the order ID as tracking ID.
         // We need to know for sure it can only be used once
         //request.setTrackingId(orderId);
 
-        request.setIpnNotificationUrl(
-                baseURI + "/" + PaymentResource.PATH + "/" + orderId + "/" + PaymentResource.ACKNOWLEDGEMENT_PATH + "/" +
-                        PaypalAdaptivePaymentsGatewayFactory.ID);
-
         try {
-            AdaptivePaymentsService service = new AdaptivePaymentsService(this.configInputStream);
+            this.configProperties = new Properties();
+            this.configProperties.load(this.configInputStream);
+            AdaptivePaymentsService service = new AdaptivePaymentsService(this.configProperties);
             PayResponse response = service.pay(request);
             PaymentOperation operation = new PaymentOperation();
             operation.setGatewayId(PaypalAdaptivePaymentsGatewayFactory.ID);
@@ -136,8 +137,9 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
                     if (resp != null) {
                         if (resp.getResponseEnvelope().getAck().toString().equalsIgnoreCase("SUCCESS")) {
                             // This means the payment needs approval on paypal site
-                            String redirectURL = ConfigManager.getInstance().getValueWithDefault("service.RedirectURL",
+                            String redirectURL = this.configProperties.getProperty("service.RedirectURL",
                                     "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=");
+
                             gatewayResponse.setRedirectURL(redirectURL + "_ap-payment&paykey=" + response.getPayKey());
                         } else {
                             throw new GatewayException("Failed to send payment options : " + resp.getError());
@@ -168,29 +170,36 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 
     public GatewayResponse acknowledge(UUID orderId, Map<String, List<String>> data) throws GatewayException
     {
-
-        IPNMessage ipnListener = new IPNMessage(convertDataMap(data));
-        boolean isIpnVerified = ipnListener.validate();
-
-        Map map = ipnListener.getIpnMap();
-
-        PaymentOperation operation = new PaymentOperation();
-        operation.setGatewayId(PaypalAdaptivePaymentsGatewayFactory.ID);
-        operation.setExternalId((String) map.get("pay_key"));
-        operation.setMemo(map);
-
-        String status = (String) map.get("status");
         GatewayResponse response;
+        try {
+            this.configProperties = new Properties();
+            this.configProperties.load(this.configInputStream);
 
-        if (isIpnVerified && status.equalsIgnoreCase("Completed")) {
-            operation.setResult(PaymentOperation.Result.CAPTURED);
-            response = new GatewayResponse(true, operation);
-        } else {
-            operation.setResult(PaymentOperation.Result.FAILED);
-            response = new GatewayResponse(false, operation);
+            IPNMessage ipnListener = new IPNMessage(convertDataMap(data), (Map) this.configProperties);
+            boolean isIpnVerified = ipnListener.validate();
+
+            Map map = ipnListener.getIpnMap();
+
+            PaymentOperation operation = new PaymentOperation();
+            operation.setGatewayId(PaypalAdaptivePaymentsGatewayFactory.ID);
+            operation.setExternalId((String) map.get("pay_key"));
+            operation.setMemo(map);
+
+            String status = (String) map.get("status");
+
+
+            if (isIpnVerified && status.equalsIgnoreCase("Completed")) {
+                operation.setResult(PaymentOperation.Result.CAPTURED);
+                response = new GatewayResponse(true, operation);
+            } else {
+                operation.setResult(PaymentOperation.Result.FAILED);
+                response = new GatewayResponse(false, operation);
+            }
+
+            return response;
+        } catch (IOException e) {
+            throw new GatewayException(e);
         }
-
-        return response;
     }
 
     public GatewayResponse acknowledge(Map<String, List<String>> data) throws GatewayException
