@@ -32,13 +32,6 @@ class ShippingOptionWebObject
 
     DeliveryTimeWebObject deliveryTime;
 
-    // See https://github.com/FasterXML/jackson-core/issues/79
-    @JsonIgnore
-    public Boolean isSelected()
-    {
-        selected
-    }
-
     def withOption(ShippingService service, ShippingOption option, Currency currency, Locale locale)
     {
         id = option.carrierId
