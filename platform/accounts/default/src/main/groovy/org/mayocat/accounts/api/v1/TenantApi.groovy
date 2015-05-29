@@ -136,9 +136,11 @@ class TenantApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDeleg
         Tenant tenant = tenantRepresentation.toTenant(platformSettings,
                 Optional.<ThemeDefinition> fromNullable(context.theme?.definition))
 
-        // Forbid to change slug
+        // Forbid to change slug, id, creationDate and defaultHost
         tenant.id = currentTenant.id
         tenant.slug = currentTenant.slug
+        tenant.defaultHost = currentTenant.defaultHost
+        tenant.creationDate = currentTenant.creationDate
 
         // Featured image is updated via the /images API only, set it back
         tenant.featuredImageId = currentTenant.featuredImageId
