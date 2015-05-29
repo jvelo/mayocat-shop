@@ -115,15 +115,14 @@
                 var deferred = $q.defer(),
                     promise = deferred.promise;
 
-                getFlatData().then(function (data) {
-                    var result = codes.map(function (code) {
-                        return typeof data[code] !== 'undefined' ? data[code].name : undefined
+                    getFlatData().then(function (data) {
+                        var result = (codes || []).map(function (code) {
+                            return typeof data[code] !== 'undefined' ? data[code].name : undefined
+                        });
+                        deferred.resolve(result);
                     });
-                    deferred.resolve(result);
-                });
-
                 return promise;
-            }
+            };
 
             return {
                 getData: loadData,

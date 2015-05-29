@@ -24,7 +24,7 @@ public class FlatStrategyPriceCalculator implements StrategyPriceCalculator
     @Override
     public BigDecimal getPrice(Carrier carrier, Map<Purchasable, Long> items)
     {
-        BigDecimal price = carrier.getPerShipping();
+        BigDecimal price = carrier.getPerShipping() != null ? carrier.getPerShipping() : BigDecimal.ZERO;
         Long numberOfItems = 0l;
         for (Long number : items.values()) {
             numberOfItems += number;
@@ -35,7 +35,8 @@ public class FlatStrategyPriceCalculator implements StrategyPriceCalculator
             return BigDecimal.ZERO;
         }
 
-        price = price.add(carrier.getPerItem().multiply(BigDecimal.valueOf(numberOfItems)));
+        BigDecimal perItem = carrier.getPerItem() != null ? carrier.getPerItem() : BigDecimal.ZERO;
+        price = price.add(perItem.multiply(BigDecimal.valueOf(numberOfItems)));
         return price;
     }
 }
