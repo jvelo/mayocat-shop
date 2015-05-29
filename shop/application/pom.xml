@@ -24,6 +24,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-assets</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.xwiki.commons</groupId>
             <artifactId>xwiki-commons-observation-local</artifactId>
             <version>${xwiki.version}</version>

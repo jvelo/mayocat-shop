@@ -7,32 +7,24 @@
  */
 package org.mayocat.rest.resources;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import com.google.common.base.Function;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.LocaleUtils;
+import org.mayocat.rest.Resource;
+import org.mayocat.rest.representations.LocaleRepresentation;
+import org.xwiki.component.annotation.Component;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.LocaleUtils;
-import org.mayocat.rest.Resource;
-import org.mayocat.rest.representations.LocaleRepresentation;
-import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Function;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * @version $Id$
@@ -40,16 +32,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Component("/api/locales")
 @Path("/api/locales")
 @Produces(MediaType.APPLICATION_JSON)
-@Api("/api/locales")
 public class LocalesResource implements Resource
 {
     private Set<LocaleRepresentation> localesRepresentations;
 
     @GET
-    @ApiOperation(value="Lists locales", response = LocaleRepresentation.class, responseContainer="List")
-    @ApiResponses(
-            @ApiResponse(code = 200, message = "List of locales", response = LocaleRepresentation.class)
-    )
     public Response getLocales()
     {
         if (localesRepresentations == null) {

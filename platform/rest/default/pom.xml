@@ -82,12 +82,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.federecio</groupId>
-            <artifactId>dropwizard-swagger</artifactId>
-            <version>0.5.2</version>
-        </dependency>
-
         <!-- Accounts module needed for the annotation resource method dispatcher -->
         <dependency>
             <groupId>org.mayocat.platform</groupId>
