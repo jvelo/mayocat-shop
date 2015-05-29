@@ -187,7 +187,6 @@ public class PaypalAdaptivePaymentsPaymentGateway implements PaymentGateway
 
             String status = (String) map.get("status");
 
-
             if (isIpnVerified && status.equalsIgnoreCase("Completed")) {
                 operation.setResult(PaymentOperation.Result.CAPTURED);
                 response = new GatewayResponse(true, operation);

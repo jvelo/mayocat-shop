@@ -77,13 +77,7 @@ public class PaymentResource implements Resource
 
             observationManager.notify(new PaymentOperationEvent(), op);
 
-        } catch (GatewayException e) {
-            this.logger.error("Failed to acknowledge payment", e);
-            throw new WebApplicationException( e );
-        } catch (InvalidEntityException e) {
-            this.logger.error("Failed to acknowledge payment", e);
-            throw new WebApplicationException( e );
-        } catch (EntityAlreadyExistsException e) {
+        } catch (GatewayException | InvalidEntityException | EntityAlreadyExistsException e) {
             this.logger.error("Failed to acknowledge payment", e);
             throw new WebApplicationException( e );
         }
