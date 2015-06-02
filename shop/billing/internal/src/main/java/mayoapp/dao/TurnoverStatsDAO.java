@@ -34,4 +34,16 @@ public interface TurnoverStatsDAO
 
     @SqlQuery
     TurnoverStatEntry forever(@Bind("tenantId") UUID tenant);
+
+    @SqlQuery
+    TurnoverStatEntry dailyOverall();
+
+    @SqlQuery
+    TurnoverStatEntry weeklyOverall();
+
+    @SqlQuery
+    TurnoverStatEntry monthlyOverall();
+
+    @SqlQuery
+    TurnoverStatEntry foreverOverall();
 }

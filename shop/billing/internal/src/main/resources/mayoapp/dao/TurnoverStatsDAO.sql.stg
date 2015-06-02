@@ -38,3 +38,38 @@ forever() ::= <<
      WHERE  status in ('SHIPPED', 'PREPARED', 'PAID')
        AND  tenant_id IS NOT DISTINCT FROM :tenantId
 >>
+
+dailyOverall() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
+     WHERE  creation_date BETWEEN current_date AND localtimestamp
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+>>
+
+weeklyOverall() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
+     WHERE  creation_date BETWEEN localtimestamp - interval '7 days' AND localtimestamp
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+>>
+
+monthlyOverall() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
+     WHERE  creation_date BETWEEN localtimestamp - interval '30 days' AND localtimestamp
+       AND  status in ('SHIPPED', 'PREPARED', 'PAID')
+>>
+
+foreverOverall() ::= <<
+     SELECT coalesce(sum(grand_total), 0) AS total,
+            count(*) AS orders
+     FROM   purchase_order
+            INNER JOIN entity on purchase_order.entity_id = entity.id
+     WHERE  status in ('SHIPPED', 'PREPARED', 'PAID')
+>>
