@@ -106,6 +106,18 @@
                                id="theme"
                                ng-disabled="!isConfigurable('theme.active')"/>
                     </div>
+
+                    <!-- Gateway (for now, always hidden via CSS) -->
+                    <div class="hidden"
+                         ng-show="isVisible('checkout.gateway')"
+                         ng-class="{default: isDefaultValue('checkout.gateway')}">
+
+                        <p><label class="control-label" for="theme">{{'settings.misc.gateway' | translate}}</label></p>
+                        <input type="text" name="name" class="input-xlarge"
+                               ng-model="settings.checkout.gateway.value"
+                               id="gateway"
+                               ng-disabled="!isConfigurable('checkout.gateway')"/>
+                    </div>
                 </div>
 
             </fieldset>

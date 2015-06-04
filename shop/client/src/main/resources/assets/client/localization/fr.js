@@ -390,6 +390,7 @@ var Mayocat = (function (Mayocat) {
                 languagesGroup: "Langages",
                 variantsGroup: "Variantes",
                 theme: "Thème",
+                gateway: "Passerelle de paiement",
 
                 byWeight: "Selon le poids",
                 byPrice: "Selon le prix",

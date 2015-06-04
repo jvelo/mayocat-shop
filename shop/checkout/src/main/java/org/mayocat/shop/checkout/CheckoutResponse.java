@@ -21,6 +21,8 @@ public class CheckoutResponse
 {
     private Optional<String> redirectURL = Optional.absent();
 
+    private Optional<String> formURL = Optional.absent();
+
     private Order order;
 
     private Map<String, Object> data = Maps.newHashMap();
@@ -33,6 +35,14 @@ public class CheckoutResponse
     public void setRedirectURL(Optional<String> redirectURL)
     {
         this.redirectURL = redirectURL;
+    }
+
+    public Optional<String> getFormURL() {
+        return formURL;
+    }
+
+    public void setFormURL(Optional<String> formURL) {
+        this.formURL = formURL;
     }
 
     public Order getOrder()

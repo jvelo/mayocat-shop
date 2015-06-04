@@ -5,14 +5,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.configuration.theme;
-
-import java.util.List;
+package org.mayocat.shop.checkout;
 
 import javax.inject.Inject;
-
 import org.mayocat.configuration.GestaltConfigurationSource;
-import org.mayocat.theme.ThemeDefinition;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
@@ -20,16 +16,15 @@ import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 /**
  * @version $Id$
  */
-@Component("theme")
+@Component("checkout")
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class ThemeGestaltConfigurationSource implements GestaltConfigurationSource
+public class CheckoutGestaltConfigurationSource implements GestaltConfigurationSource
 {
     @Inject
-    private ThemeSettings themeSettings;
+    private CheckoutSettings checkoutSettings;
 
     @Override
-    public Object get()
-    {
-        return themeSettings;
+    public Object get() {
+        return checkoutSettings;
     }
 }

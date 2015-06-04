@@ -16,6 +16,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.SiteSettings;
@@ -78,9 +79,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private PlatformSettings platformSettings;
 
     @Inject
-    private CheckoutSettings checkoutSettings;
-
-    @Inject
     private TaxesSettings taxesSettings;
 
     @Inject
@@ -121,6 +119,9 @@ public class DefaultCheckoutRegister implements CheckoutRegister
 
     @Inject
     private MultitenancySettings multitenancySettings;
+
+    @Inject
+    private ConfigurationService configurationService;
 
     @Override
     public CheckoutResponse checkout(Customer customer, Address deliveryAddress,
@@ -228,16 +229,17 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException(e);
         }
 
-        String defaultGatewayFactory = checkoutSettings.getDefaultPaymentGateway();
+        CheckoutSettings tenantCheckoutSettings = configurationService.getSettings(CheckoutSettings.class);
+        String gatewayId = tenantCheckoutSettings.getGateway().getValue();
 
         // Right now only the default gateway factory is supported.
         // In the future individual tenants will be able to setup their own payment gateway.
 
-        if (!gatewayFactories.containsKey(defaultGatewayFactory)) {
+        if (!gatewayFactories.containsKey(gatewayId)) {
             throw new CheckoutException("No gateway factory is available to handle the checkout.");
         }
 
-        GatewayFactory factory = gatewayFactories.get(defaultGatewayFactory);
+        GatewayFactory factory = gatewayFactories.get(gatewayId);
         PaymentGateway gateway = factory.createGateway();
         if (gateway == null) {
             throw new CheckoutException("Gateway could not be created.");
@@ -272,6 +274,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 if (gatewayResponse.isRedirection()) {
                     response.setRedirectURL(Optional.fromNullable(gatewayResponse.getRedirectURL()));
                 }
+
+                response.setFormURL(Optional.fromNullable(gatewayResponse.getFormURL()));
 
                 cartManager.discardCart();
 

@@ -435,6 +435,7 @@ var Mayocat = (function (Mayocat) {
                 languagesGroup: "Languages",
                 variantsGroup: "Variants",
                 theme: "Theme",
+                gateway: "Payment gateway",
 
                 byWeight: "By weight",
                 byPrice: "By price",

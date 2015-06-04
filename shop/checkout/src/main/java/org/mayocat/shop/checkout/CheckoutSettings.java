@@ -12,27 +12,37 @@ import javax.validation.Valid;
 import org.mayocat.configuration.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.mayocat.configuration.ExposedSettings;
 
 /**
  * @version $Id$
  */
-public class CheckoutSettings
+public class CheckoutSettings implements ExposedSettings
 {
     @Valid
     @JsonProperty
     private Configurable<Boolean> guestCheckout = new Configurable<>(Boolean.TRUE);
 
-    @Valid
-    @JsonProperty
     private String defaultPaymentGateway = "paypaladaptivepayments";
+
+    private Configurable<String> gateway = new Configurable<>(defaultPaymentGateway);
 
     public String getDefaultPaymentGateway()
     {
         return defaultPaymentGateway;
     }
 
+    public Configurable<String> getGateway() {
+        return gateway;
+    }
+
     public Configurable<Boolean> isGuestCheckoutEnabled()
     {
         return guestCheckout;
+    }
+
+    @Override
+    public String getKey() {
+        return "checkout";
     }
 }

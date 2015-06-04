@@ -256,6 +256,13 @@ public class CheckoutResource implements Resource
                     checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
+            } else if (response.getFormURL().isPresent()) {
+                Map<String, Object> bindings = new HashMap<>();
+                bindings.put("formURL", response.getFormURL().get());
+                bindings.put("paymentData", response.getData());
+
+                return new WebView().template("checkout/payment.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                        .data(bindings);
             } else {
                 Map<String, Object> bindings = new HashMap<>();
                 bindings.put("errors", errors);
@@ -263,6 +270,7 @@ public class CheckoutResource implements Resource
                         Optional.fromNullable(deliveryAddress), webContext.getTenant(),
                         configurationService.getSettings(
                                 GeneralSettings.class).getLocales().getMainLocale().getValue()));
+
                 return new WebView().template("checkout/success.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
                         .data(bindings);
             }

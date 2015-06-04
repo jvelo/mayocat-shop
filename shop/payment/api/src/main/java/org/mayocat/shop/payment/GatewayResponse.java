@@ -31,6 +31,11 @@ public final class GatewayResponse
     private String redirectURL;
 
     /**
+     * @see {@link #getFormURL()}
+     */
+    private String formURL;
+
+    /**
      * @see {@link #getOperation()}
      */
     private PaymentOperation operation;
@@ -86,6 +91,23 @@ public final class GatewayResponse
     public void setRedirectURL(String redirectURL)
     {
         this.redirectURL = redirectURL;
+    }
+
+    /**
+     * @return a possible URL of a form to which a POST must be made in order to continue the operation initially
+     * executed on the gateway. Typically the form URL is a to a third party web site (like a bank's payment
+     * gateway).
+     */
+    public String getFormURL() {
+        return formURL;
+    }
+
+    /**
+     * Sets the form URL for this response. See {@link #getFormURL()}.
+     * @param formURL the URL to which a POST will have to be made to continue the payment.
+     */
+    public void setFormURL(String formURL) {
+        this.formURL = formURL;
     }
 
     /**
