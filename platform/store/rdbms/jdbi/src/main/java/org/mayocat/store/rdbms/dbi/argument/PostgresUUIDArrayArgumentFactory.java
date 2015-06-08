@@ -11,6 +11,7 @@ import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class PostgresUUIDArrayArgumentFactory implements ArgumentFactory<List<UU
             return false;
         }
 
-        List list = (List) value;
+        List list = new ArrayList((List) value);
 
         if (list.size() == 0 || list.get(0) == null) {
             // This is not efficient since we are forcing an exception just to know if UUID is the right type.
