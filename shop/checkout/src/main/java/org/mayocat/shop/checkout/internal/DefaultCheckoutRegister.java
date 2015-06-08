@@ -178,7 +178,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 order.setAdditionalInformation((String) extraOrderData.get("additionalInformation"));
             }
             if (extraOrderData.containsKey("extraData")) {
-                data.put(Order.ORDER_DATA_EXTRA, (Map<String, Object>) extraOrderData.get("extraData"));
+                data.put(Order.ORDER_DATA_EXTRA, extraOrderData.get("extraData"));
             }
 
             // Items

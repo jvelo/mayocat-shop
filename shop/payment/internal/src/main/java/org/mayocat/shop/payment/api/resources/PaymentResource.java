@@ -73,12 +73,17 @@ public class PaymentResource implements Resource
 
         try {
             response = gateway.acknowledge(orderId, data);
-            PaymentOperation op = response.getOperation();
-            op.setOrderId(orderId);
-            paymentOperationStore.get().create(op);
+            if (response != null && response.getOperation() != null) {
+                PaymentOperation op = response.getOperation();
+                op.setOrderId(orderId);
+                paymentOperationStore.get().create(op);
 
-            observationManager.notify(new PaymentOperationEvent(), op);
-
+                observationManager.notify(new PaymentOperationEvent(), op);
+            }
+            else {
+                this.logger.error("Payment gateway {} did not return a valid response !", gatewayId);
+                throw new WebApplicationException();
+            }
         } catch (GatewayException | InvalidEntityException | EntityAlreadyExistsException e) {
             this.logger.error("Failed to acknowledge payment", e);
             throw new WebApplicationException( e );

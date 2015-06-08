@@ -139,7 +139,7 @@ class HomeWebView implements Resource
         // All products
 
         Integer numberOfProducts =
-                this.webContext.getTheme().definition.getPaginationDefinition("home").itemsPerPage;
+                theme?.getPaginationDefinition("home")?.itemsPerPage ?: 50;
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0)
         List<EntityData> productsData = dataLoader.load(products,
                 AttachmentLoadingOptions.FEATURED_IMAGE_ONLY,
