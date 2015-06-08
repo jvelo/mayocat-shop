@@ -1,0 +1,14 @@
+<form method="POST" action="{{formURL}}">
+
+    {{#eachProperty paymentData}}
+    <input type="hidden" name="{{key}}" value="{{value}}">
+    {{/eachProperty}}
+
+    <p>
+        {{message 'checkout.payment.message'}}
+    </p>
+
+    <div>
+        <input type="submit" value="{{message 'checkout.payment.payButton'}}" class="button"/>
+    </div>
+</form>
