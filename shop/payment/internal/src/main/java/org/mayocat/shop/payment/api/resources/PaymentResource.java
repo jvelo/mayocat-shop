@@ -8,6 +8,8 @@
 package org.mayocat.shop.payment.api.resources;
 
 import com.google.common.base.Strings;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.payment.GatewayException;
@@ -87,5 +89,17 @@ public class PaymentResource implements Resource
         }
 
         return Response.ok().build();
+    }
+
+    /**
+     * Some payment gateways call IPN as GET requests. Support those as well.
+     */
+    @GET
+    @Path("{orderId}/" + ACKNOWLEDGEMENT_PATH + "/{gatewayId}")
+    public Response acknowledgePaymentGet(
+            @PathParam("gatewayId") String gatewayId, @PathParam("orderId") UUID orderId,
+            @Context UriInfo uriInfo)
+    {
+        return this.acknowledgePayment(gatewayId, orderId, uriInfo.getQueryParameters());
     }
 }
