@@ -232,28 +232,33 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         CheckoutSettings tenantCheckoutSettings = configurationService.getSettings(CheckoutSettings.class);
         String gatewayId = tenantCheckoutSettings.getGateway().getValue();
 
-        // Right now only the default gateway factory is supported.
-        // In the future individual tenants will be able to setup their own payment gateway.
-
         if (!gatewayFactories.containsKey(gatewayId)) {
             throw new CheckoutException("No gateway factory is available to handle the checkout.");
         }
 
         GatewayFactory factory = gatewayFactories.get(gatewayId);
         PaymentGateway gateway = factory.createGateway();
+
         if (gateway == null) {
             throw new CheckoutException("Gateway could not be created.");
         }
 
         Map<PaymentData, Object> data = Maps.newHashMap();
 
+        // Sets a couple of URL that can be useful for payment gateways
         data.put(BasePaymentData.BASE_WEB_URL, urlHelper.getContextWebBaseURL());
         data.put(BasePaymentData.BASE_PLATFORM_URL, urlHelper.getContextPlatformBaseURL());
+        // Return URL -> return for the customer from the gateway to the website after payment
         data.put(BasePaymentData.CANCEL_URL,
                 urlHelper.getContextWebURL(CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH + "/"
                         + order.getId()).toString());
+        // Cancel URL -> return for the customer from the gateway to the website when cancelling
         data.put(BasePaymentData.RETURN_URL, urlHelper.getContextWebURL(CheckoutResource.PATH + "/"
                 + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
+        // IPN ack URL -> end-point called by the payment gateway servers
+        data.put(BasePaymentData.IPN_URL,
+                urlHelper.getContextPlatformURL("payment/" + order.getId() + "/acknowledgement/" + gatewayId));
+
         data.put(BasePaymentData.CURRENCY, cart.currency());
         data.put(BasePaymentData.ORDER_ID, order.getId());
         data.put(BasePaymentData.CUSTOMER, actualCustomer);
