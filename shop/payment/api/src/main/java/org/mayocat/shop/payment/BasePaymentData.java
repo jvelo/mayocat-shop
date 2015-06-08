@@ -15,6 +15,7 @@ public enum BasePaymentData implements PaymentData
     CURRENCY,
     CANCEL_URL,
     RETURN_URL,
+    IPN_URL,
     BASE_WEB_URL,
     BASE_PLATFORM_URL,
     ORDER_ID,
