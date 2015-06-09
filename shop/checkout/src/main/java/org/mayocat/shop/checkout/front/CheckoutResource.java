@@ -7,15 +7,16 @@
  */
 package org.mayocat.shop.checkout.front;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.math.RoundingMode;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
@@ -29,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -47,6 +47,8 @@ import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.model.OrderItem;
 import org.mayocat.shop.billing.store.OrderStore;
+import org.mayocat.shop.catalog.model.Product;
+import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutRequest;
@@ -59,10 +61,6 @@ import org.mayocat.shop.front.views.WebView;
 import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @version $Id$
@@ -79,6 +77,9 @@ public class CheckoutResource implements Resource
     public static final String PAYMENT_RETURN_PATH = "return";
 
     public static final String PAYMENT_CANCEL_PATH = "cancel";
+
+    @Inject
+    private Provider<ProductStore> productStore;
 
     @Inject
     private CheckoutRegister checkoutRegister;
@@ -118,15 +119,32 @@ public class CheckoutResource implements Resource
                     .data(bindings);
         }
 
-        Customer customer = checkoutRequest.getCustomer();
-        Address deliveryAddress = checkoutRequest.getDeliveryAddress();
-        Address billingAddress = checkoutRequest.getBillingAddress();
-        Map<String, Object> otherOrderData = checkoutRequest.getOtherOrderData();
-        Map<String, CheckoutRequest.Error> errors = checkoutRequest.getErrors();
-
         try {
-            CheckoutResponse response =
-                    checkoutRegister.checkout(customer, deliveryAddress, billingAddress, otherOrderData);
+            CheckoutResponse response;
+            if (data.containsKey("product")) {
+                // Direct checkout
+                Product product = productStore.get().findBySlug((String) data.getFirst("product"));
+
+                if (product == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).entity("Direct checkout product not found").build();
+                }
+
+                Long quantity;
+                if (data.containsKey("quantity")) {
+                    try {
+                        quantity = Long.parseLong((String) data.getFirst("quantity"));
+                    } catch (NumberFormatException e) {
+                        return Response.status(Response.Status.BAD_REQUEST).entity("Malformed quantity.").build();
+                    }
+                } else {
+                    quantity = 1l;
+                }
+                response = checkoutRegister.directCheckout(checkoutRequest, product, quantity);
+
+            } else {
+                // Cart checkout
+                response = checkoutRegister.checkoutCart(checkoutRequest);
+            }
 
             if (response.getRedirectURL().isPresent()) {
                 return Response.seeOther(new URI(response.getRedirectURL().get())).build();
@@ -139,11 +157,17 @@ public class CheckoutResource implements Resource
                         .data(bindings);
             } else {
                 Map<String, Object> bindings = new HashMap<>();
-                bindings.put("errors", errors);
-                bindings.putAll(prepareMailContext(response.getOrder(), customer, Optional.fromNullable(billingAddress),
-                        Optional.fromNullable(deliveryAddress), webContext.getTenant(),
-                        configurationService.getSettings(
-                                GeneralSettings.class).getLocales().getMainLocale().getValue()));
+
+                bindings.putAll(
+                        prepareMailContext(
+                                response.getOrder(),
+                                checkoutRequest.getCustomer(),
+                                Optional.fromNullable(checkoutRequest.getBillingAddress()),
+                                Optional.fromNullable(checkoutRequest.getDeliveryAddress()),
+                                webContext.getTenant(),
+                                configurationService.getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue()
+                        )
+                );
 
                 return new WebView().template("checkout/success.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
                         .data(bindings);
@@ -164,33 +188,9 @@ public class CheckoutResource implements Resource
 
     @GET
     public Object checkout() {
-        if (checkoutRegister.requiresForm()) {
             Map<String, Object> bindings = new HashMap<>();
             return new WebView().template("checkout/form.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
                     .data(bindings);
-        } else {
-            try {
-                CheckoutResponse response =
-                        checkoutRegister.checkout(null, null, null, Maps.<String, Object>newHashMap());
-
-                if (response.getRedirectURL().isPresent()) {
-                    return Response.seeOther(new URI(response.getRedirectURL().get())).build();
-                }
-            } catch (final CheckoutException e) {
-                Map<String, Object> bindings = new HashMap<>();
-                bindings.put("exception", new HashMap<String, Object>()
-                {
-                    {
-                        put("message", e.getMessage());
-                    }
-                });
-                return new WebView().template("checkout/exception.html")
-                        .with(WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        return Response.ok().build();
     }
 
     @GET
