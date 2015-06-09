@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.billing.store.jdbi.mapper;
 
+import com.google.common.base.Predicates;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -55,8 +56,10 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
             List<OrderItem> items = FluentIterable.from(itemsData).transform(
                     new Function<Map<String, Object>, OrderItem>()
                     {
-                        public OrderItem apply(Map<String, Object> map)
-                        {
+                        public OrderItem apply(Map<String, Object> map) {
+                            if (map == null) {
+                                return null;
+                            }
                             OrderItem orderItem = new OrderItem();
                             orderItem.setId(UUID.fromString((String) map.get("id")));
                             orderItem.setOrderId(UUID.fromString((String) map.get("order_id")));
@@ -80,7 +83,7 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
                             }
                             return orderItem;
                         }
-                    }).toList();
+                    }).filter(Predicates.notNull()).toList();
             order.setOrderItems(items);
         } catch (IOException e) {
             logger.error("Failed to deserialize order data", e);
