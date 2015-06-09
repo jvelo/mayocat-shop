@@ -153,6 +153,11 @@ public class CheckoutResource implements Resource
                 bindings.put("formURL", response.getFormURL().get());
                 bindings.put("paymentData", response.getData());
 
+                // Also add the payment data keys in the response. This can be useful for JSON clients
+                // Since keys are not ordered in JSON, objects keys are not ordered, and for some
+                // payment gateways, respecting the order of keys is mandatory.
+                bindings.put("paymentDataKeys", response.getData().keySet());
+
                 return new WebView().template("checkout/payment.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
                         .data(bindings);
             } else {
