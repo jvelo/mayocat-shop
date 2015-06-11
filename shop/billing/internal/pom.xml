@@ -81,5 +81,10 @@
             <artifactId>mayocat-shop-customer-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-webhooks</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

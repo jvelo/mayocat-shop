@@ -1,0 +1,3 @@
+org.mayocat.webhooks.Webhooks
+org.mayocat.webhooks.WebhooksSettings
+org.mayocat.webhooks.WebhooksGestaltConfigurationSource
