@@ -86,7 +86,7 @@ class MarketplaceCheckoutWebView implements Resource
     @POST
     public Object checkout(CheckoutWebObject checkoutWebObject)
     {
-        if (!webContext.user && !checkoutSettings.isGuestCheckoutEnabled()) {
+        if (!webContext.user && !checkoutSettings.isGuestCheckoutEnabled().value) {
             return Response.status(Response.Status.FORBIDDEN).
                     entity("Configuration does not allow guest checkout").build()
         } else if (!webContext.user) {

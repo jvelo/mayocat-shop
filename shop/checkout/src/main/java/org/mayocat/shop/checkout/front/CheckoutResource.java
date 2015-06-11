@@ -53,10 +53,13 @@ import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutRequest;
 import org.mayocat.shop.checkout.CheckoutResponse;
+import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.internal.CheckoutRequestBuilder;
 import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
+import org.mayocat.shop.customer.store.AddressStore;
+import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.front.views.WebView;
 import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
@@ -77,6 +80,12 @@ public class CheckoutResource implements Resource
     public static final String PAYMENT_RETURN_PATH = "return";
 
     public static final String PAYMENT_CANCEL_PATH = "cancel";
+
+    @Inject
+    private Provider<CustomerStore> customerStore;
+
+    @Inject
+    private Provider<AddressStore> addressStore;
 
     @Inject
     private Provider<ProductStore> productStore;
@@ -107,8 +116,26 @@ public class CheckoutResource implements Resource
 
     @POST
     public Object checkout(final MultivaluedMap data) {
-        CheckoutRequestBuilder builder = new CheckoutRequestBuilder();
-        CheckoutRequest checkoutRequest = builder.build(data);
+
+        CheckoutSettings checkoutSettings = configurationService.getSettings(CheckoutSettings.class);
+        if (webContext.getUser() == null && !checkoutSettings.isGuestCheckoutEnabled().getValue()) {
+            return Response.status(Response.Status.FORBIDDEN).
+                    entity("Configuration does not allow guest checkout").build();
+        }
+
+        CheckoutRequest checkoutRequest;
+        if (webContext.getUser() != null) {
+            Customer customer = customerStore.get().findByUserId(webContext.getUser().getId());
+            Address deliveryAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "delivery");
+            Address billingAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "billing");
+            checkoutRequest = new CheckoutRequest();
+            checkoutRequest.setCustomer(customer);
+            checkoutRequest.setBillingAddress(billingAddress);
+            checkoutRequest.setDeliveryAddress(deliveryAddress);
+        } else {
+            CheckoutRequestBuilder builder = new CheckoutRequestBuilder();
+            checkoutRequest = builder.build(data);
+        }
 
         if (checkoutRequest.getErrors().size() != 0) {
             Map<String, Object> bindings = new HashMap<>();
@@ -259,7 +286,6 @@ public class CheckoutResource implements Resource
      */
     private Map<String, Object> prepareMailContext(Order order, Customer customer, Optional<Address> ba,
                                                    Optional<Address> da, Tenant tenant, Locale locale) {
-        Map<String, Object> orderData = order.getOrderData();
         List<OrderItem> items = order.getOrderItems();
         Map<String, Object> context = Maps.newHashMap();
 

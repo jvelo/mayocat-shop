@@ -1,2 +1,3 @@
+org.mayocat.shop.customer.web.TenantCustomerAccountWebView
 org.mayocat.shop.customer.web.CustomerAccountWebView
 org.mayocat.shop.customer.web.data.CustomerWebDataSupplier
