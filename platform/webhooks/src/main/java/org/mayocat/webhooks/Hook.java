@@ -26,7 +26,7 @@ public class Hook
     private String url;
 
     @JsonDeserialize(using = OptionalStringDeserializer.class)
-    private Optional<String> secret;
+    private Optional<String> secret = Optional.absent();
 
     public String getEvent() {
         return event;

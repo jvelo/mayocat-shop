@@ -82,7 +82,7 @@ public class AbstractSettings extends Configuration
     @Valid
     @NotNull
     @JsonProperty
-    private WebhooksSettings webhooksSettings = new WebhooksSettings();
+    private WebhooksSettings webhooks = new WebhooksSettings();
 
     public MultitenancySettings getMultitenancySettings()
     {

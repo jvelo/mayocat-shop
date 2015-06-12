@@ -11,8 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import java.io.IOException;
+import com.google.common.collect.ImmutableList;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -26,6 +27,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.context.WebContext;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -42,53 +44,78 @@ public class Webhooks
     private WebhooksSettings globalSettings;
 
     @Inject
+    private WebContext webContext;
+
+    @Inject
     private Logger logger;
 
     public void notifyHook(final Webhook event, final Object payload) {
-        WebhooksSettings tenantSettings = configurationService.getSettings(WebhooksSettings.class);
-        final List<Hook> matched = FluentIterable.from(tenantSettings.getHooks().getValue()).filter(new Predicate<Hook>()
+
+        // Global hooks
+        List<Hook> global = FluentIterable.from(globalSettings.getHooks().getDefaultValue()).filter(hookMatchesEvent(event)).toList();
+
+        // Per-tenant hooks
+        List<Hook> perTenant = new ArrayList();
+        if (this.webContext.getTenant() != null) {
+            WebhooksSettings tenantSettings = configurationService.getSettings(WebhooksSettings.class);
+            perTenant.addAll(FluentIterable.from(tenantSettings.getHooks().getValue()).filter(hookMatchesEvent(event)).toList());
+        }
+
+        final ImmutableList<Hook> matchedHooks
+                = new ImmutableList.Builder<Hook>()
+                .addAll(global)
+                .addAll(perTenant)
+                .build();
+
+        for (final Hook hook : matchedHooks) {
+            Executors.newSingleThreadExecutor().submit(new Callable<Void>()
+            {
+                @Override
+                public Void call() throws Exception {
+                    doNotifyHook(event, hook, payload);
+                    return null;
+                }
+            });
+        }
+    }
+
+    private Predicate<Hook> hookMatchesEvent(final Webhook event) {
+        return new Predicate<Hook>()
         {
             public boolean apply(Hook hook) {
                 return hook.getEvent().equals(event.getName());
             }
-        }).toList();
-
-        Executors.newSingleThreadExecutor().submit(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                doNotifyInternal(event, matched, payload);
-                return null;
-            }
-        });
+        };
     }
 
-    private void doNotifyInternal(final Webhook event, final List<Hook> matchedHooks, final Object payload) {
+    private void doNotifyHook(final Webhook event, Hook hook, final Object payload) {
         CloseableHttpClient client = HttpClients.createDefault();
+
 
         try {
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(payload);
 
-            for (Hook hook : matchedHooks) {
-                HttpPost request = new HttpPost(hook.getUrl());
-                request.setEntity(new StringEntity(json));
 
-                if (hook.getSecret().isPresent()) {
-                    String hmac = this.hmac(hook.getSecret().get(), json);
-                    request.setHeader("X-Mayocat-Signature", hmac);
-                }
+            HttpPost request = new HttpPost(hook.getUrl());
+            request.setEntity(new StringEntity(json));
 
-                CloseableHttpResponse response = client.execute(request);
+            if (hook.getSecret().isPresent()) {
+                String hmac = this.hmac(hook.getSecret().get(), json);
+                request.setHeader("X-Mayocat-Signature", hmac);
             }
-        } catch (IOException | GeneralSecurityException e) {
+
+            request.setHeader("User-Agent", "Mayocat Webhooks/1.0");
+            request.setHeader("X-Mayocat-Hook", event.getName());
+
+            CloseableHttpResponse response = client.execute(request);
+
+        } catch (Exception e) {
             logger.error("Failed to notify hook", e);
         }
     }
 
-    private String hmac(String secret, String message) throws GeneralSecurityException
-    {
+    private String hmac(String secret, String message) throws GeneralSecurityException {
         SecretKeySpec signingKey =
                 new SecretKeySpec(secret.getBytes(), HMAC_SHA256);
         Mac mac = Mac.getInstance(HMAC_SHA256);
