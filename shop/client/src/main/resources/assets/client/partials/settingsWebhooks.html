@@ -20,11 +20,13 @@
 
                     <div class="block">
 
-                        <ul ng-repeat="hooks in webhooks">
-                            {{ hook.url }}
+                        <ul ng-repeat="hook in hooks">
+                            <input type="text" ng-model="hook.event" placeholder="Event" />
+                            <input type="url" ng-model="hook.url" placeholder="URL" />
+                            <input type="text" ng-model="hook.secret" placeholder="Secret (optional)"/>
                         </ul>
 
-
+                        <button ng-click="addHook()" class="btn">Add hook</button>
 
                     </div>
 
@@ -32,7 +34,7 @@
 
                 <!-- Save button -->
                 <div class="hasLoading">
-                    <button ng-click="updateTenant()" class="btn btn-large btn-primary">
+                    <button ng-click="updateHooks()" class="btn btn-large btn-primary">
                         {{'entity.action.update' | translate}}
                     </button>
                     <span ng-class="{'loading': isSaving}"></span>

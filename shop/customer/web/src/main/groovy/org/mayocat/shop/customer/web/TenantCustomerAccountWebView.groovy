@@ -28,6 +28,7 @@ import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.error.Error
 import org.mayocat.rest.error.StandardError
 import org.mayocat.shop.billing.model.Order
+import org.mayocat.shop.billing.model.OrderItem
 import org.mayocat.shop.billing.store.OrderStore
 import org.mayocat.shop.catalog.store.ProductStore
 import org.mayocat.shop.catalog.web.object.PriceWebObject
@@ -379,28 +380,24 @@ class TenantCustomerAccountWebView implements Resource, WithProductWebObjectBuil
 
         OrderWebObject orderWebObject = new OrderWebObject().withOrder(order, context.locale)
 
-        List<Map<String, Object>> orderItems = order.orderData.get("items") as List<Map<String, Object>>;
+        List<OrderItem> orderItems = order.getOrderItems();
 
-        orderItems.each({ Map<String, Object> item ->
+        orderItems.each({OrderItem item ->
 
             OrderItemWebObject orderItemWebObject = new OrderItemWebObject()
-
-            orderItemWebObject.quantity = item.get("quantity") as Long
-            orderItemWebObject.itemTotal =
-                    new PriceWebObject().withPrice(item.get("itemTotal") as BigDecimal, order.currency, context.locale)
-            orderItemWebObject.unitPrice =
-                    new PriceWebObject().withPrice(item.get("unitPrice") as BigDecimal, order.currency, context.locale)
-            orderItemWebObject.title = item.get("title") as String
-
-            UUID productId = UUID.fromString(item.get("id") as String)
+            orderItemWebObject.withOrderItem(item, order.currency, context.locale)
+            
+            def productId = item.purchasableId
             if (productId) {
                 def product = productStore.get().findById(productId)
-                def productData = dataLoader.
-                        load(product, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
-                def tenant = productData.getData(Tenant.class)
-                MarketplaceProductWebObject productWebObject = buildProductWebObject(tenant.orNull(), productData)
+                if (product) {
+                    def productData = dataLoader.
+                            load(product, StandardOptions.LOCALIZE, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
+                    def tenant = productData.getData(Tenant.class)
+                    MarketplaceProductWebObject productWebObject = buildProductWebObject(tenant.orNull(), productData)
 
-                orderItemWebObject.product = productWebObject
+                    orderItemWebObject.product = productWebObject
+                }
             }
 
             orderWebObject.items << orderItemWebObject

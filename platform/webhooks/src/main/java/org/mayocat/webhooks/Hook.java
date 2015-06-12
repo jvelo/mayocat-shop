@@ -7,17 +7,25 @@
  */
 package org.mayocat.webhooks;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Optional;
+import org.mayocat.jackson.OptionalStringDeserializer;
 
 /**
  * @version $Id$
+ *
+ * Registered hook : a URL that is called when an event occurs. An optional secret can be given for
+ * computing a signature that attests the hook HTTP call authenticity.
  */
 public class Hook
 {
+    // And I don't need no hook for this shiiiit
+
     private String event;
 
     private String url;
 
+    @JsonDeserialize(using = OptionalStringDeserializer.class)
     private Optional<String> secret;
 
     public String getEvent() {
