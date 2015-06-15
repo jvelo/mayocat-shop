@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
+import org.mayocat.webhooks.WebhooksSettings;
 
 /**
  * @version $Id$
@@ -78,6 +79,11 @@ public class AbstractSettings extends Configuration
     @JsonProperty
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private WebhooksSettings webhooks = new WebhooksSettings();
+
     public MultitenancySettings getMultitenancySettings()
     {
         return multitenancy;
@@ -131,5 +137,9 @@ public class AbstractSettings extends Configuration
     public JerseyClientConfiguration getJerseyClientConfiguration()
     {
         return httpClient;
+    }
+
+    public PlatformSettings getPlatform() {
+        return platform;
     }
 }

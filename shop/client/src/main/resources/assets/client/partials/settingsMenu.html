@@ -58,6 +58,18 @@
                 </div>
             </div>
         </li>-->
+
+        <li ng-class="{'active': isWebhooks}">
+            <div>
+                <div class="droptarget">
+                    <div>
+                        <a ng-click="setRoute('/settings/webhooks')">
+                            {{'settings.misc.webhooks' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </li>
     </ul>
 
 </div>

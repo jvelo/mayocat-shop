@@ -1,0 +1,45 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<form>
+    <div class="page-header">
+        <h1 class="">{{'settings.title.webhooks' | translate}}</h1>
+    </div>
+
+    <article class="entity" ng-class="{'loading': tenant.slug == undefined}">
+        <div id="settings">
+            <div class="span8">
+                <!-- header -->
+                <div ng-show="tenant.slug != undefined">
+
+                    <div class="block">
+
+                        <ul ng-repeat="hook in hooks">
+                            <input type="text" ng-model="hook.event" placeholder="Event" />
+                            <input type="url" ng-model="hook.url" placeholder="URL" />
+                            <input type="text" ng-model="hook.secret" placeholder="Secret (optional)"/>
+                        </ul>
+
+                        <button ng-click="addHook()" class="btn">Add hook</button>
+
+                    </div>
+
+                </div>
+
+                <!-- Save button -->
+                <div class="hasLoading">
+                    <button ng-click="updateHooks()" class="btn btn-large btn-primary">
+                        {{'entity.action.update' | translate}}
+                    </button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
+            </div>
+        </div>
+    </article>
+</form>

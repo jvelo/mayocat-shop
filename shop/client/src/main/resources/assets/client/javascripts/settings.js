@@ -493,6 +493,43 @@ angular.module('settings', ['ngResource'])
 
     //==================================================================================================================
     //
+    // Controller for the general settings UI
+    // See partials/settingsGeneral.html
+    //
+    .controller('SettingsWebhooksController', ['$scope', '$rootScope', 'configurationService', 'timeService', 'localesService',
+
+        function ($scope, $rootScope, configurationService, timeService, localesService) {
+
+            configurationService.getSettings("webhooks", function (webhooksConfiguration) {
+                console.log("Configuration : ", webhooksConfiguration);
+
+                $scope.hooks = webhooksConfiguration.hooks.value;
+            });
+
+            $scope.addHook = function() {
+                $scope.hooks.push({
+                    event: "",
+                    url: "",
+                    secret: undefined
+                });
+            }
+
+            $scope.updateHooks = function () {
+                $scope.isSaving = true;
+                configurationService.getSettings(function (settings) {
+                    settings.webhooks.hooks.value = $scope.hooks;
+                    configurationService.put(settings, function () {
+                        $scope.isSaving = false;
+                    });
+                });
+            };
+        }
+
+    ])
+
+
+    //==================================================================================================================
+    //
     // Controller for the settings sub-menu
     // See partials/settingsMenu.html
     //

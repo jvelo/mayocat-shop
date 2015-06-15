@@ -118,8 +118,13 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
             controller: 'SettingsTaxesController',
             titleTranslation: 'settings'
         })
+        .when('/settings/webhooks', {
+            templateUrl: 'partials/settingsWebhooks.html',
+            controller: 'SettingsWebhooksController',
+            titleTranslation: 'webhooks'
+        })
         .when('/me', {
-            templateUrl: 'partials/accountSettings.html?1',
+            templateUrl: 'partials/accountSettings.html',
             controller: 'AccountSettings',
             titleTranslation: 'account'
         })
