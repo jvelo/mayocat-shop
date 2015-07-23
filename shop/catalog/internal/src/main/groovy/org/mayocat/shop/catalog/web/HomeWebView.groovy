@@ -26,6 +26,7 @@ import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.entity.EntityDataLoader
+import org.mayocat.entity.LoadingOption
 import org.mayocat.entity.StandardOptions
 import org.mayocat.image.model.Image
 import org.mayocat.localization.EntityLocalizationService
@@ -33,6 +34,7 @@ import org.mayocat.model.EntityList
 import org.mayocat.rest.Resource
 import org.mayocat.rest.annotation.ExistingTenant
 import org.mayocat.rest.web.object.PaginationWebObject
+import org.mayocat.shop.catalog.ProductLoadingOptions
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.ProductCollection
 import org.mayocat.shop.catalog.store.CollectionStore
@@ -48,9 +50,11 @@ import org.xwiki.component.annotation.Component
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.ws.rs.Consumes
+import javax.ws.rs.DefaultValue
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
 import java.math.RoundingMode
 import java.text.MessageFormat
@@ -110,11 +114,20 @@ class HomeWebView implements Resource
     Provider<HomePageStore> homePageStore
 
     @GET
-    def getHomePage()
+    def getHomePage(
+            @QueryParam("allImages") @DefaultValue("false") Boolean includeAllImages,
+            @QueryParam("withVariants") @DefaultValue("false") Boolean includeVariants
+    )
     {
         Map<String, Object> context = new HashMap<>();
-
         ThemeDefinition theme = this.webContext.theme?.definition
+        LoadingOption[] loadingOptions = [StandardOptions.LOCALIZE as LoadingOption]
+        if (!includeAllImages) {
+            loadingOptions += AttachmentLoadingOptions.FEATURED_IMAGE_ONLY
+        }
+        if (includeVariants) {
+            loadingOptions += ProductLoadingOptions.WITH_FEATURE_AND_VARIANTS
+        }
 
         // Home data
 
@@ -123,7 +136,6 @@ class HomeWebView implements Resource
         context.addons = addonsWebObjectBuilder.build(homeData)
 
         // Featured products
-
         def List<EntityList> lists = entityListStore.get().findListsByHint("home_featured_products");
         if (!lists.isEmpty() && !lists.first().entities.isEmpty()) {
             List<Product> products = productStore.get().findByIds(lists.first().entities)
@@ -131,8 +143,7 @@ class HomeWebView implements Resource
                 products.find({ Product product -> product.id == id })
             }) as List<Product>;
 
-            List<EntityData<Product>> productsData = dataLoader.
-                    load(sorted, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY, StandardOptions.LOCALIZE)
+            List<EntityData<Product>> productsData = dataLoader.load(sorted, loadingOptions)
             context.put("featuredProducts", buildProductListListWebObject(productsData, Optional.absent()));
         }
 
@@ -141,10 +152,7 @@ class HomeWebView implements Resource
         Integer numberOfProducts =
                 theme?.getPaginationDefinition("home")?.itemsPerPage ?: 50;
         List<Product> products = this.productStore.get().findAllOnShelf(numberOfProducts, 0)
-        List<EntityData> productsData = dataLoader.load(products,
-                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY,
-                StandardOptions.LOCALIZE
-        )
+        List<EntityData> productsData = dataLoader.load(products, loadingOptions)
         List<UUID> productIds = products.collect { Product product -> product.id }
         List<org.mayocat.shop.catalog.model.Collection> collections = collectionStoreProvider.get().
                 findAllForProductIds(productIds)
@@ -193,10 +201,7 @@ class HomeWebView implements Resource
                 .getOtherDefinition("articles").or(6) : 6;
 
         List<Article> articles = articleStore.get().findAllPublished(0, numberOfArticlesPerPAge);
-        List<EntityData<Article>> articlesData = dataLoader.load(articles,
-                StandardOptions.LOCALIZE,
-                AttachmentLoadingOptions.FEATURED_IMAGE_ONLY
-        )
+        List<EntityData<Article>> articlesData = dataLoader.load(articles, loadingOptions)
 
         List<ArticleWebObject> articleList = []
 

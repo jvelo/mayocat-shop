@@ -18,6 +18,7 @@ import org.mayocat.image.model.Image
 import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
+import org.mayocat.shop.catalog.model.Feature
 import org.mayocat.shop.catalog.model.Product
 import org.mayocat.shop.catalog.model.Collection
 import org.mayocat.shop.catalog.web.object.ProductListWebObject
@@ -25,6 +26,7 @@ import org.mayocat.shop.catalog.web.object.ProductWebObject
 import org.mayocat.shop.taxes.configuration.TaxesSettings
 import org.mayocat.theme.ThemeDefinition
 import org.mayocat.theme.ThemeFileResolver
+import org.mayocat.theme.TypeDefinition
 import org.mayocat.url.EntityURLFactory
 import org.xwiki.component.annotation.Component
 
@@ -95,6 +97,19 @@ class DefaultProductListWebViewDelegate implements ProductListWebViewDelegate
             }
 
             productWebObject.withImages(images as List<Image>, product.featuredImageId, Optional.fromNullable(theme))
+
+            List<Product> variants = productData.getChildren(Product.class)
+            List<Feature> features = productData.getChildren(Feature.class)
+
+            if (features.size() > 0) {
+                Map<String, TypeDefinition> types = [:]
+                types.putAll(theme.productTypes)
+                types.putAll(catalogSettings.productsSettings.types)
+
+
+                productWebObject.withFeaturesAndVariants(features, variants, Collections.emptyMap(),
+                        catalogSettings, generalSettings, taxesSettings, types)
+            }
 
             list << productWebObject
         })
