@@ -254,8 +254,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException(e);
         }
 
-        CheckoutSettings tenantCheckoutSettings = configurationService.getSettings(CheckoutSettings.class);
-        String gatewayId = tenantCheckoutSettings.getGateway().getValue();
+        CheckoutSettings checkoutSettings = configurationService.getSettings(CheckoutSettings.class);
+        String gatewayId = checkoutSettings.getGateway().getValue();
 
         if (!gatewayFactories.containsKey(gatewayId)) {
             throw new CheckoutException("No gateway factory is available to handle the checkout.");
@@ -345,7 +345,8 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
         // IPN ack URL -> end-point called by the payment gateway servers
         data.put(BasePaymentData.IPN_URL,
-                urlHelper.getContextPlatformURL("payment/" + order.getId() + "/acknowledgement/" + gatewayId));
+                urlHelper.getContextPlatformURL((webContext.getTenant() == null ? "marketplace/" : "") +
+                        "payment/" + order.getId() + "/acknowledgement/" + gatewayId));
 
         data.put(BasePaymentData.CURRENCY, currency);
         data.put(BasePaymentData.ORDER_ID, order.getId());

@@ -8,6 +8,7 @@
 package org.mayocat.shop.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import java.io.File;
 import javax.inject.Inject;
 import org.mayocat.configuration.general.FilesSettings;
@@ -44,13 +45,16 @@ public abstract class AbstractGatewayFactory implements GatewayFactory
      *
      * @param fileName the name of the file to retrieve
      */
-    protected File getTenantConfigurationFile(String fileName) {
-        return filesSettings.getPermanentDirectory()
+    protected Optional<File> getTenantConfigurationFile(String fileName) {
+        if (this.context.getTenant() == null) {
+            return Optional.absent();
+        }
+        return Optional.of(filesSettings.getPermanentDirectory()
                 .resolve(TENANTS_DIRECTORY)
                 .resolve(this.context.getTenant().getSlug())
                 .resolve(PAYMENTS_DIRECTORY)
                 .resolve(this.getId())
-                .resolve(fileName).toFile();
+                .resolve(fileName).toFile());
     }
 
 }

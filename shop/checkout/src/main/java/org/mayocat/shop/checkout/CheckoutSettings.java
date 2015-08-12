@@ -25,7 +25,7 @@ public class CheckoutSettings implements ExposedSettings
 
     private String defaultPaymentGateway = "paypaladaptivepayments";
 
-    private Configurable<String> gateway = new Configurable<>(defaultPaymentGateway);
+    private Configurable<String> gateway;
 
     public String getDefaultPaymentGateway()
     {
@@ -33,6 +33,9 @@ public class CheckoutSettings implements ExposedSettings
     }
 
     public Configurable<String> getGateway() {
+        if (gateway == null) {
+            gateway = new Configurable<>(getDefaultPaymentGateway());
+        }
         return gateway;
     }
 

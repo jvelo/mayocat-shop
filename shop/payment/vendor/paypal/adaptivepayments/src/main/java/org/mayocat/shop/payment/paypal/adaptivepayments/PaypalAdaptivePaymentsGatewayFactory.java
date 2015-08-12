@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.google.common.base.Optional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,14 +49,20 @@ public class PaypalAdaptivePaymentsGatewayFactory extends AbstractGatewayFactory
 
     @Override
     public PaymentGateway createGateway() {
+
         File globalConfigurationFile = this.getGlobalConfigurationFile(CONFIG_FILE_NAME);
-        File tenantConfigurationFile = this.getTenantConfigurationFile(TENANT_CONFIGURATION_FILENAME);
+        Optional<File> tenantConfigurationFile = this.getTenantConfigurationFile(TENANT_CONFIGURATION_FILENAME);
+
+        if (!tenantConfigurationFile.isPresent()) {
+            logger.error("Failed to create Paypal Adaptive payment gateway: no tenant configuration file found");
+            return null;
+        }
 
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(globalConfigurationFile);
 
-            JsonNode node = mapper.readTree(tenantConfigurationFile);
+            JsonNode node = mapper.readTree(tenantConfigurationFile.get());
             PaypalAdaptivePaymentsTenantConfiguration configuration =
                     mapper.readValue(new TreeTraversingParser(node), PaypalAdaptivePaymentsTenantConfiguration.class);
 

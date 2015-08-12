@@ -53,16 +53,20 @@ class MarketplacePaymentWebView extends PaymentResource
     ObservationManager observationManager;
 
     @POST
-    @Path("acknowledgement/{gatewayId}")
+    @Path("{orderId}/acknowledgement/{gatewayId}")
     public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId,
-            MultivaluedMap<String, String> data)
-    {
+                                       @PathParam("orderId") UUID orderId,
+                                       MultivaluedMap<String, String> data) {
         GatewayFactory factory = gatewayFactories.get(gatewayId);
         PaymentGateway gateway = factory.createGateway();
         GatewayResponse response;
 
         try {
-            response = gateway.acknowledge(data);
+            if (orderId != null) {
+                response = gateway.acknowledge(orderId, data);
+            } else {
+                response = gateway.acknowledge(data);
+            }
             PaymentOperation op = response.getOperation();
 
             if (op.orderId) {
@@ -82,6 +86,14 @@ class MarketplacePaymentWebView extends PaymentResource
         }
 
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("acknowledgement/{gatewayId}")
+    public Response acknowledgePayment(@PathParam("gatewayId") String gatewayId,
+            MultivaluedMap<String, String> data)
+    {
+        return this.acknowledgePayment(gatewayId, null, data);
     }
 
     @POST
