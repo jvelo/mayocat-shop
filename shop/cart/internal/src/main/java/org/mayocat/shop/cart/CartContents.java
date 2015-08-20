@@ -59,12 +59,13 @@ public class CartContents
         Preconditions.checkArgument(quantity > 0);
 
         BigDecimal unitPrice = null;
-        if (item.getUnitPrice() != null && !item.getParent().isPresent()) {
+        if (item.getUnitPrice() != null || !item.getParent().isPresent()) {
             unitPrice = item.getUnitPrice();
-        } else if (item.getParent().isPresent() && item.getParent().get().isLoaded()) {
+        } else if (item.getParent().get().isLoaded()) {
             unitPrice = item.getParent().get().get().getUnitPrice();
         }
 
+        Preconditions.checkNotNull(unitPrice, "Can't set cart item with no unit price");
         Preconditions.checkArgument(unitPrice.compareTo(BigDecimal.ZERO) > 0);
 
         items.put(item, quantity);
