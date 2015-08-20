@@ -183,11 +183,22 @@ public class DefaultImageService implements ImageService, Initializable
     public Optional<Dimension> newDimension(Attachment attachment, Optional<Integer> width, Optional<Integer> height)
             throws IOException
     {
-        LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
-        Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
+        int imageWidth = -1;
+        int imageHeight = -1;
 
-        int imageWidth = image.getWidth(null);
-        int imageHeight = image.getHeight(null);
+        if (attachment.getMetadata().containsKey("imageDimensions")) {
+            // First, try to exploit stored metadata
+
+            imageWidth = (int) attachment.getMetadata().get("imageDimensions").get("width");
+            imageHeight = (int) attachment.getMetadata().get("imageDimensions").get("height");
+        } else {
+            // Fallback on loading the image
+            LoadedAttachment loadedAttachment = this.attachmentStore.get().findAndLoadById(attachment.getId());
+            Image image = loadedAttachment.getData().getObject(loadImage, Image.class);
+
+            imageWidth = image.getWidth(null);
+            imageHeight = image.getHeight(null);
+        }
 
         if (imageHeight == height.or(imageHeight) && imageWidth == width.or(imageWidth)) {
             return Optional.absent();

@@ -7,25 +7,23 @@
  */
 package org.mayocat.rest.resources;
 
-import java.awt.*;
+import com.google.common.base.Optional;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Response;
-
 import org.mayocat.attachment.model.Attachment;
 import org.mayocat.attachment.model.LoadedAttachment;
 import org.mayocat.attachment.store.AttachmentStore;
 import org.mayocat.image.ImageService;
 import org.mayocat.rest.parameters.ImageOptions;
 import org.slf4j.Logger;
-
-import com.google.common.base.Optional;
 
 /**
  * @version $Id$
@@ -151,7 +149,6 @@ public class AbstractImageResource
                             .header("Content-disposition", "inline; filename*=utf-8''" + fileName)
                             .build();
                 } else {
-
                     Optional<Dimension> newDimension = imageService.newDimension(file,
                             imageOptions.get().getWidth(),
                             imageOptions.get().getHeight());

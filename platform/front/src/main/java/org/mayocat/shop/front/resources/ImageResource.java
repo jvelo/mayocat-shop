@@ -7,19 +7,17 @@
  */
 package org.mayocat.shop.front.resources;
 
+import com.google.common.base.Optional;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.parameters.ImageOptions;
 import org.mayocat.rest.resources.AbstractImageResource;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Optional;
 
 /**
  * @version $Id$
