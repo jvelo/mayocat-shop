@@ -194,8 +194,16 @@ class CartWebView implements Resource
         final Locale locale = generalSettings.locales.mainLocale.value
 
         List<UUID> featuredImageIds = cart.items()
-                .collect({ CartItem item -> item.item().featuredImageId })
-                .findAll ({ UUID id -> id != null }) as List<UUID>
+                .collect({ CartItem item ->
+                    UUID featuredImageId
+                    if (item.item().parent.isPresent() && item.item().parent.get().isLoaded()) {
+                        featuredImageId = item.item().featuredImageId ?: item.item().parent.get().get().featuredImageId
+                    } else {
+                        featuredImageId = item.item().featuredImageId
+                    }
+                    featuredImageId
+                })
+                .findAll({ UUID id -> id != null }) as List<UUID>
 
         List<Attachment> attachments =
                 featuredImageIds.isEmpty() ? [] as List<Attachment> : attachmentStore.get().findByIds(featuredImageIds)

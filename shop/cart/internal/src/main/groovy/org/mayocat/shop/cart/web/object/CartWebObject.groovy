@@ -56,6 +56,9 @@ class CartWebObject extends AbstractCartWebObject
             cartItemWebObject.withItemTotal(cartItem.total(), cart.currency(), locale)
 
             Image featuredImage = images.find({ Image image ->
+                if (purchasable.parent.isPresent()) {
+                    return image.attachment.parentId == (cartItem.item().parent.get().get().id ?: cartItem.item().id)
+                }
                 image.attachment.parentId == cartItem.item().id
             })
             if (featuredImage) {
