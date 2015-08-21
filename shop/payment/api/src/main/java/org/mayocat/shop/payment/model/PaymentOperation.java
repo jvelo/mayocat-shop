@@ -25,6 +25,7 @@ public class PaymentOperation implements Identifiable
         AUTHORIZED,
         CAPTURED,
         CANCELLED,
+        REFUSED,
         FAILED,
         REFUND
     }
