@@ -123,16 +123,19 @@ public class CheckoutResource implements Resource
                     entity("Configuration does not allow guest checkout").build();
         }
 
-        CheckoutRequest checkoutRequest;
+        CheckoutRequest checkoutRequest = null;
         if (webContext.getUser() != null) {
             Customer customer = customerStore.get().findByUserId(webContext.getUser().getId());
-            Address deliveryAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "delivery");
-            Address billingAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "billing");
-            checkoutRequest = new CheckoutRequest();
-            checkoutRequest.setCustomer(customer);
-            checkoutRequest.setBillingAddress(billingAddress);
-            checkoutRequest.setDeliveryAddress(deliveryAddress);
-        } else {
+            if (customer != null) {
+                Address deliveryAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "delivery");
+                Address billingAddress = addressStore.get().findByCustomerIdAndType(customer.getId(), "billing");
+                checkoutRequest = new CheckoutRequest();
+                checkoutRequest.setCustomer(customer);
+                checkoutRequest.setBillingAddress(billingAddress);
+                checkoutRequest.setDeliveryAddress(deliveryAddress);
+            }
+        }
+        if (checkoutRequest == null) {
             CheckoutRequestBuilder builder = new CheckoutRequestBuilder();
             checkoutRequest = builder.build(data);
         }
