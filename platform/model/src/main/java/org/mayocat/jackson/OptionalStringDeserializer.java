@@ -26,6 +26,6 @@ public class OptionalStringDeserializer extends JsonDeserializer<Optional<String
         if (Strings.isNullOrEmpty(jsonParser.getValueAsString())) {
             return Optional.absent();
         }
-        return Optional.of(jsonParser.getValueAsString());
+        return Optional.fromNullable(jsonParser.getValueAsString());
     }
 }
