@@ -7,13 +7,13 @@
  */
 package org.mayocat.templating.jtwig;
 
+import com.lyncode.jtwig.exception.ResourceException;
+import com.lyncode.jtwig.resource.JtwigResource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Path;
-
-import com.lyncode.jtwig.exception.ResourceException;
-import com.lyncode.jtwig.resource.JtwigResource;
+import java.util.Stack;
 
 /**
  * @version $Id$
@@ -47,6 +47,28 @@ public class JailedPathJtwigResource implements JtwigResource
     @Override
     public JtwigResource resolve(String relativePath) throws ResourceException
     {
-        return new JailedPathJtwigResource(jail, resourcePath.getParent().resolve(relativePath));
+        if (resourcePath.getParent().resolve(relativePath).toFile().isFile()) {
+            return new JailedPathJtwigResource(jail, resourcePath.getParent().resolve(relativePath));
+        }
+
+        // If not found, try to find a not-localized version of the template
+        Path path = resourcePath.getParent();
+        Stack<Path> saved = new Stack<>();
+        while (path.toAbsolutePath().startsWith(this.jail.toAbsolutePath())) {
+            if (path.getFileName().toString().equals("localized")) {
+                saved.pop(); // pop language (like "fr", etc.)
+                Path notLocalized = path.getParent();
+                while(!saved.empty()) {
+                    notLocalized = notLocalized.resolve(saved.pop());
+                }
+                return new JailedPathJtwigResource(jail, notLocalized.resolve(relativePath));
+            }
+            else {
+                saved.push(path.getFileName());
+                path = path.getParent();
+            }
+        }
+
+        throw new ResourceException("Not found");
     }
 }
