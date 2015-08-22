@@ -11,9 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -27,7 +25,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.context.WebContext;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
@@ -41,33 +38,14 @@ public class Webhooks
     private ConfigurationService configurationService;
 
     @Inject
-    private WebhooksSettings globalSettings;
-
-    @Inject
-    private WebContext webContext;
-
-    @Inject
     private Logger logger;
 
     public void notifyHook(final Webhook event, final Object payload) {
 
-        // Global hooks
-        List<Hook> global = FluentIterable.from(globalSettings.getHooks().getDefaultValue()).filter(hookMatchesEvent(event)).toList();
+        WebhooksSettings hooksSettings = configurationService.getSettings(WebhooksSettings.class);
+        List<Hook> hooks = FluentIterable.from(hooksSettings.getHooks().getValue()).filter(hookMatchesEvent(event)).toList();
 
-        // Per-tenant hooks
-        List<Hook> perTenant = new ArrayList();
-        if (this.webContext.getTenant() != null) {
-            WebhooksSettings tenantSettings = configurationService.getSettings(WebhooksSettings.class);
-            perTenant.addAll(FluentIterable.from(tenantSettings.getHooks().getValue()).filter(hookMatchesEvent(event)).toList());
-        }
-
-        final ImmutableList<Hook> matchedHooks
-                = new ImmutableList.Builder<Hook>()
-                .addAll(global)
-                .addAll(perTenant)
-                .build();
-
-        for (final Hook hook : matchedHooks) {
+        for (final Hook hook : hooks) {
             Executors.newSingleThreadExecutor().submit(new Callable<Void>()
             {
                 @Override
@@ -90,7 +68,6 @@ public class Webhooks
 
     private void doNotifyHook(final Webhook event, Hook hook, final Object payload) {
         CloseableHttpClient client = HttpClients.createDefault();
-
 
         try {
             ObjectMapper mapper = new ObjectMapper();

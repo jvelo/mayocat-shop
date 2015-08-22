@@ -37,6 +37,9 @@ public class Hook
     }
 
     public Optional<String> getSecret() {
+        if (secret == null) {
+            return Optional.absent();
+        }
         return secret;
     }
 }

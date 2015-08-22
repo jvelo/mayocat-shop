@@ -24,7 +24,7 @@ public class WebhooksSettings implements ExposedSettings
         return "webhooks";
     }
 
-    private Configurable<List<Hook>> hooks = new Configurable(Collections.emptyList());
+    private Configurable<List<Hook>> hooks = new Configurable<>(Collections.<Hook>emptyList());
 
     public Configurable<List<Hook>> getHooks() {
         return hooks;

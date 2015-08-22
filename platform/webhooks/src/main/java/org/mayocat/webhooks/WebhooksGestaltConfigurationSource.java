@@ -17,11 +17,8 @@ import org.xwiki.component.annotation.Component;
 @Component("webhooks")
 public class WebhooksGestaltConfigurationSource implements GestaltConfigurationSource
 {
-    @Inject
-    private WebhooksSettings settings;
-
     @Override
     public Object get() {
-        return settings;
+        return new WebhooksSettings();
     }
 }
