@@ -127,7 +127,7 @@ public class DefaultURLHelper implements URLHelper
         try {
             url = new URL(urlAsString);
         } catch (MalformedURLException e) {
-            new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         return url;
     }
