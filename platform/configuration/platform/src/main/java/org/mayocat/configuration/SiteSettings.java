@@ -30,6 +30,10 @@ public class SiteSettings
 
     @Valid
     @JsonProperty
+    private String defaultScheme = "http://";
+
+    @Valid
+    @JsonProperty
     private String name = "Mayocat";
 
     @Valid
@@ -51,6 +55,10 @@ public class SiteSettings
     public String getDomainName()
     {
         return domainName;
+    }
+
+    public String getDefaultScheme() {
+        return defaultScheme;
     }
 
     public String getName()

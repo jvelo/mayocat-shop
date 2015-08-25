@@ -109,14 +109,15 @@
 
                     <!-- Gateway (for now, always hidden via CSS) -->
                     <div class="hidden"
-                         ng-show="isVisible('checkout.gateway')"
-                         ng-class="{default: isDefaultValue('checkout.gateway')}">
+                         ng-show="isVisible('payments.gateways')"
+                         ng-class="{default: isDefaultValue('payments.gateways')}">
 
                         <p><label class="control-label" for="theme">{{'settings.misc.gateway' | translate}}</label></p>
                         <input type="text" name="name" class="input-xlarge"
-                               ng-model="settings.checkout.gateway.value"
+                               ng-model="settings.payments.gateways.value"
                                id="gateway"
-                               ng-disabled="!isConfigurable('checkout.gateway')"/>
+                               ng-list
+                               ng-disabled="!isConfigurable('payments.gateways')"/>
                     </div>
                 </div>
 

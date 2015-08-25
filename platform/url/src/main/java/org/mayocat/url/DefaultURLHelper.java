@@ -15,6 +15,7 @@ import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.context.internal.ThreadLocalWebContext;
 import org.xwiki.component.annotation.Component;
 
 /**
@@ -116,7 +117,17 @@ public class DefaultURLHelper implements URLHelper
 
     private URL getURL(String domain, String path) {
         URL url = null;
-        String urlAsString = (context.getRequest().isSecure() ? "https://" : "http://") + domain;
+        String scheme = null;
+        if (ThreadLocalWebContext.class.isAssignableFrom(context.getClass())) {
+            if (((ThreadLocalWebContext) context).getContext() != null) {
+                scheme = (context.getRequest().isSecure() ? "https://" : "http://");
+            }
+        }
+        if (scheme == null) {
+            scheme = siteSettings.getDefaultScheme();
+        }
+
+        String urlAsString = scheme + domain;
         if (!Strings.isNullOrEmpty(path)) {
             if (!path.startsWith("/")) {
                 urlAsString += "/" + path;

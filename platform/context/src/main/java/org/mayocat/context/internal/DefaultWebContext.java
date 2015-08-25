@@ -57,6 +57,11 @@ public class DefaultWebContext implements WebContext
     }
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public Tenant getTenant()
     {
         return tenant;

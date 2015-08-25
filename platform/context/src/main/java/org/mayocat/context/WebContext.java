@@ -31,6 +31,8 @@ import com.google.common.base.Optional;
 @Role
 public interface WebContext
 {
+    boolean isAvailable();
+
     Tenant getTenant();
 
     User getUser();

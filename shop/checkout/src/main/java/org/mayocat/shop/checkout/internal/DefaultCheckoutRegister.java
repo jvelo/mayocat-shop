@@ -258,7 +258,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         try {
             PaymentRequest request = paymentProcessor.requestPayment(order, data);
             return new CheckoutResponse(order, request);
-
         } catch (PaymentException e) {
             this.logger.error("Payment error while checking out cart", e);
             throw new CheckoutException(e);

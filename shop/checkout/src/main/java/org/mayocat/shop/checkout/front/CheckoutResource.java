@@ -274,7 +274,6 @@ public class CheckoutResource implements Resource
             }
 
             PaymentRequest paymentRequest = paymentProcessor.requestPayment(order, paymentData);
-
             CheckoutResponse response = new CheckoutResponse(order, paymentRequest);
 
             return generateCheckoutResponse(response);

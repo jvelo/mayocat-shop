@@ -23,25 +23,6 @@ public class CheckoutSettings implements ExposedSettings
     @JsonProperty
     private Configurable<Boolean> guestCheckout = new Configurable<>(Boolean.TRUE);
 
-    private String defaultPaymentGateway = "paypaladaptivepayments";
-
-    @Deprecated
-    private Configurable<String> gateway;
-
-    @Deprecated
-    public String getDefaultPaymentGateway()
-    {
-        return defaultPaymentGateway;
-    }
-
-    @Deprecated
-    public Configurable<String> getGateway() {
-        if (gateway == null) {
-            gateway = new Configurable<>(getDefaultPaymentGateway());
-        }
-        return gateway;
-    }
-
     public Configurable<Boolean> isGuestCheckoutEnabled()
     {
         return guestCheckout;

@@ -22,10 +22,10 @@ public class PaymentsSettings implements ExposedSettings
         return "payments";
     }
 
-    private Configurable<List<String>> availableGateways =
+    private Configurable<List<String>> gateways =
             new Configurable<List<String>>(Lists.newArrayList("paypaladaptivepayments"));
 
-    public Configurable<List<String>> getAvailableGateways() {
-        return availableGateways;
+    public Configurable<List<String>> getGateways() {
+        return gateways;
     }
 }

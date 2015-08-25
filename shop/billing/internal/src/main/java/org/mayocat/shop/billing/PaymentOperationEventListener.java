@@ -96,7 +96,6 @@ public class PaymentOperationEventListener implements EventListener
         if (operation.getResult().equals(PaymentOperation.Result.CAPTURED)) {
 
             Order order = orderStore.get().findById(operation.getOrderId());
-            //if (order.getStatus().equals(Order.Status.PAYMENT_PENDING)) {
 
             this.logger.debug("Updating order paid status");
             try {
@@ -107,7 +106,6 @@ public class PaymentOperationEventListener implements EventListener
             } catch (Exception e) {
                 this.logger.error("Failed to update order status", e);
             }
-            //}
         }
 
         if (operation.getResult().equals(PaymentOperation.Result.FAILED)) {
