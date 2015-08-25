@@ -10,18 +10,16 @@ package org.mayocat.shop.payment;
 /**
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+public enum PaymentStatus
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
+    NONE,
+    INITIALIZED,
+    AUTHORIZED,
+    CAPTURED,
+    CANCELLED,
+    REFUSED,
+    FAILED,
+    IN_DISPUTE,
+    PARTIALLY_REFUNDED,
+    FULLY_REFUNDED
 }

@@ -23,7 +23,6 @@ import javax.inject.Provider;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.TenantStore;
 import org.mayocat.configuration.ConfigurationService;
-import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.PlatformSettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
@@ -36,12 +35,12 @@ import org.mayocat.shop.cart.CartBuilder;
 import org.mayocat.shop.cart.CartItemBuilder;
 import org.mayocat.shop.cart.CartManager;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
+import org.mayocat.shop.catalog.model.Purchasable;
 import org.mayocat.shop.catalog.store.ProductStore;
 import org.mayocat.shop.checkout.CheckoutException;
 import org.mayocat.shop.checkout.CheckoutRegister;
 import org.mayocat.shop.checkout.CheckoutRequest;
 import org.mayocat.shop.checkout.CheckoutResponse;
-import org.mayocat.shop.checkout.CheckoutSettings;
 import org.mayocat.shop.checkout.RegularCheckoutException;
 import org.mayocat.shop.checkout.front.CheckoutResource;
 import org.mayocat.shop.customer.model.Address;
@@ -49,14 +48,10 @@ import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.payment.BasePaymentData;
-import org.mayocat.shop.payment.GatewayException;
-import org.mayocat.shop.payment.GatewayFactory;
-import org.mayocat.shop.payment.GatewayResponse;
 import org.mayocat.shop.payment.PaymentData;
-import org.mayocat.shop.payment.PaymentGateway;
-import org.mayocat.shop.payment.event.PaymentOperationEvent;
-import org.mayocat.shop.payment.model.PaymentOperation;
-import org.mayocat.shop.payment.store.PaymentOperationStore;
+import org.mayocat.shop.payment.PaymentException;
+import org.mayocat.shop.payment.PaymentProcessor;
+import org.mayocat.shop.payment.PaymentRequest;
 import org.mayocat.shop.shipping.ShippingOption;
 import org.mayocat.shop.shipping.ShippingService;
 import org.mayocat.shop.shipping.model.Carrier;
@@ -70,7 +65,6 @@ import org.mayocat.store.InvalidEntityException;
 import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.observation.ObservationManager;
 
 /**
  * @version $Id$
@@ -106,16 +100,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private Provider<TenantStore> tenantStore;
 
     @Inject
-    private Map<String, GatewayFactory> gatewayFactories;
-
-    @Inject
-    private Provider<PaymentOperationStore> paymentOperationStore;
-
-    @Inject
     private ShippingService shippingService;
-
-    @Inject
-    private ObservationManager observationManager;
 
     @Inject
     private CartManager cartManager;
@@ -130,19 +115,19 @@ public class DefaultCheckoutRegister implements CheckoutRegister
     private URLHelper urlHelper;
 
     @Inject
-    private MultitenancySettings multitenancySettings;
-
-    @Inject
     private ConfigurationService configurationService;
 
     @Inject
     private TaxesService taxesService;
 
+    @Inject
+    private PaymentProcessor paymentProcessor;
+
     @Override
     public CheckoutResponse directCheckout(CheckoutRequest request, final Taxable taxable, final Long quantity)
             throws CheckoutException {
 
-        List<ShippingOption> options = shippingService.getOptions(new HashMap()
+        List<ShippingOption> options = shippingService.getOptions(new HashMap<Purchasable, Long>()
         {
             {
                 put(taxable, quantity);
@@ -254,71 +239,27 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             throw new CheckoutException(e);
         }
 
-        CheckoutSettings checkoutSettings = configurationService.getSettings(CheckoutSettings.class);
-        String gatewayId = checkoutSettings.getGateway().getValue();
-
-        if (!gatewayFactories.containsKey(gatewayId)) {
-            throw new CheckoutException("No gateway factory is available to handle the checkout.");
-        }
-
-        GatewayFactory factory = gatewayFactories.get(gatewayId);
-        PaymentGateway gateway = factory.createGateway();
-
-        if (gateway == null) {
-            throw new CheckoutException("Gateway could not be created.");
-        }
-
         Map<PaymentData, Object> data = preparePaymentData(
                 deliveryAddress,
                 billingAddress,
                 order,
                 actualCustomer,
                 cart.currency(),
-                gatewayId
+                Optional.<String>absent()
         );
 
-        return doGatewayCheckout(order, cart, gateway, data);
+        return doGatewayCheckout(order, data);
     }
 
     private CheckoutResponse doGatewayCheckout(
             Order order,
-            Cart cart,
-            PaymentGateway gateway,
             Map<PaymentData, Object> data)
             throws CheckoutException {
         try {
-            CheckoutResponse response = new CheckoutResponse();
-            response.setOrder(order);
-            GatewayResponse gatewayResponse = gateway.purchase(cart.total().incl(), data);
-            response.setData(gatewayResponse.getData());
+            PaymentRequest request = paymentProcessor.requestPayment(order, data);
+            return new CheckoutResponse(order, request);
 
-            if (gatewayResponse.isSuccessful()) {
-                if (gatewayResponse.isRedirection()) {
-                    response.setRedirectURL(Optional.fromNullable(gatewayResponse.getRedirectURL()));
-                }
-                response.setFormURL(Optional.fromNullable(gatewayResponse.getFormURL()));
-                cartManager.discardCart();
-                if (gatewayResponse.getOperation().getResult().equals(PaymentOperation.Result.CAPTURED)) {
-                    order.setStatus(Order.Status.PAID);
-                } else {
-                    order.setStatus(Order.Status.PAYMENT_PENDING);
-                }
-                try {
-                    orderStore.get().update(order);
-                    PaymentOperation operation = gatewayResponse.getOperation();
-                    operation.setOrderId(order.getId());
-                    paymentOperationStore.get().create(operation);
-
-                    observationManager.notify(new PaymentOperationEvent(), gatewayResponse.getOperation());
-                } catch (EntityDoesNotExistException | InvalidEntityException | EntityAlreadyExistsException e) {
-                    this.logger.error("Order error while checking out cart", e);
-                    throw new CheckoutException(e);
-                }
-                return response;
-            } else {
-                throw new CheckoutException("Payment was not successful");
-            }
-        } catch (GatewayException e) {
+        } catch (PaymentException e) {
             this.logger.error("Payment error while checking out cart", e);
             throw new CheckoutException(e);
         }
@@ -330,7 +271,7 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             Order order,
             Customer actualCustomer,
             Currency currency,
-            String gatewayId) {
+            Optional<String> gatewayId) {
         Map<PaymentData, Object> data = Maps.newHashMap();
 
         // Sets a couple of URL that can be useful for payment gateways
@@ -356,6 +297,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         }
         data.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
         data.put(BasePaymentData.ORDER, order);
+
+        if (gatewayId.isPresent()) {
+            data.put(BasePaymentData.GATEWAY, gatewayId.get());
+        }
+
         return data;
     }
 

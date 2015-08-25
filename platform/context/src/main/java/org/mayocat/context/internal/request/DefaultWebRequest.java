@@ -33,10 +33,12 @@ public class DefaultWebRequest implements WebRequest
 
     private final String tenantPrefix;
 
+    private final boolean secure;
+
     private final Optional<Breakpoint> breakpoint;
 
     public DefaultWebRequest(URI baseURI, String canonicalPath, String path, boolean isTenantRequest,
-            String tenantPrefix, boolean isApiRequest, Optional<Breakpoint> breakpoint)
+                             String tenantPrefix, boolean isApiRequest, boolean secure, Optional<Breakpoint> breakpoint)
     {
         this.tenantPrefix = tenantPrefix;
         this.isTenantRequest = isTenantRequest;
@@ -44,6 +46,7 @@ public class DefaultWebRequest implements WebRequest
         this.baseURI = baseURI;
         this.path = path;
         this.canonicalPath = canonicalPath;
+        this.secure = secure;
         this.breakpoint = breakpoint;
     }
 
@@ -87,5 +90,10 @@ public class DefaultWebRequest implements WebRequest
     public String getTenantPrefix()
     {
         return tenantPrefix;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return secure;
     }
 }

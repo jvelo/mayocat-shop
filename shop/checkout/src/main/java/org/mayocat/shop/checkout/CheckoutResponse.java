@@ -7,42 +7,22 @@
  */
 package org.mayocat.shop.checkout;
 
-import java.util.Map;
-
 import org.mayocat.shop.billing.model.Order;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
+import org.mayocat.shop.payment.PaymentRequest;
 
 /**
  * @version $Id$
  */
 public class CheckoutResponse
 {
-    private Optional<String> redirectURL = Optional.absent();
+    private final PaymentRequest paymentRequest;
 
-    private Optional<String> formURL = Optional.absent();
+    private final Order order;
 
-    private Order order;
-
-    private Map<String, Object> data = Maps.newHashMap();
-
-    public Optional<String> getRedirectURL()
-    {
-        return redirectURL;
-    }
-
-    public void setRedirectURL(Optional<String> redirectURL)
-    {
-        this.redirectURL = redirectURL;
-    }
-
-    public Optional<String> getFormURL() {
-        return formURL;
-    }
-
-    public void setFormURL(Optional<String> formURL) {
-        this.formURL = formURL;
+    public CheckoutResponse(Order order, PaymentRequest paymentRequest) {
+        this.order = order;
+        this.paymentRequest = paymentRequest;
     }
 
     public Order getOrder()
@@ -50,18 +30,7 @@ public class CheckoutResponse
         return order;
     }
 
-    public void setOrder(Order order)
-    {
-        this.order = order;
-    }
-
-    public Map<String, Object> getData()
-    {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data)
-    {
-        this.data = data;
+    public PaymentRequest getPaymentRequest() {
+        return paymentRequest;
     }
 }

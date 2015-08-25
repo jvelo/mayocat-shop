@@ -3,3 +3,4 @@ org.mayocat.shop.payment.store.jdbi.DBIGatewayDataStore
 org.mayocat.shop.payment.store.memory.MemoryPaymentOperationStore
 org.mayocat.shop.payment.store.memory.MemoryGatewayDataStore
 org.mayocat.shop.payment.api.resources.PaymentResource
+org.mayocat.shop.payment.internal.DefaultPaymentProcessor

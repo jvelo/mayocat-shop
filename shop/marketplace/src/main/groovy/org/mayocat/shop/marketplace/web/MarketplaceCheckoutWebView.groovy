@@ -125,10 +125,10 @@ class MarketplaceCheckoutWebView implements Resource
             CheckoutResponse response = checkoutRegister.checkoutCart(request);
 
             CheckoutResponseWebObject checkoutResponseWebObject = new CheckoutResponseWebObject();
-            if (response.getRedirectURL().isPresent()) {
-                checkoutResponseWebObject.redirection = response.getRedirectURL().get()
+            if (response.paymentRequest.getRedirectionTarget().isPresent()) {
+                checkoutResponseWebObject.redirection = response.paymentRequest.getRedirectionTarget().get()
             }
-            checkoutResponseWebObject.paymentData = response.getData()
+            checkoutResponseWebObject.paymentData = response.paymentRequest.getData()
 
             return new WebView().data(
                     [checkout: checkoutResponseWebObject, cart: cartWebObject] as Map<String, Object>,

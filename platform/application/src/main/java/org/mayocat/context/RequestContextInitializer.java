@@ -124,7 +124,6 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
         // The context tenant is actually needed to find out the context user and to initialize tenant configurations
         ((ThreadLocalWebContext) this.context).setContext(context);
 
-
         if (tenant != null) {
             requestBuilder.tenantRequest(true);
             if (path.indexOf("/tenant/" + tenant.getSlug()) == 0) {
@@ -203,6 +202,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
                 .path(path)
                 .breakpoint(breakpoint);
 
+        requestBuilder.secure(isSecure(servletRequestEvent));
+
         context.setRequest(requestBuilder.build());
     }
 
@@ -225,6 +226,11 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
     private String getPath(ServletRequestEvent event)
     {
         return ((HttpServletRequest) event.getServletRequest()).getPathInfo();
+    }
+
+    private boolean isSecure(ServletRequestEvent event)
+    {
+        return ((HttpServletRequest) event.getServletRequest()).isSecure();
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)
