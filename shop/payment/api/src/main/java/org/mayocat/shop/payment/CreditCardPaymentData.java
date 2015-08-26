@@ -16,5 +16,5 @@ public enum CreditCardPaymentData implements PaymentData
     CARD_NUMBER,
     EXPIRATION_MONTH,
     EXPIRATION_YEAR,
-    SECURITY_CODE
+    VERIFICATION_CODE
 }

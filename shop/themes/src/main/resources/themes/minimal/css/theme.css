@@ -145,6 +145,11 @@ form .error {
     color: black;
 }
 
+.products-list .product .price {
+    min-height: 18px;
+    white-space: pre;
+}
+
 section > .product .price {
     font-size: 26px;
     margin-right: 10px;
@@ -497,7 +502,7 @@ form input.small {
     }
 
     .products-list .product:not(.featured) {
-        width: 228px;
+        width: 227px;
         display: inline-block;
         margin-right: 20px;
     }

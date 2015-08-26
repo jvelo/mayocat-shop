@@ -71,12 +71,15 @@ var Mayocat = (function (Mayocat) {
     $(function () {
         currentLocale = $("meta[property='mayocat:locale']").attr("content");
         if (typeof currentLocale !== 'undefined') {
-            messageFormat = new MessageFormat(currentLocale);
+            try {
+                messageFormat = new MessageFormat(currentLocale);
 
-            $.getJSON("/api/localization/theme/" + currentLocale, function (json)
-            {
-                messageTemplates = json;
-            });
+                $.getJSON("/api/localization/theme/" + currentLocale, function (json){
+                    messageTemplates = json;
+                });
+            } catch (error) {
+                console.error(error);
+            }
         }
     });
 

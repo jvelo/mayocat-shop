@@ -95,7 +95,7 @@ public class DefaultPaymentProcessor implements PaymentProcessor
             }
 
             if (CreditCardPaymentGateway.class.isAssignableFrom(gateway.getClass())
-                    && !data.containsKey(CreditCardPaymentData.CARD_NUMBER)) {
+                    && !dataContainsCreditCard(data)) {
                 return new PaymentRequest(PaymentStatus.NONE, RequiredAction.INTERNAL_FORM,
                         ImmutableMap.<String, Object>of("creditCard", true));
             }
@@ -153,5 +153,10 @@ public class DefaultPaymentProcessor implements PaymentProcessor
             this.logger.error("Payment error while checking out cart", e);
             throw new PaymentException(e);
         }
+    }
+
+    private static boolean dataContainsCreditCard(Map<PaymentData, Object> data) {
+        return data.containsKey(CreditCardPaymentData.CARD_NUMBER)
+                && !Strings.isNullOrEmpty((String) data.get(CreditCardPaymentData.CARD_NUMBER));
     }
 }

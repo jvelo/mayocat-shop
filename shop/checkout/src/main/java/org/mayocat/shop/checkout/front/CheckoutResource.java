@@ -270,7 +270,7 @@ public class CheckoutResource implements Resource
                 paymentData.put(CreditCardPaymentData.HOLDER_NAME, data.getFirst("holderName"));
                 paymentData.put(CreditCardPaymentData.EXPIRATION_MONTH, data.getFirst("expiryMonth"));
                 paymentData.put(CreditCardPaymentData.EXPIRATION_YEAR, data.getFirst("expiryYear"));
-                paymentData.put(CreditCardPaymentData.SECURITY_CODE, data.getFirst("cvv"));
+                paymentData.put(CreditCardPaymentData.VERIFICATION_CODE, data.getFirst("cvv"));
             }
 
             PaymentRequest paymentRequest = paymentProcessor.requestPayment(order, paymentData);
