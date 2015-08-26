@@ -63,7 +63,11 @@ angular.module('settings', ['ngResource'])
                 }
 
                 return $scope.elementToDisplay;
-            }
+            };
+
+            $scope.reset = function(key) {
+                delete $scope.settings[key];
+            };
 
             // Initialization ------------------------------------------------------------------------------------------
 

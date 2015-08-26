@@ -20,7 +20,8 @@ var Mayocat = (function (Mayocat) {
                 cancel: "Cancel",
                 edit: "Edit",
                 close: "Close",
-                save: "Save"
+                save: "Save",
+                reset: "Reset"
             },
             validation: {
                 required : "Required"

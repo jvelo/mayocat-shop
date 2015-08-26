@@ -24,6 +24,8 @@ public interface WebRequest
 
     boolean isTenantRequest();
 
+    boolean isSecure();
+
     URI getBaseUri();
 
     String getTenantPrefix();

@@ -7,21 +7,15 @@
  */
 package org.mayocat.shop.payment;
 
+import java.util.Map;
+import org.mayocat.shop.billing.model.Order;
+import org.xwiki.component.annotation.Role;
+
 /**
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+@Role
+public interface PaymentProcessor
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
+    PaymentRequest requestPayment(Order order, Map<PaymentData, Object> data) throws PaymentException;
 }

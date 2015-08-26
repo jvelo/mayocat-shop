@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.math.RoundingMode;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +62,13 @@ import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
 import org.mayocat.shop.front.views.WebView;
+import org.mayocat.shop.payment.BasePaymentData;
+import org.mayocat.shop.payment.CreditCardPaymentData;
+import org.mayocat.shop.payment.PaymentData;
+import org.mayocat.shop.payment.PaymentProcessor;
+import org.mayocat.shop.payment.PaymentRequest;
+import org.mayocat.shop.payment.PaymentStatus;
+import org.mayocat.shop.payment.RequiredAction;
 import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -110,6 +118,9 @@ public class CheckoutResource implements Resource
 
     @Inject
     private ConfigurationService configurationService;
+
+    @Inject
+    private PaymentProcessor paymentProcessor;
 
     @Inject
     private Logger logger;
@@ -176,48 +187,58 @@ public class CheckoutResource implements Resource
                 response = checkoutRegister.checkoutCart(checkoutRequest);
             }
 
-            if (response.getRedirectURL().isPresent()) {
-                return Response.seeOther(new URI(response.getRedirectURL().get())).build();
-            } else if (response.getFormURL().isPresent()) {
-                Map<String, Object> bindings = new HashMap<>();
-                bindings.put("formURL", response.getFormURL().get());
-                bindings.put("paymentData", response.getData());
+            return generateCheckoutResponse(response);
+        } catch (final Exception e) {
+            this.logger.error("Failed to checkout", e);
+            return renderError(e.getMessage());
+        }
+    }
+
+    private Object generateCheckoutResponse(CheckoutResponse response) throws URISyntaxException {
+        PaymentRequest paymentRequest = response.getPaymentRequest();
+        Map<String, Object> bindings = new HashMap<>();
+
+        switch(paymentRequest.getNextAction()) {
+            case GET_EXTERNAL_URL:
+                return Response.seeOther(new URI(paymentRequest.getRedirectionTarget().get())).build();
+            case POST_EXTERNAL_URL:
+            case INTERNAL_FORM:
+                bindings.put("formURL", paymentRequest.getRedirectionTarget().isPresent()
+                        ? paymentRequest.getRedirectionTarget().get()
+                        :"/checkout/" + response.getOrder().getId() + "/payment");
+                bindings.put("paymentData", paymentRequest.getData());
 
                 // Also add the payment data keys in the response. This can be useful for JSON clients
                 // Since keys are not ordered in JSON, objects keys are not ordered, and for some
                 // payment gateways, respecting the order of keys is mandatory.
-                bindings.put("paymentDataKeys", response.getData().keySet());
-
+                bindings.put("paymentDataKeys", paymentRequest.getData().keySet());
                 return new WebView().template("checkout/payment.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
                         .data(bindings);
-            } else {
-                Map<String, Object> bindings = new HashMap<>();
 
+            case MANUAL_VALIDATION:
+            case NONE:
+            default:
                 bindings.putAll(
-                        prepareMailContext(
+                        prepareContext(
                                 response.getOrder(),
-                                checkoutRequest.getCustomer(),
-                                Optional.fromNullable(checkoutRequest.getBillingAddress()),
-                                Optional.fromNullable(checkoutRequest.getDeliveryAddress()),
+                                response.getOrder().getCustomer(),
+                                Optional.fromNullable(response.getOrder().getBillingAddress()),
+                                Optional.fromNullable(response.getOrder().getDeliveryAddress()),
                                 webContext.getTenant(),
                                 configurationService.getSettings(GeneralSettings.class).getLocales().getMainLocale().getValue()
                         )
                 );
 
-                return new WebView().template("checkout/success.html").with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
-                        .data(bindings);
-            }
-        } catch (final Exception e) {
-            this.logger.error("Exception checking out", e);
-            Map<String, Object> bindings = new HashMap<>();
-            bindings.put("exception", new HashMap<String, Object>()
-            {
-                {
-                    put("message", e.getMessage());
+                String template = "checkout/success.html";
+                if (paymentRequest.getNextAction().equals(RequiredAction.MANUAL_VALIDATION)) {
+                    template = "checkout/pending.html";
+                } else if (paymentRequest.getStatus().equals(PaymentStatus.FAILED)
+                    || paymentRequest.getStatus().equals(PaymentStatus.REFUSED)) {
+                    template = "checkout/failed.html";
                 }
-            });
-            return new WebView().template("checkout/exception.html").with(
-                    WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
+
+                return new WebView().template(template).with(WebView.Option.FALLBACK_ON_DEFAULT_THEME)
+                        .data(bindings);
         }
     }
 
@@ -228,9 +249,42 @@ public class CheckoutResource implements Resource
                     .data(bindings);
     }
 
+    @POST
+    @Path("{orderId}/payment")
+    public Object internalPayment(@PathParam("orderId") UUID orderId, MultivaluedMap<String, String> data) {
+
+        try {
+            Order order = orderStore.get().findById(orderId);
+            Map<PaymentData, Object> paymentData = Maps.newHashMap();
+            paymentData.put(BasePaymentData.CURRENCY, order.getCurrency());
+            paymentData.put(BasePaymentData.ORDER_ID, order.getId());
+            paymentData.put(BasePaymentData.CUSTOMER, order.getCustomer());
+            if (order.getBillingAddress() != null) {
+                paymentData.put(BasePaymentData.BILLING_ADDRESS, order.getBillingAddress());
+            }
+            paymentData.put(BasePaymentData.DELIVERY_ADDRESS, order.getDeliveryAddress());
+            paymentData.put(BasePaymentData.ORDER, order);
+
+            if (data.containsKey("cardNumber")) {
+                paymentData.put(CreditCardPaymentData.CARD_NUMBER, data.getFirst("cardNumber"));
+                paymentData.put(CreditCardPaymentData.HOLDER_NAME, data.getFirst("holderName"));
+                paymentData.put(CreditCardPaymentData.EXPIRATION_MONTH, data.getFirst("expiryMonth"));
+                paymentData.put(CreditCardPaymentData.EXPIRATION_YEAR, data.getFirst("expiryYear"));
+                paymentData.put(CreditCardPaymentData.VERIFICATION_CODE, data.getFirst("cvv"));
+            }
+
+            PaymentRequest paymentRequest = paymentProcessor.requestPayment(order, paymentData);
+            CheckoutResponse response = new CheckoutResponse(order, paymentRequest);
+
+            return generateCheckoutResponse(response);
+        } catch (Exception e) {
+            return renderError(e.getMessage());
+        }
+    }
+
     @GET
-    @Path(PAYMENT_RETURN_PATH + "/{order}")
-    public WebView returnFromExternalPaymentService(@Context UriInfo uriInfo, @PathParam("order") String orderId) {
+    @Path(PAYMENT_RETURN_PATH + "/{order}/payment")
+    public WebView returnFromPaymentService(@Context UriInfo uriInfo, @PathParam("order") String orderId) {
         Map<String, Object> bindings = new HashMap<>();
         if (StringUtils.isNotBlank(orderId)) {
             Order order = orderStore.get().findById(UUID.fromString(orderId));
@@ -240,7 +294,7 @@ public class CheckoutResource implements Resource
                 Optional<Address> ba = order.getBillingAddress() != null ?
                         Optional.fromNullable(order.getBillingAddress()) : Optional.<Address>absent();
                 bindings.putAll(
-                        prepareMailContext(order, order.getCustomer(), ba, da, webContext.getTenant(),
+                        prepareContext(order, order.getCustomer(), ba, da, webContext.getTenant(),
                                 configurationService.getSettings(GeneralSettings.class).getLocales().getMainLocale()
                                         .getValue()));
             }
@@ -249,9 +303,15 @@ public class CheckoutResource implements Resource
                 .data(bindings);
     }
 
+    @POST
+    @Path(PAYMENT_RETURN_PATH + "/{order}")
+    public WebView postReturnFromPaymentService(@Context UriInfo uriInfo, @PathParam("order") String orderId) {
+        return this.returnFromPaymentService(uriInfo, orderId);
+    }
+
     @GET
     @Path(PAYMENT_CANCEL_PATH + "/{orderId}")
-    public WebView cancelFromExternalPaymentService(@PathParam("orderId") UUID orderId) {
+    public WebView cancelFromPaymentService(@PathParam("orderId") UUID orderId) {
         try {
             checkoutRegister.dropOrder(orderId);
         } catch (final CheckoutException e) {
@@ -276,8 +336,32 @@ public class CheckoutResource implements Resource
                 .data(bindings);
     }
 
+    @POST
+    @Path(PAYMENT_CANCEL_PATH + "/{orderId}")
+    public WebView postCancelFromPaymentService(@PathParam("orderId") UUID orderId) {
+        return this.cancelFromPaymentService(orderId);
+    }
+
     /**
-     * Prepares the JSON context for an order mail notification
+     * Render a user facing error page
+     *
+     * @param message the message associated with the error
+     * @return the error page
+     */
+    private Object renderError(final String message) {
+        Map<String, Object> bindings = new HashMap<>();
+        bindings.put("exception", new HashMap<String, Object>()
+        {
+            {
+                put("message", message);
+            }
+        });
+        return new WebView().template("checkout/exception.html").with(
+                WebView.Option.FALLBACK_ON_DEFAULT_THEME).data(bindings);
+    }
+
+    /**
+     * Prepare checkout response context
      *
      * @param order the order concerned by the notification
      * @param customer the customer
@@ -287,8 +371,8 @@ public class CheckoutResource implements Resource
      * @param locale the main locale of the tenant
      * @return a JSON context as map
      */
-    private Map<String, Object> prepareMailContext(Order order, Customer customer, Optional<Address> ba,
-                                                   Optional<Address> da, Tenant tenant, Locale locale) {
+    private Map<String, Object> prepareContext(Order order, Customer customer, Optional<Address> ba,
+                                               Optional<Address> da, Tenant tenant, Locale locale) {
         List<OrderItem> items = order.getOrderItems();
         Map<String, Object> context = Maps.newHashMap();
 

@@ -10,18 +10,12 @@ package org.mayocat.shop.payment;
 /**
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+public enum RequiredAction
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
+    NONE,
+    PRESENT_GATEWAY_CHOICE,
+    MANUAL_VALIDATION,
+    GET_EXTERNAL_URL,
+    POST_EXTERNAL_URL,
+    INTERNAL_FORM
 }

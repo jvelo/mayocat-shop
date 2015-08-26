@@ -5,31 +5,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.checkout;
+package org.mayocat.shop.payment;
 
-import javax.validation.Valid;
-
+import com.google.common.collect.Lists;
+import java.util.List;
 import org.mayocat.configuration.Configurable;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mayocat.configuration.ExposedSettings;
 
 /**
  * @version $Id$
  */
-public class CheckoutSettings implements ExposedSettings
+public class PaymentsSettings implements ExposedSettings
 {
-    @Valid
-    @JsonProperty
-    private Configurable<Boolean> guestCheckout = new Configurable<>(Boolean.TRUE);
-
-    public Configurable<Boolean> isGuestCheckoutEnabled()
-    {
-        return guestCheckout;
-    }
-
     @Override
     public String getKey() {
-        return "checkout";
+        return "payments";
+    }
+
+    private Configurable<List<String>> gateways =
+            new Configurable<List<String>>(Lists.newArrayList("paypaladaptivepayments"));
+
+    public Configurable<List<String>> getGateways() {
+        return gateways;
     }
 }

@@ -8,6 +8,7 @@
 package org.mayocat.shop.checkout;
 
 import java.util.UUID;
+import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.taxes.Taxable;
 import org.xwiki.component.annotation.Role;
 

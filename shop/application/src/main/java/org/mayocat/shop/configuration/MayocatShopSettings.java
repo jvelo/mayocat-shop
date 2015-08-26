@@ -17,6 +17,7 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.checkout.CheckoutSettings;
+import org.mayocat.shop.payment.PaymentsSettings;
 import org.mayocat.shop.shipping.configuration.ShippingSettings;
 import org.mayocat.shop.taxes.configuration.TaxesSettings;
 
@@ -52,6 +53,11 @@ public class MayocatShopSettings extends AbstractSettings
     @NotNull
     @JsonProperty
     private CheckoutSettings checkout = new CheckoutSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private PaymentsSettings payments = new PaymentsSettings();
 
     @Valid
     @NotNull

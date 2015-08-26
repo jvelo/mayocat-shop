@@ -23,6 +23,7 @@ shop/application/data/imagecache
 shop/application/data/themes
 shop/application/data/tenants
 shop/application/data/payments
+shop/application/data/cert
 
 # misc
 /classes

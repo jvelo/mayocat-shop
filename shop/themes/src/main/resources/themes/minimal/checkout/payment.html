@@ -1,14 +1,100 @@
-<form method="POST" action="{{formURL}}">
+<ul class="checkout-wizard">
+    <li class="step">{{message 'checkout.yourCart'}}</li>
+    <li class="step">{{message 'checkout.yourInformation'}}</li>
+    <li class="active step">{{message 'checkout.payment'}}</li>
+</ul>
 
-    {{#eachProperty paymentData}}
-    <input type="hidden" name="{{key}}" value="{{value}}">
-    {{/eachProperty}}
+<form action="{{formURL}}" method="POST" id="payment-form">
+    {{#if paymentData.creditCard}}
+        {{#if paymentData.error}}
+            <div class="error">
+                {{#is paymentData.error 'INVALID_NUMBER'}} {{message 'checkout.payment.card.error.invalidNumber'}} {{/is}}
+                {{#is paymentData.error 'INVALID_EXPIRATION_DATE'}} {{message 'checkout.payment.card.error.invalidExpirationDate'}} {{/is}}
+                {{#is paymentData.error 'INVALID_VERIFICATION_CODE'}} {{message 'checkout.payment.card.error.invalidVerificationCode'}} {{/is}}
+                {{#is paymentData.error 'CARD_EXPIRED'}} {{message 'checkout.payment.card.error.cardExpired'}} {{/is}}
+                {{#is paymentData.error 'CARD_DECLINED'}} {{message 'checkout.payment.card.error.cardDeclined'}} {{/is}}
+                {{#is paymentData.error 'OTHER'}} {{message 'checkout.payment.card.error.other'}} {{/is}}
+            </div>
+        {{/if}}
 
+        <div class="controls">
+
+            <div class="field">
+                <label class="control-label" for="card-holder-name">{{message 'checkout.payment.card.name'}}</label>
+
+                <div>
+                    <input type="text" class="form-control" name="cardHolder" id="card-holder-name" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="control-label" for="card-number">{{message 'checkout.payment.card.number'}}</label>
+
+                <div>
+                    <input type="text" class="form-control" name="cardNumber" id="card-number" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="control-label" for="expiry-month">{{message 'checkout.payment.card.expirationDate'}}</label>
+
+                <div>
+                    <div class="row">
+                        <div>
+                            <select class="form-control" name="expiryMonth" id="expiry-month">
+                                <option>{{message 'checkout.payment.card.expirationMonth'}}</option>
+                                <option value="01">Jan (01)</option>
+                                <option value="02">Feb (02)</option>
+                                <option value="03">Mar (03)</option>
+                                <option value="04">Apr (04)</option>
+                                <option value="05">May (05)</option>
+                                <option value="06">June (06)</option>
+                                <option value="07">July (07)</option>
+                                <option value="08">Aug (08)</option>
+                                <option value="09">Sep (09)</option>
+                                <option value="10">Oct (10)</option>
+                                <option value="11">Nov (11)</option>
+                                <option value="12">Dec (12)</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-3">
+                            <select class="form-control" name="expiryYear">
+                                <option value="2015">2015</option>
+                                <option value="2016">2016</option>
+                                <option value="2017">2017</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="control-label" for="cvv">{{message 'checkout.payment.card.cvv'}}</label>
+
+                <div>
+                    <input type="text" class="form-control" name="cvv" id="cvv" />
+                </div>
+            </div>
+            <div class="field">
+                <div>
+                    <input type="submit" class="button" value="{{message 'checkout.payment.payButton'}}" />
+                </div>
+            </div>
+        </div>
+    {{else}}
     <p>
         {{message 'checkout.payment.message'}}
     </p>
 
+    {{#eachProperty paymentData}}
+        <input type="hidden" name="{{key}}" value="{{value}}" />
+    {{/eachProperty}}
+
     <div>
         <input type="submit" value="{{message 'checkout.payment.payButton'}}" class="button"/>
     </div>
+    {{/if}}
 </form>

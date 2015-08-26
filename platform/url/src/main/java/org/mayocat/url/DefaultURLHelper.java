@@ -7,18 +7,16 @@
  */
 package org.mayocat.url;
 
+import com.google.common.base.Strings;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.inject.Inject;
-
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.context.internal.ThreadLocalWebContext;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Strings;
 
 /**
  * @version $Id$
@@ -35,71 +33,58 @@ public class DefaultURLHelper implements URLHelper
     @Inject
     private WebContext context;
 
-    public String getContextWebBaseURL()
-    {
+    public String getContextWebBaseURL() {
         return getTenantWebBaseURL(context.getTenant());
     }
 
-    public String getContextPlatformBaseURL()
-    {
+    public String getContextPlatformBaseURL() {
         return getTenantPlatformBaseURL(context.getTenant());
     }
 
-    public String getTenantWebBaseURL(Tenant tenant)
-    {
+    public String getTenantWebBaseURL(Tenant tenant) {
         return getTenantWebURL(tenant, "").toString();
     }
 
-    public String getTenantPlatformBaseURL(Tenant tenant)
-    {
+    public String getTenantPlatformBaseURL(Tenant tenant) {
         return getTenantPlatformURL(tenant, "").toString();
     }
 
-    public String getContextWebDomain()
-    {
+    public String getContextWebDomain() {
         return getTenantWebDomain(context.getTenant());
     }
 
-    public String getContextPlatformDomain()
-    {
+    public String getContextPlatformDomain() {
         return getTenantPlatformDomain(context.getTenant());
     }
 
-    public String getTenantWebDomain(Tenant tenant)
-    {
+    public String getTenantWebDomain(Tenant tenant) {
         if (siteSettings.getWebDomainName().isPresent()) {
             return getTenantDomainName(siteSettings.getWebDomainName().get(), tenant);
         }
         return getTenantPlatformDomain(tenant);
     }
 
-    public String getTenantPlatformDomain(Tenant tenant)
-    {
+    public String getTenantPlatformDomain(Tenant tenant) {
         return getTenantDomainName(siteSettings.getDomainName(), tenant);
     }
 
-    public URL getContextWebURL(String path)
-    {
+    public URL getContextWebURL(String path) {
         return getTenantWebURL(context.getTenant(), path);
     }
 
-    public URL getContextBackOfficeURL(String path)
-    {
+    public URL getContextBackOfficeURL(String path) {
         return getTenantBackOfficeURL(context.getTenant(), path);
     }
 
-    public URL getContextPlatformURL(String path)
-    {
+    public URL getContextPlatformURL(String path) {
         return getTenantPlatformURL(context.getTenant(), path);
     }
 
-    public URL getTenantWebURL(Tenant tenant, String path)
-    {
+    public URL getTenantWebURL(Tenant tenant, String path) {
         return getURL(getTenantWebDomain(tenant), path);
     }
 
-    public URL getTenantBackOfficeURL(Tenant tenant, String path)
-    {
+    public URL getTenantBackOfficeURL(Tenant tenant, String path) {
         String backOfficeDomain;
         String realPath;
         if (siteSettings.getBackOfficeDomainName().isPresent()) {
@@ -112,16 +97,14 @@ public class DefaultURLHelper implements URLHelper
         return getURL(backOfficeDomain, realPath);
     }
 
-    public URL getTenantPlatformURL(Tenant tenant, String path)
-    {
+    public URL getTenantPlatformURL(Tenant tenant, String path) {
         return getURL(getTenantPlatformDomain(tenant), path);
     }
 
     // Private helpers
     // -----------------------------------------------------------------------------------------------------------------
 
-    private String getTenantDomainName(String domainName, Tenant tenant)
-    {
+    private String getTenantDomainName(String domainName, Tenant tenant) {
         if (!multitenancySettings.isActivated() || tenant == null) {
             return domainName;
         } else {
@@ -132,10 +115,19 @@ public class DefaultURLHelper implements URLHelper
                 tenant.getDefaultHost();
     }
 
-    private URL getURL(String domain, String path)
-    {
+    private URL getURL(String domain, String path) {
         URL url = null;
-        String urlAsString = "http://" + domain;
+        String scheme = null;
+        if (ThreadLocalWebContext.class.isAssignableFrom(context.getClass())) {
+            if (((ThreadLocalWebContext) context).getContext() != null) {
+                scheme = (context.getRequest().isSecure() ? "https://" : "http://");
+            }
+        }
+        if (scheme == null) {
+            scheme = siteSettings.getDefaultScheme();
+        }
+
+        String urlAsString = scheme + domain;
         if (!Strings.isNullOrEmpty(path)) {
             if (!path.startsWith("/")) {
                 urlAsString += "/" + path;
@@ -146,7 +138,7 @@ public class DefaultURLHelper implements URLHelper
         try {
             url = new URL(urlAsString);
         } catch (MalformedURLException e) {
-            new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         return url;
     }

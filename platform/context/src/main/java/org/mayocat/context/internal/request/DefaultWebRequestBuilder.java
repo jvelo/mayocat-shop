@@ -34,6 +34,8 @@ public class DefaultWebRequestBuilder
 
     private Optional<Breakpoint> breakpoint = Optional.absent();
 
+    private boolean secure = false;
+
     public DefaultWebRequestBuilder canonicalPath(String path)
     {
         this.canonicalPath = path;
@@ -70,6 +72,12 @@ public class DefaultWebRequestBuilder
         return this;
     }
 
+    public DefaultWebRequestBuilder secure(boolean secure)
+    {
+        this.secure = secure;
+        return this;
+    }
+
     public DefaultWebRequestBuilder breakpoint(Optional<Breakpoint> breakpoint)
     {
         this.breakpoint = breakpoint;
@@ -84,7 +92,7 @@ public class DefaultWebRequestBuilder
 
         return new DefaultWebRequest(
                 baseURI, canonicalPath, path, isTenantRequest, tenantPrefix,
-                isApiRequest, breakpoint
+                isApiRequest, secure, breakpoint
         );
     }
 }

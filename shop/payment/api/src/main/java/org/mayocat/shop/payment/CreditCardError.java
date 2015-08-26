@@ -10,18 +10,12 @@ package org.mayocat.shop.payment;
 /**
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+public enum CreditCardError
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
+    INVALID_NUMBER,
+    INVALID_EXPIRATION_DATE,
+    INVALID_VERIFICATION_CODE,
+    CARD_EXPIRED,
+    CARD_DECLINED,
+    OTHER
 }

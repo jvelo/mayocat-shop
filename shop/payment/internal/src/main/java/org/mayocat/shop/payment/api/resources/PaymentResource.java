@@ -8,6 +8,7 @@
 package org.mayocat.shop.payment.api.resources;
 
 import com.google.common.base.Strings;
+import java.net.URI;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import org.mayocat.rest.Resource;

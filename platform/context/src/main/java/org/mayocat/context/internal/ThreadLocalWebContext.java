@@ -39,6 +39,11 @@ public class ThreadLocalWebContext implements WebContext
         this.context.set(context);
     }
 
+    @Override
+    public boolean isAvailable() {
+        return this.getContext() != null && this.getContext().isAvailable();
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
 
     // Wrapped methods
@@ -154,7 +159,10 @@ public class ThreadLocalWebContext implements WebContext
     @Override
     public WebRequest getRequest()
     {
-        return getContext().getRequest();
+        if (getContext() != null) {
+            return getContext().getRequest();
+        }
+        return null;
     }
 
     @Override

@@ -5,23 +5,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.mayocat.shop.payment;
+package org.mayocat.shop.payment.event;
+
+import org.xwiki.observation.event.AbstractFilterableEvent;
+import org.xwiki.observation.event.Event;
 
 /**
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+public class ExternalPaymentInitialized extends AbstractFilterableEvent implements Event
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
 }

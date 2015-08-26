@@ -8,20 +8,10 @@
 package org.mayocat.shop.payment;
 
 /**
+ * Tag interface that indicates a payment gateway processes credit card information
+ *
  * @version $Id$
  */
-public enum BasePaymentData implements PaymentData
+public interface CreditCardPaymentGateway extends PaymentGateway
 {
-    GATEWAY,
-    CURRENCY,
-    CANCEL_URL,
-    RETURN_URL,
-    IPN_URL,
-    BASE_WEB_URL,
-    BASE_PLATFORM_URL,
-    ORDER_ID,
-    CUSTOMER,
-    BILLING_ADDRESS,
-    DELIVERY_ADDRESS,
-    ORDER
 }
