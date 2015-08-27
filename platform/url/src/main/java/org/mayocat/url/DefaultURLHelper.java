@@ -118,10 +118,8 @@ public class DefaultURLHelper implements URLHelper
     private URL getURL(String domain, String path) {
         URL url = null;
         String scheme = null;
-        if (ThreadLocalWebContext.class.isAssignableFrom(context.getClass())) {
-            if (((ThreadLocalWebContext) context).getContext() != null) {
-                scheme = (context.getRequest().isSecure() ? "https://" : "http://");
-            }
+        if (context.isAvailable() && context.getRequest() != null) {
+            scheme = (context.getRequest().isSecure() ? "https://" : "http://");
         }
         if (scheme == null) {
             scheme = siteSettings.getDefaultScheme();
