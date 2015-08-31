@@ -276,13 +276,16 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         // Sets a couple of URL that can be useful for payment gateways
         data.put(BasePaymentData.BASE_WEB_URL, urlHelper.getContextWebBaseURL());
         data.put(BasePaymentData.BASE_PLATFORM_URL, urlHelper.getContextPlatformBaseURL());
-        // Return URL -> return for the customer from the gateway to the website after payment
+
+        // Cancel URL -> return for the customer from the gateway to the website when cancelling
         data.put(BasePaymentData.CANCEL_URL,
                 urlHelper.getContextWebURL(CheckoutResource.PATH + "/" + CheckoutResource.PAYMENT_CANCEL_PATH + "/"
                         + order.getId()).toString());
-        // Cancel URL -> return for the customer from the gateway to the website when cancelling
+
+        // Return URL -> return for the customer from the gateway to the website after payment
         data.put(BasePaymentData.RETURN_URL, urlHelper.getContextWebURL(CheckoutResource.PATH + "/"
                 + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
+
         // IPN ack URL -> end-point called by the payment gateway servers
         data.put(BasePaymentData.IPN_URL,
                 urlHelper.getContextPlatformURL((webContext.getTenant() == null ? "marketplace/" : "") +

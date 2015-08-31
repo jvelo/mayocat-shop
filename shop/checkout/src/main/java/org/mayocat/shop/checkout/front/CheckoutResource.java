@@ -230,10 +230,13 @@ public class CheckoutResource implements Resource
                 );
 
                 String template = "checkout/success.html";
+                bindings.put("checkoutResult", "success");
                 if (paymentRequest.getNextAction().equals(RequiredAction.MANUAL_VALIDATION)) {
+                    bindings.put("checkoutResult", "paymentPending");
                     template = "checkout/pending.html";
                 } else if (paymentRequest.getStatus().equals(PaymentStatus.FAILED)
                     || paymentRequest.getStatus().equals(PaymentStatus.REFUSED)) {
+                    bindings.put("checkoutResult", "failed");
                     template = "checkout/failed.html";
                 }
 
@@ -282,8 +285,10 @@ public class CheckoutResource implements Resource
         }
     }
 
+    // Return from payment gateway -----------------------------------------------------------------
+
     @GET
-    @Path(PAYMENT_RETURN_PATH + "/{order}/payment")
+    @Path(PAYMENT_RETURN_PATH + "/{order}")
     public WebView returnFromPaymentService(@Context UriInfo uriInfo, @PathParam("order") String orderId) {
         Map<String, Object> bindings = new HashMap<>();
         if (StringUtils.isNotBlank(orderId)) {
@@ -341,6 +346,8 @@ public class CheckoutResource implements Resource
     public WebView postCancelFromPaymentService(@PathParam("orderId") UUID orderId) {
         return this.cancelFromPaymentService(orderId);
     }
+
+    // Private helpers -----------------------------------------------------------------------------
 
     /**
      * Render a user facing error page
