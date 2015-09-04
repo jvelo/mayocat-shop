@@ -17,11 +17,13 @@ var Mayocat = (function (Mayocat) {
             actions: {
                 add: "Add",
                 remove: "Remove",
+                delete: "Delete",
                 cancel: "Cancel",
                 edit: "Edit",
                 close: "Close",
                 save: "Save",
-                reset: "Reset"
+                reset: "Reset",
+                validate: "Validate"
             },
             validation: {
                 required : "Required"
@@ -420,6 +422,24 @@ var Mayocat = (function (Mayocat) {
                 contactEmail: "Contact email",
                 contactEmailPlaceholder: "Email at which notifications will be sent",
                 shopLogo: "Shop logo"
+            },
+
+            taxes: {
+                menuEntry: "Taxes",
+                title: "Taxes settings",
+                vat: "VAT",
+                defaultRate: "Default rate",
+                addRate: "Add rate",
+                addArea: "Add geographic area",
+                taxArea: "Area",
+                areaName: "Area name",
+                enablePerAreaManagement: "Manage taxes per area",
+                disablePerAreaManagement: "Disable per area management",
+                modifyGeographicArea: "Modify geographic area",
+                deleteGeographicArea: "Delete geographic area",
+                managePerArea: "Manage taxes per geographical area",
+                managePerAreaInfo: "Per-area tax management lets you manage taxes according to the delivery area.",
+                affectAreaToExistingRates: "Affect area to existing rate"
             },
 
             misc: {
