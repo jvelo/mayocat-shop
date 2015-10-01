@@ -124,7 +124,8 @@ var Mayocat = (function (global, Mayocat)
     });
 
     Handlebars.registerHelper('message', function(key, options){
-        return new Handlebars.SafeString(themeLocalizationService.getMessage(key, options.hash));
+        var result = themeLocalizationService.getMessage(key, options.hash);
+        return new Handlebars.SafeString(result ? result : key);
     });
 
     return Mayocat;
