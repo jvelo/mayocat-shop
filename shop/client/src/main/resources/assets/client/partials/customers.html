@@ -7,6 +7,56 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 -->
-<h1 class="big">Customers</h1>
+<h1 class="big">{{ 'customers.title' | translate }}</h1>
 
-<div class="alert alert-info">There are no customers yet.</div>
+<!-- list -->
+<div class="loading" ng-show="isLoading"></div>
+
+<div class="customers row" ng-controller="CustomersController">
+    <div class="span9">
+        <div class="alert alert-info" ng-show="!customers || customers.length <= 0">{{'customers.table.empty' | translate}}</div>
+            <table class="table table-hover " ng-show="customers.length > 0">
+                <thead>
+                    <tr>
+                        <th>{{'customers.table.fullName' | translate}}</th>
+                        <th>{{'customers.table.company' | translate}}</th>
+                        <th>{{'customers.table.email' | translate}}</th>
+                        <th>{{'customers.table.actions' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="customer in customers">
+                        <td>{{customer.firstName}} {{customer.lastName}}</td>
+                        <td>{{customer.company}}</td>
+                        <td>{{customer.email}}</td>
+                        <td>
+                            <span class="link" ng-click="deleteCustomer(customer)">{{'global.actions.delete' | translate}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <pagination total-items="totalItems" ng-model="currentPage" items-per-page="itemsPerPage"
+                        ng-change="fetchCustomers()"></pagination>
+
+        </div>
+</div>
+
+<!-- Deletion modal for articles -->
+<script type="text/ng-template" id="confirmCustomerDeletion.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'entity.title.confirmDeletion' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        {{'content.alert.confirmArticleDeletion' | translate}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+        <button class="btn btn-danger" ng-click="$close()">
+            {{'content.action.deleteArticle' | translate}}
+        </button>
+    </div>
+</script>

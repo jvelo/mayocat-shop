@@ -24,6 +24,7 @@ var MayocatShop = angular.module('MayocatShop', [
     'dashboard',
     'orders',
     'order',
+    'customers',
     '$strap.directives', // Used for the date picker bs-datepicker directive
                          // TODO rationalize on ui-bootstrap
     'ui.bootstrap',

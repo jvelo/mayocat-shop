@@ -503,6 +503,17 @@ var Mayocat = (function (Mayocat) {
                 passwordsDoNotMatch: "Les mots de passes diffèrent",
                 wrongPassword: "Mot de passe actuel non valide"
             }
+        },
+
+        customers: {
+            title: "Clients",
+            table: {
+                "title" : "Tous les clients",
+                "empty" : "Aucun client pour le moment",
+                "fullName" : "Nom",
+                "company" : "Société",
+                "email" : "E-mail"
+            }
         }
     };
 

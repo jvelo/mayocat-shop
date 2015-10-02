@@ -539,7 +539,7 @@ var Mayocat = (function (Mayocat) {
         },
 
         /**
-         * Translation related to "My account"
+         * Translations related to "My account"
          */
         account: {
             title:"My account",
@@ -551,6 +551,21 @@ var Mayocat = (function (Mayocat) {
                 passwordsDoNotMatch: "Passwords do not match",
                 wrongPassword: "Current password not valid",
                 passwordRequirementsNotMet: "Password is not strong enough"
+            }
+        },
+
+        /**
+         * Translations related to customers
+         */
+        customers: {
+            title: "Customers",
+            table: {
+                "title" : "All customers",
+                "empty" : "No customers yet",
+                "fullName" : "Full name",
+                "company" : "Company",
+                "email" : "Email",
+                "actions" : "Actions"
             }
         }
 

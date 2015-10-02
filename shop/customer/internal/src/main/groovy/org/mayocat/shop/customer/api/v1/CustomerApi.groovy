@@ -10,6 +10,8 @@ package org.mayocat.shop.customer.api.v1
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.google.common.base.Optional
 import groovy.transform.CompileStatic
+import org.mayocat.accounts.model.Role
+import org.mayocat.authorization.annotation.Authorized
 import org.mayocat.configuration.PlatformSettings
 import org.mayocat.context.WebContext
 import org.mayocat.rest.Resource
@@ -40,6 +42,7 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @CompileStatic
+@Authorized
 class CustomerApi implements Resource
 {
     @Inject
@@ -149,10 +152,33 @@ class CustomerApi implements Resource
             return Response.ok().build()
         } catch (InvalidEntityException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid article\n").type(MediaType.TEXT_PLAIN_TYPE).build()
+                    .entity("Invalid customer\n").type(MediaType.TEXT_PLAIN_TYPE).build()
         } catch (EntityDoesNotExistException e) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No Article with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build()
+                    .entity("No customer with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build()
         }
+    }
+
+    @DELETE
+    @Path("{customer}")
+    @Consumes("*/*")
+    def deleteCustomer(@PathParam("customer") String slug)
+    {
+        Customer retrieved = this.customerStore.get().findBySlug(slug)
+        if (retrieved == null) {
+            return Response.status(404).build()
+        }
+
+        try {
+            this.customerStore.get().delete(retrieved);
+
+            return Response.ok().build()
+        } catch (EntityDoesNotExistException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No customer with this slug could be found\n").type(MediaType.TEXT_PLAIN_TYPE).build()
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+
     }
 }
