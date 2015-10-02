@@ -132,6 +132,9 @@
                     <span class="fn">{{order._embedded.customer.firstName}} {{order._embedded.customer.lastName}}</span>
                 </div>
                 <div>
+                    <span class="org">{{order._embedded.customer.company}}</span>
+                </div>
+                <div>
                     <a class="email"
                        href="mailto:{{order._embedded.customer.email}}">{{order._embedded.customer.email}}</a>
                 </div>

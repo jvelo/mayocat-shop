@@ -98,6 +98,7 @@ public class OrderMapper extends AbstractOrderMapper implements ResultSetMapper<
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setLastName(resultSet.getString("last_name"));
             customer.setPhoneNumber(resultSet.getString("phone_number"));
+            customer.setCompany(resultSet.getString("company"));
             order.setCustomer(customer);
         } catch (SQLException e) {
             // Nevermind

@@ -38,8 +38,20 @@ public class CheckoutRequestBuilder
             request.putError("email", new CheckoutRequest.Error(CheckoutRequest.ErrorType.REQUIRED, "email is mandatory"));
         }
 
-        String firstName = getNonEmptyFieldValueOrAddToErrorMap("firstName", data, request);
-        String lastName = getNonEmptyFieldValueOrAddToErrorMap("lastName", data, request);
+        String firstName = multimapContains(data, "firstName") ? (String) data.getFirst("firstName") : null;
+        String lastName = multimapContains(data, "lastName") ? (String) data.getFirst("lastName") : null;
+        String company = multimapContains(data, "company") ? (String) data.getFirst("company") : null;
+
+        if ((firstName == null || lastName == null) && company == null) {
+            // Full name is only required when no company name has been provided
+            if (firstName == null) {
+                request.putError("firstName", new CheckoutRequest.Error(CheckoutRequest.ErrorType.REQUIRED, "First name is mandatory"));
+            }
+            if (lastName == null) {
+                request.putError("lastName", new CheckoutRequest.Error(CheckoutRequest.ErrorType.REQUIRED, "Last name is mandatory"));
+            }
+        }
+
         String street = getNonEmptyFieldValueOrAddToErrorMap("street", data, request);
         String zip = getNonEmptyFieldValueOrAddToErrorMap("zip", data, request);
         String city = getNonEmptyFieldValueOrAddToErrorMap("city", data, request);
@@ -47,84 +59,103 @@ public class CheckoutRequestBuilder
 
         Address billingAddress = null;
         boolean hasDifferentBillingAddress =
-                FluentIterable.from(Arrays.asList("street", "zip", "city", "country")).anyMatch(new Predicate<String>()
-                {
+                FluentIterable.from(Arrays.asList("street", "zip", "city", "country")).anyMatch(new Predicate<String>() {
                     public boolean apply(@Nullable String input) {
-                        return data.containsKey("billing" + StringUtils.capitalize(input)) && StringUtils.isNotBlank(
-                                (String) data.getFirst("billing" + StringUtils.capitalize(input)));
+                        return multimapContains(data, "billing" + StringUtils.capitalize(input));
                     }
                 });
+
         if (hasDifferentBillingAddress) {
             String billingStreet = getNonEmptyFieldValueOrAddToErrorMap("billingStreet", data, request);
             String billingZip = getNonEmptyFieldValueOrAddToErrorMap("billingZip", data, request);
             String billingCity = getNonEmptyFieldValueOrAddToErrorMap("billingCity", data, request);
             String billingCountry = getNonEmptyFieldValueOrAddToErrorMap("billingCountry", data, request);
             billingAddress = new Address();
-            billingAddress.setFullName(firstName + " " + lastName);
+            if (firstName != null || lastName != null) {
+                billingAddress.setFullName(fullName(firstName, lastName));
+            }
             billingAddress.setStreet(billingStreet);
             billingAddress.setZip(billingZip);
             billingAddress.setCity(billingCity);
             billingAddress.setCountry(billingCountry);
-            if (data.containsKey("billingCompany")) {
-                String company = (String) data.getFirst("billingCompany");
-                if (!Strings.isNullOrEmpty(company)) {
-                    billingAddress.setCompany(company);
-                }
-                String streetComplement = (String) data.getFirst("billingStreetComplement");
-                if (!Strings.isNullOrEmpty(streetComplement)) {
-                    billingAddress.setStreetComplement(streetComplement);
-                }
+            if (multimapContains(data, "billingCompany")) {
+                billingAddress.setCompany((String) data.getFirst("billingCompany"));
             }
-
+            if (multimapContains(data, "billingStreetComplement")) {
+                billingAddress.setStreetComplement((String) data.getFirst("billingStreetComplement"));
+            }
             request.setBillingAddress(billingAddress);
         }
 
         if (request.getErrors().keySet().size() == 0) {
             Customer customer = new Customer();
             customer.setEmail(email);
-            customer.setFirstName(firstName);
-            customer.setLastName(lastName);
-            if (data.containsKey("phone") && !Strings.isNullOrEmpty((String) data.getFirst("phone"))) {
+            if (firstName != null) {
+                customer.setFirstName(firstName);
+            }
+            if (lastName != null) {
+                customer.setLastName(lastName);
+            }
+            if (multimapContains(data, "phone")) {
                 customer.setPhoneNumber((String) data.getFirst("phone"));
+            }
+            if (company != null) {
+                customer.setCompany(company);
             }
 
             request.setCustomer(customer);
 
             Address deliveryAddress = new Address();
-            deliveryAddress.setFullName(firstName + " " + lastName);
+            if (firstName != null || lastName != null) {
+                deliveryAddress.setFullName(fullName(firstName, lastName));
+            }
             deliveryAddress.setStreet(street);
             deliveryAddress.setZip(zip);
             deliveryAddress.setCity(city);
             deliveryAddress.setCountry(country);
-            if (data.containsKey("company")) {
-                String company = (String) data.getFirst("company");
-                if (!Strings.isNullOrEmpty(company)) {
-                    deliveryAddress.setCompany(company);
-                }
-                String streetComplement = (String) data.getFirst("streetComplement");
-                if (!Strings.isNullOrEmpty(streetComplement)) {
-                    deliveryAddress.setStreetComplement(streetComplement);
-                }
+            if (company != null) {
+                // FIXME this should be a different property than the customer one
+                deliveryAddress.setCompany(company);
+            }
+            if (multimapContains(data, "streetComplement")) {
+                deliveryAddress.setStreetComplement((String) data.getFirst("streetComplement"));
             }
 
             request.setDeliveryAddress(deliveryAddress);
 
             // Include additional information if the field is present and not empty
-            if (data.containsKey("additionalInformation") &&
-                    !Strings.isNullOrEmpty((String) data.getFirst("additionalInformation"))) {
+            if (multimapContains(data, "additionalInformation")) {
                 request.putOtherOrderData("additionalInformation", data.getFirst("additionalInformation"));
             }
         }
-
         return request;
     }
 
-    private String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, CheckoutRequest request) {
-        if (!data.containsKey(field) || Strings.isNullOrEmpty((String) data.getFirst(field))) {
-            request.putError(field, new CheckoutRequest.Error(CheckoutRequest.ErrorType.REQUIRED, StringUtils.capitalize(field) + " is mandatory"));
+    private static String fullName(String firstName, String lastName) {
+        StringBuilder builder = new StringBuilder();
+        if (firstName != null) {
+            builder.append(firstName);
+            if (lastName != null) {
+                builder.append(" ");
+            }
+        }
+        if (lastName != null) {
+            builder.append(lastName);
+        }
+        return builder.toString();
+    }
+
+    private static String getNonEmptyFieldValueOrAddToErrorMap(String field, MultivaluedMap data, CheckoutRequest request) {
+        if (!multimapContains(data, field)) {
+            request.putError(field, new CheckoutRequest.Error(CheckoutRequest.ErrorType.REQUIRED,
+                    StringUtils.capitalize(field) + " is mandatory"));
             return null;
         } else {
             return (String) data.getFirst(field);
         }
+    }
+
+    private static boolean multimapContains(MultivaluedMap data, String field) {
+        return data.containsKey(field) && !Strings.isNullOrEmpty((String) data.getFirst(field));
     }
 }

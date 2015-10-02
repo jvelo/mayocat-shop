@@ -402,6 +402,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             update = true;
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         }
+        if (existingCustomer.getCompany() == null ||
+                !existingCustomer.getCompany().equals(customer.getCompany())) {
+            update = true;
+            existingCustomer.setCompany(customer.getCompany());
+        }
         return update;
     }
 }

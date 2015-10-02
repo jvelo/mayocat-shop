@@ -39,6 +39,15 @@
         </div>
 
         <div class="controls">
+            {{#errors.company}}
+            <div class="error">{{this.userMessage}}</div>
+            {{/errors.company}}
+            <span class="mandatory"></span>
+            <input type="text" name="company" value="{{request.company}}" placeholder="Company"/>
+        </div>
+
+
+        <div class="controls">
             {{#errors.street}}
             <div class="error">{{this.userMessage}}</div>
             {{/errors.street}}
@@ -51,7 +60,7 @@
             <div class="error">{{this.userMessage}}</div>
             {{/errors.zip}}
             <span class="mandatory"></span>
-            <input type="text" name="zip" value="{{request.street}}" placeholder="Zip"/>
+            <input type="text" name="zip" value="{{request.zip}}" placeholder="Zip"/>
         </div>
 
         <div class="controls">
