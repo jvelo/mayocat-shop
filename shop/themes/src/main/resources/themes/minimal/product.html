@@ -23,7 +23,7 @@
                             {{name}}
                             <ul class="feature list">
                             {{#list}}
-                                <li><a href="{{url}}">{{title}}</a></li>
+                                <li><a href="{{localizedUrl url}}">{{title}}</a></li>
                              {{/list}}
                             </ul>
                         </div>
@@ -34,7 +34,7 @@
                     </div>
                 {{else}}
                     {{#unitPrice}}
-                        <form action="/cart/add" method="post" class="add">
+                        <form action="{{localizedUrl '/cart/add'}}" method="post" class="add">
                             <div class="add-to-cart">
                                 <input type="hidden" name="product" value="{{../slug}}"/>
                                 <input type="submit" value="{{message 'product.addToCart'}}" class="button"/>

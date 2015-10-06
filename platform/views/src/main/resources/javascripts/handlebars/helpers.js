@@ -128,6 +128,13 @@ var Mayocat = (function (global, Mayocat)
         return new Handlebars.SafeString(result ? result : key);
     });
 
+    Handlebars.registerHelper('localizedUrl', function(url){
+        if (webContext.isAlternativeLocale()) {
+            return '/' + webContext.getLocale().toLanguageTag() + url;
+        }
+        return url;
+    });
+
     return Mayocat;
 
 })(this, Mayocat || {});
