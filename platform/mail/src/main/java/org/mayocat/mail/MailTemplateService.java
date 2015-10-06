@@ -7,13 +7,9 @@
  */
 package org.mayocat.mail;
 
-import java.util.Locale;
 import java.util.Map;
-
-import org.mayocat.views.Template;
+import org.mayocat.accounts.model.Tenant;
 import org.xwiki.component.annotation.Role;
-
-import com.google.common.base.Optional;
 
 /**
  * @version $Id$
@@ -28,4 +24,12 @@ public interface MailTemplateService
      * @param context the context to send the template against
      */
     void sendTemplateMail(MailTemplate mail, Map<String, Object> context) throws MailException;
+
+    /**
+     * Sends a mail template against a context
+     *
+     * @param mail the template mail
+     * @param context the context to send the template against
+     */
+    void sendTemplateMail(MailTemplate mail, Map<String, Object> context, Tenant tenant) throws MailException;
 }
