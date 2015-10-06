@@ -7,11 +7,18 @@
  */
 package org.mayocat.localization;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,7 +29,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.mayocat.application.AbstractService;
 import org.mayocat.configuration.ConfigurationService;
 import org.mayocat.configuration.LocalizationFilterSettings;
@@ -31,12 +37,6 @@ import org.mayocat.configuration.general.LocalesSettings;
 import org.mayocat.context.WebContext;
 import org.mayocat.servlet.ServletFilter;
 import org.xwiki.component.annotation.Component;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 
 /**
  * Servlet filter for web requests that checks if the language cookie has been set. If it has not been set, tries to
@@ -99,48 +99,50 @@ public class RequestLocalizationFilter implements Filter, ServletFilter
             return;
         }
 
-        if (!languageCookie.isPresent()) {
+        LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
+        List<Locale> alternativeLocales =
+                FluentIterable.from(localesSettings.getOtherLocales().getValue())
+                        .filter(Predicates.notNull()).toList();
 
-            LocalesSettings localesSettings = configurationService.getSettings(GeneralSettings.class).getLocales();
-            List<Locale> alternativeLocales =
-                    FluentIterable.from(localesSettings.getOtherLocales().getValue())
-                            .filter(Predicates.notNull()).toList();
 
-            // Maybe there is a better locale matching the user Accept-Language
-            String acceptLanguage = request.getHeader("Accept-Language");
-            if (!Strings.isNullOrEmpty(acceptLanguage)) {
-                final Locale acceptLanguageAsLocale = request.getLocale();
-                Optional<Locale> bestMatch = FluentIterable.from(alternativeLocales).filter(new Predicate<Locale>()
+        if (isLocalizedInPath(request.getRequestURI(), alternativeLocales)) {
+            // URI already localized (e.g. /fr/product/my-product/), continue
+            chain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
+        // Maybe there is a better locale matching the user Accept-Language
+        String acceptLanguage = request.getHeader("Accept-Language");
+        if (!Strings.isNullOrEmpty(acceptLanguage)) {
+            final Locale acceptLanguageAsLocale = request.getLocale();
+            Optional<Locale> bestMatch = FluentIterable.from(alternativeLocales).filter(new Predicate<Locale>()
+            {
+                public boolean apply(Locale input) {
+                    return input.equals(acceptLanguageAsLocale);
+                }
+            }).first();
+
+            if (!bestMatch.isPresent() &&
+                    !Strings.isNullOrEmpty(acceptLanguageAsLocale.getDisplayCountry())) {
+                final Locale onlyLanguageAcceptLanguage = new Locale(acceptLanguageAsLocale.getLanguage());
+                bestMatch = FluentIterable.from(alternativeLocales).filter(new Predicate<Locale>()
                 {
-                    public boolean apply(Locale input)
-                    {
-                        return input.equals(acceptLanguageAsLocale);
+                    public boolean apply(Locale input) {
+                        return input.equals(onlyLanguageAcceptLanguage);
                     }
                 }).first();
+            }
 
-                if (!bestMatch.isPresent() &&
-                        !Strings.isNullOrEmpty(acceptLanguageAsLocale.getDisplayCountry()))
-                {
-                    final Locale onlyLanguageAcceptLanguage = new Locale(acceptLanguageAsLocale.getLanguage());
-                    bestMatch = FluentIterable.from(alternativeLocales).filter(new Predicate<Locale>()
-                    {
-                        public boolean apply(Locale input)
-                        {
-                            return input.equals(onlyLanguageAcceptLanguage);
-                        }
-                    }).first();
-                }
+            if (bestMatch.isPresent()) {
+                // Mark the language as set with a cookie
+                Cookie cookie = new Cookie("language", "set");
+                cookie.setMaxAge(-1);
+                cookie.setPath("/");
+                response.addCookie(cookie);
 
-                if (bestMatch.isPresent()) {
-                    // Mark the language as set with a cookie
-                    Cookie cookie = new Cookie("language", "set");
-                    cookie.setMaxAge(-1);
-                    cookie.setPath("/");
-                    response.addCookie(cookie);
-
-                    // Redirect to the found language
-                    response.sendRedirect("/" + bestMatch.get().toLanguageTag() + request.getRequestURI());
-                }
+                // Redirect to the found language
+                response.sendRedirect("/" + bestMatch.get().toLanguageTag() + request.getRequestURI());
+                return;
             }
         }
 
@@ -155,6 +157,30 @@ public class RequestLocalizationFilter implements Filter, ServletFilter
     public String urlPattern()
     {
         return "*";
+    }
+
+    private static Predicate<String> NOT_BLANK = new Predicate<String>()
+    {
+        public boolean apply(String s) {
+            return !Strings.isNullOrEmpty(s);
+        }
+    };
+
+    private static final boolean isLocalizedInPath(String path, List<Locale> locales) {
+        List<String> fragments = ImmutableList.copyOf(
+                Collections2.filter(Arrays.asList(path.split("/")), NOT_BLANK));
+
+        if (fragments.size() == 0) {
+            return false;
+        }
+
+        String firstFragment = fragments.get(0);
+        return FluentIterable.from(locales).transform(new Function<Locale, String>()
+        {
+            public String apply(Locale locale) {
+                return locale.toLanguageTag();
+            }
+        }).toList().indexOf(firstFragment) >= 0;
     }
 
     private static final Predicate<String> startsWithPath(final HttpServletRequest request)
