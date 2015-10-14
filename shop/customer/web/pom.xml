@@ -52,5 +52,6 @@
             <artifactId>mayocat-shop-marketplace-web</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 </project>

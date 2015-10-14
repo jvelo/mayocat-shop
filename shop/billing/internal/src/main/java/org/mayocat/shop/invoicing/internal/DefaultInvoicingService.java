@@ -135,7 +135,7 @@ public class DefaultInvoicingService implements InvoicingService
     }
 
     private Optional<Path> getTemplate() {
-        String templateName = "invoice.xhtml.twig";
+        String templateName = "invoice.twig";
         Path templateFilePath = fileManager.resolvePermanentFilePath(Paths.get("invoicing")).resolve(templateName);
 
         if (templateFilePath.toFile().isFile()) {

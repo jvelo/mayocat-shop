@@ -10,6 +10,9 @@ package org.mayocat.pdf.internal;
 import com.lowagie.text.DocumentException;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.mayocat.pdf.PdfRenderingException;
 import org.mayocat.pdf.PdfTemplateRenderer;
 import java.util.Map;
@@ -40,8 +43,14 @@ public class DefaultPdfTemplateRenderer implements PdfTemplateRenderer
 
         try {
             String html = templateRenderer.renderAsString(template, context);
+
+            // Ensure we have a valid XHTML document using JSoup
+            Document jsoupDoc = Jsoup.parse(html);
+            jsoupDoc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+            jsoupDoc.outputSettings().charset("UTF-8");
+
             String path = renderingRoot.toAbsolutePath().toUri().toString();
-            renderer.setDocumentFromString(html, path);
+            renderer.setDocumentFromString(jsoupDoc.toString(), path);
             renderer.layout();
             renderer.createPDF(outputStream);
         } catch (DocumentException | TemplateRenderingException e) {
