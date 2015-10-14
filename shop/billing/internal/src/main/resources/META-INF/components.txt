@@ -5,3 +5,4 @@ org.mayocat.shop.billing.api.resource.OverallTurnoverStatsResource
 org.mayocat.shop.billing.PaymentOperationEventListener
 org.mayocat.shop.billing.internal.SendEmailsWhenOrderIsPaid
 org.mayocat.shop.billing.internal.NotifyHooksWhenOrderIsPaid
+org.mayocat.shop.invoicing.internal.DefaultInvoicingService
