@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.billing.internal;
 
+import com.google.common.base.Strings;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -315,7 +316,13 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
             context.put("shipping", order.getOrderData().get("shipping"));
         }
 
-        context.put("siteName", tenant != null ? tenant.getName() : siteSettings.getName());
+        String siteName;
+        if (tenant != null) {
+            siteName = Strings.isNullOrEmpty(tenant.getName()) ? tenant.getSlug() : tenant.getName();
+        } else {
+            siteName = siteSettings.getName();
+        }
+        context.put("siteName", siteName);
         context.put("itemsTotal", itemsTotal);
         context.put("orderId", order.getSlug());
         context.put("grandTotal", grandTotal);
