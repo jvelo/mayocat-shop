@@ -33,6 +33,7 @@ public class AbstractOrderMapper
     protected void fillOrderSummary(ResultSet resultSet, OrderSummary order) throws SQLException
     {
         order.setId((UUID) resultSet.getObject("id"));
+        order.setTenantId((UUID) resultSet.getObject("tenant_id"));
         order.setSlug(resultSet.getString("slug"));
 
         order.setBillingAddressId((UUID) resultSet.getObject("billing_address_id"));

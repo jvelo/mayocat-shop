@@ -24,7 +24,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
  */
 @UseStringTemplate3StatementLocator
 @RegisterMapper(InvoiceNumberMapper.class)
-public abstract class InvoiceNumberDao implements Transactional<InvoiceNumberDao>
+public abstract class InvoiceNumberDAO implements Transactional<InvoiceNumberDAO>
 {
     @SqlUpdate
     public abstract void createInvoiceNumber(@BindBean("invoiceNumber") InvoiceNumber number);

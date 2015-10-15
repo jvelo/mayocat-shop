@@ -18,9 +18,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
-import mayoapp.dao.InvoiceNumberDao;
+import javax.inject.Provider;
+import mayoapp.dao.InvoiceNumberDAO;
 import org.joda.time.DateTime;
-import org.mayocat.context.WebContext;
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.accounts.store.TenantStore;
+import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.files.FileManager;
 import org.mayocat.pdf.PdfRenderingException;
 import org.mayocat.pdf.PdfTemplateRenderer;
@@ -35,16 +39,15 @@ import org.mayocat.shop.invoicing.model.InvoiceNumber;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.phase.Initializable;
+import org.xwiki.component.phase.InitializationException;
 
 /**
  * @version $Id$
  */
 @Component
-public class DefaultInvoicingService implements InvoicingService
+public class DefaultInvoicingService implements InvoicingService, Initializable
 {
-    @Inject
-    private WebContext webContext;
-
     @Inject
     private PdfTemplateRenderer pdfTemplateRenderer;
 
@@ -52,12 +55,18 @@ public class DefaultInvoicingService implements InvoicingService
     private FileManager fileManager;
 
     @Inject
+    private ConfigurationService configurationService;
+
+    @Inject
     private Logger logger;
 
     @Inject
     private DBIProvider dbi;
 
-    private InvoiceNumberDao dao;
+    @Inject
+    private Provider<TenantStore> tenantStore;
+
+    private InvoiceNumberDAO dao;
 
     @Override
     public void generatePdfInvoice(Order order, OutputStream outputStream) throws InvoicingException {
@@ -70,7 +79,7 @@ public class DefaultInvoicingService implements InvoicingService
         }
 
         try {
-            pdfTemplateRenderer.generatePDF(outputStream, invoicesFolderPath, template.get(), invoiceContext);
+            pdfTemplateRenderer.generatePDF(outputStream, template.get(), invoicesFolderPath, invoiceContext);
         } catch (PdfRenderingException e) {
             throw new InvoicingException("Failed to generate PDF invoice", e);
         }
@@ -106,7 +115,10 @@ public class DefaultInvoicingService implements InvoicingService
         Map<String, Object> result = Maps.newHashMap();
 
         // TODO: use stored locale instead of context locale
-        final Locale locale = webContext.getLocale();
+
+        Tenant tenant = tenantStore.get().findById(order.getTenantId());
+        GeneralSettings settings = configurationService.getSettings(GeneralSettings.class, tenant);
+        final Locale locale = settings.getLocales().getMainLocale().getValue();
 
         OrderWebObject orderWebObject = new OrderWebObject().withOrder(order, locale);
         orderWebObject.setItems(
@@ -142,5 +154,10 @@ public class DefaultInvoicingService implements InvoicingService
             return Optional.of(templateFilePath);
         }
         return Optional.absent();
+    }
+
+    @Override
+    public void initialize() throws InitializationException {
+        this.dao = dbi.get().onDemand(InvoiceNumberDAO.class);
     }
 }

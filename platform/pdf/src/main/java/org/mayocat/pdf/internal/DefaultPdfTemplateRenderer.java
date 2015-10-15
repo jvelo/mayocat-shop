@@ -46,6 +46,7 @@ public class DefaultPdfTemplateRenderer implements PdfTemplateRenderer
 
             // Ensure we have a valid XHTML document using JSoup
             Document jsoupDoc = Jsoup.parse(html);
+            jsoupDoc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
             jsoupDoc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
             jsoupDoc.outputSettings().charset("UTF-8");
 
