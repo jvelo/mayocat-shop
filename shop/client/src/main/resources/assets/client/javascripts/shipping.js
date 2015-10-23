@@ -198,11 +198,10 @@
                     }).get();
 
                     this.onChange.call(this, this.selection);
-                }
+                };
 
                 this.checkParentBefore = function (node) {
-                    var isChecked = node.children(".checkbox").first().hasClass("checked"),
-                        parent = node.parents(":not(destination-picker) li").first();
+                    var parent = node.parents(":not(destination-picker) li").first();
 
                     if (parent.length == 1) {
 
@@ -218,8 +217,7 @@
                 };
 
                 this.checkParentAfter = function (node) {
-                    var isChecked = node.children(".checkbox").first().hasClass("checked"),
-                        parent = node.parents(":not(destination-picker) li").first();
+                    var parent = node.parents(":not(destination-picker) li").first();
 
                     if (parent.length == 1) {
                         var allChildrenChecked = parent.find("> .children > ul > li > .checkbox:not(.checked)").length == 0,
@@ -247,6 +245,12 @@
                     }
                 };
 
+                /**
+                 * Adds a node to the destination picker
+                 *
+                 * @param data the node data (name, code and own children nodes)
+                 * @param parent the parent node data of this node
+                 */
                 this.addNode = function (data, parent) {
                     var node = $(this.nodeTemplate).clone(),
                         hasChildren = typeof data.children !== 'undefined' && data.children.length > 0,
@@ -255,8 +259,7 @@
                     node.find(".name").html(data.name);
                     node.find("p.destination").data("code", data.code);
 
-                    node.find(".arrow").click(function (event) {
-
+                    node.find(".arrow").click(function () {
                         if (hasChildren && node.find(".children ul li").length == 0) {
                             for (var i = 0; i < data.children.length; i++) {
                                 picker.addNode(data.children[i], node.find(".children ul").first());
@@ -264,10 +267,9 @@
                         }
 
                         node.children(".children").toggleClass("hidden");
-                    })
+                    });
 
-                    node.children(".checkbox").click(function (event) {
-
+                    node.children(".checkbox").click(function () {
                         picker.checkParentBefore(node);
 
                         if (node.children(".checkbox").hasClass("checked")) {
@@ -297,24 +299,30 @@
                     }
 
                     if (data.code.length === 3  && hasChildren) {
-                        // this is a continent but not antartica
+                        // this is a continent but not Antarctica
                         // pre-load all its countries
                         for (var i = 0; i < data.children.length; i++) {
                             picker.addNode(data.children[i], node.find(".children ul").first());
                         }
                     }
 
-                    for (var i=0; i<this.selected.length; i++) {
-                        var code = this.selected[i].substring(0, 2);
-                        if (data.code.indexOf(code) == 0 && hasChildren && this.selected[i].length !== 3) {
-                            for (var i = 0; i < data.children.length; i++) {
-                                picker.addNode(data.children[i], node.find(".children ul").first());
-                            }
+                    var countriesWithSelectedItems = this.selected.map(function(item) {
+                        return item.substring(0, 2)
+                    }).filter(function(code, position, self) {
+                        // Remove duplicates
+                        return self.indexOf(code) == position;
+                    });
 
+                    countriesWithSelectedItems.forEach(function(countryCode) {
+                        if (data.code === countryCode && hasChildren) {
+                            // We are that country and it has children
+                            for (var j = 0; j < data.children.length; j++) {
+                                picker.addNode(data.children[j], node.find(".children ul").first());
+                            }
                             node.parents(":not(destination-picker) li").children(".children").removeClass("hidden");
                         }
-                    }
-                }
+                    });
+                };
 
                 for (var i = 0; i < destinations.children.length; i++) {
                     this.addNode(destinations.children[i], this.root);
@@ -326,9 +334,9 @@
                 });
 
                 this.onChange = function () {
-                    // Change callback to be overriden by the directive
+                    // Change callback to be overridden by the directive
                 }
-            }
+            };
 
             return {
                 scope: {
