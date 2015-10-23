@@ -109,7 +109,7 @@ public class DBICarrierStore implements CarrierStore, Initializable
     }
 
     @Override
-    public void updateOrder(List<Carrier> carriers) {
+    public void updatePositions(List<Carrier> carriers) {
         this.carrierDAO.updatePositions(carriers);
     }
 

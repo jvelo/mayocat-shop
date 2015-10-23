@@ -9,7 +9,6 @@ package org.mayocat.shop.shipping.rest.resource;
 
 import java.util.List;
 import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,8 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.authorization.annotation.Authorized;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.shipping.Strategy;
@@ -44,9 +42,6 @@ public class CarrierResource implements Resource
     @Inject
     private CarrierStore carrierStore;
 
-    @Inject
-    private ConfigurationService configurationService;
-
     @GET
     public Response getCarriers(@QueryParam("strategy") String strategy)
     {
@@ -58,6 +53,7 @@ public class CarrierResource implements Resource
     }
 
     @POST
+    @Authorized
     public Response createCarrier(Carrier carrier)
     {
         this.carrierStore.createCarrier(carrier);
@@ -66,6 +62,7 @@ public class CarrierResource implements Resource
 
     @POST
     @Path("order")
+    @Authorized
     public Response updatePositions(List<Carrier> carriers)
     {
         int position = 0;
@@ -73,13 +70,14 @@ public class CarrierResource implements Resource
             carrier.setPosition(position);
             position++;
         }
-        carrierStore.updateOrder(carriers);
+        carrierStore.updatePositions(carriers);
 
         return Response.ok().build();
     }
 
     @PUT
     @Path("{id}")
+    @Authorized
     public Response updateCarrier(@PathParam("id") String id, Carrier carrier)
     {
         if (this.carrierStore.findById(UUID.fromString(id)) == null) {
@@ -93,6 +91,7 @@ public class CarrierResource implements Resource
     @DELETE
     @Path("{id}")
     @Consumes(MediaType.WILDCARD)
+    @Authorized
     public Response deleteCarrier(@PathParam("id") String id)
     {
         Carrier carrier = this.carrierStore.findById(UUID.fromString(id));

@@ -33,5 +33,5 @@ public interface CarrierStore
 
     void deleteCarrier(Carrier carrier);
 
-    void updateOrder(List<Carrier> carriers);
+    void updatePositions(List<Carrier> carriers);
 }

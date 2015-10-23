@@ -80,7 +80,7 @@ public class MemoryCarrierStore extends BaseEntityMemoryStore<Carrier> implement
     }
 
 
-    public void updateOrder(List<Carrier> carriers) {
+    public void updatePositions(List<Carrier> carriers) {
         throw new UnsupportedOperationException("Not supported");
     }
 }
