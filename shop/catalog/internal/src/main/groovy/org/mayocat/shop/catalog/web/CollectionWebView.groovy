@@ -94,8 +94,6 @@ class CollectionWebView implements Resource
 
         ThemeDefinition theme = this.context.theme.definition
 
-
-
         Optional<ImageGallery> gallery = data.getData(ImageGallery.class)
         List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
