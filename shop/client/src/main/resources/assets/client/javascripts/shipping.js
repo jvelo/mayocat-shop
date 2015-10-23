@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 (function () {
-    'use strict'
+    'use strict';
 
     angular.module('shipping', [])
 
@@ -49,7 +49,7 @@
                         })
                 }
                 return dataPromise;
-            }
+            };
 
             /**
              * Promise of earth data loaded from the server /api/shipping/destinations/flat API.
@@ -81,7 +81,7 @@
                 }
 
                 return flatDataPromise;
-            }
+            };
 
             /**
              * Convert a destination code (for example "FR" or "FR-49") to its matching destination name (here "France" and

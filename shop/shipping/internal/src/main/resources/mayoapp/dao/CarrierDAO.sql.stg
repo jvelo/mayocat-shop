@@ -5,7 +5,7 @@ findById() ::= <<
     FROM carrier
     LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
     WHERE carrier.id = :id
-    ORDER BY id, carrier_rule.up_to_value
+    ORDER BY position, id, carrier_rule.up_to_value
 >>
 
 findAll() ::= <<
@@ -13,7 +13,7 @@ findAll() ::= <<
     FROM carrier
     LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
     WHERE carrier.tenant_id IS NOT DISTINCT FROM :tenantId
-    ORDER BY id, carrier_rule.up_to_value
+    ORDER BY position, id, carrier_rule.up_to_value
 >>
 
 findAllWithStrategy() ::= <<
@@ -22,7 +22,7 @@ findAllWithStrategy() ::= <<
     LEFT OUTER JOIN carrier_rule ON carrier_rule.carrier_id = carrier.id
     WHERE carrier.strategy = :strategy
       AND carrier.tenant_id IS NOT DISTINCT FROM :tenantId
-    ORDER BY id, carrier_rule.up_to_value
+    ORDER BY position, id, carrier_rule.up_to_value
 >>
 
 create() ::= <<
@@ -100,4 +100,10 @@ removeRules(excludedUpToValues) ::= <<
     FROM carrier_rule
     WHERE carrier_id = :carrierId
       AND up_to_value NOT IN (<excludedUpToValues>)
+>>
+
+updatePositions() ::= <<
+    UPDATE carrier
+    SET    position = :carrier.position
+    WHERE  id = :carrier.id
 >>

@@ -10,6 +10,7 @@ package org.mayocat.shop.shipping.store.jdbi;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -105,6 +106,11 @@ public class DBICarrierStore implements CarrierStore, Initializable
     {
         carrierDAO.delete(carrier);
         // Note: rules deletion is cascaded from carrier
+    }
+
+    @Override
+    public void updateOrder(List<Carrier> carriers) {
+        this.carrierDAO.updatePositions(carriers);
     }
 
     protected UUID getTenant()

@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.shipping.rest.resource;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -60,6 +61,20 @@ public class CarrierResource implements Resource
     public Response createCarrier(Carrier carrier)
     {
         this.carrierStore.createCarrier(carrier);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("order")
+    public Response updatePositions(List<Carrier> carriers)
+    {
+        int position = 0;
+        for (Carrier carrier : carriers) {
+            carrier.setPosition(position);
+            position++;
+        }
+        carrierStore.updateOrder(carriers);
+
         return Response.ok().build();
     }
 
