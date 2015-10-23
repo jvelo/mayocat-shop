@@ -7,13 +7,10 @@
  */
 package org.mayocat.shop.shipping;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import org.mayocat.shop.taxes.PriceWithTaxes;
-
 import com.google.common.base.Objects;
+import java.io.Serializable;
+import java.util.UUID;
+import org.mayocat.shop.taxes.PriceWithTaxes;
 
 /**
  * @version $Id$
