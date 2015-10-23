@@ -89,6 +89,10 @@
                 tagName:"addon-image",
                 type:"image"
             });
+            registerEditor("color", {
+                tagName:"addon-color",
+                extraAttributes:'formats="addon.properties.formats" options="addon.properties[\'jquery.colorpicker\']"'
+            });
 
             return {
 
@@ -383,49 +387,6 @@
             }
         })
 
-        .directive("addonImage", ['$rootScope', function ($rootScope) {
-            return {
-                templateUrl: '/common/partials/addonImage.html',
-                require : 'ngModel',
-                restrict: 'E',
-                controller: ['$scope', function ($scope) {
-                    $scope.getImageUploadUri = function () {
-                        return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
-                    }
-
-                    $rootScope.$on("upload:progress", function(event, memo) {
-                        var index = memo.queue.findIndex(function (upload) {
-                            return upload.id == $scope.id;
-                        });
-                        if (index >= 0) {
-                            $scope.uploading = true;
-                        }
-                    });
-
-                    $rootScope.$on("upload:done", function(event, memo) {
-                        if (memo.id == $scope.id) {
-                            var parts = memo.fileUri.split('/');
-                            $scope.internalModel = parts[parts.length - 1];
-                            $scope.uploading = false;
-                        }
-                    });
-                }],
-                link: function (scope, element, attrs, ngModel) {
-                    // Generate a random image list/upload id
-                    scope.id = Math.random().toString(36).substring(8);
-                    scope.uploading = false;
-                    scope.server = $rootScope.server;
-                    var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
-                        scope.internalModel = ngModel.$modelValue;
-                        clear();
-                        scope.$watch("internalModel", function (newValue) {
-                            ngModel.$setViewValue(newValue);
-                        });
-                    });
-                }
-            }
-        }])
-
         .directive('addonList', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
             return {
                 restrict: 'E',
@@ -579,36 +540,276 @@
         }])
 
         .directive("addon", ['$compile', 'addonsService', function ($compile, addonsService) {
-        return {
-            scope:{
-                addon: '=definition',
-                object: '=',
-                localizedObject: '=',
-                key: '=',
-                noDropZone: '='
-            },
-            restrict:"E",
-            link:function (scope, element, attrs) {
-                scope.$watch(
-                    'addon',
-                    function (definition) {
-                        scope.type = addonsService.type(definition.type, definition.editor);
+            return {
+                scope:{
+                    addon: '=definition',
+                    object: '=',
+                    localizedObject: '=',
+                    key: '=',
+                    noDropZone: '='
+                },
+                restrict:"E",
+                link:function (scope, element, attrs) {
+                    scope.$watch(
+                        'addon',
+                        function (definition) {
+                            scope.type = addonsService.type(definition.type, definition.editor);
 
-                        var editor = addonsService.editor(definition.type, definition, {
-                            "ignoreReadOnly":typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
-                        });
-                        // The "template" option allow to override default behavior
-                        if (typeof definition.template !== 'undefined') {
-                            editor = definition.template;
+                            var editor = addonsService.editor(definition.type, definition, {
+                                "ignoreReadOnly":typeof scope.ignoreReadOnly !== 'undefined' ? scope.ignoreReadOnly : false
+                            });
+                            // The "template" option allow to override default behavior
+                            if (typeof definition.template !== 'undefined') {
+                                editor = definition.template;
+                            }
+
+                            element.html(editor);
+
+                            $compile(element.contents())(scope);
                         }
-
-                        element.html(editor);
-
-                        $compile(element.contents())(scope);
-                    }
-                );
+                    );
+                }
             }
-        }
-    }]);
+        }])
+
+        .directive("addonImage", ['$rootScope', function ($rootScope) {
+            return {
+                templateUrl: '/common/partials/addonImage.html',
+                require : 'ngModel',
+                restrict: 'E',
+                controller: ['$scope', function ($scope) {
+                    $scope.getImageUploadUri = function () {
+                        return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
+                    }
+
+                    $rootScope.$on("upload:progress", function(event, memo) {
+                        var index = memo.queue.findIndex(function (upload) {
+                            return upload.id == $scope.id;
+                        });
+                        if (index >= 0) {
+                            $scope.uploading = true;
+                        }
+                    });
+
+                    $rootScope.$on("upload:done", function(event, memo) {
+                        if (memo.id == $scope.id) {
+                            var parts = memo.fileUri.split('/');
+                            $scope.internalModel = parts[parts.length - 1];
+                            $scope.uploading = false;
+                        }
+                    });
+                }],
+                link: function (scope, element, attrs, ngModel) {
+                    // Generate a random image list/upload id
+                    scope.id = Math.random().toString(36).substring(8);
+                    scope.uploading = false;
+                    scope.server = $rootScope.server;
+                    var clear = scope.$watch("ngModel.$modelValue", function (modelValue) {
+                        scope.internalModel = ngModel.$modelValue;
+                        clear();
+                        scope.$watch("internalModel", function (newValue) {
+                            ngModel.$setViewValue(newValue);
+                        });
+                    });
+                }
+            }
+        }])
+
+        .directive("addonColor", function () {
+
+            $.colorpicker.parts.swatcheslist = function(colorpicker) {
+
+                this.init = function() {
+                    var $container = $(colorpicker.dialog).find('.ui-colorpicker-swatcheslist-container'),
+                        swatchesKey = colorpicker.options.swatches || 'html',
+                        swatches;
+
+                    if (angular.isString(swatchesKey)) {
+                        swatches = $.colorpicker.swatches[swatchesKey];
+                    } else {
+                        swatches = Object.keys(swatchesKey).map(function(name) {
+                            return $.extend(swatchesKey[name], { name: name });
+                        });
+                    }
+
+                    var colorItems = swatches.map(function(swatch) {
+                        var rgb = ['r', 'g', 'b'].map(function(channel) {
+                            return Math.round(swatch[channel] * 255);
+                        });
+
+                        var color = 'rgb(' + rgb.join(',') + ')';
+
+                        return [
+                            '<div class="ui-colorpicker-swatch-item" data-color="' + color + '">',
+                                '<div style="background-color: ' + color + '"></div>',
+                                '<span>' + (swatchesKey === 'pantone' ? 'Pantone ' :  '') + swatch.name + '</span>',
+                            '</div>',
+                        ].join('');
+                    }).join('');
+
+                    $container.append($('<div>').addClass('ui-colorpicker-swatcheslist').append(colorItems));
+
+                    $container.find('.ui-colorpicker-swatch-item').on('click', function(event) {
+                        var color = $(event.currentTarget).data('color');
+                        colorpicker.color = colorpicker._parseColor(color) || new $.colorpicker.Color();
+                        colorpicker._change();
+                    });
+                };
+
+            };
+
+            $.colorpicker.parsers.CMYK = function(color) {
+                var match = /^cmyk\(\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?\s*\)$/.exec(color);
+
+                if (match) {
+                    var color = new $.colorpicker.Color,
+                        channels = match.slice(1).map(function(channel) {
+                            return channel / 100;
+                        });
+
+                    return color.setCMYK.apply(color, channels);
+                }
+            };
+
+            $.colorpicker.writers.CMYK = function(color, colorpicker) {
+                color = color.getCMYK();
+                return [
+                    'cmyk(',
+                        Math.round(color.c * 100) + ',',
+                        Math.round(color.m * 100) + ',',
+                        Math.round(color.y * 100) + ',',
+                        Math.round(color.k * 100),
+                    ')',
+                ].join('');
+            };
+
+            $.colorpicker.writers['CMYK%'] = function(color, colorpicker) {
+                color = color.getCMYK();
+                return [
+                    'cmyk(',
+                        Math.round(color.c * 100) + '%,',
+                        Math.round(color.m * 100) + '%,',
+                        Math.round(color.y * 100) + '%,',
+                        Math.round(color.k * 100) + '%',
+                    ')',
+                ].join('');
+            };
+
+            function link(scope, element, attrs, NgModelCtrl) {
+                // Instanciate the colorpicker
+                var $input = element.find('input'),
+                    $button = element.find('button');
+
+                var colorOptions = $.extend(true, {
+                    position: {
+                        my: 'left top',
+                        at: 'left bottom',
+                        of: $button,
+                    }
+                }, scope.options);
+
+                var colorpicker = $input.colorpicker(colorOptions).data('vanderlee-colorpicker');
+
+                colorpicker.option('layout', $.extend(colorpicker.options.layout, {
+                    swatcheslist: [5, 0, 1, 5],
+                }));
+
+                // Display the colorpicker when the button is clicked
+                $button.on('click', setTimeout.bind(window, colorpicker.open.bind(colorpicker)));
+
+                // Manage color value
+                function formatsToColor(formats, formatNames) {
+                    if (!angular.isDefined(formats)) return;
+                    formatNames = formatNames || scope.formats;
+
+                    function validColorFilter(color) {
+                        return color;
+                    }
+
+                    function parseFormat(format) {
+                        var parsers = $.colorpicker.parsers;
+
+                        return Object.keys(parsers).map(function(parserName) {
+                            return parsers[parserName](format, colorpicker);
+                        }).filter(validColorFilter)[0];
+                    }
+
+                    if (!Array.isArray(formatNames)) {
+                        return parseFormat(formats);
+                    } else {
+                        return Object.keys(formats).map(function(formatKey) {
+                            return parseFormat(formats[formatKey]);
+                        }).filter(validColorFilter)[0];
+                    }
+                }
+
+                function colorToFormats(colorObj, formatNames) {
+                    formatNames = formatNames || scope.formats;
+
+                    if (!Array.isArray(formatNames)) {
+                        var writer = $.colorpicker.writers[String(formatNames).toUpperCase()];
+                        return writer ? writer(colorObj, colorpicker) : null;
+                    } else {
+                        return formatNames.reduce(function(output, formatName) {
+                            var writer = $.colorpicker.writers[String(formatName).toUpperCase()];
+                            output[formatName] = writer ? writer(colorObj, colorpicker) : null;
+                            return output;
+                        }, {});
+                    }
+                }
+
+                function convertFormatsTo(formats, formatsNames) {
+                    var color = formatsToColor(NgModelCtrl.$modelValue);
+                    if (color) return colorToFormats(color, formatsNames);
+                }
+
+                function applyFormats(formats) {
+                    if (!formats) return;
+
+                    setTimeout(function() {
+                        scope.colorFormats = formats;
+
+                        var rgbColor = convertFormatsTo(formats, 'rgb');
+                        scope.colorValue = rgbColor;
+                        colorpicker.setColor(rgbColor);
+                    }, 0);
+                }
+
+                scope.$watch(NgModelCtrl, function() {
+                    applyFormats(NgModelCtrl.$modelValue);
+                });
+
+                $input.on('colorpickerselect', function(event, args) {
+                    var colorObj = colorpicker.color;
+
+                    scope.colorValue = $.colorpicker.writers.RGB(colorObj, colorpicker);
+                    scope.colorFormats = angular.isDefined(scope.formats)
+                                       ? colorToFormats(colorObj)
+                                       : '#' + args.formatted;
+
+                    NgModelCtrl.$setViewValue(scope.colorFormats);
+                    scope.$apply();
+
+                    $button.toggleClass('color-addon-light', colorObj.getHSL().l <= 0.35);
+                });
+            }
+
+            return {
+                template: '\
+                    <input type="hidden"> \
+                    <button type="button" class="btn btn-small color-addon" \
+                            ng-style="{\'background-color\': colorValue}"> \
+                    </button> \
+                ',
+                require : 'ngModel',
+                restrict: 'E',
+                link: link,
+                scope: {
+                    formats: '=',
+                    options: '=',
+                },
+            };
+
+        });
 
 })();

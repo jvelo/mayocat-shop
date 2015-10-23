@@ -132,3 +132,34 @@ productTypes:
               type: string
               name: Made in
       properties: ["stock", "price", "weight"]
+
+addons:
+  dimensions:
+    name: Dimensions
+    text: 'Fill-in here the dimensions of the book: "15cm x 32cm" for example'
+    for: product
+    fields:
+      folded:
+        name: Folded
+        type: string
+        editor: color
+        properties:
+          jquery.colorpicker:
+            parts: ['swatcheslist']
+            swatches:
+              black:
+                r: 0
+                g: 0
+                b: 0
+              grey:
+                r: 0.5
+                g: 0.5
+                b: 0.5
+              white:
+                r: 1
+                g: 1
+                b: 1
+      open:
+        name: Open
+        type: string
+        placeholder: 42cm x 65cm
