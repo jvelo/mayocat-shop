@@ -292,6 +292,59 @@ ul.entity-list li img:first-of-type {
   margin-top: 7px;
 }
 
+/* Color addon */
+
+.color-addon {
+  display: block;
+  border: 1px solid #e6e6e6;
+  width: 50px; height: 24px;
+  padding: 0 6px;
+  text-align: right;
+  background-color: transparent;
+}
+
+.color-addon::after {
+  content: '\25BE';
+}
+
+.color-addon:hover {
+  border-color: #cdcdcd;
+  background-color: transparent;
+}
+
+.color-addon.color-addon-light::after {
+  color: #fff;
+}
+
+.ui-colorpicker {
+    position: absolute;
+    border: 1px solid #dfdfdf;
+    padding: 10px;
+    background: #fff;
+}
+
+.ui-colorpicker-swatcheslist {
+    max-height: 256px;
+    overflow: auto;
+}
+
+.ui-colorpicker-swatch-item {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.ui-colorpicker-swatch-item div {
+    vertical-align: -3px;
+    display: inline-block;
+    width: 30px; height: 16px;
+}
+
+.ui-colorpicker-swatch-item span {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+
 /* Thumbnail editor */
 
 .editImage {
