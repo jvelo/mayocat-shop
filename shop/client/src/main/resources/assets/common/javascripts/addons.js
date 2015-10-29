@@ -759,7 +759,7 @@
                 }
 
                 function convertFormatsTo(formats, formatsNames) {
-                    var color = formatsToColor(NgModelCtrl.$modelValue);
+                    var color = formatsToColor(formats);
                     if (color) return colorToFormats(color, formatsNames);
                 }
 
