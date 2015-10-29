@@ -580,7 +580,7 @@
                 controller: ['$scope', function ($scope) {
                     $scope.getImageUploadUri = function () {
                         return $rootScope.entity ? ($rootScope.entity.uri + "/attachments") : "";
-                    }
+                    };
 
                     $rootScope.$on("upload:progress", function(event, memo) {
                         var index = memo.queue.findIndex(function (upload) {
@@ -695,8 +695,9 @@
                 ].join('');
             };
 
-            function link(scope, element, attrs, NgModelCtrl) {
-                // Instanciate the colorpicker
+            function link(scope, element, attrs) {
+
+                // Instantiate the color-picker
                 var $input = element.find('input'),
                     $button = element.find('button');
 
@@ -704,17 +705,22 @@
                     position: {
                         my: 'left top',
                         at: 'left bottom',
-                        of: $button,
+                        of: $button
                     }
                 }, scope.options);
 
                 var colorpicker = $input.colorpicker(colorOptions).data('vanderlee-colorpicker');
 
                 colorpicker.option('layout', $.extend(colorpicker.options.layout, {
-                    swatcheslist: [5, 0, 1, 5],
+                    swatcheslist: [
+                        5, // 6th column
+                        0, // 1st line
+                        1, // 1-column wide
+                        5  // 5-lines high
+                    ]
                 }));
 
-                // Display the colorpicker when the button is clicked
+                // Display the color-picker when the button is clicked
                 $button.on('click', setTimeout.bind(window, colorpicker.open.bind(colorpicker)));
 
                 // Manage color value
@@ -768,29 +774,40 @@
 
                     setTimeout(function() {
                         scope.colorFormats = formats;
-
                         var rgbColor = convertFormatsTo(formats, 'rgb');
                         scope.colorValue = rgbColor;
+                        scope.notApplyingFormat = false;
                         colorpicker.setColor(rgbColor);
+                        scope.notApplyingFormat = true;
                     }, 0);
                 }
-
-                scope.$watch(NgModelCtrl, function() {
-                    applyFormats(NgModelCtrl.$modelValue);
-                });
 
                 $input.on('colorpickerselect', function(event, args) {
                     var colorObj = colorpicker.color;
 
                     scope.colorValue = $.colorpicker.writers.RGB(colorObj, colorpicker);
                     scope.colorFormats = angular.isDefined(scope.formats)
-                                       ? colorToFormats(colorObj)
-                                       : '#' + args.formatted;
+                        ? colorToFormats(colorObj)
+                        : '#' + args.formatted;
 
-                    NgModelCtrl.$setViewValue(scope.colorFormats);
-                    scope.$apply();
+                    scope.notApplyingFormat && scope.$apply(function(scope){
+                        scope.internalModel = scope.colorFormats;
+                    });
 
                     $button.toggleClass('color-addon-light', colorObj.getHSL().l <= 0.35);
+                });
+
+                scope.$watch("internalModel", function() {
+                    applyFormats(scope.internalModel);
+                    try {
+                        scope.$eval(attrs.ngModel + ' = internalModel');
+                    } catch (error) {
+                        // Swallow "Cannot set property 'undefined' of undefined" error
+                    }
+                });
+
+                scope.$watch(attrs.ngModel, function(val) {
+                    scope.internalModel = val;
                 });
             }
 
@@ -805,9 +822,10 @@
                 restrict: 'E',
                 link: link,
                 scope: {
+                    internalModel: '=ngModel',
                     formats: '=',
-                    options: '=',
-                },
+                    options: '='
+                }
             };
 
         });
