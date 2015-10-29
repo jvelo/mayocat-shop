@@ -17,11 +17,13 @@ var Mayocat = (function (Mayocat) {
             actions: {
                 add: "Add",
                 remove: "Remove",
+                delete: "Delete",
                 cancel: "Cancel",
                 edit: "Edit",
                 close: "Close",
                 save: "Save",
-                reset: "Reset"
+                reset: "Reset",
+                validate: "Validate"
             },
             validation: {
                 required : "Required"
@@ -422,6 +424,24 @@ var Mayocat = (function (Mayocat) {
                 shopLogo: "Shop logo"
             },
 
+            taxes: {
+                menuEntry: "Taxes",
+                title: "Taxes settings",
+                vat: "VAT",
+                defaultRate: "Default rate",
+                addRate: "Add rate",
+                addArea: "Add geographic area",
+                taxArea: "Area",
+                areaName: "Area name",
+                enablePerAreaManagement: "Manage taxes per area",
+                disablePerAreaManagement: "Disable per area management",
+                modifyGeographicArea: "Modify geographic area",
+                deleteGeographicArea: "Delete geographic area",
+                managePerArea: "Manage taxes per geographical area",
+                managePerAreaInfo: "Per-area tax management lets you manage taxes according to the delivery area.",
+                affectAreaToExistingRates: "Affect area to existing rate"
+            },
+
             misc: {
                 general: "General",
                 shop: "Shop information",
@@ -519,7 +539,7 @@ var Mayocat = (function (Mayocat) {
         },
 
         /**
-         * Translation related to "My account"
+         * Translations related to "My account"
          */
         account: {
             title:"My account",
@@ -531,6 +551,21 @@ var Mayocat = (function (Mayocat) {
                 passwordsDoNotMatch: "Passwords do not match",
                 wrongPassword: "Current password not valid",
                 passwordRequirementsNotMet: "Password is not strong enough"
+            }
+        },
+
+        /**
+         * Translations related to customers
+         */
+        customers: {
+            title: "Customers",
+            table: {
+                "title" : "All customers",
+                "empty" : "No customers yet",
+                "fullName" : "Full name",
+                "company" : "Company",
+                "email" : "Email",
+                "actions" : "Actions"
             }
         }
 

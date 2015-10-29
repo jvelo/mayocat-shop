@@ -44,7 +44,9 @@ public class Carrier implements Identifiable
 
     private BigDecimal vatRate = BigDecimal.ZERO;
 
-    private List<CarrierRule> rules = new ArrayList<CarrierRule>();
+    private List<CarrierRule> rules = new ArrayList<>();
+
+    private Integer position;
 
     public UUID getId()
     {
@@ -174,6 +176,14 @@ public class Carrier implements Identifiable
     public void setVatRate(BigDecimal vatRate)
     {
         this.vatRate = vatRate;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
     @Override

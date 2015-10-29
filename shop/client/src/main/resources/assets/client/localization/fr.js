@@ -14,11 +14,13 @@ var Mayocat = (function (Mayocat) {
             actions: {
                 add: "Ajouter",
                 remove: "Retirer",
+                delete: "Supprimer",
                 cancel: "Annuler",
                 edit: "Modifier",
                 close: "Fermer",
                 save: "Sauvegarder",
-                reset: "Réinitialiser"
+                reset: "Réinitialiser",
+                validate: "Valider"
             },
             validation: {
                 required : "Requis"
@@ -377,6 +379,24 @@ var Mayocat = (function (Mayocat) {
                 shopLogo: "Logo de la boutique"
             },
 
+            taxes: {
+                menuEntry: "Taxes",
+                title: "Gestion des taxes",
+                vat: "TVA",
+                defaultRate: "Taux par défaut",
+                addRate: "Ajouter une taux",
+                addArea: "Ajouter une zone géographique",
+                taxArea: "Zone géographique",
+                areaName: "Nom de la zone",
+                enablePerAreaManagement: "Gérer par zone géographique",
+                disablePerAreaManagement: "Ne plus gérer par zone géographique",
+                modifyGeographicArea: "Modifier la zone géographique",
+                deleteGeographicArea: "Supprimer la zone géographique",
+                managePerArea: "Gestion par zone géographique",
+                managePerAreaInfo: "La gestion par zone géographique permet de gérer les taxes en fonction du lieu de livraison.",
+                affectAreaToExistingRates: "Attribuer une zone aux taux existants :"
+            },
+
             misc: {
                 general: "Général",
                 shop: "Boutique",
@@ -482,6 +502,17 @@ var Mayocat = (function (Mayocat) {
                 newPasswordAgain: "Entrez-le à nouveau",
                 passwordsDoNotMatch: "Les mots de passes diffèrent",
                 wrongPassword: "Mot de passe actuel non valide"
+            }
+        },
+
+        customers: {
+            title: "Clients",
+            table: {
+                "title" : "Tous les clients",
+                "empty" : "Aucun client pour le moment",
+                "fullName" : "Nom",
+                "company" : "Société",
+                "email" : "E-mail"
             }
         }
     };

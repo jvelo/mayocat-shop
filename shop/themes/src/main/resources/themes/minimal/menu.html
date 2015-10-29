@@ -1,15 +1,15 @@
 <ul class="menu">
     <li {{#is canonicalUrl '/products/'}}class="active"{{/is}}>
-        <a href="/products/">{{message 'menu.products'}}</a>
+        <a href="{{localizedUrl '/products/'}}">{{message 'menu.products'}}</a>
         {{#any collections}}
             <ul>
                 {{#collections}}
-                    <li {{#is ../canonicalUrl url}}class="active"{{/is}}><a href="{{url}}">{{title}}</a></li>
+                    <li {{#is ../canonicalUrl url}}class="active"{{/is}}><a href="{{localizedUrl url}}">{{title}}</a></li>
                 {{/collections}}
             </ul>
         {{/any}}
     </li>
     {{#pages}}
-        <li {{#is ../canonicalUrl url}}class="active"{{/is}}><a href="{{url}}">{{title}}</a></li>
+        <li {{#is ../canonicalUrl url}}class="active"{{/is}}><a href="{{localizedUrl url}}">{{title}}</a></li>
     {{/pages}}
 </ul>

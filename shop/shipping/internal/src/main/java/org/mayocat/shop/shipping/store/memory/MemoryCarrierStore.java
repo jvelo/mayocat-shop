@@ -8,6 +8,7 @@
 package org.mayocat.shop.shipping.store.memory;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -36,7 +37,7 @@ public class MemoryCarrierStore extends BaseEntityMemoryStore<Carrier> implement
         {
             public boolean apply(@Nullable Carrier input)
             {
-                return input.getStrategy().equals(strategy);
+                return input != null && input.getStrategy().equals(strategy);
             }
         };
     }
@@ -76,5 +77,10 @@ public class MemoryCarrierStore extends BaseEntityMemoryStore<Carrier> implement
         } catch (EntityDoesNotExistException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public void updatePositions(List<Carrier> carriers) {
+        throw new UnsupportedOperationException("Not supported");
     }
 }

@@ -36,7 +36,7 @@
             </div>
 
             <div ng-show="!editedCarrier">
-                <ul>
+                <ul ui-sortable="getCarriersSortableOptions('weight')" ng-model="carriers.weight">
                     <li ng-repeat="carrier in carriers.weight" class="block">
                         <div class="pull-right">
                             <div><a ng-click="editCarrier(carrier);">
@@ -71,7 +71,7 @@
             </div>
 
             <div ng-show="!editedCarrier">
-                <ul>
+                <ul ui-sortable="getCarriersSortableOptions('price')" ng-model="carriers.price">
                     <li ng-repeat="carrier in carriers.price" class="block">
                         <div class="pull-right">
                             <div><a ng-click="editCarrier(carrier);">
@@ -105,7 +105,7 @@
             </div>
 
             <div ng-show="!editedCarrier">
-                <ul>
+                <ul ui-sortable="getCarriersSortableOptions('flat')" ng-model="carriers.flat">
                     <li ng-repeat="carrier in carriers.flat" class="block">
                         <div class="pull-right">
                             <div><a ng-click="editCarrier(carrier);">

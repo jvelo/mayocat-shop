@@ -7,6 +7,7 @@
  */
 package org.mayocat.mail.internal;
 
+import com.google.common.base.Optional;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.mayocat.accounts.model.Tenant;
+import org.mayocat.context.WebContext;
 import org.mayocat.files.FileManager;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailService;
@@ -42,37 +45,31 @@ public class DefaultMailTemplateService implements MailTemplateService
     @Inject
     private TemplateRenderer templateRenderer;
 
+    @Inject
+    private WebContext context;
+
     private static final String DELIMITER =
             "------------------------------------------------------------------------------------------------------------------------";
+    @Override
+    public void sendTemplateMail(MailTemplate mail, Map<String, Object> context) throws MailException {
+        this.sendTemplateMail(mail, context, null);
+    }
 
     @Override
-    public void sendTemplateMail(MailTemplate mail, Map<String, Object> context) throws MailException
-    {
-        Path templatePath = null;
-        if (mail.locale().isPresent()) {
-            templatePath =
-                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
-                            .resolve(mail.locale().get().toLanguageTag())
-                            .resolve(mail.template() + ".twig");
-            if (!templatePath.toFile().isFile()) {
-                templatePath =
-                        fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve("localized")
-                                .resolve(mail.locale().get().getLanguage())
-                                .resolve(mail.template() + ".twig");
-            }
+    public void sendTemplateMail(MailTemplate mail, Map<String, Object> context, Tenant tenant) throws MailException {
+
+        Optional<Path> resolved = resolveTenantTemplate(mail, tenant);
+
+        if (!resolved.isPresent()) {
+            resolved = resolveDefaultTemplate(mail);
         }
 
-        if (templatePath == null || !templatePath.toFile().isFile()) {
-            templatePath =
-                    fileManager.resolvePermanentFilePath(Paths.get("emails")).resolve(mail.template() + ".twig");
-        }
-
-        if (templatePath == null || !templatePath.toFile().isFile()) {
+        if (!resolved.isPresent() || !resolved.get().toFile().isFile()) {
             throw new MailException("Mail template not found");
         }
 
         try {
-            String result = templateRenderer.renderAsString(templatePath, context);
+            String result = templateRenderer.renderAsString(resolved.get(), context);
 
             List<String> parts = Lists.newArrayList(Splitter.on(DELIMITER).trimResults().split(result));
 
@@ -93,4 +90,43 @@ public class DefaultMailTemplateService implements MailTemplateService
             throw new MailException("Failed to render mail template", e);
         }
     }
+
+    private Optional<Path> resolveDefaultTemplate(MailTemplate mail) {
+        return this.resolveTemplate(Paths.get(""), mail);
+    }
+
+    private Optional<Path> resolveTenantTemplate(MailTemplate mail, Tenant tenant) {
+        if (tenant == null) {
+            return Optional.absent();
+        }
+        String tenantSlug = tenant.getSlug();
+
+        return this.resolveTemplate(Paths.get("tenants").resolve(tenantSlug), mail);
+    }
+
+    private Optional<Path> resolveTemplate(Path base, MailTemplate mail) {
+        Path templatePath = null;
+        if (mail.locale().isPresent()) {
+            templatePath =
+                    fileManager.resolvePermanentFilePath(
+                            base.resolve("emails")).resolve("localized")
+                            .resolve(mail.locale().get().toLanguageTag())
+                            .resolve(mail.template() + ".twig");
+            if (!templatePath.toFile().isFile()) {
+                templatePath =
+                        fileManager.resolvePermanentFilePath(
+                                base.resolve("emails")).resolve("localized")
+                                .resolve(mail.locale().get().getLanguage())
+                                .resolve(mail.template() + ".twig");
+            }
+        }
+        if (templatePath == null || !templatePath.toFile().isFile()) {
+            // Failed to find a localized mail, try the default one
+            templatePath =
+                    fileManager.resolvePermanentFilePath(base.resolve("emails"))
+                            .resolve(mail.template() + ".twig");
+        }
+        return templatePath.toFile().isFile() ? Optional.of(templatePath) : Optional.<Path>absent();
+    }
+
 }

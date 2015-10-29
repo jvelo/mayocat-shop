@@ -5,7 +5,7 @@
 </ul>
 
 
-<form method="post" action="/checkout" name="checkout">
+<form method="post" action="{{localizedUrl '/checkout'}}" name="checkout">
 
     <div class="controls">
         <div class="field">
@@ -48,6 +48,20 @@
 
     <div class="controls">
         <div class="field">
+            {{message 'checkout.info.company'}}
+            <span class="mandatory"></span>
+        </div>
+        {{#errors.company}}
+        <div class="error">
+            {{message 'checkout.info.thisFieldIsMandatory'}}
+        </div>
+        {{/errors.company}}
+        <input type="text" name="company" value="{{request.company}}"/>
+    </div>
+
+
+    <div class="controls">
+        <div class="field">
             {{message 'checkout.info.addressStreet'}}
             <span class="mandatory"></span>
         </div>
@@ -69,7 +83,7 @@
                 {{message 'checkout.info.thisFieldIsMandatory'}}
             </div>
         {{/errors.zip}}
-        <input type="text" name="zip" class="small" value="{{request.street}}"/>
+        <input type="text" name="zip" class="small" value="{{request.zip}}"/>
     </div>
 
     <div class="controls">

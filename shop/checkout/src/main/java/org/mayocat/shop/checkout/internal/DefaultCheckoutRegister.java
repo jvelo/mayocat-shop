@@ -273,6 +273,15 @@ public class DefaultCheckoutRegister implements CheckoutRegister
             Optional<String> gatewayId) {
         Map<PaymentData, Object> data = Maps.newHashMap();
 
+        data.put(BasePaymentData.CURRENCY, currency);
+        data.put(BasePaymentData.ORDER_ID, order.getId());
+        data.put(BasePaymentData.ORDER, order);
+        data.put(BasePaymentData.CUSTOMER, actualCustomer);
+        data.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
+        if (billingAddress != null) {
+            data.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
+        }
+
         // Sets a couple of URL that can be useful for payment gateways
         data.put(BasePaymentData.BASE_WEB_URL, urlHelper.getContextWebBaseURL());
         data.put(BasePaymentData.BASE_PLATFORM_URL, urlHelper.getContextPlatformBaseURL());
@@ -285,20 +294,6 @@ public class DefaultCheckoutRegister implements CheckoutRegister
         // Return URL -> return for the customer from the gateway to the website after payment
         data.put(BasePaymentData.RETURN_URL, urlHelper.getContextWebURL(CheckoutResource.PATH + "/"
                 + CheckoutResource.PAYMENT_RETURN_PATH + "/" + order.getId()).toString());
-
-        // IPN ack URL -> end-point called by the payment gateway servers
-        data.put(BasePaymentData.IPN_URL,
-                urlHelper.getContextPlatformURL((webContext.getTenant() == null ? "marketplace/" : "") +
-                        "payment/" + order.getId() + "/acknowledgement/" + gatewayId));
-
-        data.put(BasePaymentData.CURRENCY, currency);
-        data.put(BasePaymentData.ORDER_ID, order.getId());
-        data.put(BasePaymentData.CUSTOMER, actualCustomer);
-        if (billingAddress != null) {
-            data.put(BasePaymentData.BILLING_ADDRESS, billingAddress);
-        }
-        data.put(BasePaymentData.DELIVERY_ADDRESS, deliveryAddress);
-        data.put(BasePaymentData.ORDER, order);
 
         if (gatewayId.isPresent()) {
             data.put(BasePaymentData.GATEWAY, gatewayId.get());
@@ -406,6 +401,11 @@ public class DefaultCheckoutRegister implements CheckoutRegister
                 !existingCustomer.getPhoneNumber().equals(customer.getPhoneNumber())) {
             update = true;
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
+        }
+        if (existingCustomer.getCompany() == null ||
+                !existingCustomer.getCompany().equals(customer.getCompany())) {
+            update = true;
+            existingCustomer.setCompany(customer.getCompany());
         }
         return update;
     }

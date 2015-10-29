@@ -107,9 +107,12 @@ class TenantCustomerAccountWebView implements Resource, WithProductWebObjectBuil
         {
             accountCreationData.put("error",
                     new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA, "Invalid user account"))
-        } else if (!customerWebObject || Strings.isNullOrEmpty(customerWebObject.firstName) ||
-                Strings.isNullOrEmpty(customerWebObject.lastName))
+        } else if (!customerWebObject ||
+                    (Strings.isNullOrEmpty(customerWebObject.company)
+                    && (Strings.isNullOrEmpty(customerWebObject.firstName) || Strings.isNullOrEmpty(customerWebObject.lastName))))
         {
+            // Customer account requires either a company name, or a full name
+
             accountCreationData.put("error", new Error(Response.Status.BAD_REQUEST, StandardError.INSUFFICIENT_DATA,
                     "Invalid customer information"))
         }

@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.mayocat.configuration.ConfigurationService;
+import org.mayocat.context.WebContext;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.store.OrderStore;
 import org.mayocat.shop.payment.BasePaymentData;
@@ -37,6 +38,7 @@ import org.mayocat.shop.payment.store.PaymentOperationStore;
 import org.mayocat.store.EntityAlreadyExistsException;
 import org.mayocat.store.EntityDoesNotExistException;
 import org.mayocat.store.InvalidEntityException;
+import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.observation.ObservationManager;
@@ -63,6 +65,12 @@ public class DefaultPaymentProcessor implements PaymentProcessor
     private ConfigurationService configurationService;
 
     @Inject
+    private WebContext webContext;
+
+    @Inject
+    private URLHelper urlHelper;
+
+    @Inject
     private Logger logger;
 
     @Override
@@ -84,6 +92,13 @@ public class DefaultPaymentProcessor implements PaymentProcessor
 
         if (!gatewayFactories.containsKey(gatewayId)) {
             throw new PaymentException("Gateway id [" + gatewayId+ "] is not supported");
+        }
+
+        if (!data.containsKey(BasePaymentData.IPN_URL)) {
+            // Add IPN URL if not present already in data map
+            data.put(BasePaymentData.IPN_URL,
+                    urlHelper.getContextPlatformURL((webContext.getTenant() == null ? "marketplace/" : "") +
+                            "payment/" + order.getId() + "/acknowledgement/" + gatewayId));
         }
 
         try {

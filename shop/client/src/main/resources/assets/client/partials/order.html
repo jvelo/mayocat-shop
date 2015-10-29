@@ -1,4 +1,4 @@
-<!--
+-<!--
 
     Copyright (c) 2012, Mayocat <hello@mayocat.org>
 
@@ -132,6 +132,9 @@
                     <span class="fn">{{order._embedded.customer.firstName}} {{order._embedded.customer.lastName}}</span>
                 </div>
                 <div>
+                    <span class="org">{{order._embedded.customer.company}}</span>
+                </div>
+                <div>
                     <a class="email"
                        href="mailto:{{order._embedded.customer.email}}">{{order._embedded.customer.email}}</a>
                 </div>
@@ -172,10 +175,10 @@
             </div>
         </div>
 
-        <div class="block" ng-show="order.additionalInformation">
+        <div class="block" ng-show="order.additionalInformation && order.additionalInformation !== ''">
             <h3>{{'order.misc.additionalInformation' | translate}}</h3>
 
-            <div>{{order.additionalInformation}}</div>
+            <div class="additionalInformation" ng-bind="order.additionalInformation"></div>
         </div>
 
         <div class="block" ng-show="order._embedded.operations">

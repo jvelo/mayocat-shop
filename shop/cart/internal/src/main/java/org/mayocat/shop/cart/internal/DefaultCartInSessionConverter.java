@@ -11,6 +11,7 @@ import java.util.Currency;
 
 import javax.inject.Inject;
 
+import org.mayocat.localization.EntityLocalizationService;
 import org.mayocat.shop.cart.CartInSessionConverter;
 import org.mayocat.shop.cart.CartContents;
 import org.mayocat.shop.cart.CartInSession;
@@ -32,6 +33,9 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
     @Inject
     private Logger logger;
 
+    @Inject
+    private EntityLocalizationService entityLocalizationService;
+
     @Override
     public CartInSession convertToCartInSession(CartContents cartContents)
     {
@@ -51,17 +55,18 @@ public class DefaultCartInSessionConverter implements CartInSessionConverter
                 // Poor-man's pattern matching...
                 if (Product.class.isAssignableFrom(clazz)) {
                     Product product = productStore.findById(idAndType.getId());
-                    if (product.getParentId() != null) {
-                        Product parent = productStore.findById(product.getParentId());
-                        if (parent == null) {
-                            // parent set but not found -> ignore
-                            continue;
-                        }
-                        product.setParent(parent);
-                    }
                     if (product != null) {
+                        if (product.getParentId() != null) {
+                            Product parent = productStore.findById(product.getParentId());
+                            if (parent == null) {
+                                // parent set but not found -> ignore
+                                continue;
+                            }
+                            product.setParent(parent);
+                        }
+
                         try {
-                            cartContents.addItem(product, cartInSession.getItems().get(idAndType));
+                            cartContents.addItem(entityLocalizationService.localize(product), cartInSession.getItems().get(idAndType));
                         } catch (Exception e) {
                             // Don't fail when a product can't be added back to the cart
                             logger.warn("Failed to add back product [{}] from session", product.getId());

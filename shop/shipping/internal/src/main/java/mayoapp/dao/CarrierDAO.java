@@ -9,6 +9,7 @@ package mayoapp.dao;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import org.mayocat.shop.shipping.store.jdbi.argument.StrategyArgumentFactory;
 import org.mayocat.shop.shipping.store.jdbi.mapper.CarrierMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterArgumentFactory;
@@ -41,30 +43,33 @@ public interface CarrierDAO extends Transactional<CarrierDAO>
     // returned as a Set so that carrier rules get folded.
     // FIXME. Find a better way to fold joined rows.
     // Follow https://github.com/brianm/jdbi/pull/69
-    public Set<Carrier> findById(@Bind("id") UUID id);
+    Set<Carrier> findById(@Bind("id") UUID id);
 
     @SqlQuery
-    public Set<Carrier> findAll(@Bind("tenantId") UUID tenant);
+    Set<Carrier> findAll(@Bind("tenantId") UUID tenant);
 
     @SqlQuery
-    public Set<Carrier> findAllWithStrategy(@Bind("tenantId") UUID tenant, @Bind("strategy") Strategy strategy);
+    Set<Carrier> findAllWithStrategy(@Bind("tenantId") UUID tenant, @Bind("strategy") Strategy strategy);
 
     @SqlUpdate
-    public abstract void create(@BindCarrier("carrier") Carrier carrier);
+    void create(@BindCarrier("carrier") Carrier carrier);
 
     @SqlUpdate
-    public abstract void delete(@BindCarrier("carrier") Carrier carrier);
+    void delete(@BindCarrier("carrier") Carrier carrier);
 
     @SqlUpdate
-    public abstract void update(@BindCarrier("carrier") Carrier carrier);
+    void update(@BindCarrier("carrier") Carrier carrier);
 
     @SqlUpdate
-    public abstract int updateRule(@Bind("carrierId") UUID carrierId, @BindBean("rule") CarrierRule rule);
+    int updateRule(@Bind("carrierId") UUID carrierId, @BindBean("rule") CarrierRule rule);
 
     @SqlUpdate
-    public abstract void addRule(@Bind("carrierId") UUID carrierId, @BindBean("rule") CarrierRule rule);
+    void addRule(@Bind("carrierId") UUID carrierId, @BindBean("rule") CarrierRule rule);
 
     @SqlUpdate
-    public abstract void removeRules(@Bind("carrierId") UUID carrierId,
+    void removeRules(@Bind("carrierId") UUID carrierId,
             @BindIn("excludedUpToValues") Collection<BigDecimal> excludedUpToValues);
+
+    @SqlBatch
+    void updatePositions(@BindCarrier("carrier") List<Carrier> carrier);
 }

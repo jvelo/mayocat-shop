@@ -28,6 +28,7 @@ import org.mayocat.mail.MailService;
 import org.mayocat.rest.Resource;
 import org.mayocat.rest.annotation.ExistingTenant;
 import org.mayocat.shop.front.context.ContextConstants;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 
 import com.google.common.base.Strings;
@@ -52,11 +53,16 @@ public class ContactResource implements Resource, ContextConstants
 
     private static final String DEFAULT_SUBJECT = "New contact message";
 
+    public static final String PARAMETER_HONEYPOT = "sugarBush";
+
     @Inject
     private MailService mailService;
 
     @Inject
     private WebContext context;
+
+    @Inject
+    private Logger logger;
 
     @POST
     public Response postContactMessage(MultivaluedMap<String, String> form)
@@ -72,7 +78,7 @@ public class ContactResource implements Resource, ContextConstants
         String text = "";
 
         for (String name : form.keySet()) {
-            if (!Arrays.asList(PARAMETER_REDIRECT_TO, PARAMETER_SUBJECT).contains(name)) {
+            if (!Arrays.asList(PARAMETER_REDIRECT_TO, PARAMETER_SUBJECT, PARAMETER_HONEYPOT).contains(name)) {
                 text += (name.toUpperCase() + ": " + form.getFirst(name) + "\n");
             }
         }
@@ -82,7 +88,13 @@ public class ContactResource implements Resource, ContextConstants
         try {
             URI returnTo = new URI(redirectTo);
             try {
-                mailService.sendEmail(mail);
+                if (Strings.isNullOrEmpty(form.getFirst(PARAMETER_HONEYPOT))) {
+                    logger.debug("Sending contact form [{}]", subject);
+                    mailService.sendEmail(mail);
+
+                    // Note: If spam, don't act anything different but not sending the mail.
+                    // i.e. return success as well.
+                }
                 context.flash("postContactMessage", "Success");
                 return Response.seeOther(returnTo).build();
             } catch (MailException e) {

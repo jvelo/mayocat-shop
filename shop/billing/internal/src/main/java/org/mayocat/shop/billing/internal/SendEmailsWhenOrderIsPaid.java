@@ -164,9 +164,9 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
             MailTemplate customerNotificationEmail = getCustomerNotificationEmail(tenant,
                     customerEmail, customerLocale);
-            sendNotificationMail(customerNotificationEmail, emailContext);
+            sendNotificationMail(customerNotificationEmail, emailContext, tenant);
             MailTemplate tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
-            sendNotificationMail(tenantNotificationEmail, emailContext);
+            sendNotificationMail(tenantNotificationEmail, emailContext, tenant);
         } catch (Exception e) {
             logger.error("Failed to send order notification email when sending email", e);
         }
@@ -228,10 +228,10 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @param template the mail template
      * @param context the mail JSON context
      */
-    private void sendNotificationMail(MailTemplate template, Map<String, Object> context)
+    private void sendNotificationMail(MailTemplate template, Map<String, Object> context, Tenant tenant)
     {
         try {
-            mailTemplateService.sendTemplateMail(template, context);
+            mailTemplateService.sendTemplateMail(template, context, tenant);
         } catch (MailException e) {
             logger.error("Failed to send order paid email", ExceptionUtils.getRootCause(e));
         }

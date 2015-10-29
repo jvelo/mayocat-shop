@@ -124,7 +124,15 @@ var Mayocat = (function (global, Mayocat)
     });
 
     Handlebars.registerHelper('message', function(key, options){
-        return new Handlebars.SafeString(themeLocalizationService.getMessage(key, options.hash));
+        var result = themeLocalizationService.getMessage(key, options.hash);
+        return new Handlebars.SafeString(result ? result : key);
+    });
+
+    Handlebars.registerHelper('localizedUrl', function(url){
+        if (webContext.isAlternativeLocale()) {
+            return '/' + webContext.getLocale().toLanguageTag() + url;
+        }
+        return url;
     });
 
     return Mayocat;

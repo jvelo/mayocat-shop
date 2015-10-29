@@ -59,7 +59,7 @@
 
                 <div class="brand">
                     {{#site}}
-                        <a href="/">
+                        <a href={{localizedUrl "/"}}>
                             {{#logo}}
                                 <span data-picture data-alt="{{description}}" data-title="{{title}}">
                             <span data-src="{{theme_mobile-home-logo_url}}"></span>
@@ -89,7 +89,7 @@
                 <div class="cart mobile">
                     {{#cart}}
                         {{#gt numberOfItems 0}}
-                            <a href="/cart">
+                            <a href={{localizedUrl "/cart"}}>
                                 <span class="mobile basket">
                                     <img src="{{resource 'images/basket.png'}}"/>
                                 </span>
@@ -120,7 +120,7 @@
                 <div class="large-layout cart-info">
                     {{#cart}}
                         {{#gt numberOfItems 0}}
-                            <a href="/cart">
+                            <a href={{localizedUrl "/cart"}}>
                                 {{message 'header.cart' PRODUCTS=numberOfItems
                                                         PRICE=itemsTotal.amountCompact
                                                         CURRENCY=itemsTotal.currency.localSymbol}}

@@ -14,7 +14,7 @@
         {{#withFirst products.list}}
         <div class="product featured">
 
-            <a rel='product' href="{{url}}">
+            <a rel='product' href="{{localizedUrl url}}">
                 {{#images.featured}}
                     <span data-picture data-alt="{{description}}" data-title="{{title}}">
             <span data-src="{{theme_mobile-home-featured_url}}"></span>
@@ -30,7 +30,7 @@
                 {{/images.featured}}
             </a>
 
-            <h2 class="fn"><a rel='product' href="{{url}}">{{title}}</a></h2>
+            <h2 class="fn"><a rel='product' href="{{localizedUrl url}}">{{title}}</a></h2>
 
             <div class="price">{{#unitPrice}}{{amountCompact}}{{currency.localSymbol}}{{/unitPrice}}</div>
 
