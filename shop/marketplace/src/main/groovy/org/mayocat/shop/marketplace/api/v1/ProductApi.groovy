@@ -112,7 +112,8 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
     @Authorized
     def getProducts(@QueryParam("number") @DefaultValue("50") Integer number,
             @QueryParam("offset") @DefaultValue("0") Integer offset,
-            @QueryParam("titleMatches") @DefaultValue("") String titleMatches)
+            @QueryParam("titleMatches") @DefaultValue("") String titleMatches,
+            @QueryParam("sortBy") @DefaultValue("") String sort)
     {
         List<ProductApiObject> productList = [];
         List<Product> products;
@@ -122,8 +123,12 @@ class ProductApi implements Resource, AttachmentApiDelegate, ImageGalleryApiDele
             products = productStore.get().findAllWithTitleLike(titleMatches, number, offset)
             totalItems = productStore.get().countAllWithTitleLike(titleMatches);
         } else {
-            products = productStore.get().findAllNotVariants(number, offset)
             totalItems = productStore.get().countAllNotVariants()
+            if (!Strings.isNullOrEmpty(sort) && sort.equals("tenant")) {
+                products = productStore.get().findAllNotVariants(number, offset, MarketplaceProductStore.Order.TENANT_NAME_THEN_PRODUCT_TITLE)
+            } else {
+                products = productStore.get().findAllNotVariants(number, offset)
+            }
         }
 
         List<EntityData<Product>> productsData = dataLoader.load(products, AttachmentLoadingOptions.FEATURED_IMAGE_ONLY)
