@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import mayoapp.dao.InvoiceNumberDAO;
+import mayoapp.dao.InvoiceNumberDao;
 import org.joda.time.DateTime;
 import org.mayocat.accounts.model.Tenant;
 import org.mayocat.accounts.store.TenantStore;
@@ -35,6 +35,7 @@ import org.mayocat.shop.customer.web.object.OrderItemWebObject;
 import org.mayocat.shop.customer.web.object.OrderWebObject;
 import org.mayocat.shop.invoicing.InvoicingException;
 import org.mayocat.shop.invoicing.InvoicingService;
+import org.mayocat.shop.invoicing.InvoicingSettings;
 import org.mayocat.shop.invoicing.model.InvoiceNumber;
 import org.mayocat.store.rdbms.dbi.DBIProvider;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class DefaultInvoicingService implements InvoicingService, Initializable
     @Inject
     private Provider<TenantStore> tenantStore;
 
-    private InvoiceNumberDAO dao;
+    private InvoiceNumberDao dao;
 
     @Override
     public void generatePdfInvoice(Order order, OutputStream outputStream) throws InvoicingException {
@@ -111,13 +112,18 @@ public class DefaultInvoicingService implements InvoicingService, Initializable
         return generated;
     }
 
+    @Override
+    public boolean isEnabledInContext() {
+        InvoicingSettings settings = configurationService.getSettings(InvoicingSettings.class);
+        return settings.getEnabled().getValue();
+    }
+
     protected Map<String, Object> prepareInvoiceContext(final Order order) {
         Map<String, Object> result = Maps.newHashMap();
 
-        // TODO: use stored locale instead of context locale
-
         Tenant tenant = tenantStore.get().findById(order.getTenantId());
         GeneralSettings settings = configurationService.getSettings(GeneralSettings.class, tenant);
+        // Note: we are always using the store default locale as invoice locale
         final Locale locale = settings.getLocales().getMainLocale().getValue();
 
         OrderWebObject orderWebObject = new OrderWebObject().withOrder(order, locale);
@@ -158,6 +164,6 @@ public class DefaultInvoicingService implements InvoicingService, Initializable
 
     @Override
     public void initialize() throws InitializationException {
-        this.dao = dbi.get().onDemand(InvoiceNumberDAO.class);
+        this.dao = dbi.get().onDemand(InvoiceNumberDao.class);
     }
 }

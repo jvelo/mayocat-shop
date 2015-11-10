@@ -397,6 +397,12 @@ var Mayocat = (function (Mayocat) {
                 affectAreaToExistingRates: "Attribuer une zone aux taux existants :"
             },
 
+            invoicing: {
+                menuEntry: "Factures",
+                title: "Factures",
+                enableInvoicing: "Générer une facture lorsqu'un achat est effectué"
+            },
+
             misc: {
                 general: "Général",
                 shop: "Boutique",

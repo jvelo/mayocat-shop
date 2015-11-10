@@ -8,6 +8,7 @@
 package org.mayocat.mail.internal;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
@@ -166,6 +167,11 @@ public class JavaMailMailService implements MailService
 
                 message.setContent(multipart);
             }
+
+            logger.debug("Sending email from [{}] to [{}] with subject [{}]",
+                    Joiner.on(", ").join(message.getFrom()),
+                    Joiner.on(", ").join(message.getAllRecipients()),
+                    message.getSubject());
 
             // Boom goes the dynamite
             Transport.send(message);

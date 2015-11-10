@@ -36,4 +36,10 @@ public interface InvoicingService
      * @throws InvoicingException
      */
     InvoiceNumber getOrCreateInvoiceNumber(Order order) throws InvoicingException;
+
+    /**
+     * @return true if invoicing is enabled in current context (i.e. for the tenant the context
+     * is executing under or for the global context), false otherwise.
+     */
+    boolean isEnabledInContext();
 }

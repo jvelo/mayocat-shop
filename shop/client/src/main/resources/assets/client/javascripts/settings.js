@@ -30,11 +30,11 @@ angular.module('settings', ['ngResource'])
 
             $scope.isVisible = function (path) {
                 return configurationService.isVisible($scope.settings, path);
-            }
+            };
 
             $scope.isConfigurable = function (path) {
                 return configurationService.isConfigurable($scope.settings, path);
-            }
+            };
 
             $scope.isDefaultValue = function (path) {
                 return configurationService.isDefaultValue($scope.settings, path);
@@ -134,14 +134,14 @@ angular.module('settings', ['ngResource'])
                 addonsService.initializeEntityAddons("tenant", $scope.tenant).then(function (addons) {
                     $scope.addons = addons;
                 });
-            }
+            };
 
             $scope.updateTenant = function () {
                 $scope.isSaving = true;
                 $scope.TenantResource.save({}, $scope.tenant, function () {
                     $scope.isSaving = false;
                 });
-            }
+            };
 
             // Initialization ------------------------------------------------------------------------------------------
 
@@ -176,11 +176,11 @@ angular.module('settings', ['ngResource'])
 
             $scope.fromValue = function (rules, index) {
                 return rules[index] ? (parseFloat(rules[index].upToValue) || "") : 0;
-            }
+            };
 
             $scope.isValidFloat = function (numberAsString) {
                 return typeof numberAsString == 'undefined' || !isNaN(numberAsString);
-            }
+            };
 
             $scope.validShippingDurationRange = function (carrier) {
                 if (typeof carrier === "undefined" ||
@@ -189,16 +189,16 @@ angular.module('settings', ['ngResource'])
                 }
                 return !isNaN(carrier.minimumDays) && !isNaN(carrier.maximumDays)
                     && parseFloat(carrier.minimumDays) <= parseFloat(carrier.maximumDays);
-            }
+            };
 
             $scope.stopEditingCarrier = function () {
                 delete $scope.editedCarrier;
-            }
+            };
 
             $scope.editCarrier = function (carrier) {
                 $scope.editedCarrier = carrier;
                 $scope.addFirstRule(carrier);
-            }
+            };
 
             $scope.newCarrierForm = function (strategy) {
                 $scope.editedCarrier = {
@@ -208,7 +208,7 @@ angular.module('settings', ['ngResource'])
                 };
 
                 $scope.addFirstRule($scope.editedCarrier);
-            }
+            };
 
             $scope.addFirstRule = function (carrier) {
                 if (carrier.strategy == 'weight' || carrier.strategy == 'price') {
@@ -252,7 +252,7 @@ angular.module('settings', ['ngResource'])
                     .error(function () {
                         $modal.open({ templateUrl: 'serverError.html' });
                     });
-            }
+            };
 
             $scope.loadCarriers = function() {
                 $scope.carriers = {};
@@ -275,7 +275,7 @@ angular.module('settings', ['ngResource'])
                             $modal.open({ templateUrl: 'serverError.html' });
                         });
                 });
-            }
+            };
 
             $scope.getTranslationProperties = function () {
                 var editedCarrier = $scope.editedCarrier || {};
@@ -364,11 +364,11 @@ angular.module('settings', ['ngResource'])
 
             $scope.isVisible = function (path) {
                 return configurationService.isVisible($scope.settings, path);
-            }
+            };
 
             $scope.isConfigurable = function (path) {
                 return configurationService.isConfigurable($scope.settings, path);
-            }
+            };
 
             $scope.isDefaultValue = function (path) {
                 return configurationService.isDefaultValue($scope.settings, path);
@@ -497,12 +497,49 @@ angular.module('settings', ['ngResource'])
 
     //==================================================================================================================
     //
+    // Controller for the invoicing settings UI
+    // See partials/settingsInvoicing.html
+    //
+    .controller('SettingsInvoicingController', ['$scope', 'configurationService',
+        function ($scope, configurationService) {
+
+            $scope.updateSettings = function () {
+                $scope.isSaving = true;
+                configurationService.put($scope.invoicing, function () {
+                    $scope.isSaving = false;
+                });
+            };
+
+            // Generic configuration helpers ---------------------------------------------------------------------------
+
+            $scope.isVisible = function (path) {
+                return configurationService.isVisible($scope.settings, path);
+            };
+
+            $scope.isConfigurable = function (path) {
+                return configurationService.isConfigurable($scope.settings, path);
+            };
+
+            $scope.isDefaultValue = function (path) {
+                return configurationService.isDefaultValue($scope.settings, path);
+            };
+
+            // Initialization ------------------------------------------------------------------------------------------
+
+            configurationService.getSettings(function (settings) {
+                $scope.settings = settings;
+                console.log($scope.settings);
+            });
+        }])
+
+    //==================================================================================================================
+    //
     // Controller for the general settings UI
     // See partials/settingsGeneral.html
     //
-    .controller('SettingsWebhooksController', ['$scope', '$rootScope', 'configurationService', 'timeService', 'localesService',
+    .controller('SettingsWebhooksController', ['$scope', '$rootScope', 'configurationService',
 
-        function ($scope, $rootScope, configurationService, timeService, localesService) {
+        function ($scope, $rootScope, configurationService) {
 
             configurationService.getSettings("webhooks", function (webhooksConfiguration) {
                 console.log("Configuration : ", webhooksConfiguration);
@@ -516,7 +553,7 @@ angular.module('settings', ['ngResource'])
                     url: "",
                     secret: undefined
                 });
-            }
+            };
 
             $scope.updateHooks = function () {
                 $scope.isSaving = true;
@@ -545,6 +582,7 @@ angular.module('settings', ['ngResource'])
             $scope.isTenant = false;
             $scope.isCatalog = false;
             $scope.isShipping = false;
+            $scope.isInvoicing = false;
 
             $scope.$watch('location.path()', function (path) {
 
@@ -564,6 +602,9 @@ angular.module('settings', ['ngResource'])
                 }
                 if (path === "/settings/shipping") {
                     $scope.isShipping = true;
+                }
+                if (path === "/settings/invoicing") {
+                    $scope.isInvoicing = true;
                 }
             });
 

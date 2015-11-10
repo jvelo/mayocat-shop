@@ -114,6 +114,11 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
             controller: 'SettingsShippingController',
             titleTranslation: 'settings'
         })
+        .when('/settings/invoicing', {
+            templateUrl: 'partials/settingsInvoicing.html',
+            controller: 'SettingsInvoicingController',
+            titleTranslation: 'settings'
+        })
         .when('/settings/taxes', {
             templateUrl: 'partials/settingsTaxes.html',
             controller: 'SettingsTaxesController',

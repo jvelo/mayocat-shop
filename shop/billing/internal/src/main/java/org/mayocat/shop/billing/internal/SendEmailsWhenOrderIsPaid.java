@@ -49,6 +49,7 @@ import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
+import org.mayocat.shop.invoicing.InvoicingException;
 import org.mayocat.shop.invoicing.InvoicingService;
 import org.mayocat.shop.invoicing.model.InvoiceNumber;
 import org.mayocat.url.URLHelper;
@@ -130,13 +131,14 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         final Locale customerLocale = webContext.getLocale();
         final Tenant tenant = webContext.getTenant();
         final Locale tenantLocale = settings.getLocales().getMainLocale().getValue();
+        final boolean withInvoice = invoicingService.isEnabledInContext();
 
         Executors.newSingleThreadExecutor().submit(new Callable<Void>()
         {
             @Override
             public Void call() throws Exception
             {
-                sendNotificationMails(order, tenant, customerLocale, tenantLocale);
+                sendNotificationMails(order, tenant, customerLocale, tenantLocale, withInvoice);
                 return null;
             }
         });
@@ -151,8 +153,9 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @param tenant the tenant concerned by the notifications mails
      * @param customerLocale the locale the customer browsed the site in when checking out
      * @param tenantLocale the main locale of the tenant
+     * @param withInvoice whether to generate and include a PDF invoice with the notification mail
      */
-    private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale)
+    private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale, boolean withInvoice)
     {
         try {
             Customer customer = order.getCustomer();
@@ -179,18 +182,24 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
                     customerEmail, customerLocale);
             MailTemplate tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
 
-            // TODO: there should be a way to not load the whole PDF in memory...
-            ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-            InvoiceNumber invoiceNumber = invoicingService.getOrCreateInvoiceNumber(order);
-            invoicingService.generatePdfInvoice(order, pdfStream);
+            // Generate invoice number and add add invoice to email if invoicing is enabled
+            if (withInvoice) {
+                try {
+                    // TODO: there should be a way to not load the whole PDF in memory...
+                    ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+                    InvoiceNumber invoiceNumber = invoicingService.getOrCreateInvoiceNumber(order);
+                    invoicingService.generatePdfInvoice(order, pdfStream);
 
-            MailAttachment attachment = new MailAttachment(
-                    new ByteArrayDataSource(pdfStream.toByteArray(), "application/pdf"),
-                    "invoice-" + invoiceNumber.getNumber() + ".pdf"
-            );
+                    MailAttachment attachment = new MailAttachment(
+                            new ByteArrayDataSource(pdfStream.toByteArray(), "application/pdf"),
+                            "invoice-" + invoiceNumber.getNumber() + ".pdf");
 
-            customerNotificationEmail.addAttachment(attachment);
-            tenantNotificationEmail.addAttachment(attachment);
+                    customerNotificationEmail.addAttachment(attachment);
+                    tenantNotificationEmail.addAttachment(attachment);
+                } catch (InvoicingException e) {
+                    logger.error("Failed to to generate invoice for email", e);
+                }
+            }
 
             sendNotificationMail(customerNotificationEmail, emailContext, tenant);
             sendNotificationMail(tenantNotificationEmail, emailContext, tenant);
