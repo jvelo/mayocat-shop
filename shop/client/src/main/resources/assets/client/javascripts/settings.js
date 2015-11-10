@@ -528,7 +528,6 @@ angular.module('settings', ['ngResource'])
 
             configurationService.getSettings(function (settings) {
                 $scope.settings = settings;
-                console.log($scope.settings);
             });
         }])
 
@@ -542,8 +541,6 @@ angular.module('settings', ['ngResource'])
         function ($scope, $rootScope, configurationService) {
 
             configurationService.getSettings("webhooks", function (webhooksConfiguration) {
-                console.log("Configuration : ", webhooksConfiguration);
-
                 $scope.hooks = webhooksConfiguration.hooks.value;
             });
 
