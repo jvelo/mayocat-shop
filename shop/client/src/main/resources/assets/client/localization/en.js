@@ -443,8 +443,8 @@ var Mayocat = (function (Mayocat) {
             },
 
             invoicing: {
-                menuEntry: "Factures",
-                title: "Factures",
+                menuEntry: "Invoices",
+                title: "Invoices",
                 enableInvoicing: "Generate an invoice when a purchase is made"
             },
 
