@@ -51,11 +51,11 @@
 
             // See below in the function exports
             var registerEditor = function (key, editor) {
-                if (typeof editors[key] === "undefined") {
+                if (editors[key] === undefined) {
                     editors[key] = editor;
                 }
                 else {
-                    console && console.warn("Editor [" + key + "] is already registered.");
+                    console.warn("Editor [" + key + "] is already registered.");
                 }
             }
 
@@ -85,12 +85,23 @@
                     return "<div>" + string + "</div>"
                 }
             });
+            registerEditor("radioBox", {
+                tagName:"addon-radio",
+                type:"string",
+                extraAttributes:"options='addon.properties[\"list.values\"]'"
+            });
+            registerEditor("checkBox", {
+                tagName:"addon-checkbox",
+                type:"json",
+                extraAttributes:"options='addon.properties[\"list.values\"]'"
+            });
             registerEditor("image", {
                 tagName:"addon-image",
                 type:"image"
             });
             registerEditor("color", {
                 tagName:"addon-color",
+                type:"json",
                 extraAttributes:'formats="addon.properties.formats" options="addon.properties[\'jquery.colorpicker\']"'
             });
 
@@ -116,7 +127,7 @@
                         return type;
                     }
                     if (typeof editors[editor] !== "undefined") {
-                        return editors[editor].type();
+                        return editors[editor].type;
                     }
                     return "string";
                 },
@@ -318,6 +329,7 @@
                                         definition: definition
                                     });
                                 });
+
                             });
                         });
 
@@ -774,11 +786,13 @@
 
                     setTimeout(function() {
                         scope.colorFormats = formats;
+
                         var rgbColor = convertFormatsTo(formats, 'rgb');
                         scope.colorValue = rgbColor;
-                        scope.notApplyingFormat = false;
+
+                        scope.applyingFormat = true;
                         colorpicker.setColor(rgbColor);
-                        scope.notApplyingFormat = true;
+                        scope.applyingFormat = false;
                     }, 0);
                 }
 
@@ -790,24 +804,18 @@
                         ? colorToFormats(colorObj)
                         : '#' + args.formatted;
 
-                    scope.notApplyingFormat && scope.$apply(function(scope){
-                        scope.internalModel = scope.colorFormats;
-                    });
+                    if (!scope.applyingFormat) {
+                        scope.$apply(function() {
+                            applyFormats(scope.colorFormats);
+                            scope.$parent.$eval(attrs.ngModel + '=' + JSON.stringify(scope.colorFormats));
+                        });
+                    }
 
                     $button.toggleClass('color-addon-light', colorObj.getHSL().l <= 0.35);
                 });
 
-                scope.$watch("internalModel", function() {
-                    applyFormats(scope.internalModel);
-                    try {
-                        scope.$eval(attrs.ngModel + ' = internalModel');
-                    } catch (error) {
-                        // Swallow "Cannot set property 'undefined' of undefined" error
-                    }
-                });
-
-                scope.$watch(attrs.ngModel, function(val) {
-                    scope.internalModel = val;
+                scope.$parent.$watch(attrs.ngModel, function(formats) {
+                    applyFormats(formats);
                 });
             }
 
@@ -822,9 +830,80 @@
                 restrict: 'E',
                 link: link,
                 scope: {
-                    internalModel: '=ngModel',
                     formats: '=',
-                    options: '='
+                    options: '=',
+                }
+            };
+
+        })
+
+        .directive('addonRadio', function() {
+
+            function link(scope, element, attrs) {
+                scope.radio = {};
+
+                scope.$watch('radio.value', function(value) {
+                    if (value) scope.$parent.$eval(attrs.ngModel + '=' + JSON.stringify(value));
+                });
+
+                scope.$parent.$watch(attrs.ngModel, function(value) {
+                    scope.radio.value = value;
+                });
+            }
+
+            return {
+                template: '\
+                    <label ng-repeat="option in options" class="radio"> \
+                        <input type="radio" ng-model="radio.value" ng-value="option.key"> \
+                        {{ option.name }} \
+                    </label> \
+                ',
+                require : 'ngModel',
+                restrict: 'E',
+                link: link,
+                scope: {
+                    options: '=',
+                }
+            };
+
+        })
+
+        .directive('addonCheckbox', function() {
+
+            function link(scope, element, attrs) {
+                scope.checkboxes = {};
+
+                scope.updateModel = function() {
+                    var list = Object.keys(scope.checkboxes).reduce(function(list, key) {
+                        if (scope.checkboxes[key]) list.push(key);
+                        return list;
+                    }, []);
+
+                    scope.$parent.$eval(attrs.ngModel + '=' + JSON.stringify(list));
+                };
+
+                scope.$parent.$watch(attrs.ngModel, function(values) {
+                    if (Array.isArray(values)) {
+                        scope.checkboxes = values.reduce(function(checkboxes, value) {
+                            checkboxes[value] = true;
+                            return checkboxes;
+                        }, {});
+                    }
+                });
+            }
+
+            return {
+                template: '\
+                    <label ng-repeat="option in options" class="checkbox"> \
+                        <input type="checkbox" ng-model="checkboxes[option.key]" ng-change="updateModel()"> \
+                        {{ option.name }} \
+                    </label> \
+                ',
+                require : 'ngModel',
+                restrict: 'E',
+                link: link,
+                scope: {
+                    options: '=',
                 }
             };
 
