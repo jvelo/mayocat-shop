@@ -102,7 +102,7 @@
             registerEditor("color", {
                 tagName:"addon-color",
                 type:"json",
-                extraAttributes:'formats="addon.properties.formats" options="addon.properties[\'jquery.colorpicker\']"'
+                extraAttributes:'formats="addon.properties.formats" color-prefix="addon.properties.colorPrefix" options="addon.properties[\'jquery.colorpicker\']"'
             });
 
             return {
@@ -654,7 +654,7 @@
                         return [
                             '<div class="ui-colorpicker-swatch-item" data-color="' + color + '">',
                                 '<div style="background-color: ' + color + '"></div>',
-                                '<span>' + (swatchesKey === 'pantone' ? 'Pantone ' :  '') + swatch.name + '</span>',
+                                '<span>' + ($.colorpicker.mayoColorPrefix || '') + swatch.name + '</span>',
                             '</div>',
                         ].join('');
                     }).join('');
@@ -707,7 +707,33 @@
                 ].join('');
             };
 
+            // Return the exact name with a slight tolerance for color differences
+            $.colorpicker.writers.EXACT = function(color, colorpicker) {
+                var swatchesKey = colorpicker.options.swatches || 'html',
+                    swatches;
+
+                if (angular.isString(swatchesKey)) {
+                    swatches = $.colorpicker.swatches[swatchesKey];
+                } else {
+                    swatches = Object.keys(swatchesKey).map(function(name) {
+                        return $.extend(swatchesKey[name], { name: name });
+                    });
+                }
+
+                var exactColor = swatches.filter(function(swatch) {
+                    var colorRGB = color.getRGB();
+
+                    return Math.round(colorRGB.r * 255) === Math.round(swatch.r * 255)
+                        && Math.round(colorRGB.g * 255) === Math.round(swatch.g * 255)
+                        && Math.round(colorRGB.b * 255) === Math.round(swatch.b * 255);
+                })[0];
+
+                return exactColor ? exactColor.name : false;
+            };
+
             function link(scope, element, attrs) {
+
+                $.colorpicker.mayoColorPrefix = scope.colorPrefix;
 
                 // Instantiate the color-picker
                 var $input = element.find('input'),
@@ -769,8 +795,7 @@
                         return writer ? writer(colorObj, colorpicker) : null;
                     } else {
                         return formatNames.reduce(function(output, formatName) {
-                            var writer = $.colorpicker.writers[String(formatName).toUpperCase()];
-                            output[formatName] = writer ? writer(colorObj, colorpicker) : null;
+                            output[formatName] = colorToFormats(colorObj, formatName);
                             return output;
                         }, {});
                     }
@@ -781,49 +806,56 @@
                     if (color) return colorToFormats(color, formatsNames);
                 }
 
-                function applyFormats(formats) {
-                    if (!formats) return;
-
-                    setTimeout(function() {
-                        scope.colorFormats = formats;
-
-                        var rgbColor = convertFormatsTo(formats, 'rgb');
-                        scope.colorValue = rgbColor;
-
-                        scope.applyingFormat = true;
-                        colorpicker.setColor(rgbColor);
-                        scope.applyingFormat = false;
-                    }, 0);
-                }
-
                 $input.on('colorpickerselect', function(event, args) {
-                    var colorObj = colorpicker.color;
+                    var colorObj = colorpicker.color,
+                        colorChannels = colorObj.getRGB();
 
-                    scope.colorValue = $.colorpicker.writers.RGB(colorObj, colorpicker);
-                    scope.colorFormats = angular.isDefined(scope.formats)
+                    // Convert those decimal values to 8bits values
+                    colorChannels = Object.keys(colorChannels).reduce(function(channels, channelKey) {
+                        channels[channelKey] = Math.round(colorChannels[channelKey] * 255);
+                        return channels;
+                    }, {});
+
+                    // Construct the color object used by the template
+                    scope.color = {
+                        name: colorToFormats(colorObj, 'exact'),
+                        rgb: $.extend(colorChannels, {
+                            cssValue: colorToFormats(colorObj, 'rgb')
+                        }),
+                    };
+
+                    // Construct the model returned to parent scope
+                    var formats = angular.isDefined(scope.formats)
                         ? colorToFormats(colorObj)
                         : '#' + args.formatted;
 
-                    if (!scope.applyingFormat) {
-                        scope.$apply(function() {
-                            applyFormats(scope.colorFormats);
-                            scope.$parent.$eval(attrs.ngModel + '=' + JSON.stringify(scope.colorFormats));
-                        });
-                    }
+                    // Use a timeout to avoid errors related to the $digest cycle
+                    setTimeout(function() {
+                        // Return the model to the parent scope
+                        scope.$parent.$eval(attrs.ngModel + '=' + JSON.stringify(formats));
 
-                    $button.toggleClass('color-addon-light', colorObj.getHSL().l <= 0.35);
+                        // Update the template
+                        scope.$digest();
+                    }, 0);
                 });
 
+                // Apply the color inherited from the parent scope
                 scope.$parent.$watch(attrs.ngModel, function(formats) {
-                    applyFormats(formats);
+                    colorpicker.setColor(convertFormatsTo(formats, 'rgb'));
                 });
             }
 
             return {
                 template: '\
                     <input type="hidden"> \
-                    <button type="button" class="btn btn-small color-addon" \
-                            ng-style="{\'background-color\': colorValue}"> \
+                    <button type="button" class="btn color-addon"> \
+                        <span class="color-addon-preview" \
+                              ng-style="{\'background-color\': color.rgb.cssValue}"> \
+                        </span> \
+                        <span class="color-addon-description"> \
+                            <strong ng-if="color.name">{{ colorPrefix }}{{ color.name }}<br></strong> \
+                            R{{ color.rgb.r }} V{{ color.rgb.g }} B{{ color.rgb.b }} \
+                        </span> \
                     </button> \
                 ',
                 require : 'ngModel',
@@ -831,6 +863,7 @@
                 link: link,
                 scope: {
                     formats: '=',
+                    colorPrefix: '=',
                     options: '=',
                 }
             };
