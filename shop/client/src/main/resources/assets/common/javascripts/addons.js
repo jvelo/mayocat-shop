@@ -918,7 +918,11 @@
                 scope.$parent.$watch(attrs.ngModel, function(values) {
                     if (Array.isArray(values)) {
                         scope.checkboxes = values.reduce(function(checkboxes, value) {
-                            checkboxes[value] = true;
+                            var valueisInOptions = scope.options.reduce(function(inOptions, option) {
+                                return inOptions || option.key === value;
+                            }, false);
+
+                            if (valueisInOptions) checkboxes[value] = true;
                             return checkboxes;
                         }, {});
                     }
