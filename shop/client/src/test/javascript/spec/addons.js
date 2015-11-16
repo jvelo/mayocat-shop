@@ -129,9 +129,7 @@ describe('Addons', function () {
 
             // When we don't precise the type but the editor, we expect the type defined by the editor
             addonsService.registerEditor("myCustomEditor", {
-                type: function(){
-                    return "html";
-                }
+                type: "html"
             });
             expect(addonsService.type(undefined, "myCustomEditor")).toBe("html");
         });
