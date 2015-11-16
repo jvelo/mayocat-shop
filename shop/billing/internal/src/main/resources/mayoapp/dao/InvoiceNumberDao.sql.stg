@@ -1,0 +1,18 @@
+group InvoiceNumberDAO;
+
+createInvoiceNumber() ::= <<
+    INSERT INTO invoice_number (order_id, number, generation_date)
+    VALUES (:invoiceNumber.orderId,
+            :invoiceNumber.number,
+            :invoiceNumber.generationDate)
+>>
+
+findForOrderId() ::= <<
+    SELECT *
+    FROM   invoice_number
+    WHERE  order_id = :orderId
+>>
+
+getCountForPrefix() ::= <<
+    SELECT COALESCE((SELECT MAX(TO_NUMBER(SUBSTRING (number from char_length(:prefix) + 1), '999')) FROM invoice_number), 0);
+>>
