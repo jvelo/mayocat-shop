@@ -17,6 +17,7 @@ import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.configuration.theme.ThemeSettings;
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings;
 import org.mayocat.shop.checkout.CheckoutSettings;
+import org.mayocat.shop.invoicing.InvoicingSettings;
 import org.mayocat.shop.payment.PaymentsSettings;
 import org.mayocat.shop.shipping.configuration.ShippingSettings;
 import org.mayocat.shop.taxes.configuration.TaxesSettings;
@@ -77,6 +78,11 @@ public class MayocatShopSettings extends AbstractSettings
     @Valid
     @NotNull
     @JsonProperty
+    private InvoicingSettings invoicing = new InvoicingSettings();
+
+    @Valid
+    @NotNull
+    @JsonProperty
     private NewsSettings news = new NewsSettings();
 
     public DataSourceFactory getDataSourceFactory()
@@ -112,6 +118,10 @@ public class MayocatShopSettings extends AbstractSettings
     public TaxesSettings getTaxesSettings()
     {
         return taxes;
+    }
+
+    public InvoicingSettings getInvoicing() {
+        return invoicing;
     }
 
     public NewsSettings getNewsSettings()

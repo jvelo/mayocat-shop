@@ -10,6 +10,7 @@ package org.mayocat.mail;
 import java.util.Locale;
 
 import com.google.common.base.Optional;
+import javax.activation.DataSource;
 
 /**
  * @version $Id$
@@ -66,6 +67,12 @@ public class MailTemplate extends Mail
     public MailTemplate html(String subject)
     {
         super.html(subject);
+        return this;
+    }
+
+    @Override
+    public MailTemplate addAttachment(MailAttachment attachment) {
+        super.addAttachment(attachment);
         return this;
     }
 

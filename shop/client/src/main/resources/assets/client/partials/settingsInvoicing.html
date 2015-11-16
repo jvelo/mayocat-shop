@@ -1,0 +1,68 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">{{'settings.invoicing.title' | translate}}</h1>
+        </div>
+
+        <form name="shopForm">
+            <div class="block">
+                <div ng-show="isVisible('invoicing.enabled')"
+                     ng-class="{default: isDefaultValue('invoicing.enabled')}">
+
+                    <label class="checkbox">
+                        {{'settings.invoicing.enableInvoicing' | translate}}
+                        <input type="checkbox"
+                               id="invoicesEnabled"
+                               ng-model="settings.invoicing.enabled.value"
+                               ng-disabled="!isConfigurable('invoicing.enabled')"/>
+                    </label>
+                </div>
+
+                <div ng-show="isVisible('invoicing.footerLegalNotice')"
+                     ng-class="{default: isDefaultValue('invoicing.footerLegalNotice')}">
+                    <p><label class="control-label" for="footerLegalNotice">{{'settings.invoicing.footerLegalNotice' | translate}}</label></p>
+
+                    <input type="text" name="name" class="input-xlarge"
+                           ng-model="settings.invoicing.footerLegalNotice.value"
+                           id="footerLegalNotice"
+                           ng-disabled="!isConfigurable('invoicing.footerLegalNotice')"/>
+                </div>
+
+                <div ng-show="isVisible('invoicing.contentBefore')"
+                     ng-class="{default: isDefaultValue('invoicing.contentBefore')}">
+                    <p><label class="control-label" for="contentBefore">{{'settings.invoicing.contentBefore' | translate}}</label></p>
+
+                    <textarea ng-model="settings.invoicing.contentBefore.value" id="contentBefore" ck-editor ></textarea>
+                </div>
+                <div ng-show="isVisible('invoicing.contentAfter')"
+                     ng-class="{default: isDefaultValue('invoicing.contentAfter')}">
+                    <p><label class="control-label" for="contentAfter">{{'settings.invoicing.contentAfter' | translate}}</label></p>
+
+                    <textarea ng-model="settings.invoicing.contentAfter.value" id="contentAfter" ck-editor ></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div>
+        <div class="buttons hasLoading">
+            <button ng-click="updateSettings()"
+                    class="btn btn-large btn-primary">
+                {{'entity.action.update' | translate}}
+            </button>
+            <span ng-class="{'loading': isSaving}"></span>
+        </div>
+    </div>
+</div>

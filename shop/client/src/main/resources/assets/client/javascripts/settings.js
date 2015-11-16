@@ -505,16 +505,50 @@ angular.module('settings', ['ngResource'])
 
     //==================================================================================================================
     //
+    // Controller for the invoicing settings UI
+    // See partials/settingsInvoicing.html
+    //
+    .controller('SettingsInvoicingController', ['$scope', 'configurationService',
+        function ($scope, configurationService) {
+
+            $scope.updateSettings = function () {
+                $scope.isSaving = true;
+                configurationService.put($scope.invoicing, function () {
+                    $scope.isSaving = false;
+                });
+            };
+
+            // Generic configuration helpers ---------------------------------------------------------------------------
+
+            $scope.isVisible = function (path) {
+                return configurationService.isVisible($scope.settings, path);
+            };
+
+            $scope.isConfigurable = function (path) {
+                return configurationService.isConfigurable($scope.settings, path);
+            };
+
+            $scope.isDefaultValue = function (path) {
+                return configurationService.isDefaultValue($scope.settings, path);
+            };
+
+            // Initialization ------------------------------------------------------------------------------------------
+
+            configurationService.getSettings(function (settings) {
+                $scope.settings = settings;
+            });
+        }])
+
+    //==================================================================================================================
+    //
     // Controller for the general settings UI
     // See partials/settingsGeneral.html
     //
-    .controller('SettingsWebhooksController', ['$scope', '$rootScope', 'configurationService', 'timeService', 'localesService',
+    .controller('SettingsWebhooksController', ['$scope', '$rootScope', 'configurationService',
 
-        function ($scope, $rootScope, configurationService, timeService, localesService) {
+        function ($scope, $rootScope, configurationService) {
 
             configurationService.getSettings("webhooks", function (webhooksConfiguration) {
-                console.log("Configuration : ", webhooksConfiguration);
-
                 $scope.hooks = webhooksConfiguration.hooks.value;
             });
 
@@ -553,6 +587,7 @@ angular.module('settings', ['ngResource'])
             $scope.isTenant = false;
             $scope.isCatalog = false;
             $scope.isShipping = false;
+            $scope.isInvoicing = false;
 
             $scope.$watch('location.path()', function (path) {
 
@@ -572,6 +607,9 @@ angular.module('settings', ['ngResource'])
                 }
                 if (path === "/settings/shipping") {
                     $scope.isShipping = true;
+                }
+                if (path === "/settings/invoicing") {
+                    $scope.isInvoicing = true;
                 }
             });
 

@@ -299,7 +299,10 @@ mayocat.directive('ckEditor', ['$rootScope', function ($rootScope) {
             CKEDITOR.plugins.addExternal('image2', 'plugins/image2/', 'plugin.js');
 
             CKEDITOR.config.mayocat_server = $rootScope.server;
-            CKEDITOR.config.mayocat_entity_uri = $rootScope.entity.uri;
+            if ($rootScope.entity !== undefined) {
+                CKEDITOR.config.mayocat_entity_uri = $rootScope.entity.uri;
+            }
+
             var ck = CKEDITOR.replace(elm[0], ckOptions);
 
             if (!ngModel) return;

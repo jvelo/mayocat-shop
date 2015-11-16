@@ -17,12 +17,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.mayocat.model.Entity;
+import org.mayocat.model.Owned;
+import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 
 /**
  * @version $Id$
  */
-public class OrderSummary implements Entity
+public class OrderSummary implements Entity, Owned
 {
     public static final String ORDER_DATA_ID = "id";
 
@@ -38,6 +40,9 @@ public class OrderSummary implements Entity
     public static final String ORDER_DATA_ITEMS = "items";
 
     private UUID id;
+
+    @DoNotIndex
+    private UUID tenantId = null;
 
     private UUID customerId;
 
@@ -258,6 +263,15 @@ public class OrderSummary implements Entity
     public void setBillingAddressId(UUID billingAddressId)
     {
         this.billingAddressId = billingAddressId;
+    }
+
+    @Override
+    public UUID getTenantId() {
+        return this.tenantId;
+    }
+
+    public void setTenantId(UUID tenantId) {
+        this.tenantId = tenantId;
     }
 
     public enum Status

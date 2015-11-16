@@ -86,5 +86,15 @@
             <artifactId>mayocat-platform-webhooks</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mayocat.shop</groupId>
+            <artifactId>mayocat-shop-customer-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mayocat.platform</groupId>
+            <artifactId>mayocat-platform-pdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

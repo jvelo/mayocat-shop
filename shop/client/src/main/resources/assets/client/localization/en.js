@@ -442,6 +442,15 @@ var Mayocat = (function (Mayocat) {
                 affectAreaToExistingRates: "Affect area to existing rate"
             },
 
+            invoicing: {
+                menuEntry: "Invoices",
+                title: "Invoices",
+                enableInvoicing: "Generate an invoice when a purchase is made",
+                footerLegalNotice: "Text for the legal notice in the footer",
+                contentBefore: "Content to include before the table of items",
+                contentAfter: "Content to include before the table of items"
+            },
+
             misc: {
                 general: "General",
                 shop: "Shop information",

@@ -24,6 +24,7 @@ shop/application/data/themes
 shop/application/data/tenants
 shop/application/data/payments
 shop/application/data/cert
+shop/application/data/invoicing
 
 # misc
 /classes

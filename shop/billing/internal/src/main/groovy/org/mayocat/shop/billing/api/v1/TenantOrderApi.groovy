@@ -23,10 +23,13 @@ import org.mayocat.shop.billing.model.Order
 import org.mayocat.shop.billing.store.OrderStore
 import org.mayocat.shop.customer.model.Customer
 import org.mayocat.shop.customer.store.CustomerStore
+import org.mayocat.shop.invoicing.InvoicingException
+import org.mayocat.shop.invoicing.InvoicingService
 import org.mayocat.shop.payment.model.PaymentOperation
 import org.mayocat.shop.payment.store.PaymentOperationStore
 import org.mayocat.store.EntityDoesNotExistException
 import org.mayocat.store.InvalidEntityException
+import org.slf4j.Logger
 import org.xwiki.component.annotation.Component
 
 import javax.inject.Inject
@@ -34,6 +37,7 @@ import javax.inject.Provider
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.StreamingOutput
 
 /**
  * @version $Id$
@@ -57,6 +61,12 @@ class TenantOrderApi implements Resource
 
     @Inject
     Provider<PaymentOperationStore> paymentOperationStore
+
+    @Inject
+    InvoicingService invoicingService
+
+    @Inject
+    Logger logger
 
     @Inject
     WebContext context
@@ -153,6 +163,33 @@ class TenantOrderApi implements Resource
         }
 
         return Response.ok(apiObject).build()
+    }
+
+    @GET
+    @Path("{slug}/invoice")
+    @Produces("application/pdf")
+    @Authorized
+    def getInvoice(@PathParam("slug") String slug)
+    {
+        Order order = orderStore.get().findBySlug(slug)
+        if (order == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Order not found").build()
+        }
+
+        StreamingOutput so = new StreamingOutput() {
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException
+            {
+                try {
+                    invoicingService.generatePdfInvoice(order, outputStream);
+                } catch (InvoicingException e) {
+                    logger.warn("Failed to generate PDF invoice", e);
+                    throw new WebApplicationException(Response.status(Response.Status.SERVICE_UNAVAILABLE).build());
+                }
+            }
+        }
+        return Response.ok(so)
+                .header("Content-Disposition", "attachment; filename=invoice-" + slug + ".pdf")
+                .build();
     }
 
     @Path("{slug}")

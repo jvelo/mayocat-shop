@@ -7,6 +7,11 @@
  */
 package org.mayocat.shop.billing.internal;
 
+import com.google.common.base.Strings;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PipedInputStream;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
@@ -15,9 +20,11 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
+import javax.activation.DataSource;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.money.CurrencyUnit;
@@ -31,6 +38,7 @@ import org.mayocat.configuration.MultitenancySettings;
 import org.mayocat.configuration.SiteSettings;
 import org.mayocat.configuration.general.GeneralSettings;
 import org.mayocat.context.WebContext;
+import org.mayocat.mail.MailAttachment;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailTemplate;
 import org.mayocat.mail.MailTemplateService;
@@ -41,6 +49,9 @@ import org.mayocat.shop.customer.model.Address;
 import org.mayocat.shop.customer.model.Customer;
 import org.mayocat.shop.customer.store.AddressStore;
 import org.mayocat.shop.customer.store.CustomerStore;
+import org.mayocat.shop.invoicing.InvoicingException;
+import org.mayocat.shop.invoicing.InvoicingService;
+import org.mayocat.shop.invoicing.model.InvoiceNumber;
 import org.mayocat.url.URLHelper;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
@@ -63,6 +74,9 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 {
     @Inject
     private MailTemplateService mailTemplateService;
+
+    @Inject
+    private InvoicingService invoicingService;
 
     @Inject
     private Logger logger;
@@ -117,13 +131,14 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         final Locale customerLocale = webContext.getLocale();
         final Tenant tenant = webContext.getTenant();
         final Locale tenantLocale = settings.getLocales().getMainLocale().getValue();
+        final boolean withInvoice = invoicingService.isEnabledInContext();
 
         Executors.newSingleThreadExecutor().submit(new Callable<Void>()
         {
             @Override
             public Void call() throws Exception
             {
-                sendNotificationMails(order, tenant, customerLocale, tenantLocale);
+                sendNotificationMails(order, tenant, customerLocale, tenantLocale, withInvoice);
                 return null;
             }
         });
@@ -138,8 +153,9 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
      * @param tenant the tenant concerned by the notifications mails
      * @param customerLocale the locale the customer browsed the site in when checking out
      * @param tenantLocale the main locale of the tenant
+     * @param withInvoice whether to generate and include a PDF invoice with the notification mail
      */
-    private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale)
+    private void sendNotificationMails(Order order, Tenant tenant, Locale customerLocale, Locale tenantLocale, boolean withInvoice)
     {
         try {
             Customer customer = order.getCustomer();
@@ -164,8 +180,28 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
 
             MailTemplate customerNotificationEmail = getCustomerNotificationEmail(tenant,
                     customerEmail, customerLocale);
-            sendNotificationMail(customerNotificationEmail, emailContext, tenant);
             MailTemplate tenantNotificationEmail = getTenantNotificationEmail(tenant, tenantLocale);
+
+            // Generate invoice number and add add invoice to email if invoicing is enabled
+            if (withInvoice) {
+                try {
+                    // TODO: there should be a way to not load the whole PDF in memory...
+                    ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+                    InvoiceNumber invoiceNumber = invoicingService.getOrCreateInvoiceNumber(order);
+                    invoicingService.generatePdfInvoice(order, pdfStream);
+
+                    MailAttachment attachment = new MailAttachment(
+                            new ByteArrayDataSource(pdfStream.toByteArray(), "application/pdf"),
+                            "invoice-" + invoiceNumber.getNumber() + ".pdf");
+
+                    customerNotificationEmail.addAttachment(attachment);
+                    tenantNotificationEmail.addAttachment(attachment);
+                } catch (InvoicingException e) {
+                    logger.error("Failed to to generate invoice for email", e);
+                }
+            }
+
+            sendNotificationMail(customerNotificationEmail, emailContext, tenant);
             sendNotificationMail(tenantNotificationEmail, emailContext, tenant);
         } catch (Exception e) {
             logger.error("Failed to send order notification email when sending email", e);
@@ -289,7 +325,13 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
             context.put("shipping", order.getOrderData().get("shipping"));
         }
 
-        context.put("siteName", tenant != null ? tenant.getName() : siteSettings.getName());
+        String siteName;
+        if (tenant != null) {
+            siteName = Strings.isNullOrEmpty(tenant.getName()) ? tenant.getSlug() : tenant.getName();
+        } else {
+            siteName = siteSettings.getName();
+        }
+        context.put("siteName", siteName);
         context.put("itemsTotal", itemsTotal);
         context.put("orderId", order.getSlug());
         context.put("grandTotal", grandTotal);

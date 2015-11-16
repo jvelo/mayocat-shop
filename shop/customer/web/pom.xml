@@ -49,8 +49,9 @@
         </dependency>
         <dependency>
             <groupId>org.mayocat.shop</groupId>
-            <artifactId>mayocat-shop-marketplace</artifactId>
+            <artifactId>mayocat-shop-marketplace-web</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 </project>
