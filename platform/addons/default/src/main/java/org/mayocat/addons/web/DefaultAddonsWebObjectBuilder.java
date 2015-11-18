@@ -7,6 +7,7 @@
  */
 package org.mayocat.addons.web;
 
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,8 +113,9 @@ public class DefaultAddonsWebObjectBuilder implements AddonsWebObjectBuilder
                 continue;
             }
 
-            String type = (String) fieldModel.get("type");
             AddonFieldDefinition fieldDefinition = groupDefinition.getFields().get(fieldName);
+            String type = Strings.isNullOrEmpty(fieldDefinition.getType()) ? "string" : fieldDefinition.getType();
+
             Object value = element.get(fieldName);
 
             if (fieldTransformers.containsKey(type)) {
