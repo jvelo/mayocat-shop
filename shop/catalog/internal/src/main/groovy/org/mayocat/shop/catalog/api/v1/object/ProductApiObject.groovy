@@ -223,7 +223,7 @@ class ProductApiObject extends BaseApiObject
         List collectionRelationships = [];
 
         collections.each({ org.mayocat.shop.catalog.model.Collection collection ->
-            def link = "/api/collections/${collection.slug}"
+            def link = "/api/collections/${collection.slug}".toString()
             collectionRelationships << [
                     title: collection.title,
                     slug: collection.slug,

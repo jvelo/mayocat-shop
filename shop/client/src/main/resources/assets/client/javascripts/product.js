@@ -31,7 +31,7 @@ angular.module('product', ['ngResource'])
             $scope.publishProduct = function () {
                 $scope.product.onShelf = true;
                 $scope.updateProduct();
-            }
+            };
 
             $scope.updateProduct = function () {
                 if ($scope.isNew()) {
@@ -69,9 +69,11 @@ angular.module('product', ['ngResource'])
                     angular.forEach($scope.collections, function (collection) {
                         if (collection.hasProduct && !collection.hadProduct) {
                             $scope.collectionOperation(collection, "addProduct");
+                            collection.hadProduct = true;
                         }
                         if (collection.hadProduct && !collection.hasProduct) {
                             $scope.collectionOperation(collection, "removeProduct");
+                            collection.hadProduct = false;
                         }
                     });
                 }
@@ -132,21 +134,21 @@ angular.module('product', ['ngResource'])
                             }
                         });
                 });
-            }
+            };
 
             $scope.deleteVariant = function (variant) {
                 $http.delete(variant._href).then(function () {
                     $scope.modalInstance.close();
                     $scope.reloadVariants();
                 });
-            }
+            };
 
             $scope.confirmDeletionOfVariant = function (variant) {
                 $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionVariant.html' });
                 $scope.modalInstance.result.then(function () {
                     $scope.deleteVariant(variant)
                 });
-            }
+            };
 
             $scope.reloadVariants = function (callback) {
                 $http.get($scope.product._links.variants.href)
@@ -156,7 +158,7 @@ angular.module('product', ['ngResource'])
 
                         callback && callback($scope.product._embedded.variants)
                     });
-            }
+            };
 
             $scope.editVariant = function (variant) {
                 $scope.variant = variant;
@@ -173,7 +175,7 @@ angular.module('product', ['ngResource'])
 
                     delete $scope.variant;
                 });
-            }
+            };
 
             $scope.collectionOperation = function (collection, operation) {
                 $resource("/api/collections/:slug/:operation", {"slug": collection.slug, "operation": operation}, {
@@ -201,9 +203,9 @@ angular.module('product', ['ngResource'])
                         angular.forEach($scope.product._relationships.collections, function (productCollection) {
                             if (collection._href == productCollection._href) {
                                 // hasProduct => used as model
-                                collection.hasProduct = true
+                                collection.hasProduct = true;
                                 // hadProduct => used when saving to see if we need to update anything
-                                collection.hadProduct = true
+                                collection.hadProduct = true;
                             }
                             else if (!collection.hasProduct) {
                                 collection.hasProduct = false;
@@ -212,7 +214,7 @@ angular.module('product', ['ngResource'])
                         });
                     });
                 });
-            }
+            };
 
             $scope.initializeVariants = function () {
                 if ($scope.hasTypes) {
@@ -240,11 +242,11 @@ angular.module('product', ['ngResource'])
                             });
                     });
                 }
-            }
+            };
 
             $scope.initializeTaxes = function() {
                 $scope.calculatePrices();
-            }
+            };
 
             $scope.calculatePrices = function() {
                 if (!$scope.product.price) {
@@ -253,7 +255,7 @@ angular.module('product', ['ngResource'])
                 taxesService.excl($scope.product.price, $scope.product.vatRate).then(function(excl){
                     $scope.excl = excl;
                 });
-            }
+            };
 
             $scope.$watch("product.price", function () {
                 // When product price changes, recalculates taxes etc.
@@ -300,11 +302,12 @@ angular.module('product', ['ngResource'])
                     return keys;
                 }
                 for (var key in object) {
-                    object.hasOwnProperty(key)
-                    keys.push(key);
+                    if (object.hasOwnProperty(key)) {
+                        keys.push(key);
+                    }
                 }
                 return keys;
-            }
+            };
 
             // Initialize existing product or new product
 
@@ -341,7 +344,7 @@ angular.module('product', ['ngResource'])
             $scope.confirmDeletion = function () {
                 $scope.modalInstance = $modal.open({ templateUrl: 'confirmDeletionProduct.html' });
                 $scope.modalInstance.result.then($scope.deleteProduct);
-            }
+            };
 
             $scope.deleteProduct = function () {
                 $scope.ProductResource.delete({
@@ -351,7 +354,7 @@ angular.module('product', ['ngResource'])
                     $rootScope.$broadcast('catalog:refreshCatalog');
                     $location.url("/catalog");
                 });
-            }
+            };
 
             $scope.getTranslationProperties = function () {
                 return {
