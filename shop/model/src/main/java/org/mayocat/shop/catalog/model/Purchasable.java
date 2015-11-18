@@ -28,6 +28,8 @@ public interface Purchasable extends Identifiable, Serializable, HasFeaturedImag
 
     BigDecimal getUnitPrice();
 
+    Optional<BigDecimal> getActualUnitPrice();
+
     Optional<BigDecimal> getActualWeight();
 
     Optional<Association<Purchasable>> getParent();

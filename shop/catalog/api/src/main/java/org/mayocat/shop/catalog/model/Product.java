@@ -7,17 +7,18 @@
  */
 package org.mayocat.shop.catalog.model;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import org.mayocat.model.AddonGroup;
 import org.mayocat.model.Association;
 import org.mayocat.model.Child;
@@ -31,10 +32,6 @@ import org.mayocat.model.annotation.DoNotIndex;
 import org.mayocat.model.annotation.Index;
 import org.mayocat.model.annotation.LocalizedField;
 import org.mayocat.shop.taxes.Taxable;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 
 @Index
 public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, Taxable, Localized, HasType, Child
@@ -218,10 +215,10 @@ public class Product implements Entity, HasAddons, HasModel, HasFeaturedImage, T
                 Optional.<String>absent();
     }
 
-    public void setVatRateId(String vateRateId)
+    public void setVatRateId(String vatRateId)
     {
-        if (vateRateId != null) {
-            this.taxes.put(VAT, vateRateId);
+        if (vatRateId != null) {
+            this.taxes.put(VAT, vatRateId);
         }
         else {
             this.taxes.remove(VAT);

@@ -68,15 +68,22 @@ public class DefaultTaxesService implements TaxesService
     @Override
     public PriceWithTaxes getPriceWithTaxes(Taxable taxable)
     {
+        if (!taxable.getActualUnitPrice().isPresent()) {
+            return new PriceWithTaxes(
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+            );
+        }
+
         BigDecimal itemVatRate = getVatRate(taxable);
+        BigDecimal unitPrice = taxable.getActualUnitPrice().get();
 
-        PriceWithTaxes itemUnit = new PriceWithTaxes(
-                taxable.getUnitPrice().multiply(BigDecimal.ONE.add(itemVatRate)),
-                taxable.getUnitPrice(),
-                taxable.getUnitPrice().multiply(itemVatRate)
+        return new PriceWithTaxes(
+                unitPrice.multiply(BigDecimal.ONE.add(itemVatRate)),
+                unitPrice,
+                unitPrice.multiply(itemVatRate)
         );
-
-        return itemUnit;
     }
 
     private Optional<Rate> getRateForId(final String id)
