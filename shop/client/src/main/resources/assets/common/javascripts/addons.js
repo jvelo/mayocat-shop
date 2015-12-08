@@ -720,12 +720,17 @@
                     });
                 }
 
+                function nearlyEquals(a, b, maxDiff) {
+                    if (maxDiff === undefined) maxDiff = 1;
+                    return Math.abs(a - b) <= maxDiff;
+                }
+
                 var exactColor = swatches.filter(function(swatch) {
                     var colorRGB = color.getRGB();
 
-                    return Math.round(colorRGB.r * 255) === Math.round(swatch.r * 255)
-                        && Math.round(colorRGB.g * 255) === Math.round(swatch.g * 255)
-                        && Math.round(colorRGB.b * 255) === Math.round(swatch.b * 255);
+                    return nearlyEquals(colorRGB.r * 255, swatch.r * 255)
+                        && nearlyEquals(colorRGB.g * 255, swatch.g * 255)
+                        && nearlyEquals(colorRGB.b * 255, swatch.b * 255);
                 })[0];
 
                 return exactColor ? exactColor.name : false;
