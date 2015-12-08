@@ -139,10 +139,8 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
         // 2. Configurations
 
-        //if (tenant != null) {
-            Map<Class, Serializable> configurations = configurationService.getSettings();
-            context.setSettings(configurations);
-        //}
+        Map<Class, Serializable> configurations = configurationService.getSettings();
+        context.setSettings(configurations);
 
         // 3. User
 
@@ -230,7 +228,7 @@ public class RequestContextInitializer implements ServletRequestListener, EventL
 
     private boolean isSecure(ServletRequestEvent event)
     {
-        return ((HttpServletRequest) event.getServletRequest()).isSecure();
+        return event.getServletRequest().isSecure();
     }
 
     private String getHeaderValue(ServletRequestEvent event, String headerName)
