@@ -71,7 +71,10 @@ public class CheckoutRequestBuilder
             String billingCity = getNonEmptyFieldValueOrAddToErrorMap("billingCity", data, request);
             String billingCountry = getNonEmptyFieldValueOrAddToErrorMap("billingCountry", data, request);
             billingAddress = new Address();
-            if (firstName != null || lastName != null) {
+            if (multimapContains(data, "billingFirstName") || multimapContains(data, "billingLastName")) {
+                billingAddress.setFullName(fullName((String) data.getFirst("billingFirstName"), (String) data.getFirst("billingLastName")));
+            }
+            else if (firstName != null || lastName != null) {
                 billingAddress.setFullName(fullName(firstName, lastName));
             }
             billingAddress.setStreet(billingStreet);
