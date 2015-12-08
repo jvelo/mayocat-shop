@@ -42,6 +42,7 @@ import org.mayocat.mail.MailAttachment;
 import org.mayocat.mail.MailException;
 import org.mayocat.mail.MailTemplate;
 import org.mayocat.mail.MailTemplateService;
+import org.mayocat.rest.api.object.DateWebObject;
 import org.mayocat.shop.billing.event.OrderPaidEvent;
 import org.mayocat.shop.billing.model.Order;
 import org.mayocat.shop.billing.model.OrderItem;
@@ -336,6 +337,7 @@ public class SendEmailsWhenOrderIsPaid implements EventListener
         context.put("orderId", order.getSlug());
         context.put("grandTotal", grandTotal);
         context.put("additionalInformation", order.getAdditionalInformation());
+        context.put("orderDate", new DateWebObject().withDate(order.getCreationDate(), locale));
 
         Map<String, Object> customerMap = Maps.newHashMap();
         customerMap.put("firstName", customer.getFirstName());
