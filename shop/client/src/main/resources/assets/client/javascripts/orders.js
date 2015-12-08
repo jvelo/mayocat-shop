@@ -5,16 +5,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-'use strict'
+'use strict';
 
 angular.module('orders', [])
 
     .factory('baseOrderMixin', ["$resource", "$translate", function ($resource, $translate) {
         return function (options) {
-            options = typeof options !== 'undefined' ? options : {};
             return {
                 getStatus: function(status) {
-                    var $scope = this;
                     var camelCaseStatus = status.toLowerCase().replace(/_(.)/g, function(match, grp1) {
                         return grp1.toUpperCase();
                     });
