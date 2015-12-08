@@ -98,6 +98,11 @@
 </div>
 
 <div class="pagination">
-    <pagination total-items="totalItems" ng-model="currentPage" items-per-page="ordersPerPage"
-                ng-change="pageChanged()"></pagination>
+    <ul>
+        <li ng-repeat="n in range(pages)"
+            ng-class="{active: n + 1 == currentPage}"
+            ng-click="setPage(n + 1)">
+                <a href ng-bind="n + 1">1</a>
+        </li>
+    </ul>
 </div>

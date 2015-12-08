@@ -43,7 +43,7 @@ MayocatShop.config(['$routeProvider', function ($routeProvider) {
             titleTranslation: 'pages'
         })
         .when('/orders', {
-            templateUrl: 'partials/orders.html',
+            templateUrl: 'partials/orders.html?1',
             controller: 'OrdersController',
             titleTranslation: 'orders'
         })
