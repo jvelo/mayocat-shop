@@ -7,6 +7,7 @@
  */
 package org.mayocat.shop.catalog.web.object
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
@@ -52,8 +53,8 @@ class PriceWebObject
         currency = new CurrencyWebObject();
         currency.withCurrency(priceCurrency, locale)
 
-        if (price.doubleValue() == price.intValue()) {
-            amountCompact = "" + price.intValue();
+        if (isRoundPrice(price.doubleValue())) {
+            amountCompact = "" + Math.round(price.doubleValue());
         } else {
             amountCompact = amount;
         }
@@ -61,5 +62,11 @@ class PriceWebObject
         amountFull = price.toString()
 
         this
+    }
+
+    @JsonIgnore
+    private static boolean isRoundPrice(double number) {
+        double roundedAfterFourDecimals = (double) Math.round(number * 10000d) / 10000d
+        return roundedAfterFourDecimals == (double) Math.round(number)
     }
 }
