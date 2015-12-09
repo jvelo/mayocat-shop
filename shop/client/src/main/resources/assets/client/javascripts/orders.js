@@ -11,6 +11,7 @@ angular.module('orders', [])
 
     .factory('baseOrderMixin', ["$resource", "$translate", function ($resource, $translate) {
         return function (options) {
+            options = typeof options === 'undefined' ? {} : options;
             return {
                 getStatus: function(status) {
                     var camelCaseStatus = status.toLowerCase().replace(/_(.)/g, function(match, grp1) {
@@ -22,6 +23,33 @@ angular.module('orders', [])
 
                 getClass: function(status) {
                     return status.toLowerCase();
+                },
+
+                fetchOrders: function() {
+                    var $scope = this;
+                    $scope.isLoading = true;
+                    $resource("/api/orders").get({
+                        "offset": (($scope.currentPage - 1) * $scope.ordersPerPage),
+                        "number": $scope.ordersPerPage
+                    }, function (result) {
+                        $scope.orders = result.orders;
+
+                        // Prepare pagination variables
+                        $scope.pages = Math.floor(result._pagination.totalItems / $scope.ordersPerPage);
+                        if (result._pagination.totalItems % $scope.ordersPerPage === 0) {
+                            $scope.pages--;
+                        }
+
+                        $scope.isLoading = false;
+                    });
+                },
+
+                init: function() {
+                    var $scope = this;
+                    $scope.ordersPerPage = options.ordersPerPage || 15;
+                    $scope.isLoading = true;
+                    $scope.currentPage = 1;
+                    $scope.fetchOrders();
                 }
             }
         }
@@ -41,31 +69,6 @@ angular.module('orders', [])
         function ($scope, $resource, configurationService, timeService, mixins) {
 
             mixins.extend("base", $scope);
-
-            $scope.ordersPerPage = 15;
-            $scope.isLoading = true;
-            $scope.currentPage = 1;
-
-            $scope.fetchOrders = function() {
-                console.log("Fetching page", $scope.currentPage);
-                $scope.isLoading = true;
-                $resource("/api/orders").get({
-                    "offset": (($scope.currentPage - 1) * $scope.ordersPerPage),
-                    "number": $scope.ordersPerPage
-                }, function (result) {
-                    console.log("Setting result", result.orders);
-
-                    $scope.orders = result.orders;
-
-                    // Prepare pagination variables
-                    $scope.pages = Math.floor(result._pagination.totalItems / $scope.ordersPerPage);
-                    if (result._pagination.totalItems % $scope.ordersPerPage === 0) {
-                        $scope.pages--;
-                    }
-
-                    $scope.isLoading = false;
-                });
-            };
 
             $scope.setPage = function(page) {
                 $scope.currentPage = page;
@@ -104,6 +107,5 @@ angular.module('orders', [])
                 $scope.mainCurrency = catalogSettings.currencies.main;
             });
 
-            $scope.fetchOrders();
-
+            $scope.init();
         }]);

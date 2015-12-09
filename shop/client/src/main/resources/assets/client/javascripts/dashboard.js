@@ -17,7 +17,6 @@ angular.module('dashboard', [])
             });
 
             $scope.getTranslationProperties = function (options) {
-
                 return {
                     numberOfItems: options.order.numberOfItems || 0
                 }
