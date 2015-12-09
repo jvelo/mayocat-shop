@@ -104,7 +104,7 @@ class CollectionWebView implements Resource
         Integer totalCount = this.productStore.get().countAllForCollection(collection)
         Integer totalPages = IntMath.divide(totalCount, numberOfProductsPerPage, RoundingMode.UP)
 
-        List<Product> products = productStore.get().findForCollection(collection, numberOfProductsPerPage, offset)
+        List<Product> products = productStore.get().findOnShelfForCollection(collection, numberOfProductsPerPage, offset)
         List<EntityData<Product>> productsData = dataLoader.load(products,
                 StandardOptions.LOCALIZE,
                 AttachmentLoadingOptions.FEATURED_IMAGE_ONLY

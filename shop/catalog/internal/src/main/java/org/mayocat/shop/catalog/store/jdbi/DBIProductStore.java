@@ -303,6 +303,11 @@ public class DBIProductStore extends DBIEntityStore implements ProductStore, Ini
         return this.dao.countAllNotVariants(getTenant());
     }
 
+    public List<Product> findOnShelfForCollection(Collection collection, Integer number, Integer offset)
+    {
+        return AddonsHelper.withAddons(this.dao.findOnShelfForCollection(collection, number, offset), this.dao);
+    }
+
     public List<Product> findForCollection(Collection collection, Integer number, Integer offset)
     {
         return AddonsHelper.withAddons(this.dao.findForCollection(collection, number, offset), this.dao);

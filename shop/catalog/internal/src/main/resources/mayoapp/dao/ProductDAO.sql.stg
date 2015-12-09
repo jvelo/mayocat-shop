@@ -142,7 +142,7 @@ countAllForCollection() ::= <<
            AND product.on_shelf
 >>
 
-findAllForCollection() ::= <<
+findOnShelfForCollection() ::= <<
     SELECT entity.*, product.*, localization_data(entity_id)
     FROM   collection_product
            INNER JOIN entity
@@ -152,6 +152,20 @@ findAllForCollection() ::= <<
     WHERE  collection_product.collection_id = :collection.id
            AND (entity.parent_id IS NULL OR product.virtual)
            AND product.on_shelf
+    ORDER  BY collection_product.position
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+findAllForCollection() ::= <<
+    SELECT entity.*, product.*, localization_data(entity_id)
+    FROM   collection_product
+           INNER JOIN entity
+                   ON entity.id = collection_product.product_id
+           INNER JOIN product
+                   ON product.entity_id = collection_product.product_id
+    WHERE  collection_product.collection_id = :collection.id
+           AND (entity.parent_id IS NULL OR product.virtual)
     ORDER  BY collection_product.position
 >>
 

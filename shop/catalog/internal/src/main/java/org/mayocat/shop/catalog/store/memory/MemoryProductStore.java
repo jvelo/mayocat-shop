@@ -101,6 +101,18 @@ public class MemoryProductStore extends AbstractPositionedEntityMemoryStore<Prod
         return FluentIterable.from(findAllForCollection(collection)).skip(offset).limit(number).toList();
     }
 
+    @Override
+    public List<Product> findOnShelfForCollection(final Collection collection, Integer number, Integer offset) {
+        return FluentIterable.from(all()).filter(new Predicate<Product>()
+        {
+            public boolean apply(@Nullable Product input)
+            {
+                return input.getCollections().isLoaded() && input.getCollections().get().contains(collection)
+                        && input.getOnShelf();
+            }
+        }).toList();
+    }
+
     public List<Product> findAllForCollection(final Collection collection)
     {
         return FluentIterable.from(all()).filter(new Predicate<Product>()

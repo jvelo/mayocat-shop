@@ -56,6 +56,11 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     public abstract List<Product> findForCollection(@BindBean("collection") Collection collection,
             @Bind("number") Integer number, @Bind("offset") Integer offset);
 
+
+    @SqlQuery
+    public abstract List<Product> findOnShelfForCollection(@BindBean("collection")Collection collection,
+            @Bind("number")Integer number, @Bind("offset")Integer offset);
+
     @SqlQuery
     public abstract List<Product> findAllForCollection(@BindBean("collection") Collection collection);
 
@@ -103,4 +108,5 @@ public abstract class ProductDAO implements EntityDAO<Product>, Transactional<Pr
     {
         AddonsHelper.createOrUpdateAddons(this, entity);
     }
+
 }

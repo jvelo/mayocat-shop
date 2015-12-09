@@ -37,9 +37,11 @@ public interface ProductStore extends Store<Product, UUID>, HasOrderedCollection
 
     Integer countAllForCollection(Collection collection);
 
-    List<Product> findForCollection(Collection collection, Integer number, Integer offset);
-
     List<Product> findAllForCollection(Collection collection);
+
+    List<Product> findOnShelfForCollection(Collection collection, Integer number, Integer offset);
+
+    List<Product> findForCollection(Collection collection, Integer number, Integer offset);
 
     List<Product> findAllOnShelf(Integer number, Integer offset);
 
