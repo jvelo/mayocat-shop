@@ -120,7 +120,7 @@ class TenantHomePageApi implements Resource, AttachmentApiDelegate
                 List<Attachment> attachments = this.attachmentStore.get().findByIds(imageIds.toList());
                 List<Thumbnail> thumbnails = this.thumbnailStore.get().findAllForIds(imageIds.toList());
                 images = attachments.collect({ Attachment attachment ->
-                    def thumbs = thumbnails.findAll({ Thumbnail thumbnail -> thumbnail.attachmentId = attachment.id })
+                    def thumbs = thumbnails.findAll({ Thumbnail thumbnail -> thumbnail.attachmentId == attachment.id })
                     return new Image(attachment, thumbs.toList())
                 });
             } else {
