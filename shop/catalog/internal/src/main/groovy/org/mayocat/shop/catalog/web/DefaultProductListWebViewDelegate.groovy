@@ -15,6 +15,7 @@ import org.mayocat.configuration.general.GeneralSettings
 import org.mayocat.context.WebContext
 import org.mayocat.entity.EntityData
 import org.mayocat.image.model.Image
+import org.mayocat.image.model.ImageGallery
 import org.mayocat.localization.EntityLocalizationService
 import org.mayocat.rest.web.object.PaginationWebObject
 import org.mayocat.shop.catalog.configuration.shop.CatalogSettings
@@ -78,7 +79,8 @@ class DefaultProductListWebViewDelegate implements ProductListWebViewDelegate
         productsData.each({ EntityData<Product> productData ->
 
             Product product = productData.entity
-            List<Image> images = productData.getDataList(Image.class)
+            def gallery = productData.getData(ImageGallery.class)
+            List<Image> images = gallery.isPresent() ? gallery.get().images : [] as List<Image>
 
             def catalogSettings = configurationService.getSettings(CatalogSettings.class)
             def generalSettings = configurationService.getSettings(GeneralSettings.class)
