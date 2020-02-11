@@ -84,12 +84,12 @@
         <repository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
             <id>sonatype-nexus-releases</id>
             <name>Sonatype Releases Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/releases/</url>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
         </repository>
     </repositories>
 
@@ -99,12 +99,12 @@
         <pluginRepository>
             <id>mayocat-cloudbees-release</id>
             <name>mayocat-cloudbees-release</name>
-            <url>http://repository-mayocat.forge.cloudbees.com/release/</url>
+            <url>https://repository-mayocat.forge.cloudbees.com/release/</url>
         </pluginRepository>
         <pluginRepository>
             <id>mayocat-cloudbees-snapshot</id>
             <name>mayocat-cloudbees-snapshot</name>
-            <url>http://repository-mayocat.forge.cloudbees.com/snapshot/</url>
+            <url>https://repository-mayocat.forge.cloudbees.com/snapshot/</url>
         </pluginRepository>
     </pluginRepositories>
 
