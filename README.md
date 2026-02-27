@@ -23,13 +23,12 @@ E-commerce platform with content management and multi-vendor marketplace support
 
 ## Screenshots
 
-Product editing with rich text, image gallery, and inventory management:
-
-![Back-office — product editing](screenshots/backoffice1.png)
-
-Order management with status tracking, line items, and shipping:
-
-![Back-office — order management](screenshots/backoffice2.png)
+<table>
+<tr>
+<td width="50%"><img src="screenshots/backoffice1.png" alt="Back-office — product editing"><br>Product editing with rich text, image gallery, and inventory management</td>
+<td width="50%"><img src="screenshots/backoffice2.png" alt="Back-office — order management"><br>Order management with status tracking, line items, and shipping</td>
+</tr>
+</table>
 
 A few storefronts built on the platform — each with its own theme, branding, and content:
 
