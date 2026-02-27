@@ -33,13 +33,13 @@ Order management with status tracking, line items, and shipping:
 
 A few storefronts built on the platform — each with its own theme, branding, and content:
 
-| | |
-|---|---|
-| ![Doolittle — children's magazine and shop](screenshots/doolishop.png) | ![This is not a map — travel photography books](screenshots/thisisnotamap.png) |
-| **Doolittle** — children's magazine and shop | **This is not a map** — travel photography books |
-
-![Aristide — cat hotel in Paris](screenshots/aristide.png)
-**Aristide** — cat hotel in Paris, with booking, blog, and content pages
+<table>
+<tr>
+<td width="33%"><img src="screenshots/doolishop.png" alt="Doolittle — children's magazine and shop"><br><strong>Doolittle</strong> — children's magazine and shop</td>
+<td width="33%"><img src="screenshots/thisisnotamap.png" alt="This is not a map — travel photography books"><br><strong>This is not a map</strong> — travel photography books</td>
+<td width="33%"><img src="screenshots/aristide.png" alt="Aristide — cat hotel in Paris"><br><strong>Aristide</strong> — cat hotel in Paris, with booking, blog, and content pages</td>
+</tr>
+</table>
 
 ## Design choices
 
