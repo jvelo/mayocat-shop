@@ -76,7 +76,7 @@
         <elasticsearch.version>0.90.0</elasticsearch.version>
         <joda-money.version>0.8</joda-money.version>
         <commons-codec.version>1.9</commons-codec.version>
-        <groovy.version>2.3.6</groovy.version>
+        <groovy.version>2.4.21</groovy.version>
         <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
